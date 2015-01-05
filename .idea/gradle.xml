@@ -6,7 +6,7 @@
         <option name="createEmptyContentRootDirectories" value="true" />
         <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/MongoDataAPI" />
-        <option name="gradleHome" value="C:/gradle-2.2.1" />
+        <option name="gradleHome" value="C:/apps/gradle-2.2.1" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/MongoDataAPI" />
@@ -17,7 +17,7 @@
         <option name="createEmptyContentRootDirectories" value="true" />
         <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/MySqlDataAPI" />
-        <option name="gradleHome" value="C:/gradle-2.2.1" />
+        <option name="gradleHome" value="C:/apps/gradle-2.2.1" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/MySqlDataAPI" />
