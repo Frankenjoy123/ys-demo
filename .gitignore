@@ -1,3 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
 .gradle
 build
+
+# Intellij IDEA (not sure these project files should be commited)
+#.idea
+#*.iml
+
