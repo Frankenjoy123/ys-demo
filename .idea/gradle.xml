@@ -4,25 +4,13 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="createEmptyContentRootDirectories" value="true" />
-        <option name="distributionType" value="LOCAL" />
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/MongoDataAPI" />
-        <option name="gradleHome" value="C:/apps/gradle-2.2.1" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/MongoDataAPI" />
-          </set>
-        </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
         <option name="createEmptyContentRootDirectories" value="true" />
-        <option name="distributionType" value="LOCAL" />
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/MySqlDataAPI" />
-        <option name="gradleHome" value="C:/apps/gradle-2.2.1" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/MySqlDataAPI" />
-          </set>
-        </option>
       </GradleProjectSettings>
     </option>
   </component>
