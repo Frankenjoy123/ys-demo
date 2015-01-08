@@ -1,6 +1,6 @@
 package com.yunsoo.service.Impl;
 
-import com.yunsoo.dao.EmployeeDAO;
+import com.yunsoo.dao.EmployeeDao;
 import com.yunsoo.model.Employee;
 import com.yunsoo.service.EmployeeService;
 import java.util.List;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class EmployeeServiceImpl implements EmployeeService{
 
     @Autowired
-    private EmployeeDAO employeeDAO;
+    private EmployeeDao employeeDAO;
 
     @Override
     public void save(Employee employee){

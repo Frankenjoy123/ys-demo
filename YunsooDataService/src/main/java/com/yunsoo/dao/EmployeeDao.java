@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author Zhe Zhang
  */
-public interface EmployeeDAO{
+public interface EmployeeDao{
     public void save(Employee employee);
     public void update(Employee employee);
     public void delete(Employee employee);

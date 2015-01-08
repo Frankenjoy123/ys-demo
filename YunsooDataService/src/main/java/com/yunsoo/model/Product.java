@@ -13,14 +13,15 @@ public class Product implements Serializable {
 	@GeneratedValue
 	@Column(name = "id")
 	private int Id;
-	@Column(name = "PRODUCT_TYPE_ID")
-	private int productTypeId;
+	@Column(name = "BASE_PRODUCT_ID")
+	private int baseProductId;
 	@Column(name = "PRODUCT_STATUS_ID")
 	private int productStatusId;
 	@Column(name = "MANUFACTURING_DATE")
 	private Date manufacturingDate;
 	@Column(name = "CREATED_DATETIME")
 	private Date createdDateTime;
+	private BaseProduct baseProduct;
 
 	public int getId() {
 		return Id;
@@ -30,12 +31,12 @@ public class Product implements Serializable {
 		this.Id = id;
 	}
 
-	public int getproductTypeId() {
-		return productTypeId;
+	public int getBaseProducctId() {
+		return baseProductId;
 	}
 
-	public void setProductTypeId(int productTypeId) {
-		this.productTypeId = productTypeId;
+	public void setBaseProductId(int baseProductId) {
+		this.baseProductId = baseProductId;
 	}
 
 	public int getProductStatusId() {
@@ -60,6 +61,14 @@ public class Product implements Serializable {
 
 	public void setCreatedDateTime(Date createdDate) {
 		this.createdDateTime = createdDate;
+	}
+
+	public BaseProduct getBaseProduct() {
+		return baseProduct;
+	}
+
+	public void setBaseProduct(BaseProduct baseProduct) {
+		this.baseProduct = baseProduct;
 	}
 
 }

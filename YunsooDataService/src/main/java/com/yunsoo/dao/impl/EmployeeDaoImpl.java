@@ -1,6 +1,6 @@
 package com.yunsoo.dao.impl;
 
-import com.yunsoo.dao.EmployeeDAO;
+import com.yunsoo.dao.EmployeeDao;
 import com.yunsoo.model.Employee;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * @author Zhe Zhang
  */
 @Repository("employeeDAO")
-public class EmployeeDAOImpl implements EmployeeDAO{
+public class EmployeeDaoImpl implements EmployeeDao{
 
     @Autowired
     private SessionFactory sessionFactory;
