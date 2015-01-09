@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/MongoDataAPI/MongoDataAPI.iml" filepath="$PROJECT_DIR$/MongoDataAPI/MongoDataAPI.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MySqlDataAPI/MySqlDataAPI.iml" filepath="$PROJECT_DIR$/MySqlDataAPI/MySqlDataAPI.iml" />
-    </modules>
-  </component>
-</project>
