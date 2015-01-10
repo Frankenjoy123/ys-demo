@@ -12,7 +12,7 @@
         <appender-ref ref="FILE" />  
 </appender>  
 <appender name="FILE" class="org.apache.log4j.RollingFileAppender">  
-    <param name="File" value="E:/Logs/javatpointlog.log" />  
+    <param name="File" value="C:/logs/javatpointlog.log" />
     <param name="MaxBackupIndex" value="100" />  
  <layout class="org.apache.log4j.PatternLayout">  
   <param name="ConversionPattern" value="[%d{dd/MM/yy hh:mm:ss:sss z}] %5p %c{2}: %m%n" />  

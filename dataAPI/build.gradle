@@ -15,5 +15,5 @@ apply plugin: 'spring-boot'
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
-    compile project(':YunsooDataService')
+    compile project(':dataService')
 }

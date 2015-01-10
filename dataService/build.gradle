@@ -1,0 +1,37 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "https://repo.spring.io/libs-release" }
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.1.10.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+
+description = "dataService"
+
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "http://repo.maven.apache.org/maven2" }
+}
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+
+    compile 'org.springframework:spring-context:4.1.4.RELEASE'
+    compile 'org.springframework:spring-orm:4.1.4.RELEASE'
+    compile 'org.hibernate:hibernate-core:4.3.5.Final'
+    compile 'org.hibernate:hibernate-ehcache:4.3.5.Final'
+    compile 'commons-pool:commons-pool:1.4'
+    compile 'commons-dbcp:commons-dbcp:1.4'
+    compile 'org.slf4j:slf4j-api:1.7.9'
+    compile 'log4j:log4j:1.2.17'
+    runtime 'mysql:mysql-connector-java:5.1.6'
+}
