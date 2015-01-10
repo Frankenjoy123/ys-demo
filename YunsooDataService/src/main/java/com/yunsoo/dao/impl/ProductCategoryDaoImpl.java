@@ -13,14 +13,14 @@ import com.yunsoo.model.ProductCategory;
 @Repository("productCategoryDao")
 @Transactional
 public class ProductCategoryDaoImpl implements ProductCategoryDao {
-	
+
 	@Autowired
 	private SessionFactory sessionFactory;
 
 	@Override
 	public ProductCategory getById(int id) {
-		return (ProductCategory) sessionFactory.getCurrentSession().get(ProductCategory.class,
-				id);
+		return (ProductCategory) sessionFactory.getCurrentSession().get(
+				ProductCategory.class, id);
 	}
 
 	@Override
@@ -41,8 +41,8 @@ public class ProductCategoryDaoImpl implements ProductCategoryDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProductCategory> getAllProductCategories() {
-		return sessionFactory.getCurrentSession().createCriteria(ProductCategory.class)
-				.list();
+		return sessionFactory.getCurrentSession()
+				.createCriteria(ProductCategory.class).list();
 	}
 
 }
