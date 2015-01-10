@@ -3,6 +3,6 @@
 build
 
 # Intellij IDEA (not sure these project files should be commited)
-.idea
-*.iml
+.idea/
+#*.iml
 
