@@ -2,7 +2,14 @@
 .gradle
 build
 
-# Intellij IDEA (not sure these project files should be commited)
+# Intellij IDEA
 .idea/
-#*.iml
+*.iml
+*.iws
+*.ipr
+
+# Eclipse
+.settings/
+.classpath
+.project
 
