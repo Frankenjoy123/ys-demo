@@ -7,12 +7,16 @@ public interface ProductCategoryService {
 
 	public ProductCategory getById(int id);
 
-	public void save(ProductCategory productkey);
+	public void save(ProductCategory productCategory);
 
-	public void update(ProductCategory productkey);
+	public void update(ProductCategory productCategory);
 
-	public void delete(ProductCategory productkey);
+	public void delete(ProductCategory productCategory);
 
 	public List<ProductCategory> getAllProductCategories();
+
+	public List<ProductCategory> getProductCategoriesByParentId(int parentId); //get product-sub-categories by parent category id
+
+	public List<ProductCategory> getRootProductCategories();
 
 }

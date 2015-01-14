@@ -9,6 +9,8 @@
 		<mapping class="com.yunsoo.model.ProductKey"></mapping>
 		<mapping class="com.yunsoo.model.ProductCategory"></mapping>
 		<mapping class="com.yunsoo.model.ProductSubCategory"></mapping>
+		<mapping class="com.yunsoo.model.ProductKeyStatus"></mapping>
+		<mapping class="com.yunsoo.model.ProductKeyType"></mapping>
 		<mapping class="com.yunsoo.model.Employee" />
 	</session-factory>
 </hibernate-configuration>

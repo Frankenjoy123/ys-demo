@@ -21,6 +21,10 @@ public class ProductCategory {
 	private String name;
 	@Column(name = "description")
 	private String description;
+	@Column(name = "parent_id")
+	private int parentId;
+	@Column(name = "active")
+	private boolean active;
 
 	public int getId() {
 		return Id;
@@ -28,6 +32,14 @@ public class ProductCategory {
 
 	public void setId(int id) {
 		this.Id = id;
+	}
+
+	public int getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(int parentId) {
+		this.parentId = parentId;
 	}
 
 	public String getName() {
@@ -44,5 +56,13 @@ public class ProductCategory {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public boolean isActive() {
+		return active;
 	}
 }
