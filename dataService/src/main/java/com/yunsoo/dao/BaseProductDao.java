@@ -1,7 +1,8 @@
 package com.yunsoo.dao;
 
 import java.util.List;
-import com.yunsoo.model.BaseProduct;
+
+import com.yunsoo.dbmodel.BaseProduct;
 
 public interface BaseProductDao {
 	

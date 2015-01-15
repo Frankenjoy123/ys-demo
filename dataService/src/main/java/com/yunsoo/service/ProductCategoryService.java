@@ -1,7 +1,8 @@
 package com.yunsoo.service;
 
 import java.util.List;
-import com.yunsoo.model.ProductCategory;
+
+import com.yunsoo.dbmodel.ProductCategory;
 
 public interface ProductCategoryService {
 

@@ -1,7 +1,7 @@
 package com.yunsoo.service.Impl;
 
 import com.yunsoo.dao.ProductKeyStatusDao;
-import com.yunsoo.model.ProductKeyStatus;
+import com.yunsoo.dbmodel.ProductKeyStatus;
 import com.yunsoo.service.ProductKeyStatusService;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;

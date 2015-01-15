@@ -1,4 +1,4 @@
-package com.yunsoo.model;
+package com.yunsoo.dbmodel;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
@@ -93,6 +93,6 @@ public class Employee implements Serializable {
 
     @Override
     public String toString() {
-        return "co.id.model.Employee[ id=" + id + " ]";
+        return "co.id.dbmodel.Employee[ id=" + id + " ]";
     }
 }

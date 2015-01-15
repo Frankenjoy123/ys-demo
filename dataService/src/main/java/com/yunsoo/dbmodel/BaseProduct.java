@@ -1,4 +1,4 @@
-package com.yunsoo.model;
+package com.yunsoo.dbmodel;
 
 import java.util.Date;
 

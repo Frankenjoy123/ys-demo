@@ -1,7 +1,7 @@
 package com.yunsoo.service.Impl;
 
 import com.yunsoo.dao.EmployeeDao;
-import com.yunsoo.model.Employee;
+import com.yunsoo.dbmodel.Employee;
 import com.yunsoo.service.EmployeeService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

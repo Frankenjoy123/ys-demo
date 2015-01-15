@@ -1,7 +1,7 @@
 package com.yunsoo.service.Impl;
 
 import com.yunsoo.dao.ProductKeyTypeDao;
-import com.yunsoo.model.ProductKeyType;
+import com.yunsoo.dbmodel.ProductKeyType;
 import com.yunsoo.service.ProductKeyTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

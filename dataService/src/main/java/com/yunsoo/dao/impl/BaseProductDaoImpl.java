@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.yunsoo.dao.BaseProductDao;
-import com.yunsoo.model.BaseProduct;
+import com.yunsoo.dbmodel.BaseProduct;
 
 @Repository("baseProductDao")
 @Transactional

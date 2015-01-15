@@ -5,13 +5,13 @@
  "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
  
 <hibernate-mapping>
- <class name="com.yunsoo.model.Product" table="product">
+ <class name="com.yunsoo.dbmodel.Product" table="product">
  <id name="Id" type="int" column="ID" >
  	<generator class="assigned"/>
  </id>
- <property name="productTypeId" type="int">
- 	<column name="PRODUCT_TYPE_ID" />
- </property>
+  <!--<property name="productTypeId" type="int">-->
+  <!--<column name="PRODUCT_TYPE_ID" />-->
+  <!--</property>-->
  <property name="productStatusId" type="int">
  	<column name="PRODUCT_STATUS_ID"/>
  </property>

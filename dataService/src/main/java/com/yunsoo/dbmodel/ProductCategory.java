@@ -1,4 +1,4 @@
-package com.yunsoo.model;
+package com.yunsoo.dbmodel;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,20 +8,22 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@Table(name = "product_sub_category")
+@Table(name = "product_category")
 @XmlRootElement
-public class ProductSubCategory {
+public class ProductCategory {
 
 	@Id
 	@GeneratedValue
 	@Column(name = "id")
 	private int Id;
-	@Column(name = "category_id")
-	private int categoryId;
 	@Column(name = "name")
 	private String name;
 	@Column(name = "description")
 	private String description;
+	@Column(name = "parent_id")
+	private int parentId;
+	@Column(name = "active")
+	private boolean active;
 
 	public int getId() {
 		return Id;
@@ -31,12 +33,12 @@ public class ProductSubCategory {
 		this.Id = id;
 	}
 
-	public int getCategoryId() {
-		return categoryId;
+	public int getParentId() {
+		return parentId;
 	}
 
-	public void setCategoryId(int categoryId) {
-		this.categoryId = categoryId;
+	public void setParentId(int parentId) {
+		this.parentId = parentId;
 	}
 
 	public String getName() {
@@ -53,5 +55,13 @@ public class ProductSubCategory {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public boolean isActive() {
+		return active;
 	}
 }

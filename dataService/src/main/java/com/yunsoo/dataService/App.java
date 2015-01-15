@@ -2,7 +2,6 @@ package com.yunsoo.dataService;
 
 //import java.io.*;
 
-import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +13,7 @@ import org.hibernate.Session;
 import org.springframework.context.ApplicationContext;
 //import org.springframework.context.ApplicationEvent;
 import com.yunsoo.dao.util.*;
-import com.yunsoo.model.*;
+import com.yunsoo.dbmodel.*;
 import com.yunsoo.hibernate.HibernateSessionManager;
 import com.yunsoo.service.*;
 
@@ -26,6 +25,13 @@ public class App {
 
     public static void main(String[] args) {
         System.out.println("Start running App.Main()...");
+//        try {
+//            MemcachedTest.setSampleData();
+//        }
+//        catch (Exception ex) {
+//            System.out.println(ex.getMessage());
+//            System.out.println(ex.getStackTrace().toString());
+//        }
         ApplicationContext applicationContext = SpringDaoUtil
                 .getApplicationContext();
 

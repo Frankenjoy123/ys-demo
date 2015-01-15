@@ -9,10 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Projections;
 
 import com.yunsoo.dao.ProductCategoryDao;
-import com.yunsoo.model.ProductCategory;
+import com.yunsoo.dbmodel.ProductCategory;
 
 @Repository("productCategoryDao")
 @Transactional

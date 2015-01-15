@@ -4,13 +4,13 @@
 "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
 	<session-factory>
-		<mapping class="com.yunsoo.model.BaseProduct"></mapping>
-		<mapping class="com.yunsoo.model.Product"></mapping>
-		<mapping class="com.yunsoo.model.ProductKey"></mapping>
-		<mapping class="com.yunsoo.model.ProductCategory"></mapping>
-		<mapping class="com.yunsoo.model.ProductSubCategory"></mapping>
-		<mapping class="com.yunsoo.model.ProductKeyStatus"></mapping>
-		<mapping class="com.yunsoo.model.ProductKeyType"></mapping>
-		<mapping class="com.yunsoo.model.Employee" />
+		<mapping class="com.yunsoo.dbmodel.BaseProduct"></mapping>
+		<mapping class="com.yunsoo.dbmodel.Product"></mapping>
+		<mapping class="com.yunsoo.dbmodel.ProductKey"></mapping>
+		<mapping class="com.yunsoo.dbmodel.ProductCategory"></mapping>
+		<mapping class="com.yunsoo.dbmodel.ProductSubCategory"></mapping>
+		<mapping class="com.yunsoo.dbmodel.ProductKeyStatus"></mapping>
+		<mapping class="com.yunsoo.dbmodel.ProductKeyType"></mapping>
+		<mapping class="com.yunsoo.dbmodel.Employee"/>
 	</session-factory>
 </hibernate-configuration>

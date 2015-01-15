@@ -1,7 +1,6 @@
 package com.yunsoo.service;
 
-import com.yunsoo.dao.ProductKeyStatusDao;
-import com.yunsoo.model.ProductKeyStatus;
+import com.yunsoo.dbmodel.ProductKeyStatus;
 import java.util.List;
 
 /**

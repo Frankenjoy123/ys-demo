@@ -1,6 +1,6 @@
 package com.yunsoo.dao;
 
-import com.yunsoo.model.ProductKeyType;
+import com.yunsoo.dbmodel.ProductKeyType;
 
 import java.util.List;
 

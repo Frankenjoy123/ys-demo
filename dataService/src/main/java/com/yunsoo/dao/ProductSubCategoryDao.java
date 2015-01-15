@@ -2,7 +2,7 @@ package com.yunsoo.dao;
 
 import java.util.List;
 
-import com.yunsoo.model.ProductSubCategory;
+import com.yunsoo.dbmodel.ProductSubCategory;
 
 public interface ProductSubCategoryDao {
 	public ProductSubCategory getById(int id);

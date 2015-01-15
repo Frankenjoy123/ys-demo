@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.yunsoo.dao.ProductDao;
-import com.yunsoo.model.Product;
+import com.yunsoo.dbmodel.Product;
 import com.yunsoo.service.ProductService;
 
 /**

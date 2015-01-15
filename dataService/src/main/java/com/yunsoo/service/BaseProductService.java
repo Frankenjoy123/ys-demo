@@ -1,7 +1,8 @@
 package com.yunsoo.service;
 
 import java.util.List;
-import com.yunsoo.model.BaseProduct;
+
+import com.yunsoo.dbmodel.BaseProduct;
 
 public interface BaseProductService {
 	public BaseProduct getById(int id);

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yunsoo.dao.ProductSubCategoryDao;
-import com.yunsoo.model.ProductSubCategory;
+import com.yunsoo.dbmodel.ProductSubCategory;
 import com.yunsoo.service.ProductSubCategoryService;
 
 

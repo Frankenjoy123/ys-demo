@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yunsoo.dao.ProductSubCategoryDao;
-import com.yunsoo.model.ProductSubCategory;
+import com.yunsoo.dbmodel.ProductSubCategory;
 
 
 @Repository("productSubCategoryDao")

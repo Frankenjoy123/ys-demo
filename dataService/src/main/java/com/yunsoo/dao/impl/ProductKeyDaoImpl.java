@@ -3,7 +3,7 @@ package com.yunsoo.dao.impl;
 import java.util.List;
 //import org.springframework.orm.hibernate4.HibernateTemplate;
 import com.yunsoo.dao.ProductKeyDao;
-import com.yunsoo.model.ProductKey;
+import com.yunsoo.dbmodel.ProductKey;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

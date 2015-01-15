@@ -1,13 +1,10 @@
 package com.yunsoo.dao.impl;
 
 import com.yunsoo.dao.ProductKeyStatusDao;
-import com.yunsoo.model.ProductKeyStatus;
+import com.yunsoo.dbmodel.ProductKeyStatus;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

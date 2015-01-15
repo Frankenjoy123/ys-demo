@@ -1,6 +1,6 @@
 package com.yunsoo.dao;
 
-import com.yunsoo.model.*;
+import com.yunsoo.dbmodel.*;
 import java.util.List;
 
 public interface ProductKeyDao{

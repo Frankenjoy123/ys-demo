@@ -3,9 +3,8 @@ package com.yunsoo.hibernate;
 //Obselete: for demostration only.
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.cfg.Configuration;
 
-import com.yunsoo.model.*;
+import com.yunsoo.dbmodel.*;
  
 public class HibernateSessionManager {
  

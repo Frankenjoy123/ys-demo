@@ -1,6 +1,6 @@
 package com.yunsoo.service;
 
-import com.yunsoo.model.ProductKeyType;
+import com.yunsoo.dbmodel.ProductKeyType;
 
 import java.util.List;
 

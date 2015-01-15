@@ -1,7 +1,7 @@
 package com.yunsoo.dao.impl;
 
 import com.yunsoo.dao.ProductKeyTypeDao;
-import com.yunsoo.model.ProductKeyType;
+import com.yunsoo.dbmodel.ProductKeyType;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;

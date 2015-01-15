@@ -1,7 +1,8 @@
 package com.yunsoo.dao;
 
 import java.util.List;
-import com.yunsoo.model.Product;
+
+import com.yunsoo.dbmodel.Product;
 
 public interface ProductDao {
 	public Product getById(int id);

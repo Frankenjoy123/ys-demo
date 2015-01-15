@@ -32,8 +32,8 @@
 		<property name="dataSource" ref="dataSource"></property>
 		<property name="annotatedClasses">
 			<list>
-				<value>com.yunsoo.model.Product</value>
-				<value>com.yunsoo.model.ProductKey</value>
+				<value>com.yunsoo.dbmodel.Product</value>
+				<value>com.yunsoo.dbmodel.ProductKey</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">
@@ -47,7 +47,7 @@
 	</bean>
 
 	<context:component-scan
-		base-package="com.yunsoo.*，com.yunsoo.dao.*，com.yunsoo.dao.Impl.*， com.yunsoo.service.Impl.*， com.yunsoo.service.*" />
+			base-package="com.yunsoo.*,com.yunsoo.dao.*,com.yunsoo.dao.impl.*,com.yunsoo.service.Impl.*,com.yunsoo.service.*"/>
 	<tx:annotation-driven />
 	
 	<bean id="transactionManager"

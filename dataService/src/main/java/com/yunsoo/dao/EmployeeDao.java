@@ -1,6 +1,6 @@
 package com.yunsoo.dao;
 
-import com.yunsoo.model.Employee;
+import com.yunsoo.dbmodel.Employee;
 import java.util.List;
 
 /**
