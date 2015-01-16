@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "product_key_status")
 @XmlRootElement
-public class ProductKeyStatus {
+public class ProductKeyStatusModel {
 
     @javax.persistence.Id
     @GeneratedValue

@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "product_category")
 @XmlRootElement
-public class ProductCategory {
+public class ProductCategoryModel {
 
 	@Id
 	@GeneratedValue

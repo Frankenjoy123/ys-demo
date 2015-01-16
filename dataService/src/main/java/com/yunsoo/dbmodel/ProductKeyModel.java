@@ -15,12 +15,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "product_key")
 @XmlRootElement
 //@NamedQueries({
-//    @NamedQuery(name = "ProductKey.findAll", query = "SELECT k FROM product_key k"),
-//    @NamedQuery(name = "ProductKey.findById", query = "SELECT k FROM product_key k WHERE k.id = :id"),
-//    @NamedQuery(name = "ProductKey.findByKeyStatusId", query = "SELECT k FROM product_key k WHERE k.KEY_STATUS_ID = :KEY_STATUS_ID"),
-//    @NamedQuery(name = "ProductKey.findByProductId", query = "SELECT k FROM product_key k WHERE k.PRODUCT_ID = :PRODUCT_ID")})
+//    @NamedQuery(name = "ProductKeyModel.findAll", query = "SELECT k FROM product_key k"),
+//    @NamedQuery(name = "ProductKeyModel.findById", query = "SELECT k FROM product_key k WHERE k.id = :id"),
+//    @NamedQuery(name = "ProductKeyModel.findByKeyStatusId", query = "SELECT k FROM product_key k WHERE k.KEY_STATUS_ID = :KEY_STATUS_ID"),
+//    @NamedQuery(name = "ProductKeyModel.findByProductId", query = "SELECT k FROM product_key k WHERE k.PRODUCT_ID = :PRODUCT_ID")})
 
-public class ProductKey implements Serializable {
+public class ProductKeyModel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -53,7 +53,7 @@ public class ProductKey implements Serializable {
 	@Column(name = "CREATED_DATETIME")
 	private Date createdDateTime;
 
-	public ProductKey() {
+	public ProductKeyModel() {
 		this.key = "DefaultKEY";
 		this.productId = -1L;
 		this.keyStatusId = 1; //default
@@ -62,11 +62,11 @@ public class ProductKey implements Serializable {
 		this.createdClientId = 1; //default by System.
 		this.createdDateTime = new Date();
 	}
-	public ProductKey(String key, String productId) {
-		new ProductKey(key,Long.parseLong(productId, 10) );
+	public ProductKeyModel(String key, String productId) {
+		new ProductKeyModel(key,Long.parseLong(productId, 10) );
 	}
 	
-	public ProductKey(String key, long productId) {
+	public ProductKeyModel(String key, long productId) {
 		super();
 		this.key = key;
 		this.productId = productId;
@@ -136,7 +136,7 @@ public class ProductKey implements Serializable {
 		this.createdDateTime = createdDate;
 	}
 
-	//Validate the ProductKey object.
+	//Validate the ProductKeyModel object.
 	public boolean validate() {
 		if (this.key == null || this.key == "") {
 			return false;

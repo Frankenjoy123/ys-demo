@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "product_key_type")
 @XmlRootElement
-public class ProductKeyType {
+public class ProductKeyTypeModel {
 
     @javax.persistence.Id
     @GeneratedValue
