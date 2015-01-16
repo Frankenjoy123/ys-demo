@@ -41,10 +41,9 @@
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 				<prop key="hibernate.show_sql">true</prop>
-				<prop key="hibernate.connection.CharSet">UTF8</prop>
-				<prop key="hibernate.connection.characterEncoding">UTF8</prop>
-				<prop key="hibernate.connection.useUnicode">true</prop>
-				<prop key="hibernate.query.factory_class">org.hibernate.hql.internal.classic.ClassicQueryTranslatorFactory</prop>
+				<!--<prop key="hibernate.connection.CharSet">UTF8</prop>-->
+				<!--<prop key="hibernate.connection.characterEncoding">UTF8</prop>-->
+				<!--<prop key="hibernate.connection.useUnicode">true</prop>-->
 			</props>
 		</property>
 	</bean>
