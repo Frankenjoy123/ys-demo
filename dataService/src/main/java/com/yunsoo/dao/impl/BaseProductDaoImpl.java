@@ -1,12 +1,13 @@
 package com.yunsoo.dao.impl;
 
 import java.util.List;
+
+import com.yunsoo.dbmodel.BaseProductModel;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.yunsoo.dao.BaseProductDao;
-import com.yunsoo.dbmodel.BaseProduct;
 
 @Repository("baseProductDao")
 @Transactional
@@ -16,31 +17,31 @@ public class BaseProductDaoImpl implements BaseProductDao {
 	private SessionFactory sessionFactory;
 
 	@Override
-	public BaseProduct getById(int id) {
-		return (BaseProduct) sessionFactory.getCurrentSession().get(
-				BaseProduct.class, id);
+	public BaseProductModel getById(int id) {
+		return (BaseProductModel) sessionFactory.getCurrentSession().get(
+				BaseProductModel.class, id);
 	}
 
 	@Override
-	public void save(BaseProduct baseProduct) {
-		sessionFactory.getCurrentSession().save(baseProduct);
+	public void save(BaseProductModel baseProductModel) {
+		sessionFactory.getCurrentSession().save(baseProductModel);
 	}
 
 	@Override
-	public void update(BaseProduct baseProduct) {
-		sessionFactory.getCurrentSession().update(baseProduct);
+	public void update(BaseProductModel baseProductModel) {
+		sessionFactory.getCurrentSession().update(baseProductModel);
 	}
 
 	@Override
-	public void delete(BaseProduct baseProduct) {
-		sessionFactory.getCurrentSession().delete(baseProduct);
+	public void delete(BaseProductModel baseProductModel) {
+		sessionFactory.getCurrentSession().delete(baseProductModel);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<BaseProduct> getAllBaseProducts() {
+	public List<BaseProductModel> getAllBaseProducts() {
 		return sessionFactory.getCurrentSession()
-				.createCriteria(BaseProduct.class).list();
+				.createCriteria(BaseProductModel.class).list();
 	}
 
 }

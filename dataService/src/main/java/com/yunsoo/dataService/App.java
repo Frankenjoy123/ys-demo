@@ -36,8 +36,8 @@ public class App {
                 .getApplicationContext();
 
         System.out.println("I am here - 编码问题");
-        //TestProductKeyStatus(applicationContext);
-        TestProductKeyType(applicationContext);
+        TestProductKeyStatus(applicationContext);
+//        TestProductKeyType(applicationContext);
         //TestProductCategory(applicationContext);
         //TestBaseProduct(applicationContext);
         /*TestEmployee(applicationContext);
@@ -51,10 +51,10 @@ public class App {
     public static void TestBaseProduct(ApplicationContext applicationContext) {
         BaseProductService baseProductService = (BaseProductService) applicationContext
                 .getBean("baseProductService");
-        System.out.println("BaseProduct List : "
+        System.out.println("BaseProductModel List : "
                 + baseProductService.getAllProducts());
 
-        BaseProduct baseProd = new BaseProduct();
+        BaseProductModel baseProd = new BaseProductModel();
         // prodKey.setId(0);
         baseProd.setBarcode("BAR88CODE");
         baseProd.setName("COFFEE @CN BRAND");
@@ -71,9 +71,9 @@ public class App {
     public static void TestProduct(ApplicationContext applicationContext) {
         ProductService productService = (ProductService) applicationContext
                 .getBean("productService");
-        System.out.println("Product List : " + productService.getAllProducts());
+        System.out.println("ProductModel List : " + productService.getAllProducts());
 
-        Product prod = new Product();
+        ProductModel prod = new ProductModel();
         // prodKey.setId(0);
         prod.setProductStatusId(12);
         prod.setBaseProductId(3);
@@ -91,7 +91,7 @@ public class App {
     public static void TestProductKey(ApplicationContext applicationContext) {
         ProductKeyService productKeyService = (ProductKeyService) applicationContext
                 .getBean("productKeyService");
-        ProductKey prodKey = new ProductKey();
+        ProductKeyModel prodKey = new ProductKeyModel();
         // prodKey.setId(0);
         prodKey.setKey("DTEST8932");
         prodKey.setProductId(25434L);
@@ -102,8 +102,8 @@ public class App {
         prodKey.setCreatedDateTime(new Date());
 
         productKeyService.save(prodKey);
-        ProductKey theKey = productKeyService.getById(1);
-        System.out.println("The ProductKey is: " + theKey.getKey());
+        ProductKeyModel theKey = productKeyService.getById(1);
+        System.out.println("The ProductKeyModel is: " + theKey.getKey());
 
         prodKey.setkeyStatusId(10);
         productKeyService.update(prodKey);
@@ -114,7 +114,7 @@ public class App {
                 .openSession();
         session.beginTransaction();
 
-        ProductKey prodKey = new ProductKey();
+        ProductKeyModel prodKey = new ProductKeyModel();
         // prodKey.setId(0);
         prodKey.setKey("ABS234S");
         prodKey.setProductId(23434L);
@@ -131,16 +131,16 @@ public class App {
         ProductCategoryService productCategoryService = (ProductCategoryService) applicationContext
                 .getBean("productCategoryService");
 
-        List<ProductCategory> productCategoryList = productCategoryService.getRootProductCategories();
-        for (int i = 0; i < productCategoryList.size(); i++) {
-            System.out.println("Product Category (" + i + ") : " + productCategoryList.get(i).getName());
-            List<ProductCategory> productCategoryList2 = productCategoryService.getProductCategoriesByParentId(productCategoryList.get(i).getId());
-            for (int j = 0; j < productCategoryList2.size(); j++) {
-                System.out.println("Sub Product Category (" + j + ") : " + productCategoryList2.get(j).getName());
+        List<ProductCategoryModel> productCategoryModelList = productCategoryService.getRootProductCategories();
+        for (int i = 0; i < productCategoryModelList.size(); i++) {
+            System.out.println("ProductModel Category (" + i + ") : " + productCategoryModelList.get(i).getName());
+            List<ProductCategoryModel> productCategoryModelList2 = productCategoryService.getProductCategoriesByParentId(productCategoryModelList.get(i).getId());
+            for (int j = 0; j < productCategoryModelList2.size(); j++) {
+                System.out.println("Sub ProductModel Category (" + j + ") : " + productCategoryModelList2.get(j).getName());
             }
         }
 
-//        ProductCategory productCategory = new ProductCategory();
+//        ProductCategoryModel productCategory = new ProductCategoryModel();
 //        productCategory.setDescription("\u4E2D\u6587");
 //        productCategory.setName("其他");
 //        productCategory.setActive(true);
@@ -151,11 +151,17 @@ public class App {
         ProductKeyStatusService productKeyStatusService = (ProductKeyStatusService) applicationContext
                 .getBean("productKeyStatusService");
 
-        List<ProductKeyStatus> productKeyStatusList = productKeyStatusService.getAllProductKeyStatus(false);
-        System.out.println("productKeyStatusList Size: " + productKeyStatusList.size());
-        for (int i = 0; i < productKeyStatusList.size(); i++) {
-            System.out.println("product Key Status List (" + i + ") : " + productKeyStatusList.get(i).getDescription());
+        List<ProductKeyStatusModel> productKeyStatusModelList = productKeyStatusService.getAllProductKeyStatus(false);
+        System.out.println("productKeyStatusModelList Size: " + productKeyStatusModelList.size());
+        for (int i = 0; i < productKeyStatusModelList.size(); i++) {
+            System.out.println("product Key Status List (" + i + ") : " + productKeyStatusModelList.get(i).getDescription());
         }
+
+        ProductKeyStatusModel productKeyStatusModel = new ProductKeyStatusModel();
+        productKeyStatusModel.setDescription("码问测试中文存储");
+        productKeyStatusModel.setCode("MyCode1");
+
+        productKeyStatusService.save(productKeyStatusModel);
     }
 
     public static void TestProductKeyType(ApplicationContext applicationContext) {
@@ -163,15 +169,15 @@ public class App {
         ProductKeyTypeService productKeyTypeService = (ProductKeyTypeService) applicationContext
                 .getBean("productKeyTypeService");
 
-       /* List<ProductKeyType> productKeyTypeList = productKeyTypeService.getAllProductKeyTypes(false);
+       /* List<ProductKeyTypeModel> productKeyTypeList = productKeyTypeService.getAllProductKeyTypes(false);
         System.out.println("productKeyStatusList Size: " + productKeyTypeList.size());
         for (int i = 0; i < productKeyTypeList.size(); i++) {
             System.out.println("product Key Type List (" + i + ") : " + productKeyTypeList.get(i).getDescription());
         }*/
 
-        ProductKeyType productKeyType = new ProductKeyType();
-        productKeyType.setCode("2");
-        productKeyType.setDescription("编码问题");
-        productKeyTypeService.save(productKeyType);
+        ProductKeyTypeModel productKeyTypeModel = new ProductKeyTypeModel();
+        productKeyTypeModel.setCode("2");
+        productKeyTypeModel.setDescription("编码问题");
+        productKeyTypeService.save(productKeyTypeModel);
     }
 }

@@ -1,14 +1,17 @@
 package com.yunsoo.service;
 
-import com.yunsoo.dbmodel.Employee;
+import com.yunsoo.dbmodel.EmployeeModel;
 import java.util.List;
 
 /**
  * @author Zhe Zhang
  */
 public interface EmployeeService {
-    public void save(Employee employee);
-    public void update(Employee employee);
-    public void delete(Employee employee);
-    public List<Employee> getAllEmployees();
+    public void save(EmployeeModel employeeModel);
+
+    public void update(EmployeeModel employeeModel);
+
+    public void delete(EmployeeModel employeeModel);
+
+    public List<EmployeeModel> getAllEmployees();
 }

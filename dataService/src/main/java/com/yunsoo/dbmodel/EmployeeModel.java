@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Employee.findById", query = "SELECT e FROM Employee e WHERE e.id = :id"),
     @NamedQuery(name = "Employee.findByAddress", query = "SELECT e FROM Employee e WHERE e.address = :address"),
     @NamedQuery(name = "Employee.findByName", query = "SELECT e FROM Employee e WHERE e.name = :name")})
-public class Employee implements Serializable {
+public class EmployeeModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -34,14 +34,14 @@ public class Employee implements Serializable {
     @Column(name = "name")
     private String name;
 
-    public Employee() {
+    public EmployeeModel() {
     }
 
-    public Employee(String id) {
+    public EmployeeModel(String id) {
         this.id = id;
     }
 
-    public Employee(String id, String address, String name) {
+    public EmployeeModel(String id, String address, String name) {
         this.id = id;
         this.address = address;
         this.name = name;
@@ -81,10 +81,10 @@ public class Employee implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Employee)) {
+        if (!(object instanceof EmployeeModel)) {
             return false;
         }
-        Employee other = (Employee) object;
+        EmployeeModel other = (EmployeeModel) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -93,6 +93,6 @@ public class Employee implements Serializable {
 
     @Override
     public String toString() {
-        return "co.id.dbmodel.Employee[ id=" + id + " ]";
+        return "co.id.dbmodel.EmployeeModel[ id=" + id + " ]";
     }
 }
