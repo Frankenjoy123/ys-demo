@@ -1,4 +1,4 @@
-package com.Yunsoo.YunsooDataService;
+package com.yunsoo.dataService;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
