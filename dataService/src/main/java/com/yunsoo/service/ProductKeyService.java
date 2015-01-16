@@ -1,17 +1,17 @@
 package com.yunsoo.service;
 
-import com.yunsoo.model.ProductKey;
+import com.yunsoo.dbmodel.ProductKeyModel;
 
 import java.util.List;
 
 public interface ProductKeyService {
-	public ProductKey getById(int id);
-	
-	public void save(ProductKey productkey);
+	public ProductKeyModel getById(int id);
 
-	public void update(ProductKey productkey);
+	public void save(ProductKeyModel productkey);
 
-	public void delete(ProductKey productkey);
+	public void update(ProductKeyModel productkey);
 
-	public List<ProductKey> getAllProductKeys();
+	public void delete(ProductKeyModel productkey);
+
+	public List<ProductKeyModel> getAllProductKeys();
 }

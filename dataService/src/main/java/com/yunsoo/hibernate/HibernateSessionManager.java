@@ -3,9 +3,8 @@ package com.yunsoo.hibernate;
 //Obselete: for demostration only.
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.cfg.Configuration;
 
-import com.yunsoo.model.*;
+import com.yunsoo.dbmodel.*;
  
 public class HibernateSessionManager {
  
@@ -15,7 +14,7 @@ public class HibernateSessionManager {
 		try {
 			// Create the SessionFactory from hibernate.cfg.xml
 			//return new Configuration().configure().buildSessionFactory();
-			return new AnnotationConfiguration().configure().addAnnotatedClass(Product.class).buildSessionFactory();
+			return new AnnotationConfiguration().configure().addAnnotatedClass(ProductModel.class).buildSessionFactory();
 		} catch (Throwable ex) {
 			// Make sure you log the exception, as it might be swallowed
 			System.err.println("SessionFactory creation failed." + ex);

@@ -1,7 +1,7 @@
 package com.yunsoo.service.Impl;
 
 import com.yunsoo.dao.EmployeeDao;
-import com.yunsoo.model.Employee;
+import com.yunsoo.dbmodel.EmployeeModel;
 import com.yunsoo.service.EmployeeService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,23 +18,23 @@ public class EmployeeServiceImpl implements EmployeeService{
     private EmployeeDao employeeDAO;
 
     @Override
-    public void save(Employee employee){
-        employeeDAO.save(employee);
+    public void save(EmployeeModel employeeModel) {
+        employeeDAO.save(employeeModel);
     }
 
     @Override
-    public void update(Employee employee) {
-        employeeDAO.update(employee);
+    public void update(EmployeeModel employeeModel) {
+        employeeDAO.update(employeeModel);
     }
 
     @Override
-    public void delete(Employee employee){
-       employeeDAO.delete(employee);
+    public void delete(EmployeeModel employeeModel) {
+        employeeDAO.delete(employeeModel);
     }
 
     @Override
     @Transactional
-    public List<Employee> getAllEmployees(){
+    public List<EmployeeModel> getAllEmployees() {
         return employeeDAO.getAllEmployees();
     }
 }

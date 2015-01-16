@@ -2,12 +2,12 @@ package com.yunsoo.dao.impl;
 
 import java.util.List;
 
+import com.yunsoo.dbmodel.ProductModel;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.yunsoo.dao.ProductDao;
-import com.yunsoo.model.Product;
 
 @Repository("productDao")
 @Transactional
@@ -17,31 +17,31 @@ public class ProductDaoImpl implements ProductDao {
 	private SessionFactory sessionFactory;
 
 	@Override
-	public Product getById(int id) {
-		//to-do, merge with BaseProduct
-		return (Product) sessionFactory.getCurrentSession().get(Product.class,
+	public ProductModel getById(int id) {
+		//to-do, merge with BaseProductModel
+		return (ProductModel) sessionFactory.getCurrentSession().get(ProductModel.class,
 				id);
 	}
 
 	@Override
-	public void save(Product product) {
-		sessionFactory.getCurrentSession().save(product);
+	public void save(ProductModel productModel) {
+		sessionFactory.getCurrentSession().save(productModel);
 	}
 
 	@Override
-	public void update(Product product) {
-		sessionFactory.getCurrentSession().update(product);
+	public void update(ProductModel productModel) {
+		sessionFactory.getCurrentSession().update(productModel);
 	}
 
 	@Override
-	public void delete(Product product) {
-		sessionFactory.getCurrentSession().delete(product);
+	public void delete(ProductModel productModel) {
+		sessionFactory.getCurrentSession().delete(productModel);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Product> getAllProducts() {
-		return sessionFactory.getCurrentSession().createCriteria(Product.class)
+	public List<ProductModel> getAllProducts() {
+		return sessionFactory.getCurrentSession().createCriteria(ProductModel.class)
 				.list();
 	}
 

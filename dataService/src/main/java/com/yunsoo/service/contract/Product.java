@@ -1,29 +1,17 @@
-package com.yunsoo.model;
+package com.yunsoo.service.contract;
 
-import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
 
-@SuppressWarnings("serial")
-@Entity
-@Table(name = "product")
-public class Product implements Serializable {
+/**
+ * Created by Lijian on 2015/1/16.
+ */
+public class Product {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "id")
     private int Id;
-    @Column(name = "BASE_PRODUCT_ID")
     private int baseProductId;
-    @Column(name = "PRODUCT_STATUS_ID")
     private int productStatusId;
-    @Column(name = "MANUFACTURING_DATE")
     private Date manufacturingDate;
-    @Column(name = "CREATED_DATETIME")
     private Date createdDateTime;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "BASE_PRODUCT_ID", insertable = false, updatable = false, nullable = false)
-    private BaseProduct baseProduct;
 
     public int getId() {
         return Id;
@@ -33,7 +21,7 @@ public class Product implements Serializable {
         this.Id = id;
     }
 
-    public int getBaseProducctId() {
+    public int getBaseProductId() {
         return baseProductId;
     }
 
@@ -64,13 +52,4 @@ public class Product implements Serializable {
     public void setCreatedDateTime(Date createdDate) {
         this.createdDateTime = createdDate;
     }
-
-    public BaseProduct getBaseProduct() {
-        return baseProduct;
-    }
-
-    public void setBaseProduct(BaseProduct baseProduct) {
-        this.baseProduct = baseProduct;
-    }
-
 }

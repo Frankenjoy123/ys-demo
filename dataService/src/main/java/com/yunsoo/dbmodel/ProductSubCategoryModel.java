@@ -1,4 +1,4 @@
-package com.yunsoo.model;
+package com.yunsoo.dbmodel;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "product_sub_category")
 @XmlRootElement
-public class ProductSubCategory {
+public class ProductSubCategoryModel {
 
 	@Id
 	@GeneratedValue

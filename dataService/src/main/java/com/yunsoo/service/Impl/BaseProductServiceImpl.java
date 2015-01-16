@@ -2,12 +2,12 @@ package com.yunsoo.service.Impl;
 
 import java.util.List;
 
+import com.yunsoo.dbmodel.BaseProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yunsoo.dao.BaseProductDao;
-import com.yunsoo.model.BaseProduct;
 import com.yunsoo.service.BaseProductService;
 
 
@@ -22,28 +22,28 @@ public class BaseProductServiceImpl implements BaseProductService{
 	private BaseProductDao baseProductDao;
 
 	@Override
-	public BaseProduct getById(int id) {
+	public BaseProductModel getById(int id) {
 		return baseProductDao.getById(id);
 	}
 
 	@Override
-	public void save(BaseProduct baseProduct) {
-		baseProductDao.save(baseProduct);
+	public void save(BaseProductModel baseProductModel) {
+		baseProductDao.save(baseProductModel);
 	}
 
 	@Override
-	public void update(BaseProduct baseProduct) {
-		baseProductDao.update(baseProduct);
+	public void update(BaseProductModel baseProductModel) {
+		baseProductDao.update(baseProductModel);
 	}
 
 	@Override
-	public void delete(BaseProduct baseProduct) {
-		baseProductDao.delete(baseProduct);
+	public void delete(BaseProductModel baseProductModel) {
+		baseProductDao.delete(baseProductModel);
 	}
 
 	@Override
 	@Transactional
-	public List<BaseProduct> getAllProducts() {
+	public List<BaseProductModel> getAllProducts() {
 		return baseProductDao.getAllBaseProducts();
 	}
 

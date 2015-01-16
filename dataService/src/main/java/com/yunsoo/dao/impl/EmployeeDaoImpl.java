@@ -1,7 +1,7 @@
 package com.yunsoo.dao.impl;
 
 import com.yunsoo.dao.EmployeeDao;
-import com.yunsoo.model.Employee;
+import com.yunsoo.dbmodel.EmployeeModel;
 
 import java.util.List;
 
@@ -19,23 +19,23 @@ public class EmployeeDaoImpl implements EmployeeDao{
     private SessionFactory sessionFactory;
 
     @Override
-    public void save(Employee employee) {
-        sessionFactory.getCurrentSession().save(employee);
+    public void save(EmployeeModel employeeModel) {
+        sessionFactory.getCurrentSession().save(employeeModel);
     }
 
     @Override
-    public void update(Employee employee) {
-        sessionFactory.getCurrentSession().update(employee);
+    public void update(EmployeeModel employeeModel) {
+        sessionFactory.getCurrentSession().update(employeeModel);
     }
 
     @Override
-    public void delete(Employee employee) {
-        sessionFactory.getCurrentSession().delete(employee);
+    public void delete(EmployeeModel employeeModel) {
+        sessionFactory.getCurrentSession().delete(employeeModel);
     }
 
     @SuppressWarnings("unchecked")
 	@Override
-    public List<Employee> getAllEmployees() {
-       return sessionFactory.getCurrentSession().createCriteria(Employee.class).list();
+    public List<EmployeeModel> getAllEmployees() {
+        return sessionFactory.getCurrentSession().createCriteria(EmployeeModel.class).list();
     }
 }

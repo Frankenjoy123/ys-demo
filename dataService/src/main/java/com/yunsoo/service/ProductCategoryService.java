@@ -1,18 +1,23 @@
 package com.yunsoo.service;
 
 import java.util.List;
-import com.yunsoo.model.ProductCategory;
+
+import com.yunsoo.dbmodel.ProductCategoryModel;
 
 public interface ProductCategoryService {
 
-	public ProductCategory getById(int id);
+	public ProductCategoryModel getById(int id);
 
-	public void save(ProductCategory productkey);
+	public void save(ProductCategoryModel productCategoryModel);
 
-	public void update(ProductCategory productkey);
+	public void update(ProductCategoryModel productCategoryModel);
 
-	public void delete(ProductCategory productkey);
+	public void delete(ProductCategoryModel productCategoryModel);
 
-	public List<ProductCategory> getAllProductCategories();
+	public List<ProductCategoryModel> getAllProductCategories();
+
+	public List<ProductCategoryModel> getProductCategoriesByParentId(int parentId); //get product-sub-categories by parent category id
+
+	public List<ProductCategoryModel> getRootProductCategories();
 
 }
