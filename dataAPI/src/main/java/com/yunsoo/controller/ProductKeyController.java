@@ -1,4 +1,4 @@
-package com.yunsoo.controllers;
+package com.yunsoo.controller;
 
 import com.yunsoo.ProductKey;
 import org.springframework.web.bind.annotation.RestController;
