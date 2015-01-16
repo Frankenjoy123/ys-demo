@@ -12,10 +12,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'spring-boot'
 
-description = "dataService"
-
-sourceCompatibility = 1.5
-targetCompatibility = 1.5
+description = 'dataService'
 
 repositories {
     mavenLocal()
@@ -23,7 +20,7 @@ repositories {
     //maven { url "http://repo.maven.apache.org/maven2" }
 }
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework:spring-context:4.1.4.RELEASE'
     compile 'org.springframework:spring-orm:4.1.4.RELEASE'
     compile 'org.hibernate:hibernate-core:4.3.5.Final'
@@ -32,7 +29,7 @@ dependencies {
     compile 'commons-dbcp:commons-dbcp:1.4'
     compile 'org.slf4j:slf4j-api:1.7.9'
     compile 'com.amazonaws:aws-java-sdk-dynamodb:1.9.14'
-    compile 'com.amazonaws:aws-java-sdk-elasticache:1.9.2'
+    compile 'com.amazonaws:aws-java-sdk-elasticache:1.9.14'
+    compile fileTree(dir: 'libs', include: '*.jar')
     runtime 'mysql:mysql-connector-java:5.1.6'
-
 }
