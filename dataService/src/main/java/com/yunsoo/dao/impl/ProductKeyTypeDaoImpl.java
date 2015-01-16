@@ -1,7 +1,7 @@
 package com.yunsoo.dao.impl;
 
 import com.yunsoo.dao.ProductKeyTypeDao;
-import com.yunsoo.dbmodel.ProductKeyType;
+import com.yunsoo.dbmodel.ProductKeyTypeModel;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -21,30 +21,30 @@ public class ProductKeyTypeDaoImpl implements ProductKeyTypeDao{
     private SessionFactory sessionFactory;
 
     @Override
-    public ProductKeyType getById(int id) {
-        return (ProductKeyType)sessionFactory.getCurrentSession().get(
-                ProductKeyType.class, id);
+    public ProductKeyTypeModel getById(int id) {
+        return (ProductKeyTypeModel) sessionFactory.getCurrentSession().get(
+                ProductKeyTypeModel.class, id);
     }
 
     @Override
-    public void save(ProductKeyType productKeyType) {
-        sessionFactory.getCurrentSession().save(productKeyType);
+    public void save(ProductKeyTypeModel productKeyTypeModel) {
+        sessionFactory.getCurrentSession().save(productKeyTypeModel);
     }
 
     @Override
-    public void update(ProductKeyType productKeyType) {
-        sessionFactory.getCurrentSession().update(productKeyType);
+    public void update(ProductKeyTypeModel productKeyTypeModel) {
+        sessionFactory.getCurrentSession().update(productKeyTypeModel);
     }
 
     @Override
-    public void delete(ProductKeyType productKeyType) {
-        sessionFactory.getCurrentSession().delete(productKeyType);
+    public void delete(ProductKeyTypeModel productKeyTypeModel) {
+        sessionFactory.getCurrentSession().delete(productKeyTypeModel);
     }
 
     @Override
-    public List<ProductKeyType> getAllProductKeyType(boolean activeOnly) {
+    public List<ProductKeyTypeModel> getAllProductKeyType(boolean activeOnly) {
         Criteria criteria = sessionFactory.getCurrentSession()
-                .createCriteria(ProductKeyType.class);
+                .createCriteria(ProductKeyTypeModel.class);
         if (activeOnly) {
             criteria.add(Restrictions.eq("active", activeOnly));
         }

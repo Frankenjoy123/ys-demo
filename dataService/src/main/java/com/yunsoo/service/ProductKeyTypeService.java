@@ -1,6 +1,6 @@
 package com.yunsoo.service;
 
-import com.yunsoo.dbmodel.ProductKeyType;
+import com.yunsoo.dbmodel.ProductKeyTypeModel;
 
 import java.util.List;
 
@@ -9,13 +9,13 @@ import java.util.List;
  */
 public interface ProductKeyTypeService {
 
-    public ProductKeyType getById(int id);
+    public ProductKeyTypeModel getById(int id);
 
-    public void save(ProductKeyType productKeyType);
+    public void save(ProductKeyTypeModel productKeyTypeModel);
 
-    public void update(ProductKeyType productKeyType);
+    public void update(ProductKeyTypeModel productKeyTypeModel);
 
-    public void delete(ProductKeyType productKeyType);
+    public void delete(ProductKeyTypeModel productKeyTypeModel);
 
-    public List<ProductKeyType> getAllProductKeyTypes(boolean activeOnly);
+    public List<ProductKeyTypeModel> getAllProductKeyTypes(boolean activeOnly);
 }

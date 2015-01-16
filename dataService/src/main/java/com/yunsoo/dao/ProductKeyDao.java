@@ -4,9 +4,13 @@ import com.yunsoo.dbmodel.*;
 import java.util.List;
 
 public interface ProductKeyDao{
-	public ProductKey getById(int id);
-    public void save(ProductKey productKey);
-    public void update(ProductKey productKey);
-    public void delete(ProductKey productKey);
-    public List<ProductKey> getAllProductKeys();
+    public ProductKeyModel getById(int id);
+
+    public void save(ProductKeyModel productKeyModel);
+
+    public void update(ProductKeyModel productKeyModel);
+
+    public void delete(ProductKeyModel productKeyModel);
+
+    public List<ProductKeyModel> getAllProductKeys();
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yunsoo.dao.ProductSubCategoryDao;
-import com.yunsoo.dbmodel.ProductSubCategory;
+import com.yunsoo.dbmodel.ProductSubCategoryModel;
 
 
 @Repository("productSubCategoryDao")
@@ -19,30 +19,30 @@ public class ProductSubCategoryDaoImpl implements ProductSubCategoryDao {
 	private SessionFactory sessionFactory;
 	
 	@Override
-	public ProductSubCategory getById(int id) {
-		return (ProductSubCategory) sessionFactory.getCurrentSession().get(ProductSubCategory.class,
+	public ProductSubCategoryModel getById(int id) {
+		return (ProductSubCategoryModel) sessionFactory.getCurrentSession().get(ProductSubCategoryModel.class,
 				id);
 	}
 
 	@Override
-	public void save(ProductSubCategory productSubCategory) {
-		sessionFactory.getCurrentSession().save(productSubCategory);
+	public void save(ProductSubCategoryModel productSubCategoryModel) {
+		sessionFactory.getCurrentSession().save(productSubCategoryModel);
 	}
 
 	@Override
-	public void update(ProductSubCategory productSubCategory) {
-		sessionFactory.getCurrentSession().update(productSubCategory);
+	public void update(ProductSubCategoryModel productSubCategoryModel) {
+		sessionFactory.getCurrentSession().update(productSubCategoryModel);
 	}
 
 	@Override
-	public void delete(ProductSubCategory productSubCategory) {
-		sessionFactory.getCurrentSession().delete(productSubCategory);
+	public void delete(ProductSubCategoryModel productSubCategoryModel) {
+		sessionFactory.getCurrentSession().delete(productSubCategoryModel);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProductSubCategory> getAllProductSubCategories() {
-		return sessionFactory.getCurrentSession().createCriteria(ProductSubCategory.class)
+	public List<ProductSubCategoryModel> getAllProductSubCategories() {
+		return sessionFactory.getCurrentSession().createCriteria(ProductSubCategoryModel.class)
 				.list();
 	}
 

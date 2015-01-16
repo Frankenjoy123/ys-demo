@@ -1,7 +1,7 @@
 package com.yunsoo.service.Impl;
 
+import com.yunsoo.dbmodel.ProductKeyModel;
 import com.yunsoo.service.ProductKeyService;
-import com.yunsoo.dbmodel.ProductKey;
 import com.yunsoo.dao.*;
 
 import java.util.List;
@@ -21,28 +21,28 @@ public class ProductKeyServiceImpl implements ProductKeyService {
 	private ProductKeyDao productkeyDao;
 
 	@Override
-	public ProductKey getById(int id) {
+	public ProductKeyModel getById(int id) {
 		return productkeyDao.getById(id);
 	}
 
 	@Override
-	public void save(ProductKey productKey) {
-		productkeyDao.save(productKey);
+	public void save(ProductKeyModel productKeyModel) {
+		productkeyDao.save(productKeyModel);
 	}
 
 	@Override
-	public void update(ProductKey productKey) {
-		productkeyDao.update(productKey);
+	public void update(ProductKeyModel productKeyModel) {
+		productkeyDao.update(productKeyModel);
 	}
 
 	@Override
-	public void delete(ProductKey productKey) {
-		productkeyDao.delete(productKey);
+	public void delete(ProductKeyModel productKeyModel) {
+		productkeyDao.delete(productKeyModel);
 	}
 
 	@Transactional
 	@Override
-	public List<ProductKey> getAllProductKeys() {
+	public List<ProductKeyModel> getAllProductKeys() {
 		return productkeyDao.getAllProductKeys();
 	}
 

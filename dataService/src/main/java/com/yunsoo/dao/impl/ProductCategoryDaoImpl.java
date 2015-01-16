@@ -2,6 +2,7 @@ package com.yunsoo.dao.impl;
 
 import java.util.List;
 
+import com.yunsoo.dbmodel.ProductCategoryModel;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import com.yunsoo.dao.ProductCategoryDao;
-import com.yunsoo.dbmodel.ProductCategory;
 
 @Repository("productCategoryDao")
 @Transactional
@@ -21,51 +21,51 @@ public class ProductCategoryDaoImpl implements ProductCategoryDao {
     private SessionFactory sessionFactory;
 
     @Override
-    public ProductCategory getById(int id) {
-        return (ProductCategory) sessionFactory.getCurrentSession().get(
-                ProductCategory.class, id);
+    public ProductCategoryModel getById(int id) {
+        return (ProductCategoryModel) sessionFactory.getCurrentSession().get(
+                ProductCategoryModel.class, id);
     }
 
     @Override
     //get product-sub-categories by parent category.
-    public List<ProductCategory> getProductCategoriesByParentId(int parentId) {
-        Criteria c = sessionFactory.getCurrentSession().createCriteria(ProductCategory.class)
+    public List<ProductCategoryModel> getProductCategoriesByParentId(int parentId) {
+        Criteria c = sessionFactory.getCurrentSession().createCriteria(ProductCategoryModel.class)
                 .add(Restrictions.eq("parentId", parentId))
                 .addOrder(Order.asc("id"));
         return c.list();
 
-//        return (ProductCategory) sessionFactory.getCurrentSession().get(
-//                ProductCategory.class, parentId);
+//        return (ProductCategoryModel) sessionFactory.getCurrentSession().get(
+//                ProductCategoryModel.class, parentId);
     }
 
     @Override
-    public List<ProductCategory> getRootProductCategories() {
-        Criteria c = sessionFactory.getCurrentSession().createCriteria(ProductCategory.class)
+    public List<ProductCategoryModel> getRootProductCategories() {
+        Criteria c = sessionFactory.getCurrentSession().createCriteria(ProductCategoryModel.class)
                 .add(Restrictions.eq("parentId",-1)) //hardcode in DB.
                 .addOrder(Order.asc("id"));
         return c.list();
     }
 
     @Override
-    public void save(ProductCategory productCategory) {
-        sessionFactory.getCurrentSession().save(productCategory);
+    public void save(ProductCategoryModel productCategoryModel) {
+        sessionFactory.getCurrentSession().save(productCategoryModel);
     }
 
     @Override
-    public void update(ProductCategory productCategory) {
-        sessionFactory.getCurrentSession().update(productCategory);
+    public void update(ProductCategoryModel productCategoryModel) {
+        sessionFactory.getCurrentSession().update(productCategoryModel);
     }
 
     @Override
-    public void delete(ProductCategory productCategory) {
-        sessionFactory.getCurrentSession().delete(productCategory);
+    public void delete(ProductCategoryModel productCategoryModel) {
+        sessionFactory.getCurrentSession().delete(productCategoryModel);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<ProductCategory> getAllProductCategories() {
+    public List<ProductCategoryModel> getAllProductCategories() {
         return sessionFactory.getCurrentSession()
-                .createCriteria(ProductCategory.class).list();
+                .createCriteria(ProductCategoryModel.class).list();
     }
 
 }

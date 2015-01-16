@@ -1,6 +1,6 @@
 package com.yunsoo.dao;
 
-import com.yunsoo.dbmodel.ProductKeyStatus;
+import com.yunsoo.dbmodel.ProductKeyStatusModel;
 
 import java.util.List;
 
@@ -8,9 +8,13 @@ import java.util.List;
  * Created by Zhe on 2015/1/13.
  */
 public interface ProductKeyStatusDao {
-    public ProductKeyStatus getById(int id);
-    public void save(ProductKeyStatus productKeyStatus);
-    public void update(ProductKeyStatus productKeyStatus);
-    public void delete(ProductKeyStatus productKeyStatus);
-    public List<ProductKeyStatus> getAllProductKeyStatues(boolean activeOnly);
+    public ProductKeyStatusModel getById(int id);
+
+    public void save(ProductKeyStatusModel productKeyStatusModel);
+
+    public void update(ProductKeyStatusModel productKeyStatusModel);
+
+    public void delete(ProductKeyStatusModel productKeyStatusModel);
+
+    public List<ProductKeyStatusModel> getAllProductKeyStatues(boolean activeOnly);
 }

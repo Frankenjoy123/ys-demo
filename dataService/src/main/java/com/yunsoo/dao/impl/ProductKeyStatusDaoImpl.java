@@ -1,7 +1,7 @@
 package com.yunsoo.dao.impl;
 
 import com.yunsoo.dao.ProductKeyStatusDao;
-import com.yunsoo.dbmodel.ProductKeyStatus;
+import com.yunsoo.dbmodel.ProductKeyStatusModel;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.Criteria;
@@ -20,30 +20,30 @@ public class ProductKeyStatusDaoImpl implements ProductKeyStatusDao {
     private SessionFactory sessionFactory;
 
     @Override
-    public ProductKeyStatus getById(int id) {
-        return (ProductKeyStatus) sessionFactory.getCurrentSession().get(
-                ProductKeyStatus.class, id);
+    public ProductKeyStatusModel getById(int id) {
+        return (ProductKeyStatusModel) sessionFactory.getCurrentSession().get(
+                ProductKeyStatusModel.class, id);
     }
 
     @Override
-    public void save(ProductKeyStatus productKeyStatus) {
-        sessionFactory.getCurrentSession().save(productKeyStatus);
+    public void save(ProductKeyStatusModel productKeyStatusModel) {
+        sessionFactory.getCurrentSession().save(productKeyStatusModel);
     }
 
     @Override
-    public void update(ProductKeyStatus productKeyStatus) {
-        sessionFactory.getCurrentSession().update(productKeyStatus);
+    public void update(ProductKeyStatusModel productKeyStatusModel) {
+        sessionFactory.getCurrentSession().update(productKeyStatusModel);
     }
 
     @Override
-    public void delete(ProductKeyStatus productKeyStatus) {
-        sessionFactory.getCurrentSession().delete(productKeyStatus);
+    public void delete(ProductKeyStatusModel productKeyStatusModel) {
+        sessionFactory.getCurrentSession().delete(productKeyStatusModel);
     }
 
     @Override
-    public List<ProductKeyStatus> getAllProductKeyStatues(boolean activeOnly) {
+    public List<ProductKeyStatusModel> getAllProductKeyStatues(boolean activeOnly) {
         Criteria criteria = sessionFactory.getCurrentSession()
-                .createCriteria(ProductKeyStatus.class);
+                .createCriteria(ProductKeyStatusModel.class);
         if (activeOnly) {
             criteria.add(Restrictions.eq("active", activeOnly));
         }

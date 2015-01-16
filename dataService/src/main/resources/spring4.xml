@@ -32,8 +32,8 @@
 		<property name="dataSource" ref="dataSource"></property>
 		<property name="annotatedClasses">
 			<list>
-				<value>com.yunsoo.dbmodel.Product</value>
-				<value>com.yunsoo.dbmodel.ProductKey</value>
+				<value>com.yunsoo.dbmodel.ProductModel</value>
+				<value>com.yunsoo.dbmodel.ProductKeyModel</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">

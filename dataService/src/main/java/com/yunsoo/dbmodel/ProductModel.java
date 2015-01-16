@@ -33,7 +33,7 @@ public class ProductModel implements Serializable {
         this.Id = id;
     }
 
-    public int getBaseProducctId() {
+    public int getBaseProductId() {
         return baseProductId;
     }
 

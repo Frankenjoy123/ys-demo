@@ -3,7 +3,7 @@ package com.yunsoo.dao.impl;
 import java.util.List;
 //import org.springframework.orm.hibernate4.HibernateTemplate;
 import com.yunsoo.dao.ProductKeyDao;
-import com.yunsoo.dbmodel.ProductKey;
+import com.yunsoo.dbmodel.ProductKeyModel;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -17,31 +17,31 @@ public class ProductKeyDaoImpl implements ProductKeyDao {
 	private SessionFactory sessionFactory;
 
 	@Override
-	public ProductKey getById(int id) {
-		return (ProductKey) sessionFactory.getCurrentSession().get(
-				ProductKey.class, id);
+	public ProductKeyModel getById(int id) {
+		return (ProductKeyModel) sessionFactory.getCurrentSession().get(
+				ProductKeyModel.class, id);
 	}
 
 	@Override
-	public void save(ProductKey productKey) {
-		sessionFactory.getCurrentSession().save(productKey);
+	public void save(ProductKeyModel productKeyModel) {
+		sessionFactory.getCurrentSession().save(productKeyModel);
 	}
 
 	@Override
-	public void update(ProductKey productKey) {
-		sessionFactory.getCurrentSession().update(productKey);
+	public void update(ProductKeyModel productKeyModel) {
+		sessionFactory.getCurrentSession().update(productKeyModel);
 	}
 
 	@Override
-	public void delete(ProductKey productKey) {
-		sessionFactory.getCurrentSession().delete(productKey);
+	public void delete(ProductKeyModel productKeyModel) {
+		sessionFactory.getCurrentSession().delete(productKeyModel);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProductKey> getAllProductKeys() {
+	public List<ProductKeyModel> getAllProductKeys() {
 		return sessionFactory.getCurrentSession()
-				.createCriteria(ProductKey.class).list();
+				.createCriteria(ProductKeyModel.class).list();
 	}
 
 
@@ -50,35 +50,35 @@ public class ProductKeyDaoImpl implements ProductKeyDao {
 	// this.template = template;
 	// }
 
-	// method to return one ProductKey of given id
-	// public ProductKey getById(int id) {
-	// ProductKey ptKey = (ProductKey) template.get(ProductKey.class, id);
+	// method to return one ProductKeyModel of given id
+	// public ProductKeyModel getById(int id) {
+	// ProductKeyModel ptKey = (ProductKeyModel) template.get(ProductKeyModel.class, id);
 	// return ptKey;
 	// }
 	//
-	// // method to save ProductKey
-	// public void saveProductKey(ProductKey e) {
+	// // method to save ProductKeyModel
+	// public void saveProductKey(ProductKeyModel e) {
 	// template.save(e);
 	// }
 	//
-	// // method to update ProductKey
-	// public void updateProductKey(ProductKey e) {
+	// // method to update ProductKeyModel
+	// public void updateProductKey(ProductKeyModel e) {
 	// template.update(e);
 	// }
 	//
-	// // method to delete ProductKey
-	// public void deleteProductKey(ProductKey e) {
+	// // method to delete ProductKeyModel
+	// public void deleteProductKey(ProductKeyModel e) {
 	// template.delete(e);
 	// }
 	//
 	// // method to return all ProductKeys
-	// public List<ProductKey> getAllProductKey() {
-	// List<ProductKey> list = new ArrayList<ProductKey>();
-	// list = template.loadAll(ProductKey.class);
+	// public List<ProductKeyModel> getAllProductKey() {
+	// List<ProductKeyModel> list = new ArrayList<ProductKeyModel>();
+	// list = template.loadAll(ProductKeyModel.class);
 	// return list;
 	// }
 
-	// public static DaoStatus CreateProductKey(ProductKey prodKey) {
+	// public static DaoStatus CreateProductKey(ProductKeyModel prodKey) {
 	// try {
 	// if (!prodKey.validate()) {
 	// return DaoStatus.invalidForPersistence;

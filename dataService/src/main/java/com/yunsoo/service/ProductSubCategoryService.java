@@ -2,18 +2,18 @@ package com.yunsoo.service;
 
 import java.util.List;
 
-import com.yunsoo.dbmodel.ProductSubCategory;
+import com.yunsoo.dbmodel.ProductSubCategoryModel;
 
 public interface ProductSubCategoryService {
-	
-	public ProductSubCategory getById(int id);
 
-	public void save(ProductSubCategory productSubCategory);
+	public ProductSubCategoryModel getById(int id);
 
-	public void update(ProductSubCategory productSubCategory);
+	public void save(ProductSubCategoryModel productSubCategoryModel);
 
-	public void delete(ProductSubCategory productSubCategory);
+	public void update(ProductSubCategoryModel productSubCategoryModel);
 
-	public List<ProductSubCategory> getAllProductSubCategories();
+	public void delete(ProductSubCategoryModel productSubCategoryModel);
+
+	public List<ProductSubCategoryModel> getAllProductSubCategories();
 
 }

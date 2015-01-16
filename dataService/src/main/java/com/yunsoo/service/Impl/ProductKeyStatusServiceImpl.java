@@ -1,7 +1,7 @@
 package com.yunsoo.service.Impl;
 
 import com.yunsoo.dao.ProductKeyStatusDao;
-import com.yunsoo.dbmodel.ProductKeyStatus;
+import com.yunsoo.dbmodel.ProductKeyStatusModel;
 import com.yunsoo.service.ProductKeyStatusService;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,28 +19,28 @@ public class ProductKeyStatusServiceImpl implements ProductKeyStatusService {
     private ProductKeyStatusDao productKeyStatusDao;
 
     @Override
-    public ProductKeyStatus getById(int id) {
+    public ProductKeyStatusModel getById(int id) {
         return productKeyStatusDao.getById(id);
     }
 
     @Override
-    public void save(ProductKeyStatus productKeyStatus) {
-        productKeyStatusDao.save(productKeyStatus);
+    public void save(ProductKeyStatusModel productKeyStatusModel) {
+        productKeyStatusDao.save(productKeyStatusModel);
     }
 
     @Override
-    public void update(ProductKeyStatus productKeyStatus) {
-        productKeyStatusDao.update(productKeyStatus);
+    public void update(ProductKeyStatusModel productKeyStatusModel) {
+        productKeyStatusDao.update(productKeyStatusModel);
     }
 
     @Override
-    public void delete(ProductKeyStatus productKeyStatus) {
-        productKeyStatusDao.delete(productKeyStatus);
+    public void delete(ProductKeyStatusModel productKeyStatusModel) {
+        productKeyStatusDao.delete(productKeyStatusModel);
     }
 
     @Override
     @Transactional
-    public List<ProductKeyStatus> getAllProductKeyStatus(boolean activeOnly) {
+    public List<ProductKeyStatusModel> getAllProductKeyStatus(boolean activeOnly) {
         return productKeyStatusDao.getAllProductKeyStatues(activeOnly);
     }
 }

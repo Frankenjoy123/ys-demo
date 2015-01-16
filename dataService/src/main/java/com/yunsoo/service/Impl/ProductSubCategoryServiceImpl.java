@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yunsoo.dao.ProductSubCategoryDao;
-import com.yunsoo.dbmodel.ProductSubCategory;
+import com.yunsoo.dbmodel.ProductSubCategoryModel;
 import com.yunsoo.service.ProductSubCategoryService;
 
 
@@ -19,28 +19,28 @@ public class ProductSubCategoryServiceImpl implements ProductSubCategoryService{
 	
 	
 	@Override
-	public ProductSubCategory getById(int id) {
+	public ProductSubCategoryModel getById(int id) {
 		return productSubCategoryDao.getById(id);
 	}
 
 	@Override
-	public void save(ProductSubCategory productSubCategory) {
-		productSubCategoryDao.save(productSubCategory);		
+	public void save(ProductSubCategoryModel productSubCategoryModel) {
+		productSubCategoryDao.save(productSubCategoryModel);
 	}
 
 	@Override
-	public void update(ProductSubCategory productSubCategory) {
-		productSubCategoryDao.update(productSubCategory);		
+	public void update(ProductSubCategoryModel productSubCategoryModel) {
+		productSubCategoryDao.update(productSubCategoryModel);
 	}
 
 	@Override
-	public void delete(ProductSubCategory productSubCategory) {
-		productSubCategoryDao.delete(productSubCategory);	
+	public void delete(ProductSubCategoryModel productSubCategoryModel) {
+		productSubCategoryDao.delete(productSubCategoryModel);
 	}
 
 	@Override
 	@Transactional
-	public List<ProductSubCategory> getAllProductSubCategories() {
+	public List<ProductSubCategoryModel> getAllProductSubCategories() {
 		return productSubCategoryDao.getAllProductSubCategories();
 	}
 
