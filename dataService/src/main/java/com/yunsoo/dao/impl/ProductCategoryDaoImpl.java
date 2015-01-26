@@ -19,6 +19,7 @@ public class ProductCategoryDaoImpl implements ProductCategoryDao {
 
     @Autowired
     private SessionFactory sessionFactory;
+    private int rootCategoryParentId = -1; //hardcode in database
 
     @Override
     public ProductCategoryModel getById(int id) {
@@ -31,41 +32,45 @@ public class ProductCategoryDaoImpl implements ProductCategoryDao {
     public List<ProductCategoryModel> getProductCategoriesByParentId(int parentId) {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(ProductCategoryModel.class)
                 .add(Restrictions.eq("parentId", parentId))
+                .add(Restrictions.eq("active", true))
                 .addOrder(Order.asc("id"));
         return c.list();
-
-//        return (ProductCategoryModel) sessionFactory.getCurrentSession().get(
-//                ProductCategoryModel.class, parentId);
     }
 
     @Override
     public List<ProductCategoryModel> getRootProductCategories() {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(ProductCategoryModel.class)
-                .add(Restrictions.eq("parentId",-1)) //hardcode in DB.
+                .add(Restrictions.eq("parentId", rootCategoryParentId)) //hardcode in DB.
+                .add(Restrictions.eq("active", true))
                 .addOrder(Order.asc("id"));
         return c.list();
     }
 
     @Override
-    public void save(ProductCategoryModel productCategoryModel) {
-        sessionFactory.getCurrentSession().save(productCategoryModel);
+    public void save(ProductCategoryModel productCategoryModelModel) {
+        sessionFactory.getCurrentSession().save(productCategoryModelModel);
     }
 
     @Override
-    public void update(ProductCategoryModel productCategoryModel) {
-        sessionFactory.getCurrentSession().update(productCategoryModel);
+    public void update(ProductCategoryModel productCategoryModelModel) {
+        sessionFactory.getCurrentSession().update(productCategoryModelModel);
     }
 
     @Override
-    public void delete(ProductCategoryModel productCategoryModel) {
-        sessionFactory.getCurrentSession().delete(productCategoryModel);
+    public void delete(ProductCategoryModel productCategoryModelModel) {
+        sessionFactory.getCurrentSession().delete(productCategoryModelModel);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<ProductCategoryModel> getAllProductCategories() {
-        return sessionFactory.getCurrentSession()
-                .createCriteria(ProductCategoryModel.class).list();
+        Criteria c = sessionFactory.getCurrentSession().createCriteria(ProductCategoryModel.class)
+                .add(Restrictions.eq("active", true))
+                .addOrder(Order.asc("id"));
+        return c.list();
+
+//        return sessionFactory.getCurrentSession()
+//                .createCriteria(ProductCategoryModel.class).list();
     }
 
 }

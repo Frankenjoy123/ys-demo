@@ -2,12 +2,12 @@ package com.yunsoo.dao.impl;
 
 import java.util.List;
 
+import com.yunsoo.dao.BaseProductDao;
 import com.yunsoo.dbmodel.BaseProductModel;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import com.yunsoo.dao.BaseProductDao;
 
 @Repository("baseProductDao")
 @Transactional

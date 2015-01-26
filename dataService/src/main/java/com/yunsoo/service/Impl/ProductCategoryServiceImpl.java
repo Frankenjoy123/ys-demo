@@ -2,12 +2,12 @@ package com.yunsoo.service.Impl;
 
 import java.util.List;
 
-import com.yunsoo.dbmodel.ProductCategoryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.yunsoo.dao.ProductCategoryDao;
 import com.yunsoo.service.ProductCategoryService;
+import com.yunsoo.service.contract.ProductCategory;
 
 
 @Service("productCategoryService")
@@ -17,40 +17,41 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     private ProductCategoryDao productCategoryDao;
 
     @Override
-    public ProductCategoryModel getById(int id) {
-        return productCategoryDao.getById(id);
+    public ProductCategory getById(int id) {
+        return ProductCategory.FromModel(productCategoryDao.getById(id));
     }
 
     @Override
-    public void save(ProductCategoryModel productCategoryModel) {
-        productCategoryDao.save(productCategoryModel);
+    public void save(ProductCategory pc) {
+        productCategoryDao.save(ProductCategory.ToModel(pc));
     }
 
     @Override
-    public void update(ProductCategoryModel productCategoryModel) {
-        productCategoryDao.update(productCategoryModel);
+    public void update(ProductCategory pc) {
+
+        productCategoryDao.update(ProductCategory.ToModel(pc));
     }
 
     @Override
-    public void delete(ProductCategoryModel productCategoryModel) {
-        productCategoryDao.delete(productCategoryModel);
+    public void delete(ProductCategory pc) {
+        productCategoryDao.delete(ProductCategory.ToModel(pc));
     }
 
     @Transactional
     @Override
-    public List<ProductCategoryModel> getAllProductCategories() {
-        return productCategoryDao.getAllProductCategories();
+    public List<ProductCategory> getAllProductCategories() {
+        return ProductCategory.FromModelList(productCategoryDao.getAllProductCategories());
     }
 
     @Override
     @Transactional
-    public List<ProductCategoryModel> getProductCategoriesByParentId(int parentId) {
-        return productCategoryDao.getProductCategoriesByParentId(parentId);
+    public List<ProductCategory> getProductCategoriesByParentId(int parentId) {
+        return ProductCategory.FromModelList(productCategoryDao.getProductCategoriesByParentId(parentId));
     }
 
     @Override
     @Transactional
-    public List<ProductCategoryModel> getRootProductCategories() {
-        return productCategoryDao.getRootProductCategories();
+    public List<ProductCategory> getRootProductCategories() {
+        return ProductCategory.FromModelList(productCategoryDao.getRootProductCategories());
     }
 }

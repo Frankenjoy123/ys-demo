@@ -16,11 +16,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "employee")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e"),
-    @NamedQuery(name = "Employee.findById", query = "SELECT e FROM Employee e WHERE e.id = :id"),
-    @NamedQuery(name = "Employee.findByAddress", query = "SELECT e FROM Employee e WHERE e.address = :address"),
-    @NamedQuery(name = "Employee.findByName", query = "SELECT e FROM Employee e WHERE e.name = :name")})
+//@NamedQueries({
+//    @NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e"),
+//    @NamedQuery(name = "Employee.findById", query = "SELECT e FROM Employee e WHERE e.id = :id"),
+//    @NamedQuery(name = "Employee.findByAddress", query = "SELECT e FROM Employee e WHERE e.address = :address"),
+//    @NamedQuery(name = "Employee.findByName", query = "SELECT e FROM Employee e WHERE e.name = :name")})
 public class EmployeeModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
