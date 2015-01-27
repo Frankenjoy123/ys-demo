@@ -24,6 +24,7 @@ public class KeyGeneratorTest extends TestCase {
 
     public void test_KeyGenerator_newKey() {
         String key = KeyGenerator.newKey();
+        //System.out.println(key);
         assertTrue(key != null && key.length() == 22);
     }
 }
