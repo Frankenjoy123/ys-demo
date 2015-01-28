@@ -2,6 +2,7 @@ package com.yunsoo.service;
 
 import java.util.List;
 
+import com.yunsoo.dao.util.SpringDaoUtil;
 import com.yunsoo.service.contract.ProductCategory;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,21 +24,19 @@ import static org.junit.Assert.assertNull;
 * Created By Zhe Zhang. 2015/1/26
 * */
 @RunWith(SpringJUnit4ClassRunner.class)
-//@Configuration
-//@EnableAutoConfiguration
-@ComponentScan
-@ContextConfiguration(locations = {"classpath:**/applicationContext.xml"})
+//@ComponentScan
+//@ContextConfiguration(locations = {"classpath:**/applicationContext.xml"})
 public class ProductCategoryServiceTest {
 
-    @Autowired
+    //    @Autowired
     private ApplicationContext applicationContext;
     //    @Autowired
     private ProductCategoryService productCategoryService;
 
     @Before
     public void setUp() {
-        applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
-//        productCategoryService = new ProductCategoryServiceImpl();
+        //applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        applicationContext = SpringDaoUtil.getApplicationContext();
         productCategoryService = (ProductCategoryService) applicationContext
                 .getBean("productCategoryService");
     }

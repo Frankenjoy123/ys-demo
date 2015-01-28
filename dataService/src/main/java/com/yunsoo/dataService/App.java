@@ -75,9 +75,9 @@ public class App {
     }
 
     public static void TestEmployee(ApplicationContext applicationContext) {
-        EmployeeService employeeService = (EmployeeService) applicationContext
+        UserService userService = (UserService) applicationContext
                 .getBean("employeeService");
-        System.out.println("Emp List : " + employeeService.getAllEmployees());
+        System.out.println("Emp List : " + userService.getAllUsers());
     }
 
     public static void TestProductKey(ApplicationContext applicationContext) {

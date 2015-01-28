@@ -49,7 +49,7 @@
           class="org.springframework.orm.hibernate4.HibernateTransactionManager"
           p:sessionFactory-ref="sessionFactory"/>
     <!--
-    <bean id="productKeyService" class="com.yunsoo.service.Impl.ProductKeyServiceImpl">
+    <bean id="productKeyService" class="ProductKeyServiceImpl">
         <constructor-arg>
             <ref bean="mysessionFactory" />
         </constructor-arg>

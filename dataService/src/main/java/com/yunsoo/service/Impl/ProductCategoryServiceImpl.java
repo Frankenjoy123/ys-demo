@@ -9,7 +9,6 @@ import com.yunsoo.dao.ProductCategoryDao;
 import com.yunsoo.service.ProductCategoryService;
 import com.yunsoo.service.contract.ProductCategory;
 
-
 @Service("productCategoryService")
 public class ProductCategoryServiceImpl implements ProductCategoryService {
 

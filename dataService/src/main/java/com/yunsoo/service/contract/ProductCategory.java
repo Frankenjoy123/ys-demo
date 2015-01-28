@@ -92,7 +92,7 @@ public class ProductCategory {
     }
 
     //Convert List of ProductCategory to List of ProductCategoryModel
-    public static List<ProductCategoryModel> ToModel(List<ProductCategory> pcList) {
+    public static List<ProductCategoryModel> ToModelList(List<ProductCategory> pcList) {
         if (pcList == null) return null;
         List<ProductCategoryModel> modelList = new ArrayList<ProductCategoryModel>();
         for (ProductCategory pc : pcList) {
