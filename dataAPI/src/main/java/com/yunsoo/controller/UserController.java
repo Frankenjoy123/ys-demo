@@ -1,14 +1,9 @@
 package com.yunsoo.controller;
 
-import com.yunsoo.service.ProductCategoryService;
 import com.yunsoo.service.UserService;
-import com.yunsoo.service.contract.ProductCategory;
 import com.yunsoo.service.contract.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Created by Zhe on 2015/1/26.
@@ -25,9 +20,31 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public User getUserById(@RequestParam(value = "id", required = true) Integer id) {
+    @RequestMapping(value = "/id", method = RequestMethod.GET)
+    public User getUserById(@PathVariable(value = "id") Integer id) {
         return userService.get(id);
+    }
+
+    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    public User getUserByToken(@PathVariable(value = "token") String token) {
+        //to-do
+        return null;
+    }
+
+    @RequestMapping(value = "/nearby", method = RequestMethod.GET)
+    public User getUserByLocation(@PathVariable(value = "location") String location) {
+        //to-do
+        return null;
+    }
+
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public void createUser(User user) {
+        //to-do
+    }
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.PUT)
+    public void deleteUser() {
+        //to-do
     }
 
 }

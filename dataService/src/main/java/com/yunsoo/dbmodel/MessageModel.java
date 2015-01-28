@@ -1,5 +1,6 @@
 package com.yunsoo.dbmodel;
 
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
@@ -23,10 +24,12 @@ public class MessageModel {
     @Column(name = "companyId")
     private int companyId;
     @Column(name = "createdDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
     @Column(name = "created_By")
     private int createdBy; //associate to company's accountId
     @Column(name = "expiredDateTime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime expiredDateTime;
     @Column(name = "link")
     private String link;

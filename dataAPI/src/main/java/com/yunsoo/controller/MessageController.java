@@ -36,7 +36,7 @@ public class MessageController {
     public List<Message> getMessagesByFilter(@RequestParam(value = "type", required = false) Integer type,
                                              @RequestParam(value = "status", required = false) Integer status,
                                              @RequestParam(value = "companyId", required = false) Integer companyId,
-                                             @RequestParam(value = "ignoreExpireDate", required = false) boolean ignoreExpireDate) {
+                                             @RequestParam(value = "ignoreExpireDate", required = false, defaultValue = "true") boolean ignoreExpireDate) {
         List<Message> messageList = messageService.getMessagesByFilter(type, status, companyId, ignoreExpireDate);
         return messageList;
     }
