@@ -22,11 +22,13 @@ public class MessageController {
         this.messageService = messageService;
     }
 
+    //Push unread messages to user.
     @RequestMapping(value = "/pushTo/{userid}", method = RequestMethod.GET)
     public List<Message> getNewMessagesByUserId(@PathVariable(value = "userid") Integer id) {
         return messageService.getMessagesByFilter(1, 1, null, true);
     }
 
+    //Get Message by Id
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
     public Message getNewMessagesByMessageId(@PathVariable(value = "id") Integer id) {
         return messageService.get(id);

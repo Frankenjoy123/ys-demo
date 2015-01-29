@@ -2,6 +2,8 @@ package com.yunsoo.controller.util;
 
 /**
  * Created by Zhe on 2015/1/28.
+ *
+ * Help make restful API case insensitive.
  */
 
 import java.util.Map;
