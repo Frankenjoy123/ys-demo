@@ -8,7 +8,7 @@ import java.util.Date;
  * <p>
  * Update by Zhe 2015/1/26
  * Import Base Product property,
- * Add FromModel ToModel etc as converter methods.
+ * Add FromModel ToModelList etc as converter methods.
  */
 public class Product {
 

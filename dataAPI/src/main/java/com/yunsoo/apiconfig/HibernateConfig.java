@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackages = {"com.yunsoo"})
+@ComponentScan(basePackages = {"com.yunsoo.apiconfig"})
 @PropertySource("classpath:jdbc.properties")
 public class HibernateConfig {
 

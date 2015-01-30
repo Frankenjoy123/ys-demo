@@ -1,12 +1,10 @@
 package com.yunsoo.controller;
 
-import com.yunsoo.service.contract.ProductCategory;
-import com.yunsoo.service.Impl.ProductCategoryServiceImpl;
 import com.yunsoo.service.ProductCategoryService;
+import com.yunsoo.service.contract.ProductCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 /**
@@ -16,13 +14,8 @@ import java.util.List;
 @RequestMapping("/productcategory")
 public class ProductCategoryController {
 
-    //    private final BookmarkRepository bookmarkRepository;
-//    private final AccountRepository accountRepository;
+    @Autowired
     private final ProductCategoryService productCategoryService;
-
-    ProductCategoryController() {
-        this.productCategoryService = new ProductCategoryServiceImpl();
-    }
 
     @Autowired
     ProductCategoryController(ProductCategoryService productCategoryService) {
@@ -39,7 +32,7 @@ public class ProductCategoryController {
 //        return this.productCategoryService.getById(productCategoryId);
 //    }
 
-    @RequestMapping(value = "/getrootproductcategories", method = RequestMethod.GET)
+    @RequestMapping(value = "/rootlevel", method = RequestMethod.GET)
     public List<ProductCategory> getRootProductCategories() {
         return productCategoryService.getRootProductCategories();
     }
