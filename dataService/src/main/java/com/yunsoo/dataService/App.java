@@ -60,19 +60,19 @@ public class App {
         baseProductService.save(baseProd);
     }
 
-    public static void TestProduct(ApplicationContext applicationContext) {
-        ProductService productService = (ProductService) applicationContext
-                .getBean("productService");
-        System.out.println("ProductModel List : " + productService.getAllProducts());
-
-        ProductModel prod = new ProductModel();
-        // prodKey.setId(0);
-        prod.setProductStatusId(12);
-        prod.setBaseProductId(3);
-        prod.setManufacturingDate(new Date());
-        prod.setCreatedDateTime(new Date());
-        productService.save(prod);
-    }
+//    public static void TestProduct(ApplicationContext applicationContext) {
+//        ProductService productService = (ProductService) applicationContext
+//                .getBean("productService");
+//        System.out.println("ProductModel List : " + productService.getAllProducts());
+//
+//        ProductModel prod = new ProductModel();
+//        // prodKey.setId(0);
+//        prod.setProductStatusId(12);
+//        prod.setBaseProductId(3);
+//        prod.setManufacturingDate(new Date());
+//        prod.setCreatedDateTime(new Date());
+//        productService.save(prod);
+//    }
 
     public static void TestEmployee(ApplicationContext applicationContext) {
         EmployeeService employeeService = (EmployeeService) applicationContext
@@ -80,26 +80,26 @@ public class App {
         System.out.println("Emp List : " + employeeService.getAllEmployees());
     }
 
-    public static void TestProductKey(ApplicationContext applicationContext) {
-        ProductKeyService productKeyService = (ProductKeyService) applicationContext
-                .getBean("productKeyService");
-        ProductKeyModel prodKey = new ProductKeyModel();
-        // prodKey.setId(0);
-        prodKey.setKey("DTEST8932");
-        prodKey.setProductId(25434L);
-        prodKey.setCreatedAccountId(45);
-        prodKey.setCreatedClientId(19);
-        prodKey.setkeyStatusId(3);
-        prodKey.setkeyTypeId(7);
-        prodKey.setCreatedDateTime(new Date());
-
-        productKeyService.save(prodKey);
-        ProductKeyModel theKey = productKeyService.getById(1);
-        System.out.println("The ProductKeyModel is: " + theKey.getKey());
-
-        prodKey.setkeyStatusId(10);
-        productKeyService.update(prodKey);
-    }
+//    public static void TestProductKey(ApplicationContext applicationContext) {
+//        ProductKeyService productKeyService = (ProductKeyService) applicationContext
+//                .getBean("productKeyService");
+//        ProductKeyModel prodKey = new ProductKeyModel();
+//        // prodKey.setId(0);
+//        prodKey.setKey("DTEST8932");
+//        prodKey.setProductId(25434L);
+//        prodKey.setCreatedAccountId(45);
+//        prodKey.setCreatedClientId(19);
+//        prodKey.setkeyStatusId(3);
+//        prodKey.setkeyTypeId(7);
+//        prodKey.setCreatedDateTime(new Date());
+//
+//        productKeyService.save(prodKey);
+//        ProductKeyModel theKey = productKeyService.getById(1);
+//        System.out.println("The ProductKeyModel is: " + theKey.getKey());
+//
+//        prodKey.setkeyStatusId(10);
+//        productKeyService.update(prodKey);
+//    }
 
     public static void TestProductCategory(ApplicationContext applicationContext) {
         ProductCategoryService productCategoryService = (ProductCategoryService) applicationContext

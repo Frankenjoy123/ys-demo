@@ -21,29 +21,7 @@ public class ProductKeyServiceImpl implements ProductKeyService {
 	private ProductKeyDao productkeyDao;
 
 	@Override
-	public ProductKeyModel getById(int id) {
-		return productkeyDao.getById(id);
-	}
+	public void batchCreate() {
 
-	@Override
-	public void save(ProductKeyModel productKeyModel) {
-		productkeyDao.save(productKeyModel);
 	}
-
-	@Override
-	public void update(ProductKeyModel productKeyModel) {
-		productkeyDao.update(productKeyModel);
-	}
-
-	@Override
-	public void delete(ProductKeyModel productKeyModel) {
-		productkeyDao.delete(productKeyModel);
-	}
-
-	@Transactional
-	@Override
-	public List<ProductKeyModel> getAllProductKeys() {
-		return productkeyDao.getAllProductKeys();
-	}
-
 }

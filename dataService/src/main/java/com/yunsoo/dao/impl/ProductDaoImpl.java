@@ -1,48 +1,42 @@
 package com.yunsoo.dao.impl;
 
-import java.util.List;
 
-import com.yunsoo.dbmodel.ProductModel;
-import org.hibernate.SessionFactory;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.yunsoo.nosql.dynamoDB.model.ProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import com.yunsoo.dao.ProductDao;
 
 @Repository("productDao")
-@Transactional
 public class ProductDaoImpl implements ProductDao {
 
-	@Autowired
-	private SessionFactory sessionFactory;
+    @Autowired
+    private DynamoDBMapper dynamoDBMapper;
 
-	@Override
-	public ProductModel getById(int id) {
-		//to-do, merge with BaseProductModel
-		return (ProductModel) sessionFactory.getCurrentSession().get(ProductModel.class,
-				id);
-	}
+    @Override
+    public ProductModel getByKey(String key) {
+        ProductModel product = dynamoDBMapper.load(ProductModel.class, key);
 
-	@Override
-	public void save(ProductModel productModel) {
-		sessionFactory.getCurrentSession().save(productModel);
-	}
+            return product;
+    }
 
-	@Override
-	public void update(ProductModel productModel) {
-		sessionFactory.getCurrentSession().update(productModel);
-	}
+    @Override
+    public void save(ProductModel product) {
+        System.out.println(dynamoDBMapper);
+        dynamoDBMapper.save(product);
+    }
 
-	@Override
-	public void delete(ProductModel productModel) {
-		sessionFactory.getCurrentSession().delete(productModel);
-	}
+    @Override
+    public void update(ProductModel product) {
+        dynamoDBMapper.save(product);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ProductModel> getAllProducts() {
-		return sessionFactory.getCurrentSession().createCriteria(ProductModel.class)
-				.list();
-	}
-
+//    @Override
+//    public void deleteByKey(String key) {
+//        if (key != null && key.length() > 0) {
+//            ProductModel product = new ProductModel();
+//            product.setProductKey(key);
+//            dynamoDBMapper.delete(key);
+//        }
+//    }
 }

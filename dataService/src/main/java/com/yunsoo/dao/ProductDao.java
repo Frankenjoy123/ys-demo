@@ -1,18 +1,14 @@
 package com.yunsoo.dao;
 
-import java.util.List;
+import com.yunsoo.nosql.dynamoDB.model.ProductModel;
 
-import com.yunsoo.dbmodel.ProductModel;
 
 public interface ProductDao {
-    public ProductModel getById(int id);
 
-    public void save(ProductModel productModel);
+    public ProductModel getByKey(String key);
 
-    public void update(ProductModel productModel);
+    public void save(ProductModel product);
 
-    public void delete(ProductModel productModel);
-
-    public List<ProductModel> getAllProducts();
+    public void update(ProductModel product);
 
 }
