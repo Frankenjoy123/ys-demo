@@ -1,4 +1,4 @@
-package com.yunsoo.nosql.dynamoDB.model;
+package com.yunsoo.dbmodel;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;

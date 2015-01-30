@@ -2,7 +2,7 @@ package com.yunsoo.dao.impl;
 
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.yunsoo.nosql.dynamoDB.model.ProductModel;
+import com.yunsoo.dbmodel.ProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.yunsoo.dao.ProductDao;

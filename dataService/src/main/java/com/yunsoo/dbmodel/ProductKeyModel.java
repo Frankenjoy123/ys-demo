@@ -1,162 +1,88 @@
 package com.yunsoo.dbmodel;
 
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.*;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+
+import java.util.Set;
+
+/**
+ * Created by:   Lijian
+ * Created on:   2015/1/30
+ * Descriptions:
+ * <p>
+ * "product_key": {
+ * "product_key": "",
+ * "key_type_id": "product_key_type.id",
+ * "status_id": "product_key_status.id",
+ * "batch_id": "product_key_batch.id",
+ * "primary_product_key": "product.product_key",
+ * "product_key_set": ["product_key.product_key (?primary_product_key)"]
+ * }
+ */
+@DynamoDBTable(tableName = "product_key")
+public class ProductKeyModel {
+
+    private String productKey;
+    private int productKeyTypeId;
+    private int statusId;
+    private long batchId;
+    private String primaryProductKey;
+    private Set<String> productKeySet;
 
 
-@Entity
-@Table(name = "product_key")
-@XmlRootElement
-//@NamedQueries({
-//    @NamedQuery(name = "ProductKeyModel.findAll", query = "SELECT k FROM product_key k"),
-//    @NamedQuery(name = "ProductKeyModel.findById", query = "SELECT k FROM product_key k WHERE k.id = :id"),
-//    @NamedQuery(name = "ProductKeyModel.findByKeyStatusId", query = "SELECT k FROM product_key k WHERE k.KEY_STATUS_ID = :KEY_STATUS_ID"),
-//    @NamedQuery(name = "ProductKeyModel.findByProductId", query = "SELECT k FROM product_key k WHERE k.PRODUCT_ID = :PRODUCT_ID")})
+    @DynamoDBHashKey(attributeName = "key") //product_key
+    public String getProductKey() {
+        return productKey;
+    }
 
-public class ProductKeyModel implements Serializable {
+    public void setProductKey(String productKey) {
+        this.productKey = productKey;
+    }
 
-	private static final long serialVersionUID = 1L;
-	
-	@Id
-	@GeneratedValue
-	@Column(name = "id")
-	@Basic(optional = false)
-	private int Id;
+    @DynamoDBAttribute(attributeName = "key_type_id") //product_key_type_id
+    public int getProductKeyTypeId() {
+        return productKeyTypeId;
+    }
 
-	@Column(name = "PTKEY")
-	private String key;
+    public void setProductKeyTypeId(int productKeyTypeId) {
+        this.productKeyTypeId = productKeyTypeId;
+    }
 
-	@Column(name = "KEY_TYPE_ID")
-	private int keyTypeId;
+    @DynamoDBAttribute(attributeName = "status_id") //status_id
+    public int getStatusId() {
+        return statusId;
+    }
 
-	@Column(name = "KEY_STATUS_ID")
-	@Basic(optional = false)
-	private int keyStatusId;
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
+    }
 
-	@Column(name = "PRODUCT_ID")
-	@Basic(optional = false)
-	private long productId;
+    @DynamoDBAttribute(attributeName = "batch_id") //batch_id
+    public long getBatchId() {
+        return batchId;
+    }
 
-	@Column(name = "CREATED_CLIENT_ID")
-	private int createdClientId;
+    public void setBatchId(long batchId) {
+        this.batchId = batchId;
+    }
 
-	@Column(name = "CREATED_ACCOUNT_ID")
-	private int createdAccountId;
+    @DynamoDBAttribute(attributeName = "primary_key") //primary_product_key
+    public String getPrimaryProductKey() {
+        return primaryProductKey;
+    }
 
-	@Column(name = "CREATED_DATETIME")
-	private Date createdDateTime;
+    public void setPrimaryProductKey(String primaryProductKey) {
+        this.primaryProductKey = primaryProductKey;
+    }
 
-	public ProductKeyModel() {
-		this.key = "DefaultKEY";
-		this.productId = -1L;
-		this.keyStatusId = 1; //default
-		this.keyTypeId = 0; //default by key type
-		this.createdAccountId = 1; //default by account 1
-		this.createdClientId = 1; //default by System.
-		this.createdDateTime = new Date();
-	}
-	public ProductKeyModel(String key, String productId) {
-		new ProductKeyModel(key,Long.parseLong(productId, 10) );
-	}
-	
-	public ProductKeyModel(String key, long productId) {
-		super();
-		this.key = key;
-		this.productId = productId;
-	}
-	
-	public int getId() {
-		return Id;
-	}
+    @DynamoDBAttribute(attributeName = "key_set") //product_key_set
+    public Set<String> getProductKeySet() {
+        return productKeySet;
+    }
 
-	public void setId(int id) {
-		this.Id = id;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public int getkeyTypeId() {
-		return keyTypeId;
-	}
-
-	public void setkeyTypeId(int keyTypeId) {
-		this.keyTypeId = keyTypeId;
-	}
-
-	public int getkeyStatusId() {
-		return keyStatusId;
-	}
-
-	public void setkeyStatusId(int keyStatusId) {
-		this.keyStatusId = keyStatusId;
-	}
-
-	public long getProductId() {
-		return productId;
-	}
-
-	public void setProductId(long productId) {
-		this.productId = productId;
-	}
-
-	public int getCreatedClientId() {
-		return createdClientId;
-	}
-
-	public void setCreatedClientId(int createdClientId) {
-		this.createdClientId = createdClientId;
-	}
-
-	public int getCreatedAccountId() {
-		return createdAccountId;
-	}
-
-	public void setCreatedAccountId(int createdAccountId) {
-		this.createdAccountId = createdAccountId;
-	}
-
-	public Date getCreatedDateTime() {
-		return createdDateTime;
-	}
-
-	public void setCreatedDateTime(Date createdDate) {
-		this.createdDateTime = createdDate;
-	}
-
-	//Validate the ProductKeyModel object.
-	public boolean validate() {
-		if (this.key == null || this.key == "") {
-			return false;
-		}
-		if (this.keyStatusId < 0) {
-			return false;
-		}
-		if (this.keyTypeId < 0) {
-			return false;
-		}
-		if (this.productId < 0) {
-			return false;
-		}
-		if (this.createdAccountId < 0) {
-			return false;
-		}
-		if (this.createdClientId < 0) {
-			return false;
-		}
-		return true;
-	}
+    public void setProductKeySet(Set<String> productKeySet) {
+        this.productKeySet = productKeySet;
+    }
 
 }

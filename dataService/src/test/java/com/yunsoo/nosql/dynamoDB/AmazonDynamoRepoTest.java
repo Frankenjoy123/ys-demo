@@ -1,7 +1,7 @@
 package com.yunsoo.nosql.dynamoDB;
 
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
-import com.yunsoo.nosql.dynamoDB.model.ProductModel;
+import com.yunsoo.dbmodel.ProductModel;
 import org.junit.runner.RunWith;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

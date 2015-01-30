@@ -1,6 +1,6 @@
 package com.yunsoo.dao;
 
-import com.yunsoo.nosql.dynamoDB.model.ProductModel;
+import com.yunsoo.dbmodel.ProductModel;
 
 
 public interface ProductDao {
