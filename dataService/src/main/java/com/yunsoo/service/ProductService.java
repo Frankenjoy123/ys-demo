@@ -1,18 +1,11 @@
 package com.yunsoo.service;
 
-import java.util.List;
-
-import com.yunsoo.dbmodel.ProductModel;
+import com.yunsoo.service.contract.*;
 
 public interface ProductService {
 
-	public ProductModel getById(int id);
+	public Product getByKey(String key);
 
-	public void save(ProductModel ProductModel);
 
-	public void update(ProductModel ProductModel);
-
-	public void delete(ProductModel ProductModel);
-
-	public List<ProductModel> getAllProducts();
+	public void active();
 }

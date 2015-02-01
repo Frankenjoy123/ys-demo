@@ -1,38 +1,43 @@
 package com.yunsoo.dbmodel;
 
-import java.io.Serializable;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+
 import java.util.Date;
-import javax.persistence.*;
 
-@SuppressWarnings("serial")
-@Entity
-@Table(name = "product")
-public class ProductModel implements Serializable {
+/**
+ * Created by:   Lijian
+ * Created on:   2015/1/29
+ * Descriptions:
+ * <p>
+ * "product": {
+ * "product_key": "",
+ * "base_product_id": "base_product.id",
+ * "status_id": "product_status.id",
+ * "manufacturing_datetime": "2015-01-23T12:34:56:789Z",
+ * "created_datetime": "2015-01-23T12:34:56:789Z"
+ * }
+ */
+@DynamoDBTable(tableName = "product")
+public class ProductModel {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "id")
-    private int Id;
-    @Column(name = "BASE_PRODUCT_ID")
+    private String productKey;
     private int baseProductId;
-    @Column(name = "PRODUCT_STATUS_ID")
-    private int productStatusId;
-    @Column(name = "MANUFACTURING_DATE")
-    private Date manufacturingDate;
-    @Column(name = "CREATED_DATETIME")
+    private int statusId;
+    private Date manufacturingDateTime;
     private Date createdDateTime;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "BASE_PRODUCT_ID", insertable = false, updatable = false, nullable = false)
-    private BaseProductModel baseProductModel;
 
-    public int getId() {
-        return Id;
+    @DynamoDBHashKey(attributeName = "key") //product_key
+    public String getProductKey() {
+        return productKey;
     }
 
-    public void setId(int id) {
-        this.Id = id;
+    public void setProductKey(String productKey) {
+        this.productKey = productKey;
     }
 
+    @DynamoDBAttribute(attributeName = "base_product_id") //base_product_id
     public int getBaseProductId() {
         return baseProductId;
     }
@@ -41,36 +46,31 @@ public class ProductModel implements Serializable {
         this.baseProductId = baseProductId;
     }
 
-    public int getProductStatusId() {
-        return productStatusId;
+    @DynamoDBAttribute(attributeName = "status_id") //status_id
+    public int getStatusId() {
+        return statusId;
     }
 
-    public void setProductStatusId(int productStatusId) {
-        this.productStatusId = productStatusId;
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
     }
 
-    public Date getManufacturingDate() {
-        return manufacturingDate;
+    @DynamoDBAttribute(attributeName = "mf_dt") //manufacturing_datetime
+    public Date getManufacturingDateTime() {
+        return manufacturingDateTime;
     }
 
-    public void setManufacturingDate(Date manufacturingDate) {
-        this.manufacturingDate = manufacturingDate;
+    public void setManufacturingDateTime(Date manufacturingDateTime) {
+        this.manufacturingDateTime = manufacturingDateTime;
     }
 
+    @DynamoDBAttribute(attributeName = "c_dt") //create_datetime
     public Date getCreatedDateTime() {
         return createdDateTime;
     }
 
     public void setCreatedDateTime(Date createdDate) {
         this.createdDateTime = createdDate;
-    }
-
-    public BaseProductModel getBaseProductModel() {
-        return baseProductModel;
-    }
-
-    public void setBaseProductModel(BaseProductModel baseProductModel) {
-        this.baseProductModel = baseProductModel;
     }
 
 }

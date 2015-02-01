@@ -11,11 +11,11 @@ public interface ProductCategoryDao {
 
     public List<ProductCategoryModel> getRootProductCategories();
 
-    public void save(ProductCategoryModel productCategoryModel);
+    public void save(ProductCategoryModel productCategoryModelModel);
 
-    public void update(ProductCategoryModel productCategoryModel);
+    public void update(ProductCategoryModel productCategoryModelModel);
 
-    public void delete(ProductCategoryModel productCategoryModel);
+    public void delete(ProductCategoryModel productCategoryModelModel);
 
     public List<ProductCategoryModel> getAllProductCategories();
 }

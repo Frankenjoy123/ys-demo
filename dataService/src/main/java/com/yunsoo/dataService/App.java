@@ -1,27 +1,21 @@
 package com.yunsoo.dataService;
 
-//import java.io.*;
-
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Session;
-//import org.springframework.beans.factory.BeanFactory;  
-//import org.springframework.beans.factory.xml.XmlBeanFactory;  
-//import org.springframework.core.io.ClassPathResource;  
-//import org.springframework.core.io.Resource;  
 import org.springframework.context.ApplicationContext;
-//import org.springframework.context.ApplicationEvent;
-import com.yunsoo.dao.util.*;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
+import com.yunsoo.dao.util.SpringDaoUtil;
 import com.yunsoo.dbmodel.*;
-import com.yunsoo.hibernate.HibernateSessionManager;
 import com.yunsoo.service.*;
 
 /**
  * Run app!
  */
+@Configuration
+@EnableAutoConfiguration
 public class App {
-    private ProductCategoryService productCategoryService;
 
     public static void main(String[] args) {
         System.out.println("Start running App.Main()...");
@@ -34,8 +28,7 @@ public class App {
 //        }
         ApplicationContext applicationContext = SpringDaoUtil
                 .getApplicationContext();
-
-        System.out.println("I am here - 编码问题");
+//       TestBaseProductRepo(applicationContext);
         TestProductKeyStatus(applicationContext);
 //        TestProductKeyType(applicationContext);
         //TestProductCategory(applicationContext);
@@ -43,7 +36,6 @@ public class App {
         /*TestEmployee(applicationContext);
         TestProduct(applicationContext);
 		TestProductKey(applicationContext);*/
-
         // CreateProductKey();
         System.out.println("Done!");
     }
@@ -68,73 +60,55 @@ public class App {
         baseProductService.save(baseProd);
     }
 
-    public static void TestProduct(ApplicationContext applicationContext) {
-        ProductService productService = (ProductService) applicationContext
-                .getBean("productService");
-        System.out.println("ProductModel List : " + productService.getAllProducts());
-
-        ProductModel prod = new ProductModel();
-        // prodKey.setId(0);
-        prod.setProductStatusId(12);
-        prod.setBaseProductId(3);
-        prod.setManufacturingDate(new Date());
-        prod.setCreatedDateTime(new Date());
-        productService.save(prod);
-    }
+//    public static void TestProduct(ApplicationContext applicationContext) {
+//        ProductService productService = (ProductService) applicationContext
+//                .getBean("productService");
+//        System.out.println("ProductModel List : " + productService.getAllProducts());
+//
+//        ProductModel prod = new ProductModel();
+//        // prodKey.setId(0);
+//        prod.setProductStatusId(12);
+//        prod.setBaseProductId(3);
+//        prod.setManufacturingDate(new Date());
+//        prod.setCreatedDateTime(new Date());
+//        productService.save(prod);
+//    }
 
     public static void TestEmployee(ApplicationContext applicationContext) {
-        EmployeeService employeeService = (EmployeeService) applicationContext
+        UserService userService = (UserService) applicationContext
                 .getBean("employeeService");
-        System.out.println("Emp List : " + employeeService.getAllEmployees());
+        System.out.println("Emp List : " + userService.getAllUsers());
     }
 
-    public static void TestProductKey(ApplicationContext applicationContext) {
-        ProductKeyService productKeyService = (ProductKeyService) applicationContext
-                .getBean("productKeyService");
-        ProductKeyModel prodKey = new ProductKeyModel();
-        // prodKey.setId(0);
-        prodKey.setKey("DTEST8932");
-        prodKey.setProductId(25434L);
-        prodKey.setCreatedAccountId(45);
-        prodKey.setCreatedClientId(19);
-        prodKey.setkeyStatusId(3);
-        prodKey.setkeyTypeId(7);
-        prodKey.setCreatedDateTime(new Date());
-
-        productKeyService.save(prodKey);
-        ProductKeyModel theKey = productKeyService.getById(1);
-        System.out.println("The ProductKeyModel is: " + theKey.getKey());
-
-        prodKey.setkeyStatusId(10);
-        productKeyService.update(prodKey);
-    }
-
-    public static void CreateProductKey() {
-        Session session = HibernateSessionManager.getSessionFactory()
-                .openSession();
-        session.beginTransaction();
-
-        ProductKeyModel prodKey = new ProductKeyModel();
-        // prodKey.setId(0);
-        prodKey.setKey("ABS234S");
-        prodKey.setProductId(23434L);
-        prodKey.setCreatedAccountId(1);
-        prodKey.setCreatedClientId(89);
-        prodKey.setkeyStatusId(3);
-        prodKey.setkeyTypeId(5);
-        prodKey.setCreatedDateTime(new Date());
-        session.save(prodKey);
-        session.getTransaction().commit();
-    }
+//    public static void TestProductKey(ApplicationContext applicationContext) {
+//        ProductKeyService productKeyService = (ProductKeyService) applicationContext
+//                .getBean("productKeyService");
+//        ProductKeyModel prodKey = new ProductKeyModel();
+//        // prodKey.setId(0);
+//        prodKey.setKey("DTEST8932");
+//        prodKey.setProductId(25434L);
+//        prodKey.setCreatedAccountId(45);
+//        prodKey.setCreatedClientId(19);
+//        prodKey.setkeyStatusId(3);
+//        prodKey.setkeyTypeId(7);
+//        prodKey.setCreatedDateTime(new Date());
+//
+//        productKeyService.save(prodKey);
+//        ProductKeyModel theKey = productKeyService.getById(1);
+//        System.out.println("The ProductKeyModel is: " + theKey.getKey());
+//
+//        prodKey.setkeyStatusId(10);
+//        productKeyService.update(prodKey);
+//    }
 
     public static void TestProductCategory(ApplicationContext applicationContext) {
         ProductCategoryService productCategoryService = (ProductCategoryService) applicationContext
                 .getBean("productCategoryService");
 
-        List<ProductCategoryModel> productCategoryModelList = productCategoryService.getRootProductCategories();
+        List<com.yunsoo.service.contract.ProductCategory> productCategoryModelList = productCategoryService.getRootProductCategories();
         for (int i = 0; i < productCategoryModelList.size(); i++) {
             System.out.println("ProductModel Category (" + i + ") : " + productCategoryModelList.get(i).getName());
-            List<ProductCategoryModel> productCategoryModelList2 = productCategoryService.getProductCategoriesByParentId(productCategoryModelList.get(i).getId());
+            List<com.yunsoo.service.contract.ProductCategory> productCategoryModelList2 = productCategoryService.getProductCategoriesByParentId(productCategoryModelList.get(i).getId());
             for (int j = 0; j < productCategoryModelList2.size(); j++) {
                 System.out.println("Sub ProductModel Category (" + j + ") : " + productCategoryModelList2.get(j).getName());
             }
@@ -158,7 +132,7 @@ public class App {
         }
 
         ProductKeyStatusModel productKeyStatusModel = new ProductKeyStatusModel();
-        productKeyStatusModel.setDescription("码问测试中文存储");
+        productKeyStatusModel.setDescription("码问测试中文存储1");
         productKeyStatusModel.setCode("MyCode1");
 
         productKeyStatusService.save(productKeyStatusModel);
@@ -180,4 +154,5 @@ public class App {
         productKeyTypeModel.setDescription("编码问题");
         productKeyTypeService.save(productKeyTypeModel);
     }
+
 }

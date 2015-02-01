@@ -12,8 +12,26 @@ buildscript {
 }
 
 apply plugin: 'spring-boot'
+apply plugin: 'war'
+
+war {
+    baseName = 'dataAPI'
+    version = '0.5.0'
+}
+
+configurations {
+    providedRuntime
+}
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-web") {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    compile("org.springframework.boot:spring-boot-starter-jetty")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile("org.apache.commons:commons-dbcp2:2.0")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("junit:junit")
     compile project(':dataService')
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }

@@ -1,30 +1,24 @@
 package com.yunsoo.dbmodel;
 
-import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 /**
  * @author Zhe Zhang
+ *         Update properties with DeviceCode, Cellular etc.  2015/1/26
  */
 @Entity
-@Table(name = "employee")
+@Table(name = "user")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e"),
-    @NamedQuery(name = "Employee.findById", query = "SELECT e FROM Employee e WHERE e.id = :id"),
-    @NamedQuery(name = "Employee.findByAddress", query = "SELECT e FROM Employee e WHERE e.address = :address"),
-    @NamedQuery(name = "Employee.findByName", query = "SELECT e FROM Employee e WHERE e.name = :name")})
-public class EmployeeModel implements Serializable {
-    private static final long serialVersionUID = 1L;
+//@NamedQueries({
+//    @NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e"),
+//    @NamedQuery(name = "Employee.findById", query = "SELECT e FROM Employee e WHERE e.id = :id"),
+//    @NamedQuery(name = "Employee.findByAddress", query = "SELECT e FROM Employee e WHERE e.address = :address"),
+//    @NamedQuery(name = "Employee.findByName", query = "SELECT e FROM Employee e WHERE e.name = :name")})
+public class UserModel {
     @Id
-    @Basic(optional = false)
+    @GeneratedValue
     @Column(name = "id")
     private String id;
     @Basic(optional = false)
@@ -33,15 +27,19 @@ public class EmployeeModel implements Serializable {
     @Basic(optional = false)
     @Column(name = "name")
     private String name;
+    @Column(name = "cellular")
+    private String cellular;
+    @Column(name = "device_code")
+    private String deviceCode;
 
-    public EmployeeModel() {
+    public UserModel() {
     }
 
-    public EmployeeModel(String id) {
+    public UserModel(String id) {
         this.id = id;
     }
 
-    public EmployeeModel(String id, String address, String name) {
+    public UserModel(String id, String address, String name) {
         this.id = id;
         this.address = address;
         this.name = name;
@@ -71,6 +69,22 @@ public class EmployeeModel implements Serializable {
         this.name = name;
     }
 
+    public String getCellular() {
+        return cellular;
+    }
+
+    public void setCellular(String cellular) {
+        this.cellular = cellular;
+    }
+
+    public String getDeviceCode() {
+        return deviceCode;
+    }
+
+    public void setDeviceCode(String deviceCode) {
+        this.deviceCode = deviceCode;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -81,10 +95,10 @@ public class EmployeeModel implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof EmployeeModel)) {
+        if (!(object instanceof UserModel)) {
             return false;
         }
-        EmployeeModel other = (EmployeeModel) object;
+        UserModel other = (UserModel) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

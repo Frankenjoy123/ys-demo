@@ -1,9 +1,14 @@
 package com.yunsoo.service.contract;
 
+
 import java.util.Date;
 
 /**
  * Created by Lijian on 2015/1/16.
+ * <p>
+ * Update by Zhe 2015/1/26
+ * Import Base Product property,
+ * Add FromModel ToModelList etc as converter methods.
  */
 public class Product {
 
@@ -12,6 +17,7 @@ public class Product {
     private int productStatusId;
     private Date manufacturingDate;
     private Date createdDateTime;
+    private BaseProduct baseProduct;
 
     public int getId() {
         return Id;
@@ -52,4 +58,13 @@ public class Product {
     public void setCreatedDateTime(Date createdDate) {
         this.createdDateTime = createdDate;
     }
+
+    public BaseProduct getBaseProduct() {
+        return baseProduct;
+    }
+
+    public void setBaseProduct(BaseProduct baseProduct) {
+        this.baseProduct = baseProduct;
+    }
+
 }

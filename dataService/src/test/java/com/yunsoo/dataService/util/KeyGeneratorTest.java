@@ -22,12 +22,9 @@ public class KeyGeneratorTest extends TestCase {
         return new TestSuite(KeyGeneratorTest.class);
     }
 
-    /**
-     * Rigourous Test :-)
-     */
     public void test_KeyGenerator_newKey() {
         String key = KeyGenerator.newKey();
-
-        assertTrue(key != null && key.length() > 0);
+        //System.out.println(key);
+        assertTrue(key != null && key.length() == 22);
     }
 }

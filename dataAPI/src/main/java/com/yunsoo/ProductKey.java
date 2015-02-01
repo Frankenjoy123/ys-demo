@@ -1,5 +1,13 @@
 package com.yunsoo;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.Arrays;
+
 public class ProductKey {
     private String key;
     private String productId;
@@ -16,6 +24,5 @@ public class ProductKey {
     public String getProductId() {
         return productId;
     }
-
 
 }
