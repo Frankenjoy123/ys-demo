@@ -4,7 +4,9 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import javax.swing.text.html.Option;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * Created by Zhe on 2015/1/27.
@@ -23,12 +25,12 @@ public class MessageModel {
     private String body;
     @Column(name = "companyId")
     private int companyId;
-    @Column(name = "createdDateTime")
+    @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
-    @Column(name = "created_By")
+    @Column(name = "created_by")
     private int createdBy; //associate to company's accountId
-    @Column(name = "expiredDateTime")
+    @Column(name = "expired_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime expiredDateTime;
     @Column(name = "link")
@@ -37,6 +39,11 @@ public class MessageModel {
     private int type; //e.g. WelcomeMessage, PromotionMessage, System...
     @Column(name = "status")
     private int status;
+    @Column(name = "last_updated_datetime", nullable = true)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedDateTime;
+    @Column(name = "last_updated_by", nullable = true)
+    private Integer lastUpdatedBy; //associate to company's accountId
 
     public long getId() {
         return Id;
@@ -116,5 +123,22 @@ public class MessageModel {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public DateTime getLastUpdatedDateTime() {
+//        if(this.lastUpdatedDateTime.isPresent()) {
+        return lastUpdatedDateTime;
+    }
+
+    public void setLastUpdatedDateTime(DateTime lastUpdatedDateTime) {
+        this.lastUpdatedDateTime = lastUpdatedDateTime;
+    }
+
+    public Integer getLastUpdatedBy() {
+        return this.lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(Integer lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
     }
 }
