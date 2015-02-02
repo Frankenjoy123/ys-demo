@@ -7,10 +7,6 @@ import org.springframework.stereotype.Service;
 import com.yunsoo.dao.ProductDao;
 import com.yunsoo.service.ProductService;
 
-/**
- * @author Zhe Zhang
- */
-
 @Service("productService")
 public class ProductServiceImpl implements ProductService {
 
@@ -19,6 +15,8 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Product getByKey(String key) {
+
+
 		return null;
 	}
 

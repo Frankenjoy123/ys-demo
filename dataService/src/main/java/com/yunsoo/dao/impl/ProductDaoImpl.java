@@ -31,12 +31,4 @@ public class ProductDaoImpl implements ProductDao {
         dynamoDBMapper.save(product);
     }
 
-//    @Override
-//    public void deleteByKey(String key) {
-//        if (key != null && key.length() > 0) {
-//            ProductModel product = new ProductModel();
-//            product.setProductKey(key);
-//            dynamoDBMapper.delete(key);
-//        }
-//    }
 }
