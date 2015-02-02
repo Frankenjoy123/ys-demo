@@ -33,8 +33,10 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void update(Message message) {
-        messageDao.update(Message.ToModel(message));
+    public boolean update(Message message) {
+        DaoStatus daoStatus = messageDao.update(Message.ToModel(message));
+        if (daoStatus == DaoStatus.success) return true;
+        else return false;
     }
 
     @Override

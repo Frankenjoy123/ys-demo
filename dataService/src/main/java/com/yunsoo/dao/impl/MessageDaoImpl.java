@@ -41,8 +41,14 @@ public class MessageDaoImpl implements MessageDao {
     }
 
     @Override
-    public void update(MessageModel messageModel) {
-        sessionFactory.getCurrentSession().update(messageModel);
+    public DaoStatus update(MessageModel messageModel) {
+        try {
+            sessionFactory.getCurrentSession().update(messageModel);
+            return DaoStatus.success;
+        } catch (Exception ex) {
+            //log ex
+            return DaoStatus.fail;
+        }
     }
 
     @Override

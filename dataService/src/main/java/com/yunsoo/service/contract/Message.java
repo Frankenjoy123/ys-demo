@@ -22,6 +22,8 @@ public class Message {
     private String link;
     private int type;
     private int status;
+    private String lastUpatedDateTime;
+    private Integer lastUpdatedBy; //associate to company's accountId
 
     public long getId() {
         return Id;
@@ -103,6 +105,22 @@ public class Message {
         this.status = status;
     }
 
+    public String getLastUpatedDateTime() {
+        return lastUpatedDateTime;
+    }
+
+    public void setLastUpatedDateTime(String lastUpatedDateTime) {
+        this.lastUpatedDateTime = lastUpatedDateTime;
+    }
+
+    public Integer getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(Integer lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
     public static Message FromModel(MessageModel model) {
         if (model == null) {
             return null;
@@ -118,6 +136,12 @@ public class Message {
         message.setCompanyId(model.getCompanyId());
         message.setType(model.getType());
         message.setStatus(model.getStatus());
+        if (model.getLastUpdatedDateTime() != null) {
+            message.setLastUpatedDateTime(model.getLastUpdatedDateTime().toString());
+        }
+        if (model.getLastUpdatedBy() != null) {
+            message.setLastUpdatedBy(model.getLastUpdatedBy());
+        }
         return message;
     }
 
@@ -129,13 +153,15 @@ public class Message {
         model.setBody(message.getBody());
         model.setCreatedBy(message.getCreatedBy());
         model.setLink(message.getLink());
-//        DateTime.parse(message.getCreatedDateTime())
-
         model.setCreatedDateTime(DateTime.parse(message.getCreatedDateTime())); //convert string to datetime
         model.setExpireDateTime(DateTime.parse(message.getExpireDateTime()));
         model.setCompanyId(message.getCompanyId());
         model.setType(message.getType());
         model.setStatus(message.getStatus());
+        if (!message.getLastUpatedDateTime().isEmpty()) {
+            model.setLastUpdatedDateTime(DateTime.parse(message.getLastUpatedDateTime()));
+        }
+        model.setLastUpdatedBy(message.getLastUpdatedBy());
         return model;
     }
 

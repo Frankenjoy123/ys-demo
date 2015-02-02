@@ -2,6 +2,7 @@ package com.yunsoo.controller;
 
 import com.yunsoo.service.MessageService;
 import com.yunsoo.service.contract.Message;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +48,13 @@ public class MessageController {
     public long createMessages(Message message) {
         long id = messageService.save(message);
         return id;
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    public void updateMessages(Message message) {
+//      message.setLastUpdatedBy(); //to-do
+        message.setLastUpatedDateTime(DateTime.now().toString());
+        messageService.update(message);
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.PUT)

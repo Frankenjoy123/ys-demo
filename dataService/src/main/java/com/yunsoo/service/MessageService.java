@@ -14,7 +14,7 @@ public interface MessageService {
 
     public long save(Message message);
 
-    public void update(Message message);
+    public boolean update(Message message);
 
     public ServiceOperationStatus updateStatus(int messageId, int status);
 

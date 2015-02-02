@@ -13,7 +13,7 @@ public interface MessageDao {
 
     public long save(MessageModel messageModel);
 
-    public void update(MessageModel messageModel);
+    public DaoStatus update(MessageModel messageModel);
 
     public DaoStatus updateStatus(int messageId, int status);
 
