@@ -1,6 +1,7 @@
 FROM dockerfile/java:oracle-java8
 MAINTAINER Zhe Zhang <zhe@yunsu.co>
 EXPOSE 8080
+#install gradle
 RUN gradle_version=2.21
 RUN wget -N http://services.gradle.org/distributions/gradle-${gradle_version}-all.zip
 RUN sudo unzip -foq gradle-${gradle_version}-all.zip -d /opt/gradle
