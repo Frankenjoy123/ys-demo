@@ -1,6 +1,8 @@
 package com.yunsoo.service.Impl;
 
+import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.UserDao;
+import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.contract.User;
 import com.yunsoo.service.UserService;
 
@@ -9,8 +11,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.jws.soap.SOAPBinding;
 
 /**
  * @author Zhe Zhang
@@ -22,23 +22,37 @@ public class UserServiceImpl implements UserService {
     private UserDao userDAO;
 
     @Override
-    public User get(int id) {
+    public User get(Long id) {
         return User.FromModel(userDAO.get(id));
     }
 
     @Override
-    public void save(User user) {
-        userDAO.save(User.ToModel(user));
+    public long save(User user) {
+        if (user == null || user.getDeviceCode().isEmpty()) {
+            return -1L;
+        }
+        return userDAO.save(User.ToModel(user));
     }
 
     @Override
-    public void update(User user) {
-        userDAO.update(User.ToModel(user));
+    public ServiceOperationStatus update(User user) {
+        if (user == null || user.getId().isEmpty()) {
+            return ServiceOperationStatus.InvalidArgument;
+        }
+        DaoStatus daoStatus = userDAO.update(User.ToModel(user));
+        if (daoStatus == DaoStatus.success) return ServiceOperationStatus.Success;
+        else return ServiceOperationStatus.Fail;
+
     }
 
     @Override
-    public void delete(User user) {
-        userDAO.delete(User.ToModel(user));
+    public boolean delete(Long id, int deleteStatus) {
+        DaoStatus daoStatus = userDAO.delete(id, deleteStatus);
+        if (daoStatus == DaoStatus.success) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -47,4 +61,9 @@ public class UserServiceImpl implements UserService {
         return User.FromModelList(userDAO.getAllUsers());
     }
 
+    @Override
+    @Transactional
+    public List<User> getUsersByFilter(Long id, String deviceCode, String cellular, Integer status) {
+        return User.FromModelList(userDAO.getUsersByFilter(id, deviceCode, cellular, status));
+    }
 }

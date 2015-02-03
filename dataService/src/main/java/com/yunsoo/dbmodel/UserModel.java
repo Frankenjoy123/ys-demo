@@ -2,7 +2,6 @@ package com.yunsoo.dbmodel;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
 
 /**
  * @author Zhe Zhang
@@ -20,7 +19,7 @@ public class UserModel {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private String id;
+    private long id;
     @Basic(optional = false)
     @Column(name = "address")
     private String address;
@@ -31,25 +30,29 @@ public class UserModel {
     private String cellular;
     @Column(name = "device_code")
     private String deviceCode;
+    @Column(name = "thumbnail")
+    private String thumbnail;
+    @Column(name = "status_id")
+    private int statusId;
 
     public UserModel() {
     }
 
-    public UserModel(String id) {
+    public UserModel(Long id) {
         this.id = id;
     }
 
-    public UserModel(String id, String address, String name) {
+    public UserModel(Long id, String address, String name) {
         this.id = id;
         this.address = address;
         this.name = name;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -85,28 +88,20 @@ public class UserModel {
         this.deviceCode = deviceCode;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+    public String getThumbnail() {
+        return thumbnail;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UserModel)) {
-            return false;
-        }
-        UserModel other = (UserModel) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
-    @Override
-    public String toString() {
-        return "co.id.dbmodel.EmployeeModel[ id=" + id + " ]";
+    public int getStatusId() {
+        return statusId;
     }
+
+    public void setStatusId(int status) {
+        this.statusId = status;
+    }
+
 }

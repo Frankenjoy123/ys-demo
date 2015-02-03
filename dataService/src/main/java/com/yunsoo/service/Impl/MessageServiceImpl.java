@@ -28,7 +28,7 @@ public class MessageServiceImpl implements MessageService {
     //create New Message.
     @Override
     public long save(Message newMessage) {
-        // newMessage.setStatus(YunsooConfig.getMessageCreatedStatus());
+        // newMessage.setStatusId(YunsooConfig.getMessageCreatedStatus());
         return messageDao.save(Message.ToModel(newMessage));
     }
 
@@ -43,11 +43,11 @@ public class MessageServiceImpl implements MessageService {
     public ServiceOperationStatus updateStatus(int messageId, int status) {
         DaoStatus daoStatus = messageDao.updateStatus(messageId, status);
         if (daoStatus == DaoStatus.success) {
-            return ServiceOperationStatus.success;
+            return ServiceOperationStatus.Success;
         } else if (daoStatus == DaoStatus.NotFound) {
             return ServiceOperationStatus.ObjectNotFound;
         } else {
-            return ServiceOperationStatus.fail;
+            return ServiceOperationStatus.Fail;
         }
     }
 

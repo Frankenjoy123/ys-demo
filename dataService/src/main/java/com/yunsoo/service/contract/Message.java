@@ -24,6 +24,7 @@ public class Message {
     private int status;
     private String lastUpatedDateTime;
     private Integer lastUpdatedBy; //associate to company's accountId
+    private String postShowTime;
 
     public long getId() {
         return Id;
@@ -121,6 +122,14 @@ public class Message {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
+    public String getPostShowTime() {
+        return postShowTime;
+    }
+
+    public void setPostShowTime(String postShowTime) {
+        this.postShowTime = postShowTime;
+    }
+
     public static Message FromModel(MessageModel model) {
         if (model == null) {
             return null;
@@ -142,6 +151,9 @@ public class Message {
         if (model.getLastUpdatedBy() != null) {
             message.setLastUpdatedBy(model.getLastUpdatedBy());
         }
+        if (model.getPostShowTime() != null) {
+            message.setPostShowTime(model.getPostShowTime().toString());
+        }
         return message;
     }
 
@@ -160,6 +172,9 @@ public class Message {
         model.setStatus(message.getStatus());
         if (!message.getLastUpatedDateTime().isEmpty()) {
             model.setLastUpdatedDateTime(DateTime.parse(message.getLastUpatedDateTime()));
+        }
+        if (!message.getPostShowTime().isEmpty()) {
+            model.setPostShowTime(DateTime.parse(message.getPostShowTime()));
         }
         model.setLastUpdatedBy(message.getLastUpdatedBy());
         return model;

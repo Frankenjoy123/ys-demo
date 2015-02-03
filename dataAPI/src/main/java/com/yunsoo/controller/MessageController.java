@@ -57,7 +57,7 @@ public class MessageController {
         messageService.update(message);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public int deleteMessages(@PathVariable(value = "id") Integer id) {
         boolean result = messageService.delete(id);
         if (result) {

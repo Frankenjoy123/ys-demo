@@ -1,5 +1,6 @@
 package com.yunsoo.service;
 
+import com.yunsoo.dbmodel.UserModel;
 import com.yunsoo.service.contract.User;
 
 import java.util.List;
@@ -9,15 +10,16 @@ import java.util.List;
  */
 public interface UserService {
 
-    public User get(int id);
+    public User get(Long id);
 
-    public void save(User user);
+    public long save(User user);
 
-    public void update(User user);
+    public ServiceOperationStatus update(User user);
 
-    public void delete(User user);
+    public boolean delete(Long id, int deleteStatus);
 
     public List<User> getAllUsers();
 
+    public List<User> getUsersByFilter(Long id, String deviceCode, String cellular, Integer status);
 
 }
