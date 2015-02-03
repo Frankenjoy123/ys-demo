@@ -23,7 +23,7 @@ ENTRYPOINT ["spring-boot"]
 #RUN sudo printf "export GRADLE_HOME=/opt/gradle/latest\nexport PATH=\$PATH:\$GRADLE_HOME/bin" > /etc/profile.d/gradle.sh
 #. /etc/profile.d/gradle.sh
 #RUN gradle -v
-#RUN gradle wrapper
-#RUN gradlew build
-#CMD java -jar dataAPI-1.0.jar
-#ADD dataAPI/build/libs/dataAPI-1.0.jar /data/dataAPI-1.0.jar
+RUN gradle wrapper
+RUN gradlew build
+CMD java -jar dataAPI-1.0.jar
+ADD dataAPI/build/libs/dataAPI-1.0.jar /data/dataAPI-1.0.jar
