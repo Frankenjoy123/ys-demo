@@ -21,7 +21,7 @@ public class AmazonDynamoRepo {
         return this.amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
     }
 
-    private String getTableNameFromModel(Class<?> model){
+    private String getTableNameFromModel(Class<?> model) {
         return model.getAnnotation(DynamoDBTable.class).tableName();
     }
 

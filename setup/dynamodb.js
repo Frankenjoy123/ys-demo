@@ -19,7 +19,7 @@ program
 if (program.local) {
   AWS.config.update({accessKeyId: 'AKIAJAMFJ5DUPOD426CQ', secretAccessKey: 'secret'});
   config.endpoint = program.endpoint || 'http://localhost:8000/';
-  config.region = program.region || 'local-1';
+  program.region && (config.region = program.region);
 } else {
   AWS.config.credentials = new AWS.SharedIniFileCredentials({profile: 'dynamodb'});
   config.region = program.region || 'us-west-2';
@@ -27,6 +27,7 @@ if (program.local) {
 
 var dynamodb = new AWS.DynamoDB(config);
 
+console.log(dynamodb);
 //create tables
 createTables(dynamodb);
 

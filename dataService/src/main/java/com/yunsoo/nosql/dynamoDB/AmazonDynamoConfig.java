@@ -3,6 +3,7 @@ package com.yunsoo.nosql.dynamoDB;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.auth.profile.ProfilesConfigFile;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -23,7 +24,9 @@ import javax.annotation.Resource;
 //@ComponentScan(basePackages = "com.yunsoo.nosql")
 @PropertySource("classpath:amazon.dynamo.properties")
 public class AmazonDynamoConfig {
+    private static final String PROPERTY_NAME_AMAZON_DYNAMO_PROFILE = "amazon.dynamo.profile";
     private static final String PROPERTY_NAME_AMAZON_DYNAMO_REGION = "amazon.dynamo.region";
+    private static final String PROPERTY_NAME_AMAZON_DYNAMO_ENDPOINT = "amazon.dynamo.endpoint";
 
     @Resource
     private Environment environment;
@@ -31,19 +34,18 @@ public class AmazonDynamoConfig {
     @Bean
     AmazonDynamoDBClient amazonDynamoDBClient() throws AmazonClientException {
         AmazonDynamoDBClient dynamoDB;
-        AWSCredentials credentials = null;
-        try {
-            credentials = new ProfileCredentialsProvider().getCredentials();
-        } catch (Exception e) {
-            throw new AmazonClientException(
-                    "Cannot load the credentials from the credential profiles file. " +
-                            "Please make sure that your credentials file is at the correct " +
-                            "location (~/.aws/credentials), and is in valid format.",
-                    e);
+        String profileName = environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMO_PROFILE);
+        String regionName = environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMO_REGION);
+        String endpoint = environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMO_ENDPOINT);
+
+        dynamoDB = new AmazonDynamoDBClient(new ProfileCredentialsProvider(profileName));
+
+        if (endpoint != null) {
+            dynamoDB.setEndpoint(endpoint);
+        } else if (regionName != null) {
+            dynamoDB.setRegion(Region.getRegion(Regions.fromName(regionName)));
         }
-        dynamoDB = new AmazonDynamoDBClient(credentials);
-        Region region = Region.getRegion(Regions.fromName(environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMO_REGION)));
-        dynamoDB.setRegion(region);
+
         return dynamoDB;
     }
 
@@ -56,4 +58,5 @@ public class AmazonDynamoConfig {
     AmazonDynamoRepo amazonDynamoRepo() {
         return new AmazonDynamoRepo();
     }
+
 }
