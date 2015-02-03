@@ -58,12 +58,6 @@ public class MessageDaoImpl implements MessageDao {
 
     @Override
     public DaoStatus delete(int id) {
-//        MessageModel messageModel = this.get(id);
-//        if (messageModel == null) return DaoStatus.NotFound;
-//
-//        messageModel.setStatus(YunsooConfig.getMessageDeleteStatus());
-//        this.update(messageModel);
-//        return DaoStatus.success;
         //find in config file for deleted status
         return updateStatus(id, YunsooConfig.getMessageDeleteStatus());
 //        MyObject myObject = (MyObject) sessionFactory.getCurrentSession().load(MyObject.class,id);

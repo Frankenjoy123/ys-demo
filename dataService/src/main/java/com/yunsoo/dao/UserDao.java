@@ -8,13 +8,15 @@ import java.util.List;
  * @author Zhe Zhang
  */
 public interface UserDao {
-    public UserModel get(int id);
+    public UserModel get(Long id);
 
-    public void save(UserModel userModel);
+    public long save(UserModel userModel);
 
-    public void update(UserModel userModel);
+    public DaoStatus update(UserModel userModel);
 
-    public void delete(UserModel userModel);
+    public DaoStatus delete(Long id, int deleteStatus);
 
     public List<UserModel> getAllUsers();
+
+    public List<UserModel> getUsersByFilter(Long id, String deviceCode, String cellular, Integer status);
 }
