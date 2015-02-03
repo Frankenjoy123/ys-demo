@@ -1,2 +1,5 @@
 rootProject.name = 'yunsoo'
-include ':dataService', ':dataAPI', ':dataAPI2'
+include ':dataService'
+include ':dataAPI'
+include ':setup'
+
