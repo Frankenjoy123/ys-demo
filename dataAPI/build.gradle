@@ -8,10 +8,14 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.1.10.RELEASE")
+        classpath 'se.transmode.gradle:gradle-docker:1.2'
     }
 }
 
 apply plugin: 'spring-boot'
+//apply plugin: "io.ratpack.ratpack-groovy"
+//apply plugin: 'com.github.johnrengelman.shadow'
+//apply plugin: 'docker'
 //apply plugin: 'war'
 
 //war {
