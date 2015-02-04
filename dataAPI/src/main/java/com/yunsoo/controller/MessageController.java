@@ -2,9 +2,12 @@ package com.yunsoo.controller;
 
 import com.yunsoo.service.MessageService;
 import com.yunsoo.service.contract.Message;
+//import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -45,13 +48,13 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public long createMessages(Message message) {
+    public ResponseEntity<String> createMessages(@RequestBody Message message) {
         long id = messageService.save(message);
-        return id;
+        return new ResponseEntity<String>(String.valueOf(id), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public void updateMessages(Message message) {
+    public void updateMessages(@RequestBody Message message) {
 //      message.setLastUpdatedBy(); //to-do
         message.setLastUpatedDateTime(DateTime.now().toString());
         messageService.update(message);

@@ -41,7 +41,7 @@ public class ScanController {
     }
 
     @RequestMapping(value = "/savelog", method = RequestMethod.POST)
-    public long createMessages(ScanRecord scanRecord) {
+    public long createMessages(@RequestBody ScanRecord scanRecord) {
         long id = scanRecordService.save(scanRecord);
         return id;
     }

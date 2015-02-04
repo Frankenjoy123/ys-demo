@@ -4,10 +4,7 @@ import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.UserService;
 import com.yunsoo.service.contract.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -50,13 +47,13 @@ public class UserController {
 
     //Return -1L if Fail, or the userId if Success.
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public long createUser(User user) {
+    public long createUser(@RequestBody User user) {
         long id = userService.save(user);
         return id;
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public boolean updateUser(User user) {
+    public boolean updateUser(@RequestBody User user) {
         ServiceOperationStatus serviceOperationStatus = userService.update(user);
         if (serviceOperationStatus.equals(ServiceOperationStatus.Success)) return true;
         else return false;
