@@ -1,5 +1,6 @@
 package com.yunsoo.service.Impl;
 
+import com.yunsoo.dbmodel.ProductKeyBatchModel;
 import com.yunsoo.dbmodel.ProductKeyModel;
 import com.yunsoo.service.ProductKeyService;
 import com.yunsoo.dao.*;
@@ -20,8 +21,13 @@ public class ProductKeyServiceImpl implements ProductKeyService {
 	@Autowired
 	private ProductKeyDao productkeyDao;
 
+    @Autowired
+    private ProductKeyBatchDao productkeyBatchDao;
+
 	@Override
 	public void batchCreate() {
+        ProductKeyBatchModel batchModel = new ProductKeyBatchModel();
+
 
 	}
 }
