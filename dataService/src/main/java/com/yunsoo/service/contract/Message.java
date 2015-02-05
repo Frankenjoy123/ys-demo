@@ -1,5 +1,6 @@
 package com.yunsoo.service.contract;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.yunsoo.dbmodel.MessageModel;
 import org.joda.time.DateTime;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * Created by Zhe on 2015/1/26.
  * This is the data contract for Message to end users.
  */
+@JsonAutoDetect
 public class Message {
     private long Id;
     private String title;
@@ -165,15 +167,17 @@ public class Message {
         model.setBody(message.getBody());
         model.setCreatedBy(message.getCreatedBy());
         model.setLink(message.getLink());
-        model.setCreatedDateTime(DateTime.parse(message.getCreatedDateTime())); //convert string to datetime
+        if (!message.getCreatedDateTime().isEmpty()) {
+            model.setCreatedDateTime(DateTime.parse(message.getCreatedDateTime())); //convert string to datetime
+        }
         model.setExpireDateTime(DateTime.parse(message.getExpireDateTime()));
         model.setCompanyId(message.getCompanyId());
         model.setType(message.getType());
         model.setStatus(message.getStatus());
-        if (!message.getLastUpatedDateTime().isEmpty()) {
+        if (message.getLastUpatedDateTime() != null) {
             model.setLastUpdatedDateTime(DateTime.parse(message.getLastUpatedDateTime()));
         }
-        if (!message.getPostShowTime().isEmpty()) {
+        if (message.getPostShowTime() != null) {
             model.setPostShowTime(DateTime.parse(message.getPostShowTime()));
         }
         model.setLastUpdatedBy(message.getLastUpdatedBy());
