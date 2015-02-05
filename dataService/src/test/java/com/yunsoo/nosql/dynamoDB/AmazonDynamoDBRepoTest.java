@@ -23,18 +23,18 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
  * Descriptions:
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AmazonDynamoConfig.class})
-public class AmazonDynamoRepoTest {
+@ContextConfiguration(classes = {AmazonDynamoDBConfig.class})
+public class AmazonDynamoDBRepoTest {
 
     @Autowired
-    private AmazonDynamoRepo amazonDynamoRepo;
+    private AmazonDynamoDBRepo amazonDynamoDBRepo;
 
     @Autowired
     private DynamoDBMapper dynamoDBMapper;
 
     @Test
     public void test_getTableDescription() throws Exception {
-        TableDescription desc = amazonDynamoRepo.getTableDescription(ProductModel.class);
+        TableDescription desc = amazonDynamoDBRepo.getTableDescription(ProductModel.class);
         System.out.println(desc);
         assertNotNull(desc);
     }

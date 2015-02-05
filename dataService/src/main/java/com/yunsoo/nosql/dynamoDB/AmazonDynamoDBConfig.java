@@ -19,9 +19,8 @@ import javax.annotation.Resource;
  * Descriptions: Config AmazonDynamoDB related instances
  */
 @Configuration
-//@ComponentScan(basePackages = "com.yunsoo.nosql")
 @PropertySource("classpath:amazon.dynamo.properties")
-public class AmazonDynamoConfig {
+public class AmazonDynamoDBConfig {
     private static final String PROPERTY_NAME_AMAZON_DYNAMODB_PROFILE = "amazon.dynamodb.profile";
     private static final String PROPERTY_NAME_AMAZON_DYNAMODB_REGION = "amazon.dynamodb.region";
     private static final String PROPERTY_NAME_AMAZON_DYNAMODB_ENDPOINT = "amazon.dynamodb.endpoint";
@@ -30,7 +29,7 @@ public class AmazonDynamoConfig {
     private Environment environment;
 
     @Bean
-    AmazonDynamoDBClient amazonDynamoDBClient() throws AmazonClientException {
+    public AmazonDynamoDBClient amazonDynamoDBClient() throws AmazonClientException {
         AmazonDynamoDBClient dynamoDB;
         String profileName = environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMODB_PROFILE);
         String regionName = environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMODB_REGION);
@@ -48,13 +47,13 @@ public class AmazonDynamoConfig {
     }
 
     @Bean
-    DynamoDBMapper dynamoDBMapper() {
+    public DynamoDBMapper dynamoDBMapper() {
         return new DynamoDBMapper(amazonDynamoDBClient());
     }
 
     @Bean
-    AmazonDynamoRepo amazonDynamoRepo() {
-        return new AmazonDynamoRepo();
+    public AmazonDynamoDBRepo amazonDynamoDBRepo() {
+        return new AmazonDynamoDBRepo();
     }
 
 }

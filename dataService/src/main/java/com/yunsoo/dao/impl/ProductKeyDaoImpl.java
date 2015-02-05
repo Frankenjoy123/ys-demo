@@ -6,6 +6,8 @@ import com.yunsoo.dbmodel.ProductKeyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository("productKeyDao")
 public class ProductKeyDaoImpl implements ProductKeyDao {
 
@@ -20,6 +22,11 @@ public class ProductKeyDaoImpl implements ProductKeyDao {
     @Override
     public void save(ProductKeyModel productKeyModel) {
         dynamoDBMapper.save(productKeyModel);
+    }
+
+    @Override
+    public void batchSave(List<ProductKeyModel> productKeyModels) {
+        dynamoDBMapper.batchSave(productKeyModels);
     }
 
     @Override
