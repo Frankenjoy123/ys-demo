@@ -12,5 +12,6 @@
 		<mapping class="com.yunsoo.dbmodel.UserModel"/>
 		<mapping class="com.yunsoo.dbmodel.MessageModel"/>
 		<mapping class="com.yunsoo.dbmodel.ScanRecordModel"/>
+		<mapping class="com.yunsoo.dbmodel.UserOrganizationModel"/>
 	</session-factory>
 </hibernate-configuration>

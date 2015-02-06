@@ -90,7 +90,7 @@ public class User {
     public static UserModel ToModel(User user) {
         if (user == null) return null;
         UserModel model = new UserModel();
-        if (!user.getId().isEmpty()) {
+        if (user.getId() != null && !user.getId().isEmpty()) {
             model.setId(Long.parseLong(user.getId()));
         }
         model.setName(user.getName());
