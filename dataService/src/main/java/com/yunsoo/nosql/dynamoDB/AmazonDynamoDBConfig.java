@@ -1,9 +1,7 @@
 package com.yunsoo.nosql.dynamoDB;
 
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.auth.profile.ProfilesConfigFile;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -21,22 +19,21 @@ import javax.annotation.Resource;
  * Descriptions: Config AmazonDynamoDB related instances
  */
 @Configuration
-//@ComponentScan(basePackages = "com.yunsoo.nosql")
 @PropertySource("classpath:amazon.dynamo.properties")
-public class AmazonDynamoConfig {
-    private static final String PROPERTY_NAME_AMAZON_DYNAMO_PROFILE = "amazon.dynamo.profile";
-    private static final String PROPERTY_NAME_AMAZON_DYNAMO_REGION = "amazon.dynamo.region";
-    private static final String PROPERTY_NAME_AMAZON_DYNAMO_ENDPOINT = "amazon.dynamo.endpoint";
+public class AmazonDynamoDBConfig {
+    private static final String PROPERTY_NAME_AMAZON_DYNAMODB_PROFILE = "amazon.dynamodb.profile";
+    private static final String PROPERTY_NAME_AMAZON_DYNAMODB_REGION = "amazon.dynamodb.region";
+    private static final String PROPERTY_NAME_AMAZON_DYNAMODB_ENDPOINT = "amazon.dynamodb.endpoint";
 
     @Resource
     private Environment environment;
 
     @Bean
-    AmazonDynamoDBClient amazonDynamoDBClient() throws AmazonClientException {
+    public AmazonDynamoDBClient amazonDynamoDBClient() throws AmazonClientException {
         AmazonDynamoDBClient dynamoDB;
-        String profileName = environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMO_PROFILE);
-        String regionName = environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMO_REGION);
-        String endpoint = environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMO_ENDPOINT);
+        String profileName = environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMODB_PROFILE);
+        String regionName = environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMODB_REGION);
+        String endpoint = environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMODB_ENDPOINT);
 
         dynamoDB = new AmazonDynamoDBClient(new ProfileCredentialsProvider(profileName));
 
@@ -50,13 +47,13 @@ public class AmazonDynamoConfig {
     }
 
     @Bean
-    DynamoDBMapper dynamoDBMapper() {
+    public DynamoDBMapper dynamoDBMapper() {
         return new DynamoDBMapper(amazonDynamoDBClient());
     }
 
     @Bean
-    AmazonDynamoRepo amazonDynamoRepo() {
-        return new AmazonDynamoRepo();
+    public AmazonDynamoDBRepo amazonDynamoDBRepo() {
+        return new AmazonDynamoDBRepo();
     }
 
 }

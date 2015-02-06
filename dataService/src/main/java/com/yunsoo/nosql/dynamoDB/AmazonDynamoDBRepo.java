@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Created on:   2015/1/27
  * Descriptions:
  */
-public class AmazonDynamoRepo {
+public class AmazonDynamoDBRepo {
 
     @Autowired
     private AmazonDynamoDBClient amazonDynamoDBClient;

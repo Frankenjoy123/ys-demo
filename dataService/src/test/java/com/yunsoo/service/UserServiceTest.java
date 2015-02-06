@@ -28,7 +28,7 @@ public class UserServiceTest {
 
     @Test
     public void testGet() throws Exception {
-        User user = userService.get(1);
+        User user = userService.get((long) 1);
         System.out.println("user name: " + user.getName());
         assertNotNull(user);
     }

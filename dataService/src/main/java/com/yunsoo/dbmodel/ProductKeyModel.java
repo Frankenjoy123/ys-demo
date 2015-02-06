@@ -26,7 +26,7 @@ public class ProductKeyModel {
     private String productKey;
     private int productKeyTypeId;
     private int statusId;
-    private long batchId;
+    private String batchId;
     private String primaryProductKey;
     private Set<String> productKeySet;
 
@@ -59,11 +59,11 @@ public class ProductKeyModel {
     }
 
     @DynamoDBAttribute(attributeName = "batch_id") //batch_id
-    public long getBatchId() {
+    public String getBatchId() {
         return batchId;
     }
 
-    public void setBatchId(long batchId) {
+    public void setBatchId(String batchId) {
         this.batchId = batchId;
     }
 
