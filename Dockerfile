@@ -24,8 +24,8 @@ RUN cd /var/yunsoo/ && unzip dev.zip && mv yunsoo-dev/* . && rm -rf yunsoo-dev d
 #WORKDIR /app/
 
 #RUN gradle -v
-RUN chmod +x gradlew
-RUN ./gradlew bootRepackage
+RUN chmod +x /var/yunsoo/gradlew
+RUN  /var/yunsoo/gradlew bootRepackage
 
 EXPOSE 80
 
