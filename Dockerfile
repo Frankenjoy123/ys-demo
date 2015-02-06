@@ -2,6 +2,7 @@ FROM ubuntu:latest
 # dockerfile/java:oracle-java8
 MAINTAINER Zhe Zhang <zhe@yunsu.co>
 
+RUN apt-get install software-properties-common -y
 RUN add-apt-repository ppa:webupd8team/java -y
 RUN apt-get update
 #RUN apt-get install default-jre -y
