@@ -2,13 +2,22 @@ FROM ubuntu:latest
 # dockerfile/java:oracle-java8
 MAINTAINER Zhe Zhang <zhe@yunsu.co>
 
-RUN apt-get install software-properties-common -y
-RUN add-apt-repository ppa:webupd8team/java -y
+#RUN apt-get install software-properties-common -y
+#RUN add-apt-repository ppa:webupd8team/java -y
 RUN apt-get update
 #RUN apt-get install default-jre -y
-RUN apt-get install oracle-java8-installer -y
+#RUN apt-get install oracle-java8-installer -y
 RUN apt-get install curl -y
 RUN apt-get install zip -y
+
+#install java8
+RUN \
+  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+  add-apt-repository -y ppa:webupd8team/java && \
+  apt-get update && \
+  apt-get install -y oracle-java8-installer && \
+  rm -rf /var/lib/apt/lists/* && \
+  rm -rf /var/cache/oracle-jdk8-installer
 
 #install gradle
 #RUN gradle_version=2.21
