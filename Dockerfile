@@ -3,8 +3,8 @@ FROM ubuntu:latest
 MAINTAINER Zhe Zhang <zhe@yunsu.co>
 
 RUN apt-get update
-RUN apt-get install default-jre -y
-RUN apt-get install default-jdk -y
+#RUN apt-get install default-jre -y
+RUN apt-get install oracle-java8-installer -y
 RUN apt-get install curl -y
 RUN apt-get install zip -y
 
