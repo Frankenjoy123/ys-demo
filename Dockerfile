@@ -5,6 +5,8 @@ MAINTAINER Zhe Zhang <zhe@yunsu.co>
 RUN apt-get update
 RUN apt-get install default-jre -y
 RUN apt-get install default-jdk -y
+RUN apt-get install curl -y
+RUN apt-get install zip -y
 
 #install gradle
 #RUN gradle_version=2.21
