@@ -9,7 +9,7 @@ import com.yunsoo.dbmodel.ProductKeyBatchModel;
  */
 public interface ProductKeyBatchDao {
 
-    public ProductKeyBatchModel getById(long id);
+    public ProductKeyBatchModel getById(String id);
 
     public void save(ProductKeyBatchModel productKeyModel);
 

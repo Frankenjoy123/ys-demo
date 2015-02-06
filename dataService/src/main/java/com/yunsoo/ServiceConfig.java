@@ -1,6 +1,8 @@
 package com.yunsoo;
 
+import com.yunsoo.service.Impl.ProductKeyBatchServiceImpl;
 import com.yunsoo.service.Impl.ProductKeyServiceImpl;
+import com.yunsoo.service.ProductKeyBatchService;
 import com.yunsoo.service.ProductKeyService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,5 +20,10 @@ public class ServiceConfig {
     @Bean
     public ProductKeyService productKeyService() {
         return new ProductKeyServiceImpl();
+    }
+
+    @Bean
+    public ProductKeyBatchService productKeyBatchService() {
+        return new ProductKeyBatchServiceImpl();
     }
 }

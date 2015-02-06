@@ -11,14 +11,14 @@ import org.springframework.stereotype.Repository;
  * Created on:   2015/2/1
  * Descriptions:
  */
-@Repository("productKeyBatchDao")
+@Repository
 public class ProductKeyBatchDaoImpl implements ProductKeyBatchDao {
 
     @Autowired
     private DynamoDBMapper dynamoDBMapper;
 
     @Override
-    public ProductKeyBatchModel getById(long id) {
+    public ProductKeyBatchModel getById(String id) {
         return dynamoDBMapper.load(ProductKeyBatchModel.class, id);
     }
 

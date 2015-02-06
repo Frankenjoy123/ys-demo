@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Created on:   2015/2/1
  * Descriptions:
  */
-@Service("productKeyService")
+@Service
 public class ProductKeyServiceImpl implements ProductKeyService {
 
     @Autowired
@@ -80,6 +80,7 @@ public class ProductKeyServiceImpl implements ProductKeyService {
         batchModel.setCreatedClientId(request.getCreatedClientId());
         batchModel.setCreatedAccountId(request.getCreatedAccountId());
         batchModel.setCreatedDateTime(request.getCreatedDateTime());
+        batchModel.setProductKeyTypeIds(request.getProductKeyTypeIds());
         batchModel.setProductKeySetAddress("http://localhost"); //todo
         productkeyBatchDao.save(batchModel);
         String batchId = batchModel.getId();
@@ -87,6 +88,7 @@ public class ProductKeyServiceImpl implements ProductKeyService {
             m.setBatchId(batchId);
         });
         productkeyDao.batchSave(keyModels);
+
         response.setQuantity(quantity);
         response.setProductKeyTypeIds(keyTypeIds);
         response.setBatchId(batchId);

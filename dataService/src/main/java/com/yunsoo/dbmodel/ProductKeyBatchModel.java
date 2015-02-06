@@ -1,7 +1,10 @@
 package com.yunsoo.dbmodel;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.yunsoo.nosql.dynamoDB.ArrayMarshaller;
 import org.joda.time.DateTime;
+
+import java.util.ArrayList;
 
 /**
  * Created by:   Lijian
@@ -26,6 +29,7 @@ public class ProductKeyBatchModel {
     private int createdClientId;
     private int createdAccountId;
     private long createdDateTimeValue;
+    private int[] productKeyTypeIds;
     private String productKeySetAddress;
 
     @DynamoDBHashKey(attributeName = "id") //id
@@ -90,6 +94,16 @@ public class ProductKeyBatchModel {
 
     public void setCreatedDateTimeValue(long createdDateTimeValue) {
         this.createdDateTimeValue = createdDateTimeValue;
+    }
+
+    @DynamoDBAttribute(attributeName = "key_type_ids") //product_key_type_ids
+    @DynamoDBMarshalling(marshallerClass = ArrayMarshaller.class)
+    public int[] getProductKeyTypeIds() {
+        return productKeyTypeIds;
+    }
+
+    public void setProductKeyTypeIds(int[] productKeyTypeIds) {
+        this.productKeyTypeIds = productKeyTypeIds;
     }
 
     @DynamoDBAttribute(attributeName = "key_set_add") //product_key_set_address
