@@ -31,7 +31,7 @@ public class MessageController {
     //Push unread messages to user.
     @RequestMapping(value = "/pushTo/{userid}", method = RequestMethod.GET)
     public ResponseEntity<List<Message>> getNewMessagesByUserId(@PathVariable(value = "userid") Integer id) {
-        List<Message> messageList = messageService.getMessagesByFilter(1, 1, null, true);
+        List<Message> messageList = messageService.getMessagesByFilter(1, 3, null, true); //push approved message only
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 
