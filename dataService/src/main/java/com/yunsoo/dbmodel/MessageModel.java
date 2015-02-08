@@ -2,11 +2,9 @@ package com.yunsoo.dbmodel;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
+import com.yunsoo.dbmodel.OrganizationModel;
 import javax.persistence.*;
-import javax.swing.text.html.Option;
-import java.util.Date;
-import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by Zhe on 2015/1/27.
@@ -23,8 +21,10 @@ public class MessageModel {
     private String title;
     @Column(name = "body")
     private String body;
+    @Column(name = "digest")
+    private String digest;
     @Column(name = "companyId")
-    private int companyId;
+    private long companyId;
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
@@ -47,6 +47,10 @@ public class MessageModel {
     @Column(name = "post_show_time", nullable = true)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime postShowTime;
+//    @OneToMany
+//    @JoinTable(name="user_organization")
+//    @JoinColumn(name = "user_Id")
+//    private Set<UserOrganizationModel> userOrganizationModelSet;
 
     public long getId() {
         return Id;
@@ -72,11 +76,19 @@ public class MessageModel {
         this.body = body;
     }
 
-    public int getCompanyId() {
+    public String getDigest() {
+        return digest;
+    }
+
+    public void setDigest(String digest) {
+        this.digest = digest;
+    }
+
+    public long getCompanyId() {
         return companyId;
     }
 
-    public void setCompanyId(int companyId) {
+    public void setCompanyId(long companyId) {
         this.companyId = companyId;
     }
 

@@ -16,17 +16,17 @@ public interface MessageService {
 
     public boolean update(Message message);
 
-    public ServiceOperationStatus updateStatus(int messageId, int status);
+    public ServiceOperationStatus updateStatus(Long messageId, int status);
 
     public void delete(Message message);
 
-    public boolean delete(int messageId);
+    public boolean delete(Long messageId);
 
     public List<Message> getMessagesByStatus(int statusId);
 
     public List<Message> getMessagesByType(int typeId);
 
-    public List<Message> getMessagesByFilter(Integer type, Integer status, Integer companyId, boolean ignoreExpireDate);
+    public List<Message> getMessagesByFilter(Integer type, Integer status, Long companyId, Boolean ignoreExpireDate);
 
     public List<Message> getUnreadMessages(Long userId, Long companyId);
 }

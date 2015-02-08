@@ -17,7 +17,8 @@ public class Message {
     private long Id;
     private String title;
     private String body;
-    private int companyId;
+    private String digest;
+    private long companyId;
     private String createdDateTime;
     private int createdBy; //associate to company's accountId
     private String expiredDateTime;
@@ -52,11 +53,19 @@ public class Message {
         this.body = body;
     }
 
-    public int getCompanyId() {
+    public String getDigest() {
+        return digest;
+    }
+
+    public void setDigest(String digest) {
+        this.digest = digest;
+    }
+
+    public long getCompanyId() {
         return companyId;
     }
 
-    public void setCompanyId(int companyId) {
+    public void setCompanyId(long companyId) {
         this.companyId = companyId;
     }
 
@@ -140,6 +149,7 @@ public class Message {
         message.setId(model.getId());
         message.setTitle(model.getTitle());
         message.setBody(model.getBody());
+        message.setDigest(model.getDigest());
         message.setCreatedBy(model.getCreatedBy());
         message.setLink(model.getLink());
         message.setCreatedDateTime(model.getCreatedDateTime().toString());
@@ -165,6 +175,7 @@ public class Message {
         model.setId(message.getId());
         model.setTitle(message.getTitle());
         model.setBody(message.getBody());
+        model.setDigest(message.getDigest());
         model.setCreatedBy(message.getCreatedBy());
         model.setLink(message.getLink());
         if (!message.getCreatedDateTime().isEmpty()) {

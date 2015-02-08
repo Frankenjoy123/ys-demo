@@ -27,13 +27,30 @@ public class UserOrganizationModel {
     @Column(name = "is_following")
     private long isFollowing;
 
-    @ManyToOne
-    private UserModel userModel;
-    @ManyToOne
-    private MessageModel messageModel;
+//    @ManyToOne
+//    @JoinColumn(name="user_id")
+//    private UserModel userModel;
+//
+//    @ManyToOne
+//    @JoinColumn(name="last_read_message_id")
+//    private MessageModel messageModel;
+
+//    @ManyToOne
+//    @JoinColumn(name = "last_read_message_id")
+//    public MessageModel getMessageModel() {
+//        return messageModel;
+//    }
+//
+//    public void setMessageModel(MessageModel messageModel) {
+//        this.messageModel = messageModel;
+//    }
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public long getUserId() {
@@ -67,4 +84,15 @@ public class UserOrganizationModel {
     public void setIsFollowing(long isFollowing) {
         this.isFollowing = isFollowing;
     }
+
+//    @ManyToOne
+//    @JoinColumn(name = "user_Id")
+//    public UserModel getUserModel() {
+//        return userModel;
+//    }
+//
+//    public void setUserModel(UserModel userModel) {
+//        this.userModel = userModel;
+//    }
+
 }

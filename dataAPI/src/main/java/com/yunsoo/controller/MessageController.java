@@ -30,7 +30,7 @@ public class MessageController {
 
     //Push unread messages to user.
     @RequestMapping(value = "/pushTo/{userid}", method = RequestMethod.GET)
-    public ResponseEntity<List<Message>> getNewMessagesByUserId(@PathVariable(value = "userid") Integer id) {
+    public ResponseEntity<List<Message>> getNewMessagesByUserId(@PathVariable(value = "userid") Long id) {
         List<Message> messageList = messageService.getMessagesByFilter(1, 3, null, true); //push approved message only
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
@@ -45,9 +45,16 @@ public class MessageController {
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity<List<Message>> getMessagesByFilter(@RequestParam(value = "type", required = false) Integer type,
                                              @RequestParam(value = "status", required = false) Integer status,
-                                             @RequestParam(value = "companyId", required = false) Integer companyId,
+                                             @RequestParam(value = "companyId", required = false) Long companyId,
                                              @RequestParam(value = "ignoreExpireDate", required = false, defaultValue = "true") boolean ignoreExpireDate) {
         List<Message> messageList = messageService.getMessagesByFilter(type, status, companyId, ignoreExpireDate);
+        return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/getUnread", method = RequestMethod.GET)
+    public ResponseEntity<List<Message>> getUnreadMessagesBy(@RequestParam(value = "userId", required = true) Long userId,
+                                                             @RequestParam(value = "companyId", required = true) Long companyId) {
+        List<Message> messageList = messageService.getUnreadMessages(userId, companyId);
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 
@@ -65,7 +72,7 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<ResultWrapper> deleteMessages(@PathVariable(value = "id") Integer id) {
+    public ResponseEntity<ResultWrapper> deleteMessages(@PathVariable(value = "id") Long id) {
         boolean result = messageService.delete(id);
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
     }

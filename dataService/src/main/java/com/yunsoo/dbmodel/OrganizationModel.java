@@ -15,7 +15,7 @@ public class OrganizationModel {
     @javax.persistence.Id
     @GeneratedValue
     @Column(name = "id")
-    private int Id;
+    private long Id;
     @Column(name = "name")
     private String name;
     @Column(name = "description")
@@ -27,11 +27,11 @@ public class OrganizationModel {
     @Column(name = "type")
     private int type;
 
-    public int getId() {
+    public long getId() {
         return Id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         Id = id;
     }
 

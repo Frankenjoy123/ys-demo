@@ -9,6 +9,7 @@ import java.util.Properties;
 public final class YunsooConfig {
 
     private static final String PROPERTY_YUNSOO_MESSAGE_DELETE_STATUS_ID = "yunsoo.message.delete_status_id";
+    private static final String PROPERTY_YUNSOO_MESSAGE_APPROVED_STATUS_ID = "yunsoo.message.approved_status_id";
     private static final String PROPERTY_YUNSOO_MESSAGE_CREATED_STATUS_ID = "yunsoo.message.created_status_id";
     private static final Properties properties = new Properties();
 
@@ -33,4 +34,7 @@ public final class YunsooConfig {
         return Integer.parseInt(getSetting(PROPERTY_YUNSOO_MESSAGE_CREATED_STATUS_ID));
     }
 
+    public static Integer getMessageApprovedStatus() {
+        return Integer.parseInt(getSetting(PROPERTY_YUNSOO_MESSAGE_APPROVED_STATUS_ID));
+    }
 }
