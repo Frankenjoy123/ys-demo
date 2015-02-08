@@ -1,6 +1,6 @@
 (function () {
     angular.module("interceptor", [])
-            .factory('interceptorTrack', ["$q", "$http", "$templateCache", function ($q, $http, $templateCache) {
+            .factory('interceptorTrack', ["$q","$templateCache", function ($q, $templateCache) {
                     var tracker = {
                         request: function (config) {
                             return config || $q.when(config);
