@@ -1,22 +1,9 @@
-#FROM ubuntu:latest
 FROM dockerfile/java:oracle-java8
 MAINTAINER Zhe Zhang <zhe@yunsu.co>
 
-#RUN apt-get install software-properties-common -y
-#RUN add-apt-repository ppa:webupd8team/java -y
+# BELOW shows the docker file for Dockerhub auto-build.
 RUN apt-get update
-#RUN apt-get install default-jre -y
-#RUN apt-get install oracle-java8-installer -y
-RUN apt-get install curl -y
 RUN apt-get install zip -y
-
-#install gradle
-#RUN gradle_version=2.21
-#RUN wget -N http://services.gradle.org/distributions/gradle-2.2.1-all.zip
-#RUN sudo unzip -foq gradle-${gradle_version}-all.zip -d /opt/gradle
-#RUN sudo ln -sfn gradle-${gradle_version} /opt/gradle/latest
-#RUN sudo printf "export GRADLE_HOME=/opt/gradle/latest\nexport PATH=\$PATH:\$GRADLE_HOME/bin" > /etc/profile.d/gradle.sh
-#. /etc/profile.d/gradle.sh
 
 RUN mkdir /var/yunsoo
 RUN curl -o  /var/yunsoo/dev.zip -L https://github.com/dataDeathKnight/yunsoo/archive/dev.zip
@@ -25,11 +12,20 @@ RUN cd /var/yunsoo/ && unzip dev.zip && mv yunsoo-dev/* . && rm -rf yunsoo-dev d
 #ADD src/ /app/src/
 #WORKDIR /app/
 
-#RUN gradle -v
 RUN chmod +x /var/yunsoo/gradlew
 RUN cd /var/yunsoo/ && ./gradlew bootRepackage
 
-EXPOSE 80
+EXPOSE 8080
 
 CMD java -jar /var/yunsoo/dataAPI/build/libs/dataAPI-1.0.jar
 #ADD dataAPI/build/libs/dataAPI-1.0.jar /data/dataAPI-1.0.jar
+
+# !Below shows how to deploy jar into AWS Beanstalk
+
+#RUN mkdir /var/yunsoo
+#RUN curl -o  /var/yunsoo/yunsoo-API.jar -L https://s3-us-west-2.amazonaws.com/todeploy/dataAPI-1.0.jar
+
+#EXPOSE 8080
+
+#ENTRYPOINT ["java", "-jar", "/var/yunsoo/yunsoo-API.jar"]
+#CMD [""]
