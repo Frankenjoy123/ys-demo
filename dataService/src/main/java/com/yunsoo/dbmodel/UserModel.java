@@ -2,6 +2,7 @@ package com.yunsoo.dbmodel;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Set;
 
 /**
  * @author Zhe Zhang
@@ -34,6 +35,10 @@ public class UserModel {
     private String thumbnail;
     @Column(name = "status_id")
     private int statusId;
+//    @OneToMany
+//    @JoinTable(name="user_organization")
+//    @JoinColumn(name = "user_Id")
+//    private Set<UserOrganizationModel> userOrganizationModelSet;
 
     public UserModel() {
     }
@@ -104,4 +109,11 @@ public class UserModel {
         this.statusId = status;
     }
 
+//    public Set<UserOrganizationModel> getUserOrganizationModelSet() {
+//        return userOrganizationModelSet;
+//    }
+//
+//    public void setUserOrganizationModelSet(Set<UserOrganizationModel> userOrganizationModelSet) {
+//        this.userOrganizationModelSet = userOrganizationModelSet;
+//    }
 }

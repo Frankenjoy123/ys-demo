@@ -37,7 +37,7 @@ public class HibernateConfig {
         LocalSessionFactoryBean lsfb = new LocalSessionFactoryBean();
 
         lsfb.setPackagesToScan(PROPERTY_NAME_DAL_CLASSES_PACKAGE);
-        System.out.println("PROPERTY_NAME_DAL_CLASSES_PACKAGE: " + PROPERTY_NAME_DAL_CLASSES_PACKAGE);
+        //System.out.println("PROPERTY_NAME_DAL_CLASSES_PACKAGE: " + PROPERTY_NAME_DAL_CLASSES_PACKAGE);
         Properties hibernateProperties = new Properties();
         hibernateProperties.put("dialect", PROPERTY_NAME_HIBERNATE_DIALECT);
         hibernateProperties.put("show_sql", PROPERTY_NAME_HIBERNATE_SHOWSQL);

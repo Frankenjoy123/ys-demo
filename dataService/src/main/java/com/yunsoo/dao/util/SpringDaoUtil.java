@@ -1,6 +1,7 @@
 package com.yunsoo.dao.util;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -8,6 +9,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Zhe Zhang;
  * 
  */
+@ComponentScan
 public class SpringDaoUtil {
     
     private static ApplicationContext applicationContext;

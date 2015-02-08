@@ -40,7 +40,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public ServiceOperationStatus updateStatus(int messageId, int status) {
+    public ServiceOperationStatus updateStatus(Long messageId, int status) {
         DaoStatus daoStatus = messageDao.updateStatus(messageId, status);
         if (daoStatus == DaoStatus.success) {
             return ServiceOperationStatus.Success;
@@ -57,7 +57,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public boolean delete(int messageId) {
+    public boolean delete(Long messageId) {
         DaoStatus daoStatus = messageDao.delete(messageId);
         if (daoStatus == DaoStatus.success) {
             return true;
@@ -80,7 +80,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional
-    public List<Message> getMessagesByFilter(Integer type, Integer status, Integer companyId, boolean ignoreExpireDate) {
+    public List<Message> getMessagesByFilter(Integer type, Integer status, Long companyId, Boolean ignoreExpireDate) {
         return Message.FromModelList(messageDao.getMessagesByFilter(type, status, companyId, ignoreExpireDate));
     }
 
