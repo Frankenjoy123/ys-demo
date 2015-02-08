@@ -83,4 +83,9 @@ public class MessageServiceImpl implements MessageService {
     public List<Message> getMessagesByFilter(Integer type, Integer status, Integer companyId, boolean ignoreExpireDate) {
         return Message.FromModelList(messageDao.getMessagesByFilter(type, status, companyId, ignoreExpireDate));
     }
+
+    @Override
+    public List<Message> getUnreadMessages(Long userId, Long companyId) {
+        return Message.FromModelList(messageDao.getUnreadMessages(userId, companyId));
+    }
 }

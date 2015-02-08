@@ -90,4 +90,16 @@ public class MessageServiceTest {
         }
         assertNotNull(messageList);
     }
+
+    @Test
+    public void testGetUnreadMessages() throws Exception {
+        List<Message> messageList = messageService.getUnreadMessages(1L, 1L);
+        if (messageList.size() == 0) {
+            System.out.println("unread message is zero");
+        }
+        for (Message message : messageList) {
+            System.out.println("message name: " + message.getTitle() + "  " + message.getCreatedDateTime());
+        }
+        assertNotNull(messageList);
+    }
 }
