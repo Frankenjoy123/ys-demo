@@ -44,6 +44,9 @@ public class MessageModel {
     private DateTime lastUpdatedDateTime;
     @Column(name = "last_updated_by", nullable = true)
     private Integer lastUpdatedBy; //associate to company's accountId
+    @Column(name = "post_show_time", nullable = true)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime postShowTime;
 
     public long getId() {
         return Id;
@@ -140,5 +143,13 @@ public class MessageModel {
 
     public void setLastUpdatedBy(Integer lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public DateTime getPostShowTime() {
+        return postShowTime;
+    }
+
+    public void setPostShowTime(DateTime postShowTime) {
+        this.postShowTime = postShowTime;
     }
 }

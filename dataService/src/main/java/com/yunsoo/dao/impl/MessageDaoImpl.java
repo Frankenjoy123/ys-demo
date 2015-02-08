@@ -3,10 +3,14 @@ package com.yunsoo.dao.impl;
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.MessageDao;
 import com.yunsoo.dbmodel.MessageModel;
+import com.yunsoo.dbmodel.UserOrganizationModel;
 import com.yunsoo.util.YunsooConfig;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,12 +62,6 @@ public class MessageDaoImpl implements MessageDao {
 
     @Override
     public DaoStatus delete(int id) {
-//        MessageModel messageModel = this.get(id);
-//        if (messageModel == null) return DaoStatus.NotFound;
-//
-//        messageModel.setStatus(YunsooConfig.getMessageDeleteStatus());
-//        this.update(messageModel);
-//        return DaoStatus.success;
         //find in config file for deleted status
         return updateStatus(id, YunsooConfig.getMessageDeleteStatus());
 //        MyObject myObject = (MyObject) sessionFactory.getCurrentSession().load(MyObject.class,id);
@@ -112,5 +110,25 @@ public class MessageDaoImpl implements MessageDao {
             c.add(Restrictions.gt("expiredDateTime", DateTime.now()));
         }
         return c.list();
+    }
+
+    @Override
+    public List<MessageModel> getUnreadMessages(Long userId, Long companyId) {
+        Session session = sessionFactory.getCurrentSession();
+        Criteria criteria = session.createCriteria(UserOrganizationModel.class);
+        criteria.add(Restrictions.eq("organizationId", companyId));
+        criteria.add(Restrictions.eq("userId", userId));
+
+        Criteria nestedCriteriaUser = criteria.createCriteria("userModel");
+        nestedCriteriaUser.add(Restrictions.eq("id", userId));
+
+        Criteria criteriaMessage = criteria.createCriteria("messageModel");
+        criteriaMessage.add(Restrictions.eq("status", 3)); //approved message status = 3
+        criteriaMessage.add(Restrictions.eq("companyId", companyId));
+//        criteriaMessage.add(Restrictions.gt("id", Property.forName("lastReadMessageId").in(criteria)));
+
+//        String hql = "from UserOrganizationModel where id=" + userId + " from MessageModel where companyId=" + companyId;
+//        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        return criteria.list();
     }
 }

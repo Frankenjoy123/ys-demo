@@ -1,10 +1,15 @@
 package com.yunsoo.controller;
 
+import com.yunsoo.dto.ResultWrapper;
+import com.yunsoo.factory.ResultFactory;
 import com.yunsoo.service.MessageService;
 import com.yunsoo.service.contract.Message;
+//import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -25,45 +30,43 @@ public class MessageController {
 
     //Push unread messages to user.
     @RequestMapping(value = "/pushTo/{userid}", method = RequestMethod.GET)
-    public List<Message> getNewMessagesByUserId(@PathVariable(value = "userid") Integer id) {
-        return messageService.getMessagesByFilter(1, 1, null, true);
+    public ResponseEntity<List<Message>> getNewMessagesByUserId(@PathVariable(value = "userid") Integer id) {
+        List<Message> messageList = messageService.getMessagesByFilter(1, 3, null, true); //push approved message only
+        return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 
     //Get Message by Id
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
-    public Message getNewMessagesByMessageId(@PathVariable(value = "id") Integer id) {
-        return messageService.get(id);
+    public ResponseEntity<Message> getNewMessagesByMessageId(@PathVariable(value = "id") Integer id) {
+        Message message = messageService.get(id);
+        return new ResponseEntity(message, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public List<Message> getMessagesByFilter(@RequestParam(value = "type", required = false) Integer type,
+    public ResponseEntity<List<Message>> getMessagesByFilter(@RequestParam(value = "type", required = false) Integer type,
                                              @RequestParam(value = "status", required = false) Integer status,
                                              @RequestParam(value = "companyId", required = false) Integer companyId,
                                              @RequestParam(value = "ignoreExpireDate", required = false, defaultValue = "true") boolean ignoreExpireDate) {
         List<Message> messageList = messageService.getMessagesByFilter(type, status, companyId, ignoreExpireDate);
-        return messageList;
+        return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public long createMessages(Message message) {
+    public ResponseEntity<ResultWrapper> createMessages(@RequestBody Message message) {
         long id = messageService.save(message);
-        return id;
+        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public void updateMessages(Message message) {
-//      message.setLastUpdatedBy(); //to-do
+    public ResponseEntity updateMessages(@RequestBody Message message) {
         message.setLastUpatedDateTime(DateTime.now().toString());
         messageService.update(message);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.PUT)
-    public int deleteMessages(@PathVariable(value = "id") Integer id) {
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<ResultWrapper> deleteMessages(@PathVariable(value = "id") Integer id) {
         boolean result = messageService.delete(id);
-        if (result) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
     }
 }

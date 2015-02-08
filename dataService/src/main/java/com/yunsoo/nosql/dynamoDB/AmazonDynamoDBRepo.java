@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Created on:   2015/1/27
  * Descriptions:
  */
-public class AmazonDynamoRepo {
+public class AmazonDynamoDBRepo {
 
     @Autowired
     private AmazonDynamoDBClient amazonDynamoDBClient;
@@ -21,7 +21,7 @@ public class AmazonDynamoRepo {
         return this.amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
     }
 
-    private String getTableNameFromModel(Class<?> model){
+    private String getTableNameFromModel(Class<?> model) {
         return model.getAnnotation(DynamoDBTable.class).tableName();
     }
 

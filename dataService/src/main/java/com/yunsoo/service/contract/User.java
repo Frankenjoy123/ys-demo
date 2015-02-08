@@ -15,6 +15,8 @@ public class User {
     private String name;
     private String cellular;
     private String deviceCode;
+    private String thumbnail;
+    private int statusId;
 
     public String getId() {
         return id;
@@ -56,6 +58,22 @@ public class User {
         this.deviceCode = deviceCode;
     }
 
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public int getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
+    }
+
     public static User FromModel(UserModel model) {
         if (model == null) return null;
         User user = new User();
@@ -63,18 +81,24 @@ public class User {
         user.setAddress(model.getAddress());
         user.setCellular(model.getCellular());
         user.setDeviceCode(model.getDeviceCode());
-        user.setId(model.getId());
+        user.setId(Long.toString(model.getId()));
+        user.setThumbnail(model.getThumbnail());
+        user.setStatusId(model.getStatusId());
         return user;
     }
 
     public static UserModel ToModel(User user) {
         if (user == null) return null;
         UserModel model = new UserModel();
-        model.setId(user.getId());
+        if (user.getId() != null && !user.getId().isEmpty()) {
+            model.setId(Long.parseLong(user.getId()));
+        }
         model.setName(user.getName());
         model.setDeviceCode(user.getDeviceCode());
         model.setCellular(user.getCellular());
         model.setAddress(user.getAddress());
+        model.setThumbnail(user.getThumbnail());
+        model.setStatusId(user.getStatusId());
         return model;
     }
 

@@ -15,14 +15,11 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public ProductModel getByKey(String key) {
-        ProductModel product = dynamoDBMapper.load(ProductModel.class, key);
-
-            return product;
+        return dynamoDBMapper.load(ProductModel.class, key);
     }
 
     @Override
     public void save(ProductModel product) {
-        System.out.println(dynamoDBMapper);
         dynamoDBMapper.save(product);
     }
 
@@ -31,12 +28,4 @@ public class ProductDaoImpl implements ProductDao {
         dynamoDBMapper.save(product);
     }
 
-//    @Override
-//    public void deleteByKey(String key) {
-//        if (key != null && key.length() > 0) {
-//            ProductModel product = new ProductModel();
-//            product.setProductKey(key);
-//            dynamoDBMapper.delete(key);
-//        }
-//    }
 }
