@@ -19,7 +19,7 @@ import javax.annotation.Resource;
  * Descriptions: Config AmazonDynamoDB related instances
  */
 @Configuration
-@PropertySource("classpath:amazon.dynamo.properties")
+@PropertySource("classpath:amazon.properties")
 public class AmazonDynamoDBConfig {
     private static final String PROPERTY_NAME_AMAZON_DYNAMODB_PROFILE = "amazon.dynamodb.profile";
     private static final String PROPERTY_NAME_AMAZON_DYNAMODB_REGION = "amazon.dynamodb.region";
