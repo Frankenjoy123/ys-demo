@@ -4,6 +4,7 @@ import com.yunsoo.dao.ScanRecordDao;
 import com.yunsoo.dbmodel.ScanRecordModel;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ public class ScanRecordDaoImpl implements ScanRecordDao {
         if (createdDateTime != null) {
             c.add(Restrictions.eq("createdDateTime", createdDateTime));
         }
+        c.addOrder(Order.desc("createdDateTime"));
         c.setFirstResult(pageIndex * pageSize);
         c.setMaxResults(pageSize);
         return c.list();

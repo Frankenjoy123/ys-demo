@@ -25,7 +25,6 @@ repositories {
     //maven { url "http://repo.maven.apache.org/maven2" }
 }
 dependencies {
-//    compile 'org.springframework.boot:spring-boot-starter-web'
 //    compile("org.springframework.boot:spring-boot-starter-web") {
 //        exclude module: "spring-boot-starter-tomcat"
 //    }
@@ -46,6 +45,7 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.9'
     compile 'com.amazonaws:aws-java-sdk-dynamodb:1.9.14'
     compile 'com.amazonaws:aws-java-sdk-elasticache:1.9.14'
+    compile 'com.amazonaws:aws-java-sdk-s3:1.9.14'
     compile fileTree(dir: 'libs', include: '*.jar')
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("junit:junit")
