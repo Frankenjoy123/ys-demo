@@ -8,8 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-//@Repository
-//By Zhe: Bean type = ProductKeyBatchDao can either be defined here or in DaoConfig.
+@Repository("productKeyDao")
 public class ProductKeyDaoImpl implements ProductKeyDao {
 
     @Autowired

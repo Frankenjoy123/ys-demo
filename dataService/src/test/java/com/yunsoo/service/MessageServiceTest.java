@@ -81,7 +81,7 @@ public class MessageServiceTest {
 
     @Test
     public void testGetMessagesByFilter() throws Exception {
-        List<Message> messageList = messageService.getMessagesByFilter(2, 2, 24, true);
+        List<Message> messageList = messageService.getMessagesByFilter(2, 2, 24L, true);
         if (messageList.size() == 0) {
             System.out.println("message is zero");
         }

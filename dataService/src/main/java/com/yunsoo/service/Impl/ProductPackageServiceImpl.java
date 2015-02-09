@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
  * Created on:   2015/2/1
  * Descriptions:
  */
-@Service("ProductPackageService")
+@Service("productPackageService")
 public class ProductPackageServiceImpl implements ProductPackageService {
 
 

@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Created on:   2015/2/1
  * Descriptions:
  */
-@Service
+@Service("productKeyService")
 public class ProductKeyServiceImpl implements ProductKeyService {
 
     @Autowired

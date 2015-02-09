@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * Created on:   2015/2/1
  * Descriptions:
  */
-@Service
+@Service("productKeyBatchService")
 public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
     @Autowired
@@ -32,6 +32,9 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
             keyBatch.setCreatedAccountId(keyBatchModel.getCreatedAccountId());
             keyBatch.setCreatedDateTime(keyBatchModel.getCreatedDateTime());
             keyBatch.setProductKeyTypeIds(keyBatchModel.getProductKeyTypeIds());
+
+            String keySetAddress = keyBatchModel.getProductKeySetAddress();
+
         }
         return keyBatch;
     }
