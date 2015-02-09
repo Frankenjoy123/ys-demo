@@ -5,7 +5,8 @@
         "head", 
         "nav",
         "a", 
-        "b"
+        "b",
+        "msg"
     ]);
 
     app.config(["$routeProvider", function ($routeProvider) {
@@ -17,6 +18,10 @@
                     .when('/b', {
                         templateUrl: "pages/b/b.html",
                         controller: "bCtrl"
+                    })
+                    .when('/msg', {
+                        templateUrl: "pages/msg/msg.html",
+                        controller: "msgCtrl"
                     })
                     .otherwise({
                         redirectTo: "/"
