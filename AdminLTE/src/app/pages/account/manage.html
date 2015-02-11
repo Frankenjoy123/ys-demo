@@ -1,0 +1,14 @@
+<div class="account-manage"  ng-controller="accountManageCtrl">
+    <ul>
+        <li class="row">
+            <div class="col-md-2 col-lg-2 col-sm-2">序号</div>
+            <div class="col-md-2 col-lg-2 col-sm-2">姓名</div>
+        </li>
+    </ul>
+    <ul ng-repeat="account in data.accounts">
+        <li class="row">
+            <div class="col-md-2 col-lg-2 col-sm-2">{{account.id}}</div>
+            <div class="col-md-2 col-lg-2 col-sm-2">{{account.name}}</div>
+        </li>
+    </ul>
+</div>

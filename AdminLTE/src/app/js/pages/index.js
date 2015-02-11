@@ -4,7 +4,7 @@
         "interceptor",
         "head", 
         "nav",
-        "a", 
+        "accountManage", 
         "b",
         "msg"
     ]);
@@ -22,6 +22,10 @@
                     .when('/msg', {
                         templateUrl: "pages/msg/msg.html",
                         controller: "msgCtrl"
+                    })
+                    .when('/account', {
+                        templateUrl: "pages/account/manage.html",
+                        controller: "accountManageCtrl"
                     })
                     .otherwise({
                         redirectTo: "/"

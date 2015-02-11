@@ -9,6 +9,9 @@
                             return $q.reject(rejection);
                         },
                         response: function (response) {
+                            try {
+                                response = JSON.parse(response);
+                            } catch (e) {}
                             return response || $q.when(response);
                         },
                         responseError: function (rejection) {
