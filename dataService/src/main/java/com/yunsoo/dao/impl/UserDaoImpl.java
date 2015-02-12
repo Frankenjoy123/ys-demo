@@ -10,6 +10,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +40,21 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public UserModel get(String cellular) {
+        String hql = "from UserModel where cellular=" + cellular + " and statusId in (2,3)";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+
+        @SuppressWarnings("unchecked")
+        List<UserModel> listUser = (List<UserModel>) query.list();
+        if (listUser != null && !listUser.isEmpty()) {
+            return listUser.get(0);
+        }
+        return null;
+    }
+
+    @Override
     public long save(UserModel userModel) {
+        userModel.setCreatedDateTime(DateTime.now());
         sessionFactory.getCurrentSession().save(userModel);
         return userModel.getId();
     }

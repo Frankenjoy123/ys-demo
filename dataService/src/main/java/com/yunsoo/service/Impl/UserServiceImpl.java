@@ -27,6 +27,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User get(String cellular) {
+        return User.FromModel(userDAO.get(cellular));
+    }
+
+
+    @Override
     public long save(User user) {
         if (user == null || user.getDeviceCode().isEmpty()) {
             return -1L;
