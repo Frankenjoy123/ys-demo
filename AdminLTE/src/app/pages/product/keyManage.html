@@ -25,7 +25,9 @@
                         <select name="productType"
                                 class="form-control inline"
                                 ng-model="newData.productTypeId">
-                            <option ng-repeat="item in productTypeOptions" value="{{item.value}}">{{item.name}}</option>
+                            <option ng-repeat="item in creationPanel.baseProducts" value="{{item.id}}">
+                                {{item.name}}
+                            </option>
                         </select>
 
                     </div>
@@ -39,7 +41,7 @@
                     <div class="form-group">
                         <label>产品码类型：</label>
 
-                        <div class="checkbox inline" ng-repeat="type in keyTypeOptions">
+                        <div class="checkbox inline" ng-repeat="type in creationPanel.keyTypes">
                             <label>
                                 <input type="checkbox" class="simple"
                                        name="keyType[]"

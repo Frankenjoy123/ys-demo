@@ -3,24 +3,75 @@
 
   app.factory("productKeyManageService", ["$http", function ($http) {
     return {
-      getInfo: function (fnSuccess, fnError) {
-        $http.get("mock/productKeyBatch.json")
-          .success(function (data) {
-            fnSuccess(data);
-          });
+      getBaseProducts: function (fnSuccess) {
+        $http.get("mock/baseProducts.json").success(function (data) {
+          fnSuccess(data);
+        });
+        return this;
+      },
+      getProductKeyTypes: function (fnSuccess) {
+        $http.get("mock/productKeyTypes.json").success(function (data) {
+          fnSuccess(data);
+        });
+        return this;
+      },
+      createProductKeyBatch: function (request, fnSuccess, fnFail) {
+
+      },
+      activeProductKeyBatch: function (request, fnSuccess){
+
       }
     };
   }]);
 
   app.controller("productKeyManageCtrl", ["$scope", "productKeyManageService", function ($scope, productKeyManageService) {
-    $scope.productTypeOptions = [
-      { value: 1, name: "王老吉" },
-      { value: 2, name: "茅台" },
-      { value: 3, name: "无限极牌钙片" },
-      { value: 4, name: "维生素C泡腾片（甜橙）" },
-      { value: 5, name: "椰树牌椰汁" },
-      { value: 6, name: "海洋之娇" }
-    ];
+    $scope.creationPanel = {
+      create: function () {
+        var newData = $scope.newData;
+        console.log(newData);
+        var requestData = {
+          quantity: newData.quantity,
+          productTypeId: newData.productTypeId,
+          //"manufacturingDate": "2014-11-28",
+          productKeyTypeIds: newData.keyTypeIds,
+          createClientId: 100,
+          createAccountId: 1000
+        };
+        productKeyManageService.createProductKeyBatch(requestData, function (data) {
+
+        });
+
+        //$.ajax({
+        //  //url: 'http://admin.page/api/products',
+        //  url: 'http://wweb.chinacloudapp.cn/api/products',
+        //  type: 'PUT',
+        //  dataType: 'json',
+        //  data: requestData
+        //}).done(function (data) {
+        //  for (var i = 0; i < $scope.productTypeOptions.length; i++) {
+        //    if ($scope.productTypeOptions[i].value == newData.productTypeId) {
+        //      data.productTypeName = $scope.productTypeOptions[i].name;
+        //      break;
+        //    }
+        //  }
+        //  data.index = $scope.results.length;
+        //  //console.log(data);
+        //  $scope.results.splice(0, 0, data);
+        //  $scope.$apply();
+        //}).fail(function (err) {
+        //  console.log(err);
+        //});
+      }
+    };
+
+    productKeyManageService
+      .getBaseProducts(function (data) {
+        $scope.creationPanel.baseProducts = data;
+      })
+      .getProductKeyTypes(function (data) {
+        $scope.creationPanel.keyTypes = data;
+      });
+
     $scope.results = [];
 
     $scope.getTypeName = function (value) {
@@ -74,40 +125,6 @@
         $scope.newData.keyTypeIds.push(value);
       }
     };
-    $scope.create = function () {
-      resultsCount++;
-      var newData = $scope.newData;
-      console.log(newData);
-      var requestData = {
-        quantity: newData.quantity,
-        productTypeId: newData.productTypeId,
-        //"manufacturingDate": "2014-11-28",
-        productKeyTypeIds: newData.keyTypeIds,
-        createClientId: 100,
-        createAccountId: 1000
-      };
-
-      $.ajax({
-        //url: 'http://admin.page/api/products',
-        url: 'http://wweb.chinacloudapp.cn/api/products',
-        type: 'PUT',
-        dataType: 'json',
-        data: requestData
-      }).done(function (data) {
-        for (var i = 0; i < $scope.productTypeOptions.length; i++) {
-          if ($scope.productTypeOptions[i].value == newData.productTypeId) {
-            data.productTypeName = $scope.productTypeOptions[i].name;
-            break;
-          }
-        }
-        data.index = $scope.results.length;
-        //console.log(data);
-        $scope.results.splice(0, 0, data);
-        $scope.$apply();
-      }).fail(function (err) {
-        console.log(err);
-      });
-    };
 
     $scope.active = function (index) {
       var data;
@@ -117,7 +134,7 @@
         }
       });
       //console.log(data);
-      var requestData = { manufacturingDate: new DateTime(new Date()).toString('yyyy-MM-dd') };
+      var requestData = {manufacturingDate: new DateTime(new Date()).toString('yyyy-MM-dd')};
       console.log(requestData);
       $.each(data.products, function (i, p) {
         $.ajax({
@@ -138,4 +155,6 @@
     //  $scope.data.accounts = data;
     //});
   }]);
+
+
 })();
