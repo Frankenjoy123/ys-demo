@@ -1,6 +1,7 @@
 package com.yunsoo.service.contract;
 
 import com.yunsoo.dbmodel.UserModel;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ public class User {
     private String deviceCode;
     private String thumbnail;
     private int statusId;
+    private String createdDateTime;
 
     public String getId() {
         return id;
@@ -74,6 +76,14 @@ public class User {
         this.statusId = statusId;
     }
 
+    public String getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(String createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
     public static User FromModel(UserModel model) {
         if (model == null) return null;
         User user = new User();
@@ -84,6 +94,7 @@ public class User {
         user.setId(Long.toString(model.getId()));
         user.setThumbnail(model.getThumbnail());
         user.setStatusId(model.getStatusId());
+        user.setCreatedDateTime(model.getCreatedDateTime().toString());
         return user;
     }
 
@@ -99,6 +110,7 @@ public class User {
         model.setAddress(user.getAddress());
         model.setThumbnail(user.getThumbnail());
         model.setStatusId(user.getStatusId());
+        model.setCreatedDateTime(DateTime.parse(user.getCreatedDateTime()));
         return model;
     }
 

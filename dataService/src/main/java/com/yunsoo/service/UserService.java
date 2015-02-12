@@ -12,6 +12,8 @@ public interface UserService {
 
     public User get(Long id);
 
+    public User get(String cellular);
+
     public long save(User user);
 
     public ServiceOperationStatus update(User user);
