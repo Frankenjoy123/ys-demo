@@ -1,0 +1,107 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        产品码管理
+        <!--<small>Control panel</small>-->
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>首页</a></li>
+        <li class="active">产品码管理</li>
+    </ol>
+</section>
+<!-- Main content -->
+<section class="content" ng-controller="productKeyManageCtrl">
+
+    <div class="box box-solid">
+        <div class="box-header">
+            <h3 class="box-title">创建新的产品码</h3>
+        </div>
+        <!-- /.box-header -->
+        <form role="form" id="createForm">
+            <div class="box-body">
+                <div class="row">
+                    <div class="form-group col-xs-4">
+                        <label>品名：</label>
+                        <select name="productType"
+                                class="form-control inline"
+                                ng-model="newData.productTypeId">
+                            <option ng-repeat="item in productTypeOptions" value="{{item.value}}">{{item.name}}</option>
+                        </select>
+
+                    </div>
+                    <div class="form-group">
+                        <label>数量：</label>
+                        <input type="text" name="quantity" ng-model="newData.quantity" class="form-control inline"
+                               placeholder=""/>
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>产品码类型：</label>
+
+                        <div class="checkbox inline" ng-repeat="type in keyTypeOptions">
+                            <label>
+                                <input type="checkbox" class="simple"
+                                       name="keyType[]"
+                                       value="{{type.value}}"
+                                       ng-checked="newData.keyTypeIds.indexOf(type.value) > -1"
+                                       ng-click="toggleKeyTypeOption(type.value)"/>
+                                {{type.name}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary" ng-click="create()">创建</button>
+            </div>
+
+        </form>
+
+    </div>
+    <!-- /.box -->
+
+    <div class="box-group" id="results">
+        <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
+        <div class="panel box box-primary" ng-repeat="item in results track by $id(item)">
+            <!--track by $index-->
+            <div class="box-header">
+                <h4 class="box-title">
+                    <a data-toggle="collapse" href="#collapse{{item.index}}">
+                        {{item.productTypeName}}&nbsp;
+                        <span ng-show="item.active" style="color:#45e40f"><i class="fa fa-fw fa-check"></i>已激活</span>
+                    </a>
+                </h4>
+
+                <div style="width:100%; text-align:right; padding:5px 5px 0px 0px">
+                    <button class="btn btn-primary btn-sm" ng-click="active(item.index)" ng-disabled="item.active">
+                        批量激活
+                    </button>
+                </div>
+            </div>
+            <div id="collapse{{item.index}}" class="panel-collapse collapse in">
+                <div class="box-body">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>ID</th>
+                            <th>产品名称</th>
+                            <th ng-repeat="keyTypeId in item.productKeyTypeIds">
+                                {{getTypeName(keyTypeId)}}
+                            </th>
+                            <th>创建时间</th>
+                        </tr>
+                        <tr ng-repeat="product in item.products">
+                            <td>{{product.productId}}</td>
+                            <td>{{item.productTypeName}}</td>
+                            <td ng-repeat="key in product.keys">http://io1s.com/{{key}}</td>
+                            <td>{{getDateString(item.createDateTime)}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</section><!-- /.content -->
