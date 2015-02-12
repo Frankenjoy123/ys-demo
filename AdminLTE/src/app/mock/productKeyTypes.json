@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "code": "QRCODE_PUBLIC",
+    "description": "二维码"
+  },
+  {
+    "id": 2,
+    "code": "QRCODE_SECURE",
+    "description": "隐藏二维码"
+  },
+  {
+    "id": 3,
+    "code": "RFID",
+    "description": "RFID标签"
+  }
+]
