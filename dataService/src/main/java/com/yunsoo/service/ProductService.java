@@ -6,6 +6,7 @@ public interface ProductService {
 
 	public Product getByKey(String key);
 
+    public void batchCreate();
 
 	public void active();
 }

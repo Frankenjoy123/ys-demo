@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.dao.S3ItemDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 /**
  * Created by Zhe on 2015/2/9.
  */
+@Repository("s3ItemDao")
 public class S3ItemDaoImpl implements S3ItemDao {
     private static final String SUFFIX = "/";
     private static ObjectMapper mapper = new ObjectMapper();
@@ -76,18 +78,19 @@ public class S3ItemDaoImpl implements S3ItemDao {
         PipedInputStream inputStream = new PipedInputStream();
         PipedOutputStream outputStream = new PipedOutputStream();
         try {
-            amazonS3Client.putObject(new PutObjectRequest(bucketName, key, inputStream, null));
             outputStream.connect(inputStream);
+            amazonS3Client.putObject(new PutObjectRequest(bucketName, key, inputStream, null));
 //            outputStream = new PipedOutputStream(inputStream);
             mapper.writeValue(outputStream, item);
             outputStream.flush();
 
         } catch (Exception ex) {
             //todo:
-            throw new Exception("Note: putItem fail!");
+            throw new Exception("Note: putItem fail!", ex);
         } finally {
 //            assert outputStream != null;
             outputStream.close();
+            inputStream.close();
         }
 
     }

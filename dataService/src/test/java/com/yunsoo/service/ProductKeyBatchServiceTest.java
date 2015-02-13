@@ -2,6 +2,9 @@ package com.yunsoo.service;
 
 import com.yunsoo.dao.util.SpringDaoUtil;
 import com.yunsoo.service.contract.ProductKeyBatch;
+import com.yunsoo.service.contract.ProductKeyBatchCreateRequest;
+import com.yunsoo.service.contract.ProductKeyBatchCreateResponse;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -11,7 +14,6 @@ import org.springframework.context.ApplicationContext;
  * Created on:   2015/2/6
  * Descriptions:
  */
-//@RunWith(SpringJUnit4ClassRunner.class)
 public class ProductKeyBatchServiceTest {
 
     private ProductKeyBatchService productKeyBatchService;
@@ -28,4 +30,21 @@ public class ProductKeyBatchServiceTest {
         System.out.println((batch != null));
         assert true;
     }
+
+    @Test
+    public void test_create() throws Exception {
+        ProductKeyBatch keyBatch = new ProductKeyBatch();
+        keyBatch.setQuantity(5);
+        keyBatch.setStatusId(0);
+        keyBatch.setCreatedClientId(100);
+        keyBatch.setCreatedAccountId(1000);
+        keyBatch.setCreatedDateTime(DateTime.now());
+        keyBatch.setProductKeyTypeIds(new int[]{1, 2});
+        ProductKeyBatch response = productKeyBatchService.create(keyBatch);
+        String batchId = response.getId();
+        System.out.println(batchId);
+        ProductKeyBatch batch = productKeyBatchService.getById(batchId);
+        assert batch != null;
+    }
+
 }

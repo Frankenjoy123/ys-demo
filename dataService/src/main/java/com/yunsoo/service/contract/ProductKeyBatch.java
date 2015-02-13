@@ -18,6 +18,7 @@ public class ProductKeyBatch {
     private int createdAccountId;
     private DateTime createdDateTime;
     private int[] productKeyTypeIds;
+    private String productKeysAddress;
     private List<List<String>> productKeys;
 
 
@@ -29,6 +30,7 @@ public class ProductKeyBatch {
         this.id = id;
     }
 
+
     public int getQuantity() {
         return quantity;
     }
@@ -36,6 +38,7 @@ public class ProductKeyBatch {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
 
     public int getStatusId() {
         return statusId;
@@ -45,6 +48,7 @@ public class ProductKeyBatch {
         this.statusId = statusId;
     }
 
+
     public int getCreatedClientId() {
         return createdClientId;
     }
@@ -52,6 +56,7 @@ public class ProductKeyBatch {
     public void setCreatedClientId(int createdClientId) {
         this.createdClientId = createdClientId;
     }
+
 
     public int getCreatedAccountId() {
         return createdAccountId;
@@ -61,6 +66,7 @@ public class ProductKeyBatch {
         this.createdAccountId = createdAccountId;
     }
 
+
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
@@ -69,6 +75,7 @@ public class ProductKeyBatch {
         this.createdDateTime = createdDateTime;
     }
 
+
     public int[] getProductKeyTypeIds() {
         return productKeyTypeIds;
     }
@@ -76,6 +83,16 @@ public class ProductKeyBatch {
     public void setProductKeyTypeIds(int[] productKeyTypeIds) {
         this.productKeyTypeIds = productKeyTypeIds;
     }
+
+
+    public String getProductKeysAddress() {
+        return productKeysAddress;
+    }
+
+    public void setProductKeysAddress(String productKeysAddress) {
+        this.productKeysAddress = productKeysAddress;
+    }
+
 
     public List<List<String>> getProductKeys() {
         return productKeys;

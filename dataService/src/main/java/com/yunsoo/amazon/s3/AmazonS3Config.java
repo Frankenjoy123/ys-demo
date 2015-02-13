@@ -1,4 +1,4 @@
-package com.yunsoo.nosql.s3;
+package com.yunsoo.amazon.s3;
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Region;

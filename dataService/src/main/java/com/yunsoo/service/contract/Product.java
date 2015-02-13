@@ -1,8 +1,5 @@
 package com.yunsoo.service.contract;
 
-
-import com.yunsoo.dbmodel.ProductModel;
-
 import java.util.Date;
 
 /**
