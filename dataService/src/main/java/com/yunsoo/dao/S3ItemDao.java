@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.S3Object;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -29,5 +30,5 @@ public interface S3ItemDao {
 
     public <T> void putItem(T item, String bucketName, String key);
 
-    public <T> T getItem(Class<T> clazz, String bucketName, String key);
+    public <T> T getItem(String bucketName, String key, Class<T> clazz);
 }

@@ -3,12 +3,14 @@ package com.yunsoo.dao.impl;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.services.s3.model.S3Object;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.dao.S3ItemDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 
 /**
@@ -16,6 +18,7 @@ import java.util.List;
  */
 public class S3ItemDaoImpl implements S3ItemDao {
     private static final String SUFFIX = "/";
+    private static ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     AmazonS3Client amazonS3Client;
@@ -73,11 +76,20 @@ public class S3ItemDaoImpl implements S3ItemDao {
 
     @Override
     public <T> void putItem(T item, String bucketName, String key) {
+        //mapper.writeValue("", item);
 
     }
 
     @Override
-    public <T> T getItem(Class<T> clazz, String bucketName, String key) {
-        return null;
+    public <T> T getItem(String bucketName, String key, Class<T> clazz) {
+        String content = "[]"; //todo: get content form s3
+
+        try {
+            T item = mapper.readValue(content, clazz);
+            return item;
+        } catch (Exception ex) {
+            //todo:
+            return null;
+        }
     }
 }
