@@ -2,15 +2,11 @@ package com.yunsoo.dao.impl;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
-import com.amazonaws.services.s3.model.S3Object;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.dao.S3ItemDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -75,17 +71,34 @@ public class S3ItemDaoImpl implements S3ItemDao {
     }
 
     @Override
-    public <T> void putItem(T item, String bucketName, String key) {
-        //mapper.writeValue("", item);
+    public <T> void putItem(T item, String bucketName, String key) throws Exception {
+
+        PipedInputStream inputStream = new PipedInputStream();
+        PipedOutputStream outputStream = new PipedOutputStream();
+        try {
+            amazonS3Client.putObject(new PutObjectRequest(bucketName, key, inputStream, null));
+            outputStream.connect(inputStream);
+//            outputStream = new PipedOutputStream(inputStream);
+            mapper.writeValue(outputStream, item);
+            outputStream.flush();
+
+        } catch (Exception ex) {
+            //todo:
+            throw new Exception("Note: putItem fail!");
+        } finally {
+//            assert outputStream != null;
+            outputStream.close();
+        }
 
     }
 
     @Override
     public <T> T getItem(String bucketName, String key, Class<T> clazz) {
-        String content = "[]"; //todo: get content form s3
+        S3Object object = this.getItem(bucketName, key);
+        if (object == null) return null; //to-do
 
         try {
-            T item = mapper.readValue(content, clazz);
+            T item = mapper.readValue(object.getObjectContent(), clazz);
             return item;
         } catch (Exception ex) {
             //todo:

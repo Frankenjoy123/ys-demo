@@ -28,7 +28,7 @@ public interface S3ItemDao {
 
     public AmazonS3Client getClients();
 
-    public <T> void putItem(T item, String bucketName, String key);
+    public <T> void putItem(T item, String bucketName, String key) throws Exception;
 
     public <T> T getItem(String bucketName, String key, Class<T> clazz);
 }
