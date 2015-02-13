@@ -70,4 +70,14 @@ public class S3ItemDaoImpl implements S3ItemDao {
     public AmazonS3Client getClients() {
         return amazonS3Client;
     }
+
+    @Override
+    public <T> void putItem(T item, String bucketName, String key) {
+
+    }
+
+    @Override
+    public <T> T getItem(Class<T> clazz, String bucketName, String key) {
+        return null;
+    }
 }
