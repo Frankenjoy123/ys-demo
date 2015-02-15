@@ -14,19 +14,19 @@ import java.util.Date;
  */
 public class Product {
 
-    private int Id;
+    private String id;
     private int baseProductId;
     private int productStatusId;
     private Date manufacturingDate;
     private Date createdDateTime;
     private BaseProduct baseProduct;
 
-    public int getId() {
-        return Id;
+    public String getId() {
+        return id;
     }
 
-    public void setId(int id) {
-        this.Id = id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public int getBaseProductId() {

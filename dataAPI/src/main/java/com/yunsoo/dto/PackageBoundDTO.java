@@ -7,13 +7,21 @@ import java.util.List;
  */
 public class PackageBoundDTO {
     private long operator;
+    private final String packageKey;
     private List<String> keys;
+    
 
-    public PackageBoundDTO(long operator, List<String> keys) {
+    public PackageBoundDTO(long operator, String packageKey, List<String> keys) {
         this.operator = operator;
+        this.packageKey = packageKey;
         this.keys = keys;
     }
 
+    public String getPackageKey() {
+        return packageKey;
+    }
+    
+    
     public List<String> getKeys() {
         return keys;
     }

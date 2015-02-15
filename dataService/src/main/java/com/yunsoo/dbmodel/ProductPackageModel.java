@@ -23,20 +23,20 @@ import java.util.Set;
 @DynamoDBTable(tableName = "product_package")
 public class ProductPackageModel {
 
-    private String productKey;
+    private String key;
     private Set<String> childProductKeySet;
     private String parentProductKey;
     private int statusId;
     private Date createdDateTime;
-
+    private long operator;
 
     @DynamoDBHashKey(attributeName = "key") //product_key
-    public String getProductKey() {
-        return productKey;
+    public String getKey() {
+        return key;
     }
 
-    public void setProductKey(String productKey) {
-        this.productKey = productKey;
+    public void setKey(String productKey) {
+        this.key = productKey;
     }
 
     @DynamoDBAttribute(attributeName = "child_key_set") //child_product_key_set
@@ -74,4 +74,16 @@ public class ProductPackageModel {
     public void setCreatedDateTime(Date createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
+
+    @DynamoDBAttribute(attributeName = "operator")
+    public long getOperator() {
+        return operator;
+    }
+
+    public void setOperator(long operator) {
+        this.operator = operator;
+    }
+    
+    
+    
 }
