@@ -14,19 +14,19 @@ import java.util.Date;
  */
 public class Product {
 
-    private String id;
+    private String productKey;
     private int baseProductId;
     private int productStatusId;
     private Date manufacturingDate;
     private Date createdDateTime;
     private BaseProduct baseProduct;
 
-    public String getId() {
-        return id;
+    public String getProductKey() {
+        return productKey;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setProductKey(String id) {
+        this.productKey = id;
     }
 
     public int getBaseProductId() {
@@ -72,7 +72,7 @@ public class Product {
 //    public static ProductModel ToModel(Product product) {
 //        if (product == null) return null;
 //        ProductModel model = new ProductModel();
-//        model.setId(product.getId());
+//        model.setProductKey(product.getProductKey());
 //        model.setBaseProductId(product.getBaseProductId());
 //        model.setCreatedDateTime(product.getCreatedDateTime());
 //        model.setManufacturingDate(product.getManufacturingDate());
@@ -84,7 +84,7 @@ public class Product {
 //    public static Product FromModel(ProductModel model) {
 //        if (model == null) return null;
 //        Product product = new Product();
-//        product.setId(model.getId());
+//        product.setProductKey(model.getProductKey());
 //        product.setProductStatusId(model.getProductStatusId());
 //        product.setManufacturingDate(model.getManufacturingDate());
 //        product.setCreatedDateTime(model.getCreatedDateTime());

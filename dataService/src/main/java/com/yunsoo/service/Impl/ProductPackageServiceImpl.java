@@ -2,13 +2,10 @@ package com.yunsoo.service.Impl;
 
 import com.yunsoo.dao.ProductDao;
 import com.yunsoo.dao.ProductPackageDao;
-import com.yunsoo.dao.impl.ProductDaoImpl;
-import com.yunsoo.dbmodel.ProductCategoryModel;
 import com.yunsoo.dbmodel.ProductPackageModel;
 import com.yunsoo.service.ProductPackageService;
 import com.yunsoo.service.contract.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,7 +60,7 @@ public class ProductPackageServiceImpl implements ProductPackageService {
                 List<Product> products = new ArrayList<Product>();
                 for (String productKey : subKeys) {
                     Product product = new Product();
-                    product.setId(productKey);
+                    product.setProductKey(productKey);
                     products.add(product);
                 }
                 p.setProducts(products);

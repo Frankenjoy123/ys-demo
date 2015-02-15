@@ -2,6 +2,7 @@ package com.yunsoo.dao;
 
 import com.amazonaws.services.s3.model.Bucket;
 import com.yunsoo.dao.util.SpringDaoUtil;
+import com.yunsoo.util.YunsooConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -36,7 +37,7 @@ public class S3ItemDaoTest {
 
     @Test
     public void test_putItem() throws Exception {
-        String bucketName = "testBucket";
+        String bucketName = YunsooConfig.getProductKeyBatchS3bucketName();
         String key = "testKey";
         String item = "test";
 
