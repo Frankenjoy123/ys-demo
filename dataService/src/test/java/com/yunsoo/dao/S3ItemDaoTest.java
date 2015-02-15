@@ -1,9 +1,12 @@
 package com.yunsoo.dao;
 
+import com.amazonaws.services.s3.model.Bucket;
 import com.yunsoo.dao.util.SpringDaoUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
+
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -18,6 +21,16 @@ public class S3ItemDaoTest {
     public void setUp() throws Exception {
         ApplicationContext applicationContext = SpringDaoUtil.getApplicationContext();
         s3ItemDao = (S3ItemDao) applicationContext.getBean("s3ItemDao");
+    }
+
+    @Test
+    public void test_listBucket() {
+        List<Bucket> buckets = s3ItemDao.getBuckets();
+        if (buckets != null) {
+            buckets.forEach(item -> {
+                System.out.println(item.getName());
+            });
+        }
     }
 
 

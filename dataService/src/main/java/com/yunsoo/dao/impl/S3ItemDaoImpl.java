@@ -47,12 +47,11 @@ public class S3ItemDaoImpl implements S3ItemDao {
 
     @Override
     public S3Object getItem(String bucketName, String key) {
-        S3Object object = amazonS3Client.getObject(new GetObjectRequest(bucketName, key));
-        return object;
+        return amazonS3Client.getObject(new GetObjectRequest(bucketName, key));
     }
 
     @Override
-    public Boolean hasItem(String bucketName, String key) {
+    public boolean hasItem(String bucketName, String key) {
         return getItem(bucketName, key) != null;
     }
 
@@ -62,49 +61,30 @@ public class S3ItemDaoImpl implements S3ItemDao {
     }
 
     @Override
-    public List<Bucket> listItem(String bucketName) {
+    public List<Bucket> getBuckets() {
         return amazonS3Client.listBuckets();
-
-    }
-
-    @Override
-    public AmazonS3Client getClients() {
-        return amazonS3Client;
     }
 
     @Override
     public <T> void putItem(T item, String bucketName, String key) throws Exception {
 
-        PipedInputStream inputStream = new PipedInputStream();
-        PipedOutputStream outputStream = new PipedOutputStream();
         try {
-            outputStream.connect(inputStream);
+            byte[] buf = mapper.writeValueAsBytes(item);
+            InputStream inputStream = new ByteArrayInputStream(buf);
             amazonS3Client.putObject(new PutObjectRequest(bucketName, key, inputStream, null));
-//            outputStream = new PipedOutputStream(inputStream);
-            mapper.writeValue(outputStream, item);
-            outputStream.flush();
-
         } catch (Exception ex) {
-            //todo:
             throw new Exception("Note: putItem fail!", ex);
-        } finally {
-//            assert outputStream != null;
-            outputStream.close();
-            inputStream.close();
         }
-
     }
 
     @Override
     public <T> T getItem(String bucketName, String key, Class<T> clazz) {
         S3Object object = this.getItem(bucketName, key);
-        if (object == null) return null; //to-do
+        if (object == null) return null; //todo
 
         try {
-            T item = mapper.readValue(object.getObjectContent(), clazz);
-            return item;
+            return mapper.readValue(object.getObjectContent(), clazz);
         } catch (Exception ex) {
-            //todo:
             return null;
         }
     }

@@ -3,6 +3,9 @@
 
   app.factory("productKeyManageService", ["$http", function ($http) {
     return {
+      getProductKeyBatch: function () {
+
+      },
       getBaseProducts: function (fnSuccess) {
         $http.get("mock/baseProducts.json").success(function (data) {
           fnSuccess(data);
@@ -18,7 +21,7 @@
       createProductKeyBatch: function (request, fnSuccess, fnFail) {
 
       },
-      activeProductKeyBatch: function (request, fnSuccess){
+      activeProductKeyBatch: function (request, fnSuccess) {
 
       }
     };
@@ -139,7 +142,7 @@
       $.each(data.products, function (i, p) {
         $.ajax({
           //url: 'http://admin.page/api/products/' + p.keys[0] + '/active',
-          url: 'http://wweb.chinacloudapp.cn/api/products/' + p.keys[0] + '/active',
+          url: '/api/products/' + p.keys[0] + '/active',
           type: 'POST',
           dataType: 'json',
           data: requestData

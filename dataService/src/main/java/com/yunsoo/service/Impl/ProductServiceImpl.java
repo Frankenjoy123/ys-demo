@@ -1,6 +1,7 @@
 package com.yunsoo.service.Impl;
 
 
+import com.yunsoo.dbmodel.ProductModel;
 import com.yunsoo.service.contract.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Product getByKey(String key) {
+        ProductModel productModel = productDao.getByKey(key);
+        Product product = new Product();
 
 
 		return null;

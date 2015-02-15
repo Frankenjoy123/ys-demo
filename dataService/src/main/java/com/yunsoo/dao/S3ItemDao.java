@@ -20,13 +20,11 @@ public interface S3ItemDao {
 
     public S3Object getItem(String bucketName, String key);
 
-    public Boolean hasItem(String bucketName, String key);
+    public boolean hasItem(String bucketName, String key);
 
     public void deleteItem(String bucketName, String key);
 
-    public List<Bucket> listItem(String bucketName);
-
-    public AmazonS3Client getClients();
+    public List<Bucket> getBuckets();
 
     public <T> void putItem(T item, String bucketName, String key) throws Exception;
 
