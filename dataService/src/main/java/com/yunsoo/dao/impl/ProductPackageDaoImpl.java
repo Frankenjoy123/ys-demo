@@ -42,7 +42,7 @@ public class ProductPackageDaoImpl implements ProductPackageDao {
         List<Object> itemsToGet = new ArrayList<>();
         for (String key : keys) {
             ProductPackageModel model = new ProductPackageModel();
-            model.setKey(key);
+            model.setProductKey(key);
             itemsToGet.add(model);
         }
 

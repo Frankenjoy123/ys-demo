@@ -20,7 +20,12 @@ public class ProductServiceImpl implements ProductService {
 		return null;
 	}
 
-	@Override
+    @Override
+    public void batchCreate() {
+
+    }
+
+    @Override
 	public void active() {
 
 	}

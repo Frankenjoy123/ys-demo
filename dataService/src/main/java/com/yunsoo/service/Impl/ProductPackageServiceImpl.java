@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,10 +78,10 @@ public class ProductPackageServiceImpl implements ProductPackageService {
     @Override
     public boolean bind(String packageKey, List<String> subKeys, long operator) {
         ProductPackageModel model = new ProductPackageModel();
-        model.setKey(packageKey);
+        model.setProductKey(packageKey);
         model.setChildProductKeySet(new HashSet<>(subKeys));
         model.setParentProductKey(null);//currently not know
-        model.setCreatedDateTime(new Date());
+        model.setCreatedDateTime(new DateTime());
         model.setOperator(operator);
         packageDao.save(model);
 

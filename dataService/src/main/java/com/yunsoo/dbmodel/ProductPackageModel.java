@@ -29,6 +29,7 @@ public class ProductPackageModel {
     private String parentProductKey;
     private int statusId;
     private long createdDateTimeValue;
+    private long operator;
 
 
     @DynamoDBHashKey(attributeName = "key") //product_key

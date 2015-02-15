@@ -6,6 +6,8 @@
 package com.yunsoo.service.contract;
 
 import com.yunsoo.dbmodel.ProductPackageModel;
+import org.joda.time.DateTime;
+
 import java.util.Date;
 import java.util.List;
 
@@ -22,13 +24,13 @@ public class ProductPackage {
     private List<ProductPackage> subPackages;
     private List<Product> products;
     private long operator; // Will join to User table to get the user info 
-    private Date created_datetime;
+    private DateTime created_datetime;
 
     public ProductPackage() {
     }
 
     public ProductPackage(ProductPackageModel model) {
-        this.key = model.getKey();
+        this.key = model.getProductKey();
         this.productCount = 0;
         this.packageCount = 0;
         this.operator = model.getOperator();
@@ -97,11 +99,11 @@ public class ProductPackage {
         this.statusId = statusId;
     }
 
-    public Date getCreated_datetime() {
+    public DateTime getCreated_datetime() {
         return created_datetime;
     }
 
-    public void setCreated_datetime(Date created_datetime) {
+    public void setCreated_datetime(DateTime created_datetime) {
         this.created_datetime = created_datetime;
     }
 
