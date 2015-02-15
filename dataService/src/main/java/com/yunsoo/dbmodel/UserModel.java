@@ -38,7 +38,7 @@ public class UserModel {
     private String thumbnail;
     @Column(name = "status_id")
     private int statusId;
-    @Column(name = "created_datetime", nullable = true)
+    @Column(name = "created_datetime", nullable = true, updatable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 

@@ -110,7 +110,9 @@ public class User {
         model.setAddress(user.getAddress());
         model.setThumbnail(user.getThumbnail());
         model.setStatusId(user.getStatusId());
-        model.setCreatedDateTime(DateTime.parse(user.getCreatedDateTime()));
+        if (user.getCreatedDateTime() != null) {
+            model.setCreatedDateTime(DateTime.parse(user.getCreatedDateTime()));
+        }
         return model;
     }
 
