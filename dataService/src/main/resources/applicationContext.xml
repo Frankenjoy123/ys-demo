@@ -37,10 +37,6 @@
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
                 <prop key="hibernate.show_sql">true</prop>
                 <prop key="connection.pool_size">1</prop>
-                <!-- JDBC connection pool (use the built-in connection pool) -->
-                <!--<prop key="hibernate.connection.CharSet">UTF8</prop>-->
-                <!--<prop key="hibernate.connection.characterEncoding">UTF8</prop>-->
-                <!--<prop key="hibernate.connection.useUnicode">true</prop>-->
             </props>
         </property>
     </bean>
@@ -60,8 +56,5 @@
         </constructor-arg>
     </bean>
     -->
-    <!-- <bean id="yunsooTemplate" class="org.springframework.orm.hibernate4.HibernateTemplate">
-        <property name="sessionFactory" ref="mysessionFactory"></property> </bean>
-        <bean id="d" class="com.yunsoo.dao.impl.ProductKeyDaoImpl"> <property name="template"
-        ref="yunsooTemplate"></property> </bean> -->
+
 </beans>  
