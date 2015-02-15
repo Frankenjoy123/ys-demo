@@ -11,4 +11,7 @@ public interface ProductKeyBatchService {
 
     public ProductKeyBatch getById(String batchId);
 
+    public ProductKeyBatch getByIdWithProductKeys(String batchId);
+
+    public ProductKeyBatch create(ProductKeyBatch keyBatch);
 }

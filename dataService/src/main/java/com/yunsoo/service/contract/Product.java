@@ -2,6 +2,7 @@ package com.yunsoo.service.contract;
 
 
 import com.yunsoo.dbmodel.ProductModel;
+import org.joda.time.DateTime;
 
 import java.util.Date;
 
@@ -14,19 +15,19 @@ import java.util.Date;
  */
 public class Product {
 
-    private int Id;
+    private String productKey;
     private int baseProductId;
     private int productStatusId;
-    private Date manufacturingDate;
-    private Date createdDateTime;
+    private DateTime manufacturingDateTime;
+    private DateTime createdDateTime;
     private BaseProduct baseProduct;
 
-    public int getId() {
-        return Id;
+    public String getProductKey() {
+        return productKey;
     }
 
-    public void setId(int id) {
-        this.Id = id;
+    public void setProductKey(String productKey) {
+        this.productKey = productKey;
     }
 
     public int getBaseProductId() {
@@ -45,20 +46,20 @@ public class Product {
         this.productStatusId = productStatusId;
     }
 
-    public Date getManufacturingDate() {
-        return manufacturingDate;
+    public DateTime getManufacturingDateTime() {
+        return manufacturingDateTime;
     }
 
-    public void setManufacturingDate(Date manufacturingDate) {
-        this.manufacturingDate = manufacturingDate;
+    public void setManufacturingDateTime(DateTime manufacturingDateTime) {
+        this.manufacturingDateTime = manufacturingDateTime;
     }
 
-    public Date getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(Date createdDate) {
-        this.createdDateTime = createdDate;
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 
     public BaseProduct getBaseProduct() {
@@ -69,27 +70,4 @@ public class Product {
         this.baseProduct = baseProduct;
     }
 
-//    public static ProductModel ToModel(Product product) {
-//        if (product == null) return null;
-//        ProductModel model = new ProductModel();
-//        model.setId(product.getId());
-//        model.setBaseProductId(product.getBaseProductId());
-//        model.setCreatedDateTime(product.getCreatedDateTime());
-//        model.setManufacturingDate(product.getManufacturingDate());
-//        model.setProductStatusId(product.getProductStatusId());
-//        model.setBaseProductModel(BaseProduct.ToModel(product.getBaseProduct()));
-//        return model;
-//    }
-//
-//    public static Product FromModel(ProductModel model) {
-//        if (model == null) return null;
-//        Product product = new Product();
-//        product.setId(model.getId());
-//        product.setProductStatusId(model.getProductStatusId());
-//        product.setManufacturingDate(model.getManufacturingDate());
-//        product.setCreatedDateTime(model.getCreatedDateTime());
-//        product.setBaseProductId(model.getBaseProductId());
-//        product.setBaseProduct(BaseProduct.FromModel(model.getBaseProductModel()));
-//        return product;
-//    }
 }

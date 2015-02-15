@@ -2,7 +2,7 @@ package com.yunsoo.service.Impl;
 
 import java.util.List;
 
-import com.yunsoo.dbmodel.BaseProductModel;
+import com.yunsoo.service.contract.BaseProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,35 +16,37 @@ import com.yunsoo.service.BaseProductService;
  */
 
 @Service("baseProductService")
-public class BaseProductServiceImpl implements BaseProductService{
-	
-	@Autowired
-	private BaseProductDao baseProductDao;
+public class BaseProductServiceImpl implements BaseProductService {
 
-	@Override
-	public BaseProductModel getById(int id) {
-		return baseProductDao.getById(id);
-	}
+    @Autowired
+    private BaseProductDao baseProductDao;
 
-	@Override
-	public void save(BaseProductModel baseProductModel) {
-		baseProductDao.save(baseProductModel);
-	}
+    @Override
+    public BaseProduct getById(int id) {
+        return BaseProduct.FromModel(baseProductDao.getById(id));
+    }
 
-	@Override
-	public void update(BaseProductModel baseProductModel) {
-		baseProductDao.update(baseProductModel);
-	}
+    @Override
+    public void save(BaseProduct baseProductModel) {
+        baseProductDao.save(BaseProduct.ToModel(baseProductModel));
+    }
 
-	@Override
-	public void delete(BaseProductModel baseProductModel) {
-		baseProductDao.delete(baseProductModel);
-	}
+    @Override
+    public void update(BaseProduct baseProductModel) {
+        baseProductDao.update(BaseProduct.ToModel((baseProductModel)));
+    }
 
-	@Override
-	@Transactional
-	public List<BaseProductModel> getAllProducts() {
-		return baseProductDao.getAllBaseProducts();
-	}
+    @Override
+    public void delete(BaseProduct baseProduct) {
+        baseProductDao.delete(BaseProduct.ToModel(baseProduct));
+    }
+
+    @Override
+    @Transactional
+    public List<BaseProduct> getAllProducts() {
+
+        //return baseProductDao.getAllBaseProducts();
+        return null;
+    }
 
 }

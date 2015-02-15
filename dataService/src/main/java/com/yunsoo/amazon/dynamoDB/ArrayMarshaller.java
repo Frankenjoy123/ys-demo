@@ -1,4 +1,4 @@
-package com.yunsoo.nosql.dynamoDB;
+package com.yunsoo.amazon.dynamoDB;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.JsonMarshaller;
 

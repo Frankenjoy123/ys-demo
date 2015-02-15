@@ -2,9 +2,10 @@ package com.yunsoo.dbmodel;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import org.joda.time.DateTime;
 
-import java.util.Date;
 import java.util.Set;
 
 /**
@@ -27,7 +28,8 @@ public class ProductPackageModel {
     private Set<String> childProductKeySet;
     private String parentProductKey;
     private int statusId;
-    private Date createdDateTime;
+    private long createdDateTimeValue;
+    private long operator;
 
 
     @DynamoDBHashKey(attributeName = "key") //product_key
@@ -48,6 +50,7 @@ public class ProductPackageModel {
         this.childProductKeySet = childProductKeySet;
     }
 
+
     @DynamoDBAttribute(attributeName = "parent_key") //parent_product_key
     public String getParentProductKey() {
         return parentProductKey;
@@ -56,6 +59,7 @@ public class ProductPackageModel {
     public void setParentProductKey(String parentProductKey) {
         this.parentProductKey = parentProductKey;
     }
+
 
     @DynamoDBAttribute(attributeName = "status_id") //status_id
     public int getStatusId() {
@@ -66,12 +70,34 @@ public class ProductPackageModel {
         this.statusId = statusId;
     }
 
-    @DynamoDBAttribute(attributeName = "c_dt") //created_datetime
-    public Date getCreatedDateTime() {
-        return createdDateTime;
+
+    @DynamoDBIgnore
+    public DateTime getCreatedDateTime() {
+        return new DateTime(createdDateTimeValue);
     }
 
-    public void setCreatedDateTime(Date createdDateTime) {
-        this.createdDateTime = createdDateTime;
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTimeValue = createdDateTime.getMillis();
     }
+
+    @DynamoDBAttribute(attributeName = "c_dt") //created_datetime
+    public long getCreatedDateTimeValue() {
+        return createdDateTimeValue;
+    }
+
+    public void setCreatedDateTimeValue(long createdDateTimeValue) {
+        this.createdDateTimeValue = createdDateTimeValue;
+    }
+
+    @DynamoDBAttribute(attributeName = "operator")
+    public long getOperator() {
+        return operator;
+    }
+
+    public void setOperator(long operator) {
+        this.operator = operator;
+    }
+    
+    
+    
 }

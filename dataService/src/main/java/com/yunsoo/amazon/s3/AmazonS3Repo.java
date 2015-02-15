@@ -1,4 +1,4 @@
-package com.yunsoo.nosql.s3;
+package com.yunsoo.amazon.s3;
 
 /**
  * Created by:   Lijian

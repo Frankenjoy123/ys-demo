@@ -1,4 +1,4 @@
-package com.yunsoo.nosql.dynamoDB;
+package com.yunsoo.amazon.dynamoDB;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;

@@ -2,16 +2,16 @@ package com.yunsoo.service;
 
 import java.util.List;
 
-import com.yunsoo.dbmodel.BaseProductModel;
+import com.yunsoo.service.contract.BaseProduct;
 
 public interface BaseProductService {
-	public BaseProductModel getById(int id);
+    public BaseProduct getById(int id);
 
-	public void save(BaseProductModel baseProductModel);
+    public void save(BaseProduct baseProductModel);
 
-	public void update(BaseProductModel baseProductModel);
+    public void update(BaseProduct baseProductModel);
 
-	public void delete(BaseProductModel baseProductModel);
+    public void delete(BaseProduct baseProductModel);
 
-	public List<BaseProductModel> getAllProducts();
+    public List<BaseProduct> getAllProducts();
 }

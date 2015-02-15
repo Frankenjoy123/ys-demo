@@ -1,4 +1,4 @@
-package com.yunsoo.nosql.dynamoDB;
+package com.yunsoo.amazon.dynamoDB;
 
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.yunsoo.dbmodel.ProductModel;
@@ -7,11 +7,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -38,22 +33,5 @@ public class AmazonDynamoDBRepoTest {
         System.out.println(desc);
         assertNotNull(desc);
     }
-
-    @Test
-    public void test_putItem() {
-        List<ProductModel> items = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            ProductModel item = new ProductModel();
-            item.setProductKey("TestBatchWrite1-" + i);
-            item.setBaseProductId(1);
-            item.setStatusId(1);
-            item.setManufacturingDateTime(new GregorianCalendar(2014, 12, 25).getTime());
-            item.setCreatedDateTime(new Date());
-            items.add(item);
-        }
-
-        dynamoDBMapper.batchSave(items);
-    }
-
 
 }
