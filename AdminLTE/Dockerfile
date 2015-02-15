@@ -5,13 +5,15 @@ RUN apt-get update && \
     apt-get install zip curl -y && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /var/yunsoo && \
-    curl -o /var/yunsoo/dev.zip -L https://github.com/dataDeathKnight/yunsoo/archive/dev.zip && \
-    cd /var/yunsoo && unzip dev.zip && mv yunsoo-dev/* . && rm -rf yunsoo-dev dev.zip && \
-    rm -rf /usr/share/nginx/html/* && \
-    cp -r /var/yunsoo/AdminLTE/src/app/* /usr/share/nginx/html && \
-    rm -rf /var/yunsoo
-RUN ls
-AdminLTE/nginx.server.conf /etc/nginx/conf.d/default.conf
+#RUN mkdir -p /var/yunsoo && \
+#    curl -o /var/yunsoo/dev.zip -L https://github.com/dataDeathKnight/yunsoo/archive/dev.zip && \
+#    cd /var/yunsoo && unzip dev.zip && mv yunsoo-dev/* . && rm -rf yunsoo-dev dev.zip && \
+#    rm -rf /usr/share/nginx/html/* && \
+#    cp -r /var/yunsoo/AdminLTE/src/app/* /usr/share/nginx/html && \
+#    rm -rf /var/yunsoo
+
+#WORKDIR /var/yunsoo/admin
+COPY AdminLTE/src/app/* /usr/share/nginx/html
+COPY AdminLTE/nginx.server.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
