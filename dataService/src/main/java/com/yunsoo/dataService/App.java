@@ -40,25 +40,25 @@ public class App {
         System.out.println("Done!");
     }
 
-    public static void TestBaseProduct(ApplicationContext applicationContext) {
-        BaseProductService baseProductService = (BaseProductService) applicationContext
-                .getBean("baseProductService");
-        System.out.println("BaseProductModel List : "
-                + baseProductService.getAllProducts());
-
-        BaseProductModel baseProd = new BaseProductModel();
-        // prodKey.setId(0);
-        baseProd.setBarcode("BAR88CODE");
-        baseProd.setName("COFFEE @CN BRAND");
-        baseProd.setDescription("Des TBD");
-        baseProd.setDetails("This is Coffee!");
-        baseProd.setManufacturerId(20);
-        baseProd.setShelfLife(11);
-        baseProd.setShelfLifeInterval("PH1");
-        baseProd.setSubCategoryId(1);
-        baseProd.setCreatedDateTime(new Date());
-        baseProductService.save(baseProd);
-    }
+//    public static void TestBaseProduct(ApplicationContext applicationContext) {
+//        BaseProductService baseProductService = (BaseProductService) applicationContext
+//                .getBean("baseProductService");
+//        System.out.println("BaseProductModel List : "
+//                + baseProductService.getAllProducts());
+//
+//        BaseProductModel baseProd = new BaseProductModel();
+//        // prodKey.setId(0);
+//        baseProd.setBarcode("BAR88CODE");
+//        baseProd.setName("COFFEE @CN BRAND");
+//        baseProd.setDescription("Des TBD");
+//        baseProd.setDetails("This is Coffee!");
+//        baseProd.setManufacturerId(20);
+//        baseProd.setShelfLife(11);
+//        baseProd.setShelfLifeInterval("PH1");
+//        baseProd.setSubCategoryId(1);
+//        baseProd.setCreatedDateTime(new Date());
+//        baseProductService.save(baseProd);
+//    }
 
 //    public static void TestProduct(ApplicationContext applicationContext) {
 //        ProductService productService = (ProductService) applicationContext

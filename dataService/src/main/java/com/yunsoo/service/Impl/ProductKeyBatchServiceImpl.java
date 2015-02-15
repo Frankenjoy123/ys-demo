@@ -4,6 +4,7 @@ import com.yunsoo.dao.ProductKeyBatchDao;
 import com.yunsoo.dao.ProductKeyDao;
 import com.yunsoo.dao.S3ItemDao;
 import com.yunsoo.dbmodel.ProductKeyBatchModel;
+import com.yunsoo.dbmodel.ProductKeyBatchS3ObjectModel;
 import com.yunsoo.dbmodel.ProductKeyModel;
 import com.yunsoo.service.ProductKeyBatchService;
 import com.yunsoo.service.contract.ProductKeyBatch;
@@ -56,15 +57,19 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
         //todo: get productKeys from S3
         String address = keyBatch.getProductKeysAddress();
-//        if (address != null) {
-//            String[] tempArr = unformatAddress(address);
-//            List<List<String>> productKeys = s3ItemDao.getItem(
-//                    tempArr[0],
-//                    tempArr[1],
-//                    (Class<List<List<String>>>) new ArrayList<List<String>>().getClass());
-//
-//
-//        }
+
+        if (address != null) {
+            String[] tempArr = unformatAddress(address);
+            //ProductKeyBatchS3ObjectModel
+            ProductKeyBatchS3ObjectModel s3ObjectModel = s3ItemDao.getItem(
+                    tempArr[0],
+                    tempArr[1],
+                    ProductKeyBatchS3ObjectModel.class);
+            if (s3ObjectModel != null) {
+                keyBatch.setProductKeys(s3ObjectModel.getProductKeys());
+            }
+
+        }
 
         return keyBatch;
     }
@@ -135,11 +140,18 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         batchModel.setCreatedDateTime(keyBatch.getCreatedDateTime());
         batchModel.setProductKeyTypeIds(keyBatch.getProductKeyTypeIds());
 
+        //save keyList to S3
+        ProductKeyBatchS3ObjectModel s3ObjectModel = new ProductKeyBatchS3ObjectModel(batchModel);
+        s3ObjectModel.setProductKeys(keyList);
+        try {
+            s3ItemDao.putItem(s3ObjectModel, YunsooConfig.getProductKeyBatchS3bucketName(), batchId);
+        } catch (Exception ex) {
+            return null;
+        }
+
         String address = formatAddress(YunsooConfig.getProductKeyBatchS3bucketName(), batchId);
         batchModel.setProductKeysAddress(address);
         productkeyBatchDao.save(batchModel);
-
-        //todo: save keyList to S3
 
 
         //save ProductKeys
@@ -157,6 +169,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         result.setCreatedAccountId(batchModel.getCreatedAccountId());
         result.setCreatedDateTime(batchModel.getCreatedDateTime());
         result.setProductKeyTypeIds(keyTypeIds);
+        result.setProductKeys(keyList);
 
         return result;
     }
