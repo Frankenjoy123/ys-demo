@@ -11,7 +11,7 @@ RUN mkdir -p /var/yunsoo && \
     rm -rf /usr/share/nginx/html/* && \
     cp -r /var/yunsoo/AdminLTE/src/app/* /usr/share/nginx/html && \
     rm -rf /var/yunsoo
-
-COPY AdminLTE/nginx.server.conf /etc/nginx/conf.d/default.conf
+RUN ls
+AdminLTE/nginx.server.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
