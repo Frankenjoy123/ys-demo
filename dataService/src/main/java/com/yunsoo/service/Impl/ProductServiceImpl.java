@@ -24,8 +24,8 @@ public class ProductServiceImpl implements ProductService {
     BaseProductService baseProductServicce;
 
     @Override
-    public Product getByKey(String key) {
-        ProductModel productModel = productDao.getByKey(key);
+    public Product getByKey(String productKey) {
+        ProductModel productModel = productDao.getByKey(productKey);
         if (productModel == null) {
             return null;
         }
@@ -59,7 +59,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void active() {
-
+    public void active(String productKey) {
+        ProductModel productModel = productDao.getByKey(productKey);
+        if (productModel != null) {
+            productModel.setStatusId(1); //active
+            productDao.save(productModel);
+        }
     }
 }
