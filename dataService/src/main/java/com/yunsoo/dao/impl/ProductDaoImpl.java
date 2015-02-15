@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.yunsoo.dao.ProductDao;
 
+import java.util.List;
+
 @Repository("productDao")
 public class ProductDaoImpl implements ProductDao {
 
@@ -21,6 +23,11 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public void save(ProductModel product) {
         dynamoDBMapper.save(product);
+    }
+
+    @Override
+    public void batchSave(List<ProductModel> products){
+        dynamoDBMapper.batchSave(products);
     }
 
     @Override
