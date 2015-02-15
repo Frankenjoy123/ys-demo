@@ -1,22 +1,30 @@
 (function () {
     var app = angular.module("root", [
-        "ngRoute", 
+        "ngRoute",
         "interceptor",
-        "head", 
+        "head",
         "nav",
-        "a", 
-        "b"
+        "accountManage",
+        "productKeyManage",
+        "msg"
     ]);
 
     app.config(["$routeProvider", function ($routeProvider) {
             $routeProvider
-                    .when('/a', {
-                        templateUrl: "pages/a/a.html",
-                        controller: "aCtrl"
+                    .when('/account', {
+                        templateUrl: "pages/account/manage.html",
+                        controller: "accountManageCtrl"
                     })
-                    .when('/b', {
-                        templateUrl: "pages/b/b.html",
-                        controller: "bCtrl"
+                    .when('/productKeyManage', {
+                        templateUrl: "pages/product/keyManage.html",
+                        controller: "productKeyManageCtrl"
+                    })
+                    .when('/msg', {
+                        templateUrl: "pages/msg/msg.html",
+                        controller: "msgCtrl"
+                    })
+                    .when('/test', {
+                        templateUrl: "pages/empty.html"
                     })
                     .otherwise({
                         redirectTo: "/"

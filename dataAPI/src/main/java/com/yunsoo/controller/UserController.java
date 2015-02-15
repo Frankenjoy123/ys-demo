@@ -32,6 +32,11 @@ public class UserController {
         return new ResponseEntity<User>(userService.get(id), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/cellular/{cellular}", method = RequestMethod.GET)
+    public ResponseEntity<User> getUserByCellular(@PathVariable(value = "cellular") String cellular) {
+        return new ResponseEntity<User>(userService.get(cellular), HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/token/{deviceCode}", method = RequestMethod.GET)
     public ResponseEntity<User> getUserByDeviceCode(@PathVariable(value = "deviceCode") String deviceCode) {
         //to-do

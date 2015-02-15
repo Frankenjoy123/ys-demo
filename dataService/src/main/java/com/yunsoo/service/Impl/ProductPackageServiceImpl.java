@@ -104,7 +104,7 @@ public class ProductPackageServiceImpl implements ProductPackageService {
         }
         model.setChildProductKeySet(new HashSet<>());
         model.setStatusId(1); //0 new, 1 revoke
-        
+
         packageDao.save(model);
         packageDao.batchSave(new HashSet<>(subModels));
         return true;
@@ -118,7 +118,6 @@ public class ProductPackageServiceImpl implements ProductPackageService {
             throw new IllegalArgumentException("This key is not a valid package key.");
         }
 
-       
         for (String subKey : revokeKeys) {
             if (model.getChildProductKeySet().contains(subKey)) {
                 ProductPackageModel subModel = packageDao.getByKey(subKey);

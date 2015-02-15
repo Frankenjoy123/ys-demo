@@ -1,5 +1,8 @@
 package com.yunsoo.dbmodel;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Set;
@@ -35,6 +38,10 @@ public class UserModel {
     private String thumbnail;
     @Column(name = "status_id")
     private int statusId;
+    @Column(name = "created_datetime", nullable = true)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdDateTime;
+
 //    @OneToMany
 //    @JoinTable(name="user_organization")
 //    @JoinColumn(name = "user_Id")
@@ -109,7 +116,15 @@ public class UserModel {
         this.statusId = status;
     }
 
-//    public Set<UserOrganizationModel> getUserOrganizationModelSet() {
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    //    public Set<UserOrganizationModel> getUserOrganizationModelSet() {
 //        return userOrganizationModelSet;
 //    }
 //

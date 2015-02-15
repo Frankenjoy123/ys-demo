@@ -10,6 +10,8 @@ import java.util.List;
 public interface UserDao {
     public UserModel get(Long id);
 
+    public UserModel get(String cellular);
+
     public long save(UserModel userModel);
 
     public DaoStatus update(UserModel userModel);

@@ -38,7 +38,7 @@ public class ScanRecordModel {
 
     @Column(name = "created_datetime", nullable = true)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdDatetime;
+    private DateTime createdDateTime;
 
     public long getId() {
         return id;
@@ -97,10 +97,10 @@ public class ScanRecordModel {
     }
 
     public DateTime getCreatedDateTime() {
-        return createdDatetime;
+        return createdDateTime;
     }
 
     public void setCreatedDateTime(DateTime createDateTime) {
-        this.createdDatetime = createDateTime;
+        this.createdDateTime = createDateTime;
     }
 }
