@@ -6,13 +6,14 @@ import com.yunsoo.factory.ResultFactory;
 import com.yunsoo.service.MessageService;
 import com.yunsoo.service.ProductPackageService;
 import com.yunsoo.service.contract.Message;
+import com.yunsoo.service.contract.ProductPackage;
+import java.util.List;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 //import org.apache.http.HttpStatus;
 
@@ -39,26 +40,26 @@ public class PackageController {
      */
     @RequestMapping(value = "/bind", method = RequestMethod.POST)
     public ResponseEntity bind(@RequestBody PackageBoundDTO info) {
-        //TODO: create the bound relation, here we possibly bind products or packages.
-        // but we do not bind products and packages at the same time.
+        packageService.bind(info.getPackageKey(), info.getKeys(), info.getOperator());        
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
-    public ResponseEntity list(@PathVariable(value = "key") String key) {
-        //TODO: list all data below this key. {"products":"...."} or {"packages",[...]}
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity<ProductPackage> list(@PathVariable(value = "key") String key) {
+        ProductPackage p = packageService.list(key);
+        
+        return new ResponseEntity<>(p,HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/revokeAll/{key}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/revokeAll/{key}", method = RequestMethod.POST)
     public ResponseEntity revokeAll(@PathVariable(value = "key") String key) {
-        //TODO: revoke all the relations inside the key package.
+        boolean result = packageService.revoke(key);
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/revoke/{key}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/revoke/{key}", method = RequestMethod.POST)
     public ResponseEntity revoke(@PathVariable(value = "key") String key, @RequestBody List<String> subKeys) {
-        //TODO: revoke sub key relations. Nested revoke is not supported.
+        boolean result = packageService.revoke(key, subKeys);
         return new ResponseEntity(HttpStatus.OK);
     }
 

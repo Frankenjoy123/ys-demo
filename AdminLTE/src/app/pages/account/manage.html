@@ -1,14 +1,131 @@
 <div class="account-manage"  ng-controller="accountManageCtrl">
-    <ul>
-        <li class="row">
-            <div class="col-md-2 col-lg-2 col-sm-2">序号</div>
-            <div class="col-md-2 col-lg-2 col-sm-2">姓名</div>
-        </li>
-    </ul>
-    <ul ng-repeat="account in data.accounts">
-        <li class="row">
-            <div class="col-md-2 col-lg-2 col-sm-2">{{account.id}}</div>
-            <div class="col-md-2 col-lg-2 col-sm-2">{{account.name}}</div>
-        </li>
-    </ul>
+    <div class="toolbar">
+        <div class='pull-left'>每页显示
+            <span class="dropdown" dropdown>
+                <a href class="dropdown-toggle" data-toggle="dropdown">
+                    {{paging.size}}
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href ng-click="setPaging(10)">10</a></li>
+                    <li><a href ng-click="setPaging(20)">20</a></li>
+                    <li><a href ng-click="setPaging(50)">50</a></li>
+                    <li><a href ng-click="setPaging(100)">100</a></li>
+                </ul>
+            </span>个
+        </div>
+        <div class='pull-left'>
+            <span class='glyphicon glyphicon-step-backward'
+                  ng-class='{"disabled": paging.index<1}'
+                  ng-click='gotoFirstPage()'></span>
+            <span class='glyphicon glyphicon-chevron-left'
+                  ng-class='{"disabled": paging.index<1}'
+                  ng-click='paging.index>0&&gotoPage(paging.index-1)'></span>
+            <span>第<a href>{{paging.index+1}}</a>页</span>
+            <span class='glyphicon glyphicon glyphicon-chevron-right'
+                  ng-class='{"disabled":data.accounts.length < (paging.index+1)*paging.size}'
+                  ng-click='data.accounts.length >= (paging.index+1)*paging.size && gotoPage(paging.index+1)'></span>
+            <span class='glyphicon glyphicon-step-forward'
+                  ng-class='{"disabled":data.accounts.length < (paging.index+1)*paging.size}'
+                  ng-click='gotoLastPage()'></span>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th ng-click='sort("employeeID")'>工号
+                    <span class="glyphicon"
+                          ng-class='{
+                              "glyphicon-sort": orderBy !== "employeeID",
+                              "glyphicon-sort-by-order": orderBy === "employeeID" && orderAsc,
+                              "glyphicon-sort-by-order-alt": orderBy === "employeeID" && !orderAsc
+                          }'></span>
+                </th>
+                <th ng-click='sort("name")'>姓名
+                    <span class="glyphicon"
+                          ng-class='{
+                              "glyphicon-sort": orderBy !== "name",
+                              "glyphicon-sort-by-order": orderBy === "name" && orderAsc,
+                              "glyphicon-sort-by-order-alt": orderBy === "name" && !orderAsc
+                          }'></span>
+                </th>
+                <th ng-click='sort("status")'>状态
+                    <span class="glyphicon"
+                          ng-class='{
+                              "glyphicon-sort": orderBy !== "status",
+                              "glyphicon-sort-by-order": orderBy === "status" && orderAsc,
+                              "glyphicon-sort-by-order-alt": orderBy === "status" && !orderAsc
+                          }'></span>
+                </th>
+                <th ng-click='sort("role")'>职位
+                    <span class="glyphicon"
+                          ng-class='{
+                              "glyphicon-sort": orderBy !== "role",
+                              "glyphicon-sort-by-order": orderBy === "role" && orderAsc,
+                              "glyphicon-sort-by-order-alt": orderBy === "role" && !orderAsc
+                          }'></span>
+                </th>
+                <th ng-click='sort("phone")'>电话
+                    <span class="glyphicon"
+                          ng-class='{
+                              "glyphicon-sort": orderBy !== "phone",
+                              "glyphicon-sort-by-order": orderBy === "phone" && orderAsc,
+                              "glyphicon-sort-by-order-alt": orderBy === "phone" && !orderAsc
+                          }'></span>
+                </th>
+                <th ng-click='sort("email")'>邮箱
+                    <span class="glyphicon"
+                          ng-class='{
+                              "glyphicon-sort": orderBy !== "email",
+                              "glyphicon-sort-by-order": orderBy === "email" && orderAsc,
+                              "glyphicon-sort-by-order-alt": orderBy === "email" && !orderAsc
+                          }'></span>
+                </th>
+                <th ng-click='sort("SSID")'>身份证号
+                    <span class="glyphicon"
+                          ng-class='{
+                              "glyphicon-sort": orderBy !== "SSID",
+                              "glyphicon-sort-by-order": orderBy === "SSID" && orderAsc,
+                              "glyphicon-sort-by-order-alt": orderBy === "SSID" && !orderAsc
+                          }'></span>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody ng-repeat="account in data.filteredAccounts">
+            <tr>
+                <th>
+                    <span>{{$index + 1 + paging.index * paging.size}}</span>
+                </th>
+                <td>
+                    <span ng-hide='account.mode'>{{account.employeeID}}</span>
+                    <input ng-show='account.mode' ng-model='account.employeeID' />
+                </td>
+                <td>
+                    <span ng-hide='account.mode'>{{account.name}}</span>
+                    <input ng-show='account.mode' ng-model='account.name' />
+                </td>
+                <td>{{account.status ? "启用中" : "已停用"}}</td>
+                <td>{{getRole(account.role)}}</td>
+                <td>
+                    <span ng-hide='account.mode'>{{account.phone}}</span>
+                    <input ng-show='account.mode' ng-model='account.phone' />
+                </td>
+                <td>
+                    <span ng-hide='account.mode'>{{account.email}}</span>
+                    <input ng-show='account.mode' ng-model='account.email' />
+                </td>
+                <td>
+                    <span ng-hide='account.mode'>{{account.SSID}}</span>
+                    <input ng-show='account.mode' ng-model='account.SSID' />
+                </td>
+                <td>
+                    <button ng-show='!account.mode' ng-click='editRow(account)'>编辑</button>
+                    <button ng-show='account.mode' ng-click='cancelRow(account)'>放弃</button>
+                    <button ng-show='account.mode' ng-click='saveRow(account)'>保存</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>

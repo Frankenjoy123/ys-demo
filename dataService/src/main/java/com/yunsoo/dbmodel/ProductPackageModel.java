@@ -87,4 +87,16 @@ public class ProductPackageModel {
     public void setCreatedDateTimeValue(long createdDateTimeValue) {
         this.createdDateTimeValue = createdDateTimeValue;
     }
+
+    @DynamoDBAttribute(attributeName = "operator")
+    public long getOperator() {
+        return operator;
+    }
+
+    public void setOperator(long operator) {
+        this.operator = operator;
+    }
+    
+    
+    
 }

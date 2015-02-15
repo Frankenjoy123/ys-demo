@@ -1,6 +1,9 @@
 package com.yunsoo.dao;
 
 import com.yunsoo.dbmodel.ProductPackageModel;
+import java.util.List;
+import java.util.Set;
+
 
 /**
  * Created by:   Lijian
@@ -9,9 +12,15 @@ import com.yunsoo.dbmodel.ProductPackageModel;
  */
 public interface ProductPackageDao {
 
-    public ProductPackageModel getByProductKey(String key);
+    public ProductPackageModel getByKey(String key);
 
-    public void save(ProductPackageModel productKeyModel);
+    public DaoStatus save(ProductPackageModel productKeyModel);
 
-    public void update(ProductPackageModel productKeyModel);
+    public DaoStatus update(ProductPackageModel productKeyModel);
+    
+    public List<ProductPackageModel> batchLoad(Set<String> keys);
+    
+    public DaoStatus batchSave(Set<ProductPackageModel> packages);
+    
+            
 }
