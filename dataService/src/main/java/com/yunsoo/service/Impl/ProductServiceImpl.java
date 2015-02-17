@@ -42,14 +42,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void batchCreate(BaseProduct baseProduct, List<String> productKeyList) {
-        if (baseProduct != null && productKeyList != null) {
+    public void batchCreate(int baseProductId, List<String> productKeyList) {
+        if (baseProductId > 0 && productKeyList != null) {
             List<ProductModel> products = new ArrayList<>();
             for (String key : productKeyList) {
                 ProductModel p = new ProductModel();
                 p.setProductKey(key);
                 p.setStatusId(0); //init to 0
-                p.setBaseProductId(baseProduct.getId());
+                p.setBaseProductId(baseProductId);
                 p.setCreatedDateTime(DateTime.now());
                 products.add(p);
             }

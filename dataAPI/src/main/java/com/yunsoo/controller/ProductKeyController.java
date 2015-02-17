@@ -1,15 +1,32 @@
 package com.yunsoo.controller;
 
 import com.yunsoo.ProductKey;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.yunsoo.dto.ProductKeyBatchDto;
+import com.yunsoo.service.ProductKeyBatchService;
+import com.yunsoo.service.ProductService;
+import com.yunsoo.service.contract.ProductKeyBatch;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 //import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/productkey")
 public class ProductKeyController {
+
+    private final ProductKeyBatchService productKeyBatchService;
+
+    private final ProductService productService;
+
+    @Autowired
+    ProductKeyController(ProductKeyBatchService productKeyBatchService, ProductService productService) {
+        this.productKeyBatchService = productKeyBatchService;
+        this.productService = productService;
+    }
 
     @RequestMapping(value = "/newkey", method = RequestMethod.GET)
     public ProductKey newProductKey() {
@@ -30,12 +47,44 @@ public class ProductKeyController {
     }
 
     //batch request product keys
-    @RequestMapping(value = "/request", method = RequestMethod.GET)
-    public void requestKeys(@PathVariable(value = "number") Integer number) {
-        //to-do
+    @RequestMapping(value = "/batch/request", method = RequestMethod.POST)
+    public ProductKeyBatchDto requestKeys(@RequestBody ProductKeyBatchDto batch) {
+        int quantity = batch.getQuantity();
+        int[] productKeyTypeIds = batch.getProductKeyTypeIds();
+        int baseProductId = batch.getBaseProductId();
+        int createdClientId = 1;
+        int createdAccountId = 1000;
+        DateTime createdDateTime = DateTime.now();
+
+        ProductKeyBatch keyBatch = new ProductKeyBatch();
+        keyBatch.setQuantity(quantity);
+        keyBatch.setProductKeyTypeIds(productKeyTypeIds);
+        keyBatch.setCreatedClientId(createdClientId);
+        keyBatch.setCreatedAccountId(createdAccountId);
+        keyBatch.setCreatedDateTime(createdDateTime);
+
+        //create product keys
+        ProductKeyBatch resultBatch = productKeyBatchService.create(keyBatch);
+        if (resultBatch != null) {
+            if (baseProductId > 0) {
+                //create products
+                List<String> keys = resultBatch.getProductKeys()
+                        .stream()
+                        .map(kl -> kl.get(0))
+                        .collect(Collectors.toList());
+                productService.batchCreate(baseProductId, keys);
+            }
+
+            ProductKeyBatchDto resultDto = new ProductKeyBatchDto();
+            resultDto.setId(resultBatch.getId());
+            resultDto.setQuantity(resultBatch.getQuantity());
+            resultDto.setProductKeyTypeIds(resultBatch.getProductKeyTypeIds());
+            resultDto.setCreatedDateTime(resultBatch.getCreatedDateTime());
+            resultDto.setProductKeysAddress(resultBatch.getProductKeysAddress());
+            return resultDto;
+        }
+        return null;
     }
-
-
 
 
 }
