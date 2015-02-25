@@ -12,8 +12,8 @@
 <!-- Main content -->
 <section class="content" ng-controller="productKeyManageCtrl">
     <div class="account-manage" ng-controller="accountManageCtrl">
-    <div class="toolbar">
-        <div class='pull-left'>每页显示
+        <div class="toolbar">
+            <div class='pull-left'>每页显示
             <span class="dropdown" dropdown>
                 <a href class="dropdown-toggle" data-toggle="dropdown">
                     {{paging.size}}
@@ -25,29 +25,29 @@
                     <li><a href ng-click="setPaging(100)">100</a></li>
                 </ul>
             </span>个
-        </div>
-        <div class='pull-left'>
+            </div>
+            <div class='pull-left'>
             <span class='glyphicon glyphicon-step-backward'
                   ng-class='{"disabled": paging.index<1}'
                   ng-click='gotoFirstPage()'></span>
             <span class='glyphicon glyphicon-chevron-left'
                   ng-class='{"disabled": paging.index<1}'
                   ng-click='paging.index>0&&gotoPage(paging.index-1)'></span>
-            <span>第<a href>{{paging.index+1}}</a>页</span>
+                <span>第<a href>{{paging.index+1}}</a>页</span>
             <span class='glyphicon glyphicon glyphicon-chevron-right'
                   ng-class='{"disabled":data.accounts.length < (paging.index+1)*paging.size}'
                   ng-click='data.accounts.length >= (paging.index+1)*paging.size && gotoPage(paging.index+1)'></span>
             <span class='glyphicon glyphicon-step-forward'
                   ng-class='{"disabled":data.accounts.length < (paging.index+1)*paging.size}'
                   ng-click='gotoLastPage()'></span>
+            </div>
         </div>
-    </div>
 
-    <table class="table table-striped">
-        <thead>
+        <table class="table table-striped dataTable">
+            <thead>
             <tr>
                 <th>#</th>
-                <th ng-click='sort("employeeID")'>工号
+                <th ng-click='sort("employeeID")' class="sorting">工号
                     <span class="glyphicon"
                           ng-class='{
                               "glyphicon-sort": orderBy !== "employeeID",
@@ -105,41 +105,50 @@
                 </th>
                 <th></th>
             </tr>
-        </thead>
-        <tbody ng-repeat="account in data.filteredAccounts">
+            </thead>
+            <tbody ng-repeat="account in data.filteredAccounts">
             <tr>
                 <th>
                     <span>{{$index + 1 + paging.index * paging.size}}</span>
                 </th>
                 <td>
                     <span ng-hide='account.mode'>{{account.employeeID}}</span>
-                    <input ng-show='account.mode' ng-model='account.employeeID' />
+                    <input ng-show='account.mode' ng-model='account.employeeID'/>
                 </td>
                 <td>
                     <span ng-hide='account.mode'>{{account.name}}</span>
-                    <input ng-show='account.mode' ng-model='account.name' />
+                    <input ng-show='account.mode' ng-model='account.name'/>
                 </td>
                 <td>{{account.status ? "启用中" : "已停用"}}</td>
                 <td>{{getRole(account.role)}}</td>
                 <td>
                     <span ng-hide='account.mode'>{{account.phone}}</span>
-                    <input ng-show='account.mode' ng-model='account.phone' />
+                    <input ng-show='account.mode' ng-model='account.phone'/>
                 </td>
                 <td>
                     <span ng-hide='account.mode'>{{account.email}}</span>
-                    <input ng-show='account.mode' ng-model='account.email' />
+                    <input ng-show='account.mode' ng-model='account.email'/>
                 </td>
                 <td>
                     <span ng-hide='account.mode'>{{account.SSID}}</span>
-                    <input ng-show='account.mode' ng-model='account.SSID' />
+                    <input ng-show='account.mode' ng-model='account.SSID'/>
                 </td>
                 <td>
-                    <button ng-show='!account.mode' ng-click='editRow(account)'>编辑</button>
-                    <button ng-show='account.mode' ng-click='cancelRow(account)'>放弃</button>
-                    <button ng-show='account.mode' ng-click='saveRow(account)'>保存</button>
+                    <button ng-show='!account.mode' class="btn btn-primary btn-sm"
+                            ng-click='editRow(account)'>
+                        <i class="fa fa-edit"></i> 编辑
+                    </button>
+                    <button ng-show='account.mode' class="btn btn-default btn-sm"
+                            ng-click='cancelRow(account)'>
+                        <i class="fa fa-undo"></i> 放弃
+                    </button>
+                    <button ng-show='account.mode' class="btn btn-primary btn-sm"
+                            ng-click='saveRow(account)'>
+                        <i class="fa fa-save"></i> 保存
+                    </button>
                 </td>
             </tr>
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
 </section>
