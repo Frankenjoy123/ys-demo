@@ -1,5 +1,6 @@
 package com.yunsoo.dbmodel;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -14,6 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 @XmlRootElement
+@DynamicUpdate
 //@NamedQueries({
 //    @NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e"),
 //    @NamedQuery(name = "Employee.findById", query = "SELECT e FROM Employee e WHERE e.id = :id"),

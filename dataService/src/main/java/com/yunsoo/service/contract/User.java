@@ -94,7 +94,9 @@ public class User {
         user.setId(Long.toString(model.getId()));
         user.setThumbnail(model.getThumbnail());
         user.setStatusId(model.getStatusId());
-        user.setCreatedDateTime(model.getCreatedDateTime().toString());
+        if (model.getCreatedDateTime() != null) {
+            user.setCreatedDateTime(model.getCreatedDateTime().toString());
+        }
         return user;
     }
 

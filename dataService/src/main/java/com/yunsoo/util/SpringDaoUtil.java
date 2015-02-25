@@ -1,4 +1,4 @@
-package com.yunsoo.dao.util;
+package com.yunsoo.util;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;

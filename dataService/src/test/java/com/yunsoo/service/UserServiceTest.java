@@ -1,29 +1,34 @@
 package com.yunsoo.service;
 
-import com.yunsoo.dao.util.SpringDaoUtil;
-import com.yunsoo.service.UserService;
+import com.yunsoo.util.SpringDaoUtil;
 import com.yunsoo.service.contract.User;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
 import static org.junit.Assert.*;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
 public class UserServiceTest {
 
+    @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
     private UserService userService;
 
     @Before
     public void setUp() throws Exception {
 //        applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
-        applicationContext = SpringDaoUtil.getApplicationContext();
-        userService = (UserService) applicationContext
-                .getBean("userService");
+//        applicationContext = SpringDaoUtil.getApplicationContext();
+//        userService = (UserService) applicationContext
+//                .getBean("userService");
     }
 
     @Test

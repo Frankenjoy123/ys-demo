@@ -1,32 +1,35 @@
 package com.yunsoo.service;
 
-import com.yunsoo.dao.util.SpringDaoUtil;
+import com.yunsoo.util.SpringDaoUtil;
 import com.yunsoo.service.contract.Message;
-import com.yunsoo.util.YunsooConfig;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import com.yunsoo.service.MessageService;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
 import static org.junit.Assert.*;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
 public class MessageServiceTest {
 
-    //    @Autowired
+    @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
     private MessageService messageService;
 
     @Before
     public void setUp() throws Exception {
 //        applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
-        applicationContext = SpringDaoUtil.getApplicationContext();
-        messageService = (MessageService) applicationContext
-                .getBean("messageService");
+//        applicationContext = SpringDaoUtil.getApplicationContext();
+//        messageService = (MessageService) applicationContext
+//                .getBean("messageService");
 
     }
 

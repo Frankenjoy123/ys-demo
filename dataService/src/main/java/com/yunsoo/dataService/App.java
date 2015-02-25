@@ -1,12 +1,11 @@
 package com.yunsoo.dataService;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
-import com.yunsoo.dao.util.SpringDaoUtil;
+import com.yunsoo.util.SpringDaoUtil;
 import com.yunsoo.dbmodel.*;
 import com.yunsoo.service.*;
 

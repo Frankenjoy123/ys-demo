@@ -3,6 +3,7 @@ package com.yunsoo.controller;
 import com.yunsoo.dto.ScanRecordDto;
 import com.yunsoo.dto.ScanResultDto;
 import com.yunsoo.service.ScanRecordService;
+import com.yunsoo.service.Impl.ScanRecordServiceImpl;
 import com.yunsoo.service.contract.ScanRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

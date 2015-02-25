@@ -2,15 +2,19 @@ package com.yunsoo.service;
 
 import java.util.List;
 
-import com.yunsoo.dao.util.SpringDaoUtil;
+import com.yunsoo.dao.ProductCategoryDao;
+import com.yunsoo.dao.impl.ProductCategoryDaoImpl;
+import com.yunsoo.service.Impl.ProductCategoryServiceImpl;
+import com.yunsoo.util.SpringDaoUtil;
 import com.yunsoo.service.contract.ProductCategory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -24,21 +28,38 @@ import static org.junit.Assert.assertNull;
 * Created By Zhe Zhang. 2015/1/26
 * */
 @RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration
 //@ComponentScan
-//@ContextConfiguration(locations = {"classpath:**/applicationContext.xml"})
+@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
+//@SpringApplicationConfiguration(classes = ProductCategoryServiceImpl.class)
 public class ProductCategoryServiceTest {
 
-    //    @Autowired
+//    @Configuration
+//    static class Config {
+//        // this bean will be injected into the ProductCategoryServiceTest class
+//        @Bean
+//        public ProductCategoryDao productCategoryDao() {
+//            ProductCategoryDao productCategoryDao = new ProductCategoryDaoImpl();
+//            return  productCategoryDao;
+//        }
+//        @Bean
+//        public ProductCategoryService productCategoryService() {
+//            ProductCategoryService productCategoryService1 = new ProductCategoryServiceImpl();
+//            // set properties, etc.
+//            return productCategoryService1;
+//        }
+//    }
+
+    @Autowired
     private ApplicationContext applicationContext;
-    //    @Autowired
+    @Autowired
     private ProductCategoryService productCategoryService;
 
     @Before
     public void setUp() {
-        //applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
-        applicationContext = SpringDaoUtil.getApplicationContext();
-        productCategoryService = (ProductCategoryService) applicationContext
-                .getBean("productCategoryService");
+//        applicationContext = SpringDaoUtil.getApplicationContext();
+//        productCategoryService = (ProductCategoryService) applicationContext
+//                .getBean("productCategoryService");
     }
 
 //    @After

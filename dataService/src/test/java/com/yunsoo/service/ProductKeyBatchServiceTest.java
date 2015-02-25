@@ -1,9 +1,7 @@
 package com.yunsoo.service;
 
-import com.yunsoo.dao.util.SpringDaoUtil;
+import com.yunsoo.util.SpringDaoUtil;
 import com.yunsoo.service.contract.ProductKeyBatch;
-import com.yunsoo.service.contract.ProductKeyBatchCreateRequest;
-import com.yunsoo.service.contract.ProductKeyBatchCreateResponse;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;

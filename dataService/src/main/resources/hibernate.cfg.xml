@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE hibernate-configuration PUBLIC
-"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-	<session-factory>
-		<mapping class="com.yunsoo.dbmodel.BaseProductModel"></mapping>
-		<mapping class="com.yunsoo.dbmodel.ProductCategoryModel"></mapping>
-		<mapping class="com.yunsoo.dbmodel.ProductSubCategoryModel"></mapping>
-		<mapping class="com.yunsoo.dbmodel.ProductKeyStatusModel"></mapping>
-		<mapping class="com.yunsoo.dbmodel.ProductKeyTypeModel"></mapping>
-		<mapping class="com.yunsoo.dbmodel.UserModel"/>
-		<mapping class="com.yunsoo.dbmodel.MessageModel"/>
-		<mapping class="com.yunsoo.dbmodel.ScanRecordModel"/>
-		<mapping class="com.yunsoo.dbmodel.UserOrganizationModel"/>
-		<!--<mapping class="com.yunsoo.dbmodel.LogisticsKeyTrackingModel"/>-->
-	</session-factory>
+    <session-factory>
+        <mapping class="com.yunsoo.dbmodel.BaseProductModel"></mapping>
+        <mapping class="com.yunsoo.dbmodel.ProductCategoryModel"></mapping>
+        <mapping class="com.yunsoo.dbmodel.ProductSubCategoryModel"></mapping>
+        <mapping class="com.yunsoo.dbmodel.ProductKeyStatusModel"></mapping>
+        <mapping class="com.yunsoo.dbmodel.ProductKeyTypeModel"></mapping>
+        <mapping class="com.yunsoo.dbmodel.UserModel"/>
+        <mapping class="com.yunsoo.dbmodel.MessageModel"/>
+        <mapping class="com.yunsoo.dbmodel.ScanRecordModel"/>
+        <mapping class="com.yunsoo.dbmodel.UserOrganizationModel"/>
+        <!--<mapping class="com.yunsoo.dbmodel.LogisticsKeyTrackingModel"/>-->
+    </session-factory>
 </hibernate-configuration>

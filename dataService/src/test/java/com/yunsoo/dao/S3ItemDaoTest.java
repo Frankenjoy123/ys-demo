@@ -1,7 +1,7 @@
 package com.yunsoo.dao;
 
 import com.amazonaws.services.s3.model.Bucket;
-import com.yunsoo.dao.util.SpringDaoUtil;
+import com.yunsoo.util.SpringDaoUtil;
 import com.yunsoo.util.YunsooConfig;
 import org.junit.Before;
 import org.junit.Test;
