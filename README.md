@@ -6,5 +6,4 @@ Yunsoo Platform consists of three modules:
 4, Admin Site, which is the enterprise admin site.
 
 Please contact with it@yunsu.co if any questions.
-
 Maintained by Yunsu technology.
