@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Repository("productKeyTypeDao")
 @Transactional
-public class ProductKeyTypeDaoImpl implements ProductKeyTypeDao{
+public class ProductKeyTypeDaoImpl implements ProductKeyTypeDao {
     @Autowired
     private SessionFactory sessionFactory;
 

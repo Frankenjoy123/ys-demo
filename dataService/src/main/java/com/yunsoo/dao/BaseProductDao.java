@@ -3,7 +3,6 @@ package com.yunsoo.dao;
 import java.util.List;
 
 import com.yunsoo.dbmodel.BaseProductModel;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BaseProductDao {
 

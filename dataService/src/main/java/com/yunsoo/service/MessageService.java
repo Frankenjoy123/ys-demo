@@ -1,6 +1,5 @@
 package com.yunsoo.service;
 
-import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.service.contract.Message;
 
 import java.util.List;

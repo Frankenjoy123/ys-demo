@@ -1,17 +1,10 @@
 package com.yunsoo.dataService;
 
-import com.yunsoo.service.contract.ProductCategory;
-import com.yunsoo.service.ProductCategoryService;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 /**
  * Unit test for simple App.

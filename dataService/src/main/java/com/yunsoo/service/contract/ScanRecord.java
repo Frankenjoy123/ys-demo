@@ -119,7 +119,7 @@ public class ScanRecord {
 //
 //        List<ScanRecord> scanRecordList = new ArrayList<ScanRecord>();
 //        for (ScanRecordModel model : modelList) {
-//            scanRecordList.add(com.yunsoo.service.contract.ScanRecord.FromModel(model));
+//            scanRecordList.add(ScanRecord.FromModel(model));
 //        }
 //        return scanRecordList;
     }

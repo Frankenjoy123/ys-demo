@@ -1,8 +1,3 @@
-allprojects {
-//    placeholder by Zhe
-    task showModuleNam << { task -> println "I'm $task.project.name" }
-
-}
 
 subprojects {
     apply plugin: "java"
@@ -20,14 +15,5 @@ subprojects {
         compile 'log4j:log4j:1.2.17'
         testCompile "junit:junit:4+"
     }
-
-//    placeholder by Zhe
-    showModuleNam << { task -> println "- I am the sub project of A" }
-
-}
-
-project(':dataService').showModuleNam << {
-    //    placeholder by Zhe
-    println "- I'm the core component and provide service for other parts."
 }
 

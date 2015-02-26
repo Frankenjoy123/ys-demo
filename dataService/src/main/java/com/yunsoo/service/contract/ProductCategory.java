@@ -86,7 +86,7 @@ public class ProductCategory {
         if (modelList == null) return null;
         List<ProductCategory> pcList = new ArrayList<ProductCategory>();
         for (ProductCategoryModel model : modelList) {
-            pcList.add(com.yunsoo.service.contract.ProductCategory.FromModel(model));
+            pcList.add(ProductCategory.FromModel(model));
         }
         return pcList;
     }
@@ -96,7 +96,7 @@ public class ProductCategory {
         if (pcList == null) return null;
         List<ProductCategoryModel> modelList = new ArrayList<ProductCategoryModel>();
         for (ProductCategory pc : pcList) {
-            modelList.add(com.yunsoo.service.contract.ProductCategory.ToModel(pc));
+            modelList.add(ProductCategory.ToModel(pc));
         }
         return modelList;
     }

@@ -1,6 +1,5 @@
 package com.yunsoo.service;
 
-import com.yunsoo.util.SpringDaoUtil;
 import com.yunsoo.service.contract.User;
 import org.junit.Before;
 import org.junit.Test;

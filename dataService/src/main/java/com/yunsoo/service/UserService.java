@@ -1,6 +1,5 @@
 package com.yunsoo.service;
 
-import com.yunsoo.dbmodel.UserModel;
 import com.yunsoo.service.contract.User;
 
 import java.util.List;

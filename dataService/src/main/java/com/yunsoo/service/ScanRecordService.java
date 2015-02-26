@@ -1,7 +1,6 @@
 package com.yunsoo.service;
 
 import com.yunsoo.service.contract.ScanRecord;
-import org.joda.time.DateTime;
 
 import java.util.List;
 

@@ -2,12 +2,17 @@ package com.yunsoo.dataService;
 
 import java.util.List;
 
+import com.yunsoo.dbmodel.ProductKeyStatusModel;
+import com.yunsoo.dbmodel.ProductKeyTypeModel;
+import com.yunsoo.service.ProductCategoryService;
+import com.yunsoo.service.ProductKeyStatusService;
+import com.yunsoo.service.ProductKeyTypeService;
+import com.yunsoo.service.UserService;
+import com.yunsoo.service.contract.ProductCategory;
+import com.yunsoo.util.SpringDaoUtil;
 import org.springframework.context.ApplicationContext;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
-import com.yunsoo.util.SpringDaoUtil;
-import com.yunsoo.dbmodel.*;
-import com.yunsoo.service.*;
 
 /**
  * Run app!
@@ -104,10 +109,10 @@ public class App {
         ProductCategoryService productCategoryService = (ProductCategoryService) applicationContext
                 .getBean("productCategoryService");
 
-        List<com.yunsoo.service.contract.ProductCategory> productCategoryModelList = productCategoryService.getRootProductCategories();
+        List<ProductCategory> productCategoryModelList = productCategoryService.getRootProductCategories();
         for (int i = 0; i < productCategoryModelList.size(); i++) {
             System.out.println("ProductModel Category (" + i + ") : " + productCategoryModelList.get(i).getName());
-            List<com.yunsoo.service.contract.ProductCategory> productCategoryModelList2 = productCategoryService.getProductCategoriesByParentId(productCategoryModelList.get(i).getId());
+            List<ProductCategory> productCategoryModelList2 = productCategoryService.getProductCategoriesByParentId(productCategoryModelList.get(i).getId());
             for (int j = 0; j < productCategoryModelList2.size(); j++) {
                 System.out.println("Sub ProductModel Category (" + j + ") : " + productCategoryModelList2.get(j).getName());
             }

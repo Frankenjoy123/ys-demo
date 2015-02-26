@@ -4,14 +4,14 @@
 // * and open the template in the editor.
 // */
 //
-//package com.yunsoo.service.Impl;
+//package com.com.yunsoo.api.service.Impl;
 //
-//import com.yunsoo.dao.LogisticsDao;
-//import com.yunsoo.dbmodel.LogisticsTrackingModel;
-//import com.yunsoo.service.LogisticsService;
-//import com.yunsoo.service.contract.LogisticsCreated;
-//import com.yunsoo.service.contract.LogisticsInfo;
-//import com.yunsoo.service.contract.LogisticsPath;
+//import com.com.yunsoo.api.dao.LogisticsDao;
+//import com.com.yunsoo.api.dbmodel.LogisticsTrackingModel;
+//import LogisticsService;
+//import LogisticsCreated;
+//import LogisticsInfo;
+//import LogisticsPath;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Service;
 //

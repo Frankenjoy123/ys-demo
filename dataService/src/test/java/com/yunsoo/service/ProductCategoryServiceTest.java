@@ -2,19 +2,12 @@ package com.yunsoo.service;
 
 import java.util.List;
 
-import com.yunsoo.dao.ProductCategoryDao;
-import com.yunsoo.dao.impl.ProductCategoryDaoImpl;
-import com.yunsoo.service.Impl.ProductCategoryServiceImpl;
-import com.yunsoo.util.SpringDaoUtil;
 import com.yunsoo.service.contract.ProductCategory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 

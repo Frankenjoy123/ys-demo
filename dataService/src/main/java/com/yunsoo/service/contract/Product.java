@@ -1,10 +1,7 @@
 package com.yunsoo.service.contract;
 
 
-import com.yunsoo.dbmodel.ProductModel;
 import org.joda.time.DateTime;
-
-import java.util.Date;
 
 /**
  * Created by Lijian on 2015/1/16.

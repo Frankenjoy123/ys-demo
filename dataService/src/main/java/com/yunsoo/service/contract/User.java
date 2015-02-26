@@ -123,7 +123,7 @@ public class User {
         if (modelList == null) return null;
         List<User> userList = new ArrayList<User>();
         for (UserModel model : modelList) {
-            userList.add(com.yunsoo.service.contract.User.FromModel(model));
+            userList.add(User.FromModel(model));
         }
         return userList;
     }
@@ -133,7 +133,7 @@ public class User {
         if (userList == null) return null;
         List<UserModel> modelList = new ArrayList<UserModel>();
         for (User user : userList) {
-            modelList.add(com.yunsoo.service.contract.User.ToModel(user));
+            modelList.add(User.ToModel(user));
         }
         return modelList;
     }

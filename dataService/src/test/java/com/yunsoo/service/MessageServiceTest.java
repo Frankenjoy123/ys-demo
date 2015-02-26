@@ -1,6 +1,5 @@
 package com.yunsoo.service;
 
-import com.yunsoo.util.SpringDaoUtil;
 import com.yunsoo.service.contract.Message;
 import org.joda.time.DateTime;
 import org.junit.Before;

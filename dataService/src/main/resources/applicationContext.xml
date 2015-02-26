@@ -48,7 +48,7 @@
             <ref bean="mysessionFactory" />
         </constructor-arg>
     </bean>
-    <bean id="productKeyDao" class="com.yunsoo.dao.impl.ProductKeyDaoImpl">
+    <bean id="productKeyDao" class="ProductKeyDaoImpl">
         <constructor-arg>
             <ref bean="mysessionFactory" />
         </constructor-arg>

@@ -2,9 +2,8 @@ package com.yunsoo.dbmodel;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-import com.yunsoo.dbmodel.OrganizationModel;
+
 import javax.persistence.*;
-import java.util.Set;
 
 /**
  * Created by Zhe on 2015/1/27.

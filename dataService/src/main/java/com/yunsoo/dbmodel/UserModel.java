@@ -6,7 +6,6 @@ import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Set;
 
 /**
  * @author Zhe Zhang

@@ -2,12 +2,12 @@ package com.yunsoo.service.Impl;
 
 import java.util.List;
 
+import com.yunsoo.service.ProductCategoryService;
+import com.yunsoo.service.contract.ProductCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.yunsoo.dao.ProductCategoryDao;
-import com.yunsoo.service.ProductCategoryService;
-import com.yunsoo.service.contract.ProductCategory;
 
 @Service("productCategoryService")
 public class ProductCategoryServiceImpl implements ProductCategoryService {

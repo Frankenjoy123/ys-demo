@@ -3,22 +3,17 @@ package com.yunsoo.dao.impl;
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.MessageDao;
 import com.yunsoo.dbmodel.MessageModel;
-import com.yunsoo.dbmodel.UserOrganizationModel;
 import com.yunsoo.util.YunsooConfig;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -157,6 +152,6 @@ public class MessageDaoImpl implements MessageDao {
 
 //        return messageModelList;
 
-        return getMessagesByFilter(null, null, 18L, null);
+        return getMessagesByFilter(null, null, 18L, false);
     }
 }

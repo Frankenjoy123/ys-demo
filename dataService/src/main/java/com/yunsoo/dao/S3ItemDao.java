@@ -1,12 +1,10 @@
 package com.yunsoo.dao;
 
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.S3Object;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.List;
 
 /**

@@ -2,7 +2,7 @@
 //
 //import org.hibernate.annotations.Type;
 //import org.joda.time.DateTime;
-//import com.yunsoo.dbmodel.OrganizationModel;
+//import OrganizationModel;
 //import javax.persistence.*;
 //import java.util.Set;
 //

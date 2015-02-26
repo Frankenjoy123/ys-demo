@@ -1,6 +1,6 @@
 package com.yunsoo.service;
 
-import com.yunsoo.service.contract.*;
+import com.yunsoo.service.contract.Product;
 
 import java.util.List;
 

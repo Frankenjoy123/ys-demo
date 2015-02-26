@@ -3,7 +3,6 @@ package com.yunsoo.service.Impl;
 
 import com.yunsoo.dbmodel.ProductModel;
 import com.yunsoo.service.BaseProductService;
-import com.yunsoo.service.contract.BaseProduct;
 import com.yunsoo.service.contract.Product;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;

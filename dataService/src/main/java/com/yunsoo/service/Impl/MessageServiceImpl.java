@@ -2,9 +2,9 @@ package com.yunsoo.service.Impl;
 
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.MessageDao;
+import com.yunsoo.service.contract.Message;
 import com.yunsoo.service.MessageService;
 import com.yunsoo.service.ServiceOperationStatus;
-import com.yunsoo.service.contract.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

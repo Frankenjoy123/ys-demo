@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.yunsoo.dbmodel.MessageModel;
 import org.joda.time.DateTime;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 

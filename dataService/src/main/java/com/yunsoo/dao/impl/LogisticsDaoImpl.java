@@ -3,14 +3,14 @@
 // * To change this template file, choose Tools | Templates
 // * and open the template in the editor.
 // */
-//package com.yunsoo.dao.impl;
+//package com.com.yunsoo.api.dao.impl;
 //
-//import com.yunsoo.dao.DaoStatus;
-//import com.yunsoo.dao.LogisticsDao;
-//import com.yunsoo.dbmodel.LogisticsCheckPathModel;
-//import com.yunsoo.dbmodel.LogisticsCheckPointModel;
-//import com.yunsoo.dbmodel.LogisticsKeyTrackingModel;
-//import com.yunsoo.dbmodel.LogisticsTrackingModel;
+//import DaoStatus;
+//import com.com.yunsoo.api.dao.LogisticsDao;
+//import com.com.yunsoo.api.dbmodel.LogisticsCheckPathModel;
+//import com.com.yunsoo.api.dbmodel.LogisticsCheckPointModel;
+//import com.com.yunsoo.api.dbmodel.LogisticsKeyTrackingModel;
+//import com.com.yunsoo.api.dbmodel.LogisticsTrackingModel;
 //import java.util.ArrayList;
 //import java.util.Iterator;
 //import java.util.List;

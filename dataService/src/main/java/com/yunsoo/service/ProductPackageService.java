@@ -1,7 +1,7 @@
 package com.yunsoo.service;
 
-import com.yunsoo.dbmodel.ProductPackageModel;
 import com.yunsoo.service.contract.ProductPackage;
+
 import java.util.List;
 
 /**
