@@ -30,6 +30,26 @@
             var date = new Date(value);
             return new DateTime(date).toString('yyyy-MM-dd HH:mm:ss');
         };
+
+        $scope.editRow = function (message) {
+            message.mode = 1;
+            message.tmptitle = message.title;
+            message.tmpbody = message.body;
+        };
+
+        $scope.cancelRow = function (message) {
+            message.mode = 0;
+            message.title = message.tmptitle;
+            message.body = message.tmpbody;
+        };
+
+        $scope.saveRow = function (message) {
+            message.mode = 0;
+        };
+
+        $scope.deleteRow = function (message) {
+            message.mode = 0;
+        };
     }]);
 
     var AngularDataTable = function (data) {
