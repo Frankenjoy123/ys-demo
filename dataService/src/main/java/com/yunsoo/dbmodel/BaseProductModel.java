@@ -16,8 +16,8 @@ public class BaseProductModel {
 	@GeneratedValue
 	@Column(name = "id")
 	private int Id;
-	@Column(name = "SUB_CATEGORY_ID")
-	private int subCategoryId;
+	@Column(name = "CATEGORY_ID")
+	private int categoryId;
 	@Column(name = "manufacturer_id")
 	private int manufacturerId;
 
@@ -46,12 +46,12 @@ public class BaseProductModel {
 		this.Id = id;
 	}
 
-	public int getSubCategoryId() {
-		return subCategoryId;
+	public int getCategoryId() {
+		return categoryId;
 	}
 
-	public void setSubCategoryId(int baseProductId) {
-		this.subCategoryId = baseProductId;
+	public void setCategoryId(int baseProductId) {
+		this.categoryId = baseProductId;
 	}
 
 	public int getManufacturerId() {
