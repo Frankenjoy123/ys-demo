@@ -52,10 +52,30 @@
                                 ng-repeat="da in dataTable.filteredData = (dataTable.data | filter:dataTable.filter) | orderBy:dataTable.sortColumn:dataTable.sortDescending | startFrom:dataTable.currentPageStart() | limitTo:dataTable.pageSize">
                         <tr>
                             <td>{{da.id}}</td>
-                            <td>{{da.title}}</td>
-                            <td>{{da.body}}</td>
+                            <td>
+                                <span ng-hide='da.mode'>{{da.title}}</span>
+                                <input ng-show='da.mode' ng-model='da.title'/>
+                            </td>
+                            <td>
+                                <span ng-hide='da.mode'>{{da.body}}</span>
+                                <input ng-show='da.mode' ng-model='da.body'/>
+                            </td>
                             <td>{{getDateString(da.createdDateTime)}}</td>
                             <td>{{getDateString(da.expireDateTime)}}</td>
+                            <td>
+                                <button ng-show='!da.mode' class="btn btn-primary btn-sm"
+                                        ng-click='editRow(da)'>
+                                    <i class="fa fa-edit"></i> 编辑
+                                </button>
+                                <button ng-show='da.mode' class="btn btn-default btn-sm"
+                                        ng-click='cancelRow(da)'>
+                                    <i class="fa fa-undo"></i> 放弃
+                                </button>
+                                <button ng-show='da.mode' class="btn btn-primary btn-sm"
+                                        ng-click='saveRow(da)'>
+                                    <i class="fa fa-save"></i> 保存
+                                </button>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
