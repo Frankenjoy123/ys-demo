@@ -7,7 +7,7 @@ package com.yunsoo.api.object;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Page {
+public class TPage {
 
     private String name;
     private String about;

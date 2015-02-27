@@ -104,7 +104,7 @@ public class BaseProduct {
         if (model == null) return null;
         BaseProduct baseProduct = new BaseProduct();
         baseProduct.setId(model.getId());
-        baseProduct.setSubCategoryId(model.getSubCategoryId());
+        baseProduct.setSubCategoryId(model.getCategoryId());
         baseProduct.setManufacturerId(model.getManufacturerId());
         baseProduct.setName(model.getName());
         baseProduct.setDescription(model.getDescription());
@@ -120,7 +120,7 @@ public class BaseProduct {
         if (baseProduct == null) return null;
         BaseProductModel model = new BaseProductModel();
         model.setId(baseProduct.getId());
-        model.setSubCategoryId(baseProduct.getSubCategoryId());
+        model.setCategoryId(baseProduct.getSubCategoryId());
         model.setManufacturerId(baseProduct.getManufacturerId());
         model.setName(baseProduct.getName());
         model.setDescription(baseProduct.getDescription());

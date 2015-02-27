@@ -1,6 +1,6 @@
 package com.yunsoo.api;
 
-import com.yunsoo.api.object.Page;
+import com.yunsoo.api.object.TPage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationContext;
@@ -14,7 +14,7 @@ public class Application {
 
     public static void main(String[] args) {
         RestTemplate restTemplate = new RestTemplate();
-        Page page = restTemplate.getForObject("http://graph.facebook.com/pivotalsoftware", Page.class);
+        TPage page = restTemplate.getForObject("http://graph.facebook.com/pivotalsoftware", TPage.class);
         System.out.println("Name:    " + page.getName());
         System.out.println("About:   " + page.getAbout());
         System.out.println("Phone:   " + page.getPhone());
