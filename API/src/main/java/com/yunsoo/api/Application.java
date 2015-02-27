@@ -6,10 +6,13 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@ComponentScan
-@EnableAutoConfiguration
-@Configuration
+//@ComponentScan
+//@EnableAutoConfiguration
+//@Configuration
+@SpringBootApplication
 public class Application {
 
     public static void main(String[] args) {

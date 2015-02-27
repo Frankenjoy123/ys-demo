@@ -4,14 +4,11 @@ import com.yunsoo.api.dto.ScanResult;
 import com.yunsoo.api.dto.basic.Logistics;
 import com.yunsoo.api.dto.basic.Product;
 import com.yunsoo.api.dto.basic.ProductCategory;
-import org.joda.time.DateTime;
+import com.yunsoo.api.exception.UnauthorizedException;
+//import org.joda.time.DateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +20,7 @@ import java.util.List;
 public class ScanController {
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
-    public ResponseEntity<ScanResult> getDetailByKey(@PathVariable(value = "key") String key) {
+    public ResponseEntity<?> getDetailByKey(@PathVariable(value = "key") String key) {
         ScanResult ScanResult = new ScanResult();
         ScanResult.setKeyType("new key");
         ScanResult.setLogisticsList(this.getFakeLogistics());
@@ -34,6 +31,11 @@ public class ScanController {
 //                0, 100);
 //        ScanResult.setScanRecord(ScanRecordDto.FromScanRecordList(scanRecordList));
         return new ResponseEntity(ScanResult, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/forbidden", method = RequestMethod.GET)
+    public ResponseEntity<?> forbidden() {
+        throw new UnauthorizedException("JB_USER_909");
     }
 
     private Product getFakeProduct() {
@@ -80,4 +82,5 @@ public class ScanController {
         logisticsList.add(logistics2);
         return logisticsList;
     }
+
 }
