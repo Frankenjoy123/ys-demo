@@ -5,7 +5,7 @@ package com.yunsoo.api.dto;
  * Created on:   2015/2/27
  * Descriptions:
  */
-public class ProductKeyStatus extends StatusBase {
+public class ProductKeyStatus extends StatusBase<ProductKeyStatus> {
     public static final ProductKeyStatus NORMAL = new ProductKeyStatus(0, "NORMAL");
     public static final ProductKeyStatus DELETED = new ProductKeyStatus(1, "DELETED");
 

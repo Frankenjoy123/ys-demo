@@ -13,7 +13,8 @@ public class StatusTest {
     public void compareStatus() {
         ProductStatus ps1 = ProductStatus.NEW;
         ProductStatus ps2 = new ProductStatus(0, "NEW");
-        System.out.println(ps1 == ps2);
+        assert ps1.equals(ps2);
+        assert ps1.compareTo(ps2) == 0;
 
     }
 }

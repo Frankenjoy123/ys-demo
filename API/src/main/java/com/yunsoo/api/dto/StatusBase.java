@@ -1,11 +1,13 @@
 package com.yunsoo.api.dto;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/2/27
  * Descriptions:
  */
-public abstract class StatusBase {
+public abstract class StatusBase<T extends StatusBase> implements Comparable<T> {
     private int id;
     private String code;
     private String description;
@@ -30,16 +32,8 @@ public abstract class StatusBase {
         return description;
     }
 
-    public void setDescription(String description) {
-        description = description;
-    }
-
     public boolean isActive() {
         return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     @Override
@@ -49,13 +43,17 @@ public abstract class StatusBase {
 
     @Override
     public int hashCode() {
-        return this.id;
+        return this.getId();
     }
 
     @Override
     public boolean equals(Object obj) {
         return this == obj
-                || (obj instanceof StatusBase
-                && this.getId() == ((StatusBase) obj).getId());
+                || (this.getClass().isInstance(obj) && this.getId() == ((StatusBase) obj).getId());
+    }
+
+    @Override
+    public int compareTo(T obj) {
+        return Integer.compare(this.getId(), obj.getId());
     }
 }
