@@ -1,6 +1,5 @@
 package com.yunsoo.api;
 
-import com.yunsoo.api.object.Page;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.*;
 import org.springframework.web.client.RestTemplate;

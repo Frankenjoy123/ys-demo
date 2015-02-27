@@ -1,4 +1,4 @@
-package com.yunsoo.api.object;
+package com.yunsoo.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
