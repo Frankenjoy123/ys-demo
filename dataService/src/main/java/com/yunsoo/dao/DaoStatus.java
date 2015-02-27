@@ -5,6 +5,6 @@ public enum DaoStatus {
     success,
     fail,
     invalidForPersistence,
-    NotFound, //Object not found in persistence layer
+    NotFound, //object not found in persistence layer
 
 }

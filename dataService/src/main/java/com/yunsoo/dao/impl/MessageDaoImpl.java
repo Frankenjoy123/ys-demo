@@ -130,10 +130,10 @@ public class MessageDaoImpl implements MessageDao {
 //                        .add(Property.forName("body"))
 //                        .add(Property.forName("digest"))
 //        );
-//        List<Object> list = criteria.list();
+//        List<object> list = criteria.list();
 //        Iterator it = list.iterator();
 //        while (it.hasNext()) {
-//            Object[] objects = (Object[]) it.next();
+//            object[] objects = (object[]) it.next();
 //        }
 
 //        String hql = "from UserOrganizationModel where id=" + userId + " from MessageModel where companyId=" + companyId;

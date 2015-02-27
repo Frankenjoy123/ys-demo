@@ -4,10 +4,9 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.*;
 import org.springframework.context.ApplicationContext;
-
 import java.util.Arrays;
 
-@ComponentScan
+@ComponentScan(basePackages = {"com.yunsoo"})
 @EnableAutoConfiguration
 @Configuration
 public class Application {
