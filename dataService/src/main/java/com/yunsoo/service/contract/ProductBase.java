@@ -1,13 +1,13 @@
 package com.yunsoo.service.contract;
 
-import com.yunsoo.dbmodel.BaseProductModel;
+import com.yunsoo.dbmodel.ProductBaseModel;
 
 import java.util.Date;
 
 /**
  * Created by Zhe on 2015/1/26.
  */
-public class BaseProduct {
+public class ProductBase {
 
     private int Id;
     private int subCategoryId;
@@ -100,35 +100,35 @@ public class BaseProduct {
         this.createdDateTime = createdDate;
     }
 
-    public static BaseProduct FromModel(BaseProductModel model) {
+    public static ProductBase FromModel(ProductBaseModel model) {
         if (model == null) return null;
-        BaseProduct baseProduct = new BaseProduct();
-        baseProduct.setId(model.getId());
-        baseProduct.setSubCategoryId(model.getCategoryId());
-        baseProduct.setManufacturerId(model.getManufacturerId());
-        baseProduct.setName(model.getName());
-        baseProduct.setDescription(model.getDescription());
-        baseProduct.setCreatedDateTime(model.getCreatedDateTime());
-        baseProduct.setBarcode(model.getBarcode());
-        baseProduct.setDetails(model.getDetails());
-        baseProduct.setShelfLife(model.getShelfLife());
-        baseProduct.setShelfLifeInterval(model.getShelfLifeInterval());
-        return baseProduct;
+        ProductBase productBase = new ProductBase();
+        productBase.setId(model.getId());
+        productBase.setSubCategoryId(model.getCategoryId());
+        productBase.setManufacturerId(model.getManufacturerId());
+        productBase.setName(model.getName());
+        productBase.setDescription(model.getDescription());
+        productBase.setCreatedDateTime(model.getCreatedDateTime());
+        productBase.setBarcode(model.getBarcode());
+        productBase.setDetails(model.getDetails());
+        productBase.setShelfLife(model.getShelfLife());
+        productBase.setShelfLifeInterval(model.getShelfLifeInterval());
+        return productBase;
     }
 
-    public static BaseProductModel ToModel(BaseProduct baseProduct) {
-        if (baseProduct == null) return null;
-        BaseProductModel model = new BaseProductModel();
-        model.setId(baseProduct.getId());
-        model.setCategoryId(baseProduct.getSubCategoryId());
-        model.setManufacturerId(baseProduct.getManufacturerId());
-        model.setName(baseProduct.getName());
-        model.setDescription(baseProduct.getDescription());
-        model.setCreatedDateTime(baseProduct.getCreatedDateTime());
-        model.setBarcode(baseProduct.getBarcode());
-        model.setDetails(baseProduct.getDetails());
-        model.setShelfLife(baseProduct.getShelfLife());
-        model.setShelfLifeInterval(baseProduct.getShelfLifeInterval());
+    public static ProductBaseModel ToModel(ProductBase productBase) {
+        if (productBase == null) return null;
+        ProductBaseModel model = new ProductBaseModel();
+        model.setId(productBase.getId());
+        model.setCategoryId(productBase.getSubCategoryId());
+        model.setManufacturerId(productBase.getManufacturerId());
+        model.setName(productBase.getName());
+        model.setDescription(productBase.getDescription());
+        model.setCreatedDateTime(productBase.getCreatedDateTime());
+        model.setBarcode(productBase.getBarcode());
+        model.setDetails(productBase.getDetails());
+        model.setShelfLife(productBase.getShelfLife());
+        model.setShelfLifeInterval(productBase.getShelfLifeInterval());
         return model;
     }
 }

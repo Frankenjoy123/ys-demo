@@ -9,8 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "base_product")
-public class BaseProductModel {
+@Table(name = "product_base")
+public class ProductBaseModel {
 
 	@Id
 	@GeneratedValue

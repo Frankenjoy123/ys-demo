@@ -2,10 +2,10 @@ package com.yunsoo.dataService;
 
 import java.util.List;
 
-import com.yunsoo.dbmodel.ProductKeyStatusModel;
+import com.yunsoo.dbmodel.ProductStatusModel;
 import com.yunsoo.dbmodel.ProductKeyTypeModel;
 import com.yunsoo.service.ProductCategoryService;
-import com.yunsoo.service.ProductKeyStatusService;
+import com.yunsoo.service.ProductStatusService;
 import com.yunsoo.service.ProductKeyTypeService;
 import com.yunsoo.service.UserService;
 import com.yunsoo.service.contract.ProductCategory;
@@ -126,20 +126,20 @@ public class App {
     }
 
     public static void TestProductKeyStatus(ApplicationContext applicationContext) {
-        ProductKeyStatusService productKeyStatusService = (ProductKeyStatusService) applicationContext
+        ProductStatusService productStatusService = (ProductStatusService) applicationContext
                 .getBean("productKeyStatusService");
 
-        List<ProductKeyStatusModel> productKeyStatusModelList = productKeyStatusService.getAllProductKeyStatus(false);
-        System.out.println("productKeyStatusModelList Size: " + productKeyStatusModelList.size());
-        for (int i = 0; i < productKeyStatusModelList.size(); i++) {
-            System.out.println("product Key Status List (" + i + ") : " + productKeyStatusModelList.get(i).getDescription());
+        List<ProductStatusModel> productStatusModelList = productStatusService.getAllProductKeyStatus(false);
+        System.out.println("productKeyStatusModelList Size: " + productStatusModelList.size());
+        for (int i = 0; i < productStatusModelList.size(); i++) {
+            System.out.println("product Key Status List (" + i + ") : " + productStatusModelList.get(i).getDescription());
         }
 
-        ProductKeyStatusModel productKeyStatusModel = new ProductKeyStatusModel();
-        productKeyStatusModel.setDescription("码问测试中文存储1");
-        productKeyStatusModel.setCode("MyCode1");
+        ProductStatusModel productStatusModel = new ProductStatusModel();
+        productStatusModel.setDescription("码问测试中文存储1");
+        productStatusModel.setCode("MyCode1");
 
-        productKeyStatusService.save(productKeyStatusModel);
+        productStatusService.save(productStatusModel);
     }
 
     public static void TestProductKeyType(ApplicationContext applicationContext) {

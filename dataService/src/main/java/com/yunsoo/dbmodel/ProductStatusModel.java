@@ -7,9 +7,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Created by Zhe on 2015/1/13.
  */
 @Entity
-@Table(name = "product_key_status")
+@Table(name = "product_status")
 @XmlRootElement
-public class ProductKeyStatusModel {
+public class ProductStatusModel {
 
     @javax.persistence.Id
     @GeneratedValue

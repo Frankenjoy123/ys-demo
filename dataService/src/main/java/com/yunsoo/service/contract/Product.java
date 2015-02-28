@@ -17,7 +17,7 @@ public class Product {
     private int productStatusId;
     private DateTime manufacturingDateTime;
     private DateTime createdDateTime;
-    private BaseProduct baseProduct;
+    private ProductBase productBase;
 
     public String getProductKey() {
         return productKey;
@@ -59,12 +59,12 @@ public class Product {
         this.createdDateTime = createdDateTime;
     }
 
-    public BaseProduct getBaseProduct() {
-        return baseProduct;
+    public ProductBase getProductBase() {
+        return productBase;
     }
 
-    public void setBaseProduct(BaseProduct baseProduct) {
-        this.baseProduct = baseProduct;
+    public void setProductBase(ProductBase productBase) {
+        this.productBase = productBase;
     }
 
 }

@@ -2,7 +2,7 @@ package com.yunsoo.service.Impl;
 
 
 import com.yunsoo.dbmodel.ProductModel;
-import com.yunsoo.service.BaseProductService;
+import com.yunsoo.service.ProductBaseService;
 import com.yunsoo.service.contract.Product;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao;
 
     @Autowired
-    BaseProductService baseProductServicce;
+    ProductBaseService baseProductServicce;
 
     @Override
     public Product getByKey(String productKey) {
@@ -35,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
         product.setCreatedDateTime(productModel.getCreatedDateTime());
         product.setBaseProductId(productModel.getBaseProductId());
 
-        product.setBaseProduct(baseProductServicce.getById(productModel.getBaseProductId()));
+        product.setProductBase(baseProductServicce.getById(productModel.getBaseProductId()));
 
         return product;
     }
