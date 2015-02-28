@@ -13,6 +13,8 @@ public abstract class StatusBase<T extends StatusBase> implements Comparable<T> 
     private String description;
     private boolean active;
 
+    public StatusBase(){};
+
     public StatusBase(int id, String code) {
         this.id = id;
         this.code = code;
