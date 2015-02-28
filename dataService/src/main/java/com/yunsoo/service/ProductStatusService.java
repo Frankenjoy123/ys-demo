@@ -14,6 +14,8 @@ public interface ProductStatusService {
 
     public Boolean update(ProductStatus productStatus);
 
+    public Boolean patchUpdate(ProductStatus productStatus);
+
     public void delete(ProductStatus productStatus);
 
     public boolean delete(int id);

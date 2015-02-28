@@ -1,7 +1,7 @@
 package com.yunsoo.service;
 
 import com.yunsoo.service.contract.ProductKeyBatch;
-import com.yunsoo.util.SpringDaoUtil;
+import com.yunsoo.util.SpringAppContextUtil;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,7 @@ public class ProductKeyBatchServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        ApplicationContext applicationContext = SpringDaoUtil.getApplicationContext();
+        ApplicationContext applicationContext = SpringAppContextUtil.getApplicationContext();
         productKeyBatchService = (ProductKeyBatchService) applicationContext.getBean("productKeyBatchService");
     }
 

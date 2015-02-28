@@ -10,7 +10,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  */
 @ComponentScan
-public class SpringDaoUtil {
+public class SpringAppContextUtil {
     
     private static ApplicationContext applicationContext;
     

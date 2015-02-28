@@ -14,6 +14,8 @@ public interface ProductStatusDao {
 
     public DaoStatus update(ProductStatusModel productStatusModel);
 
+    public DaoStatus patchUpdate(ProductStatusModel productStatusModelForPatch);
+
     public DaoStatus delete(int id);
 
     public void delete(ProductStatusModel productStatusModel);

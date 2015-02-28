@@ -1,6 +1,12 @@
 package com.yunsoo.dbmodel;
 
-import javax.persistence.*;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -9,24 +15,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "product_status")
 @XmlRootElement
+@DynamicUpdate
+@SelectBeforeUpdate
 public class ProductStatusModel {
 
     @javax.persistence.Id
     @GeneratedValue
     @Column(name = "id")
-    private int Id;
+    private Integer Id;
     @Column(name = "code")
     private String code;
     @Column(name = "description")
     private String description;
     @Column(name = "active")
-    private boolean active;
+    private Boolean active;
 
-    public int getId() {
+    public Integer getId() {
         return Id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         Id = id;
     }
 
@@ -46,11 +54,15 @@ public class ProductStatusModel {
         this.description = description;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
         this.active = active;
     }
 }

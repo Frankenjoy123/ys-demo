@@ -1,7 +1,7 @@
 package com.yunsoo.dao;
 
 import com.amazonaws.services.s3.model.Bucket;
-import com.yunsoo.util.SpringDaoUtil;
+import com.yunsoo.util.SpringAppContextUtil;
 import com.yunsoo.util.YunsooConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +20,7 @@ public class S3ItemDaoTest {
 
     @Before
     public void setUp() throws Exception {
-        ApplicationContext applicationContext = SpringDaoUtil.getApplicationContext();
+        ApplicationContext applicationContext = SpringAppContextUtil.getApplicationContext();
         s3ItemDao = (S3ItemDao) applicationContext.getBean("s3ItemDao");
     }
 
