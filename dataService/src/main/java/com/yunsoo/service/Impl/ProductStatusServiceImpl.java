@@ -1,8 +1,10 @@
 package com.yunsoo.service.Impl;
 
+import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.ProductStatusDao;
 import com.yunsoo.dbmodel.ProductStatusModel;
 import com.yunsoo.service.ProductStatusService;
+import com.yunsoo.service.contract.ProductStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,28 +21,33 @@ public class ProductStatusServiceImpl implements ProductStatusService {
     private ProductStatusDao productStatusDao;
 
     @Override
-    public ProductStatusModel getById(int id) {
-        return productStatusDao.getById(id);
+    public ProductStatus getById(int id) {
+        return ProductStatus.FromModel(productStatusDao.getById(id));
     }
 
     @Override
-    public void save(ProductStatusModel productStatusModel) {
-        productStatusDao.save(productStatusModel);
+    public int save(ProductStatus productStatus) {
+        return productStatusDao.save(ProductStatus.ToModel(productStatus));
     }
 
     @Override
-    public void update(ProductStatusModel productStatusModel) {
-        productStatusDao.update(productStatusModel);
+    public Boolean update(ProductStatus productStatus) {
+        return productStatusDao.update(ProductStatus.ToModel(productStatus)) == DaoStatus.success ? true : false;
     }
 
     @Override
-    public void delete(ProductStatusModel productStatusModel) {
-        productStatusDao.delete(productStatusModel);
+    public void delete(ProductStatus productStatus) {
+        productStatusDao.delete(ProductStatus.ToModel(productStatus));
+    }
+
+    @Override
+    public boolean delete(int id) {
+        return productStatusDao.delete(id) == DaoStatus.success;
     }
 
     @Override
     @Transactional
-    public List<ProductStatusModel> getAllProductKeyStatus(boolean activeOnly) {
-        return productStatusDao.getAllProductKeyStatues(activeOnly);
+    public List<ProductStatus> getAllProductKeyStatus(boolean activeOnly) {
+        return ProductStatus.FromModelList(productStatusDao.getAllProductKeyStatues(activeOnly));
     }
 }

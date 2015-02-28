@@ -1,6 +1,6 @@
 package com.yunsoo.service;
 
-import com.yunsoo.dbmodel.ProductStatusModel;
+import com.yunsoo.service.contract.ProductStatus;
 
 import java.util.List;
 
@@ -8,13 +8,15 @@ import java.util.List;
  * Created by Zhe on 2015/1/13.
  */
 public interface ProductStatusService {
-    public ProductStatusModel getById(int id);
+    public ProductStatus getById(int id);
 
-    public void save(ProductStatusModel productStatusModel);
+    public int save(ProductStatus productStatus);
 
-    public void update(ProductStatusModel productStatusModel);
+    public Boolean update(ProductStatus productStatus);
 
-    public void delete(ProductStatusModel productStatusModel);
+    public void delete(ProductStatus productStatus);
 
-    public List<ProductStatusModel> getAllProductKeyStatus(boolean activeOnly);
+    public boolean delete(int id);
+
+    public List<ProductStatus> getAllProductKeyStatus(boolean activeOnly);
 }

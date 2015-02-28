@@ -1,10 +1,11 @@
 package com.yunsoo.dao.impl;
 
+import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.ProductStatusDao;
 import com.yunsoo.dbmodel.ProductStatusModel;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,18 +28,40 @@ public class ProductStatusDaoImpl implements ProductStatusDao {
     }
 
     @Override
-    public void save(ProductStatusModel productStatusModel) {
+    public int save(ProductStatusModel productStatusModel) {
         sessionFactory.getCurrentSession().save(productStatusModel);
+        return productStatusModel.getId();
     }
 
     @Override
-    public void update(ProductStatusModel productStatusModel) {
-        sessionFactory.getCurrentSession().update(productStatusModel);
+    public DaoStatus update(ProductStatusModel productStatusModel) {
+        try {
+            sessionFactory.getCurrentSession().update(productStatusModel);
+            return DaoStatus.success;
+        } catch (Exception ex) {
+            //log
+            return DaoStatus.fail;
+        }
     }
 
     @Override
     public void delete(ProductStatusModel productStatusModel) {
         sessionFactory.getCurrentSession().delete(productStatusModel);
+    }
+
+    @Override
+    public DaoStatus delete(int id) {
+
+        return this.update(id, false);
+    }
+
+    private DaoStatus update(int id, Boolean isActive) {
+        ProductStatusModel productStatusModel = this.getById(id);
+        if (productStatusModel == null) return DaoStatus.NotFound;
+
+        productStatusModel.setActive(isActive);
+        this.update(productStatusModel);
+        return DaoStatus.success;
     }
 
     @Override

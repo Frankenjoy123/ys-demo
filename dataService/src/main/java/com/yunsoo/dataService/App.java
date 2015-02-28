@@ -9,6 +9,7 @@ import com.yunsoo.service.ProductStatusService;
 import com.yunsoo.service.ProductKeyTypeService;
 import com.yunsoo.service.UserService;
 import com.yunsoo.service.contract.ProductCategory;
+import com.yunsoo.service.contract.ProductStatus;
 import com.yunsoo.util.SpringDaoUtil;
 import org.springframework.context.ApplicationContext;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -129,7 +130,7 @@ public class App {
         ProductStatusService productStatusService = (ProductStatusService) applicationContext
                 .getBean("productKeyStatusService");
 
-        List<ProductStatusModel> productStatusModelList = productStatusService.getAllProductKeyStatus(false);
+        List<ProductStatusModel> productStatusModelList = ProductStatus.ToModelList(productStatusService.getAllProductKeyStatus(false));
         System.out.println("productKeyStatusModelList Size: " + productStatusModelList.size());
         for (int i = 0; i < productStatusModelList.size(); i++) {
             System.out.println("product Key Status List (" + i + ") : " + productStatusModelList.get(i).getDescription());
@@ -139,7 +140,7 @@ public class App {
         productStatusModel.setDescription("码问测试中文存储1");
         productStatusModel.setCode("MyCode1");
 
-        productStatusService.save(productStatusModel);
+        productStatusService.save(ProductStatus.FromModel(productStatusModel));
     }
 
     public static void TestProductKeyType(ApplicationContext applicationContext) {

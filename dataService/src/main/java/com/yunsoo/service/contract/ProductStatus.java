@@ -2,6 +2,9 @@ package com.yunsoo.service.contract;
 
 import com.yunsoo.dbmodel.ProductStatusModel;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 /**
  * Created by Zhe on 2015/1/16.
  * <p>
@@ -64,5 +67,15 @@ public class ProductStatus {
         model.setActive(productStatus.isActive());
 
         return model;
+    }
+
+    public static List<ProductStatus> FromModelList(List<ProductStatusModel> modelList) {
+        if (modelList == null) return null;
+        return modelList.stream().map(ProductStatus::FromModel).collect(Collectors.toList());
+    }
+
+    public static List<ProductStatusModel> ToModelList(List<ProductStatus> productStatusList) {
+        if (productStatusList == null) return null;
+        return productStatusList.stream().map(ProductStatus::ToModel).collect(Collectors.toList());
     }
 }

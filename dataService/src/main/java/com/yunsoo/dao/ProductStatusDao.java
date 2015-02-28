@@ -10,9 +10,11 @@ import java.util.List;
 public interface ProductStatusDao {
     public ProductStatusModel getById(int id);
 
-    public void save(ProductStatusModel productStatusModel);
+    public int save(ProductStatusModel productStatusModel);
 
-    public void update(ProductStatusModel productStatusModel);
+    public DaoStatus update(ProductStatusModel productStatusModel);
+
+    public DaoStatus delete(int id);
 
     public void delete(ProductStatusModel productStatusModel);
 
