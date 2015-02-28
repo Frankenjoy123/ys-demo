@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by Zhe on 2015/2/26.
  */
 @RestController
+@RequestMapping(value = "")
 public class HomeController {
 
-    @RequestMapping(value = "/")
+    @RequestMapping(value = "")
     public String home() {
         System.out.println("HomeController: Passing through...");
         return "Welcome to YUNSOO API!";

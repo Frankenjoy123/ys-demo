@@ -2,8 +2,10 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.dto.ProductStatus;
 import com.yunsoo.api.exception.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,13 +31,13 @@ public class ProductStatusController {
         //todo
         Optional<ProductStatus> result = list.stream().filter(i -> i.getId() == id).findFirst();
         if (!result.isPresent()) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("ProductStatus");
         } else {
             return result.get();
         }
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductStatus> query(@RequestParam(value = "id", required = false) Integer id,
                                      @RequestParam(value = "code", required = false) String code) {
         List<ProductStatus> list = new ArrayList<ProductStatus>(Arrays.asList(
@@ -56,4 +58,5 @@ public class ProductStatusController {
         }
         return resultList;
     }
+
 }
