@@ -11,6 +11,8 @@ public class ProductStatus extends StatusBase<ProductStatus> {
     public static final ProductStatus RECALLED = new ProductStatus(2, "RECALLED");
     public static final ProductStatus DELETED = new ProductStatus(3, "DELETED");
 
+    public ProductStatus(){}
+
     public ProductStatus(int id, String code) {
         super(id, code);
     }

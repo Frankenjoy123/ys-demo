@@ -29,9 +29,9 @@ public class DataAPIConfiguration {
         ppc.setIgnoreUnresolvablePlaceholders(true);
         return ppc;
     }
-//
-//    @Value("${yunsoo.dataapi.baseuri}")
-//    private String baseURIString;
+
+    @Value("${yunsoo.dataapi.baseuri}")
+    private String baseURIString;
 
     @Bean
     public RestTemplate restTemplate() {
@@ -39,9 +39,7 @@ public class DataAPIConfiguration {
     }
 
     @Bean
-    public DataAPIClient dataAPIClient(
-            @Value("${yunsoo.dataapi.baseuri}")
-            String baseURIString) {
+    public DataAPIClient dataAPIClient() {
         URI baseURI = URI.create(baseURIString);
         return new DataAPIClient(baseURI);
     }

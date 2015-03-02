@@ -1,7 +1,9 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.data.DataAPIClient;
 import com.yunsoo.api.dto.ProductStatus;
 import com.yunsoo.api.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,32 +23,29 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/productstatus")
 public class ProductStatusController {
 
+    private DataAPIClient dataAPIClient;
+
+    @Autowired
+    ProductStatusController(DataAPIClient dataAPIClient) {
+        this.dataAPIClient = dataAPIClient;
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ProductStatus getById(@PathVariable(value = "id") int id) throws ResourceNotFoundException {
-        List<ProductStatus> list = new ArrayList<ProductStatus>(Arrays.asList(
-                ProductStatus.NEW,
-                ProductStatus.ACTIVATED,
-                ProductStatus.RECALLED,
-                ProductStatus.DELETED));
-        //todo
-        Optional<ProductStatus> result = list.stream().filter(i -> i.getId() == id).findFirst();
-        if (!result.isPresent()) {
+        List<ProductStatus> list = query(id, null);
+        ProductStatus productStatus = list == null || list.isEmpty() ? null : list.get(0);
+        if (productStatus == null) {
             throw new ResourceNotFoundException("ProductStatus");
         } else {
-            return result.get();
+            return productStatus;
         }
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductStatus> query(@RequestParam(value = "id", required = false) Integer id,
                                      @RequestParam(value = "code", required = false) String code) {
-        List<ProductStatus> list = new ArrayList<ProductStatus>(Arrays.asList(
-                ProductStatus.NEW,
-                ProductStatus.ACTIVATED,
-                ProductStatus.RECALLED,
-                ProductStatus.DELETED));
-        //todo
-        List<ProductStatus> resultList = new ArrayList<>();
+        ProductStatus[] array = dataAPIClient.getRequest("productstatus/all/true", ProductStatus[].class);
+        List<ProductStatus> resultList, list = Arrays.asList(array == null ? new ProductStatus[0] : array);
         if (id != null) {
             //query by id
             resultList = list.stream().filter(i -> i.getId() == id).collect(Collectors.toList());
@@ -58,5 +57,4 @@ public class ProductStatusController {
         }
         return resultList;
     }
-
 }
