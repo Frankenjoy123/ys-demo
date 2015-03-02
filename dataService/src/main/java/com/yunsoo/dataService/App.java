@@ -10,7 +10,7 @@ import com.yunsoo.service.ProductKeyTypeService;
 import com.yunsoo.service.UserService;
 import com.yunsoo.service.contract.ProductCategory;
 import com.yunsoo.service.contract.ProductStatus;
-import com.yunsoo.util.SpringDaoUtil;
+import com.yunsoo.util.SpringAppContextUtil;
 import org.springframework.context.ApplicationContext;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +31,7 @@ public class App {
 //            System.out.println(ex.getMessage());
 //            System.out.println(ex.getStackTrace().toString());
 //        }
-        ApplicationContext applicationContext = SpringDaoUtil
+        ApplicationContext applicationContext = SpringAppContextUtil
                 .getApplicationContext();
 //       TestBaseProductRepo(applicationContext);
         TestProductKeyStatus(applicationContext);

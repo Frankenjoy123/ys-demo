@@ -42,8 +42,19 @@ public class ProductStatusServiceTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testPatchUpdate() throws Exception {
+        ProductStatus productStatus = new ProductStatus();
+        productStatus.setId(6);
+        productStatus.setDescription("产品测试状态100 - by merge4");
+        assertTrue(productStatusService.patchUpdate(productStatus));
+    }
 
+    @Test
+    public void testUpdate() throws Exception {
+        ProductStatus productStatus = productStatusService.getById(6);
+        assertNotNull(productStatus);
+        productStatus.setDescription("产品测试状态100 - by merge5");
+        assertTrue(productStatusService.update(productStatus));
     }
 
     @Test

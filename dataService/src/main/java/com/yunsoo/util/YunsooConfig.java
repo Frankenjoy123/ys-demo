@@ -1,11 +1,14 @@
 package com.yunsoo.util;
 
+import org.springframework.context.annotation.PropertySource;
+
 import java.io.IOException;
 import java.util.Properties;
 
 /**
  * Created by Zhe on 2015/1/27.
  */
+//@PropertySource("classpath:yunsoo.properties")
 public final class YunsooConfig {
 
     private static final String PROPERTY_YUNSOO_MESSAGE_DELETE_STATUS_ID = "yunsoo.message.delete_status_id";
