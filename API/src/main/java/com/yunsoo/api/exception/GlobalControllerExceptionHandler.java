@@ -18,8 +18,8 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseBody
     public ErrorResult handleBadRequest(HttpServletRequest req, Exception ex) {
-        if (ex instanceof ResourceNotFoundException) {
-            return ((ResourceNotFoundException) ex).toErrorResult();
+        if (ex instanceof ErrorResultException) {
+            return ((ErrorResultException) ex).toErrorResult();
         } else {
             return new ErrorResult(40400, "Resource not found");
         }
