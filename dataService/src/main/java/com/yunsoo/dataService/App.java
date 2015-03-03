@@ -130,7 +130,7 @@ public class App {
         ProductStatusService productStatusService = (ProductStatusService) applicationContext
                 .getBean("productKeyStatusService");
 
-        List<ProductStatusModel> productStatusModelList = ProductStatus.ToModelList(productStatusService.getAllProductKeyStatus(false));
+        List<ProductStatusModel> productStatusModelList = ProductStatus.ToModelList(productStatusService.getAllProductStatus(false));
         System.out.println("productKeyStatusModelList Size: " + productStatusModelList.size());
         for (int i = 0; i < productStatusModelList.size(); i++) {
             System.out.println("product Key Status List (" + i + ") : " + productStatusModelList.get(i).getDescription());

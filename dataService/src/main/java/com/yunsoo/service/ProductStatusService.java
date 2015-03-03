@@ -5,7 +5,9 @@ import com.yunsoo.service.contract.ProductStatus;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/1/13.
+ * Created by:   Zhe
+ * Created on:   2015/1/13
+ * Descriptions:
  */
 public interface ProductStatusService {
     public ProductStatus getById(int id);
@@ -20,5 +22,5 @@ public interface ProductStatusService {
 
     public boolean delete(int id);
 
-    public List<ProductStatus> getAllProductKeyStatus(boolean activeOnly);
+    public List<ProductStatus> getAllProductStatus(boolean active);
 }

@@ -1,6 +1,5 @@
 package com.yunsoo.service.Impl;
 
-import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.ProductStatusDao;
 import com.yunsoo.dbmodel.ProductStatusModel;
@@ -14,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/1/13.
+ * Created by:   Zhe
+ * Created on:   2015/1/13
+ * Descriptions:
  */
 @Service("productKeyStatusService")
 public class ProductStatusServiceImpl implements ProductStatusService {
@@ -56,8 +57,8 @@ public class ProductStatusServiceImpl implements ProductStatusService {
 
     @Override
     @Transactional
-    public List<ProductStatus> getAllProductKeyStatus(boolean activeOnly) {
-        return ProductStatus.FromModelList(productStatusDao.getAllProductKeyStatues(activeOnly));
+    public List<ProductStatus> getAllProductStatus(boolean active) {
+        return ProductStatus.FromModelList(productStatusDao.getAll(active));
     }
 
     //Convert Dto to Model,just copy properties which is not null.

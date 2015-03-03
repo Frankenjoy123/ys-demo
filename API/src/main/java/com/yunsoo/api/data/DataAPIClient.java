@@ -2,7 +2,7 @@
 package com.yunsoo.api.data;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,33 +17,56 @@ import java.util.Map;
 
 public class DataAPIClient {
 
-    private URI baseURI;
+    private String baseURL;
 
     @Autowired
     private RestTemplate restTemplate;
 
-    public DataAPIClient(URI baseURI) {
-        this.baseURI = baseURI;
+    public DataAPIClient(String baseURL) {
+        this.baseURL = baseURL;
     }
 
-    public URI getBaseURI() {
-        return baseURI;
+    public String getBaseURL() {
+        return baseURL;
+    }
+
+    public RestTemplate getRestTemplate() {
+        return restTemplate;
     }
 
 
-    public <T> T getRequest(String path, Class<T> responseType, Map<String, String> uriVariables) {
+    //GET
+
+    public <T> T get(String path, Class<T> responseType, Object... uriVariables) {
         try {
-            return restTemplate.getForObject(baseURI.resolve(path).toString(), responseType, uriVariables);
+            return restTemplate.getForObject(baseURL + path, responseType, uriVariables);
+        } catch (HttpClientErrorException ex) {
+            //todo:handle error code/message from dataAPI
+            System.out.println(ex.getResponseBodyAsString());
+            return null;
         } catch (RestClientException ex) {
-            return null; //todo
+            throw ex;
         }
     }
 
-    public <T> T getRequest(String path, Class<T> responseType) {
-        try {
-            return restTemplate.getForObject(baseURI.resolve(path).toString(), responseType);
-        } catch (RestClientException ex) {
-            return null; //todo
-        }
-    }
+//    public <T> T get(String path, Class<T> responseType, Map<String, String> uriVariables) {
+//        try {
+//            return restTemplate.getForObject(baseURL + path, responseType, uriVariables);
+//        } catch (RestClientException ex) {
+//            throw ex;
+//            //return null; //todo
+//        }
+//    }
+
+
+    //POST
+
+
+    //PUT
+
+
+    //PATCH
+
+
+    //DELETE
 }
