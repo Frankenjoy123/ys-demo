@@ -2,6 +2,7 @@ package com.yunsoo.service;
 
 import com.yunsoo.service.contract.User;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -13,11 +14,13 @@ public interface UserService {
 
     public User get(String cellular);
 
-    public long save(User user);
+    public long save(User user) throws Exception;
 
-    public ServiceOperationStatus update(User user);
+    public ServiceOperationStatus update(User user) throws Exception;
 
-    public boolean delete(Long id, int deleteStatus);
+    public ServiceOperationStatus patchUpdate(User user) throws Exception;
+
+    public boolean delete(Long id);
 
     public List<User> getAllUsers();
 

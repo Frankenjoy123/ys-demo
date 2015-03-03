@@ -1,11 +1,13 @@
 package com.yunsoo.dbmodel;
 
+import com.yunsoo.model.ThumbnailFile;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashMap;
 
 /**
  * @author Zhe Zhang
@@ -37,6 +39,8 @@ public class UserModel {
     private String deviceCode;
     @Column(name = "thumbnail")
     private String thumbnail;
+    @Transient
+    private ThumbnailFile thumbnailFile;
     @Column(name = "status_id")
     private int statusId;
     @Column(name = "created_datetime", nullable = true, updatable = false)
@@ -123,6 +127,14 @@ public class UserModel {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public ThumbnailFile getThumbnailFile() {
+        return thumbnailFile;
+    }
+
+    public void setThumbnailFile(ThumbnailFile thumbnailFile) {
+        this.thumbnailFile = thumbnailFile;
     }
 
     //    public Set<UserOrganizationModel> getUserOrganizationModelSet() {
