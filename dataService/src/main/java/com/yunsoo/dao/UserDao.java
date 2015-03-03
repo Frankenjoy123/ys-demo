@@ -14,6 +14,8 @@ public interface UserDao {
 
     public long save(UserModel userModel);
 
+    public DaoStatus patchUpdate(UserModel userModelForPatch);
+
     public DaoStatus update(UserModel userModel);
 
     public DaoStatus delete(Long id, int deleteStatus);
