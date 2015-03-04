@@ -1,6 +1,6 @@
 rootProject.name = 'com.yunsoo'
 include 'common'
-include 'common.web'
+include 'common-web'
 include 'dataService'
 include 'dataAPI'
 include 'setup'
