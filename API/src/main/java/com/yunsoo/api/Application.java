@@ -24,7 +24,7 @@ public class Application {
 //        System.out.println("Website: " + page.getWebsite());
 
         SpringApplication.run(Application.class, args);
-        System.out.println("Run API by Spring Boot:");
+        System.out.println("Run API by Spring Boot. Successfully started...");
     }
 
 

@@ -4,14 +4,12 @@ import com.yunsoo.api.data.DataAPIClient;
 import com.yunsoo.api.dto.ProductStatus;
 import com.yunsoo.api.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -32,8 +30,7 @@ public class ProductStatusController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ProductStatus getById(@PathVariable(value = "id") int id) throws ResourceNotFoundException {
-        List<ProductStatus> list = query(id, null);
-        ProductStatus productStatus = list == null || list.isEmpty() ? null : list.get(0);
+        ProductStatus productStatus = dataAPIClient.get("productstatus/" + id, ProductStatus.class);
         if (productStatus == null) {
             throw new ResourceNotFoundException("ProductStatus");
         } else {
@@ -44,7 +41,9 @@ public class ProductStatusController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductStatus> query(@RequestParam(value = "id", required = false) Integer id,
                                      @RequestParam(value = "code", required = false) String code) {
-        ProductStatus[] array = dataAPIClient.getRequest("productstatus/all/true", ProductStatus[].class);
+        Map<String, String> params = new HashMap<>();
+        params.put("active", Boolean.toString(true));
+        ProductStatus[] array = dataAPIClient.get("productstatus", ProductStatus[].class, params);
         List<ProductStatus> resultList, list = Arrays.asList(array == null ? new ProductStatus[0] : array);
         if (id != null) {
             //query by id

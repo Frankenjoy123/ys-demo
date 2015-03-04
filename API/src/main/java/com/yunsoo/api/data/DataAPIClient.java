@@ -2,12 +2,12 @@
 package com.yunsoo.api.data;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.util.Assert;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-import java.net.URI;
-import java.util.Map;
 
 /**
  * Created by:   Lijian
@@ -17,33 +17,107 @@ import java.util.Map;
 
 public class DataAPIClient {
 
-    private URI baseURI;
+    private String baseURL;
 
     @Autowired
     private RestTemplate restTemplate;
 
-    public DataAPIClient(URI baseURI) {
-        this.baseURI = baseURI;
+    public DataAPIClient(String baseURL) {
+        this.baseURL = baseURL;
     }
 
-    public URI getBaseURI() {
-        return baseURI;
+    public String getBaseURL() {
+        return baseURL;
+    }
+
+    public RestTemplate getRestTemplate() {
+        return restTemplate;
     }
 
 
-    public <T> T getRequest(String path, Class<T> responseType, Map<String, String> uriVariables) {
+    private String createURL(String path) {
+        Assert.notNull(path, "'path' must not be null");
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        return baseURL + path;
+    }
+
+
+    //GET
+
+    public <T> T get(String path, Class<T> responseType, Object... uriVariables) {
         try {
-            return restTemplate.getForObject(baseURI.resolve(path).toString(), responseType, uriVariables);
+            return restTemplate.getForObject(createURL(path), responseType, uriVariables);
+        } catch (HttpClientErrorException ex) {
+            //todo:handle error code/message from dataAPI
+            //System.out.println(ex.getResponseBodyAsString());
+            return null;
         } catch (RestClientException ex) {
-            return null; //todo
+            throw ex;
         }
     }
 
-    public <T> T getRequest(String path, Class<T> responseType) {
+//    public <T> T get(String path, Class<T> responseType, Map<String, String> uriVariables) {
+//        try {
+//            return restTemplate.getForObject(createURL(path), responseType, uriVariables);
+//        } catch (RestClientException ex) {
+//            throw ex;
+//            //return null; //todo
+//        }
+//    }
+
+
+    //POST
+
+    public <T> T post(String path, Object request, Class<T> responseType, Object... uriVariables) {
         try {
-            return restTemplate.getForObject(baseURI.resolve(path).toString(), responseType);
+            return restTemplate.postForObject(createURL(path), request, responseType, uriVariables);
+        } catch (HttpClientErrorException ex) {
+            //todo:handle error code/message from dataAPI
+            return null;
         } catch (RestClientException ex) {
-            return null; //todo
+            throw ex;
+        }
+    }
+
+    //PUT
+
+    public void put(String path, Object request, Object... uriVariables) {
+        try {
+            restTemplate.put(createURL(path), request, uriVariables);
+        } catch (HttpClientErrorException ex) {
+            //todo:handle error code/message from dataAPI
+
+        } catch (RestClientException ex) {
+            throw ex;
+        }
+    }
+
+    //PATCH
+
+    public void patch(String path, Object request, Object... uriVariables) {
+        try {
+            HttpEntity<?> httpEntity = new HttpEntity<>(request);
+            restTemplate.exchange(createURL(path), HttpMethod.PATCH, httpEntity, (Class<?>) null, uriVariables);
+        } catch (HttpClientErrorException ex) {
+            //todo:handle error code/message from dataAPI
+
+        } catch (RestClientException ex) {
+            throw ex;
+        }
+    }
+
+    //DELETE
+
+    public void delete(String path, Object... uriVariables) {
+        try {
+            restTemplate.delete(createURL(path), uriVariables);
+        } catch (HttpClientErrorException ex) {
+            //todo:handle error code/message from dataAPI
+
+        } catch (RestClientException ex) {
+            throw ex;
         }
     }
 }

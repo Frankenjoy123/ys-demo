@@ -16,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/1/13.
+ * Created by:   Zhe
+ * Created on:   2015/1/13
+ * Descriptions:
  */
 @Repository("productStatusDao")
 @Transactional
@@ -86,11 +88,11 @@ public class ProductStatusDaoImpl implements ProductStatusDao {
     }
 
     @Override
-    public List<ProductStatusModel> getAllProductKeyStatues(boolean activeOnly) {
+    public List<ProductStatusModel> getAll(boolean active) {
         Criteria criteria = sessionFactory.getCurrentSession()
                 .createCriteria(ProductStatusModel.class);
-        if (activeOnly) {
-            criteria.add(Restrictions.eq("active", activeOnly));
+        if (active) {
+            criteria.add(Restrictions.eq("active", true));
         }
         return criteria.list();
     }

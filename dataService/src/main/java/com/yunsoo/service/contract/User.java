@@ -1,9 +1,12 @@
 package com.yunsoo.service.contract;
 
 import com.yunsoo.dbmodel.UserModel;
+import com.yunsoo.model.ThumbnailFile;
 import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -17,6 +20,9 @@ public class User {
     private String cellular;
     private String deviceCode;
     private String thumbnail;
+    private ThumbnailFile thumbnailFile;
+    //    private byte[] thumbnailData;
+//    private HashMap<String, String> thumbnailDataProperties;
     private int statusId;
     private String createdDateTime;
 
@@ -84,16 +90,26 @@ public class User {
         this.createdDateTime = createdDateTime;
     }
 
+    public ThumbnailFile getThumbnailFile() {
+        return thumbnailFile;
+    }
+
+    public void setThumbnailFile(ThumbnailFile thumbnailFile) {
+        this.thumbnailFile = thumbnailFile;
+    }
+
     public static User FromModel(UserModel model) {
         if (model == null) return null;
         User user = new User();
-        user.setName(model.getName());
-        user.setAddress(model.getAddress());
-        user.setCellular(model.getCellular());
-        user.setDeviceCode(model.getDeviceCode());
-        user.setId(Long.toString(model.getId()));
-        user.setThumbnail(model.getThumbnail());
-        user.setStatusId(model.getStatusId());
+        BeanUtils.copyProperties(model, user, new String[]{"createdDateTime"});
+//        user.setName(model.getName());
+//        user.setAddress(model.getAddress());
+//        user.setCellular(model.getCellular());
+//        user.setDeviceCode(model.getDeviceCode());
+//        user.setId(Long.toString(model.getId()));
+//        user.setThumbnail(model.getThumbnail());
+//        user.setStatusId(model.getStatusId());
+        user.setId(String.valueOf(model.getId()));
         if (model.getCreatedDateTime() != null) {
             user.setCreatedDateTime(model.getCreatedDateTime().toString());
         }
@@ -103,15 +119,16 @@ public class User {
     public static UserModel ToModel(User user) {
         if (user == null) return null;
         UserModel model = new UserModel();
+        BeanUtils.copyProperties(user, model, new String[]{"createdDateTime", "thumbnailData", "id"});
         if (user.getId() != null && !user.getId().isEmpty()) {
             model.setId(Long.parseLong(user.getId()));
         }
-        model.setName(user.getName());
-        model.setDeviceCode(user.getDeviceCode());
-        model.setCellular(user.getCellular());
-        model.setAddress(user.getAddress());
-        model.setThumbnail(user.getThumbnail());
-        model.setStatusId(user.getStatusId());
+//        model.setName(user.getName());
+//        model.setDeviceCode(user.getDeviceCode());
+//        model.setCellular(user.getCellular());
+//        model.setAddress(user.getAddress());
+//        model.setThumbnail(user.getThumbnail());
+//        model.setStatusId(user.getStatusId());
         if (user.getCreatedDateTime() != null) {
             model.setCreatedDateTime(DateTime.parse(user.getCreatedDateTime()));
         }
@@ -137,4 +154,5 @@ public class User {
         }
         return modelList;
     }
+
 }

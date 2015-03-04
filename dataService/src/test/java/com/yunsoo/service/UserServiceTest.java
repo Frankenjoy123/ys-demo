@@ -1,5 +1,6 @@
 package com.yunsoo.service;
 
+import com.yunsoo.model.ThumbnailFile;
 import com.yunsoo.service.contract.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +10,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -39,11 +46,68 @@ public class UserServiceTest {
 
     @Test
     public void testSave() throws Exception {
+        //byte[] demBytes = null; //instead of null, specify your bytes here.
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL url = classLoader.getResource("yunsoo.properties");
+        Path path = Paths.get(url.toURI());
+        byte[] demBytes = Files.readAllBytes(path);
+//        File outputFile = new File("classpath:yunsoo.properties");
+//        try ( FileOutputStream outputStream = new FileOutputStream(outputFile); ) {
+//            outputStream.write(demBytes);  //write the bytes and your done.
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        ThumbnailFile thumbnailFile = new ThumbnailFile();
+        thumbnailFile.setSuffix("jpg");
+        thumbnailFile.setThumbnailData(demBytes);
 
+        User user = new User();
+        user.setName("宁波JY");
+        user.setDeviceCode("65-KDJ=DSDl-LKJNN-NOLDK");
+        user.setCellular("67548093");
+        user.setAddress("宁波大学**寝室");
+        user.setThumbnailFile(thumbnailFile);
+
+        long uID = userService.save(user);
+        assertTrue(uID > 0L);
     }
 
     @Test
     public void testUpdate() throws Exception {
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL url = classLoader.getResource("amazon.properties");
+        Path path = Paths.get(url.toURI());
+        byte[] demBytes = Files.readAllBytes(path);
+
+        ThumbnailFile thumbnailFile = new ThumbnailFile();
+        thumbnailFile.setSuffix("png");
+        thumbnailFile.setThumbnailData(demBytes);
+
+        User user = userService.get(38L);
+        user.setThumbnailFile(thumbnailFile);
+        user.setAddress("Hangzhou 中山路99号1nong");
+        ServiceOperationStatus serviceOperationStatus = userService.update(user);
+        assertTrue(serviceOperationStatus == ServiceOperationStatus.Success);
+    }
+
+    @Test
+    public void testPatchUpdate() throws Exception {
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL url = classLoader.getResource("amazon.properties");
+        Path path = Paths.get(url.toURI());
+        byte[] demBytes = Files.readAllBytes(path);
+
+        ThumbnailFile thumbnailFile = new ThumbnailFile();
+        thumbnailFile.setSuffix("png");
+        thumbnailFile.setThumbnailData(demBytes);
+
+        User user = new User();
+        user.setId("39");
+        user.setThumbnailFile(thumbnailFile);
+        user.setAddress("Shanghai - 中山路99号");
+        ServiceOperationStatus serviceOperationStatus = userService.patchUpdate(user);
+        assertTrue(serviceOperationStatus == ServiceOperationStatus.Success);
 
     }
 

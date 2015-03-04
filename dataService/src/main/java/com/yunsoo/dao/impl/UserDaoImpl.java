@@ -6,11 +6,14 @@ import com.yunsoo.dbmodel.UserModel;
 
 import java.util.List;
 
+import com.yunsoo.util.SpringBeanUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +60,24 @@ public class UserDaoImpl implements UserDao {
         userModel.setCreatedDateTime(DateTime.now());
         sessionFactory.getCurrentSession().save(userModel);
         return userModel.getId();
+    }
+
+    //Dynamic update model for intended updated properties.
+    @Override
+    public DaoStatus patchUpdate(UserModel userModelForPatch) {
+        try {
+            Session currentSession = sessionFactory.getCurrentSession();
+            UserModel modelInDB = (UserModel) currentSession.get(UserModel.class, userModelForPatch.getId());
+            //Set properties that needs to update in DB, ignore others are null.
+            BeanUtils.copyProperties(userModelForPatch, modelInDB, SpringBeanUtil.getNullPropertyNames(userModelForPatch));
+            currentSession.update(modelInDB);
+            return DaoStatus.success;
+        } catch (Exception ex) {
+            //log
+            System.out.println(ex.getStackTrace());
+            System.out.println(ex.getMessage());
+            return DaoStatus.fail;
+        }
     }
 
     @Override

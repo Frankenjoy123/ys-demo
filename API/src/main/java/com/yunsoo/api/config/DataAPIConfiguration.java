@@ -26,12 +26,12 @@ public class DataAPIConfiguration {
     public static PropertyPlaceholderConfigurer yunsooProperties() throws IOException {
         PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
         ppc.setLocations(new ClassPathResource[]{new ClassPathResource("yunsoo.properties")});
-        ppc.setIgnoreUnresolvablePlaceholders(true);
+        //ppc.setIgnoreUnresolvablePlaceholders(true);
         return ppc;
     }
 
-    @Value("${yunsoo.dataapi.baseuri}")
-    private String baseURIString;
+    @Value("${yunsoo.dataapi.baseurl}")
+    private String dataAPIBaseURL;
 
     @Bean
     public RestTemplate restTemplate() {
@@ -40,8 +40,10 @@ public class DataAPIConfiguration {
 
     @Bean
     public DataAPIClient dataAPIClient() {
-        URI baseURI = URI.create(baseURIString);
-        return new DataAPIClient(baseURI);
+        if (!dataAPIBaseURL.endsWith("/")) {
+            dataAPIBaseURL += "/";
+        }
+        return new DataAPIClient(dataAPIBaseURL);
     }
 
 }

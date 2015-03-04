@@ -1,15 +1,19 @@
 package com.yunsoo.dataapi.controller;
 
 import com.yunsoo.dataapi.dto.ResultWrapper;
+import com.yunsoo.dataapi.dto.UserDto;
 import com.yunsoo.dataapi.factory.ResultFactory;
 import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.UserService;
 import com.yunsoo.service.contract.User;
+import com.yunsoo.util.SpringBeanUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -28,13 +32,14 @@ public class UserController {
     }
 
     @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
-    public ResponseEntity<User> getUserById(@PathVariable(value = "id") Long id) {
-        return new ResponseEntity<User>(userService.get(id), HttpStatus.OK);
+    public ResponseEntity<UserDto> getUserById(@PathVariable(value = "id") Long id) {
+        UserDto userDto = UserDto.FromUser(userService.get(id));
+        return new ResponseEntity<UserDto>(userDto, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/cellular/{cellular}", method = RequestMethod.GET)
-    public ResponseEntity<User> getUserByCellular(@PathVariable(value = "cellular") String cellular) {
-        return new ResponseEntity<User>(userService.get(cellular), HttpStatus.OK);
+    public ResponseEntity<UserDto> getUserByCellular(@PathVariable(value = "cellular") String cellular) {
+        return new ResponseEntity<UserDto>(UserDto.FromUser(userService.get(cellular)), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/token/{deviceCode}", method = RequestMethod.GET)
@@ -42,11 +47,6 @@ public class UserController {
         //to-do
         List<User> users = userService.getUsersByFilter(null, deviceCode, "", null);
         return new ResponseEntity<User>(users.get(0), HttpStatus.OK);
-//        if (users.size() == 0) {
-//            return new ResponseEntity<User>(null, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<User>(users.get(0), HttpStatus.OK);
-//        }
     }
 
     @RequestMapping(value = "/nearby/{location}", method = RequestMethod.GET)
@@ -57,22 +57,24 @@ public class UserController {
 
     //Return -1L if Fail, or the userId if Success.
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<ResultWrapper> createUser(@RequestBody User user) {
+    public ResponseEntity<ResultWrapper> createUser(@RequestBody UserDto userDto) throws Exception {
+        User user = UserDto.ToUser(userDto);
         long id = userService.save(user);
         HttpStatus status = id > 0L ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResponseEntity<ResultWrapper> updateUser(@RequestBody User user) {
-        Boolean result = userService.update(user).equals(ServiceOperationStatus.Success) ? true : false;
+    public ResponseEntity<ResultWrapper> updateUser(@RequestBody UserDto userDto) throws Exception {
+        //patch update, we don't provide functions like update with set null properties.
+        User user = UserDto.ToUser(userDto);
+        Boolean result = userService.patchUpdate(user).equals(ServiceOperationStatus.Success) ? true : false;
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<ResultWrapper> deleteUser(@PathVariable(value = "id") Long id) {
-        Boolean result = userService.delete(id, 5); //delete status is 5 in dev DB
+        Boolean result = userService.delete(id); //delete status is 5 in dev DB
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
     }
-
 }

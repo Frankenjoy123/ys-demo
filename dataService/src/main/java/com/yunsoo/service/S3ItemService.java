@@ -1,24 +1,20 @@
-package com.yunsoo.dao;
+package com.yunsoo.service;
 
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/2/9.
+ * Created by Zhe on 2015/3/1.
  */
-public interface S3ItemDao {
+public interface S3ItemService {
 
     public void putFolderItem(String bucketName, String folderName);
 
     public void putFileItem(String bucketName, String folderName, String fileName, File file, CannedAccessControlList cannedAccessControlList);
-
-    public void putItem(String bucketName, String objectPath, InputStream inputStream, ObjectMetadata objectMetadata, CannedAccessControlList cannedAccessControlList);
 
     public S3Object getItem(String bucketName, String key);
 
@@ -31,4 +27,5 @@ public interface S3ItemDao {
     public <T> void putItem(T item, String bucketName, String key) throws Exception;
 
     public <T> T getItem(String bucketName, String key, Class<T> clazz);
+
 }

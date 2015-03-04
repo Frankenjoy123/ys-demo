@@ -45,6 +45,14 @@ public class S3ItemDaoImpl implements S3ItemDao {
                 .withCannedAcl(cannedAccessControlList));
     }
 
+    //upload item with inputstream
+    @Override
+    public void putItem(String bucketName, String objectPath, InputStream inputStream, ObjectMetadata objectMetadata, CannedAccessControlList cannedAccessControlList) {
+        objectMetadata = objectMetadata == null ? new ObjectMetadata() : objectMetadata;
+        amazonS3Client.putObject(new PutObjectRequest(bucketName, objectPath, inputStream, objectMetadata)
+                .withCannedAcl(cannedAccessControlList));
+    }
+
     @Override
     public S3Object getItem(String bucketName, String key) {
         return amazonS3Client.getObject(new GetObjectRequest(bucketName, key));
@@ -71,6 +79,7 @@ public class S3ItemDaoImpl implements S3ItemDao {
         try {
             byte[] buf = mapper.writeValueAsBytes(item);
             InputStream inputStream = new ByteArrayInputStream(buf);
+            //to-do: replace null with new ObjectMetadata() ?
             amazonS3Client.putObject(new PutObjectRequest(bucketName, key, inputStream, null));
         } catch (Exception ex) {
             throw new Exception("Note: putItem fail!", ex);

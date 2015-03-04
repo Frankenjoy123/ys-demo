@@ -5,7 +5,9 @@ import com.yunsoo.dbmodel.ProductStatusModel;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/1/13.
+ * Created by:   Zhe
+ * Created on:   2015/1/13
+ * Descriptions:
  */
 public interface ProductStatusDao {
     public ProductStatusModel getById(int id);
@@ -20,5 +22,5 @@ public interface ProductStatusDao {
 
     public void delete(ProductStatusModel productStatusModel);
 
-    public List<ProductStatusModel> getAllProductKeyStatues(boolean activeOnly);
+    public List<ProductStatusModel> getAll(boolean active);
 }
