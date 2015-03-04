@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Created by Zhe on 2015/3/3.
+ * Created by:   Zhe
+ * Created on:   2015/3/3
+ * Descriptions:
  */
 @RestController
 @RequestMapping("/user")
@@ -23,14 +25,14 @@ public class UserController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public User getById(@PathVariable(value = "id") int id) throws ResourceNotFoundException {
-        User user = dataAPIClient.getRequest("user/id/" + id, User.class);
+        User user = dataAPIClient.get("user/id/{id}", User.class, id);
         if (user == null) throw new ResourceNotFoundException("User not found id=" + id);
         return user;
     }
 
     @RequestMapping(value = "cellular/{cellular}", method = RequestMethod.GET)
     public User getByCellular(@PathVariable(value = "cellular") int cellular) throws ResourceNotFoundException {
-        User user = dataAPIClient.getRequest("user/cellular/" + cellular, User.class);
+        User user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
         if (user == null) throw new ResourceNotFoundException("User not found cellular=" + cellular);
         return user;
     }
@@ -38,7 +40,7 @@ public class UserController {
     @RequestMapping(value = "token/{deviceCode}", method = RequestMethod.GET)
 
     public User getByCellular(@PathVariable(value = "deviceCode") String deviceCode) throws ResourceNotFoundException {
-        User user = dataAPIClient.getRequest("user/token/" + deviceCode, User.class);
+        User user = dataAPIClient.get("user/token/{deviceCode}", User.class, deviceCode);
         if (user == null) throw new ResourceNotFoundException("User not found token=" + deviceCode);
         return user;
     }
