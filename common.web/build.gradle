@@ -1,4 +1,4 @@
 dependencies {
-    compile("org.springframework:spring-web")
+    compile("org.springframework:spring-web:4.1.4.RELEASE")
     compile project(':common')
 }
