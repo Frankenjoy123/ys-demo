@@ -1,7 +1,7 @@
 package com.yunsoo.common.web.exception;
 
 import com.yunsoo.common.error.ErrorResult;
-import com.yunsoo.common.web.error.ErrorResultCode;
+import com.yunsoo.common.web.error.APIErrorResultCode;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 public class InternalServerErrorException extends APIErrorResultException {
 
     public InternalServerErrorException() {
-        this(ErrorResultCode.INTERNAL_SERVER_ERROR);
+        this(APIErrorResultCode.INTERNAL_SERVER_ERROR);
     }
 
     public InternalServerErrorException(int code) {
@@ -20,7 +20,7 @@ public class InternalServerErrorException extends APIErrorResultException {
     }
 
     public InternalServerErrorException(String message) {
-        this(ErrorResultCode.INTERNAL_SERVER_ERROR, message);
+        this(APIErrorResultCode.INTERNAL_SERVER_ERROR, message);
     }
 
     public InternalServerErrorException(int code, String message) {

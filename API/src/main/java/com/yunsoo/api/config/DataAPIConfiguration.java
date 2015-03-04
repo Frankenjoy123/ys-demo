@@ -1,17 +1,15 @@
 
 package com.yunsoo.api.config;
 
-import com.yunsoo.api.data.DataAPIClient;
+import com.yunsoo.api.data.RestClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.net.URI;
 
 /**
  * Created by:   Lijian
@@ -34,16 +32,11 @@ public class DataAPIConfiguration {
     private String dataAPIBaseURL;
 
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
-    @Bean
-    public DataAPIClient dataAPIClient() {
+    public RestClient dataAPIClient() {
         if (!dataAPIBaseURL.endsWith("/")) {
             dataAPIBaseURL += "/";
         }
-        return new DataAPIClient(dataAPIBaseURL);
+        return new RestClient(dataAPIBaseURL);
     }
 
 }

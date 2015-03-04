@@ -1,7 +1,7 @@
 package com.yunsoo.common.web.exception;
 
 import com.yunsoo.common.error.ErrorResult;
-import com.yunsoo.common.web.error.ErrorResultCode;
+import com.yunsoo.common.web.error.APIErrorResultCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UnauthorizedException extends APIErrorResultException {
 
     public UnauthorizedException() {
-        this(ErrorResultCode.UNAUTHORIZED);
+        this(APIErrorResultCode.UNAUTHORIZED);
     }
 
     public UnauthorizedException(String message) {
-        this(ErrorResultCode.UNAUTHORIZED, message);
+        this(APIErrorResultCode.UNAUTHORIZED, message);
     }
 
     public UnauthorizedException(int code) {

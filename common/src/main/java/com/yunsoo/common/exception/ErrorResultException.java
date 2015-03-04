@@ -12,7 +12,7 @@ public class ErrorResultException extends RuntimeException {
     private ErrorResult errorResult;
 
     public ErrorResultException() {
-        this(ErrorResult.DEFAULT);
+        this(ErrorResult.UNKNOWN);
     }
 
 
@@ -23,5 +23,12 @@ public class ErrorResultException extends RuntimeException {
 
     public ErrorResult getErrorResult() {
         return errorResult;
+    }
+
+    public ErrorResultException withInnerException(Exception exception) {
+        if (getCause() == null && exception != this) {
+            initCause(exception);
+        }
+        return this;
     }
 }

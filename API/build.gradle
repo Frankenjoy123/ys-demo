@@ -20,6 +20,7 @@ buildscript {
 apply plugin: 'spring-boot'
 
 dependencies {
+    compile project(":common-web")
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }

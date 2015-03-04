@@ -6,5 +6,6 @@ package com.yunsoo.common.error;
  * Descriptions:
  */
 public final class ErrorResultCode {
-
+    public final static int UNKNOWN = 0;
+    public final static int DEBUG = 1;
 }

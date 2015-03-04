@@ -1,7 +1,10 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.exception.ResourceNotFoundException;
-import com.yunsoo.api.exception.ServerErrorException;
+import com.yunsoo.common.error.ErrorResult;
+import com.yunsoo.common.error.ErrorResultCode;
+import com.yunsoo.common.web.exception.APIErrorResultException;
+import com.yunsoo.common.web.exception.InternalServerErrorException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,34 +20,44 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/debug")
 public class DebugController {
 
-    @RequestMapping(value = "/ok")
+    @RequestMapping(value = "ok")
     @ResponseStatus(HttpStatus.OK)
     public String ok() {
         return "200 OK";
     }
 
-    @RequestMapping(value = "/created")
+    @RequestMapping(value = "created")
     @ResponseStatus(HttpStatus.CREATED)
     public void created() {
     }
 
-    @RequestMapping(value = "/accepted")
+    @RequestMapping(value = "accepted")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void accepted() {
     }
 
-    @RequestMapping(value = "/nocontent")
+    @RequestMapping(value = "nocontent")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void noContent() {
     }
 
-    @RequestMapping(value = "/error/{code}")
-    public void throwError(@PathVariable(value = "code") int code) {
-        HttpStatus status = HttpStatus.valueOf(code);
-        if (status.is4xxClientError()) {
-            throw new ResourceNotFoundException();
-        } else if (status.is5xxServerError()) {
-            throw new ServerErrorException();
+    @RequestMapping(value = "error/{code}")
+    public void throwError(@PathVariable(value = "code") int code) throws APIErrorResultException {
+        HttpStatus status;
+        APIErrorResultException apiEx;
+        try {
+            status = HttpStatus.valueOf(code);
+        } catch (IllegalArgumentException ex) {
+            throw new NotFoundException("Error");
         }
+        if (status.is4xxClientError() || status.is5xxServerError()) {
+            throw new APIErrorResultException(status, new ErrorResult(ErrorResultCode.DEBUG, "Debug"));
+        }
+        throw new NotFoundException("Error");
+    }
+
+    @RequestMapping(value = "error")
+    public void throwError() throws Exception {
+        throw new Exception("Error");
     }
 }
