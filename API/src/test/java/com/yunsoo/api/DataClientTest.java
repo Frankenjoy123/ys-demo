@@ -1,7 +1,7 @@
 package com.yunsoo.api;
 
 import com.yunsoo.api.config.DataAPIConfiguration;
-import com.yunsoo.api.data.RestClient;
+import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.api.dto.ProductStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;

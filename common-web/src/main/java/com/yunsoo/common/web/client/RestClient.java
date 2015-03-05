@@ -1,11 +1,12 @@
 
-package com.yunsoo.api.data;
+package com.yunsoo.common.web.client;
 
 import com.yunsoo.common.web.exception.APIErrorResultException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,7 +25,11 @@ public class RestClient {
     public RestClient(String baseURL) {
         this.baseURL = baseURL;
         restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(new DataAPIErrorHandler());
+    }
+
+    public RestClient(String baseURL, ResponseErrorHandler responseErrorHandler) {
+        this(baseURL);
+        restTemplate.setErrorHandler(responseErrorHandler);
     }
 
     public String getBaseURL() {

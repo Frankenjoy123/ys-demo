@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.data.RestClient;
 import com.yunsoo.api.dto.basic.User;
+import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
-    private DataAPIClient dataAPIClient;
+    private RestClient dataAPIClient;
 
     @Autowired
-    UserController(DataAPIClient dataAPIClient) {
+    UserController(RestClient dataAPIClient) {
         this.dataAPIClient = dataAPIClient;
     }
 
@@ -38,7 +38,6 @@ public class UserController {
     }
 
     @RequestMapping(value = "token/{deviceCode}", method = RequestMethod.GET)
-    public User getByCellular(@PathVariable(value = "deviceCode") String deviceCode) throws ResourceNotFoundException {
     public User getByCellular(@PathVariable(value = "deviceCode") String deviceCode) throws NotFoundException {
         User user = dataAPIClient.get("user/token/{deviceCode}", User.class, deviceCode);
         if (user == null) throw new NotFoundException("User not found token=" + deviceCode);

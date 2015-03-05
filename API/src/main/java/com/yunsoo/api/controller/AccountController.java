@@ -1,10 +1,9 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.data.DataAPIClient;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TAccountRole;
 import com.yunsoo.api.security.AccountAuthentication;
-import org.eclipse.jetty.security.UserAuthentication;
+import com.yunsoo.common.web.client.RestClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,7 +21,7 @@ import java.util.List;
 @RequestMapping("/accounts")
 public class AccountController {
 
-    private DataAPIClient dataAPIClient;
+    private RestClient dataAPIClient;
 
     @RequestMapping(value = "/current", method = RequestMethod.GET)
     public TAccount getCurrent() {

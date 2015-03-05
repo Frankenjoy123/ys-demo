@@ -1,11 +1,7 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.data.RestClient;
+import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.api.dto.ProductStatus;
-import com.yunsoo.common.error.ErrorResult;
-import com.yunsoo.common.error.ErrorResultCode;
-import com.yunsoo.common.web.error.APIErrorResultCode;
-import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
