@@ -7,7 +7,7 @@ package com.yunsoo.common.error;
  */
 public class ErrorResult {
 
-    public static ErrorResult UNKNOWN = new ErrorResult(ErrorResultCode.UNKNOWN, "Unknown Error");
+    public final static ErrorResult UNKNOWN = new ErrorResult(ErrorResultCode.UNKNOWN, "Unknown Error");
 
 
     private int code;

@@ -53,8 +53,6 @@ public class RestClient {
         } catch (APIErrorResultException ex) {
             //todo:handle error code/message from dataAPI
             //System.out.println(ex.getResponseBodyAsString());
-            return null;
-        } catch (Exception ex) {
             throw ex;
         }
     }

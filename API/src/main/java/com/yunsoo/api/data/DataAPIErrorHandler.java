@@ -3,6 +3,7 @@ package com.yunsoo.api.data;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.web.exception.APIErrorResultException;
+import com.yunsoo.common.web.exception.InternalServerErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
@@ -23,7 +24,7 @@ public class DataAPIErrorHandler implements ResponseErrorHandler {
         return errorHandler.hasError(response);
     }
 
-    public void handleError(ClientHttpResponse response) throws IOException {
+    public void handleError(ClientHttpResponse response) throws APIErrorResultException {
         ObjectMapper mapper = new ObjectMapper();
         ErrorResult result;
         HttpStatus statusCode;
@@ -31,7 +32,7 @@ public class DataAPIErrorHandler implements ResponseErrorHandler {
             statusCode = response.getStatusCode();
             result = mapper.readValue(response.getBody(), ErrorResult.class);
         } catch (Exception ex) {
-            throw new APIErrorResultException().withInnerException(ex);
+            throw new InternalServerErrorException().withInnerException(ex);
         }
         throw new APIErrorResultException(statusCode, result);
     }

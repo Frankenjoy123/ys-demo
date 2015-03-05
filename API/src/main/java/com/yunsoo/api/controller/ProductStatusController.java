@@ -2,6 +2,10 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.data.RestClient;
 import com.yunsoo.api.dto.ProductStatus;
+import com.yunsoo.common.error.ErrorResult;
+import com.yunsoo.common.error.ErrorResultCode;
+import com.yunsoo.common.web.error.APIErrorResultCode;
+import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +34,8 @@ public class ProductStatusController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ProductStatus getById(@PathVariable(value = "id") int id) throws NotFoundException {
-        ProductStatus productStatus = dataAPIClient.get("productstatus/" + id, ProductStatus.class);
+        ProductStatus productStatus;
+        productStatus = dataAPIClient.get("productstatus/{id}", ProductStatus.class, id);
         if (productStatus == null) {
             throw new NotFoundException("ProductStatus");
         } else {

@@ -2,14 +2,11 @@
 package com.yunsoo.api.config;
 
 import com.yunsoo.api.data.RestClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-
-import java.io.IOException;
 
 /**
  * Created by:   Lijian
@@ -17,18 +14,10 @@ import java.io.IOException;
  * Descriptions:
  */
 @Configuration
-@ComponentScan(basePackages = {"com.yunsoo.api.config"})
+@ComponentScan(basePackageClasses = YunsooConfiguration.class)
 public class DataAPIConfiguration {
 
-    @Bean
-    public static PropertyPlaceholderConfigurer yunsooProperties() throws IOException {
-        PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
-        ppc.setLocations(new ClassPathResource[]{new ClassPathResource("yunsoo.properties")});
-        //ppc.setIgnoreUnresolvablePlaceholders(true);
-        return ppc;
-    }
-
-    @Value("${yunsoo.dataapi.baseurl}")
+    @Autowired
     private String dataAPIBaseURL;
 
     @Bean
