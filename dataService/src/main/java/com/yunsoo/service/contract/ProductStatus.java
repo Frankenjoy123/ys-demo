@@ -2,7 +2,6 @@ package com.yunsoo.service.contract;
 
 import com.yunsoo.dbmodel.ProductStatusModel;
 import org.springframework.beans.BeanUtils;
-import sun.rmi.runtime.Log;
 
 import java.util.*;
 import java.util.stream.Collectors;

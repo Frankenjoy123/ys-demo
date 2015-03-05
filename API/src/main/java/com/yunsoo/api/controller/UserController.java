@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * Created by:   Zhe
  * Created on:   2015/3/3
- * Descriptions:
+ * Descriptions: This controller manage end user.
  */
 @RestController
 @RequestMapping("/user")
@@ -38,7 +38,6 @@ public class UserController {
     }
 
     @RequestMapping(value = "token/{deviceCode}", method = RequestMethod.GET)
-
     public User getByCellular(@PathVariable(value = "deviceCode") String deviceCode) throws ResourceNotFoundException {
         User user = dataAPIClient.get("user/token/{deviceCode}", User.class, deviceCode);
         if (user == null) throw new ResourceNotFoundException("User not found token=" + deviceCode);
@@ -47,20 +46,20 @@ public class UserController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public long createUser(@RequestBody User user) throws Exception {
-        long id = -1;
-        return id;
+    public User createUser(@RequestBody User user) throws Exception {
+        long id = dataAPIClient.post("user/create", user, Long.class, null);
+        User resultUser = new User();
+        resultUser.setId(Long.toString(id));
+        return resultUser;
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public Boolean updateUser(@RequestBody User user) throws Exception {
-        Boolean result = false;
-        return result;
+    @RequestMapping(value = "/update", method = RequestMethod.PATCH)
+    public void updateUser(@RequestBody User user) throws Exception {
+        dataAPIClient.patch("user/update", user, null);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public Boolean deleteUser(@RequestBody User user) throws Exception {
-        Boolean result = false;
-        return result;
+    public void deleteUser(@RequestBody Integer userId) throws Exception {
+        dataAPIClient.delete("user/delete/{id}", userId);
     }
 }

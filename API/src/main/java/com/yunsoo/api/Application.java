@@ -1,18 +1,18 @@
 package com.yunsoo.api;
 
-import com.yunsoo.api.object.TPage;
+import com.yunsoo.api.security.StatelessAuthenticationSecurityConfig;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.filter.CharacterEncodingFilter;
+
+import javax.servlet.Filter;
 
 //@ComponentScan
 //@EnableAutoConfiguration
 //@Configuration
 @SpringBootApplication
+@Import(StatelessAuthenticationSecurityConfig.class)
 public class Application {
 
     public static void main(String[] args) {
@@ -27,5 +27,11 @@ public class Application {
         System.out.println("Run API by Spring Boot. Successfully started...");
     }
 
-
+    @Bean
+    public Filter characterEncodingFilter() {
+        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+        characterEncodingFilter.setEncoding("UTF-8");
+        characterEncodingFilter.setForceEncoding(true);
+        return characterEncodingFilter;
+    }
 }
