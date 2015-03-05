@@ -1,8 +1,12 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.data.DataAPIClient;
+import com.yunsoo.api.data.RestClient;
 import com.yunsoo.api.dto.ProductStatus;
-import com.yunsoo.api.exception.ResourceNotFoundException;
+import com.yunsoo.common.error.ErrorResult;
+import com.yunsoo.common.error.ErrorResultCode;
+import com.yunsoo.common.web.error.APIErrorResultCode;
+import com.yunsoo.common.web.exception.InternalServerErrorException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,18 +25,19 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/productstatus")
 public class ProductStatusController {
 
-    private DataAPIClient dataAPIClient;
+    private RestClient dataAPIClient;
 
     @Autowired
-    ProductStatusController(DataAPIClient dataAPIClient) {
+    ProductStatusController(RestClient dataAPIClient) {
         this.dataAPIClient = dataAPIClient;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ProductStatus getById(@PathVariable(value = "id") int id) throws ResourceNotFoundException {
-        ProductStatus productStatus = dataAPIClient.get("productstatus/" + id, ProductStatus.class);
+    public ProductStatus getById(@PathVariable(value = "id") int id) throws NotFoundException {
+        ProductStatus productStatus;
+        productStatus = dataAPIClient.get("productstatus/{id}", ProductStatus.class, id);
         if (productStatus == null) {
-            throw new ResourceNotFoundException("ProductStatus");
+            throw new NotFoundException("ProductStatus");
         } else {
             return productStatus;
         }

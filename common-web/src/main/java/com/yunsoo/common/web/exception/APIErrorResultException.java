@@ -14,13 +14,13 @@ public class APIErrorResultException extends ErrorResultException {
     private HttpStatus httpStatus;
 
 
-//    public APIErrorResultException() {
-//        this(HttpStatus.INTERNAL_SERVER_ERROR); //set default status to 500
-//    }
-//
-//    public APIErrorResultException(ErrorResult errorResult) {
-//        this(HttpStatus.INTERNAL_SERVER_ERROR, errorResult); //set default status to 500
-//    }
+    public APIErrorResultException() {
+        this(HttpStatus.INTERNAL_SERVER_ERROR); //set default status to 500
+    }
+
+    public APIErrorResultException(ErrorResult errorResult) {
+        this(HttpStatus.INTERNAL_SERVER_ERROR, errorResult); //set default status to 500
+    }
 
     public APIErrorResultException(HttpStatus httpStatus){
         super();

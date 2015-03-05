@@ -1,7 +1,7 @@
 package com.yunsoo.api;
 
 import com.yunsoo.api.config.DataAPIConfiguration;
-import com.yunsoo.api.data.DataAPIClient;
+import com.yunsoo.api.data.RestClient;
 import com.yunsoo.api.dto.ProductStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,11 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by:   Lijian
@@ -27,7 +23,7 @@ import java.util.Map;
 public class DataClientTest {
 
     @Autowired
-    private DataAPIClient dataAPIClient;
+    private RestClient dataAPIClient;
 
     @Test
     public void testGetBaseURL() {
@@ -36,7 +32,7 @@ public class DataClientTest {
 
     @Test
     public void testGet() {
-        ProductStatus productStatus = dataAPIClient.get("productstatus/{id}", ProductStatus.class, 1);
+        ProductStatus productStatus = new RestClient("http://localhost/api/").get("productstatus/{id}", ProductStatus.class, 7);
         System.out.println(productStatus);
 
         ProductStatus[] array = dataAPIClient.get("productstatus?active={active}", ProductStatus[].class, true);

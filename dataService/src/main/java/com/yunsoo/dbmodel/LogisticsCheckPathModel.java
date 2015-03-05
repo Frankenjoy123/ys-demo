@@ -1,5 +1,8 @@
 package com.yunsoo.dbmodel;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import java.util.Date;
 import javax.persistence.*;
 
@@ -18,23 +21,25 @@ public class LogisticsCheckPathModel {
     @Column(name = "product_key")
     private String productKey;
 
-    @Column(name = "status_id")
+    @Column(name = "status_id", nullable = true)
     private int status_id;
 
     @Column(name = "start_check_point_id")
     private int startCheckPoint;
 
     @Column(name = "end_check_point_id", nullable = true)
-    private Integer endCheckPoint;
+    private int endCheckPoint;
 
     @Column(name = "start_datetime")
-    private Date startDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime startDate;
 
     @Column(name = "desc", nullable = true)
     private String desc;
 
     @Column(name = "end_datetime", nullable = true)
-    private Date endDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime endDate;
 
     @Column(name = "operator", nullable = true)
     private long operator;
@@ -79,19 +84,19 @@ public class LogisticsCheckPathModel {
         this.endCheckPoint = endCheckPoint;
     }
 
-    public Date getStartDate() {
+    public DateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(DateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public DateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(DateTime endDate) {
         this.endDate = endDate;
     }
 

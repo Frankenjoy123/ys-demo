@@ -1,7 +1,7 @@
 package com.yunsoo.common.web.exception;
 
 import com.yunsoo.common.error.ErrorResult;
-import com.yunsoo.common.web.error.ErrorResultCode;
+import com.yunsoo.common.web.error.APIErrorResultCode;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 public class NotAcceptableException extends APIErrorResultException {
 
     public NotAcceptableException() {
-        this(ErrorResultCode.NOT_ACCEPTABLE);
+        this(APIErrorResultCode.NOT_ACCEPTABLE);
     }
 
     public NotAcceptableException(int code) {
@@ -20,7 +20,7 @@ public class NotAcceptableException extends APIErrorResultException {
     }
 
     public NotAcceptableException(String message) {
-        this(ErrorResultCode.NOT_ACCEPTABLE, message);
+        this(APIErrorResultCode.NOT_ACCEPTABLE, message);
     }
 
     public NotAcceptableException(int code, String message) {
