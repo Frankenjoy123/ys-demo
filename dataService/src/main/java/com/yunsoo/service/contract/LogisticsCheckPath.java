@@ -15,11 +15,11 @@ public class LogisticsCheckPath {
     private String productKey;
     private int status_id;
     private int startCheckPoint;
-    private int endCheckPoint;
-    private String startDate;
+    private Integer endCheckPoint;
+    private DateTime startDate;
     private String desc;
-    private String endDate;
-    private long operator;
+    private DateTime endDate;
+    private Long operator;
     private String deviceId;
 
     public long getId() {
@@ -54,35 +54,35 @@ public class LogisticsCheckPath {
         this.startCheckPoint = startCheckPoint;
     }
 
-    public int getEndCheckPoint() {
+    public Integer getEndCheckPoint() {
         return endCheckPoint;
     }
 
-    public void setEndCheckPoint(int endCheckPoint) {
+    public void setEndCheckPoint(Integer endCheckPoint) {
         this.endCheckPoint = endCheckPoint;
     }
 
-    public String getStartDate() {
+    public DateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(DateTime startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public DateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(DateTime endDate) {
         this.endDate = endDate;
     }
 
-    public long getOperator() {
+    public Long getOperator() {
         return operator;
     }
 
-    public void setOperator(long operator) {
+    public void setOperator(Long operator) {
         this.operator = operator;
     }
 
@@ -109,16 +109,12 @@ public class LogisticsCheckPath {
         path.setId(model.getId());
         path.setProductKey(model.getProductKey());
         path.setStartCheckPoint(model.getStartCheckPoint());
-
-        if (model.getStartDate() != null) {
-            path.setStartDate(model.getStartDate().toString());
-        }
+        path.setStartDate(model.getStartDate());
         path.setEndCheckPoint(model.getEndCheckPoint());
-
-        if (model.getEndDate() != null) {
-            path.setEndDate(model.getEndDate().toString());
-        }
+        path.setEndDate(model.getEndDate());
         path.setOperator(model.getOperator());
+        path.setStatus_id(model.getStatus_id());
+        path.setDesc(model.getDesc());
 
         return path;
     }
@@ -127,23 +123,15 @@ public class LogisticsCheckPath {
         if (path == null) return null;
 
         LogisticsCheckPathModel model = new LogisticsCheckPathModel();
-        if (path.getId() >= 0) {
-            model.setId(path.getId());
-        }
         model.setId(path.getId());
         model.setProductKey(path.getProductKey());
         model.setStartCheckPoint(path.getStartCheckPoint());
-
-        if (path.getStartDate() != null) {
-            model.setStartDate(DateTime.parse(path.getStartDate()));
-        }
-
+        model.setStartDate(path.getStartDate());
         model.setEndCheckPoint(path.getEndCheckPoint());
-
-        if (path.getEndDate() != null) {
-            model.setEndDate(DateTime.parse(path.getEndDate()));
-        }
+        model.setEndDate(path.getEndDate());
         model.setOperator(path.getOperator());
+        model.setStatus_id(path.getStatus_id());
+        model.setDesc(path.getDesc());
 
         return model;
     }

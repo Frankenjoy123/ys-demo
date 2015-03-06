@@ -9,13 +9,13 @@ import java.util.List;
  */
 public interface LogisticsCheckPathDao {
 
-    public LogisticsCheckPathModel get(Long id);
+    public LogisticsCheckPathModel get(long id);
 
     public Long save(LogisticsCheckPathModel logisticsModel);
 
     public DaoStatus update(LogisticsCheckPathModel logisticsModel);
 
-    public DaoStatus delete(Long id, int deleteStatus);
+    public DaoStatus delete(long id, int deleteStatus);
 
     public List<LogisticsCheckPathModel> getLogisticsCheckPathModelsOrderByStartDate(String productKey);
 }

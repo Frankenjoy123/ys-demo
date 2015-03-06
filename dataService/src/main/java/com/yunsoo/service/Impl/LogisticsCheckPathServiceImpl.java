@@ -22,7 +22,7 @@ public class LogisticsCheckPathServiceImpl implements LogisticsCheckPathService{
     private LogisticsCheckPathDao logisticsCheckPathDao;
 
     @Override
-    public LogisticsCheckPath get(Long id) {
+    public LogisticsCheckPath get(long id) {
         return LogisticsCheckPath.FromModel(logisticsCheckPathDao.get(id));
     }
 
@@ -47,7 +47,7 @@ public class LogisticsCheckPathServiceImpl implements LogisticsCheckPathService{
     }
 
     @Override
-    public boolean delete(Long id, int deleteStatus) {
+    public boolean delete(long id, int deleteStatus) {
         DaoStatus daoStatus = logisticsCheckPathDao.delete(id, deleteStatus);
         if (daoStatus == DaoStatus.success) {
             return true;

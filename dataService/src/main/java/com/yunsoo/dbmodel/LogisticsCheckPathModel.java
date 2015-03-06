@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Table(name = "logistics_check_path")
 public class LogisticsCheckPathModel {
 
-    @Id
+    @javax.persistence.Id
     @GeneratedValue
     @Column(name = "id")
     private long Id;
@@ -22,27 +22,27 @@ public class LogisticsCheckPathModel {
     private String productKey;
 
     @Column(name = "status_id", nullable = true)
-    private int status_id;
+    private Integer status_id;
 
     @Column(name = "start_check_point_id")
-    private int startCheckPoint;
-
-    @Column(name = "end_check_point_id", nullable = true)
-    private int endCheckPoint;
+    private Integer startCheckPoint;
 
     @Column(name = "start_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime startDate;
 
-    @Column(name = "desc", nullable = true)
-    private String desc;
+    @Column(name = "end_check_point_id", nullable = true)
+    private Integer endCheckPoint;
 
     @Column(name = "end_datetime", nullable = true)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime endDate;
 
     @Column(name = "operator", nullable = true)
-    private long operator;
+    private Long operator;
+
+    @Column(name = "description", nullable = true)
+    private String desc;
 
     public long getId() {
         return Id;
@@ -60,27 +60,27 @@ public class LogisticsCheckPathModel {
         this.productKey = productKey;
     }
 
-    public int getStatus_id() {
+    public Integer getStatus_id() {
         return status_id;
     }
 
-    public void setStatus_id(int status_id) {
+    public void setStatus_id(Integer status_id) {
         this.status_id = status_id;
     }
 
-    public int getStartCheckPoint() {
+    public Integer getStartCheckPoint() {
         return startCheckPoint;
     }
 
-    public void setStartCheckPoint(int startCheckPoint) {
+    public void setStartCheckPoint(Integer startCheckPoint) {
         this.startCheckPoint = startCheckPoint;
     }
 
-    public int getEndCheckPoint() {
+    public Integer getEndCheckPoint() {
         return endCheckPoint;
     }
 
-    public void setEndCheckPoint(int endCheckPoint) {
+    public void setEndCheckPoint(Integer endCheckPoint) {
         this.endCheckPoint = endCheckPoint;
     }
 
@@ -100,11 +100,11 @@ public class LogisticsCheckPathModel {
         this.endDate = endDate;
     }
 
-    public long getOperator() {
+    public Long getOperator() {
         return operator;
     }
 
-    public void setOperator(long operator) {
+    public void setOperator(Long operator) {
         this.operator = operator;
     }
 

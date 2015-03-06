@@ -10,13 +10,13 @@ import java.util.List;
  */
 public interface LogisticsCheckPathService {
 
-    public LogisticsCheckPath get(Long id);
+    public LogisticsCheckPath get(long id);
 
     public Long save(LogisticsCheckPath logisticsCheckPath);
 
     public ServiceOperationStatus update(LogisticsCheckPath logisticsCheckPath);
 
-    public boolean delete(Long id, int deleteStatus);
+    public boolean delete(long id, int deleteStatus);
 
     public List<LogisticsCheckPath> getLogisticsCheckPathsOrderByStartDate(String productKey);
 }
