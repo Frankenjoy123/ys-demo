@@ -2,8 +2,7 @@ package com.yunsoo.common.web.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.common.error.ErrorResult;
-import com.yunsoo.common.web.exception.APIErrorResultException;
-import com.yunsoo.common.web.exception.InternalServerErrorException;
+import com.yunsoo.common.web.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
@@ -34,6 +33,30 @@ public class RestResponseErrorHandler implements ResponseErrorHandler {
         } catch (Exception ex) {
             throw new InternalServerErrorException().withInnerException(ex);
         }
-        throw new APIErrorResultException(statusCode, result);
+        switch (statusCode) {
+            case BAD_REQUEST: //400
+                throw new BadRequestException(result);
+
+            case UNAUTHORIZED: //401
+                throw new UnauthorizedException(result);
+
+            case FORBIDDEN: //403
+                throw new ForbiddenException(result);
+
+            case NOT_FOUND: //404
+                throw new NotFoundException(result);
+
+            case NOT_ACCEPTABLE: //406
+                throw new NotAcceptableException(result);
+
+            case UNPROCESSABLE_ENTITY: //422
+                throw new UnprocessableEntityException(result);
+
+            case INTERNAL_SERVER_ERROR: //500
+                throw new InternalServerErrorException(result);
+
+            default:
+                throw new APIErrorResultException(statusCode, result);
+        }
     }
 }
