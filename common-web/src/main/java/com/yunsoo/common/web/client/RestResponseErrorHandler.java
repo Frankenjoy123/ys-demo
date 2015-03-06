@@ -23,7 +23,7 @@ public class RestResponseErrorHandler implements ResponseErrorHandler {
         return errorHandler.hasError(response);
     }
 
-    public void handleError(ClientHttpResponse response) throws APIErrorResultException {
+    public void handleError(ClientHttpResponse response) throws RestErrorResultException {
         ObjectMapper mapper = new ObjectMapper();
         ErrorResult result;
         HttpStatus statusCode;
@@ -56,7 +56,7 @@ public class RestResponseErrorHandler implements ResponseErrorHandler {
                 throw new InternalServerErrorException(result);
 
             default:
-                throw new APIErrorResultException(statusCode, result);
+                throw new RestErrorResultException(statusCode, result);
         }
     }
 }

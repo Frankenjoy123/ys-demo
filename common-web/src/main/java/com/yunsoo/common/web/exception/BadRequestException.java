@@ -1,7 +1,7 @@
 package com.yunsoo.common.web.exception;
 
 import com.yunsoo.common.error.ErrorResult;
-import com.yunsoo.common.web.error.APIErrorResultCode;
+import com.yunsoo.common.web.error.RestErrorResultCode;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -9,10 +9,10 @@ import org.springframework.http.HttpStatus;
  * Created on:   2015/3/6
  * Descriptions:
  */
-public class BadRequestException extends APIErrorResultException {
+public class BadRequestException extends RestErrorResultException {
 
     public BadRequestException() {
-        this(APIErrorResultCode.FORBIDDEN);
+        this(RestErrorResultCode.FORBIDDEN);
     }
 
     public BadRequestException(int code) {
@@ -20,7 +20,7 @@ public class BadRequestException extends APIErrorResultException {
     }
 
     public BadRequestException(String message) {
-        this(APIErrorResultCode.BAD_REQUEST, message);
+        this(RestErrorResultCode.BAD_REQUEST, message);
     }
 
     public BadRequestException(int code, String message) {

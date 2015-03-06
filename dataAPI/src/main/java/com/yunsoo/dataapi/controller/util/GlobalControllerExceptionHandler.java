@@ -4,8 +4,8 @@ import com.yunsoo.common.config.CommonConfig;
 import com.yunsoo.common.error.DebugErrorResult;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.TraceInfo;
-import com.yunsoo.common.web.error.APIErrorResultCode;
-import com.yunsoo.common.web.exception.APIErrorResultException;
+import com.yunsoo.common.web.error.RestErrorResultCode;
+import com.yunsoo.common.web.exception.RestErrorResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +28,13 @@ public class GlobalControllerExceptionHandler {
     @Autowired
     private CommonConfig commonConfig;
 
-    @ExceptionHandler(APIErrorResultException.class)
+    @ExceptionHandler(RestErrorResultException.class)
     @ResponseBody
     public ResponseEntity<ErrorResult> handleRestError(HttpServletRequest req, Exception ex) {
         ErrorResult result;
         HttpStatus status;
-        if (ex instanceof APIErrorResultException) {
-            APIErrorResultException apiEx = (APIErrorResultException) ex;
+        if (ex instanceof RestErrorResultException) {
+            RestErrorResultException apiEx = (RestErrorResultException) ex;
             result = apiEx.getErrorResult();
             status = apiEx.getHttpStatus();
         } else {
@@ -49,7 +49,7 @@ public class GlobalControllerExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResult handleNoHandlerFound(HttpServletRequest req, Exception ex) {
-        ErrorResult result = new ErrorResult(APIErrorResultCode.NOT_FOUND, "no handler found");
+        ErrorResult result = new ErrorResult(RestErrorResultCode.NOT_FOUND, "no handler found");
         return appendTraceInfo(result, ex);
     }
 
