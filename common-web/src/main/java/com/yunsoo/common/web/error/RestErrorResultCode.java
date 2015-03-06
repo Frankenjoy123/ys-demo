@@ -27,6 +27,8 @@ public final class RestErrorResultCode {
     public final static int NOT_ACCEPTABLE = 40600;
     //add more...
 
+    public final static int CONFLICT = 40900;
+
     //422
     public final static int UNPROCESSABLE_ENTITY = 42200;
     //add more...

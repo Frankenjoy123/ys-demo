@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 public class BadRequestException extends RestErrorResultException {
 
     public BadRequestException() {
-        this(RestErrorResultCode.FORBIDDEN);
+        this(RestErrorResultCode.BAD_REQUEST);
     }
 
     public BadRequestException(int code) {
