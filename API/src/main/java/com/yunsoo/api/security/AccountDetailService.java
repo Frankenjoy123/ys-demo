@@ -27,7 +27,7 @@ public class AccountDetailService implements org.springframework.security.core.u
         //mock up TAccount - to be updated by Kaibin
         tAccount.setUsername("YunsooAdmin");
         tAccount.setPassword(new BCryptPasswordEncoder().encode("12345678"));
-        tAccount.grantRole(username.equals("YunsooAdmin") ? TAccountRole.YUNSOO_ADMIN : TAccountRole.COM_USER);
+        tAccount.grantRole(TAccountRole.YUNSOO_ADMIN);
 //        Set<TAccountRole> accountRoles = new HashSet<TAccountRole>();
 //        accountRoles.add(TAccountRole.YUNSOO_ADMIN);
 //        tAccount.setRoles(accountRoles);

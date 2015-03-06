@@ -10,16 +10,16 @@ public enum TAccountRole {
 
     public TAccountAuthority asAuthorityFor(final TAccount user) {
         final TAccountAuthority authority = new TAccountAuthority();
-        authority.setAuthority("ROLE_" + toString());
+        authority.setAuthority(this.toString());
         authority.setAccount(user);
         return authority;
     }
 
     public static TAccountRole valueOf(final TAccountAuthority authority) {
         switch (authority.getAuthority()) {
-            case "ROLE_COM_USER":
+            case "COM_USER":
                 return COM_USER;
-            case "ROLE_YUNSOO_ADMIN":
+            case "YUNSOO_ADMIN":
                 return YUNSOO_ADMIN;
         }
         throw new IllegalArgumentException("No role defined for authority: " + authority.getAuthority());
