@@ -4,11 +4,13 @@ import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.LogisticsCheckPathDao;
 import com.yunsoo.dbmodel.LogisticsCheckActionModel;
 import com.yunsoo.dbmodel.LogisticsCheckPathModel;
+import com.yunsoo.dbmodel.LogisticsCheckPointModel;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,22 +28,22 @@ public class LogisticsCheckPathDaoImpl implements LogisticsCheckPathDao {
     private SessionFactory sessionFactory;
 
     @Override
-    public LogisticsCheckPathModel get(Long id) {
-        String hql = "from LogisticsCheckPathModel where Id=" + id;
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
-
-        @SuppressWarnings("unchecked")
-        List<LogisticsCheckPathModel> listPaths = (List<LogisticsCheckPathModel>) query.list();
-        if (listPaths != null && !listPaths.isEmpty()) {
-            return listPaths.get(0);
-        }
-        return null;
+    public LogisticsCheckPathModel get(long id) {
+        return (LogisticsCheckPathModel) sessionFactory.getCurrentSession().get(
+                LogisticsCheckPathModel.class, id);
     }
 
     @Override
     public Long save(LogisticsCheckPathModel pathModel) {
+        try
+        {
         sessionFactory.getCurrentSession().save(pathModel);
         return pathModel.getId();
+
+        } catch (Exception ex) {
+            //log ex
+           return -1l;
+        }
     }
 
     @Override
@@ -56,7 +58,7 @@ public class LogisticsCheckPathDaoImpl implements LogisticsCheckPathDao {
     }
 
     @Override
-    public DaoStatus delete(Long Id, int deleteStatus) {
+    public DaoStatus delete(long Id, int deleteStatus) {
         try {
             LogisticsCheckPathModel pathModel = this.get(Id);
             if (pathModel == null) return DaoStatus.NotFound;
