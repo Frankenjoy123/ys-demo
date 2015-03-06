@@ -1,7 +1,7 @@
 package com.yunsoo.common.web.exception;
 
 import com.yunsoo.common.error.ErrorResult;
-import com.yunsoo.common.web.error.ErrorResultCode;
+import com.yunsoo.common.web.error.APIErrorResultCode;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 public class NotFoundException extends APIErrorResultException {
 
     public NotFoundException() {
-        this(ErrorResultCode.NOT_FOUND);
+        this(APIErrorResultCode.NOT_FOUND);
     }
 
     public NotFoundException(int code) {
@@ -20,7 +20,7 @@ public class NotFoundException extends APIErrorResultException {
     }
 
     public NotFoundException(String resourceName) {
-        this(ErrorResultCode.NOT_FOUND, resourceName);
+        this(APIErrorResultCode.NOT_FOUND, resourceName);
     }
 
     public NotFoundException(int code, String resourceName) {

@@ -4,7 +4,6 @@ import com.yunsoo.api.dto.ScanResult;
 import com.yunsoo.api.dto.basic.Logistics;
 import com.yunsoo.api.dto.basic.Product;
 import com.yunsoo.api.dto.basic.ProductCategory;
-import com.yunsoo.api.exception.UnauthorizedException;
 //import org.joda.time.DateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,22 +19,17 @@ import java.util.List;
 public class ScanController {
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
-    public ResponseEntity<?> getDetailByKey(@PathVariable(value = "key") String key) {
-        ScanResult ScanResult = new ScanResult();
-        ScanResult.setKeyType("new key");
-        ScanResult.setLogisticsList(this.getFakeLogistics());
-        ScanResult.setManufacturer(null);
-        ScanResult.setProduct(this.getFakeProduct());
+    public ScanResult getDetailByKey(@PathVariable(value = "key") String key) {
+        ScanResult scanResult = new ScanResult();
+        scanResult.setKeyType("new key");
+        scanResult.setLogisticsList(this.getFakeLogistics());
+        scanResult.setManufacturer(null);
+        scanResult.setProduct(this.getFakeProduct());
 
 //        List<ScanRecord> scanRecordList = scanRecordService.getScanRecordsByFilter(key, null, null, null,
 //                0, 100);
 //        ScanResult.setScanRecord(ScanRecordDto.FromScanRecordList(scanRecordList));
-        return new ResponseEntity(ScanResult, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/forbidden", method = RequestMethod.GET)
-    public ResponseEntity<?> forbidden() {
-        throw new UnauthorizedException("JB_USER_909");
+        return scanResult;
     }
 
     private Product getFakeProduct() {

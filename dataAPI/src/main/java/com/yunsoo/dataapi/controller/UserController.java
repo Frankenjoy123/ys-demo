@@ -1,5 +1,6 @@
 package com.yunsoo.dataapi.controller;
 
+import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.yunsoo.dataapi.dto.ResultWrapper;
 import com.yunsoo.dataapi.dto.UserDto;
 import com.yunsoo.dataapi.factory.ResultFactory;
@@ -34,6 +35,7 @@ public class UserController {
     @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
     public ResponseEntity<UserDto> getUserById(@PathVariable(value = "id") Long id) {
         UserDto userDto = UserDto.FromUser(userService.get(id));
+        if (userDto == null) throw new ResourceNotFoundException("UserDto not found id=" + id);
         return new ResponseEntity<UserDto>(userDto, HttpStatus.OK);
     }
 
@@ -46,6 +48,8 @@ public class UserController {
     public ResponseEntity<User> getUserByDeviceCode(@PathVariable(value = "deviceCode") String deviceCode) {
         //to-do
         List<User> users = userService.getUsersByFilter(null, deviceCode, "", null);
+        if (users == null || users.size() <= 0)
+            throw new ResourceNotFoundException("Users not found token=" + deviceCode);
         return new ResponseEntity<User>(users.get(0), HttpStatus.OK);
     }
 
@@ -64,7 +68,7 @@ public class UserController {
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    @RequestMapping(value = "/update", method = RequestMethod.PATCH)
     public ResponseEntity<ResultWrapper> updateUser(@RequestBody UserDto userDto) throws Exception {
         //patch update, we don't provide functions like update with set null properties.
         User user = UserDto.ToUser(userDto);

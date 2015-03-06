@@ -5,7 +5,7 @@ package com.yunsoo.common.web.error;
  * Created on:   2015/3/4
  * Descriptions:
  */
-public final class ErrorResultCode {
+public final class APIErrorResultCode {
 
     //400
     public final static int BAD_REQUEST = 40000;

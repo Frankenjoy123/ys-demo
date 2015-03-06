@@ -1,7 +1,7 @@
 package com.yunsoo.common.web.exception;
 
 import com.yunsoo.common.error.ErrorResult;
-import com.yunsoo.common.web.error.ErrorResultCode;
+import com.yunsoo.common.web.error.APIErrorResultCode;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 public class UnprocessableEntityException extends APIErrorResultException {
 
     public UnprocessableEntityException() {
-        this(ErrorResultCode.UNPROCESSABLE_ENTITY);
+        this(APIErrorResultCode.UNPROCESSABLE_ENTITY);
     }
 
     public UnprocessableEntityException(int code) {
@@ -20,7 +20,7 @@ public class UnprocessableEntityException extends APIErrorResultException {
     }
 
     public UnprocessableEntityException(String message) {
-        this(ErrorResultCode.UNPROCESSABLE_ENTITY, message);
+        this(APIErrorResultCode.UNPROCESSABLE_ENTITY, message);
     }
 
     public UnprocessableEntityException(int code, String message) {

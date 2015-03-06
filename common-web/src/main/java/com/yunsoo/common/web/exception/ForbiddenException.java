@@ -1,7 +1,7 @@
 package com.yunsoo.common.web.exception;
 
 import com.yunsoo.common.error.ErrorResult;
-import com.yunsoo.common.web.error.ErrorResultCode;
+import com.yunsoo.common.web.error.APIErrorResultCode;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 public class ForbiddenException extends APIErrorResultException {
 
     public ForbiddenException() {
-        this(ErrorResultCode.FORBIDDEN);
+        this(APIErrorResultCode.FORBIDDEN);
     }
 
     public ForbiddenException(int code) {
@@ -20,7 +20,7 @@ public class ForbiddenException extends APIErrorResultException {
     }
 
     public ForbiddenException(String actionName, String accountName) {
-        this(ErrorResultCode.FORBIDDEN, actionName, accountName);
+        this(APIErrorResultCode.FORBIDDEN, actionName, accountName);
     }
 
     public ForbiddenException(int code, String actionName, String accountName) {

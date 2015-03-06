@@ -1,11 +1,12 @@
 
-package com.yunsoo.api.data;
+package com.yunsoo.common.web.client;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.yunsoo.common.web.exception.APIErrorResultException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,15 +16,20 @@ import org.springframework.web.client.RestTemplate;
  * Descriptions:
  */
 
-public class DataAPIClient {
+public class RestClient {
 
     private String baseURL;
 
-    @Autowired
     private RestTemplate restTemplate;
 
-    public DataAPIClient(String baseURL) {
+    public RestClient(String baseURL) {
         this.baseURL = baseURL;
+        restTemplate = new RestTemplate();
+    }
+
+    public RestClient(String baseURL, ResponseErrorHandler responseErrorHandler) {
+        this(baseURL);
+        restTemplate.setErrorHandler(responseErrorHandler);
     }
 
     public String getBaseURL() {
@@ -49,11 +55,9 @@ public class DataAPIClient {
     public <T> T get(String path, Class<T> responseType, Object... uriVariables) {
         try {
             return restTemplate.getForObject(createURL(path), responseType, uriVariables);
-        } catch (HttpClientErrorException ex) {
+        } catch (APIErrorResultException ex) {
             //todo:handle error code/message from dataAPI
             //System.out.println(ex.getResponseBodyAsString());
-            return null;
-        } catch (RestClientException ex) {
             throw ex;
         }
     }
