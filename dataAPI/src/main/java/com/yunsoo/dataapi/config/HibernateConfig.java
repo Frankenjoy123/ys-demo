@@ -1,9 +1,10 @@
-package com.yunsoo.dataapi.apiconfig;
+package com.yunsoo.dataapi.config;
 
 /**
- * Created by Zhe on 2015/1/24.
+ * Created by:   Zhe
+ * Created on:   2015/1/24
+ * Descriptions:
  */
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,7 +19,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackages = {"com.yunsoo.dataapi.apiconfig"})
+@ComponentScan(basePackages = {"com.yunsoo.dataapi.config"})
 @PropertySource("classpath:jdbc.properties")
 public class HibernateConfig {
 

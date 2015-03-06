@@ -1,7 +1,13 @@
 package com.yunsoo.dataapi.exception;
 
-import com.yunsoo.dataapi.dto.ErrorResult;
+import com.yunsoo.common.config.CommonConfig;
+import com.yunsoo.common.error.DebugErrorResult;
+import com.yunsoo.common.error.ErrorResult;
+import com.yunsoo.common.error.TraceInfo;
+import com.yunsoo.common.web.exception.APIErrorResultException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,27 +23,38 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(ErrorResultException.class)
+    @Autowired
+    private CommonConfig commonConfig;
+
+    @ExceptionHandler(APIErrorResultException.class)
     @ResponseBody
-    public ErrorResult handleBadRequest(HttpServletRequest req, Exception ex) {
-        if (ex instanceof ErrorResultException) {
-            return ((ErrorResultException) ex).toErrorResult();
+    public ResponseEntity<ErrorResult> handleBadRequest(HttpServletRequest req, Exception ex) {
+        ErrorResult result;
+        HttpStatus status;
+        if (ex instanceof APIErrorResultException) {
+            APIErrorResultException apiEx = (APIErrorResultException) ex;
+            result = apiEx.getErrorResult();
+            status = apiEx.getHttpStatus();
         } else {
-            return new ErrorResult(40400, "Resource not found");
+            result = ErrorResult.UNKNOWN;
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
+        if (commonConfig.isDebugEnabled()) {
+            result = new DebugErrorResult(result, new TraceInfo(ex));
+        }
+        return new ResponseEntity<>(result, status);
+
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ErrorResult handleServerError(HttpServletRequest req, Exception ex) {
-        if (ex instanceof ErrorResultException) {
-            return ((ErrorResultException) ex).toErrorResult();
+        ErrorResult result = ErrorResult.UNKNOWN;
+        if (commonConfig.isDebugEnabled()) {
+            result = new DebugErrorResult(result, new TraceInfo(ex));
         }
-
-        return new ErrorResult(50000, ex.toString());
-        //return new ErrorResult(50000, "Internal Server Error");
+        return result;
     }
 
 }

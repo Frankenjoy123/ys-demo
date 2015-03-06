@@ -1,6 +1,6 @@
 package com.yunsoo.api.config;
 
-import com.yunsoo.common.error.DebugConfig;
+import com.yunsoo.common.config.CommonConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +17,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class YunsooConfigurationTest {
 
     @Autowired()
-    private DebugConfig debugConfig;
+    private CommonConfig commonConfig;
 
     @Autowired
     private String dataAPIBaseURL;
 
     @Test
     public void test_debugConfig(){
-        System.out.println(debugConfig.isDebugEnabled());
+        System.out.println(commonConfig.isDebugEnabled());
     }
 
     @Test

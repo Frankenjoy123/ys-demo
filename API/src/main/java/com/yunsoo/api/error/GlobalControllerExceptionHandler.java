@@ -1,6 +1,6 @@
 package com.yunsoo.api.error;
 
-import com.yunsoo.common.error.DebugConfig;
+import com.yunsoo.common.config.CommonConfig;
 import com.yunsoo.common.error.DebugErrorResult;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.TraceInfo;
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 public class GlobalControllerExceptionHandler {
 
     @Autowired
-    private DebugConfig debugConfig;
+    private CommonConfig commonConfig;
 
     @ExceptionHandler(APIErrorResultException.class)
     @ResponseBody
@@ -36,7 +36,7 @@ public class GlobalControllerExceptionHandler {
             result = ErrorResult.UNKNOWN;
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        if (debugConfig.isDebugEnabled()) {
+        if (commonConfig.isDebugEnabled()) {
             result = new DebugErrorResult(result, new TraceInfo(ex));
         }
         return new ResponseEntity<>(result, status);
@@ -48,7 +48,7 @@ public class GlobalControllerExceptionHandler {
     @ResponseBody
     public ErrorResult handleServerError(HttpServletRequest req, Exception ex) {
         ErrorResult result = ErrorResult.UNKNOWN;
-        if (debugConfig.isDebugEnabled()) {
+        if (commonConfig.isDebugEnabled()) {
             result = new DebugErrorResult(result, new TraceInfo(ex));
         }
         return result;

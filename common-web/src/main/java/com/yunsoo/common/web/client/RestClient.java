@@ -1,13 +1,10 @@
 
 package com.yunsoo.common.web.client;
 
-import com.yunsoo.common.web.exception.APIErrorResultException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResponseErrorHandler;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -15,21 +12,30 @@ import org.springframework.web.client.RestTemplate;
  * Created on:   2015/3/2
  * Descriptions:
  */
-
 public class RestClient {
-
-    private String baseURL;
 
     private RestTemplate restTemplate;
 
+    private String baseURL;
+
+    public RestClient() {
+        this(null, null);
+    }
+
     public RestClient(String baseURL) {
-        this.baseURL = baseURL;
-        restTemplate = new RestTemplate();
+        this(baseURL, null);
     }
 
     public RestClient(String baseURL, ResponseErrorHandler responseErrorHandler) {
-        this(baseURL);
-        restTemplate.setErrorHandler(responseErrorHandler);
+        this.baseURL = baseURL;
+        if (baseURL != null && !baseURL.endsWith("/")) {
+            this.baseURL += "/";
+        }
+
+        this.restTemplate = new RestTemplate();
+        if (responseErrorHandler != null) {
+            restTemplate.setErrorHandler(responseErrorHandler);
+        }
     }
 
     public String getBaseURL() {
@@ -41,87 +47,38 @@ public class RestClient {
     }
 
 
-    private String createURL(String path) {
-        Assert.notNull(path, "'path' must not be null");
-        if (path.startsWith("/")) {
-            path = path.substring(1);
+    private String createURL(String url) {
+        Assert.notNull(url, "'url' must not be null");
+        if (baseURL != null && url.startsWith("/")) {
+            url = url.substring(1);
         }
-        return baseURL + path;
+        return baseURL + url;
     }
 
 
     //GET
-
-    public <T> T get(String path, Class<T> responseType, Object... uriVariables) {
-        try {
-            return restTemplate.getForObject(createURL(path), responseType, uriVariables);
-        } catch (APIErrorResultException ex) {
-            //todo:handle error code/message from dataAPI
-            //System.out.println(ex.getResponseBodyAsString());
-            throw ex;
-        }
+    public <T> T get(String url, Class<T> responseType, Object... uriVariables) {
+        return restTemplate.getForObject(createURL(url), responseType, uriVariables);
     }
-
-//    public <T> T get(String path, Class<T> responseType, Map<String, String> uriVariables) {
-//        try {
-//            return restTemplate.getForObject(createURL(path), responseType, uriVariables);
-//        } catch (RestClientException ex) {
-//            throw ex;
-//            //return null; //todo
-//        }
-//    }
 
 
     //POST
-
-    public <T> T post(String path, Object request, Class<T> responseType, Object... uriVariables) {
-        try {
-            return restTemplate.postForObject(createURL(path), request, responseType, uriVariables);
-        } catch (HttpClientErrorException ex) {
-            //todo:handle error code/message from dataAPI
-            return null;
-        } catch (RestClientException ex) {
-            throw ex;
-        }
+    public <T> T post(String url, Object request, Class<T> responseType, Object... uriVariables) {
+        return restTemplate.postForObject(createURL(url), request, responseType, uriVariables);
     }
 
     //PUT
-
-    public void put(String path, Object request, Object... uriVariables) {
-        try {
-            restTemplate.put(createURL(path), request, uriVariables);
-        } catch (HttpClientErrorException ex) {
-            //todo:handle error code/message from dataAPI
-
-        } catch (RestClientException ex) {
-            throw ex;
-        }
+    public void put(String url, Object request, Object... uriVariables) {
+        restTemplate.put(createURL(url), request, uriVariables);
     }
 
     //PATCH
-
-    public void patch(String path, Object request, Object... uriVariables) {
-        try {
-            HttpEntity<?> httpEntity = new HttpEntity<>(request);
-            restTemplate.exchange(createURL(path), HttpMethod.PATCH, httpEntity, (Class<?>) null, uriVariables);
-        } catch (HttpClientErrorException ex) {
-            //todo:handle error code/message from dataAPI
-
-        } catch (RestClientException ex) {
-            throw ex;
-        }
+    public void patch(String url, Object request, Object... uriVariables) {
+        restTemplate.exchange(createURL(url), HttpMethod.PATCH, new HttpEntity<>(request), (Class<?>) null, uriVariables);
     }
 
     //DELETE
-
-    public void delete(String path, Object... uriVariables) {
-        try {
-            restTemplate.delete(createURL(path), uriVariables);
-        } catch (HttpClientErrorException ex) {
-            //todo:handle error code/message from dataAPI
-
-        } catch (RestClientException ex) {
-            throw ex;
-        }
+    public void delete(String url, Object... uriVariables) {
+        restTemplate.delete(createURL(url), uriVariables);
     }
 }
