@@ -2,8 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.ErrorResultCode;
-import com.yunsoo.common.web.exception.APIErrorResultException;
-import com.yunsoo.common.web.exception.InternalServerErrorException;
+import com.yunsoo.common.web.exception.RestErrorResultException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,16 +41,16 @@ public class DebugController {
     }
 
     @RequestMapping(value = "error/{code}")
-    public void throwError(@PathVariable(value = "code") int code) throws APIErrorResultException {
+    public void throwError(@PathVariable(value = "code") int code) throws RestErrorResultException {
         HttpStatus status;
-        APIErrorResultException apiEx;
+        RestErrorResultException apiEx;
         try {
             status = HttpStatus.valueOf(code);
         } catch (IllegalArgumentException ex) {
             throw new NotFoundException("Error");
         }
         if (status.is4xxClientError() || status.is5xxServerError()) {
-            throw new APIErrorResultException(status, new ErrorResult(ErrorResultCode.DEBUG, "Debug"));
+            throw new RestErrorResultException(status, new ErrorResult(ErrorResultCode.DEBUG, "Debug"));
         }
         throw new NotFoundException("Error");
     }

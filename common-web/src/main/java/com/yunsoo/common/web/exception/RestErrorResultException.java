@@ -9,25 +9,25 @@ import org.springframework.http.HttpStatus;
  * Created on:   2015/3/4
  * Descriptions:
  */
-public class APIErrorResultException extends ErrorResultException {
+public class RestErrorResultException extends ErrorResultException {
 
     private HttpStatus httpStatus;
 
 
-    public APIErrorResultException() {
+    public RestErrorResultException() {
         this(HttpStatus.INTERNAL_SERVER_ERROR); //set default status to 500
     }
 
-    public APIErrorResultException(ErrorResult errorResult) {
+    public RestErrorResultException(ErrorResult errorResult) {
         this(HttpStatus.INTERNAL_SERVER_ERROR, errorResult); //set default status to 500
     }
 
-    public APIErrorResultException(HttpStatus httpStatus){
+    public RestErrorResultException(HttpStatus httpStatus){
         super();
         this.httpStatus = httpStatus;
     }
 
-    public APIErrorResultException(HttpStatus httpStatus, ErrorResult errorResult){
+    public RestErrorResultException(HttpStatus httpStatus, ErrorResult errorResult){
         super(errorResult);
         this.httpStatus = httpStatus;
     }

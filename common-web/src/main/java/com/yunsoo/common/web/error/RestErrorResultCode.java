@@ -5,7 +5,7 @@ package com.yunsoo.common.web.error;
  * Created on:   2015/3/4
  * Descriptions:
  */
-public final class APIErrorResultCode {
+public final class RestErrorResultCode {
 
     //400
     public final static int BAD_REQUEST = 40000;
@@ -26,6 +26,8 @@ public final class APIErrorResultCode {
     //404
     public final static int NOT_ACCEPTABLE = 40600;
     //add more...
+
+    public final static int CONFLICT = 40900;
 
     //422
     public final static int UNPROCESSABLE_ENTITY = 42200;
