@@ -9,6 +9,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @EnableWebSecurity
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Order(1)
 public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -48,17 +50,21 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/resources/**").permitAll()
 
+                //allow anonymous to All controller by default
+                .antMatchers("/**").permitAll()
+
                 //allow anonymous POSTs to login
-                .antMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
 
                 //allow anonymous GETs to API
-                .antMatchers(HttpMethod.GET, "/api/**").permitAll()
+                // .antMatchers(HttpMethod.GET, "/api/**").permitAll()
 
                 //defined Admin only API area
-                //.antMatchers("/admin/**").hasRole("YUNSOO_ADMIN")
+                .antMatchers("/admin/**").hasRole("YUNSOO_ADMIN")
+                //.antMatchers("/user").permitAll()
 
                 //all other request need to be authenticated
-                .anyRequest().hasRole("YUNSOO_ADMIN").and()
+                .anyRequest().hasRole("COM_USER").and()
 
                 // custom JSON based authentication by POST of {"username":"<name>","password":"<password>"} which sets the token header upon authentication
                 .addFilterBefore(new StatelessLoginFilter("/api/login", tokenAuthenticationService, accountDetailService, authenticationManager()), UsernamePasswordAuthenticationFilter.class)

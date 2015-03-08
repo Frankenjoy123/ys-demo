@@ -4,6 +4,7 @@ import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TAccountRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,16 +41,16 @@ public class TokenAuthenticationService {
         final String token = request.getHeader(AUTH_HEADER_NAME);
 
         //mock-up, to be updated by Kaibing
-        if (token.equals("DENY")) {
+        if (token == null || !token.equals("DENY")) {
+            final TAccount tAccount = new TAccount();
+            tAccount.setUsername("YunsooAdmin");
+            tAccount.setPassword(new BCryptPasswordEncoder().encode("12345678"));
+            tAccount.grantRole(TAccountRole.YUNSOO_ADMIN);
+            if (tAccount != null) {
+                return new AccountAuthentication(tAccount);
+            }
+        } else {
             return null;
-        }
-
-        final TAccount tAccount = new TAccount();
-        tAccount.setUsername("YunsooAdmin");
-        tAccount.setPassword(new BCryptPasswordEncoder().encode("12345678"));
-        tAccount.grantRole(TAccountRole.YUNSOO_ADMIN);
-        if (tAccount != null) {
-            return new AccountAuthentication(tAccount);
         }
 
         //to-be

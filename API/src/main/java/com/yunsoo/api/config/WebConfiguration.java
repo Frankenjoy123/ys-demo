@@ -19,6 +19,7 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
         return new CaseInsensitivePathMatcher();
     }
 
+    //to-do: not working for /user/token/{deviceCode}
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         configurer.setPathMatcher(pathMatcher()); //make path case insensitive.

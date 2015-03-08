@@ -29,12 +29,6 @@ public class Application {
             ((DispatcherServlet) dispatcherServlet).setThrowExceptionIfNoHandlerFound(true);
         }
 
-        String[] beanNames = context.getBeanDefinitionNames();
-        Arrays.sort(beanNames);
-        for (String beanName : beanNames) {
-            System.out.println(beanName);
-        }
-
         System.out.println("Run API by Spring Boot. Successfully started...");
     }
 

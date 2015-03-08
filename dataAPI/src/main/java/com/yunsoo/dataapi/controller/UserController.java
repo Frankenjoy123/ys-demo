@@ -44,12 +44,12 @@ public class UserController {
         return new ResponseEntity<UserDto>(UserDto.FromUser(userService.get(cellular)), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/token/{deviceCode}", method = RequestMethod.GET)
-    public ResponseEntity<User> getUserByDeviceCode(@PathVariable(value = "deviceCode") String deviceCode) {
+    @RequestMapping(value = "/token/{devicecode}", method = RequestMethod.GET)
+    public ResponseEntity<User> getUserByDeviceCode(@PathVariable(value = "devicecode") String devicecode) {
         //to-do
-        List<User> users = userService.getUsersByFilter(null, deviceCode, "", null);
+        List<User> users = userService.getUsersByFilter(null, devicecode, "", null);
         if (users == null || users.size() <= 0)
-            throw new ResourceNotFoundException("Users not found token=" + deviceCode);
+            throw new ResourceNotFoundException("Users not found token=" + devicecode);
         return new ResponseEntity<User>(users.get(0), HttpStatus.OK);
     }
 
