@@ -36,6 +36,18 @@ public class LogisticsCheckPathServiceImpl implements LogisticsCheckPathService{
     }
 
     @Override
+    public Long save(List<LogisticsCheckPath> paths) {
+        if (paths == null || paths.isEmpty()) {
+            return -1l;
+        }
+
+        for (LogisticsCheckPath path : paths)
+            logisticsCheckPathDao.save(LogisticsCheckPath.ToModel(path));
+
+        return 0l;
+    }
+
+    @Override
     public ServiceOperationStatus update(LogisticsCheckPath path) {
         if (path == null || path.getId() < 0) {
             return ServiceOperationStatus.InvalidArgument;

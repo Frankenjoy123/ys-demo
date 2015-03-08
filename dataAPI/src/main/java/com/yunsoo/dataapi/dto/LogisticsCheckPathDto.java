@@ -15,8 +15,8 @@ import java.util.List;
 public class LogisticsCheckPathDto {
     private long Id;
     private String productKey;
-    private int status_id;
-    private int startCheckPoint;
+    private Integer status_id;
+    private Integer startCheckPoint;
     private Integer endCheckPoint;
     private String startDate;
     private String desc;
@@ -40,19 +40,19 @@ public class LogisticsCheckPathDto {
         this.productKey = productKey;
     }
 
-    public int getStatus_id() {
+    public Integer getStatus_id() {
         return status_id;
     }
 
-    public void setStatus_id(int status_id) {
+    public void setStatus_id(Integer status_id) {
         this.status_id = status_id;
     }
 
-    public int getStartCheckPoint() {
+    public Integer getStartCheckPoint() {
         return startCheckPoint;
     }
 
-    public void setStartCheckPoint(int startCheckPoint) {
+    public void setStartCheckPoint(Integer startCheckPoint) {
         this.startCheckPoint = startCheckPoint;
     }
 
@@ -129,7 +129,11 @@ public class LogisticsCheckPathDto {
 
         LogisticsCheckPath path = new LogisticsCheckPath();
         path.setId(pathDto.getId());
+
+        //Need to get key list from key package
         path.setProductKey(pathDto.getProductKey());
+
+        //Use deviceId to get start check point
         path.setStartCheckPoint(pathDto.getStartCheckPoint());
 
         //Record the start date as the server date

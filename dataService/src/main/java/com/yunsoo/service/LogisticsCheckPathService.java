@@ -14,6 +14,8 @@ public interface LogisticsCheckPathService {
 
     public Long save(LogisticsCheckPath logisticsCheckPath);
 
+    public Long save(List<LogisticsCheckPath> logisticsCheckPaths);
+
     public ServiceOperationStatus update(LogisticsCheckPath logisticsCheckPath);
 
     public boolean delete(long id, int deleteStatus);

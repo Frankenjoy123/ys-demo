@@ -13,8 +13,8 @@ public class LogisticsCheckPath {
 
     private long Id;
     private String productKey;
-    private int status_id;
-    private int startCheckPoint;
+    private Integer status_id;
+    private Integer startCheckPoint;
     private Integer endCheckPoint;
     private DateTime startDate;
     private String desc;
@@ -38,19 +38,19 @@ public class LogisticsCheckPath {
         this.productKey = productKey;
     }
 
-    public int getStatus_id() {
+    public Integer getStatus_id() {
         return status_id;
     }
 
-    public void setStatus_id(int status_id) {
+    public void setStatus_id(Integer status_id) {
         this.status_id = status_id;
     }
 
-    public int getStartCheckPoint() {
+    public Integer getStartCheckPoint() {
         return startCheckPoint;
     }
 
-    public void setStartCheckPoint(int startCheckPoint) {
+    public void setStartCheckPoint(Integer startCheckPoint) {
         this.startCheckPoint = startCheckPoint;
     }
 
