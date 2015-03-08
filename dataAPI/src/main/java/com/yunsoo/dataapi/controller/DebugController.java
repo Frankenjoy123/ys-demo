@@ -1,4 +1,4 @@
-package com.yunsoo.api.controller;
+package com.yunsoo.dataapi.controller;
 
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.ErrorResultCode;
@@ -59,4 +59,15 @@ public class DebugController {
     public void throwError() throws Exception {
         throw new Exception("Error");
     }
+
+//    @Value("${yunsoo.debug}")
+//    private String debug;
+//
+//    @Value("${jdbc.url}")
+//    private String jdbcURL;
+//
+//    @RequestMapping(value = "properties")
+//    public List<String> getProperties() throws Exception {
+//        return Arrays.asList(debug, jdbcURL);
+//    }
 }

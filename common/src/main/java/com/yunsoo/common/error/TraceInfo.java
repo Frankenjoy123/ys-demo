@@ -9,6 +9,7 @@ public class TraceInfo {
 
     private String message;
     private StackTraceElement[] stackTrace;
+    private TraceInfo innerTraceInfo;
 
     public TraceInfo(String message) {
         this.message = message;
@@ -34,5 +35,9 @@ public class TraceInfo {
 
     public StackTraceElement[] getStackTrace() {
         return stackTrace;
+    }
+
+    public TraceInfo getInnerTraceInfo() {
+        return innerTraceInfo == this ? null : innerTraceInfo;
     }
 }

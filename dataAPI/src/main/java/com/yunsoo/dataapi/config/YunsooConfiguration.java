@@ -1,7 +1,6 @@
-package com.yunsoo.api.config;
+package com.yunsoo.dataapi.config;
 
 import com.yunsoo.common.config.CommonConfig;
-import com.yunsoo.common.exception.ConfigurationErrorException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -21,9 +20,6 @@ public class YunsooConfiguration {
     @Value("${yunsoo.debug}")
     private String debug;
 
-    @Value("${yunsoo.dataapi.baseurl}")
-    private String dataAPIBaseURL;
-
     @Bean
     public static PropertyPlaceholderConfigurer yunsooProperties() throws IOException {
         PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
@@ -37,14 +33,6 @@ public class YunsooConfiguration {
         CommonConfig config = new CommonConfig();
         config.setDebugEnabled(Boolean.parseBoolean(debug));
         return config;
-    }
-
-    @Bean
-    public String dataAPIBaseURL() throws ConfigurationErrorException {
-        if (dataAPIBaseURL == null || dataAPIBaseURL.equals("${yunsoo.dataapi.baseurl}")) {
-            throw new ConfigurationErrorException("yunsoo.dataapi.baseurl");
-        }
-        return dataAPIBaseURL;
     }
 
 }
