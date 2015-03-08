@@ -1,6 +1,7 @@
 package com.yunsoo.dataapi.controller;
 
 import com.yunsoo.dataapi.dto.LogisticsCheckPathDto;
+import com.yunsoo.dataapi.dto.LogisticsPathsDto;
 import com.yunsoo.dataapi.dto.ResultWrapper;
 import com.yunsoo.dataapi.factory.ResultFactory;
 import com.yunsoo.service.LogisticsCheckPathService;
@@ -33,15 +34,23 @@ public class LogisticsCheckPathController {
         return new ResponseEntity<LogisticsCheckPathDto>(LogisticsCheckPathDto.FromLogisticsCheckPath(pathService.get(id)), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/productKey/{productKey}", method = RequestMethod.GET)
-    public ResponseEntity<List<LogisticsCheckPathDto>> getLogisticsCheckPathsOrderByStartDate(@PathVariable(value = "productKey") String productKey) {
-        List<LogisticsCheckPathDto> pathDtoList = LogisticsCheckPathDto.FromLogisticsCheckPathList(pathService.getLogisticsCheckPathsOrderByStartDate(productKey));
+    @RequestMapping(value = "/key/{key}", method = RequestMethod.GET)
+    public ResponseEntity<List<LogisticsCheckPathDto>> getLogisticsCheckPathsOrderByStartDate(@PathVariable(value = "key") String key) {
+        List<LogisticsCheckPathDto> pathDtoList = LogisticsCheckPathDto.FromLogisticsCheckPathList(pathService.getLogisticsCheckPathsOrderByStartDate(key));
         return new ResponseEntity<List<LogisticsCheckPathDto>>(pathDtoList, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<ResultWrapper> createLogisticsCheckPath(@RequestBody LogisticsCheckPathDto pathDto) {
         Long id = pathService.save(LogisticsCheckPathDto.ToLogisticsCheckPath(pathDto));
+        HttpStatus status = id > 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
+        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
+    }
+
+    @RequestMapping(value = "/batchkeycreate", method = RequestMethod.POST)
+    public ResponseEntity<ResultWrapper> createLogisticsCheckPaths(@RequestBody LogisticsPathsDto pathsDto) {
+        LogisticsPathsDto tmp = new LogisticsPathsDto();
+        Long id = pathService.save(tmp.ToLogisticsCheckPath(pathsDto));
         HttpStatus status = id > 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
     }
