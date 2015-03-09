@@ -1,6 +1,6 @@
 package com.yunsoo.api.config;
 
-import com.yunsoo.api.controller.util.CaseInsensitivePathMatcher;
+import com.yunsoo.common.web.util.CaseInsensitiveAntPathMatcher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
@@ -15,13 +15,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 public class WebConfiguration extends WebMvcConfigurationSupport {
 
     @Bean
-    public CaseInsensitivePathMatcher pathMatcher() {
-        return new CaseInsensitivePathMatcher();
+    public CaseInsensitiveAntPathMatcher caseInsensitiveAntPathMatcher() {
+        return new CaseInsensitiveAntPathMatcher();
     }
 
-    //to-do: not working for /user/token/{deviceCode}
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
-        configurer.setPathMatcher(pathMatcher()); //make path case insensitive.
+        configurer.setPathMatcher(caseInsensitiveAntPathMatcher()); //make path case insensitive.
     }
 }

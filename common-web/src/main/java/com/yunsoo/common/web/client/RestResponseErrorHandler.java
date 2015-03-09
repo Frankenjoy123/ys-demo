@@ -49,6 +49,9 @@ public class RestResponseErrorHandler implements ResponseErrorHandler {
             case NOT_ACCEPTABLE: //406
                 throw new NotAcceptableException(result);
 
+            case CONFLICT:
+                throw new ConflictException(result);
+
             case UNPROCESSABLE_ENTITY: //422
                 throw new UnprocessableEntityException(result);
 
