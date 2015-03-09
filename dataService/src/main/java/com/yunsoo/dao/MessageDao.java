@@ -13,6 +13,8 @@ public interface MessageDao {
 
     public long save(MessageModel messageModel);
 
+    public DaoStatus patchUpdate(MessageModel messageModelForPatch);
+
     public DaoStatus update(MessageModel messageModel);
 
     public DaoStatus updateStatus(Long messageId, int status);
