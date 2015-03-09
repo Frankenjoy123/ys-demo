@@ -3,6 +3,7 @@ package com.yunsoo.common.web.client;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.Assert;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
@@ -15,7 +16,6 @@ import org.springframework.web.client.RestTemplate;
 public class RestClient {
 
     private RestTemplate restTemplate;
-
     private String baseURL;
 
     public RestClient() {
@@ -27,12 +27,14 @@ public class RestClient {
     }
 
     public RestClient(String baseURL, ResponseErrorHandler responseErrorHandler) {
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        this.restTemplate = new RestTemplate(requestFactory);
+
         this.baseURL = baseURL;
         if (baseURL != null && !baseURL.endsWith("/")) {
             this.baseURL += "/";
         }
 
-        this.restTemplate = new RestTemplate();
         if (responseErrorHandler != null) {
             restTemplate.setErrorHandler(responseErrorHandler);
         }
