@@ -1,8 +1,6 @@
 package com.yunsoo.dao;
 
-import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dbmodel.PermissionModel;
-import com.yunsoo.dbmodel.UserModel;
 
 import java.util.List;
 

@@ -1,8 +1,6 @@
 package com.yunsoo.dbmodel;
 
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,9 +21,8 @@ public class OrgRoleModel {
     @Column(name = "role")
     private String role;
 
-    @ManyToOne
-    @JoinColumn(name="org_id")
-    private OrganizationModel org;
+    @Column(name = "org_id")
+    private long org;
 
     public long getId() { return id; }
     public void setId(long id) { this.id= id; }
@@ -33,7 +30,7 @@ public class OrgRoleModel {
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
 
-    public OrganizationModel getOrg() { return org; }
-    public void setOrg(OrganizationModel org) { this.org = org; }
+    public long getOrg() { return org; }
+    public void setOrg(long org) { this.org = org; }
 
 }

@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * @author KB
  */
-@Service("userService")
+@Service("accountService")
 public class AccountServiceImpl implements AccountService {
 
     @Autowired

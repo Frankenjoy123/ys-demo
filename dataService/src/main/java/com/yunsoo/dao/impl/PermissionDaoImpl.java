@@ -1,19 +1,11 @@
 package com.yunsoo.dao.impl;
 
-import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.PermissionDao;
-import com.yunsoo.dao.UserDao;
 import com.yunsoo.dbmodel.PermissionModel;
-import com.yunsoo.dbmodel.UserModel;
 import com.yunsoo.util.ConvertHelper;
-import com.yunsoo.util.SpringBeanUtil;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author KB
  */
-@Repository("permissionDAO")
+@Repository("accountDAO")
 @Transactional
 public class AccountDaoImpl implements AccountDao {
 

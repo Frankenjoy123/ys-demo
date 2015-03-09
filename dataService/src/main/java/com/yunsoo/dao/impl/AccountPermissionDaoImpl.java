@@ -1,10 +1,7 @@
 package com.yunsoo.dao.impl;
 
 import com.yunsoo.dao.AccountPermissionDao;
-import com.yunsoo.dao.PermissionDao;
 import com.yunsoo.dbmodel.AccountPermissionModel;
-import com.yunsoo.dbmodel.PermissionModel;
-import com.yunsoo.util.ConvertHelper;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +13,7 @@ import java.util.List;
 /**
  * @author KB
  */
-@Repository("permissionDAO")
+@Repository("accountPermissionDAO")
 @Transactional
 public class AccountPermissionDaoImpl implements AccountPermissionDao {
 

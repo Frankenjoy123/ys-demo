@@ -1,8 +1,6 @@
 package com.yunsoo.dbmodel;
 
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,20 +21,17 @@ public class AccountOrgModel {
     @Column(name = "status")
     private Integer status;
 
-    @ManyToMany
-    @JoinColumn(name="account_id")
-    private AccountModel account;
+    @Column(name = "account_id")
+    private long accountId;
 
-    @ManyToMany
     @Column(name = "org_id")
-    private OrganizationModel org;
+    private long orgId;
 
     @Column(name = "employee_id", nullable = true)
     private String employeeId;
 
-    @ManyToOne
     @Column(name = "role_id", nullable = true)
-    private OrgRoleModel role;
+    private long roleId;
 
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
@@ -44,15 +39,15 @@ public class AccountOrgModel {
     public Integer getStatus() { return status; }
     public void setStatus(Integer status) { this.status = status; }
 
-    public AccountModel getAccount() { return account; }
-    public void setAccount(AccountModel account) { this.account = account; }
+    public long getAccount() { return accountId; }
+    public void setAccount(long accountId) { this.accountId = accountId; }
 
-    public OrganizationModel getOrg() { return org; }
-    public void setOrg(OrganizationModel org) { this.org = org; }
+    public long getOrg() { return orgId; }
+    public void setOrg(long orgId) { this.orgId = orgId; }
 
     public String getEmployeeId() { return employeeId; }
     public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
 
-    public OrgRoleModel getRole() { return role; }
-    public void setRole(OrgRoleModel role) { this.role = role; }
+    public long getRole() { return roleId; }
+    public void setRole(long roleId) { this.roleId = roleId; }
 }

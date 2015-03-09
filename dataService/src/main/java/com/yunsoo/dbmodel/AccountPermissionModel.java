@@ -20,9 +20,8 @@ public class AccountPermissionModel {
     @Column(name = "id")
     private long id;
 
-    @OneToOne
     @Column(name = "account_org_id")
-    private AccountOrgModel accountOrg;
+    private long accountOrgId;
 
     @Column(name = "permission_group1", nullable = true)
     private long permissionGroup1;
@@ -38,15 +37,14 @@ public class AccountPermissionModel {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTs;
 
-    @ManyToOne
     @Column(name = "updated_by", nullable = true)
-    private AccountModel updatedBy;
+    private long updatedBy;
 
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
 
-    public AccountOrgModel getAccountOrg() { return accountOrg; }
-    public void setAccountOrg(AccountOrgModel accountOrg) { this.accountOrg = accountOrg; }
+    public long getAccountOrg() { return accountOrgId; }
+    public void setAccountOrg(long accountOrgId) { this.accountOrgId = accountOrgId; }
 
     public long getPermissionGroup1() { return permissionGroup1; }
     public void setPermissionGroup1(long permissionGroup1) { this.permissionGroup1 = permissionGroup1; }
@@ -60,6 +58,6 @@ public class AccountPermissionModel {
     public DateTime getUpdatedTs() { return updatedTs; }
     public void setUpdatedTs(DateTime updatedTs) { this.updatedTs = updatedTs; }
 
-    public AccountModel getUpdatedBy() { return updatedBy; }
-    public void setUpdatedBy(AccountModel updatedBy) { this.updatedBy = updatedBy; }
+    public long getUpdatedBy() { return updatedBy; }
+    public void setUpdatedBy(long updatedBy) { this.updatedBy = updatedBy; }
 }

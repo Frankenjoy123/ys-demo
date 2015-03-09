@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * KB on 3/8/2015
  */
 @Entity
-@Table(name = "account")
+@Table(name = "account_token")
 @XmlRootElement
 @DynamicUpdate
 public class AccountTokenModel {
@@ -24,10 +24,10 @@ public class AccountTokenModel {
     private Integer status;
 
     @Column(name = "account_id", nullable = true)
-    private AccountModel account;
+    private long account;
 
     @Column(name = "device_id", nullable = true)
-    private DeviceModel device;
+    private long device;
 
     @Column(name = "access_token", nullable = true)
     private String accessToken;
@@ -57,11 +57,11 @@ public class AccountTokenModel {
     public Integer getStatus() { return status; }
     public void setStatus(Integer status) { this.status = status; }
 
-    public AccountModel getAccount() { return account; }
-    public void setAccount() { this.account = account; }
+    public long getAccount() { return account; }
+    public void setAccount(long account) { this.account = account; }
 
-    public DeviceModel getDevice() { return device; }
-    public void setDevice() { this.device = device; }
+    public long getDevice() { return device; }
+    public void setDevice(long device) { this.device = device; }
 
     public String getAccessToken() { return accessToken; }
     public void setAccessToken(String accessToken) { this.accessToken = accessToken; }
