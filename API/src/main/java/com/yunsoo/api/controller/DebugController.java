@@ -59,4 +59,9 @@ public class DebugController {
     public void throwError() throws Exception {
         throw new Exception("Error");
     }
+
+    @RequestMapping(value = "echo/{value}")
+    public String echo(@PathVariable(value = "value") String value) {
+        return value;
+    }
 }
