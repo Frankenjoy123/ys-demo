@@ -30,7 +30,7 @@ public class ProductServiceImpl implements ProductService {
         }
         Product product = new Product();
         product.setProductKey(productModel.getProductKey());
-        product.setStatusId(productModel.getStatusId());
+        product.setProductStatusId(productModel.getProductStatusId());
         product.setManufacturingDateTime(productModel.getManufacturingDateTime());
         product.setCreatedDateTime(productModel.getCreatedDateTime());
         product.setProductBaseId(productModel.getProductBaseId());
@@ -44,7 +44,7 @@ public class ProductServiceImpl implements ProductService {
         Assert.notEmpty(productKeyList, "productKeyList must not be empty");
 
         int productBaseId = productTemplate.getProductBaseId();
-        int statusId = productTemplate.getStatusId();
+        int statusId = productTemplate.getProductStatusId();
         DateTime manufacturingDateTime = productTemplate.getManufacturingDateTime();
         DateTime createdDateTime = productTemplate.getCreatedDateTime();
 
@@ -58,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
             ProductModel p = new ProductModel();
             p.setProductKey(key);
             p.setProductBaseId(productBaseId);
-            p.setStatusId(statusId);
+            p.setProductStatusId(statusId);
             p.setCreatedDateTime(DateTime.now());
             products.add(p);
         }
@@ -73,15 +73,15 @@ public class ProductServiceImpl implements ProductService {
         Assert.notNull(product, "product must not be null");
 
         String productKey = product.getProductKey();
-        int statusId = product.getStatusId();
+        int statusId = product.getProductStatusId();
         DateTime manufacturingDateTime = product.getManufacturingDateTime();
 
         Assert.notNull(productKey, "productKey must not be null");
 
         ProductModel productModel = productDao.getByKey(productKey);
-        if (productModel == null) throw new ServiceException(this.getClass(), "product not found");
+        if (productModel == null) throw new ServiceException(this.getClass(), "Product not found");
 
-        productModel.setStatusId(statusId);
+        productModel.setProductStatusId(statusId);
         productModel.setManufacturingDateTime(manufacturingDateTime);
         productDao.save(productModel);
     }
@@ -91,15 +91,15 @@ public class ProductServiceImpl implements ProductService {
         Assert.notNull(product, "product must not be null");
 
         String productKey = product.getProductKey();
-        int statusId = product.getStatusId();
+        int statusId = product.getProductStatusId();
         DateTime manufacturingDateTime = product.getManufacturingDateTime();
 
         Assert.notNull(productKey, "productKey must not be null");
 
         ProductModel productModel = productDao.getByKey(productKey);
-        if (productModel == null) throw new ServiceException(this.getClass(), "product not found");
+        if (productModel == null) throw new ServiceException(this.getClass(), "Product not found");
 
-        if (statusId > 0) productModel.setStatusId(statusId);
+        if (statusId > 0) productModel.setProductStatusId(statusId);
         if (manufacturingDateTime != null) productModel.setManufacturingDateTime(manufacturingDateTime);
 
         productDao.save(productModel);

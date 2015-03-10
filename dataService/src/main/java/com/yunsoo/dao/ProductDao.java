@@ -13,6 +13,6 @@ public interface ProductDao {
 
     public void batchSave(List<ProductModel> product);
 
-    public void update(ProductModel product);
+//    public void update(ProductModel product);
 
 }

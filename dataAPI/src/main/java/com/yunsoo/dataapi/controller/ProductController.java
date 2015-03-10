@@ -37,7 +37,7 @@ public class ProductController {
         ProductDto productDto = new ProductDto();
         productDto.setProductKey(product.getProductKey());
         productDto.setProductBaseId(product.getProductBaseId());
-        productDto.setProductStatusId(product.getStatusId());
+        productDto.setProductStatusId(product.getProductStatusId());
         productDto.setManufacturingDateTime((product.getManufacturingDateTime()));
         productDto.setCreatedDateTime(product.getCreatedDateTime());
         return productDto;

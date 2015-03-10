@@ -1,5 +1,8 @@
 package com.yunsoo.service.contract;
 
+import com.yunsoo.dbmodel.ProductModel;
+import org.joda.time.DateTime;
+
 import java.util.Set;
 
 /**
@@ -10,34 +13,91 @@ import java.util.Set;
 public class ProductKey {
 
     private String productKey;
-    private int productKeyType;
-    private int statusId;
-    private String batchId;
+    private int productKeyTypeId;
+    private boolean productKeyDisabled;
+    private String productKeyBatchId;
     private String primaryProductKey;
     private Set<String> productKeySet;
-
+    private DateTime createdDateTime;
 
     public String getProductKey() {
         return productKey;
     }
 
-    public int getProductKeyType() {
-        return productKeyType;
+    public void setProductKey(String productKey) {
+        this.productKey = productKey;
     }
 
-    public int getStatusId() {
-        return statusId;
+    public int getProductKeyTypeId() {
+        return productKeyTypeId;
     }
 
-    public String getBatchId() {
-        return batchId;
+    public void setProductKeyTypeId(int productKeyTypeId) {
+        this.productKeyTypeId = productKeyTypeId;
+    }
+
+    public boolean isProductKeyDisabled() {
+        return productKeyDisabled;
+    }
+
+    public void setProductKeyDisabled(boolean productKeyDisabled) {
+        this.productKeyDisabled = productKeyDisabled;
+    }
+
+    public String getProductKeyBatchId() {
+        return productKeyBatchId;
+    }
+
+    public void setProductKeyBatchId(String productKeyBatchId) {
+        this.productKeyBatchId = productKeyBatchId;
     }
 
     public String getPrimaryProductKey() {
         return primaryProductKey;
     }
 
+    public void setPrimaryProductKey(String primaryProductKey) {
+        this.primaryProductKey = primaryProductKey;
+    }
+
     public Set<String> getProductKeySet() {
         return productKeySet;
     }
+
+    public void setProductKeySet(Set<String> productKeySet) {
+        this.productKeySet = productKeySet;
+    }
+
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    public static ProductKey fromModel(ProductModel productModel) {
+        ProductKey productKey = new ProductKey();
+        productKey.setProductKey(productModel.getProductKey());
+        productKey.setProductKeyTypeId(productModel.getProductKeyTypeId());
+        productKey.setProductKeyDisabled(productModel.isProductKeyDisabled());
+        productKey.setProductKeyBatchId(productModel.getProductKeyBatchId());
+        productKey.setPrimaryProductKey(productModel.getPrimaryProductKey());
+        productKey.setProductKeySet(productModel.getProductKeySet());
+        productKey.setCreatedDateTime(productModel.getCreatedDateTime());
+        return productKey;
+    }
+
+    public static ProductModel toModel(ProductKey productKey) {
+        ProductModel productModel = new ProductModel();
+        productModel.setProductKey(productKey.getProductKey());
+        productModel.setProductKeyTypeId(productKey.getProductKeyTypeId());
+        productModel.setProductKeyDisabled(productKey.isProductKeyDisabled());
+        productModel.setProductKeyBatchId(productKey.getProductKeyBatchId());
+        productModel.setPrimaryProductKey(productKey.getPrimaryProductKey());
+        productModel.setProductKeySet(productKey.getProductKeySet());
+        productModel.setCreatedDateTime(productKey.getCreatedDateTime());
+        return productModel;
+    }
+
 }
