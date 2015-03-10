@@ -40,7 +40,7 @@ public class YunsooConfiguration {
     }
 
     @Bean
-    public String dataAPIBaseURL() throws ConfigurationErrorException {
+    public String dataAPIBaseURL() {
         if (dataAPIBaseURL == null || dataAPIBaseURL.equals("${yunsoo.dataapi.baseurl}")) {
             throw new ConfigurationErrorException("yunsoo.dataapi.baseurl");
         }

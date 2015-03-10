@@ -98,7 +98,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
                 ProductKeyModel keyModel = new ProductKeyModel();
                 keyModel.setProductKey(key);
-                keyModel.setStatusId(keyStatusId);
+                //keyModel.setStatusId(keyStatusId);
                 keyModel.setProductKeyTypeId(keyTypeIds[0]);
                 keyModelList.add(keyModel);
             }
@@ -115,7 +115,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
                     ProductKeyModel keyModel = new ProductKeyModel();
                     keyModel.setProductKey(key);
-                    keyModel.setStatusId(keyStatusId);
+                    //keyModel.setDisabled(keyStatusId);
                     keyModel.setProductKeyTypeId(keyTypeIds[j]);
                     if (j == 0) {
                         primaryKey = key;

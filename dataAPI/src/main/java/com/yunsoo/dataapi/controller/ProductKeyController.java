@@ -71,7 +71,7 @@ public class ProductKeyController {
                         .stream()
                         .map(kl -> kl.get(0))
                         .collect(Collectors.toList());
-                productService.batchCreate(baseProductId, keys);
+                //productService.batchCreate(baseProductId, keys);
             }
 
             ProductKeyBatchDto resultDto = new ProductKeyBatchDto();

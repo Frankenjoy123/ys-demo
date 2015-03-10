@@ -14,7 +14,7 @@ import java.util.Set;
  * "product_key": {
  * "product_key": "",
  * "key_type_id": "product_key_type.id",
- * "status_id": "product_key_status.id",
+ * "disabled": "disabled (=boolean)",
  * "batch_id": "product_key_batch.id",
  * "primary_product_key": "product.product_key",
  * "product_key_set": ["product_key.product_key (?primary_product_key)"]
@@ -25,7 +25,7 @@ public class ProductKeyModel {
 
     private String productKey;
     private int productKeyTypeId;
-    private int statusId;
+    private boolean disabled;
     private String batchId;
     private String primaryProductKey;
     private Set<String> productKeySet;
@@ -49,13 +49,13 @@ public class ProductKeyModel {
         this.productKeyTypeId = productKeyTypeId;
     }
 
-    @DynamoDBAttribute(attributeName = "status_id") //status_id
-    public int getStatusId() {
-        return statusId;
+    @DynamoDBAttribute(attributeName = "disabled") //disabled
+    public boolean isDisabled() {
+        return disabled;
     }
 
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     @DynamoDBAttribute(attributeName = "batch_id") //batch_id

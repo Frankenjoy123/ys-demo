@@ -6,9 +6,12 @@ import java.util.List;
 
 public interface ProductService {
 
-	public Product getByKey(String productKey);
+    public Product getByKey(String productKey);
 
-    public void batchCreate(int baseProductId, List<String> productKeyList);
+    public void batchCreate(Product productTemplate, List<String> productKeyList);
 
-	public void active(String productKey);
+    public void update(Product product);
+
+    public void patchUpdate(Product product);
+
 }

@@ -13,17 +13,17 @@ import org.joda.time.DateTime;
  * <p>
  * "product": {
  * "product_key": "",
- * "base_product_id": "base_product.id",
+ * "product_base_id": "product_base.id",
  * "status_id": "product_status.id",
- * "manufacturing_datetime": "2015-01-23T12:34:56:789Z",
- * "created_datetime": "2015-01-23T12:34:56:789Z"
+ * "manufacturing_datetime": "(=long)",
+ * "created_datetime": "(=long)"
  * }
  */
 @DynamoDBTable(tableName = "product")
 public class ProductModel {
 
     private String productKey;
-    private int baseProductId;
+    private int productBaseId;
     private int statusId;
     private long manufacturingDateTimeValue;
     private long createdDateTimeValue;
@@ -39,13 +39,13 @@ public class ProductModel {
     }
 
 
-    @DynamoDBAttribute(attributeName = "base_product_id") //base_product_id
-    public int getBaseProductId() {
-        return baseProductId;
+    @DynamoDBAttribute(attributeName = "product_base_id") //product_base_id
+    public int getProductBaseId() {
+        return productBaseId;
     }
 
-    public void setBaseProductId(int baseProductId) {
-        this.baseProductId = baseProductId;
+    public void setProductBaseId(int productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
 
