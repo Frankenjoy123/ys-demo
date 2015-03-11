@@ -48,40 +48,40 @@ public class ProductKeyController {
     //batch request product keys
     @RequestMapping(value = "/batch/request", method = RequestMethod.POST)
     public ProductKeyBatchDto requestKeys(@RequestBody ProductKeyBatchDto batch) {
-        int quantity = batch.getQuantity();
-        int[] productKeyTypeIds = batch.getProductKeyTypeIds();
-        int baseProductId = batch.getBaseProductId();
-        int createdClientId = 1;
-        int createdAccountId = 1000;
-        DateTime createdDateTime = DateTime.now();
-
-        ProductKeyBatch keyBatch = new ProductKeyBatch();
-        keyBatch.setQuantity(quantity);
-        keyBatch.setProductKeyTypeIds(productKeyTypeIds);
-        keyBatch.setCreatedClientId(createdClientId);
-        keyBatch.setCreatedAccountId(createdAccountId);
-        keyBatch.setCreatedDateTime(createdDateTime);
-
-        //create product keys
-        ProductKeyBatch resultBatch = productKeyBatchService.create(keyBatch);
-        if (resultBatch != null) {
-            if (baseProductId > 0) {
-                //create products
-                List<String> keys = resultBatch.getProductKeys()
-                        .stream()
-                        .map(kl -> kl.get(0))
-                        .collect(Collectors.toList());
-                //productService.batchCreate(baseProductId, keys);
-            }
-
-            ProductKeyBatchDto resultDto = new ProductKeyBatchDto();
-            resultDto.setId(resultBatch.getId());
-            resultDto.setQuantity(resultBatch.getQuantity());
-            resultDto.setProductKeyTypeIds(resultBatch.getProductKeyTypeIds());
-            resultDto.setCreatedDateTime(resultBatch.getCreatedDateTime());
-            resultDto.setProductKeysAddress(resultBatch.getProductKeysAddress());
-            return resultDto;
-        }
+//        int quantity = batch.getQuantity();
+//        int[] productKeyTypeIds = batch.getProductKeyTypeIds();
+//        int baseProductId = batch.getBaseProductId();
+//        int createdClientId = 1;
+//        int createdAccountId = 1000;
+//        DateTime createdDateTime = DateTime.now();
+//
+//        ProductKeyBatch keyBatch = new ProductKeyBatch();
+//        keyBatch.setQuantity(quantity);
+//        keyBatch.setProductKeyTypeIds(productKeyTypeIds);
+//        keyBatch.setCreatedClientId(createdClientId);
+//        keyBatch.setCreatedAccountId(createdAccountId);
+//        keyBatch.setCreatedDateTime(createdDateTime);
+//
+//        //create product keys
+//        ProductKeyBatch resultBatch = productKeyBatchService.create(keyBatch);
+//        if (resultBatch != null) {
+//            if (baseProductId > 0) {
+//                //create products
+//                List<String> keys = resultBatch.getProductKeys()
+//                        .stream()
+//                        .map(kl -> kl.get(0))
+//                        .collect(Collectors.toList());
+//                //productService.batchCreate(baseProductId, keys);
+//            }
+//
+//            ProductKeyBatchDto resultDto = new ProductKeyBatchDto();
+//            //resultDto.setId(resultBatch.getId());
+//            resultDto.setQuantity(resultBatch.getQuantity());
+//            resultDto.setProductKeyTypeIds(resultBatch.getProductKeyTypeIds());
+//            resultDto.setCreatedDateTime(resultBatch.getCreatedDateTime());
+//            resultDto.setProductKeysAddress(resultBatch.getProductKeysAddress());
+//            return resultDto;
+//        }
         return null;
     }
 

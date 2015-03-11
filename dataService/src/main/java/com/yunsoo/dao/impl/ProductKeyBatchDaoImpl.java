@@ -3,6 +3,7 @@ package com.yunsoo.dao.impl;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.yunsoo.dao.ProductKeyBatchDao;
 import com.yunsoo.dbmodel.ProductKeyBatchModel;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,20 +16,20 @@ import org.springframework.stereotype.Repository;
 public class ProductKeyBatchDaoImpl implements ProductKeyBatchDao {
 
     @Autowired
-    private DynamoDBMapper dynamoDBMapper;
+    private SessionFactory sessionFactory;
 
     @Override
-    public ProductKeyBatchModel getById(String id) {
-        return dynamoDBMapper.load(ProductKeyBatchModel.class, id);
+    public ProductKeyBatchModel getById(int id) {
+        return (ProductKeyBatchModel) sessionFactory.getCurrentSession().get(ProductKeyBatchModel.class, id);
     }
 
     @Override
     public void save(ProductKeyBatchModel productKeyModel) {
-        dynamoDBMapper.save(productKeyModel);
+        sessionFactory.getCurrentSession().save(productKeyModel);
     }
 
     @Override
     public void update(ProductKeyBatchModel productKeyModel) {
-        dynamoDBMapper.save(productKeyModel); //todo
+        sessionFactory.getCurrentSession().update(productKeyModel);
     }
 }

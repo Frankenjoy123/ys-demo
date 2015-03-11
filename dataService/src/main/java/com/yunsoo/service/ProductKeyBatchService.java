@@ -11,9 +11,9 @@ import java.util.List;
  */
 public interface ProductKeyBatchService {
 
-    public ProductKeyBatch getById(String batchId);
+    public ProductKeyBatch getById(int batchId);
 
-    public List<List<String>> getProductKeys(String batchId);
+    public List<List<String>> getProductKeys(int batchId);
 
     public ProductKeyBatch create(ProductKeyBatch keyBatch);
 

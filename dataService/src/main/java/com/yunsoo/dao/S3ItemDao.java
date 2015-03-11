@@ -10,7 +10,9 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/2/9.
+ * Created by:   Zhe
+ * Created on:   2015/2/9
+ * Descriptions:
  */
 public interface S3ItemDao {
 
@@ -28,7 +30,7 @@ public interface S3ItemDao {
 
     public List<Bucket> getBuckets();
 
-    public <T> void putItem(T item, String bucketName, String key) throws Exception;
+    public <T> void putItem(T item, String bucketName, String key);
 
     public <T> T getItem(String bucketName, String key, Class<T> clazz);
 }

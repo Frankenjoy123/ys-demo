@@ -1,7 +1,5 @@
 package com.yunsoo.dbmodel;
 
-import org.joda.time.DateTime;
-
 import java.util.List;
 
 /**
@@ -11,31 +9,18 @@ import java.util.List;
  */
 public class ProductKeyBatchS3ObjectModel {
 
-    private String id;
+    private int id;
     private int quantity;
-    private DateTime createdDateTime;
+    private String createdDateTimeStr;
     private int[] productKeyTypeIds;
     private List<List<String>> productKeys;
 
 
-    public ProductKeyBatchS3ObjectModel() {
-
-    }
-
-    public ProductKeyBatchS3ObjectModel(ProductKeyBatchModel productKeyBatchModel) {
-        if (productKeyBatchModel != null) {
-            this.id = productKeyBatchModel.getId();
-            this.quantity = productKeyBatchModel.getQuantity();
-            this.createdDateTime = productKeyBatchModel.getCreatedDateTime();
-            this.productKeyTypeIds = productKeyBatchModel.getProductKeyTypeIds();
-        }
-    }
-
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -48,12 +33,12 @@ public class ProductKeyBatchS3ObjectModel {
         this.quantity = quantity;
     }
 
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
+    public String getCreatedDateTimeStr() {
+        return createdDateTimeStr;
     }
 
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
+    public void setCreatedDateTimeStr(String createdDateTimeStr) {
+        this.createdDateTimeStr = createdDateTimeStr;
     }
 
 

@@ -2,6 +2,7 @@ package com.yunsoo.dao.impl;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.dao.S3ItemDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,27 +75,25 @@ public class S3ItemDaoImpl implements S3ItemDao {
     }
 
     @Override
-    public <T> void putItem(T item, String bucketName, String key) throws Exception {
-
+    public <T> void putItem(T item, String bucketName, String key) {
         try {
             byte[] buf = mapper.writeValueAsBytes(item);
             InputStream inputStream = new ByteArrayInputStream(buf);
             //to-do: replace null with new ObjectMetadata() ?
             amazonS3Client.putObject(new PutObjectRequest(bucketName, key, inputStream, null));
-        } catch (Exception ex) {
-            throw new Exception("Note: putItem fail!", ex);
+        } catch (JsonProcessingException ex) {
+            throw new RuntimeException("Note: putItem failed! " + "[bucketName: " + bucketName + ", key: " + key + "]", ex);
         }
     }
 
     @Override
     public <T> T getItem(String bucketName, String key, Class<T> clazz) {
         S3Object object = this.getItem(bucketName, key);
-        if (object == null) return null; //todo
-
+        if (object == null) return null;
         try {
             return mapper.readValue(object.getObjectContent(), clazz);
         } catch (Exception ex) {
-            return null;
+            throw new RuntimeException("Note: getItem failed! " + "[bucketName: " + bucketName + ", key: " + key + "]", ex);
         }
     }
 }
