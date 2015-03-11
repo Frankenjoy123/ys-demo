@@ -8,5 +8,5 @@ import java.util.List;
  * @author KB
  */
 public interface AccountPermissionDao {
-    public AccountPermissionModel getByAccountOrg(long accountOrgId);
+    public AccountPermissionModel get(long accountId, long orgId);
 }

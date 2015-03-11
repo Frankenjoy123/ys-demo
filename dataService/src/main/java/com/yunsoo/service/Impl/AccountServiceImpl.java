@@ -25,27 +25,35 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountDao accountDao;
 
+    @Override
     public Account get(long id) {
-        return Account.fromModel(accountDao.get(id));
+        return Account.FromModel(accountDao.get(id));
     }
+    @Override
     public Account verify(String identity, String password) {
         return null;
     }
+    @Override
     public int add(Account account) {
         return 0;
     }
+    @Override
     public boolean inactivate(Account account) {
         return false;
     }
+    @Override
     public boolean update(Account account) {
         return false;
     }
+    @Override
     public void delete(Account account) {
 
     }
+    @Override
     public AccountToken getToken(long id, Device device) {
         return null;
     }
+    @Override
     public AccountToken refreshToken(AccountToken token) {
         return null;
     }
