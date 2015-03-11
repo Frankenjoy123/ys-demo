@@ -1,6 +1,7 @@
 package com.yunsoo.service;
 
-import com.yunsoo.service.contract.ProductPackage;
+import com.yunsoo.service.contract.PackageBoundContract;
+import com.yunsoo.service.contract.PackageContract;
 
 import java.util.List;
 
@@ -10,8 +11,9 @@ import java.util.List;
  * Descriptions:
  */
 public interface ProductPackageService {
-    public ProductPackage list(String key);
-    public boolean bind(String packageKey, List<String> subKeys, long operator);
+    public PackageContract query(String key);
+    public boolean bind(PackageBoundContract data);
+    public boolean batchBind(PackageBoundContract[] dataArray);
     public boolean revoke(String key);
-    public boolean revoke(String key, List<String> revokeKeys);    
+    public List<String> loadAllKeys(String key);
 }

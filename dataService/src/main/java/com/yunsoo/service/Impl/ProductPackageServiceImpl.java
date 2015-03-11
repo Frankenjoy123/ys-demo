@@ -1,16 +1,15 @@
 package com.yunsoo.service.Impl;
 
+
+import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.ProductDao;
 import com.yunsoo.dao.ProductPackageDao;
 import com.yunsoo.dbmodel.ProductPackageModel;
 import com.yunsoo.service.ProductPackageService;
-import com.yunsoo.service.contract.Product;
-import com.yunsoo.service.contract.ProductPackage;
+import com.yunsoo.service.contract.PackageBoundContract;
+import com.yunsoo.service.contract.PackageContract;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,38 +34,39 @@ public class ProductPackageServiceImpl implements ProductPackageService {
      * @return
      */
     @Override
-    public ProductPackage list(String key) {
+    public PackageContract query(String key) {
 
         ProductPackageModel model = packageDao.getByKey(key);
         if (model == null) {
-            throw new IllegalArgumentException("This key is not a valid package key.");
+            throw new IllegalArgumentException("包装码不存在");
         }
-        ProductPackage p = new ProductPackage(model);
+        PackageContract p = new PackageContract(model);
 
         Set<String> subKeys = model.getChildProductKeySet();
 
-        if (subKeys != null) {
 
-            List<ProductPackageModel> subModels = packageDao.batchLoad(subKeys);
+        if (subKeys != null && subKeys.size() > 0) {
+
+            List<ProductPackageModel> subModels = packageDao.batchLoad(new HashSet<>(subKeys));
             if (subModels != null && subModels.size() > 0)//they are packages.
             {
-                p.setPackageCount(subModels.size());
-                List<ProductPackage> subPackages = new ArrayList<ProductPackage>();
+                int productCount = 0;
+                int packageCount = 0;
+                List<PackageContract> subPackages = new ArrayList<PackageContract>();
                 for (ProductPackageModel subModel : subModels) {
-                    subPackages.add(new ProductPackage(subModel));
+                    if (subModel.isProduct()) {
+                        productCount++;
+                    } else {
+                        packageCount++;
+                        PackageContract subContract = query(subModel.getProductKey());
+                        if (subContract != null) {
+                            subPackages.add(subContract);
+                        }
+                    }
                 }
+                p.setPackageCount(packageCount);
+                p.setProductCount(productCount);
                 p.setSubPackages(subPackages);
-            } else {
-                //TODO: batch load product from productDao.
-
-                List<Product> products = new ArrayList<Product>();
-                for (String productKey : subKeys) {
-                    Product product = new Product();
-                    product.setProductKey(productKey);
-                    products.add(product);
-                }
-                p.setProducts(products);
-                p.setProductCount(subKeys.size());
             }
 
         }
@@ -75,67 +75,178 @@ public class ProductPackageServiceImpl implements ProductPackageService {
     }
 
     @Override
-    public boolean bind(String packageKey, List<String> subKeys, long operator) {
+    public boolean bind(PackageBoundContract packageBoundContract) {
+
+        DateTime now = DateTime.now();
         ProductPackageModel model = new ProductPackageModel();
-        model.setProductKey(packageKey);
+        model.setProductKey(packageBoundContract.getPackageKey());
+        List<String> subKeys = packageBoundContract.getKeys();
+        if (packageBoundContract.getPackageKey() == null || subKeys == null || subKeys.size() == 0) {
+            throw new IllegalArgumentException("非法数据");
+        }
         model.setChildProductKeySet(new HashSet<>(subKeys));
         model.setParentProductKey(null);//currently not know
-        model.setCreatedDateTime(new DateTime());
-        model.setOperator(operator);
+        model.setCreatedDateTime(now);
+        model.setOperator(packageBoundContract.getOperator());
         packageDao.save(model);
 
-        //TODO save parent key if possibly.
-        return true;
+        // 开始绑定子包装
+        String parentKey = packageBoundContract.getPackageKey();
+        long operatorId = packageBoundContract.getOperator();
+
+
+        List<ProductPackageModel> batchModels = new ArrayList<>();
+        // 加载子包装，也有可能是产品。
+        List<ProductPackageModel> subModels = packageDao.batchLoad(new HashSet<>(packageBoundContract.getKeys()));
+        List<String> existKeys = new ArrayList<>();
+        if (subModels != null && subModels.size() > 0) {
+            for (ProductPackageModel subModel : subModels) {
+                //redefine the parent key, overwrite it.
+                //TODO 如果我们要强制要求只有未被绑定过的才可以被绑定，也就是说如果parentkey为空的话，即为未被绑定
+                // 如果不为空，则可以抛出异常
+                subModel.setParentProductKey(parentKey);
+                existKeys.add(subModel.getProductKey());
+            }
+            batchModels.addAll(subModels);
+        }
+
+
+        for (String key : packageBoundContract.getKeys()) {
+            if (existKeys.contains(key)) {
+                continue;
+            }
+            ProductPackageModel subModel = new ProductPackageModel();
+            subModel.setProductKey(key);
+            subModel.setParentProductKey(parentKey);
+            subModel.setCreatedDateTimeValue(now.getMillis());
+            subModel.setOperator(operatorId);//可设可不设
+            batchModels.add(subModel);
+        }
+        DaoStatus status = DaoStatus.fail;
+        if (batchModels.size() > 0) {
+            status = packageDao.batchSave(batchModels);
+        }
+
+        return status == DaoStatus.success;
+    }
+
+    private List<ProductPackageModel> bindForBatchOperate(PackageBoundContract packageBoundContract) {
+
+        DateTime now = DateTime.now();
+        ProductPackageModel model = new ProductPackageModel();
+        model.setProductKey(packageBoundContract.getPackageKey());
+        List<String> subKeys = packageBoundContract.getKeys();
+        model.setChildProductKeySet(new HashSet<>(subKeys));
+        model.setParentProductKey(null);//currently not know
+        model.setCreatedDateTime(now);
+        model.setOperator(packageBoundContract.getOperator());
+
+
+        // 开始绑定子包装
+        String parentKey = packageBoundContract.getPackageKey();
+        long operatorId = packageBoundContract.getOperator();
+
+
+        List<ProductPackageModel> batchModels = new ArrayList<>();
+        batchModels.add(model);
+        // 加载子包装，也有可能是产品。
+        List<ProductPackageModel> subModels = packageDao.batchLoad(new HashSet<>(packageBoundContract.getKeys()));
+        List<String> existKeys = new ArrayList<>();
+        if (subModels != null && subModels.size() > 0) {
+            for (ProductPackageModel subModel : subModels) {
+                //redefine the parent key, overwrite it.
+                //TODO 如果我们要强制要求只有未被绑定过的才可以被绑定，也就是说如果parentkey为空的话，即为未被绑定
+                // 如果不为空，则可以抛出异常
+                subModel.setParentProductKey(parentKey);
+                existKeys.add(subModel.getProductKey());
+            }
+            batchModels.addAll(subModels);
+        }
+
+
+        for (String key : packageBoundContract.getKeys()) {
+            if (existKeys.contains(key)) {
+                continue;
+            }
+            ProductPackageModel subModel = new ProductPackageModel();
+            subModel.setProductKey(key);
+            subModel.setParentProductKey(parentKey);
+            subModel.setCreatedDateTimeValue(now.getMillis());
+            subModel.setOperator(operatorId);//可设可不设
+            batchModels.add(subModel);
+        }
+
+
+        return batchModels;
+    }
+
+    @Override
+    public boolean batchBind(PackageBoundContract[] dataArray) {
+        if (dataArray == null) {
+            throw new IllegalArgumentException("数据为空");
+        }
+        List<ProductPackageModel> models = new ArrayList<>();
+        for (PackageBoundContract contract : dataArray) {
+            List<ProductPackageModel> packageModels = bindForBatchOperate(contract);
+            int pos = models.size();
+            models.addAll(pos, packageModels);
+        }
+        //remove duplicated key
+
+        DaoStatus status = packageDao.batchSave(models);
+
+
+        return status == DaoStatus.success;
     }
 
     @Override
     public boolean revoke(String key) {
         ProductPackageModel model = packageDao.getByKey(key);
         if (model == null) {
-            throw new IllegalArgumentException("This key is not a valid package key.");
+            throw new IllegalArgumentException("包装码不存在");
         }
 
         Set<String> subKeys = model.getChildProductKeySet();
 
-        List<ProductPackageModel> subModels = packageDao.batchLoad(subKeys);
+        List<ProductPackageModel> subModels = packageDao.batchLoad(new HashSet<>(subKeys));
         if (subModels != null && !subModels.isEmpty()) {
             for (ProductPackageModel subModel : subModels) {
                 subModel.setParentProductKey(null);
             }
         }
-        model.setChildProductKeySet(new HashSet<>());
+        model.setChildProductKeySet(null);
         model.setStatusId(1); //0 new, 1 revoke
 
         packageDao.save(model);
-        packageDao.batchSave(new HashSet<>(subModels));
+        packageDao.batchSave(subModels);
         return true;
 
     }
 
     @Override
-    public boolean revoke(String key, List<String> revokeKeys) {
+    public List<String> loadAllKeys(String key) {
         ProductPackageModel model = packageDao.getByKey(key);
         if (model == null) {
-            throw new IllegalArgumentException("This key is not a valid package key.");
+            throw new IllegalArgumentException("包装码不存在");
         }
 
-        for (String subKey : revokeKeys) {
-            if (model.getChildProductKeySet().contains(subKey)) {
-                ProductPackageModel subModel = packageDao.getByKey(subKey);
-                if (subModel != null) {
-                    revoke(subKey);
-                }
-                model.getChildProductKeySet().remove(subKey);
+        Set<String> subKeys = model.getChildProductKeySet();
+
+        List<String> keys = new ArrayList<>();
+        keys.add(key);
+        if (subKeys == null || subKeys.size() == 0) {
+            return keys;
+        }
+
+        List<ProductPackageModel> subModels = packageDao.batchLoad(new HashSet<>(subKeys));
+        if (subModels != null && !subModels.isEmpty()) {
+            for (ProductPackageModel subModel : subModels) {
+                keys.addAll(keys.size(), loadAllKeys(subModel.getProductKey()));
             }
         }
-        if (model.getChildProductKeySet().isEmpty()) {
-            model.setStatusId(1);
-        }
 
-        packageDao.save(model);
-
-        return true;
-
+        return keys;
     }
+
 
 }
