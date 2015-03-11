@@ -4,11 +4,13 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <mapping class="com.yunsoo.dbmodel.ProductBaseModel"></mapping>
-        <mapping class="com.yunsoo.dbmodel.ProductCategoryModel"></mapping>
-        <mapping class="com.yunsoo.dbmodel.ProductSubCategoryModel"></mapping>
-        <mapping class="com.yunsoo.dbmodel.ProductStatusModel"></mapping>
-        <mapping class="com.yunsoo.dbmodel.ProductKeyTypeModel"></mapping>
+        <mapping class="com.yunsoo.dbmodel.ProductBaseModel"/>
+        <mapping class="com.yunsoo.dbmodel.ProductCategoryModel"/>
+        <mapping class="com.yunsoo.dbmodel.ProductSubCategoryModel"/>
+        <mapping class="com.yunsoo.dbmodel.ProductStatusModel"/>
+        <mapping class="com.yunsoo.dbmodel.ProductKeyBatchStatusModel"/>
+        <mapping class="com.yunsoo.dbmodel.ProductKeyBatchModel"/>
+        <mapping class="com.yunsoo.dbmodel.ProductKeyTypeModel"/>
         <mapping class="com.yunsoo.dbmodel.UserModel"/>
         <mapping class="com.yunsoo.dbmodel.MessageModel"/>
         <mapping class="com.yunsoo.dbmodel.ScanRecordModel"/>

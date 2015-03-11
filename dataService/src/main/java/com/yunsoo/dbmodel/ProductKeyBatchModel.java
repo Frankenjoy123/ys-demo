@@ -2,11 +2,16 @@ package com.yunsoo.dbmodel;
 
 import org.joda.time.DateTime;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/1/30
  * Descriptions:
  */
+//@Entity
+//@Table(name = "product_key_batch")
 public class ProductKeyBatchModel {
 
     private String id;

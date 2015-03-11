@@ -16,9 +16,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "product_key_batch_status")
-@XmlRootElement
-@DynamicUpdate
-@SelectBeforeUpdate
 public class ProductKeyBatchStatusModel {
 
     @javax.persistence.Id
