@@ -5,7 +5,7 @@ package com.yunsoo.common.exception;
  * Created on:   2015/3/5
  * Descriptions:
  */
-public class ConfigurationErrorException extends Exception {
+public class ConfigurationErrorException extends RuntimeException {
     private String configurationName;
 
     public ConfigurationErrorException(String configurationName) {

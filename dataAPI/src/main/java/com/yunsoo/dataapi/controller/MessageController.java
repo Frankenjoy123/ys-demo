@@ -29,7 +29,7 @@ public class MessageController {
     }
 
     //Push unread messages to user.
-    @RequestMapping(value = "/pushTo/{userid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/pushto/{userid}", method = RequestMethod.GET)
     public ResponseEntity<List<Message>> getNewMessagesByUserId(@PathVariable(value = "userid") Long id) {
         List<Message> messageList = messageService.getMessagesByFilter(1, 3, null, true); //push approved message only
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
@@ -64,10 +64,10 @@ public class MessageController {
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    @RequestMapping(value = "/update", method = RequestMethod.PATCH)
     public ResponseEntity updateMessages(@RequestBody Message message) {
         message.setLastUpatedDateTime(DateTime.now().toString());
-        messageService.update(message);
+        messageService.patchUpdate(message);
         return new ResponseEntity(HttpStatus.OK);
     }
 

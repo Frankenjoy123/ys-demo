@@ -13,6 +13,8 @@ public interface MessageService {
 
     public long save(Message message);
 
+    public boolean patchUpdate(Message message);
+
     public boolean update(Message message);
 
     public ServiceOperationStatus updateStatus(Long messageId, int status);

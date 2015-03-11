@@ -2,9 +2,12 @@ package com.yunsoo.service.Impl;
 
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.MessageDao;
+import com.yunsoo.dbmodel.MessageModel;
 import com.yunsoo.service.contract.Message;
 import com.yunsoo.service.MessageService;
 import com.yunsoo.service.ServiceOperationStatus;
+import com.yunsoo.util.SpringBeanUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +36,15 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public boolean patchUpdate(Message message) {
+        DaoStatus daoStatus = messageDao.patchUpdate(getPatchModel(message));
+        if (daoStatus == DaoStatus.success) return true;
+        else return false;
+    }
+
+    @Override
     public boolean update(Message message) {
-        DaoStatus daoStatus = messageDao.update(Message.ToModel(message));
+        DaoStatus daoStatus = messageDao.update(getPatchModel(message));
         if (daoStatus == DaoStatus.success) return true;
         else return false;
     }
@@ -87,5 +97,13 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<Message> getUnreadMessages(Long userId, Long companyId) {
         return Message.FromModelList(messageDao.getUnreadMessages(userId, companyId));
+    }
+
+    //Convert Dto to Model,just copy properties which is not null.
+    private MessageModel getPatchModel(Message message) {
+        //ProductStatusModel model = productStatusDao.getById(id);
+        MessageModel model = new MessageModel();
+        BeanUtils.copyProperties(message, model, SpringBeanUtil.getNullPropertyNames(message));
+        return model;
     }
 }

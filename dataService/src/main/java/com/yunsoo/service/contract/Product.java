@@ -4,20 +4,17 @@ package com.yunsoo.service.contract;
 import org.joda.time.DateTime;
 
 /**
- * Created by Lijian on 2015/1/16.
- * <p>
- * Update by Zhe 2015/1/26
- * Import Base Product property,
- * Add FromModel ToModelList etc as converter methods.
+ * Created by:   Lijian
+ * Created on:   2015/1/16
+ * Descriptions:
  */
 public class Product {
 
     private String productKey;
-    private int baseProductId;
+    private int productBaseId;
     private int productStatusId;
     private DateTime manufacturingDateTime;
     private DateTime createdDateTime;
-    private ProductBase productBase;
 
     public String getProductKey() {
         return productKey;
@@ -27,12 +24,12 @@ public class Product {
         this.productKey = productKey;
     }
 
-    public int getBaseProductId() {
-        return baseProductId;
+    public int getProductBaseId() {
+        return productBaseId;
     }
 
-    public void setBaseProductId(int baseProductId) {
-        this.baseProductId = baseProductId;
+    public void setProductBaseId(int productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
     public int getProductStatusId() {
@@ -57,14 +54,6 @@ public class Product {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
-    }
-
-    public ProductBase getProductBase() {
-        return productBase;
-    }
-
-    public void setProductBase(ProductBase productBase) {
-        this.productBase = productBase;
     }
 
 }

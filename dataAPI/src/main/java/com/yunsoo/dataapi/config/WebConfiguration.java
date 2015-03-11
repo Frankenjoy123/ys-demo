@@ -1,12 +1,10 @@
 package com.yunsoo.dataapi.config;
 
-import com.yunsoo.dataapi.controller.util.CaseInsensitivePathMatcher;
+import com.yunsoo.common.web.util.CaseInsensitiveAntPathMatcher;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
  * Created by:   Zhe
@@ -17,12 +15,12 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 public class WebConfiguration extends WebMvcConfigurationSupport {
 
     @Bean
-    public CaseInsensitivePathMatcher pathMatcher() {
-        return new CaseInsensitivePathMatcher();
+    public CaseInsensitiveAntPathMatcher caseInsensitiveAntPathMatcher() {
+        return new CaseInsensitiveAntPathMatcher();
     }
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
-        configurer.setPathMatcher(pathMatcher()); //make path case insensitive.
+        configurer.setPathMatcher(caseInsensitiveAntPathMatcher()); //make path case insensitive.
     }
 }

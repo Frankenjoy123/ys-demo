@@ -6,27 +6,45 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import org.joda.time.DateTime;
 
+import java.util.Set;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/1/29
  * Descriptions:
  * <p>
  * "product": {
- * "product_key": "",
- * "base_product_id": "base_product.id",
- * "status_id": "product_status.id",
- * "manufacturing_datetime": "2015-01-23T12:34:56:789Z",
- * "created_datetime": "2015-01-23T12:34:56:789Z"
+ * "product_key": "(String(22))",
+ * <p>
+ * "product_key_type_id": "product_key_type.id",
+ * "product_key_disabled": "(boolean)",
+ * "product_key_batch_id": "product_key_batch.id",
+ * "primary_product_key": "product.product_key(String(22))",
+ * "product_key_set": ["product.product_key(String(22))"],
+ * "created_datetime": "(long)",
+ * <p>
+ * "product_base_id": "product_base.id(int)",
+ * "product_status_id": "product_status.id(int)",
+ * "manufacturing_datetime": "(long)"
  * }
  */
 @DynamoDBTable(tableName = "product")
 public class ProductModel {
 
     private String productKey;
-    private int baseProductId;
-    private int statusId;
-    private long manufacturingDateTimeValue;
+
+
+    private int productKeyTypeId;
+    private boolean productKeyDisabled;
+    private String productKeyBatchId;
+    private String primaryProductKey; //if primaryProductKey is null, then it's a primary item.
+    private Set<String> productKeySet; //only exists when primaryProductKey is null
     private long createdDateTimeValue;
+
+    //only a primary item can contain below product info
+    private int productBaseId;
+    private int productStatusId;
+    private long manufacturingDateTimeValue;
 
 
     @DynamoDBHashKey(attributeName = "key") //product_key
@@ -38,24 +56,92 @@ public class ProductModel {
         this.productKey = productKey;
     }
 
-
-    @DynamoDBAttribute(attributeName = "base_product_id") //base_product_id
-    public int getBaseProductId() {
-        return baseProductId;
+    @DynamoDBIgnore
+    public boolean isPrimary() {
+        return primaryProductKey == null;
     }
 
-    public void setBaseProductId(int baseProductId) {
-        this.baseProductId = baseProductId;
+    @DynamoDBAttribute(attributeName = "key_type_id") //product_key_type_id
+    public int getProductKeyTypeId() {
+        return productKeyTypeId;
+    }
+
+    public void setProductKeyTypeId(int productKeyTypeId) {
+        this.productKeyTypeId = productKeyTypeId;
+    }
+
+    @DynamoDBAttribute(attributeName = "key_disabled") //product_key_disabled
+    public boolean isProductKeyDisabled() {
+        return productKeyDisabled;
+    }
+
+    public void setProductKeyDisabled(boolean productKeyDisabled) {
+        this.productKeyDisabled = productKeyDisabled;
+    }
+
+    @DynamoDBAttribute(attributeName = "key_batch_id") //product_key_batch_id
+    public String getProductKeyBatchId() {
+        return productKeyBatchId;
+    }
+
+    public void setProductKeyBatchId(String productKeyBatchId) {
+        this.productKeyBatchId = productKeyBatchId;
+    }
+
+    @DynamoDBAttribute(attributeName = "primary_key") //primary_product_key
+    public String getPrimaryProductKey() {
+        return primaryProductKey;
+    }
+
+    public void setPrimaryProductKey(String primaryProductKey) {
+        this.primaryProductKey = primaryProductKey;
+    }
+
+    @DynamoDBAttribute(attributeName = "key_set") //product_key_set
+    public Set<String> getProductKeySet() {
+        return productKeySet;
+    }
+
+    public void setProductKeySet(Set<String> productKeySet) {
+        this.productKeySet = productKeySet;
+    }
+
+    @DynamoDBIgnore
+    public DateTime getCreatedDateTime() {
+        return new DateTime(createdDateTimeValue);
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTimeValue = createdDateTime.getMillis();
+    }
+
+    @DynamoDBAttribute(attributeName = "c_dt") //created_datetime
+    public long getCreatedDateTimeValue() {
+        return createdDateTimeValue;
+    }
+
+    public void setCreatedDateTimeValue(long createdDateTimeValue) {
+        this.createdDateTimeValue = createdDateTimeValue;
     }
 
 
-    @DynamoDBAttribute(attributeName = "status_id") //status_id
-    public int getStatusId() {
-        return statusId;
+    @DynamoDBAttribute(attributeName = "product_base_id") //product_base_id
+    public int getProductBaseId() {
+        return productBaseId;
     }
 
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
+    public void setProductBaseId(int productBaseId) {
+        this.productBaseId = productBaseId;
+    }
+
+
+    @DynamoDBAttribute(attributeName = "status_id") //product_status_id
+    public int getProductStatusId() {
+        return productStatusId;
+    }
+
+    public void setProductStatusId(int productStatusId) {
+        this.productStatusId = productStatusId;
     }
 
 
@@ -74,25 +160,6 @@ public class ProductModel {
     }
 
     public void setManufacturingDateTimeValue(long createdDateTimeValue) {
-        this.createdDateTimeValue = createdDateTimeValue;
-    }
-
-
-    @DynamoDBIgnore
-    public DateTime getCreatedDateTime() {
-        return new DateTime(createdDateTimeValue);
-    }
-
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTimeValue = createdDateTime.getMillis();
-    }
-
-    @DynamoDBAttribute(attributeName = "c_dt") //created_datetime
-    public long getCreatedDateTimeValue() {
-        return createdDateTimeValue;
-    }
-
-    public void setCreatedDateTimeValue(long createdDateTimeValue) {
         this.createdDateTimeValue = createdDateTimeValue;
     }
 }
