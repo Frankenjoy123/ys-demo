@@ -82,7 +82,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         newBatch = updateProductKeyBatch(newBatch);
 
         //generate ProductModel List
-        List<ProductModel> productModel = generateProductModelList(productTemplate, quantity, keyTypeIds, keyList);
+        List<ProductModel> productModel = generateProductModelList(newBatch, productTemplate, keyList);
 
         //save productModel
         productDao.batchSave(productModel);
@@ -120,8 +120,12 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         return keyList;
     }
 
-    private List<ProductModel> generateProductModelList(Product productTemplate, int quantity, List<Integer> keyTypeIds, List<List<String>> keyList) {
-        Assert.isTrue(quantity > 0 && quantity == keyList.size(), "keyList not valid");
+    private List<ProductModel> generateProductModelList(ProductKeyBatch batch, Product productTemplate, List<List<String>> keyList) {
+        int quantity = batch.getQuantity();
+        List<Integer> keyTypeIds = batch.getProductKeyTypeIds();
+
+        Assert.isTrue(quantity > 0 && quantity == keyList.size(), "keyList invalid");
+
         List<ProductModel> productModelList = new ArrayList<>(quantity * keyTypeIds.size());
         if (keyTypeIds.size() == 1) {
             keyList.stream().forEach(keys -> {
@@ -129,6 +133,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
                     ProductModel productModel = generateProductModel(productTemplate);
                     productModel.setProductKey(keys.get(0));
                     productModel.setProductKeyTypeId(keyTypeIds.get(0));
+                    productModel.setCreatedDateTime(batch.getCreatedDateTime());
                     productModelList.add(productModel);
                 }
             });
@@ -139,9 +144,11 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
                     String primaryKey = keys.get(0);
                     for (int j = 0; j < keyTypeIds.size(); j++) {
                         String key = keys.get(j);
+                        keySet.add(key);
                         ProductModel productModel = generateProductModel(productTemplate);
                         productModel.setProductKey(key);
                         productModel.setProductKeyTypeId(keyTypeIds.get(j));
+                        productModel.setCreatedDateTime(batch.getCreatedDateTime());
                         if (j == 0) {
                             productModel.setProductKeySet(keySet);
                         } else {
@@ -197,6 +204,9 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     }
 
     private ProductKeyBatch saveProductKeyBatch(ProductKeyBatch keyBatch) {
+        if (keyBatch.getCreatedDateTime() == null) {
+            keyBatch.setCreatedDateTime(DateTime.now());
+        }
         ProductKeyBatchModel model = ProductKeyBatch.toModel(keyBatch);
         productkeyBatchDao.save(model);
         return ProductKeyBatch.fromModel(model);
