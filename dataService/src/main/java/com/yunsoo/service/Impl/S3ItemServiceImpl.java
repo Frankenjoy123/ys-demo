@@ -49,8 +49,8 @@ public class S3ItemServiceImpl implements S3ItemService {
     }
 
     @Override
-    public <T> void putItem(T item, String bucketName, String key) throws Exception {
-        s3ItemDao.putItem(item, bucketName, key);
+    public <T> void putItem(String bucketName, String key, T item) {
+        s3ItemDao.putItem(bucketName, key, item);
     }
 
     @Override

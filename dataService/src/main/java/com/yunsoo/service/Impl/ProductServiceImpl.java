@@ -59,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
             p.setProductKey(key);
             p.setProductBaseId(productBaseId);
             p.setProductStatusId(statusId);
-            p.setCreatedDateTime(DateTime.now());
+            p.setCreatedDateTime(createdDateTime);
             products.add(p);
         }
 

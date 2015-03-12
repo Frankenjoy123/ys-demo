@@ -17,12 +17,12 @@ program
 
 
 if (program.local) {
-  AWS.config.update({accessKeyId: 'AKIAJGZKETTWN6VZ2BIA', secretAccessKey: 'secret'});
+  AWS.config.update({accessKeyId: 'AKIAPRMKTUV3VW24UJCA', secretAccessKey: 'secret'});
   config.endpoint = program.endpoint || 'http://localhost:8000/';
   program.region && (config.region = program.region);
 } else {
   AWS.config.credentials = new AWS.SharedIniFileCredentials({profile: 'dynamodb'});
-  config.region = program.region || 'us-west-2';
+  config.region = program.region || 'cn-north-1';
 }
 
 var dynamodb = new AWS.DynamoDB(config);

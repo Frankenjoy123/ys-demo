@@ -75,12 +75,13 @@ public class S3ItemDaoImpl implements S3ItemDao {
     }
 
     @Override
-    public <T> void putItem(T item, String bucketName, String key) {
+    public <T> void putItem(String bucketName, String key, T item) {
         try {
             byte[] buf = mapper.writeValueAsBytes(item);
             InputStream inputStream = new ByteArrayInputStream(buf);
-            //to-do: replace null with new ObjectMetadata() ?
-            amazonS3Client.putObject(new PutObjectRequest(bucketName, key, inputStream, null));
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType("application/json");
+            amazonS3Client.putObject(new PutObjectRequest(bucketName, key, inputStream, metadata));
         } catch (JsonProcessingException ex) {
             throw new RuntimeException("Note: putItem failed! " + "[bucketName: " + bucketName + ", key: " + key + "]", ex);
         }

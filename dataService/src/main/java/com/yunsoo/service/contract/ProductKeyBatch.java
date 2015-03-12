@@ -4,7 +4,10 @@ import com.yunsoo.dbmodel.ProductKeyBatchModel;
 import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -20,7 +23,7 @@ public class ProductKeyBatch {
     private int createdClientId;
     private int createdAccountId;
     private DateTime createdDateTime;
-    private int[] productKeyTypeIds;
+    private List<Integer> productKeyTypeIds;
     private String productKeysAddress;
 
 
@@ -85,11 +88,11 @@ public class ProductKeyBatch {
     }
 
 
-    public int[] getProductKeyTypeIds() {
+    public List<Integer> getProductKeyTypeIds() {
         return productKeyTypeIds;
     }
 
-    public void setProductKeyTypeIds(int[] productKeyTypeIds) {
+    public void setProductKeyTypeIds(List<Integer> productKeyTypeIds) {
         this.productKeyTypeIds = productKeyTypeIds;
     }
 
@@ -113,14 +116,11 @@ public class ProductKeyBatch {
         batch.setCreatedClientId(model.getCreatedClientId());
         batch.setCreatedAccountId(model.getCreatedAccountId());
         batch.setCreatedDateTime(model.getCreatedDateTime());
-        String tIds = model.getProductKeyTypeIds();
-        if (tIds != null) {
-            String[] sa = tIds.split(",");
-            int[] ia = new int[sa.length];
-            for (int i = 0; i < sa.length; i++) {
-                ia[i] = Integer.parseInt(sa[i], 10);
-            }
-            batch.setProductKeyTypeIds(ia);
+        String ids = model.getProductKeyTypeIds();
+        if (ids != null) {
+            batch.setProductKeyTypeIds(Arrays.stream(StringUtils.delimitedListToStringArray(ids, ","))
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toList()));
         }
         batch.setProductKeysAddress(model.getProductKeysAddress());
 
@@ -136,9 +136,9 @@ public class ProductKeyBatch {
         model.setCreatedClientId(batch.getCreatedClientId());
         model.setCreatedAccountId(batch.getCreatedAccountId());
         model.setCreatedDateTime(batch.getCreatedDateTime());
-        int[] ia = batch.getProductKeyTypeIds();
-        if (ia != null) {
-            model.setProductKeyTypeIds(StringUtils.collectionToDelimitedString(Arrays.asList(ia), ","));
+        List<Integer> ids = batch.getProductKeyTypeIds();
+        if (ids != null) {
+            model.setProductKeyTypeIds(StringUtils.collectionToDelimitedString(ids, ","));
         }
         model.setProductKeysAddress(batch.getProductKeysAddress());
 

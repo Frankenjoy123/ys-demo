@@ -14,7 +14,7 @@ public class ScanRecordDto {
     private int baseProductId; //TBD
     private int clientId;
     private String deviceId;
-    private int userId;
+    private Long userId;
     private String detail;
     private String createdDateTime;
 
@@ -50,11 +50,11 @@ public class ScanRecordDto {
         this.deviceId = deviceId;
     }
 
-    public int getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

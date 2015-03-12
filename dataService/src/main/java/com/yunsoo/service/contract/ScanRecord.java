@@ -15,7 +15,7 @@ public class ScanRecord {
     private int baseProductId;
     private int clientId;
     private String deviceId;
-    private int userId;
+    private long userId;
     private String detail;
     private String createdDateTime;
 
@@ -59,11 +59,11 @@ public class ScanRecord {
         this.deviceId = deviceId;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
