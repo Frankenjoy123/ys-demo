@@ -1,12 +1,13 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.biz.validateProduct;
 import com.yunsoo.api.dto.ScanResult;
-import com.yunsoo.api.dto.basic.Logistics;
-import com.yunsoo.api.dto.basic.Product;
-import com.yunsoo.api.dto.basic.ProductCategory;
+import com.yunsoo.api.dto.basic.*;
 //import org.joda.time.DateTime;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.yunsoo.api.object.TProduct;
+import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,23 +19,41 @@ import java.util.List;
 @RequestMapping("/scan")
 public class ScanController {
 
+
+    private RestClient dataAPIClient;
+
+    @Autowired
+    ScanController(RestClient dataAPIClient) {
+        this.dataAPIClient = dataAPIClient;
+    }
+
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
-    public ScanResult getDetailByKey(@PathVariable(value = "key") String key) {
+    public ScanResult getDetailByKey(@PathVariable(value = "key") String key,
+                                     @RequestParam(value = "userId", required = false) Integer userId,
+                                     @RequestParam(value = "device", required = false) String deviceCode) {
+
+        User currentUser = this.getUser(userId, deviceCode);
+        if (currentUser == null)
+            throw new NotFoundException("User not found by userId = " + userId + " deviceCode = " + deviceCode);
+
         ScanResult scanResult = new ScanResult();
-        scanResult.setKeyType("new key");
+        scanResult.setKey(key);
+        List<ScanRecord> scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}", List.class, key);
+        scanResult.setScanRecord(scanRecords);
+
         scanResult.setLogisticsList(this.getFakeLogistics());
         scanResult.setManufacturer(null);
-        scanResult.setProduct(this.getFakeProduct());
+        scanResult.setProduct(this.getProductByKey(key));
 
-//        List<ScanRecord> scanRecordList = scanRecordService.getScanRecordsByFilter(key, null, null, null,
-//                0, 100);
-//        ScanResult.setScanRecord(ScanRecordDto.FromScanRecordList(scanRecordList));
+        scanResult.setValidationResult(validateProduct.validateProduct(scanResult.getProduct(), currentUser, scanRecords));
+
         return scanResult;
     }
 
-    private Product getFakeProduct() {
+    private Product getProductByKey(String Key) {
         Product product = new Product();
-        product.setProductKey("ABKLJLKOIED9823klLDSD");
+        product.setProductKey(Key);
+
         product.setCreatedDateTime("2015-02-02");
         product.setBarcode("KJ:LDS");
         product.setDescription("这是一瓶农夫山泉");
@@ -44,6 +63,15 @@ public class ScanController {
         product.setManufacturerId(1);
         product.setManufacturingDateTime("2015-02-02");
         product.setProductCategory(this.getFakeProductCategory());
+
+        TProduct tProduct = dataAPIClient.get("product/{Key}", TProduct.class, Key);
+        product.setStatusId(tProduct.getProductStatusId());
+        product.setManufacturingDateTime(tProduct.getManufacturingDateTime());
+        product.setCreatedDateTime(tProduct.getCreatedDateTime());
+        int productBaseId = tProduct.getProductBaseId();
+
+        //To-do: fill with ProductBase information.
+
         return product;
     }
 
@@ -77,4 +105,14 @@ public class ScanController {
         return logisticsList;
     }
 
+    //call dataAPI to get current User
+    private User getUser(Integer userId, String deviceCode) {
+        User user = null;
+        if (userId != null && userId > 0) {
+            user = dataAPIClient.get("user/id/{id}", User.class, userId);
+        } else {
+            user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);
+        }
+        return user;
+    }
 }

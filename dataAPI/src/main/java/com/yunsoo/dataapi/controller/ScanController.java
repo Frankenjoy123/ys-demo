@@ -31,8 +31,8 @@ public class ScanController {
         return new ResponseEntity(scanRecordService.get(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/filterlog", method = RequestMethod.GET)
-    public ResponseEntity<List<ScanRecord>> getScanRecordsByFilter(@RequestParam(value = "productKey", required = false) String productKey,
+    @RequestMapping(value = "/filterby", method = RequestMethod.GET)
+    public List<ScanRecord> getScanRecordsByFilter(@RequestParam(value = "productKey", required = false) String productKey,
                                                    @RequestParam(value = "baseProductId", required = false) Integer baseProductId,
                                                    @RequestParam(value = "userId", required = false) Integer userId,
                                                    @RequestParam(value = "createdDateTime", required = false, defaultValue = "") String createdDateTime,
@@ -40,12 +40,13 @@ public class ScanController {
                                                    @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         List<ScanRecord> scanRecordList = scanRecordService.getScanRecordsByFilter(productKey, baseProductId, userId, createdDateTime,
                 pageIndex, pageSize);
-        return new ResponseEntity(scanRecordList, HttpStatus.OK);
+        return scanRecordList;
     }
 
-    @RequestMapping(value = "/savelog", method = RequestMethod.POST)
-    public ResponseEntity<ResultWrapper> createScanRecord(@RequestBody ScanRecord scanRecord) {
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public long createScanRecord(@RequestBody ScanRecord scanRecord) {
         long id = scanRecordService.save(scanRecord);
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), HttpStatus.CREATED);
+        return id;
     }
 }

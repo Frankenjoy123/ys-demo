@@ -5,7 +5,7 @@ package com.yunsoo.api.dto.basic;
  */
 public class User {
 
-    private String id;
+    private Long id;
     private String address;
     private String name;
     private String cellular;
@@ -18,11 +18,11 @@ public class User {
     private int statusId;
     private String createdDateTime;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

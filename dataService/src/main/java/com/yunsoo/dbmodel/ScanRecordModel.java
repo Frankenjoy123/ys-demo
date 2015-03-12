@@ -31,7 +31,7 @@ public class ScanRecordModel {
     private String deviceId;
 
     @Column(name = "user_id")
-    private int userId;
+    private long userId;
 
     @Column(name = "detail")
     private String detail;
@@ -80,11 +80,11 @@ public class ScanRecordModel {
         this.deviceId = deviceId;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
