@@ -23,8 +23,8 @@ public class LogisticsCheckPointModel {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "region_id")
-    private int regionId;
+    @Column(name = "location_id")
+    private int locationId;
 
     @Column(name = "org_id")
     private int orgId;
@@ -53,12 +53,12 @@ public class LogisticsCheckPointModel {
         this.description = description;
     }
 
-    public int getRegion_id() {
-        return regionId;
+    public int getLocation_id() {
+        return locationId;
     }
 
-    public void setRegion_id(int region_id) {
-        this.regionId = region_id;
+    public void setLocation_id(int locationId) {
+        this.locationId = locationId;
     }
 
     public int getOrg_id() {
