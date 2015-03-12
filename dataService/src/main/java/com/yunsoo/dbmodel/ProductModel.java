@@ -33,12 +33,12 @@ public class ProductModel {
 
     private String productKey;
 
-
     private int productKeyTypeId;
     private boolean productKeyDisabled;
     private String productKeyBatchId;
     private String primaryProductKey; //if primaryProductKey is null, then it's a primary item.
     private Set<String> productKeySet; //only exists when primaryProductKey is null
+
     private long createdDateTimeValue;
 
     //only a primary item can contain below product info
@@ -58,7 +58,7 @@ public class ProductModel {
 
     @DynamoDBIgnore
     public boolean isPrimary() {
-        return primaryProductKey == null;
+        return primaryProductKey == null || primaryProductKey.equals(productKey);
     }
 
     @DynamoDBAttribute(attributeName = "key_type_id") //product_key_type_id
@@ -108,11 +108,13 @@ public class ProductModel {
 
     @DynamoDBIgnore
     public DateTime getCreatedDateTime() {
-        return new DateTime(createdDateTimeValue);
+        return createdDateTimeValue > 0 ? new DateTime(createdDateTimeValue) : null;
     }
 
     public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTimeValue = createdDateTime.getMillis();
+        if (createdDateTime != null) {
+            this.createdDateTimeValue = createdDateTime.getMillis();
+        }
     }
 
     @DynamoDBAttribute(attributeName = "c_dt") //created_datetime
@@ -147,11 +149,13 @@ public class ProductModel {
 
     @DynamoDBIgnore
     public DateTime getManufacturingDateTime() {
-        return new DateTime(manufacturingDateTimeValue);
+        return manufacturingDateTimeValue > 0 ? new DateTime(manufacturingDateTimeValue) : null;
     }
 
     public void setManufacturingDateTime(DateTime manufacturingDateTime) {
-        this.manufacturingDateTimeValue = manufacturingDateTime.getMillis();
+        if (manufacturingDateTime != null) {
+            this.manufacturingDateTimeValue = manufacturingDateTime.getMillis();
+        }
     }
 
     @DynamoDBAttribute(attributeName = "mf_dt") //manufacturing_datetime

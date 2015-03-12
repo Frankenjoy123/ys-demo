@@ -1,16 +1,18 @@
 package com.yunsoo.service.Impl;
 
 import com.yunsoo.common.util.DateTimeUtils;
+import com.yunsoo.dao.ProductDao;
 import com.yunsoo.dao.ProductKeyBatchDao;
-import com.yunsoo.dao.ProductKeyDao;
 import com.yunsoo.dao.S3ItemDao;
 import com.yunsoo.dbmodel.ProductKeyBatchModel;
 import com.yunsoo.dbmodel.ProductKeyBatchS3ObjectModel;
-import com.yunsoo.dbmodel.ProductKeyModel;
+import com.yunsoo.dbmodel.ProductModel;
 import com.yunsoo.service.ProductKeyBatchService;
+import com.yunsoo.service.contract.Product;
 import com.yunsoo.service.contract.ProductKeyBatch;
 import com.yunsoo.util.KeyGenerator;
 import com.yunsoo.util.YunsooConfig;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -30,7 +32,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     private ProductKeyBatchDao productkeyBatchDao;
 
     @Autowired
-    private ProductKeyDao productkeyDao;
+    private ProductDao productDao;
 
     @Autowired
     private S3ItemDao s3ItemDao;
@@ -49,210 +51,157 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         }
 
         String address = keyBatch.getProductKeysAddress();
-        if (address != null) {
-            String[] tempArr = unformatAddress(address);
-            //ProductKeyBatchS3ObjectModel
-            ProductKeyBatchS3ObjectModel s3ObjectModel = s3ItemDao.getItem(
-                    tempArr[0],
-                    tempArr[1],
-                    ProductKeyBatchS3ObjectModel.class);
-            return s3ObjectModel.getProductKeys();
-
-        }
-        return null;
+        ProductKeyBatchS3ObjectModel model = getProductKeyListFromS3(address);
+        return model == null ? null : model.getProductKeys();
     }
 
     @Override
-    public ProductKeyBatch create(ProductKeyBatch keyBatch) {
-        this.createProductKeys(keyBatch);
-
-        keyBatch.setId(0); //create new item
-        return save(keyBatch);
+    public ProductKeyBatch create(ProductKeyBatch batch) {
+        return createWithProduct(batch, null);
     }
 
     @Override
-    public ProductKeyBatch createAsync(ProductKeyBatch keyBatch) {
-        throw new NotImplementedException();
-    }
-
-    private void createProductKeys(ProductKeyBatch batch) {
+    public ProductKeyBatch createWithProduct(ProductKeyBatch batch, Product productTemplate) {
         int quantity = batch.getQuantity();
-        int[] keyTypeIds = batch.getProductKeyTypeIds() == null ? new int[0] : batch.getProductKeyTypeIds();
+        int[] keyTypeIds = batch.getProductKeyTypeIds();
 
         Assert.isTrue(quantity > 0, "quantity must be greater than 0");
         Assert.isTrue(keyTypeIds.length > 0, "productKeyTypeIds must not be empty");
 
-        List<ProductKeyModel> keyModelList = new ArrayList<>();
-        List<List<String>> keyList = new ArrayList<>();
-
-        if (keyTypeIds.length == 1) {
-            //create one key each product
-            for (int i = 0; i < quantity; i++) {
-                String key = KeyGenerator.newKey();
-                keyList.add(Arrays.asList(key));
-
-                ProductKeyModel keyModel = new ProductKeyModel();
-                keyModel.setProductKey(key);
-                //keyModel.setStatusId(keyStatusId);
-                keyModel.setProductKeyTypeId(keyTypeIds[0]);
-                keyModelList.add(keyModel);
-            }
-        } else {
-            //create multi keys each product
-            for (int i = 0; i < quantity; i++) {
-                List<String> tempKeys = new ArrayList<>(1);
-                Set<String> keySet = new HashSet<>();
-                String primaryKey = "";
-                for (int j = 0; j < keyTypeIds.length; j++) {
-                    String key = KeyGenerator.newKey();
-                    tempKeys.add(key);
-                    keySet.add(key);
-
-                    ProductKeyModel keyModel = new ProductKeyModel();
-                    keyModel.setProductKey(key);
-                    //keyModel.setDisabled(keyStatusId);
-                    keyModel.setProductKeyTypeId(keyTypeIds[j]);
-                    if (j == 0) {
-                        primaryKey = key;
-                        keyModel.setProductKeySet(keySet);
-                    } else {
-                        keyModel.setPrimaryProductKey(primaryKey);
-                    }
-                    keyModelList.add(keyModel);
-                }
-                keyList.add(tempKeys);
-            }
-        }
+        //
+        List<List<String>> keyList = generateProductKeys(batch);
 
         //save keyList to S3
-        ProductKeyBatchS3ObjectModel s3ObjectModel = new ProductKeyBatchS3ObjectModel();
-        s3ObjectModel.setId(batch.getId());
-        s3ObjectModel.setQuantity(batch.getQuantity());
-        s3ObjectModel.setCreatedDateTimeStr(DateTimeUtils.toString(batch.getCreatedDateTime()));
-        s3ObjectModel.setProductKeyTypeIds(batch.getProductKeyTypeIds());
-        s3ObjectModel.setProductKeys(keyList);
-        String address = saveProductKeyBatchS3ObjectModel(s3ObjectModel);
+        String address = saveProductKeyListToS3(batch, keyList);
+
+        //generate ProductModel List
+        List<ProductModel> productModel = generateProductModelList(productTemplate, quantity, keyTypeIds, keyList);
+
+        //save productModel
+        productDao.batchSave(productModel);
+
+        //save batch
+        batch.setId(0); //set to 0 for creating new item
         batch.setProductKeysAddress(address);
+        return saveProductKeyBatch(batch);
     }
 
-    private ProductKeyBatch save(ProductKeyBatch keyBatch) {
-        ProductKeyBatchModel model = ProductKeyBatch.toModel(keyBatch);
-        productkeyBatchDao.save(model);
-        return ProductKeyBatch.fromModel(model);
+    @Override
+    public ProductKeyBatch createAsync(ProductKeyBatch batch) {
+        return createWithProductAsync(batch, null);
     }
 
-    private String saveProductKeyBatchS3ObjectModel(ProductKeyBatchS3ObjectModel model) {
+    @Override
+    public ProductKeyBatch createWithProductAsync(ProductKeyBatch batch, Product productTemplate) {
+
+        throw new NotImplementedException();
+    }
+
+    //private methods
+
+    private List<List<String>> generateProductKeys(ProductKeyBatch batch) {
+        int quantity = batch.getQuantity();
+        int[] keyTypeIds = batch.getProductKeyTypeIds();
+
+        List<List<String>> keyList = new ArrayList<>(quantity);
+
+        for (int i = 0, len = keyTypeIds.length; i < quantity; i++) {
+            List<String> tempKeys = new ArrayList<>(len);
+            for (int j = 0; j < len; j++) {
+                tempKeys.add(KeyGenerator.newKey());
+            }
+            keyList.add(tempKeys);
+        }
+
+        return keyList;
+    }
+
+    private List<ProductModel> generateProductModelList(Product productTemplate, int quantity, int[] keyTypeIds, List<List<String>> keyList) {
+        Assert.isTrue(quantity > 0 && quantity == keyList.size(), "keyList not valid");
+        List<ProductModel> productModelList = new ArrayList<>(quantity * keyTypeIds.length);
+        if (keyTypeIds.length == 1) {
+            keyList.stream().forEach(keys -> {
+                if (keys != null && keys.size() > 0) {
+                    ProductModel productModel = generateProductModel(productTemplate);
+                    productModel.setProductKey(keys.get(0));
+                    productModel.setProductKeyTypeId(keyTypeIds[0]);
+                    productModelList.add(productModel);
+                }
+            });
+        } else { //multi keys for each product
+            keyList.stream().forEach(keys -> {
+                if (keys != null && keys.size() >= keyTypeIds.length) {
+                    Set<String> keySet = new HashSet<>();
+                    String primaryKey = keys.get(0);
+                    for (int j = 0; j < keyTypeIds.length; j++) {
+                        String key = keys.get(j);
+                        ProductModel productModel = generateProductModel(productTemplate);
+                        productModel.setProductKey(key);
+                        productModel.setProductKeyTypeId(keyTypeIds[j]);
+                        if (j == 0) {
+                            productModel.setProductKeySet(keySet);
+                        } else {
+                            productModel.setPrimaryProductKey(primaryKey);
+                        }
+                        productModelList.add(productModel);
+                    }
+                }
+            });
+        }
+        return productModelList;
+    }
+
+    private ProductModel generateProductModel(Product productTemplate) {
+        ProductModel model = new ProductModel();
+        if (productTemplate != null) {
+            model.setProductBaseId(productTemplate.getProductBaseId());
+            model.setProductStatusId(productTemplate.getProductStatusId());
+            if (productTemplate.getManufacturingDateTime() != null) {
+                model.setManufacturingDateTime(productTemplate.getManufacturingDateTime());
+            }
+            model.setCreatedDateTime(productTemplate.getCreatedDateTime() == null
+                    ? DateTime.now()
+                    : productTemplate.getCreatedDateTime());
+        }
+        return model;
+    }
+
+    private String saveProductKeyListToS3(ProductKeyBatch batch, List<List<String>> keyList) {
+        ProductKeyBatchS3ObjectModel model = new ProductKeyBatchS3ObjectModel();
+        model.setId(batch.getId());
+        model.setQuantity(batch.getQuantity());
+        model.setCreatedDateTimeStr(DateTimeUtils.toString(batch.getCreatedDateTime()));
+        model.setProductKeyTypeIds(batch.getProductKeyTypeIds());
+        model.setProductKeys(keyList);
         String bucketName = YunsooConfig.getProductKeyBatchS3bucketName();
         String key = UUID.randomUUID().toString();
         s3ItemDao.putItem(model, bucketName, key);
         return formatAddress(bucketName, key);
     }
 
+    private ProductKeyBatchS3ObjectModel getProductKeyListFromS3(String address) {
+        if (address == null) {
+            return null;
+        }
+        String[] tempArr = unformatAddress(address);
+        //ProductKeyBatchS3ObjectModel
+        return s3ItemDao.getItem(
+                tempArr[0],
+                tempArr[1],
+                ProductKeyBatchS3ObjectModel.class);
+    }
 
-    //    @Override
-//    public ProductKeyBatch create(ProductKeyBatch keyBatch) {
-//        int quantity = keyBatch.getQuantity();
-//        int keyStatusId = keyBatch.getStatusId();
-//        int[] keyTypeIds = keyBatch.getProductKeyTypeIds();
-//
-//        if (quantity <= 0 || keyTypeIds == null || keyTypeIds.length == 0) {
-//            return null;
-//        }
-//
-//        Arrays.sort(keyTypeIds);
-//        List<ProductKeyModel> keyModelList = new ArrayList<>();
-//        List<List<String>> keyList = new ArrayList<>();
-//
-//        if (keyTypeIds.length == 1) {
-//            //create one key each product
-//            for (int i = 0; i < quantity; i++) {
-//                String key = KeyGenerator.newKey();
-//                List<String> tempKeys = new ArrayList<>(1);
-//                tempKeys.add(key);
-//                keyList.add(tempKeys);
-//
-//                ProductKeyModel keyModel = new ProductKeyModel();
-//                keyModel.setProductKey(key);
-//                //keyModel.setStatusId(keyStatusId);
-//                keyModel.setProductKeyTypeId(keyTypeIds[0]);
-//                keyModelList.add(keyModel);
-//            }
-//        } else {
-//            //create multi keys each product
-//            for (int i = 0; i < quantity; i++) {
-//                List<String> tempKeys = new ArrayList<>(1);
-//                Set<String> keySet = new HashSet<>();
-//                String primaryKey = "";
-//                for (int j = 0; j < keyTypeIds.length; j++) {
-//                    String key = KeyGenerator.newKey();
-//                    tempKeys.add(key);
-//                    keySet.add(key);
-//
-//                    ProductKeyModel keyModel = new ProductKeyModel();
-//                    keyModel.setProductKey(key);
-//                    //keyModel.setDisabled(keyStatusId);
-//                    keyModel.setProductKeyTypeId(keyTypeIds[j]);
-//                    if (j == 0) {
-//                        primaryKey = key;
-//                        keyModel.setProductKeySet(keySet);
-//                    } else {
-//                        keyModel.setPrimaryProductKey(primaryKey);
-//                    }
-//                    keyModelList.add(keyModel);
-//                }
-//                keyList.add(tempKeys);
-//            }
-//        }
-//
-//        //save ProductKeyBatch
-//        String batchId = UUID.randomUUID().toString();
-//        ProductKeyBatchModel batchModel = new ProductKeyBatchModel();
-//        batchModel.setId(batchId);
-//        batchModel.setStatusId(keyBatch.getStatusId());
-//        batchModel.setQuantity(quantity);
-//        batchModel.setCreatedClientId(keyBatch.getCreatedClientId());
-//        batchModel.setCreatedAccountId(keyBatch.getCreatedAccountId());
-//        batchModel.setCreatedDateTime(keyBatch.getCreatedDateTime());
-//        batchModel.setProductKeyTypeIds(keyBatch.getProductKeyTypeIds());
-//
-//        //save keyList to S3
-//        ProductKeyBatchS3ObjectModel s3ObjectModel = new ProductKeyBatchS3ObjectModel(batchModel);
-//        s3ObjectModel.setProductKeys(keyList);
-//        try {
-//            s3ItemDao.putItem(s3ObjectModel, YunsooConfig.getProductKeyBatchS3bucketName(), batchId);
-//        } catch (Exception ex) {
-//            return null;
-//        }
-//
-//        String address = formatAddress(YunsooConfig.getProductKeyBatchS3bucketName(), batchId);
-//        batchModel.setProductKeysAddress(address);
-//        productkeyBatchDao.save(batchModel);
-//
-//
-//        //save ProductKeys
-//        keyModelList.forEach(m -> {
-//            m.setBatchId(batchId);
-//        });
-//        productkeyDao.batchSave(keyModelList);
-//
-//        //result
-//        ProductKeyBatch result = new ProductKeyBatch();
-//        result.setId(batchId);
-//        result.setQuantity(quantity);
-//        result.setStatusId(batchModel.getStatusId());
-//        result.setCreatedClientId(batchModel.getCreatedClientId());
-//        result.setCreatedAccountId(batchModel.getCreatedAccountId());
-//        result.setCreatedDateTime(batchModel.getCreatedDateTime());
-//        result.setProductKeyTypeIds(keyTypeIds);
-//        result.setProductKeys(keyList);
-//
-//        return result;
-//    }
-//
+    private ProductKeyBatch saveProductKeyBatch(ProductKeyBatch keyBatch) {
+        ProductKeyBatchModel model = ProductKeyBatch.toModel(keyBatch);
+        productkeyBatchDao.save(model);
+        return ProductKeyBatch.fromModel(model);
+    }
+
     private String formatAddress(String bucketName, String key) {
         return String.join("/", bucketName, key);
     }
 
+    //return String[]{bucketName, key}
     private String[] unformatAddress(String address) {
         return address.split("/", 2);
     }

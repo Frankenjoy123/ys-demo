@@ -1,5 +1,6 @@
 package com.yunsoo.service;
 
+import com.yunsoo.service.contract.Product;
 import com.yunsoo.service.contract.ProductKeyBatch;
 
 import java.util.List;
@@ -15,7 +16,11 @@ public interface ProductKeyBatchService {
 
     public List<List<String>> getProductKeys(int batchId);
 
-    public ProductKeyBatch create(ProductKeyBatch keyBatch);
+    public ProductKeyBatch create(ProductKeyBatch batch);
 
-    public ProductKeyBatch createAsync(ProductKeyBatch keyBatch);
+    public ProductKeyBatch createWithProduct(ProductKeyBatch batch, Product product);
+
+    public ProductKeyBatch createAsync(ProductKeyBatch batch);
+
+    public ProductKeyBatch createWithProductAsync(ProductKeyBatch batch, Product product);
 }
