@@ -58,7 +58,7 @@ public class UserController {
     public User createUser(@RequestBody User user) throws Exception {
         long id = dataAPIClient.post("user/create", user, Long.class);
         User resultUser = new User();
-        resultUser.setId(Long.toString(id));
+        resultUser.setId(id);
         return resultUser;
     }
 
@@ -68,6 +68,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@RequestBody Integer userId) throws Exception {
         dataAPIClient.delete("user/delete/{id}", userId);
     }

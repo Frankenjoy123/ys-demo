@@ -43,23 +43,25 @@ public class MessageController {
     @RequestMapping(value = "/getUnread", method = RequestMethod.GET)
     public List<Message> getUnreadMessagesBy(@RequestParam(value = "userId", required = true) Long userId,
                                              @RequestParam(value = "companyId", required = true) Long companyId) {
-        List<Message> messageList = dataAPIClient.get("getUnread", List.class, userId, companyId);
+        List<Message> messageList = dataAPIClient.get("message/getUnread", List.class, userId, companyId);
         return messageList;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public long createMessages(@RequestBody Message message) {
-        long id = dataAPIClient.post("/create", message, Long.class);
+        long id = dataAPIClient.post("message/create", message, Long.class);
         return id;
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PATCH)
     public void updateMessages(@RequestBody Message message) {
-        dataAPIClient.patch("/update", message);
+        dataAPIClient.patch("message/update", message);
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMessages(@PathVariable(value = "id") Long id) {
-        dataAPIClient.delete("/delete", id);
+        dataAPIClient.delete("message/delete", id);
     }
 }
