@@ -37,12 +37,11 @@ public class S3ItemDaoTest {
 
     @Test
     public void test_putItem() throws Exception {
-        String bucketName = YunsooConfig.getProductKeyBatchS3bucketName();
-        bucketName = YunsooConfig.getBaseBucket();
-        String key = "testKey";
+        String bucketName = YunsooConfig.getBaseBucket();
+        String key = "test_path/test_key1";
         String item = "test";
 
-        s3ItemDao.putItem(item, bucketName, key);
+        s3ItemDao.putItem(bucketName, key, item);
 
         String result = s3ItemDao.getItem(bucketName, key, String.class);
         System.out.println(result);

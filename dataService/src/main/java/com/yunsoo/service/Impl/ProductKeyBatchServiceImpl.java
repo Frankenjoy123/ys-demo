@@ -16,7 +16,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.*;
 
@@ -63,16 +62,24 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     @Override
     public ProductKeyBatch createWithProduct(ProductKeyBatch batch, Product productTemplate) {
         int quantity = batch.getQuantity();
-        int[] keyTypeIds = batch.getProductKeyTypeIds();
+        List<Integer> keyTypeIds = batch.getProductKeyTypeIds();
 
         Assert.isTrue(quantity > 0, "quantity must be greater than 0");
-        Assert.isTrue(keyTypeIds.length > 0, "productKeyTypeIds must not be empty");
+        Assert.isTrue(keyTypeIds.size() > 0, "productKeyTypeIds must not be empty");
 
-        //
+        //generate productKeys
         List<List<String>> keyList = generateProductKeys(batch);
 
+        //save batch to get the id
+        batch.setId(0); //set to 0 for creating new item
+        ProductKeyBatch newBatch = saveProductKeyBatch(batch);
+
         //save keyList to S3
-        String address = saveProductKeyListToS3(batch, keyList);
+        String address = saveProductKeyListToS3(newBatch, keyList);
+
+        //update batch with address
+        newBatch.setProductKeysAddress(address);
+        newBatch = updateProductKeyBatch(newBatch);
 
         //generate ProductModel List
         List<ProductModel> productModel = generateProductModelList(productTemplate, quantity, keyTypeIds, keyList);
@@ -80,10 +87,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         //save productModel
         productDao.batchSave(productModel);
 
-        //save batch
-        batch.setId(0); //set to 0 for creating new item
-        batch.setProductKeysAddress(address);
-        return saveProductKeyBatch(batch);
+        return newBatch;
     }
 
     @Override
@@ -94,18 +98,18 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     @Override
     public ProductKeyBatch createWithProductAsync(ProductKeyBatch batch, Product productTemplate) {
 
-        throw new NotImplementedException();
+        return null;
     }
 
     //private methods
 
     private List<List<String>> generateProductKeys(ProductKeyBatch batch) {
         int quantity = batch.getQuantity();
-        int[] keyTypeIds = batch.getProductKeyTypeIds();
+        List<Integer> keyTypeIds = batch.getProductKeyTypeIds();
 
         List<List<String>> keyList = new ArrayList<>(quantity);
 
-        for (int i = 0, len = keyTypeIds.length; i < quantity; i++) {
+        for (int i = 0, len = keyTypeIds.size(); i < quantity; i++) {
             List<String> tempKeys = new ArrayList<>(len);
             for (int j = 0; j < len; j++) {
                 tempKeys.add(KeyGenerator.newKey());
@@ -116,28 +120,28 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         return keyList;
     }
 
-    private List<ProductModel> generateProductModelList(Product productTemplate, int quantity, int[] keyTypeIds, List<List<String>> keyList) {
+    private List<ProductModel> generateProductModelList(Product productTemplate, int quantity, List<Integer> keyTypeIds, List<List<String>> keyList) {
         Assert.isTrue(quantity > 0 && quantity == keyList.size(), "keyList not valid");
-        List<ProductModel> productModelList = new ArrayList<>(quantity * keyTypeIds.length);
-        if (keyTypeIds.length == 1) {
+        List<ProductModel> productModelList = new ArrayList<>(quantity * keyTypeIds.size());
+        if (keyTypeIds.size() == 1) {
             keyList.stream().forEach(keys -> {
                 if (keys != null && keys.size() > 0) {
                     ProductModel productModel = generateProductModel(productTemplate);
                     productModel.setProductKey(keys.get(0));
-                    productModel.setProductKeyTypeId(keyTypeIds[0]);
+                    productModel.setProductKeyTypeId(keyTypeIds.get(0));
                     productModelList.add(productModel);
                 }
             });
         } else { //multi keys for each product
             keyList.stream().forEach(keys -> {
-                if (keys != null && keys.size() >= keyTypeIds.length) {
+                if (keys != null && keys.size() >= keyTypeIds.size()) {
                     Set<String> keySet = new HashSet<>();
                     String primaryKey = keys.get(0);
-                    for (int j = 0; j < keyTypeIds.length; j++) {
+                    for (int j = 0; j < keyTypeIds.size(); j++) {
                         String key = keys.get(j);
                         ProductModel productModel = generateProductModel(productTemplate);
                         productModel.setProductKey(key);
-                        productModel.setProductKeyTypeId(keyTypeIds[j]);
+                        productModel.setProductKeyTypeId(keyTypeIds.get(j));
                         if (j == 0) {
                             productModel.setProductKeySet(keySet);
                         } else {
@@ -170,12 +174,13 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         ProductKeyBatchS3ObjectModel model = new ProductKeyBatchS3ObjectModel();
         model.setId(batch.getId());
         model.setQuantity(batch.getQuantity());
-        model.setCreatedDateTimeStr(DateTimeUtils.toString(batch.getCreatedDateTime()));
+        model.setCreatedDateTime(DateTimeUtils.toString(batch.getCreatedDateTime()));
         model.setProductKeyTypeIds(batch.getProductKeyTypeIds());
         model.setProductKeys(keyList);
-        String bucketName = YunsooConfig.getProductKeyBatchS3bucketName();
-        String key = UUID.randomUUID().toString();
-        s3ItemDao.putItem(model, bucketName, key);
+        String bucketName = YunsooConfig.getBaseBucket();
+        String id = Integer.toString(batch.getId()); //UUID.randomUUID().toString();
+        String key = String.join("/", YunsooConfig.getProductKeyBatchS3Path(), id);
+        s3ItemDao.putItem(bucketName, key, model);
         return formatAddress(bucketName, key);
     }
 
@@ -194,6 +199,12 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     private ProductKeyBatch saveProductKeyBatch(ProductKeyBatch keyBatch) {
         ProductKeyBatchModel model = ProductKeyBatch.toModel(keyBatch);
         productkeyBatchDao.save(model);
+        return ProductKeyBatch.fromModel(model);
+    }
+
+    private ProductKeyBatch updateProductKeyBatch(ProductKeyBatch keyBatch) {
+        ProductKeyBatchModel model = ProductKeyBatch.toModel(keyBatch);
+        productkeyBatchDao.update(model);
         return ProductKeyBatch.fromModel(model);
     }
 

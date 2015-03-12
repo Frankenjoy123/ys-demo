@@ -1,11 +1,11 @@
 package com.yunsoo.dao.impl;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.yunsoo.dao.ProductKeyBatchDao;
 import com.yunsoo.dbmodel.ProductKeyBatchModel;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by:   Lijian
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
  * Descriptions:
  */
 @Repository("productKeyBatchDao")
+@Transactional
 public class ProductKeyBatchDaoImpl implements ProductKeyBatchDao {
 
     @Autowired

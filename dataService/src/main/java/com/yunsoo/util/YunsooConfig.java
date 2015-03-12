@@ -16,9 +16,9 @@ public final class YunsooConfig {
     private static final String PROPERTY_YUNSOO_MESSAGE_CREATED_STATUS_ID = "yunsoo.message.created_status_id";
     private static final String PROPERTY_YUNSOO_USER_CREATED_STATUS = "yunsoo.user.created_status_id";
     private static final String PROPERTY_YUNSOO_USER_DELETED_STATUS = "yunsoo.user.delete_status_id";
-    private static final String PROPERTY_YUNSOO_PRODUCT_KEY_BATCH_S3_BUCKET_NAME = "yunsoo.product_key_batch.s3_bucket_name";
     private static final String PROPERTY_YUNSOO_BASE_BUCKET = "yunsoo.s3.basebucket";
     private static final String PROPERTY_YUNSOO_USER_BASEURL = "yunsoo.s3.userbaseurl";
+    private static final String PROPERTY_YUNSOO_PRODUCT_KEY_BATCH_PATH = "yunsoo.s3.product_key_batch.path";
 
     private static final Properties properties = new Properties();
 
@@ -55,8 +55,8 @@ public final class YunsooConfig {
         return Integer.parseInt(getSetting(PROPERTY_YUNSOO_USER_DELETED_STATUS));
     }
 
-    public static String getProductKeyBatchS3bucketName() {
-        return getSetting(PROPERTY_YUNSOO_PRODUCT_KEY_BATCH_S3_BUCKET_NAME);
+    public static String getProductKeyBatchS3Path() {
+        return getSetting(PROPERTY_YUNSOO_PRODUCT_KEY_BATCH_PATH);
     }
 
     public static String getBaseBucket() {

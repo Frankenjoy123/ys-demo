@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
+import java.util.Arrays;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/2/6
@@ -24,7 +26,7 @@ public class ProductKeyBatchServiceTest {
 
     @Test
     public void test_getById() throws Exception {
-        ProductKeyBatch batch = productKeyBatchService.getById("01365559-8d51-4dfa-b43e-8fa540a06e18");
+        ProductKeyBatch batch = productKeyBatchService.getById(1);
         System.out.println((batch != null));
         assert true;
     }
@@ -37,9 +39,9 @@ public class ProductKeyBatchServiceTest {
         keyBatch.setCreatedClientId(100);
         keyBatch.setCreatedAccountId(1000);
         keyBatch.setCreatedDateTime(DateTime.now());
-        keyBatch.setProductKeyTypeIds(new int[]{1, 2});
+        keyBatch.setProductKeyTypeIds(Arrays.asList(1, 2));
         ProductKeyBatch response = productKeyBatchService.create(keyBatch);
-        String batchId = response.getId();
+        int batchId = response.getId();
         System.out.println(batchId);
         ProductKeyBatch batch = productKeyBatchService.getById(batchId);
         assert batch != null;

@@ -13,6 +13,6 @@ task dynamodb(type: NodeTask, dependsOn: 'npmInstall'){
     script = file('dynamodb.js')
     args = ['--local',
             '--endpoint', 'http://localhost:8000/',
-            '--region', 'us-east-1']
+            '--region', 'us-east-1'] //must be us-east-1 for local, because it hard coded in the JavaSDK as us-east-1.
 }
 

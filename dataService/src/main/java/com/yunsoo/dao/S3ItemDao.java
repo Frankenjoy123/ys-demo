@@ -30,7 +30,7 @@ public interface S3ItemDao {
 
     public List<Bucket> getBuckets();
 
-    public <T> void putItem(T item, String bucketName, String key);
+    public <T> void putItem(String bucketName, String key, T item);
 
     public <T> T getItem(String bucketName, String key, Class<T> clazz);
 }

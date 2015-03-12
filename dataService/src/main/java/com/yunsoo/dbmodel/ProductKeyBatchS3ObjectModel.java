@@ -11,8 +11,8 @@ public class ProductKeyBatchS3ObjectModel {
 
     private int id;
     private int quantity;
-    private String createdDateTimeStr;
-    private int[] productKeyTypeIds;
+    private String createdDateTime;
+    private List<Integer> productKeyTypeIds;
     private List<List<String>> productKeys;
 
 
@@ -33,20 +33,20 @@ public class ProductKeyBatchS3ObjectModel {
         this.quantity = quantity;
     }
 
-    public String getCreatedDateTimeStr() {
-        return createdDateTimeStr;
+    public String getCreatedDateTime() {
+        return createdDateTime;
     }
 
-    public void setCreatedDateTimeStr(String createdDateTimeStr) {
-        this.createdDateTimeStr = createdDateTimeStr;
+    public void setCreatedDateTime(String createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 
 
-    public int[] getProductKeyTypeIds() {
+    public List<Integer> getProductKeyTypeIds() {
         return productKeyTypeIds;
     }
 
-    public void setProductKeyTypeIds(int[] productKeyTypeIds) {
+    public void setProductKeyTypeIds(List<Integer> productKeyTypeIds) {
         this.productKeyTypeIds = productKeyTypeIds;
     }
 
