@@ -43,13 +43,16 @@ public class Account {
     public String getSalt() { return salt; }
     public void setSalt(String salt) { this.salt = salt; }
 
-    public static AccountModel toModel(Account account) {
-        ;if (account == null) return null;
+    public static AccountModel ToModel(Account account) {
+        if (account == null) return null;
         AccountModel model = new AccountModel();
         BeanUtils.copyProperties(account, model);
         return model;
     }
-    public static Account fromModel(AccountModel model) {
-        return null;
+    public static Account FromModel(AccountModel model) {
+        if (model == null) { return null; }
+        Account account = new Account();
+        BeanUtils.copyProperties(model, account);
+        return account;
     }
 }

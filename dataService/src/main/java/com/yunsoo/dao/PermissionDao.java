@@ -16,5 +16,5 @@ public interface PermissionDao {
 
     public List<PermissionModel> getPermissions(long groupId);
 
-    public List<PermissionModel> getList(long[] permissionSet);
+    public List<PermissionModel> getList();
 }

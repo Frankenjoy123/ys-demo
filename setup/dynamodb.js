@@ -17,7 +17,7 @@ program
 
 
 if (program.local) {
-  AWS.config.update({accessKeyId: 'AKIAJAMFJ5DUPOD426CQ', secretAccessKey: 'secret'});
+  AWS.config.update({accessKeyId: 'AKIAJGZKETTWN6VZ2BIA', secretAccessKey: 'secret'});
   config.endpoint = program.endpoint || 'http://localhost:8000/';
   program.region && (config.region = program.region);
 } else {

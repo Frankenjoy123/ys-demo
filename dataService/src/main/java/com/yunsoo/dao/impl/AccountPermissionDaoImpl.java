@@ -22,9 +22,8 @@ public class AccountPermissionDaoImpl implements AccountPermissionDao {
 
     @Override
     @Transactional
-    public AccountPermissionModel getByAccountOrg(long accountOrgId) {
-
-        String hql = "from AccountPermissionModel where accountOrgId=" + accountOrgId;
+    public AccountPermissionModel get(long accountId, long orgId) {
+        String hql = "from AccountOrg o left join AccountPermission p on o.id = p.accountOrgId where o.accountId = " + accountId + " and o.orgId = " + orgId;
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
 
         List<AccountPermissionModel> items = (List<AccountPermissionModel>) query.list();

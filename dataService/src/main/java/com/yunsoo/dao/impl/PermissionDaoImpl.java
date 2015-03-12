@@ -72,9 +72,8 @@ public class PermissionDaoImpl implements PermissionDao {
 
     @Override
     @Transactional
-    public List<PermissionModel> getList(long[] permissionSet) {
-        String set = ConvertHelper.joinLongArray(",", permissionSet);
-        String hql = "from PermissionModel where id in (" + set + ")";
+    public List<PermissionModel> getList() {
+        String hql = "from PermissionModel where 1 = 1";
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
 
         List<PermissionModel> permissoins = (List<PermissionModel>) query.list();

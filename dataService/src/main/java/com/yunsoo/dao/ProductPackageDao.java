@@ -21,7 +21,7 @@ public interface ProductPackageDao {
     
     public List<ProductPackageModel> batchLoad(Set<String> keys);
     
-    public DaoStatus batchSave(Set<ProductPackageModel> packages);
+    public DaoStatus batchSave(List<ProductPackageModel> packages);
     
             
 }

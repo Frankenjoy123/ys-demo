@@ -14,21 +14,22 @@ import java.util.List;
  *
  * @author qyu
  */
-public class ProductPackage {
+public class PackageContract {
 
     private String key;
     private int productCount;
     private int packageCount;
     private int statusId;
-    private List<ProductPackage> subPackages;
+    private List<PackageContract> subPackages;
+
     private List<Product> products;
     private long operator; // Will join to User table to get the user info 
     private DateTime created_datetime;
 
-    public ProductPackage() {
+    public PackageContract() {
     }
 
-    public ProductPackage(ProductPackageModel model) {
+    public PackageContract(ProductPackageModel model) {
         this.key = model.getProductKey();
         this.productCount = 0;
         this.packageCount = 0;
@@ -78,11 +79,11 @@ public class ProductPackage {
         this.products = products;
     }
 
-    public List<ProductPackage> getSubPackages() {
+    public List<PackageContract> getSubPackages() {
         return subPackages;
     }
 
-    public void setSubPackages(List<ProductPackage> subPackages) {
+    public void setSubPackages(List<PackageContract> subPackages) {
         this.subPackages = subPackages;
     }
 

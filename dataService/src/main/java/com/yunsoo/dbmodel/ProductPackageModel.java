@@ -97,7 +97,11 @@ public class ProductPackageModel {
     public void setOperator(long operator) {
         this.operator = operator;
     }
-    
-    
-    
+
+    @DynamoDBIgnore
+    public boolean isProduct() {
+        return childProductKeySet == null || childProductKeySet.isEmpty();
+    }
+
+
 }

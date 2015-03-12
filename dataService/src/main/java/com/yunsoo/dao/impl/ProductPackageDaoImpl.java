@@ -63,7 +63,7 @@ public class ProductPackageDaoImpl implements ProductPackageDao {
     }
 
     @Override
-    public DaoStatus batchSave(Set<ProductPackageModel> packages) {
+    public DaoStatus batchSave(List<ProductPackageModel> packages) {
 
         //normally it works well, but sometimes if the item size is excceeded 400K, then it will fail.
         List<DynamoDBMapper.FailedBatch> outcome = dynamoDBMapper.batchSave(packages);

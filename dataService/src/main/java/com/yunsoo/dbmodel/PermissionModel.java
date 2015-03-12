@@ -23,6 +23,9 @@ public class PermissionModel {
     @Column(name = "group_id")
     private long groupId;
 
+    @Column(name = "order")
+    private long order;
+
     @Column(name = "resource")
     private String resource;
 
@@ -38,6 +41,9 @@ public class PermissionModel {
 
     public long getGroupId() { return groupId; }
     public void setGroupId(long groupId) { this.groupId = groupId; }
+
+    public long getOrder() { return order; }
+    public void setOrder(long order) { this.order = order; }
 
     public String getResource() { return resource; }
     public void setResource(String resource) { this.resource = resource; }
