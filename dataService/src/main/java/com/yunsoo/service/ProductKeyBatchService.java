@@ -18,9 +18,9 @@ public interface ProductKeyBatchService {
 
     public ProductKeyBatch create(ProductKeyBatch batch);
 
-    public ProductKeyBatch createWithProduct(ProductKeyBatch batch, Product product);
+    public ProductKeyBatch create(ProductKeyBatch batch, Product product);
 
     public ProductKeyBatch createAsync(ProductKeyBatch batch);
 
-    public ProductKeyBatch createWithProductAsync(ProductKeyBatch batch, Product product);
+    public ProductKeyBatch createAsync(ProductKeyBatch batch, Product product);
 }

@@ -56,11 +56,11 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
     @Override
     public ProductKeyBatch create(ProductKeyBatch batch) {
-        return createWithProduct(batch, null);
+        return create(batch, null);
     }
 
     @Override
-    public ProductKeyBatch createWithProduct(ProductKeyBatch batch, Product productTemplate) {
+    public ProductKeyBatch create(ProductKeyBatch batch, Product productTemplate) {
         int quantity = batch.getQuantity();
         List<Integer> keyTypeIds = batch.getProductKeyTypeIds();
 
@@ -93,11 +93,11 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
     @Override
     public ProductKeyBatch createAsync(ProductKeyBatch batch) {
-        return createWithProductAsync(batch, null);
+        return createAsync(batch, null);
     }
 
     @Override
-    public ProductKeyBatch createWithProductAsync(ProductKeyBatch batch, Product productTemplate) {
+    public ProductKeyBatch createAsync(ProductKeyBatch batch, Product productTemplate) {
 
         return null;
     }
