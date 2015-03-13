@@ -2,10 +2,13 @@ package com.yunsoo.service.Impl;
 
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.LogisticsCheckActionDao;
+import com.yunsoo.dbmodel.LogisticsCheckActionModel;
 import com.yunsoo.service.LogisticsCheckActionService;
 import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.contract.LogisticsCheckAction;
 import com.yunsoo.service.contract.User;
+import com.yunsoo.util.SpringBeanUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +47,10 @@ public class LogisticsCheckActionServiceImpl implements LogisticsCheckActionServ
         if (action == null || action.getId() < 0) {
             return ServiceOperationStatus.InvalidArgument;
         }
-        DaoStatus daoStatus = logisticsCheckActionDao.update(LogisticsCheckAction.ToModel(action));
+        LogisticsCheckActionModel model = new LogisticsCheckActionModel();
+        BeanUtils.copyProperties(action, model,SpringBeanUtil.getNullPropertyNames(action));
+
+        DaoStatus daoStatus = logisticsCheckActionDao.update(model);
         if (daoStatus == DaoStatus.success) return ServiceOperationStatus.Success;
         else return ServiceOperationStatus.Fail;
 
