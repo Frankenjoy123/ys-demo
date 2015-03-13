@@ -43,6 +43,9 @@ public class DeviceModel {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTs;
 
+    @Column(name = "point_id", nullable = true)
+    private Integer pointId;
+
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
 
@@ -66,5 +69,8 @@ public class DeviceModel {
 
     public DateTime getUpdatedTs() { return updatedTs; }
     public void setUpdatedTs(DateTime updatedTs) { this.updatedTs = updatedTs; }
+
+    public Integer getPointId() { return pointId; }
+    public void setPointId(Integer pointId) { this.pointId = pointId; }
 
 }
