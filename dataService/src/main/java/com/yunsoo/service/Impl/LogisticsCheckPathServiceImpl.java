@@ -2,9 +2,12 @@ package com.yunsoo.service.Impl;
 
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.LogisticsCheckPathDao;
+import com.yunsoo.dbmodel.LogisticsCheckPathModel;
 import com.yunsoo.service.LogisticsCheckPathService;
 import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.contract.LogisticsCheckPath;
+import com.yunsoo.util.SpringBeanUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +55,11 @@ public class LogisticsCheckPathServiceImpl implements LogisticsCheckPathService{
         if (path == null || path.getId() < 0) {
             return ServiceOperationStatus.InvalidArgument;
         }
-        DaoStatus daoStatus = logisticsCheckPathDao.update(LogisticsCheckPath.ToModel(path));
+
+        LogisticsCheckPathModel model = new LogisticsCheckPathModel();
+        BeanUtils.copyProperties(path, model,SpringBeanUtil.getNullPropertyNames(path));
+
+        DaoStatus daoStatus = logisticsCheckPathDao.update(model);
         if (daoStatus == DaoStatus.success) return ServiceOperationStatus.Success;
         else return ServiceOperationStatus.Fail;
 

@@ -3,8 +3,10 @@ package com.yunsoo.dao.impl;
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.LogisticsCheckPointDao;
 import com.yunsoo.dbmodel.LogisticsCheckPointModel;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +19,11 @@ import java.util.List;
 @Repository("logisticsCheckPointDao")
 @Transactional
 public class LogisticsCheckPointDaoImpl implements LogisticsCheckPointDao {
+
     @Autowired
     private SessionFactory sessionFactory;
 
     @Override
-    @Transactional
     public LogisticsCheckPointModel get(int id) {
         return (LogisticsCheckPointModel) sessionFactory.getCurrentSession().get(
                 LogisticsCheckPointModel.class, id);
@@ -29,11 +31,9 @@ public class LogisticsCheckPointDaoImpl implements LogisticsCheckPointDao {
 
     @Override
     public LogisticsCheckPointModel get(String name) {
-        String hql = "from LogisticsCheckPointModel where name=" + name;
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
-
-        @SuppressWarnings("unchecked")
-        List<LogisticsCheckPointModel> listPoints = (List<LogisticsCheckPointModel>) query.list();
+        Criteria c = sessionFactory.getCurrentSession().createCriteria(LogisticsCheckPointModel.class);
+        c.add(Restrictions.eq("name", name));
+        List<LogisticsCheckPointModel> listPoints = (List<LogisticsCheckPointModel>) c.list();
         if (listPoints != null && !listPoints.isEmpty()) {
             return listPoints.get(0);
         }

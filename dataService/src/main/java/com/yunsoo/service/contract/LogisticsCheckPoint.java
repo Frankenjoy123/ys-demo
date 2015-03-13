@@ -1,5 +1,6 @@
 package com.yunsoo.service.contract;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.yunsoo.dbmodel.LogisticsCheckPointModel;
 
 import java.util.ArrayList;
@@ -10,18 +11,18 @@ import java.util.List;
  */
 public class LogisticsCheckPoint {
 
-    private int Id;
+    private int id;
     private String name;
     private String description;
     private int locationId;
     private int orgId;
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        this.Id = id;
+        this.id = id;
     }
 
     public String getName() {
@@ -40,20 +41,20 @@ public class LogisticsCheckPoint {
         this.description = description;
     }
 
-    public int getLocation_id() {
+    public int getLocationId() {
         return locationId;
     }
 
-    public void setLocation_id(int locationId) {
+    public void setLocationId(int locationId) {
         this.locationId = locationId;
     }
 
-    public int getOrg_id() {
+    public int getOrgId() {
         return orgId;
     }
 
-    public void setOrg_id(int org_id) {
-        this.orgId = org_id;
+    public void setOrgId(int orgId) {
+        this.orgId = orgId;
     }
 
     public static LogisticsCheckPoint FromModel(LogisticsCheckPointModel model) {
@@ -62,8 +63,8 @@ public class LogisticsCheckPoint {
         point.setId(model.getId());
         point.setName(model.getName());
         point.setDescription(model.getDescription());
-        point.setLocation_id(model.getLocation_id());
-        point.setOrg_id(model.getOrg_id());
+        point.setLocationId(model.getLocation_id());
+        point.setOrgId(model.getOrg_id());
 
         return point;
     }
@@ -77,8 +78,8 @@ public class LogisticsCheckPoint {
         model.setId(point.getId());
         model.setName(point.getName());
         model.setDescription(point.getDescription());
-        model.setLocation_id(point.getLocation_id());
-        model.setOrg_id(point.getOrg_id());
+        model.setLocation_id(point.getLocationId());
+        model.setOrg_id(point.getOrgId());
 
         return model;
     }

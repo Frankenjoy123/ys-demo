@@ -2,9 +2,12 @@ package com.yunsoo.service.Impl;
 
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.LogisticsCheckPointDao;
+import com.yunsoo.dbmodel.LogisticsCheckPointModel;
 import com.yunsoo.service.LogisticsCheckPointService;
 import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.contract.LogisticsCheckPoint;
+import com.yunsoo.util.SpringBeanUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +45,11 @@ public class LogisticsCheckPointServiceImpl implements LogisticsCheckPointServic
         if (point == null || point.getId() < 0) {
             return ServiceOperationStatus.InvalidArgument;
         }
-        DaoStatus daoStatus = logisticsCheckPointDao.update(LogisticsCheckPoint.ToModel(point));
+
+        LogisticsCheckPointModel model = new LogisticsCheckPointModel();
+        BeanUtils.copyProperties(point, model,SpringBeanUtil.getNullPropertyNames(point));
+
+        DaoStatus daoStatus = logisticsCheckPointDao.update(model);
         if (daoStatus == DaoStatus.success) return ServiceOperationStatus.Success;
         else return ServiceOperationStatus.Fail;
     }
