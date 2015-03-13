@@ -22,7 +22,7 @@ public class ProductKeyServiceImpl implements ProductKeyService {
 
     @Override
     public ProductKey get(String key) {
-        Assert.isNull(key, "productKey must not be null");
+        Assert.notNull(key, "productKey must not be null");
 
         ProductModel productModel = productDao.getByKey(key);
         if (productModel == null) {
@@ -33,7 +33,7 @@ public class ProductKeyServiceImpl implements ProductKeyService {
 
     @Override
     public void disable(String key) {
-        Assert.isNull(key, "productKey must not be null");
+        Assert.notNull(key, "productKey must not be null");
 
         ProductModel productModel = productDao.getByKey(key);
         if (productModel == null) {

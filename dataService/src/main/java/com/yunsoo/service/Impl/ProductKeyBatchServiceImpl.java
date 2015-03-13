@@ -72,6 +72,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
         //save batch to get the id
         batch.setId(0); //set to 0 for creating new item
+        if (batch.getCreatedDateTime() == null) batch.setCreatedDateTime(DateTime.now());
         ProductKeyBatch newBatch = saveProductKeyBatch(batch);
 
         //save keyList to S3
@@ -133,6 +134,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
                     ProductModel productModel = generateProductModel(productTemplate);
                     productModel.setProductKey(keys.get(0));
                     productModel.setProductKeyTypeId(keyTypeIds.get(0));
+                    productModel.setProductKeyBatchId(batch.getId());
                     productModel.setCreatedDateTime(batch.getCreatedDateTime());
                     productModelList.add(productModel);
                 }
@@ -148,6 +150,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
                         ProductModel productModel = generateProductModel(productTemplate);
                         productModel.setProductKey(key);
                         productModel.setProductKeyTypeId(keyTypeIds.get(j));
+                        productModel.setProductKeyBatchId(batch.getId());
                         productModel.setCreatedDateTime(batch.getCreatedDateTime());
                         if (j == 0) {
                             productModel.setProductKeySet(keySet);
@@ -170,9 +173,6 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
             if (productTemplate.getManufacturingDateTime() != null) {
                 model.setManufacturingDateTime(productTemplate.getManufacturingDateTime());
             }
-            model.setCreatedDateTime(productTemplate.getCreatedDateTime() == null
-                    ? DateTime.now()
-                    : productTemplate.getCreatedDateTime());
         }
         return model;
     }

@@ -1,16 +1,17 @@
-package com.yunsoo.service.contract;
+package com.yunsoo.dataapi.dto;
 
-import com.yunsoo.dbmodel.ProductModel;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.web.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 import java.util.Set;
 
 /**
  * Created by:   Lijian
- * Created on:   2015/2/5
+ * Created on:   2015/3/13
  * Descriptions:
  */
-public class ProductKey {
+public class ProductKeyDto {
 
     private String productKey;
     private int productKeyTypeId;
@@ -77,40 +78,13 @@ public class ProductKey {
         this.productKeySet = productKeySet;
     }
 
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
-    }
-
-    public static ProductKey fromModel(ProductModel productModel) {
-        ProductKey productKey = new ProductKey();
-        productKey.setProductKey(productModel.getProductKey());
-        productKey.setProductKeyTypeId(productModel.getProductKeyTypeId());
-        Boolean isDisabled = productModel.isProductKeyDisabled();
-        productKey.setProductKeyDisabled(isDisabled != null && isDisabled);
-        productKey.setPrimary(productModel.isPrimary());
-        productKey.setProductKeyBatchId(productModel.getProductKeyBatchId());
-        productKey.setPrimaryProductKey(productModel.getPrimaryProductKey());
-        productKey.setProductKeySet(productModel.getProductKeySet());
-        productKey.setCreatedDateTime(productModel.getCreatedDateTime());
-        return productKey;
-    }
-
-    public static ProductModel toModel(ProductKey productKey) {
-        ProductModel productModel = new ProductModel();
-        productModel.setProductKey(productKey.getProductKey());
-        productModel.setProductKeyTypeId(productKey.getProductKeyTypeId());
-        if (productKey.isProductKeyDisabled()) {
-            productModel.setProductKeyDisabled(true);
-        }
-        productModel.setProductKeyBatchId(productKey.getProductKeyBatchId());
-        productModel.setPrimaryProductKey(productKey.getPrimaryProductKey());
-        productModel.setProductKeySet(productKey.getProductKeySet());
-        productModel.setCreatedDateTime(productKey.getCreatedDateTime());
-        return productModel;
     }
 
 }
