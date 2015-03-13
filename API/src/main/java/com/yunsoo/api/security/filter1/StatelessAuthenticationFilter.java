@@ -1,4 +1,4 @@
-package com.yunsoo.api.security.Filter;
+package com.yunsoo.api.security.filter;
 
 import com.yunsoo.api.security.TokenAuthenticationService;
 import org.springframework.security.core.context.SecurityContextHolder;
