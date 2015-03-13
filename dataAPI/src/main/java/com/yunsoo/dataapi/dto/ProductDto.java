@@ -1,6 +1,8 @@
 package com.yunsoo.dataapi.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.web.DateTimeJsonDeserializer;
 import com.yunsoo.common.web.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
@@ -15,8 +17,10 @@ public class ProductDto {
     private int productBaseId;
     private int productStatusId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime manufacturingDateTime;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
 
     public String getProductKey() {
