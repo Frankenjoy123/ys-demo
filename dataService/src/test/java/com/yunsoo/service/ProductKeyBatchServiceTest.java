@@ -1,5 +1,6 @@
 package com.yunsoo.service;
 
+import com.yunsoo.service.contract.Product;
 import com.yunsoo.service.contract.ProductKeyBatch;
 import com.yunsoo.util.SpringAppContextUtil;
 import org.joda.time.DateTime;
@@ -40,7 +41,11 @@ public class ProductKeyBatchServiceTest {
         keyBatch.setCreatedAccountId(1000);
         keyBatch.setCreatedDateTime(DateTime.now());
         keyBatch.setProductKeyTypeIds(Arrays.asList(1, 2));
-        ProductKeyBatch response = productKeyBatchService.create(keyBatch);
+        Product product = new Product();
+        product.setProductBaseId(1);
+        //product.setProductStatusId(0);
+        product.setCreatedDateTime(DateTime.now());
+        ProductKeyBatch response = productKeyBatchService.create(keyBatch, product);
         int batchId = response.getId();
         System.out.println(batchId);
         ProductKeyBatch batch = productKeyBatchService.getById(batchId);

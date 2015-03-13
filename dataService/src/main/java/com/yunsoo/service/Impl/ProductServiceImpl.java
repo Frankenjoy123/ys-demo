@@ -25,15 +25,25 @@ public class ProductServiceImpl implements ProductService {
         Assert.notNull(productKey, "productKey must not be null");
 
         ProductModel productModel = productDao.getByKey(productKey);
-        if (productModel == null) {
+        if (productModel == null
+                || (productModel.isProductKeyDisabled() != null && productModel.isProductKeyDisabled())) {
             return null;
         }
+        if (!productModel.isPrimary() && productModel.getPrimaryProductKey() != null) {
+            productModel = productDao.getByKey(productModel.getPrimaryProductKey());
+        }
+        if (productModel == null || productModel.getProductBaseId() == null) {
+            return null;
+        }
+        int productBaseId = productModel.getProductBaseId();
+        int productStatusId = productModel.getProductStatusId() == null ? 0 : productModel.getProductStatusId();
+
         Product product = new Product();
         product.setProductKey(productModel.getProductKey());
-        product.setProductStatusId(productModel.getProductStatusId());
+        product.setProductBaseId(productBaseId);
+        product.setProductStatusId(productStatusId);
         product.setManufacturingDateTime(productModel.getManufacturingDateTime());
         product.setCreatedDateTime(productModel.getCreatedDateTime());
-        product.setProductBaseId(productModel.getProductBaseId());
 
         return product;
     }

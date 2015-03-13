@@ -1,48 +1,50 @@
 package com.yunsoo.dataapi.controller;
 
-import com.yunsoo.dataapi.ProductKey;
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.dataapi.dto.ProductKeyBatchDto;
+import com.yunsoo.dataapi.dto.ProductKeyDto;
 import com.yunsoo.service.ProductKeyBatchService;
+import com.yunsoo.service.ProductKeyService;
 import com.yunsoo.service.ProductService;
-import com.yunsoo.service.contract.ProductKeyBatch;
-import org.joda.time.DateTime;
+import com.yunsoo.service.contract.ProductKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
-//import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/productkey")
 public class ProductKeyController {
+
+    private final ProductKeyService productKeyService;
 
     private final ProductKeyBatchService productKeyBatchService;
 
     private final ProductService productService;
 
     @Autowired
-    ProductKeyController(ProductKeyBatchService productKeyBatchService, ProductService productService) {
+    ProductKeyController(ProductKeyService productKeyService,
+                         ProductKeyBatchService productKeyBatchService,
+                         ProductService productService) {
+        this.productKeyService = productKeyService;
         this.productKeyBatchService = productKeyBatchService;
         this.productService = productService;
     }
 
-    @RequestMapping(value = "/newkey", method = RequestMethod.GET)
-    public ProductKey newProductKey() {
-        return new ProductKey("EH6MhZATukqeKRADNOiBng", "12345");
-    }
-
-    //Response for Scanning key .
-    @RequestMapping(value = "/scan", method = RequestMethod.GET)
-    public String getScanInfor(@PathVariable(value = "key") String key) {
-        //to-do
-        return "{  result: 真品" +
-                " companyIcon: 'http://abc.com' " +
-                " productIcon: 'http://abc.com/8' " +
-                " Scan: 杭州西湖区X用户扫描可口可乐，  2015年1月28号 " +
-                " logistic: 杭州富阳仓库，  2015年1月27号 " +
-                " product: 可口可乐，水，食品添加等等。" +
-                "}";
+    @RequestMapping(value = "/{key}", method = RequestMethod.GET)
+    public ProductKeyDto get(@PathVariable(value = "key") String key) {
+        ProductKeyDto productKeyDto = new ProductKeyDto();
+        ProductKey productKey = productKeyService.get(key);
+        if (productKey == null) {
+            throw new NotFoundException("ProductKey");
+        }
+        productKeyDto.setProductKey(productKey.getProductKey());
+        productKeyDto.setProductKeyTypeId(productKey.getProductKeyTypeId());
+        productKeyDto.setProductKeyDisabled(productKey.isProductKeyDisabled());
+        productKeyDto.setPrimary(productKey.isPrimary());
+        productKeyDto.setProductKeyBatchId(productKey.getProductKeyBatchId());
+        productKeyDto.setPrimaryProductKey(productKey.getPrimaryProductKey());
+        productKeyDto.setProductKeySet(productKey.getProductKeySet());
+        productKeyDto.setCreatedDateTime(productKey.getCreatedDateTime());
+        return productKeyDto;
     }
 
     //batch request product keys

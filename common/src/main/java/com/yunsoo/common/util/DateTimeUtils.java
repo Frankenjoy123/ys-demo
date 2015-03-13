@@ -18,7 +18,7 @@ public final class DateTimeUtils {
     }
 
     public static DateTime parse(String str) {
-        return DateTime.parse(str);
+        return str == null ? null : DateTime.parse(str);
     }
 
 }
