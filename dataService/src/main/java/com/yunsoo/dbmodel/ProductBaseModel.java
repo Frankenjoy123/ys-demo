@@ -1,5 +1,8 @@
 package com.yunsoo.dbmodel;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -15,7 +18,7 @@ public class ProductBaseModel {
 	@Id
 	@GeneratedValue
 	@Column(name = "id")
-	private int Id;
+	private long Id;
 	@Column(name = "CATEGORY_ID")
 	private int categoryId;
 	@Column(name = "manufacturer_id")
@@ -36,13 +39,16 @@ public class ProductBaseModel {
 	private String shelfLifeInterval;
 
 	@Column(name = "CREATED_DATETIME")
-	private Date createdDateTime;
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private DateTime createdDateTime;
+	@Column(name = "is_active")
+	private Boolean active;
 
-	public int getId() {
+	public long getId() {
 		return Id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.Id = id;
 	}
 
@@ -109,12 +115,20 @@ public class ProductBaseModel {
 	public void setShelfLifeInterval(String shelfLifeInterval) {
 		this.shelfLifeInterval = shelfLifeInterval;
 	}
-	
-	public Date getCreatedDateTime() {
+
+	public DateTime getCreatedDateTime() {
 		return createdDateTime;
 	}
 
-	public void setCreatedDateTime(Date createdDate) {
+	public void setCreatedDateTime(DateTime createdDate) {
 		this.createdDateTime = createdDate;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 }

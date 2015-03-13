@@ -52,7 +52,7 @@ public class PackageController {
     @RequestMapping(value = "/batch/bind", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public Boolean batchBind(@RequestBody PackageBound[] data) throws Exception {
-        boolean result = dataAPIClient.post("package/batch/bind", data, Boolean.class, null);
+        boolean result = dataAPIClient.post("package/batch/bind", data, Boolean.class);
         return result;
     }
 

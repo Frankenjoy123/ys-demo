@@ -49,9 +49,9 @@ public class ProductStatusController {
 //        return new ResponseEntity(httpStatus);
 //    }
 //
-//    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-//    public ResponseEntity<ResultWrapper> delete(@PathVariable(value = "id") int id) {
-//        boolean result = productStatusService.delete(id);
+//    @RequestMapping(value = "/deletePermanantly/{id}", method = RequestMethod.DELETE)
+//    public ResponseEntity<ResultWrapper> deletePermanantly(@PathVariable(value = "id") int id) {
+//        boolean result = productStatusService.deletePermanantly(id);
 //        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
 //    }
 }

@@ -57,11 +57,6 @@ public class ProductStatus {
         if (model == null) return null;
         ProductStatus productStatus = new ProductStatus();
         BeanUtils.copyProperties(model, productStatus);
-//        productStatus.setId(model.getId());
-//        productStatus.setCode(model.getCode());
-//        productStatus.setActive(model.isActive());
-//        productStatus.setDescription(model.getDescription());
-//
         return productStatus;
     }
 
@@ -69,11 +64,6 @@ public class ProductStatus {
         if (productStatus == null) return null;
         ProductStatusModel model = new ProductStatusModel();
         BeanUtils.copyProperties(productStatus, model);
-//        model.setId(productStatus.getId());
-//        model.setCode(productStatus.getCode());
-//        model.setDescription(productStatus.getDescription());
-//        model.setActive(productStatus.isActive());
-
         return model;
     }
 

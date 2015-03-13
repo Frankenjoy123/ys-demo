@@ -95,7 +95,7 @@ public class ProductCategoryServiceTest {
 //        int idToDelete = 37;
 //        ProductCategory productCategory = productCategoryService.getById(idToDelete);
 //        assertNotNull(productCategory);
-//        productCategoryService.delete(productCategory);
+//        productCategoryService.deletePermanantly(productCategory);
 //        productCategory = productCategoryService.getById(idToDelete);
 //        assertNull(productCategory);
     }

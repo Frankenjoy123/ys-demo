@@ -2,5 +2,4 @@ dependencies {
     compile project(':common')
     compile('org.springframework:spring-web:4.1.4.RELEASE')
     compile('org.apache.httpcomponents:httpclient:4.4')
-    compile('com.fasterxml.jackson.core:jackson-databind:2.5.1')
 }

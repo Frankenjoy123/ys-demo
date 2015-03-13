@@ -1,5 +1,7 @@
 package com.yunsoo.api.object;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.yunsoo.common.DateTimeJsonDeserializer;
 import org.joda.time.DateTime;
 
 /**
@@ -10,8 +12,8 @@ public class TProduct {
     private String productKey;
     private int productBaseId;
     private int productStatusId;
-    private String manufacturingDateTime;
-    private String createdDateTime;
+    private DateTime manufacturingDateTime;
+    private DateTime createdDateTime;
 
     public String getProductKey() {
         return productKey;
@@ -37,19 +39,21 @@ public class TProduct {
         this.productStatusId = productStatusId;
     }
 
-    public String getManufacturingDateTime() {
+    public DateTime getManufacturingDateTime() {
         return manufacturingDateTime;
     }
 
-    public void setManufacturingDateTime(String manufacturingDateTime) {
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    public void setManufacturingDateTime(DateTime manufacturingDateTime) {
         this.manufacturingDateTime = manufacturingDateTime;
     }
 
-    public String getCreatedDateTime() {
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 }

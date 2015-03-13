@@ -1,15 +1,20 @@
 package com.yunsoo.service.contract;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.yunsoo.common.DateTimeJsonDeserializer;
 import com.yunsoo.dbmodel.ProductBaseModel;
+import org.joda.time.DateTime;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Zhe on 2015/1/26.
  */
 public class ProductBase {
 
-    private int Id;
+    private long Id;
     private int subCategoryId;
     private int manufacturerId;
     private String barcode;
@@ -18,13 +23,14 @@ public class ProductBase {
     private String details;
     private int shelfLife;
     private String shelfLifeInterval;
-    private Date createdDateTime;
+    private DateTime createdDateTime;
+    private Boolean active;
 
-    public int getId() {
+    public long getId() {
         return Id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.Id = id;
     }
 
@@ -92,11 +98,21 @@ public class ProductBase {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
-    public Date getCreatedDateTime() {
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(Date createdDate) {
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    public void setCreatedDateTime(DateTime createdDate) {
         this.createdDateTime = createdDate;
     }
 
@@ -113,6 +129,7 @@ public class ProductBase {
         productBase.setDetails(model.getDetails());
         productBase.setShelfLife(model.getShelfLife());
         productBase.setShelfLifeInterval(model.getShelfLifeInterval());
+        productBase.setActive(model.getActive());
         return productBase;
     }
 
@@ -129,6 +146,22 @@ public class ProductBase {
         model.setDetails(productBase.getDetails());
         model.setShelfLife(productBase.getShelfLife());
         model.setShelfLifeInterval(productBase.getShelfLifeInterval());
+        if (productBase.getActive() != null) {
+            model.setActive(false);
+        } else {
+            model.setActive(productBase.getActive());
+        }
         return model;
     }
+
+    public static List<ProductBase> FromModelList(List<ProductBaseModel> modelList) {
+        if (modelList == null) return null;
+        return modelList.stream().map(ProductBase::FromModel).collect(Collectors.toList());
+    }
+
+    public static List<ProductBaseModel> ToModelList(List<ProductBase> productBaseList) {
+        if (productBaseList == null) return null;
+        return productBaseList.stream().map(ProductBase::ToModel).collect(Collectors.toList());
+    }
+
 }
