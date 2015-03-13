@@ -39,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
         int productStatusId = productModel.getProductStatusId() == null ? 0 : productModel.getProductStatusId();
 
         Product product = new Product();
-        product.setProductKey(productModel.getProductKey());
+        product.setProductKey(productKey);
         product.setProductBaseId(productBaseId);
         product.setProductStatusId(productStatusId);
         product.setManufacturingDateTime(productModel.getManufacturingDateTime());

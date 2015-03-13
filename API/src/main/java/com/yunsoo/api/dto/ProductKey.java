@@ -1,7 +1,7 @@
 package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.web.DateTimeJsonSerializer;
+import com.yunsoo.common.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 import java.util.Set;

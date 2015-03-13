@@ -78,7 +78,7 @@ public class UserController {
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<ResultWrapper> deleteUser(@PathVariable(value = "id") Long id) {
-        Boolean result = userService.delete(id); //delete status is 5 in dev DB
+        Boolean result = userService.delete(id); //deletePermanantly status is 5 in dev DB
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
     }
 }

@@ -43,13 +43,16 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     }
 
     @Override
-    public List<List<String>> getProductKeys(int batchId) {
+    public List<List<String>> getProductKeysByBatchId(int batchId) {
         ProductKeyBatch keyBatch = this.getById(batchId);
         if (keyBatch == null) {
             return null;
         }
+        return getProductKeysByAddress(keyBatch.getProductKeysAddress());
+    }
 
-        String address = keyBatch.getProductKeysAddress();
+    @Override
+    public List<List<String>> getProductKeysByAddress(String address) {
         ProductKeyBatchS3ObjectModel model = getProductKeyListFromS3(address);
         return model == null ? null : model.getProductKeys();
     }

@@ -49,7 +49,7 @@ public class OrganizationController {
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<ResultWrapper> deleteOrganization(@PathVariable(value = "id") int id) {
-        Boolean result = organizationService.delete(id, 5); //delete status is 5 in dev DB
+        Boolean result = organizationService.delete(id, 5); //deletePermanantly status is 5 in dev DB
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
     }
 }

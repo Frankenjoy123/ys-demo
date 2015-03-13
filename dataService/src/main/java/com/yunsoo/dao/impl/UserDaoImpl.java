@@ -93,7 +93,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public DaoStatus delete(Long Id, int deleteStatus) {
-//        sessionFactory.getCurrentSession().delete(userModel);
+//        sessionFactory.getCurrentSession().deletePermanantly(userModel);
         return updateStatus(Id, deleteStatus);
     }
 

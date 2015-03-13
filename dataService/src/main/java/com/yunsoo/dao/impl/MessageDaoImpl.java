@@ -81,7 +81,7 @@ public class MessageDaoImpl implements MessageDao {
         //find in config file for deleted status
         return updateStatus(id, YunsooConfig.getMessageDeleteStatus());
 //        MyObject myObject = (MyObject) sessionFactory.getCurrentSession().load(MyObject.class,id);
-//        sessionFactory.getCurrentSession().delete(myObject);
+//        sessionFactory.getCurrentSession().deletePermanantly(myObject);
     }
 
     //Update status by message Id.
