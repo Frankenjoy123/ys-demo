@@ -185,7 +185,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         model.setProductKeyTypeIds(batch.getProductKeyTypeIds());
         model.setProductKeys(keyList);
         String bucketName = YunsooConfig.getBaseBucket();
-        String id = Integer.toString(batch.getId()); //UUID.randomUUID().toString();
+        String id = Integer.toString(batch.getId()) + "_" + UUID.randomUUID().toString();
         String key = String.join("/", YunsooConfig.getProductKeyBatchS3Path(), id);
         s3ItemDao.putItem(bucketName, key, model);
         return formatAddress(bucketName, key);

@@ -26,7 +26,7 @@ public class ProductKeyBatchModel {
     private int statusId;
 
     @Column(name = "organization_id")
-    private int organizationId;
+    private Integer organizationId;
 
     @Column(name = "created_client_id")
     private int createdClientId;
@@ -68,11 +68,11 @@ public class ProductKeyBatchModel {
         this.statusId = statusId;
     }
 
-    public int getOrganizationId() {
+    public Integer getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(int organizationId) {
+    public void setOrganizationId(Integer organizationId) {
         this.organizationId = organizationId;
     }
 

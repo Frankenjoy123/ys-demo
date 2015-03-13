@@ -19,7 +19,7 @@ public class ProductKeyBatch {
     private int id;
     private int quantity;
     private int statusId;
-    private int organizationId;
+    private Integer organizationId;
     private int createdClientId;
     private int createdAccountId;
     private DateTime createdDateTime;
@@ -53,11 +53,11 @@ public class ProductKeyBatch {
         this.statusId = statusId;
     }
 
-    public int getOrganizationId() {
+    public Integer getOrganizationId() {
         return organizationId;
     }
 
-    public void setOrganizationId(int organizationId) {
+    public void setOrganizationId(Integer organizationId) {
         this.organizationId = organizationId;
     }
 
