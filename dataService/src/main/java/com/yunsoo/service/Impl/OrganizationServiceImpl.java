@@ -2,9 +2,12 @@ package com.yunsoo.service.Impl;
 
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.OrganizationDao;
+import com.yunsoo.dbmodel.OrganizationModel;
 import com.yunsoo.service.OrganizationService;
 import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.contract.Organization;
+import com.yunsoo.util.SpringBeanUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +45,11 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (org == null || org.getId() < 0) {
             return ServiceOperationStatus.InvalidArgument;
         }
-        DaoStatus daoStatus = organizationDao.update(Organization.ToModel(org));
+
+        OrganizationModel model = new OrganizationModel();
+        BeanUtils.copyProperties(org, model,SpringBeanUtil.getNullPropertyNames(org));
+
+        DaoStatus daoStatus = organizationDao.update(model);
         if (daoStatus == DaoStatus.success) return ServiceOperationStatus.Success;
         else return ServiceOperationStatus.Fail;
     }

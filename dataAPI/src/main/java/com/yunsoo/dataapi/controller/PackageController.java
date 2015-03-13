@@ -51,7 +51,7 @@ public class PackageController {
     public Boolean batchBind(@RequestBody PackageBoundDto[] dataList) {
         boolean result = false;
         if (dataList != null && dataList.length > 0) {
-            List<PackageBoundContract> contracts = new ArrayList<>();
+            List<PackageBoundContract> contracts = new ArrayList<PackageBoundContract>();
             for (PackageBoundDto dto : dataList) {
                 contracts.add(dto.toServiceContract());
             }
@@ -74,10 +74,24 @@ public class PackageController {
     }
 
     @RequestMapping(value = "/list/{key}", method = RequestMethod.GET)
-    public ResponseEntity<List<String>> flatQuery(@PathVariable(value ="key") String key)
-    {
+    public ResponseEntity<List<String>> flatQuery(@PathVariable(value = "key") String key) {
         List<String> allKeys = packageService.loadAllKeys(key);
         return new ResponseEntity<List<String>>(allKeys, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    public List<String> batchFlatQuery(@RequestBody List<String> keys) {
+        if (keys == null || keys.isEmpty()) {
+            throw new IllegalArgumentException("数据为空");
+        }
+        List<String> allKeys = new ArrayList<String>();
+        for(String key : keys)
+        {
+            List<String> itemKeys = packageService.loadAllKeys(key);
+            allKeys.addAll(allKeys.size(),itemKeys);
+        }
+        return allKeys;
     }
 
 }

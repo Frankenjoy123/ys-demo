@@ -25,26 +25,16 @@ public class LogisticsCheckActionDaoImpl implements LogisticsCheckActionDao{
     private SessionFactory sessionFactory;
 
     @Override
-    @Transactional
     public LogisticsCheckActionModel get(int id) {
-        String hql = "from LogisticsCheckActionModel where Id=" + id;
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
-
-        @SuppressWarnings("unchecked")
-        List<LogisticsCheckActionModel> listActions = (List<LogisticsCheckActionModel>) query.list();
-        if (listActions != null && !listActions.isEmpty()) {
-            return listActions.get(0);
-        }
-        return null;
+        return (LogisticsCheckActionModel) sessionFactory.getCurrentSession().get(
+                LogisticsCheckActionModel.class, id);
     }
 
     @Override
     public LogisticsCheckActionModel get(String name) {
-        String hql = "from LogisticsCheckActionModel where name=" + name;
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
-
-        @SuppressWarnings("unchecked")
-        List<LogisticsCheckActionModel> listActions = (List<LogisticsCheckActionModel>) query.list();
+        Criteria c = sessionFactory.getCurrentSession().createCriteria(LogisticsCheckActionModel.class);
+        c.add(Restrictions.eq("name", name));
+        List<LogisticsCheckActionModel> listActions = (List<LogisticsCheckActionModel>) c.list();
         if (listActions != null && !listActions.isEmpty()) {
             return listActions.get(0);
         }

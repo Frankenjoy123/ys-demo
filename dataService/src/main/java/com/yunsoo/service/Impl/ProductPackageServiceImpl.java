@@ -10,6 +10,8 @@ import com.yunsoo.service.contract.PackageBoundContract;
 import com.yunsoo.service.contract.PackageContract;
 
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,7 +194,11 @@ public class ProductPackageServiceImpl implements ProductPackageService {
             models.addAll(pos, packageModels);
         }
         //remove duplicated key
-
+        int size = models.size();
+        List<ProductPackageModel> distinctModels = models.stream().distinct().collect(Collectors.toList());
+        if (distinctModels.size() != size) {
+            throw new IllegalArgumentException("数据中存在重复的key");
+        }
         DaoStatus status = packageDao.batchSave(models);
 
 

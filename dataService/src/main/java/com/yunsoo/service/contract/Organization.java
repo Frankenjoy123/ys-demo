@@ -23,7 +23,7 @@ public class Organization {
     }
 
     public void setId(long id) {
-        id = id;
+        this.id = id;
     }
 
     public String getName() {
@@ -85,7 +85,6 @@ public class Organization {
         if (org.getId() >= 0) {
             model.setId(org.getId());
         }
-        model.setId(org.getId());
         model.setName(org.getName());
         model.setDescription(org.getDescription());
         model.setImageUrl(org.getImageUrl());
