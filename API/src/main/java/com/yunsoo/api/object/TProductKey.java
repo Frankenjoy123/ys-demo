@@ -20,6 +20,7 @@ public class TProductKey {
     private int productKeyBatchId;
     private String primaryProductKey;
     private Set<String> productKeySet;
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
 
     public String getProductKey() {
@@ -78,7 +79,6 @@ public class TProductKey {
         this.productKeySet = productKeySet;
     }
 
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
