@@ -7,6 +7,7 @@ import com.yunsoo.dao.ProductBaseDao;
 import com.yunsoo.dbmodel.ProductBaseModel;
 import com.yunsoo.service.contract.ProductBase;
 import com.yunsoo.util.SpringBeanUtil;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class ProductBaseServiceImpl implements ProductBaseService {
 
     @Override
     public void save(ProductBase productBaseModel) {
+        productBaseModel.setCreatedDateTime(DateTime.now()); //always set createddatetime.
         productBaseDao.save(ProductBase.ToModel(productBaseModel));
     }
 

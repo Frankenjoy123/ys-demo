@@ -4,6 +4,7 @@ import com.yunsoo.api.biz.validateProduct;
 import com.yunsoo.api.dto.ScanResult;
 import com.yunsoo.api.dto.basic.*;
 import com.yunsoo.api.object.TProduct;
+import com.yunsoo.api.object.TProductBase;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 //import org.joda.time.DateTime;
@@ -22,7 +22,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/scan")
 public class ScanController {
-
 
     private RestClient dataAPIClient;
 
@@ -64,22 +63,12 @@ public class ScanController {
         return scanResult;
     }
 
+    //Retrieve Product Key, ProductBase entry and Product-Category entry from Backend.
     private Product getProductByKey(String Key) {
         Product product = new Product();
         product.setProductKey(Key);
 
-        product.setCreatedDateTime("2015-02-02");
-        product.setBarcode("KJ:LDS");
-        product.setDescription("这是一瓶农夫山泉");
-        product.setDetails("各种详细介绍..");
-        product.setName("农夫山泉");
-        product.setStatusId(1);
-        product.setManufacturerId(1);
-        product.setManufacturingDateTime("2015-02-02");
-        product.setProductCategory(this.getFakeProductCategory());
-
-        //to-do: replace with Key
-        TProduct tProduct = dataAPIClient.get("product/{Key}", TProduct.class, "orIsQ0WMT7KSABDR5QI51R");
+        TProduct tProduct = dataAPIClient.get("product/{Key}", TProduct.class, Key);
         if (tProduct == null) {
             //to-do: log ...该产品码对应的产品不存在！
         } else {
@@ -88,9 +77,19 @@ public class ScanController {
                 product.setManufacturingDateTime(tProduct.getManufacturingDateTime().toString());
             }
             product.setCreatedDateTime(tProduct.getCreatedDateTime().toString());
-            int productBaseId = tProduct.getProductBaseId();
 
-            //To-do: fill with ProductBase information.
+            //fill with ProductBase information.
+            int productBaseId = tProduct.getProductBaseId();
+            TProductBase tProductBase = dataAPIClient.get("productbase/{id}", TProductBase.class, productBaseId);
+            product.setBarcode(tProductBase.getBarcode());
+            product.setDescription(tProductBase.getDescription());
+            product.setDetails(tProductBase.getDetails());
+            product.setName(tProductBase.getName());
+            product.setManufacturerId(tProductBase.getManufacturerId());
+
+            //fill with ProductCategory information.
+            ProductCategory productCategory = dataAPIClient.get("productcategory/model?id={id}", ProductCategory.class, tProductBase.getSubCategoryId());
+            product.setProductCategory(productCategory);
         }
         return product;
     }

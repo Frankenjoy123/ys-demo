@@ -18,11 +18,11 @@ public class ProductBaseModel {
 	@Id
 	@GeneratedValue
 	@Column(name = "id")
-	private long Id;
+	private Long Id;
 	@Column(name = "CATEGORY_ID")
-	private int categoryId;
+	private Integer categoryId;
 	@Column(name = "manufacturer_id")
-	private int manufacturerId;
+	private Integer manufacturerId;
 
 	@Column(name = "barcode")
 	private String barcode;
