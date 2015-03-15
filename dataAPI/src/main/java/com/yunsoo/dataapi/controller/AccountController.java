@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by KB on 3/13/2015.
  */
 @RestController
-@RequestMapping("/device")
+@RequestMapping("/account")
 public class AccountController {
     @Autowired
     private final AccountService accountService;
