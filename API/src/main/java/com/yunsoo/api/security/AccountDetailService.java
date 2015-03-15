@@ -1,7 +1,7 @@
 package com.yunsoo.api.security;
 
 import com.yunsoo.api.object.TAccount;
-import com.yunsoo.api.object.TAccountRole;
+import com.yunsoo.common.web.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,26 +16,26 @@ import java.util.*;
 @Service
 public class AccountDetailService implements org.springframework.security.core.userdetails.UserDetailsService {
 
+    private RestClient dataAPIClient;
+
+    @Autowired
+    AccountDetailService(RestClient dataAPIClient) {
+        this.dataAPIClient = dataAPIClient;
+    }
 //    @Autowired
 //    private UserRepository userRepo;
+
 
     private final AccountStatusUserDetailsChecker detailsChecker = new AccountStatusUserDetailsChecker();
 
     @Override
     public final TAccount loadUserByUsername(String username) throws UsernameNotFoundException {
-        final TAccount tAccount = new TAccount(); // userRepo.findByUsername(username);
-        //mock up TAccount - to be updated by Kaibin
-        tAccount.setUsername("YunsooAdmin");
-        tAccount.setPassword(new BCryptPasswordEncoder().encode("12345678"));
-        tAccount.grantRole(TAccountRole.YUNSOO_ADMIN);
-//        Set<TAccountRole> accountRoles = new HashSet<TAccountRole>();
-//        accountRoles.add(TAccountRole.YUNSOO_ADMIN);
-//        tAccount.setRoles(accountRoles);
+        TAccount account = dataAPIClient.get("account/username/{username}", TAccount.class, username);
 
-        if (tAccount == null) {
+        if (account == null) {
             throw new UsernameNotFoundException("user not found");
         }
-        detailsChecker.check(tAccount);
-        return tAccount;
+        detailsChecker.check(account);
+        return account;
     }
 }

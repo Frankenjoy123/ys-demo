@@ -8,4 +8,5 @@ import com.yunsoo.dbmodel.AccountModel;
 public interface AccountDao {
     public AccountModel get(long id);
     public AccountModel getByIdentifier(String identifier);
+    public AccountModel getByToken(String token);
 }

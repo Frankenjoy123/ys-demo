@@ -1,23 +1,13 @@
-package com.yunsoo.api.object;
+package com.yunsoo.api.dto.basic;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yunsoo.api.dto.basic.Account;
-import org.springframework.beans.BeanUtils;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.yunsoo.api.object.TAccountStatusEnum;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TAccount represents API user who consumes Yunsoo API.
- * Created by Zhe on 2015/3/5.
+ * Created by Zhe on 2015/3/3.
  */
-public class TAccount implements UserDetails {
+public class Account {
     private Long id;
     private TAccountStatusEnum status;
     private String ssid;
@@ -28,38 +18,21 @@ public class TAccount implements UserDetails {
     private String phone;
     private String password;
 
-    private Set<TAccountAuthority> authorities;
-
-    public TAccount() {}
-    public TAccount(String identifier) {
-
-    }
-
-    @Override
-    public Set<TAccountAuthority> getAuthorities() {
-        return authorities;
-    }
-    @Override
     public String getPassword() {
         return password;
     }
-    @Override
     public String getUsername() {
         return identifier;
     }
-    @Override
     public boolean isAccountNonExpired() {
         return !(status == TAccountStatusEnum.EXPIRED);
     }
-    @Override
     public boolean isAccountNonLocked() {
         return !(status == TAccountStatusEnum.LOCKED);
     }
-    @Override
     public boolean isCredentialsNonExpired() {
         return !(status == TAccountStatusEnum.TOKEN_EXPIRED);
     }
-    @Override
     public boolean isEnabled() {
         return status == TAccountStatusEnum.ENABLED;
     }
@@ -81,10 +54,4 @@ public class TAccount implements UserDetails {
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
     public void setPassword(String password) { this.password = password; }
-
-    public Account ToDto(TAccount account) {
-        Account dto = new Account();
-        BeanUtils.copyProperties(account, dto);
-        return dto;
-    }
 }

@@ -45,4 +45,17 @@ public class AccountDaoImpl implements AccountDao {
         }
         return null;
     }
+
+    @Override
+    @Transactional
+    public AccountModel getByToken(String token) {
+        String hql = "from AccountModel a left join AccountTokenModel at on a.id = at.accountId where at.accessToken = " + token;
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+
+        List<AccountModel> items = (List<AccountModel>) query.list();
+        if (items != null && !items.isEmpty()) {
+            return items.get(0);
+        }
+        return null;
+    }
 }
