@@ -1,5 +1,9 @@
 package com.yunsoo.dataapi.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.DateTimeJsonDeserializer;
+import com.yunsoo.common.DateTimeJsonSerializer;
 import com.yunsoo.service.contract.LogisticsCheckPath;
 import org.joda.time.DateTime;
 
@@ -12,12 +16,16 @@ import java.util.List;
 public class LogisticsPathsDto {
     private long Id;
     private List<String> productKeys;
-    private Integer status_id;
+    private Integer action_id;
     private Integer startCheckPoint;
     private Integer endCheckPoint;
-    private String startDate;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime startDate;
     private String desc;
-    private String endDate;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime endDate;
     private Long operator;
     private String deviceId;
 
@@ -37,12 +45,12 @@ public class LogisticsPathsDto {
         this.productKeys = productKeys;
     }
 
-    public Integer getStatus_id() {
-        return status_id;
+    public Integer getAction_id() {
+        return action_id;
     }
 
-    public void setStatus_id(Integer status_id) {
-        this.status_id = status_id;
+    public void setAction_id(Integer action_id) {
+        this.action_id = action_id;
     }
 
     public Integer getStartCheckPoint() {
@@ -61,19 +69,19 @@ public class LogisticsPathsDto {
         this.endCheckPoint = endCheckPoint;
     }
 
-    public String getStartDate() {
+    public DateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(DateTime startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public DateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(DateTime endDate) {
         this.endDate = endDate;
     }
 
@@ -121,11 +129,10 @@ public class LogisticsPathsDto {
 
             path.setEndCheckPoint(pathsDto.getEndCheckPoint());
 
-            if (pathsDto.getEndDate() != null && !pathsDto.getEndDate().isEmpty()) {
-                path.setEndDate(DateTime.parse(pathsDto.getEndDate()));
-            }
+            path.setEndDate(pathsDto.getEndDate());
+
             path.setOperator(pathsDto.getOperator());
-            path.setStatus_id(pathsDto.getStatus_id());
+            path.setAction_id(pathsDto.getAction_id());
             path.setDesc(pathsDto.getDesc());
 
             paths.add(path);

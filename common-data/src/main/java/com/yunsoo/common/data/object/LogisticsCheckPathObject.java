@@ -1,22 +1,15 @@
-package com.yunsoo.dataapi.dto;
+package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.DateTimeJsonDeserializer;
 import com.yunsoo.common.DateTimeJsonSerializer;
-import com.yunsoo.service.contract.LogisticsCheckPath;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.springframework.beans.BeanUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Created by Chen Jerry on 3/5/2015.
+ * Created by Jerry on 3/16/2015.
  */
-public class LogisticsCheckPathDto {
+public class LogisticsCheckPathObject {
     private long Id;
     private String productKey;
     private Integer action_id;
@@ -110,55 +103,5 @@ public class LogisticsCheckPathDto {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
-    }
-
-    public static LogisticsCheckPathDto FromLogisticsCheckPath(LogisticsCheckPath path) {
-        LogisticsCheckPathDto pathDto = new LogisticsCheckPathDto();
-
-        pathDto.setId(path.getId());
-        pathDto.setProductKey(path.getProductKey());
-        pathDto.setStartCheckPoint(path.getStartCheckPoint());
-        pathDto.setStartDate(path.getStartDate());
-        pathDto.setEndCheckPoint(path.getEndCheckPoint());
-        pathDto.setEndDate(path.getEndDate());
-        pathDto.setOperator(path.getOperator());
-        pathDto.setAction_id(path.getAction_id());
-        pathDto.setDesc(path.getDesc());
-
-        return pathDto;
-    }
-
-    public static LogisticsCheckPath ToLogisticsCheckPath(LogisticsCheckPathDto pathDto) {
-        if (pathDto == null) return null;
-
-        LogisticsCheckPath path = new LogisticsCheckPath();
-        path.setId(pathDto.getId());
-
-        //Need to get key list from key package
-        path.setProductKey(pathDto.getProductKey());
-
-        //Use deviceId to get start check point
-        path.setStartCheckPoint(pathDto.getStartCheckPoint());
-
-        //Record the start date as the server date
-        path.setStartDate(DateTime.now());
-        path.setEndCheckPoint(pathDto.getEndCheckPoint());
-        path.setEndDate(pathDto.getEndDate());
-        path.setOperator(pathDto.getOperator());
-        path.setAction_id(pathDto.getAction_id());
-        path.setDesc(pathDto.getDesc());
-
-        return path;
-    }
-
-    public static List<LogisticsCheckPathDto> FromLogisticsCheckPathList(List<LogisticsCheckPath> pathList) {
-        if (pathList == null) return null;
-
-        List<LogisticsCheckPathDto> pathDtoList = new ArrayList<LogisticsCheckPathDto>();
-        for (LogisticsCheckPath path : pathList) {
-            pathDtoList.add(LogisticsCheckPathDto.FromLogisticsCheckPath(path));
-        }
-
-        return pathDtoList;
     }
 }
