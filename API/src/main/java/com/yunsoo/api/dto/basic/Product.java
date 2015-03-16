@@ -12,6 +12,7 @@ import java.util.Date;
 public class Product {
     private String productKey;
     private ProductCategory productCategory;
+    private int ProductBaseId;
     private int manufacturerId;
     private String barcode;
     private String name;
@@ -37,6 +38,14 @@ public class Product {
 
     public void setProductCategory(ProductCategory productCategory) {
         this.productCategory = productCategory;
+    }
+
+    public int getProductBaseId() {
+        return ProductBaseId;
+    }
+
+    public void setProductBaseId(int productBaseId) {
+        ProductBaseId = productBaseId;
     }
 
     public int getManufacturerId() {

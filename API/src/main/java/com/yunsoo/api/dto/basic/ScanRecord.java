@@ -1,5 +1,6 @@
 package com.yunsoo.api.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.yunsoo.common.util.DateTimeUtils;
 
@@ -19,6 +20,7 @@ public class ScanRecord implements Comparator<ScanRecord> {
     private String detail;
     private String createdDateTime;
 
+    @JsonIgnore
     public String getProductKey() {
         return productKey;
     }
