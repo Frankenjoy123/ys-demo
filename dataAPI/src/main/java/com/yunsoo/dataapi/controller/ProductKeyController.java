@@ -1,11 +1,11 @@
 package com.yunsoo.dataapi.controller;
 
+import com.yunsoo.common.data.object.ProductKeyBatchObject;
+import com.yunsoo.common.data.object.ProductKeyBatchRequestObject;
+import com.yunsoo.common.data.object.ProductKeyObject;
+import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.dataapi.dto.ProductDto;
-import com.yunsoo.dataapi.dto.ProductKeyBatchDto;
-import com.yunsoo.dataapi.dto.ProductKeyBatchRequestDto;
-import com.yunsoo.dataapi.dto.ProductKeyDto;
 import com.yunsoo.service.ProductKeyBatchService;
 import com.yunsoo.service.ProductKeyService;
 import com.yunsoo.service.contract.Product;
@@ -30,21 +30,21 @@ public class ProductKeyController {
     }
 
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
-    public ProductKeyDto getKey(@PathVariable(value = "key") String key) {
-        ProductKeyDto productKeyDto = new ProductKeyDto();
+    public ProductKeyObject getKey(@PathVariable(value = "key") String key) {
+        ProductKeyObject productKeyObj = new ProductKeyObject();
         ProductKey productKey = productKeyService.get(key);
         if (productKey == null) {
             throw new NotFoundException("ProductKey");
         }
-        productKeyDto.setProductKey(productKey.getProductKey());
-        productKeyDto.setProductKeyTypeId(productKey.getProductKeyTypeId());
-        productKeyDto.setProductKeyDisabled(productKey.isProductKeyDisabled());
-        productKeyDto.setPrimary(productKey.isPrimary());
-        productKeyDto.setProductKeyBatchId(productKey.getProductKeyBatchId());
-        productKeyDto.setPrimaryProductKey(productKey.getPrimaryProductKey());
-        productKeyDto.setProductKeySet(productKey.getProductKeySet());
-        productKeyDto.setCreatedDateTime(productKey.getCreatedDateTime());
-        return productKeyDto;
+        productKeyObj.setProductKey(productKey.getProductKey());
+        productKeyObj.setProductKeyTypeId(productKey.getProductKeyTypeId());
+        productKeyObj.setProductKeyDisabled(productKey.isProductKeyDisabled());
+        productKeyObj.setPrimary(productKey.isPrimary());
+        productKeyObj.setProductKeyBatchId(productKey.getProductKeyBatchId());
+        productKeyObj.setPrimaryProductKey(productKey.getPrimaryProductKey());
+        productKeyObj.setProductKeySet(productKey.getProductKeySet());
+        productKeyObj.setCreatedDateTime(productKey.getCreatedDateTime());
+        return productKeyObj;
     }
 
     @RequestMapping(value = "{key}/disable", method = RequestMethod.PUT)
@@ -56,7 +56,7 @@ public class ProductKeyController {
     //batch
 
     @RequestMapping(value = "batch/{id}", method = RequestMethod.GET)
-    public ProductKeyBatchDto getBatchById(@PathVariable(value = "id") String idStr) {
+    public ProductKeyBatchObject getBatchById(@PathVariable(value = "id") String idStr) {
         int idInt;
         try {
             idInt = Integer.parseInt(idStr);
@@ -67,34 +67,34 @@ public class ProductKeyController {
         if (batch == null) {
             throw new NotFoundException("product batch");
         }
-        ProductKeyBatchDto batchDto = new ProductKeyBatchDto();
-        batchDto.setId(batch.getId());
-        batchDto.setQuantity(batch.getQuantity());
-        batchDto.setStatusId(batch.getStatusId());
-        batchDto.setOrganizationId(batch.getOrganizationId());
-        batchDto.setCreatedClientId(batch.getCreatedClientId());
-        batchDto.setCreatedAccountId(batch.getCreatedAccountId());
-        batchDto.setCreatedDateTime(batch.getCreatedDateTime());
-        batchDto.setProductKeyTypeIds(batch.getProductKeyTypeIds());
-        batchDto.setProductKeysAddress(batch.getProductKeysAddress());
-        return batchDto;
+        ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
+        batchObj.setId(batch.getId());
+        batchObj.setQuantity(batch.getQuantity());
+        batchObj.setStatusId(batch.getStatusId());
+        batchObj.setOrganizationId(batch.getOrganizationId());
+        batchObj.setCreatedClientId(batch.getCreatedClientId());
+        batchObj.setCreatedAccountId(batch.getCreatedAccountId());
+        batchObj.setCreatedDateTime(batch.getCreatedDateTime());
+        batchObj.setProductKeyTypeIds(batch.getProductKeyTypeIds());
+        batchObj.setProductKeysAddress(batch.getProductKeysAddress());
+        return batchObj;
     }
 
 
     @RequestMapping(value = "batch/create", method = RequestMethod.POST)
-    public ProductKeyBatchDto batchCreateProductKeys(@RequestBody ProductKeyBatchRequestDto request) {
-        ProductKeyBatchDto batchDto = request.getProductKeyBatch();
-        ProductDto productDto = request.getProductTemplate();
+    public ProductKeyBatchObject batchCreateProductKeys(@RequestBody ProductKeyBatchRequestObject request) {
+        ProductKeyBatchObject batchObj = request.getProductKeyBatch();
+        ProductObject productDto = request.getProductTemplate();
 
         ProductKeyBatch batch = new ProductKeyBatch();
-        batch.setQuantity(batchDto.getQuantity());
-        batch.setStatusId(batchDto.getStatusId());
-        batch.setOrganizationId(batchDto.getOrganizationId());
-        batch.setCreatedClientId(batchDto.getCreatedClientId());
-        batch.setCreatedAccountId(batchDto.getCreatedAccountId());
-        batch.setCreatedDateTime(batchDto.getCreatedDateTime());
-        batch.setProductKeyTypeIds(batchDto.getProductKeyTypeIds());
-        batch.setProductKeysAddress(batchDto.getProductKeysAddress());
+        batch.setQuantity(batchObj.getQuantity());
+        batch.setStatusId(batchObj.getStatusId());
+        batch.setOrganizationId(batchObj.getOrganizationId());
+        batch.setCreatedClientId(batchObj.getCreatedClientId());
+        batch.setCreatedAccountId(batchObj.getCreatedAccountId());
+        batch.setCreatedDateTime(batchObj.getCreatedDateTime());
+        batch.setProductKeyTypeIds(batchObj.getProductKeyTypeIds());
+        batch.setProductKeysAddress(batchObj.getProductKeysAddress());
         Product product = null;
         if (productDto != null) {
             product = new Product();
@@ -104,18 +104,18 @@ public class ProductKeyController {
             product.setCreatedDateTime(productDto.getCreatedDateTime());
         }
         ProductKeyBatch newBatch = productKeyBatchService.create(batch, product);
-        ProductKeyBatchDto newBatchDto = new ProductKeyBatchDto();
-        newBatchDto.setId(newBatch.getId());
-        newBatchDto.setQuantity(newBatch.getQuantity());
-        newBatchDto.setStatusId(newBatch.getStatusId());
-        newBatchDto.setOrganizationId(newBatch.getOrganizationId());
-        newBatchDto.setCreatedClientId(newBatch.getCreatedClientId());
-        newBatchDto.setCreatedAccountId(newBatch.getCreatedAccountId());
-        newBatchDto.setCreatedDateTime(newBatch.getCreatedDateTime());
-        newBatchDto.setProductKeyTypeIds(newBatch.getProductKeyTypeIds());
-        newBatchDto.setProductKeysAddress(newBatch.getProductKeysAddress());
+        ProductKeyBatchObject newBatchObj = new ProductKeyBatchObject();
+        newBatchObj.setId(newBatch.getId());
+        newBatchObj.setQuantity(newBatch.getQuantity());
+        newBatchObj.setStatusId(newBatch.getStatusId());
+        newBatchObj.setOrganizationId(newBatch.getOrganizationId());
+        newBatchObj.setCreatedClientId(newBatch.getCreatedClientId());
+        newBatchObj.setCreatedAccountId(newBatch.getCreatedAccountId());
+        newBatchObj.setCreatedDateTime(newBatch.getCreatedDateTime());
+        newBatchObj.setProductKeyTypeIds(newBatch.getProductKeyTypeIds());
+        newBatchObj.setProductKeysAddress(newBatch.getProductKeysAddress());
 
-        return newBatchDto;
+        return newBatchObj;
     }
 
 
