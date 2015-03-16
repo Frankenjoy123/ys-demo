@@ -94,14 +94,12 @@ public class ProductKeyController {
         batch.setCreatedAccountId(batchObj.getCreatedAccountId());
         batch.setCreatedDateTime(batchObj.getCreatedDateTime());
         batch.setProductKeyTypeIds(batchObj.getProductKeyTypeIds());
-        batch.setProductKeysAddress(batchObj.getProductKeysAddress());
         Product product = null;
         if (productDto != null) {
             product = new Product();
             product.setProductBaseId(productDto.getProductBaseId());
             product.setProductStatusId(productDto.getProductStatusId());
-            product.setManufacturingDateTime((productDto.getManufacturingDateTime()));
-            product.setCreatedDateTime(productDto.getCreatedDateTime());
+            product.setManufacturingDateTime(productDto.getManufacturingDateTime());
         }
         ProductKeyBatch newBatch = productKeyBatchService.create(batch, product);
         ProductKeyBatchObject newBatchObj = new ProductKeyBatchObject();
