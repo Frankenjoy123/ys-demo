@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +32,7 @@ public class ScanRecordDaoImpl implements ScanRecordDao {
 
     @Override
     public long save(ScanRecordModel scanRecordModel) {
+        scanRecordModel.setCreatedDateTime(DateTime.now());
         sessionFactory.getCurrentSession().save(scanRecordModel);
         return scanRecordModel.getId();
     }

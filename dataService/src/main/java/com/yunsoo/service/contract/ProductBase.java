@@ -1,16 +1,19 @@
 package com.yunsoo.service.contract;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.yunsoo.common.DateTimeJsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.dbmodel.ProductBaseModel;
 import org.joda.time.DateTime;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by Zhe on 2015/1/26.
+ * Created by:   Zhe
+ * Created on:   2015/1/26
+ * Descriptions:
  */
 public class ProductBase {
 
@@ -23,6 +26,8 @@ public class ProductBase {
     private String details;
     private int shelfLife;
     private String shelfLifeInterval;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
     private Boolean active;
 
@@ -106,12 +111,10 @@ public class ProductBase {
         this.active = active;
     }
 
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     public void setCreatedDateTime(DateTime createdDate) {
         this.createdDateTime = createdDate;
     }

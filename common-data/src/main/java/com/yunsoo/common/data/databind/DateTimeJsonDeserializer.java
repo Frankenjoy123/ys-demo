@@ -1,4 +1,4 @@
-package com.yunsoo.common;
+package com.yunsoo.common.data.databind;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
