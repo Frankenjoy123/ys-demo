@@ -27,7 +27,6 @@ public class ProductKeyBatchDto {
     private List<Integer> productKeyTypeIds;
     private String productKeysAddress;
 
-    private ProductDto product;
 
     public int getId() {
         return id;
@@ -107,11 +106,4 @@ public class ProductKeyBatchDto {
         this.productKeysAddress = productKeysAddress;
     }
 
-    public ProductDto getProduct() {
-        return product;
-    }
-
-    public void setProduct(ProductDto product) {
-        this.product = product;
-    }
 }

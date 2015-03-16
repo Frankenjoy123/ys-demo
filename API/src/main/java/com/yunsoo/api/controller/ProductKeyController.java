@@ -49,4 +49,13 @@ public class ProductKeyController {
         return productKey;
     }
 
+    @RequestMapping(value = "{key}/disable", method = RequestMethod.PUT)
+    public void disableKey(@PathVariable(value = "key") String key) {
+        if (StringUtils.isEmpty(key)) {
+            throw new BadRequestException("please provide a valid product key");
+        }
+        dataAPIClient.put("productkey/{key}/disable", null, key);
+    }
+
+
 }
