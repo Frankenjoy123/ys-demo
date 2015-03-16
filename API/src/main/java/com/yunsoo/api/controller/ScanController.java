@@ -9,12 +9,9 @@ import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-//import org.joda.time.DateTime;
 
 /**
  * Created by Zhe on 2015/2/27.
@@ -48,18 +45,32 @@ public class ScanController {
         List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
         scanResult.setScanRecord(scanRecordList);
 
-        //3, retrieve logistics information
+        //3, set product information
+        scanResult.setProduct(this.getProductByKey(key));
+
+        //4, retrieve logistics information
+        LogisticsCheckPath[] logisticsCheckPath = dataAPIClient.get("logisticscheckpath/key/{key}", LogisticsCheckPath[].class, key);
+        Logistics logistics = new Logistics();
+//        logistics.setLocation(logisticsCheckPath.getStartCheckPoint().toString());
+//        logistics.setDateTime(logisticsCheckPath.getStartDate());
         scanResult.setLogisticsList(this.getFakeLogistics());
 
-        //4, get company information.
-        Organization organization = dataAPIClient.get("organization/id/{id}", Organization.class, 1);
+        //5, get company information.
+        System.out.print(" OrgId: " + scanResult.getProduct().getManufacturerId());
+        Organization organization = dataAPIClient.get("organization/id/{id}", Organization.class, scanResult.getProduct().getManufacturerId());
         scanResult.setManufacturer(organization);
-
-        //5, set product information
-        scanResult.setProduct(this.getProductByKey(key));
 
         //6, set validation result by our validation strategy.
         scanResult.setValidationResult(validateProduct.validateProduct(scanResult.getProduct(), currentUser, scanRecordList));
+
+        //7, save scan Record
+        ScanRecord scanRecord = new ScanRecord();
+        scanRecord.setUserId(currentUser.getId());
+        scanRecord.setDeviceId(currentUser.getDeviceCode());
+        scanRecord.setClientId(123456);
+        scanRecord.setProductKey(key);
+        scanRecord.setBaseProductId(scanResult.getProduct().getProductBaseId());
+        scanRecord.setDetail(currentUser.getName() + "扫描验证真伪。");
         return scanResult;
     }
 
@@ -81,6 +92,7 @@ public class ScanController {
             //fill with ProductBase information.
             int productBaseId = tProduct.getProductBaseId();
             TProductBase tProductBase = dataAPIClient.get("productbase/{id}", TProductBase.class, productBaseId);
+            product.setProductBaseId(productBaseId);
             product.setBarcode(tProductBase.getBarcode());
             product.setDescription(tProductBase.getDescription());
             product.setDetails(tProductBase.getDetails());
