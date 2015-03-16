@@ -1,7 +1,7 @@
 package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.yunsoo.common.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import org.joda.time.DateTime;
 
 import java.util.Set;
