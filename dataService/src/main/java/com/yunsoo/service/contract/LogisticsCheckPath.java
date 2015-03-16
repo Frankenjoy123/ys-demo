@@ -13,7 +13,7 @@ public class LogisticsCheckPath {
 
     private long Id;
     private String productKey;
-    private Integer status_id;
+    private Integer action_id;
     private Integer startCheckPoint;
     private Integer endCheckPoint;
     private DateTime startDate;
@@ -38,12 +38,12 @@ public class LogisticsCheckPath {
         this.productKey = productKey;
     }
 
-    public Integer getStatus_id() {
-        return status_id;
+    public Integer getAction_id() {
+        return action_id;
     }
 
-    public void setStatus_id(Integer status_id) {
-        this.status_id = status_id;
+    public void setAction_id(Integer action_id) {
+        this.action_id = action_id;
     }
 
     public Integer getStartCheckPoint() {
@@ -113,7 +113,7 @@ public class LogisticsCheckPath {
         path.setEndCheckPoint(model.getEndCheckPoint());
         path.setEndDate(model.getEndDate());
         path.setOperator(model.getOperator());
-        path.setStatus_id(model.getStatus_id());
+        path.setAction_id(model.getAction_id());
         path.setDesc(model.getDesc());
 
         return path;
@@ -130,7 +130,7 @@ public class LogisticsCheckPath {
         model.setEndCheckPoint(path.getEndCheckPoint());
         model.setEndDate(path.getEndDate());
         model.setOperator(path.getOperator());
-        model.setStatus_id(path.getStatus_id());
+        model.setAction_id(path.getAction_id());
         model.setDesc(path.getDesc());
 
         return model;

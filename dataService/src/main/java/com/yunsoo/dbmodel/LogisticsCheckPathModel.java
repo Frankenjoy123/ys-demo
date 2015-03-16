@@ -21,8 +21,8 @@ public class LogisticsCheckPathModel {
     @Column(name = "product_key")
     private String productKey;
 
-    @Column(name = "status_id", nullable = true)
-    private Integer status_id;
+    @Column(name = "action_id", nullable = true)
+    private Integer action_id;
 
     @Column(name = "start_check_point_id")
     private Integer startCheckPoint;
@@ -60,12 +60,12 @@ public class LogisticsCheckPathModel {
         this.productKey = productKey;
     }
 
-    public Integer getStatus_id() {
-        return status_id;
+    public Integer getAction_id() {
+        return action_id;
     }
 
-    public void setStatus_id(Integer status_id) {
-        this.status_id = status_id;
+    public void setAction_id(Integer action_id) {
+        this.action_id = action_id;
     }
 
     public Integer getStartCheckPoint() {
