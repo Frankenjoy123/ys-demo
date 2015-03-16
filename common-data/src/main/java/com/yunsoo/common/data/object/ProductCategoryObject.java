@@ -1,9 +1,9 @@
-package com.yunsoo.api.object;
+package com.yunsoo.common.data.object;
 
 /**
  * Created by Zhe on 2015/3/13.
  */
-public class TProductCategory {
+public class ProductCategoryObject {
     private int Id;
     private String name;
     private String description;

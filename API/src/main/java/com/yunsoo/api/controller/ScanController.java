@@ -3,8 +3,8 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.biz.validateProduct;
 import com.yunsoo.api.dto.ScanResult;
 import com.yunsoo.api.dto.basic.*;
-import com.yunsoo.api.object.TProduct;
-import com.yunsoo.api.object.TProductBase;
+import com.yunsoo.common.data.object.ProductObject;
+import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,28 +79,28 @@ public class ScanController {
         Product product = new Product();
         product.setProductKey(Key);
 
-        TProduct tProduct = dataAPIClient.get("product/{Key}", TProduct.class, Key);
-        if (tProduct == null) {
+        ProductObject productObject = dataAPIClient.get("product/{Key}", ProductObject.class, Key);
+        if (productObject == null) {
             //to-do: log ...该产品码对应的产品不存在！
         } else {
-            product.setStatusId(tProduct.getProductStatusId());
-            if (tProduct.getManufacturingDateTime() != null) {
-                product.setManufacturingDateTime(tProduct.getManufacturingDateTime().toString());
+            product.setStatusId(productObject.getProductStatusId());
+            if (productObject.getManufacturingDateTime() != null) {
+                product.setManufacturingDateTime(productObject.getManufacturingDateTime().toString());
             }
-            product.setCreatedDateTime(tProduct.getCreatedDateTime().toString());
+            product.setCreatedDateTime(productObject.getCreatedDateTime().toString());
 
             //fill with ProductBase information.
-            int productBaseId = tProduct.getProductBaseId();
-            TProductBase tProductBase = dataAPIClient.get("productbase/{id}", TProductBase.class, productBaseId);
+            int productBaseId = productObject.getProductBaseId();
+            ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
             product.setProductBaseId(productBaseId);
-            product.setBarcode(tProductBase.getBarcode());
-            product.setDescription(tProductBase.getDescription());
-            product.setDetails(tProductBase.getDetails());
-            product.setName(tProductBase.getName());
-            product.setManufacturerId(tProductBase.getManufacturerId());
+            product.setBarcode(productBaseObject.getBarcode());
+            product.setDescription(productBaseObject.getDescription());
+            product.setDetails(productBaseObject.getDetails());
+            product.setName(productBaseObject.getName());
+            product.setManufacturerId(productBaseObject.getManufacturerId());
 
             //fill with ProductCategory information.
-            ProductCategory productCategory = dataAPIClient.get("productcategory/model?id={id}", ProductCategory.class, tProductBase.getSubCategoryId());
+            ProductCategory productCategory = dataAPIClient.get("productcategory/model?id={id}", ProductCategory.class, productBaseObject.getSubCategoryId());
             product.setProductCategory(productCategory);
         }
         return product;
