@@ -1,16 +1,15 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.dto.ProductKey;
-import com.yunsoo.api.object.TProductKey;
+import com.yunsoo.api.dto.ProductKeyBatch;
+import com.yunsoo.api.dto.ProductKeyBatchRequest;
+import com.yunsoo.common.data.object.ProductKeyObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by:   Lijian
@@ -33,7 +32,7 @@ public class ProductKeyController {
         if (StringUtils.isEmpty(key)) {
             throw new BadRequestException("please provide a valid product key");
         }
-        TProductKey tProductKey = dataAPIClient.get("productkey/{key}", TProductKey.class, key);
+        ProductKeyObject tProductKey = dataAPIClient.get("productkey/{key}", ProductKeyObject.class, key);
         if (tProductKey == null) {
             throw new NotFoundException("product key");
         }
@@ -57,5 +56,41 @@ public class ProductKeyController {
         dataAPIClient.put("productkey/{key}/disable", null, key);
     }
 
+
+    //batch
+
+    @RequestMapping(value = "batch/{id}", method = RequestMethod.GET)
+    public ProductKeyBatch getBatchById(@PathVariable(value = "id") String idStr) {
+        int idInt;
+        try {
+            idInt = Integer.parseInt(idStr);
+        } catch (NumberFormatException ex) {
+            throw new BadRequestException("invalid id");
+        }
+//        //ProductKeyBatch batch =
+//        if (batch == null) {
+//            throw new NotFoundException("product batch");
+//        }
+//        ProductKeyBatchDto batchDto = new ProductKeyBatchDto();
+//        batchDto.setId(batch.getId());
+//        batchDto.setQuantity(batch.getQuantity());
+//        batchDto.setStatusId(batch.getStatusId());
+//        batchDto.setOrganizationId(batch.getOrganizationId());
+//        batchDto.setCreatedClientId(batch.getCreatedClientId());
+//        batchDto.setCreatedAccountId(batch.getCreatedAccountId());
+//        batchDto.setCreatedDateTime(batch.getCreatedDateTime());
+//        batchDto.setProductKeyTypeIds(batch.getProductKeyTypeIds());
+//        batchDto.setProductKeysAddress(batch.getProductKeysAddress());
+//        return batchDto;
+
+        return null;
+    }
+
+
+    @RequestMapping(value = "batch/create", method = RequestMethod.POST)
+    public ProductKeyBatch batchCreateProductKeys(@RequestBody ProductKeyBatchRequest request) {
+
+        return null;
+    }
 
 }

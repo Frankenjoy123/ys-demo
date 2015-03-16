@@ -1,6 +1,12 @@
 package com.yunsoo.api.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.DateTimeJsonDeserializer;
+import com.yunsoo.common.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
+
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -9,20 +15,23 @@ import org.joda.time.DateTime;
  */
 public class ProductKeyBatch {
 
-    private String id;
+    private int id;
     private int quantity;
-    private int[] productKeyTypeIds;
-    private int baseProductId;
     private int statusId;
+    private Integer organizationId;
+    private int createdClientId;
+    private int createdAccountId;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
-    private String productKeysAddress;
+    private List<Integer> productKeyTypeIds;
 
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -35,22 +44,6 @@ public class ProductKeyBatch {
         this.quantity = quantity;
     }
 
-    public int[] getProductKeyTypeIds() {
-        return productKeyTypeIds;
-    }
-
-    public void setProductKeyTypeIds(int[] productKeyTypeIds) {
-        this.productKeyTypeIds = productKeyTypeIds;
-    }
-
-    public int getBaseProductId() {
-        return baseProductId;
-    }
-
-    public void setBaseProductId(int baseProductId) {
-        this.baseProductId = baseProductId;
-    }
-
 
     public int getStatusId() {
         return statusId;
@@ -58,6 +51,31 @@ public class ProductKeyBatch {
 
     public void setStatusId(int statusId) {
         this.statusId = statusId;
+    }
+
+    public Integer getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(Integer organizationId) {
+        this.organizationId = organizationId;
+    }
+
+    public int getCreatedClientId() {
+        return createdClientId;
+    }
+
+    public void setCreatedClientId(int createdClientId) {
+        this.createdClientId = createdClientId;
+    }
+
+
+    public int getCreatedAccountId() {
+        return createdAccountId;
+    }
+
+    public void setCreatedAccountId(int createdAccountId) {
+        this.createdAccountId = createdAccountId;
     }
 
 
@@ -70,13 +88,12 @@ public class ProductKeyBatch {
     }
 
 
-    public String getProductKeysAddress() {
-        return productKeysAddress;
+    public List<Integer> getProductKeyTypeIds() {
+        return productKeyTypeIds;
     }
 
-    public void setProductKeysAddress(String productKeysAddress) {
-        this.productKeysAddress = productKeysAddress;
+    public void setProductKeyTypeIds(List<Integer> productKeyTypeIds) {
+        this.productKeyTypeIds = productKeyTypeIds;
     }
-
 
 }
