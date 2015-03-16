@@ -31,7 +31,9 @@ public final class TokenHandler {
         try {
             hmac = Mac.getInstance(HMAC_ALGO);
             hmac.init(new SecretKeySpec(secretKey, HMAC_ALGO));
-        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+        } catch (InvalidKeyException e) {
+            throw new IllegalStateException("failed to initialize HMAC: " + e.getMessage(), e);
+        } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("failed to initialize HMAC: " + e.getMessage(), e);
         }
     }
@@ -48,9 +50,6 @@ public final class TokenHandler {
                 boolean validHash = Arrays.equals(createHmac(userBytes), hash);
                 if (validHash) {
                     final TAccount tAccount = fromJSON(userBytes);
-                    if (new Date().getTime() < tAccount.getExpires()) {
-                        return tAccount;
-                    }
                 }
             } catch (IllegalArgumentException e) {
                 //log tempering attempt here

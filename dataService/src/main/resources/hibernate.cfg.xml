@@ -19,6 +19,8 @@
         <mapping class="com.yunsoo.dbmodel.LogisticsCheckActionModel"/>
         <mapping class="com.yunsoo.dbmodel.LogisticsCheckPointModel"/>
         <mapping class="com.yunsoo.dbmodel.OrganizationModel"/>
+        <mapping class="com.yunsoo.dbmodel.DeviceModel"/>
+        <mapping class="com.yunsoo.dbmodel.AccountTokenModel"/>
         <!--<mapping class="com.com.yunsoo.dbmodel.LogisticsKeyTrackingModel"/>-->
     </session-factory>
 </hibernate-configuration>

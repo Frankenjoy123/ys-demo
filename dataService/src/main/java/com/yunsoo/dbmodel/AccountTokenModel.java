@@ -24,10 +24,10 @@ public class AccountTokenModel {
     private Integer status;
 
     @Column(name = "account_id", nullable = true)
-    private long account;
+    private Long account;
 
     @Column(name = "device_id", nullable = true)
-    private long device;
+    private String device;
 
     @Column(name = "access_token", nullable = true)
     private String accessToken;
@@ -57,11 +57,11 @@ public class AccountTokenModel {
     public Integer getStatus() { return status; }
     public void setStatus(Integer status) { this.status = status; }
 
-    public long getAccount() { return account; }
+    public Long getAccount() { return account; }
     public void setAccount(long account) { this.account = account; }
 
-    public long getDevice() { return device; }
-    public void setDevice(long device) { this.device = device; }
+    public String getDevice() { return device; }
+    public void setDevice(String device) { this.device = device; }
 
     public String getAccessToken() { return accessToken; }
     public void setAccessToken(String accessToken) { this.accessToken = accessToken; }

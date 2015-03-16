@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
  */
 public class ProductBase {
 
-    private long Id;
-    private int subCategoryId;
-    private int manufacturerId;
+    private Long Id;
+    private Integer subCategoryId;
+    private Integer manufacturerId;
     private String barcode;
     private String name;
     private String description;
@@ -26,28 +26,28 @@ public class ProductBase {
     private DateTime createdDateTime;
     private Boolean active;
 
-    public long getId() {
+    public Long getId() {
         return Id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.Id = id;
     }
 
-    public int getSubCategoryId() {
+    public Integer getSubCategoryId() {
         return subCategoryId;
     }
 
-    public void setSubCategoryId(int baseProductId) {
+    public void setSubCategoryId(Integer baseProductId) {
         this.subCategoryId = baseProductId;
     }
 
-    public int getManufacturerId() {
-        return manufacturerId;
+    public void setManufacturerId(Integer manufacturerId) {
+        this.manufacturerId = manufacturerId;
     }
 
-    public void setManufacturerId(int manufacturerId) {
-        this.manufacturerId = manufacturerId;
+    public Integer getManufacturerId() {
+        return manufacturerId;
     }
 
     public String getBarcode() {
@@ -141,13 +141,15 @@ public class ProductBase {
         model.setManufacturerId(productBase.getManufacturerId());
         model.setName(productBase.getName());
         model.setDescription(productBase.getDescription());
-        model.setCreatedDateTime(productBase.getCreatedDateTime());
         model.setBarcode(productBase.getBarcode());
         model.setDetails(productBase.getDetails());
         model.setShelfLife(productBase.getShelfLife());
         model.setShelfLifeInterval(productBase.getShelfLifeInterval());
-        if (productBase.getActive() != null) {
-            model.setActive(false);
+        if (productBase.getCreatedDateTime() != null) {
+            model.setCreatedDateTime(productBase.getCreatedDateTime()); //convert string to datetime
+        }
+        if (productBase.getActive() == null) {
+            model.setActive(true); //default as true.
         } else {
             model.setActive(productBase.getActive());
         }
