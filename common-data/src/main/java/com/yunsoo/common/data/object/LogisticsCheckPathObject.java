@@ -2,8 +2,8 @@ package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.DateTimeJsonDeserializer;
-import com.yunsoo.common.DateTimeJsonSerializer;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
