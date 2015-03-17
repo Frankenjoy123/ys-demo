@@ -14,7 +14,7 @@ RUN cd /var/yunsoo/ && unzip dev.zip && mv yunsoo-dev/* . && rm -rf yunsoo-dev d
 
 RUN cd /var/yunsoo/ && chmod +x gradlew && ./gradlew dataAPI:bootRepackage
 
-EXPOSE 8080
+EXPOSE 9080
 
 CMD java -jar /var/yunsoo/dataAPI/build/libs/dataAPI-1.0.jar
 #ADD dataAPI/build/libs/dataAPI-1.0.jar /data/dataAPI-1.0.jar
