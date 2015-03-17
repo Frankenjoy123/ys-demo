@@ -16,5 +16,5 @@ public interface ProductKeyTypeDao {
 
     public void delete(ProductKeyTypeModel productKeyTypeModel);
 
-    public List<ProductKeyTypeModel> getAllProductKeyType(boolean activeOnly);
+    public List<ProductKeyTypeModel> getAllProductKeyTypes(boolean active);
 }

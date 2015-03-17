@@ -1,21 +1,23 @@
 package com.yunsoo.service;
 
-import com.yunsoo.dbmodel.ProductKeyTypeModel;
+import com.yunsoo.service.contract.ProductKeyType;
 
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/1/13.
+ * Created by:   Zhe
+ * Created on:   2015/1/13
+ * Descriptions:
  */
 public interface ProductKeyTypeService {
 
-    public ProductKeyTypeModel getById(int id);
+    public ProductKeyType getById(int id);
 
-    public void save(ProductKeyTypeModel productKeyTypeModel);
+    public void save(ProductKeyType productKeyTypeModel);
 
-    public void update(ProductKeyTypeModel productKeyTypeModel);
+    public void update(ProductKeyType productKeyTypeModel);
 
-    public void delete(ProductKeyTypeModel productKeyTypeModel);
+    public void delete(ProductKeyType productKeyTypeModel);
 
-    public List<ProductKeyTypeModel> getAllProductKeyTypes(boolean activeOnly);
+    public List<ProductKeyType> getAllProductKeyTypes(boolean active);
 }

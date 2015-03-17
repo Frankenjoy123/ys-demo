@@ -1,25 +1,29 @@
 package com.yunsoo.service.contract;
 
 import com.yunsoo.dbmodel.ProductKeyTypeModel;
+import org.springframework.beans.BeanUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Zhe on 2015/1/16.
- *
- *  Convert methods for DBModel <=> Contract
+ * <p>
+ * Convert methods for DBModel <=> Contract
  */
 public class ProductKeyType {
 
-    private int Id;
+    private Integer id;
     private String code;
     private String description;
-    private boolean active;
+    private Boolean active;
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getCode() {
@@ -46,24 +50,29 @@ public class ProductKeyType {
         this.active = active;
     }
 
-    public static ProductKeyType FromModel(ProductKeyTypeModel model) {
+
+    public static ProductKeyType fromModel(ProductKeyTypeModel model) {
         if (model == null) return null;
         ProductKeyType productKeyType = new ProductKeyType();
-        productKeyType.setId(productKeyType.getId());
-        productKeyType.setCode(productKeyType.getCode());
-        productKeyType.setDescription(productKeyType.getDescription());
-        productKeyType.setActive(productKeyType.isActive());
+        BeanUtils.copyProperties(model, productKeyType);
         return productKeyType;
     }
 
-    public static ProductKeyTypeModel ToModel(ProductKeyType productKeyType) {
+    public static ProductKeyTypeModel toModel(ProductKeyType productKeyType) {
         if (productKeyType == null) return null;
         ProductKeyTypeModel model = new ProductKeyTypeModel();
-        model.setId(productKeyType.getId());
-        model.setCode(productKeyType.getCode());
-        model.setDescription(productKeyType.getDescription());
-        model.setActive(productKeyType.isActive());
+        BeanUtils.copyProperties(productKeyType, model);
         return model;
+    }
+
+    public static List<ProductKeyType> fromModelList(List<ProductKeyTypeModel> modelList) {
+        if (modelList == null) return null;
+        return modelList.stream().map(ProductKeyType::fromModel).collect(Collectors.toList());
+    }
+
+    public static List<ProductKeyTypeModel> ToModelList(List<ProductKeyType> productKeyTypeList) {
+        if (productKeyTypeList == null) return null;
+        return productKeyTypeList.stream().map(ProductKeyType::toModel).collect(Collectors.toList());
     }
 
 }

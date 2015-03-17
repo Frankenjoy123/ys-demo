@@ -42,11 +42,11 @@ public class ProductKeyTypeDaoImpl implements ProductKeyTypeDao {
     }
 
     @Override
-    public List<ProductKeyTypeModel> getAllProductKeyType(boolean activeOnly) {
+    public List<ProductKeyTypeModel> getAllProductKeyTypes(boolean active) {
         Criteria criteria = sessionFactory.getCurrentSession()
                 .createCriteria(ProductKeyTypeModel.class);
-        if (activeOnly) {
-            criteria.add(Restrictions.eq("active", activeOnly));
+        if (active) {
+            criteria.add(Restrictions.eq("active", active));
         }
         return criteria.list();
     }

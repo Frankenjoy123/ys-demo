@@ -1,6 +1,7 @@
 package com.yunsoo.api;
 
 import com.yunsoo.api.config.DataAPIConfiguration;
+import com.yunsoo.common.data.object.ProductKeyTypeObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.api.dto.ProductStatus;
 import org.junit.Test;
@@ -32,10 +33,7 @@ public class DataClientTest {
 
     @Test
     public void testGet() {
-        ProductStatus productStatus = new RestClient("http://localhost/api/").get("productstatus/{id}", ProductStatus.class, 7);
-        System.out.println(productStatus);
-
-        ProductStatus[] array = dataAPIClient.get("productstatus?active={active}", ProductStatus[].class, true);
+        ProductKeyTypeObject[] array = dataAPIClient.get("productkeytype?active={active}", ProductKeyTypeObject[].class, true);
         System.out.println(Arrays.asList(array));
     }
 
