@@ -5,13 +5,16 @@ import com.yunsoo.dataapi.dto.LogisticsPathsDto;
 import com.yunsoo.dataapi.dto.ResultWrapper;
 import com.yunsoo.dataapi.factory.ResultFactory;
 import com.yunsoo.service.LogisticsCheckPathService;
+import com.yunsoo.service.ProductPackageService;
 import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.contract.LogisticsCheckPath;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,12 +25,10 @@ import java.util.List;
 public class LogisticsCheckPathController {
 
     @Autowired
-    private final LogisticsCheckPathService pathService;
+    private LogisticsCheckPathService pathService;
 
     @Autowired
-    LogisticsCheckPathController(LogisticsCheckPathService pathService) {
-        this.pathService = pathService;
-    }
+    private ProductPackageService packageService;
 
     @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
     public ResponseEntity<LogisticsCheckPathDto> getLogisticsCheckPathById(@PathVariable(value = "id") Long id) {
@@ -42,16 +43,42 @@ public class LogisticsCheckPathController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<ResultWrapper> createLogisticsCheckPath(@RequestBody LogisticsCheckPathDto pathDto) {
-        Long id = pathService.save(LogisticsCheckPathDto.ToLogisticsCheckPath(pathDto));
-        HttpStatus status = id > 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
+
+        List<String> allKeys = packageService.loadAllKeys(pathDto.getProductKey());
+        if(allKeys == null)
+            return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(0), HttpStatus.UNPROCESSABLE_ENTITY);
+
+        List<LogisticsCheckPathDto> pathDtos = new ArrayList<LogisticsCheckPathDto>();
+        for(String key : allKeys) {
+            LogisticsCheckPathDto tmpPathDto = new LogisticsCheckPathDto();
+            BeanUtils.copyProperties(pathDto, tmpPathDto);
+            tmpPathDto.setProductKey(key);
+
+            pathDtos.add(tmpPathDto);
+        }
+
+        Long id = pathService.save(LogisticsCheckPathDto.TOLogisticsCheckPathList(pathDtos));
+        HttpStatus status = id >= 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
     }
 
     @RequestMapping(value = "/batchkeycreate", method = RequestMethod.POST)
     public ResponseEntity<ResultWrapper> createLogisticsCheckPaths(@RequestBody LogisticsPathsDto pathsDto) {
-        LogisticsPathsDto tmp = new LogisticsPathsDto();
-        Long id = pathService.save(tmp.ToLogisticsCheckPath(pathsDto));
-        HttpStatus status = id > 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
+
+        if(pathsDto.getProductKey() == null)
+            return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(0), HttpStatus.UNPROCESSABLE_ENTITY);
+
+        List<String> allKeys = new ArrayList<String>();
+        for(String key : pathsDto.getProductKey())
+        {
+            List<String> itemKeys = packageService.loadAllKeys(key);
+            allKeys.addAll(allKeys.size(),itemKeys);
+        }
+
+        pathsDto.setProductKey(allKeys);
+
+        Long id = pathService.save(LogisticsPathsDto.ToLogisticsCheckPath(pathsDto));
+        HttpStatus status = id >= 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
     }
 

@@ -161,4 +161,15 @@ public class LogisticsCheckPathDto {
 
         return pathDtoList;
     }
+
+    public static List<LogisticsCheckPath> TOLogisticsCheckPathList(List<LogisticsCheckPathDto> pathDtoList) {
+        if (pathDtoList == null) return null;
+
+        List<LogisticsCheckPath> pathList = new ArrayList<LogisticsCheckPath>();
+        for (LogisticsCheckPathDto pathDto : pathDtoList) {
+            pathList.add(LogisticsCheckPathDto.ToLogisticsCheckPath(pathDto));
+        }
+
+        return pathList;
+    }
 }
