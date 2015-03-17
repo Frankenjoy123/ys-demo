@@ -56,4 +56,12 @@ public class PackageController {
         return result;
     }
 
+    @RequestMapping(value = "/revoke/{key}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Boolean revokePackage(@PathVariable(value = "key") String key) {
+        dataAPIClient.delete("package/revoke/{key}", key);
+        return true;
+    }
+
+
 }
