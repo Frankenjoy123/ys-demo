@@ -3,12 +3,14 @@ package com.yunsoo.api.biz;
 import com.yunsoo.api.dto.basic.User;
 import com.yunsoo.common.web.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 个人用户的业务域。
  * This is the User business layer that consumes multi-dataAPI services.
  * Created by Zhe on 2015/3/17.
  */
+@Component
 public class UserDomain {
 
     @Autowired

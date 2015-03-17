@@ -4,6 +4,7 @@ import com.yunsoo.api.dto.LogisticsPath;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
 import com.yunsoo.common.data.object.LogisticsCheckPathObject;
 import com.yunsoo.common.data.object.LogisticsCheckPointObject;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,14 @@ public class LogisticsDomain {
             if(path.getStartCheckPoint() != null) {
                 LogisticsCheckPointObject startPointObject = dataAPIClient.get("logisticscheckpoint/id/{id}", LogisticsCheckPointObject.class, path.getStartCheckPoint());
                 logisticsPath.setStartCheckPointObject(startPointObject);
+
+                if(startPointObject != null) {
+                    OrganizationObject startPointOrgObject = dataAPIClient.get("organization/id/{id}", OrganizationObject.class, startPointObject.getOrgId());
+                    logisticsPath.setStartCheckPointOrgObject(startPointOrgObject);
+                }
+                else{
+                    logisticsPath.setStartCheckPointOrgObject(null);
+                }
             }
             else {
                 logisticsPath.setStartCheckPointObject(null);

@@ -6,11 +6,13 @@ import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 产品域
  * Created by Zhe on 2015/3/17.
  */
+@Component
 public class ProductDomain {
     @Autowired
     private RestClient dataAPIClient;
