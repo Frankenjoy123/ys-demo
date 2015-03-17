@@ -1,5 +1,6 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import org.joda.time.DateTime;
@@ -36,6 +37,7 @@ public class ProductBaseObject {
         this.subCategoryId = subCategoryId;
     }
 
+    @JsonIgnore
     public int getManufacturerId() {
         return manufacturerId;
     }
