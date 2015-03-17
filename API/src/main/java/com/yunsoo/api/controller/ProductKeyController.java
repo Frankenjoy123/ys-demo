@@ -1,13 +1,12 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKey;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
+import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.basic.Product;
-import com.yunsoo.common.data.object.ProductKeyBatchObject;
-import com.yunsoo.common.data.object.ProductKeyBatchRequestObject;
-import com.yunsoo.common.data.object.ProductKeyObject;
-import com.yunsoo.common.data.object.ProductObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -28,31 +27,31 @@ import java.util.List;
 @RequestMapping(value = "/productkey")
 public class ProductKeyController {
 
+    @Autowired
     private RestClient dataAPIClient;
 
     @Autowired
-    ProductKeyController(RestClient dataAPIClient) {
-        this.dataAPIClient = dataAPIClient;
-    }
+    private ProductKeyDomain productKeyDomain;
+
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
     public ProductKey get(@PathVariable(value = "key") String key) {
         if (StringUtils.isEmpty(key)) {
             throw new BadRequestException("please provide a valid product key");
         }
-        ProductKeyObject tProductKey = dataAPIClient.get("productkey/{key}", ProductKeyObject.class, key);
-        if (tProductKey == null) {
+        ProductKeyObject productKeyObj = dataAPIClient.get("productkey/{key}", ProductKeyObject.class, key);
+        if (productKeyObj == null) {
             throw new NotFoundException("product key");
         }
         ProductKey productKey = new ProductKey();
-        productKey.setProductKey(tProductKey.getProductKey());
-        productKey.setProductKeyTypeId(tProductKey.getProductKeyTypeId());
-        productKey.setProductKeyDisabled(tProductKey.isProductKeyDisabled());
-        productKey.setPrimary(tProductKey.isPrimary());
-        productKey.setProductKeyBatchId(tProductKey.getProductKeyBatchId());
-        productKey.setPrimaryProductKey(tProductKey.getPrimaryProductKey());
-        productKey.setProductKeySet(tProductKey.getProductKeySet());
-        productKey.setCreatedDateTime(tProductKey.getCreatedDateTime());
+        productKey.setProductKey(productKeyObj.getProductKey());
+        productKey.setProductKeyTypeId(productKeyObj.getProductKeyTypeId());
+        productKey.setProductKeyDisabled(productKeyObj.isProductKeyDisabled());
+        productKey.setPrimary(productKeyObj.isPrimary());
+        productKey.setProductKeyBatchId(productKeyObj.getProductKeyBatchId());
+        productKey.setPrimaryProductKey(productKeyObj.getPrimaryProductKey());
+        productKey.setProductKeySet(productKeyObj.getProductKeySet());
+        productKey.setCreatedDateTime(productKeyObj.getCreatedDateTime());
         return productKey;
     }
 
@@ -91,17 +90,23 @@ public class ProductKeyController {
         return batchDto;
     }
 
-    @RequestMapping(value = "batch/test", method = RequestMethod.POST)
-    public int batchCreateProductKeysTest(@Valid @RequestBody ProductKeyBatchRequest request) {
-        return request.getQuantity();
+
+    @RequestMapping(value = "batch/test", method = RequestMethod.GET)
+    public List<ProductKeyType> batchCreateProductKeysTest(@Valid @RequestBody ProductKeyBatchRequest request) {
+        return productKeyDomain.getAllProductKeyTypes(null);
     }
 
     @RequestMapping(value = "batch/create", method = RequestMethod.POST)
     public ProductKeyBatch batchCreateProductKeys(@RequestBody ProductKeyBatchRequest request) {
         int quantity = request.getQuantity();
-        List<Integer> productKeyTypeIds = null;//request.getProductKeyTypeIds();
+        List<String> productKeyTypeCodes = request.getProductKeyTypeCodes();
         Integer productBaseId = request.getProductBaseId();
-
+        List<Integer> productKeyTypeIds;
+        try {
+            productKeyTypeIds = productKeyDomain.changeProductKeyTypeCodeToId(productKeyTypeCodes);
+        } catch (IllegalArgumentException ex) {
+            throw new BadRequestException("productKeyTypeCodes invalid");
+        }
         int statusId = 0;
         int organizationId = 1;
         int clientId = 1;

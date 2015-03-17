@@ -17,7 +17,7 @@ public class ProductKeyTypeModel {
     @javax.persistence.Id
     @GeneratedValue
     @Column(name = "id")
-    private int Id;
+    private int id;
     @Column(name = "code")
     private String code;
     @Column(name = "description")
@@ -26,11 +26,11 @@ public class ProductKeyTypeModel {
     private boolean active;
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getCode() {
