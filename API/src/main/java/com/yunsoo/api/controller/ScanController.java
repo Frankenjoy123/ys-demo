@@ -1,10 +1,15 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.biz.LogisticsDomain;
+import com.yunsoo.api.biz.ProductDomain;
+import com.yunsoo.api.biz.UserDomain;
 import com.yunsoo.api.biz.validateProduct;
+import com.yunsoo.api.dto.LogisticsPath;
 import com.yunsoo.api.dto.ScanResult;
 import com.yunsoo.api.dto.basic.*;
-import com.yunsoo.api.object.TProduct;
-import com.yunsoo.api.object.TProductBase;
+import com.yunsoo.common.data.object.ProductObject;
+import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +26,12 @@ import java.util.List;
 public class ScanController {
 
     private RestClient dataAPIClient;
+    @Autowired
+    private LogisticsDomain logisticsDomain;
+    @Autowired
+    private UserDomain userDomain;
+    @Autowired
+    private ProductDomain productDomain;
 
     @Autowired
     ScanController(RestClient dataAPIClient) {
@@ -33,7 +44,7 @@ public class ScanController {
                                      @RequestParam(value = "device", required = false) String deviceCode) {
 
         //1, get user
-        User currentUser = this.getUser(userId, deviceCode);
+        User currentUser = userDomain.getUser(userId, deviceCode);
         if (currentUser == null)
             throw new NotFoundException("User not found by userId = " + userId + " deviceCode = " + deviceCode);
 
@@ -46,14 +57,10 @@ public class ScanController {
         scanResult.setScanRecord(scanRecordList);
 
         //3, set product information
-        scanResult.setProduct(this.getProductByKey(key));
+        scanResult.setProduct(productDomain.getProductByKey(key));
 
         //4, retrieve logistics information
-        LogisticsCheckPath[] logisticsCheckPath = dataAPIClient.get("logisticscheckpath/key/{key}", LogisticsCheckPath[].class, key);
-        Logistics logistics = new Logistics();
-//        logistics.setLocation(logisticsCheckPath.getStartCheckPoint().toString());
-//        logistics.setDateTime(logisticsCheckPath.getStartDate());
-        scanResult.setLogisticsList(this.getFakeLogistics());
+        scanResult.setLogisticses(ConvertToLogisticsDigest(logisticsDomain.getLogisticsPathsOrderByStartDate(key)));
 
         //5, get company information.
         System.out.print(" OrgId: " + scanResult.getProduct().getManufacturerId());
@@ -74,76 +81,33 @@ public class ScanController {
         return scanResult;
     }
 
-    //Retrieve Product Key, ProductBase entry and Product-Category entry from Backend.
-    private Product getProductByKey(String Key) {
-        Product product = new Product();
-        product.setProductKey(Key);
-
-        TProduct tProduct = dataAPIClient.get("product/{Key}", TProduct.class, Key);
-        if (tProduct == null) {
-            //to-do: log ...该产品码对应的产品不存在！
-        } else {
-            product.setStatusId(tProduct.getProductStatusId());
-            if (tProduct.getManufacturingDateTime() != null) {
-                product.setManufacturingDateTime(tProduct.getManufacturingDateTime().toString());
-            }
-            product.setCreatedDateTime(tProduct.getCreatedDateTime().toString());
-
-            //fill with ProductBase information.
-            int productBaseId = tProduct.getProductBaseId();
-            TProductBase tProductBase = dataAPIClient.get("productbase/{id}", TProductBase.class, productBaseId);
-            product.setProductBaseId(productBaseId);
-            product.setBarcode(tProductBase.getBarcode());
-            product.setDescription(tProductBase.getDescription());
-            product.setDetails(tProductBase.getDetails());
-            product.setName(tProductBase.getName());
-            product.setManufacturerId(tProductBase.getManufacturerId());
-
-            //fill with ProductCategory information.
-            ProductCategory productCategory = dataAPIClient.get("productcategory/model?id={id}", ProductCategory.class, tProductBase.getSubCategoryId());
-            product.setProductCategory(productCategory);
-        }
-        return product;
-    }
-
-    private ProductCategory getFakeProductCategory() {
-        ProductCategory category = new ProductCategory();
-        category.setName("水");
-        category.setActive(true);
-        category.setDescription("水啊水");
-        category.setId(10);
-        category.setParentId(2);
-        return category;
-    }
-
-    private List<Logistics> getFakeLogistics() {
+    private List<Logistics> ConvertToLogisticsDigest(List<LogisticsPath> logisticsPaths) {
         List<Logistics> logisticsList = new ArrayList<Logistics>();
-        Logistics logistics1 = new Logistics();
-        logistics1.setOrgId(1);
-        logistics1.setOrgName("顺丰快递");
-        logistics1.setMessage("从广州发往杭州");
-        logistics1.setLocation("广州番禺XX街88号");
-        logistics1.setDateTime("2015-02-23");
-        logisticsList.add(logistics1);
-
-        Logistics logistics2 = new Logistics();
-        logistics2.setOrgId(1);
-        logistics2.setOrgName("杭州工商检验");
-        logistics2.setMessage("杭州下沙检验所检验合格");
-        logistics2.setLocation("杭州下沙XX街88号");
-        logistics2.setDateTime("2015-02-25");
-        logisticsList.add(logistics2);
+        for (LogisticsPath path : logisticsPaths) {
+            Logistics logistics1 = new Logistics();
+            logistics1.setOrgId(path.getStartCheckPointObject().getOrgId());
+            logistics1.setOrgName("顺丰快递");
+            logistics1.setMessage(path.getActionObject().getShortDesc());
+            logistics1.setLocation(path.getStartCheckPointObject().getName());
+            logistics1.setDateTime(DateTimeUtils.toString(path.getStartDate()));
+            logisticsList.add(logistics1);
+        }
+//        Logistics logistics1 = new Logistics();
+//        logistics1.setOrgId(1);
+//        logistics1.setOrgName("顺丰快递");
+//        logistics1.setMessage("从广州发往杭州");
+//        logistics1.setLocation("广州番禺XX街88号");
+//        logistics1.setDateTime("2015-02-23");
+//        logisticsList.add(logistics1);
+//
+//        Logistics logistics2 = new Logistics();
+//        logistics2.setOrgId(1);
+//        logistics2.setOrgName("杭州工商检验");
+//        logistics2.setMessage("杭州下沙检验所检验合格");
+//        logistics2.setLocation("杭州下沙XX街88号");
+//        logistics2.setDateTime("2015-02-25");
+//        logisticsList.add(logistics2);
         return logisticsList;
     }
 
-    //call dataAPI to get current User
-    private User getUser(Integer userId, String deviceCode) {
-        User user = null;
-        if (userId != null && userId > 0) {
-            user = dataAPIClient.get("user/id/{id}", User.class, userId);
-        } else {
-            user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);
-        }
-        return user;
-    }
 }

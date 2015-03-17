@@ -109,7 +109,7 @@ public class LogisticsPathsDto {
         this.deviceId = deviceId;
     }
 
-    public List<LogisticsCheckPath> ToLogisticsCheckPath(LogisticsPathsDto pathsDto) {
+    public static List<LogisticsCheckPath> ToLogisticsCheckPath(LogisticsPathsDto pathsDto) {
         if (pathsDto == null) return null;
 
         List<String> productKeysTemp = pathsDto.getProductKey();
@@ -118,7 +118,6 @@ public class LogisticsPathsDto {
         List<LogisticsCheckPath> paths = new ArrayList<LogisticsCheckPath>();
         for (String key : productKeysTemp) {
             LogisticsCheckPath path = new LogisticsCheckPath();
-            //Need to get key list from key package
             path.setProductKey(key);
 
             //Use deviceId to get start check point

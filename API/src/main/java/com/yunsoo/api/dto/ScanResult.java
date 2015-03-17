@@ -18,7 +18,7 @@ public class ScanResult {
     private Product product;
     private Organization manufacturer;
     private List<ScanRecord> scanRecordList;
-    private List<Logistics> logisticsList;
+    private List<Logistics> logisticses;
     private ValidationResult validationResult;
 
     public String getKey() {
@@ -53,12 +53,12 @@ public class ScanResult {
         this.scanRecordList = ScanRecordList;
     }
 
-    public List<Logistics> getLogisticsList() {
-        return logisticsList;
+    public List<Logistics> getLogisticses() {
+        return logisticses;
     }
 
-    public void setLogisticsList(List<Logistics> logisticsList) {
-        this.logisticsList = logisticsList;
+    public void setLogisticses(List<Logistics> logisticses) {
+        this.logisticses = logisticses;
     }
 
     public ValidationResult getValidationResult() {

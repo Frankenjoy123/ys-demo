@@ -7,6 +7,7 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
 import com.yunsoo.common.data.object.LogisticsCheckPointObject;
+import com.yunsoo.common.data.object.OrganizationObject;
 import org.joda.time.DateTime;
 
 /**
@@ -17,7 +18,10 @@ public class LogisticsPath {
     private String productKey;
 
     private LogisticsCheckActionObject actionObject;
+
     private LogisticsCheckPointObject startCheckPointObject;
+    private OrganizationObject startCheckPointOrgObject;
+
     private LogisticsCheckPointObject endCheckPointObject;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
@@ -61,6 +65,16 @@ public class LogisticsPath {
     public LogisticsCheckPointObject getEndCheckPointObject()
     {
         return endCheckPointObject;
+    }
+
+    public void setStartCheckPointOrgObject(OrganizationObject startCheckPointOrgObject)
+    {
+        this.startCheckPointOrgObject = startCheckPointOrgObject;
+    }
+
+    public OrganizationObject getStartCheckPointOrgObject()
+    {
+        return startCheckPointOrgObject;
     }
 
     public void setId(long id) {

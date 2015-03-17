@@ -1,5 +1,6 @@
-package com.yunsoo.api.object;
+package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import org.joda.time.DateTime;
@@ -7,7 +8,7 @@ import org.joda.time.DateTime;
 /**
  * Created by Zhe on 2015/3/13.
  */
-public class TProductBase {
+public class ProductBaseObject {
     private long Id;
     private int subCategoryId;
     private int manufacturerId;
@@ -36,6 +37,7 @@ public class TProductBase {
         this.subCategoryId = subCategoryId;
     }
 
+    @JsonIgnore
     public int getManufacturerId() {
         return manufacturerId;
     }

@@ -1,9 +1,9 @@
-package com.yunsoo.api.object;
+package com.yunsoo.common.data.object;
 
 /**
  * Created by Zhe on 2015/3/9.
  */
-public class TMessage {
+public class MessageObject {
     private long Id;
     private String title;
     private String body;
