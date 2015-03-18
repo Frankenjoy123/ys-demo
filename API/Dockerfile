@@ -17,5 +17,5 @@ RUN cd /var/yunsoo/ && chmod +x gradlew && ./gradlew API:bootRepackage
 RUN echo 54.223.176.46 dataapi >> /etc/hosts
 
 EXPOSE 6080
-
+EXPOSE 6081
 CMD java -jar /var/yunsoo/API/build/libs/API-1.0.jar

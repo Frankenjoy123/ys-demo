@@ -1,4 +1,4 @@
-package com.yunsoo.api.biz;
+﻿package com.yunsoo.api.biz;
 
 import com.yunsoo.api.dto.basic.Logistics;
 import com.yunsoo.api.dto.basic.Product;
@@ -19,12 +19,10 @@ import java.util.stream.Stream;
  * 验真伪，告知当前扫描的商家产品详细信息。
  * Created by Zhe on 2015/3/11.
  */
-public class validateProduct {
+public class ValidateProduct {
 
-    // static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
     public static Comparator<ScanRecord> comparator = (s1, s2) -> DateTimeUtils.parse(s1.getCreatedDateTime()).compareTo(DateTimeUtils.parse(s2.getCreatedDateTime()));
     // public static Comparator<ScanRecord> comparator = Comparator.comparing(sr ->  LocalDateTime.parse(sr.getCreatedDateTime(), formatter));
-//    public static Comparator<ScanRecord> comparator = (s1, s2) -> s1.getUserId().compareTo(s2.getUserId());
 
     public static ValidationResult validateProduct(Product product) {
         return ValidationResult.Real;
@@ -46,9 +44,9 @@ public class validateProduct {
             Optional<ScanRecord> firstScanRecord = scanRecords.stream().sorted(comparator).findFirst();
             if (firstScanRecord.isPresent()) {
                 if (firstScanRecord.get().getUserId() == currentUser.getId()) {
-                    return ValidationResult.Real;
+                    return ValidationResult.Uncertain;  //虽然第一次是自己扫的，任然需要用户判断是否扫的是同一物品。
                 } else {
-                    //do-check...
+                    //do-check...根据扫码时间，地点是否和用户当前扫描有明显差异，提醒用户。
                     return ValidationResult.Fake;
                 }
             }
@@ -57,6 +55,7 @@ public class validateProduct {
     }
 
     public static ValidationResult validateProduct(Product product, User currentUser, List<ScanRecord> scanRecords, List<Logistics> logistics) {
+        //to-do
         return ValidationResult.Real;
     }
 
