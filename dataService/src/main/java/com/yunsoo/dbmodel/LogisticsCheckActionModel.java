@@ -10,17 +10,18 @@ import javax.persistence.*;
 public class LogisticsCheckActionModel {
 
     @Id
+    @GeneratedValue
     @Column(name = "id")
     private int Id;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "short_desc")
-    private String shortDesc;
-
     @Column(name = "description")
     private String description;
+
+    @Column(name = "org_id")
+    private Integer orgId;
 
     public int getId() {
         return Id;
@@ -38,14 +39,6 @@ public class LogisticsCheckActionModel {
         this.name = name;
     }
 
-    public String getShortDesc() {
-        return shortDesc;
-    }
-
-    public void setShortDesc(String shortDesc) {
-        this.shortDesc = shortDesc;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -53,4 +46,13 @@ public class LogisticsCheckActionModel {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public Integer getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
+    }
+
 }
