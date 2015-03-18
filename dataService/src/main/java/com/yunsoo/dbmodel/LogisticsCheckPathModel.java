@@ -21,7 +21,7 @@ public class LogisticsCheckPathModel {
     @Column(name = "product_key")
     private String productKey;
 
-    @Column(name = "action_id", nullable = true)
+    @Column(name = "action_id")
     private Integer action_id;
 
     @Column(name = "start_check_point_id")

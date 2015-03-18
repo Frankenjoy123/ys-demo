@@ -5,6 +5,7 @@ import com.yunsoo.api.dto.basic.ProductCategory;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,30 +23,36 @@ public class ProductDomain {
         Product product = new Product();
         product.setProductKey(Key);
 
-        ProductObject productObject = dataAPIClient.get("product/{Key}", ProductObject.class, Key);
-        if (productObject == null) {
-            //to-do: log ...该产品码对应的产品不存在！
-        } else {
-            product.setStatusId(productObject.getProductStatusId());
-            if (productObject.getManufacturingDateTime() != null) {
-                product.setManufacturingDateTime(productObject.getManufacturingDateTime().toString());
-            }
-            product.setCreatedDateTime(productObject.getCreatedDateTime().toString());
-
-            //fill with ProductBase information.
-            int productBaseId = productObject.getProductBaseId();
-            ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
-            product.setProductBaseId(productBaseId);
-            product.setBarcode(productBaseObject.getBarcode());
-            product.setDescription(productBaseObject.getDescription());
-            product.setDetails(productBaseObject.getDetails());
-            product.setName(productBaseObject.getName());
-            product.setManufacturerId(productBaseObject.getManufacturerId());
-
-            //fill with ProductCategory information.
-            ProductCategory productCategory = dataAPIClient.get("productcategory/model?id={id}", ProductCategory.class, productBaseObject.getSubCategoryId());
-            product.setProductCategory(productCategory);
+        ProductObject productObject = null;
+        try {
+            productObject = dataAPIClient.get("product/{Key}", ProductObject.class, Key);
+        } catch (NotFoundException ex) {
+            //log ...该产品码对应的产品不存在！
+            return null;
+        } catch (Exception ex) {
+            return null;
         }
+
+        product.setStatusId(productObject.getProductStatusId());
+        if (productObject.getManufacturingDateTime() != null) {
+            product.setManufacturingDateTime(productObject.getManufacturingDateTime().toString());
+        }
+        product.setCreatedDateTime(productObject.getCreatedDateTime().toString());
+
+        //fill with ProductBase information.
+        int productBaseId = productObject.getProductBaseId();
+        ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
+        product.setProductBaseId(productBaseId);
+        product.setBarcode(productBaseObject.getBarcode());
+        product.setDescription(productBaseObject.getDescription());
+        product.setDetails(productBaseObject.getDetails());
+        product.setName(productBaseObject.getName());
+        product.setManufacturerId(productBaseObject.getManufacturerId());
+
+        //fill with ProductCategory information.
+        ProductCategory productCategory = dataAPIClient.get("productcategory/model?id={id}", ProductCategory.class, productBaseObject.getSubCategoryId());
+        product.setProductCategory(productCategory);
+
         return product;
     }
 }

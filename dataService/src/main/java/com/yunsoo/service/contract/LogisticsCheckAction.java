@@ -12,15 +12,15 @@ import java.util.List;
 public class LogisticsCheckAction {
     private int id;
     private String name;
-    private String shortDesc;
     private String description;
+    private Integer orgId;
 
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
-        this.id = id;
+        id = id;
     }
 
     public String getName() {
@@ -31,14 +31,6 @@ public class LogisticsCheckAction {
         this.name = name;
     }
 
-    public String getShortDesc() {
-        return shortDesc;
-    }
-
-    public void setShortDesc(String shortDesc) {
-        this.shortDesc = shortDesc;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -47,13 +39,21 @@ public class LogisticsCheckAction {
         this.description = description;
     }
 
+    public Integer getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
+    }
+
     public static LogisticsCheckAction FromModel(LogisticsCheckActionModel model) {
         if (model == null) return null;
         LogisticsCheckAction action = new LogisticsCheckAction();
         action.setId(model.getId());
         action.setName(model.getName());
-        action.setShortDesc(model.getShortDesc());
         action.setDescription(model.getDescription());
+        action.setOrgId(model.getOrgId());
 
         return action;
     }
@@ -66,8 +66,8 @@ public class LogisticsCheckAction {
         }
         model.setId(action.getId());
         model.setName(action.getName());
-        model.setShortDesc(action.getShortDesc());
         model.setDescription(action.getDescription());
+        model.setOrgId(action.getOrgId());
 
         return model;
     }

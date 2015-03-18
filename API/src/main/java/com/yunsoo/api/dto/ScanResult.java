@@ -20,6 +20,7 @@ public class ScanResult {
     private List<ScanRecord> scanRecordList;
     private List<Logistics> logisticses;
     private ValidationResult validationResult;
+    private int scanCounter;
 
     public String getKey() {
         return Key;
@@ -67,5 +68,13 @@ public class ScanResult {
 
     public void setValidationResult(ValidationResult validationResult) {
         this.validationResult = validationResult;
+    }
+
+    public int getScanCounter() {
+        return scanCounter;
+    }
+
+    public void setScanCounter(int scanCounter) {
+        this.scanCounter = scanCounter;
     }
 }

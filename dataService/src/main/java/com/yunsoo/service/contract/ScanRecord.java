@@ -109,31 +109,20 @@ public class ScanRecord {
         scanRecordModel.setUserId(scanRecord.getUserId());
         scanRecordModel.setProductKey(scanRecord.getProductKey());
         scanRecordModel.setDetail(scanRecord.getDetail());
-        scanRecordModel.setCreatedDateTime(DateTime.parse(scanRecord.getCreatedDateTime()));
+        if (scanRecord.getCreatedDateTime() != null) {
+            scanRecordModel.setCreatedDateTime(DateTime.parse(scanRecord.getCreatedDateTime()));
+        }
+        ;
         return scanRecordModel;
     }
 
     public static List<ScanRecord> FromModelList(List<ScanRecordModel> modelList) {
         if (modelList == null) return null;
         return modelList.stream().map(ScanRecord::FromModel).collect(Collectors.toList());
-//
-//        List<ScanRecord> scanRecordList = new ArrayList<ScanRecord>();
-//        for (ScanRecordModel model : modelList) {
-//            scanRecordList.add(ScanRecord.FromModel(model));
-//        }
-//        return scanRecordList;
     }
 
     public static List<ScanRecordModel> ToModelList(List<ScanRecord> scanRecordList) {
         if (scanRecordList == null) return null;
         return scanRecordList.stream().map(ScanRecord::ToModel).collect(Collectors.toList());
-
-//        List<ScanRecordModel> scanRecordModelList = new ArrayList<ScanRecordModel>();
-//        for(ScanRecord scanRecord : scanRecordList) {
-//            scanRecordModelList.add(ScanRecord.ToModel(scanRecord));
-//        }
-//
-//        return scanRecordModelList;
-
     }
 }
