@@ -3,12 +3,10 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.biz.LogisticsDomain;
 import com.yunsoo.api.biz.ProductDomain;
 import com.yunsoo.api.biz.UserDomain;
-import com.yunsoo.api.biz.validateProduct;
+import com.yunsoo.api.biz.ValidateProduct;
 import com.yunsoo.api.dto.LogisticsPath;
 import com.yunsoo.api.dto.ScanResult;
 import com.yunsoo.api.dto.basic.*;
-import com.yunsoo.common.data.object.ProductObject;
-import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -68,7 +66,7 @@ public class ScanController {
         scanResult.setManufacturer(organization);
 
         //6, set validation result by our validation strategy.
-        scanResult.setValidationResult(validateProduct.validateProduct(scanResult.getProduct(), currentUser, scanRecordList));
+        scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), currentUser, scanRecordList));
 
         //7, save scan Record
         ScanRecord scanRecord = new ScanRecord();
@@ -87,7 +85,7 @@ public class ScanController {
             Logistics logistics1 = new Logistics();
             logistics1.setOrgId(path.getStartCheckPointObject().getOrgId());
             logistics1.setOrgName("顺丰快递");
-            logistics1.setMessage(path.getActionObject().getShortDesc());
+            logistics1.setMessage(path.getActionObject().getName());
             logistics1.setLocation(path.getStartCheckPointObject().getName());
             logistics1.setDateTime(DateTimeUtils.toString(path.getStartDate()));
             logisticsList.add(logistics1);

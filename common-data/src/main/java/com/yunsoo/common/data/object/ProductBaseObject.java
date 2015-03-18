@@ -37,7 +37,6 @@ public class ProductBaseObject {
         this.subCategoryId = subCategoryId;
     }
 
-    @JsonIgnore
     public int getManufacturerId() {
         return manufacturerId;
     }
