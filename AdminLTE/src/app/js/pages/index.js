@@ -7,8 +7,7 @@
         "accountManage",
         "productKeyManage",
         "msg",
-
-
+        "logistics"
     ]);
 
     app.config(["$routeProvider", function ($routeProvider) {
@@ -31,6 +30,10 @@
             .when('/packageManage', {
                 templateUrl: "pages/package/packageManage.html"
 
+            })
+            .when('/logistics', {
+                templateUrl: "pages/logistics/logistics.html",
+                controller: "logisticsCtrl"
             })
             .otherwise({
                 redirectTo: "/"
