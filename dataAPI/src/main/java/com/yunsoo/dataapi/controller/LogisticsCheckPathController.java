@@ -1,5 +1,6 @@
 package com.yunsoo.dataapi.controller;
 
+import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import com.yunsoo.dataapi.dto.LogisticsCheckPathDto;
 import com.yunsoo.dataapi.dto.LogisticsPathsDto;
 import com.yunsoo.dataapi.dto.ResultWrapper;
@@ -42,11 +43,11 @@ public class LogisticsCheckPathController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<ResultWrapper> createLogisticsCheckPath(@RequestBody LogisticsCheckPathDto pathDto) {
+    public long createLogisticsCheckPath(@RequestBody LogisticsCheckPathDto pathDto) {
 
         List<String> allKeys = packageService.loadAllKeys(pathDto.getProductKey());
         if(allKeys == null)
-            return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(0), HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new UnprocessableEntityException();
 
         List<LogisticsCheckPathDto> pathDtos = new ArrayList<LogisticsCheckPathDto>();
         for(String key : allKeys) {
@@ -57,9 +58,8 @@ public class LogisticsCheckPathController {
             pathDtos.add(tmpPathDto);
         }
 
-        Long id = pathService.save(LogisticsCheckPathDto.TOLogisticsCheckPathList(pathDtos));
-        HttpStatus status = id >= 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
+        long id = pathService.save(LogisticsCheckPathDto.TOLogisticsCheckPathList(pathDtos));
+        return id;
     }
 
     @RequestMapping(value = "/batchkeycreate", method = RequestMethod.POST)
