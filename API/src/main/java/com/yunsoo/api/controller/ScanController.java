@@ -10,9 +10,11 @@ import com.yunsoo.api.dto.basic.*;
 import com.yunsoo.api.object.ValidationResult;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -79,6 +81,34 @@ public class ScanController {
         //7, save scan Record
         long scanSave = SaveScanRecord(currentUser, currentExistProduct);
         return scanResult;
+    }
+
+    @RequestMapping(value = "/history/user/{userId}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
+    public List<ScanRecord> getScanRecordsByFilter(
+            @PathVariable(value = "userId") Long userId,
+            @PathVariable(value = "pageIndex") Integer pageIndex,
+            @PathVariable(value = "pageSize") Integer pageSize) {
+
+        //验证输入参数
+        if (userId == null || userId <= 0) {
+            throw new BadRequestException("用户ID不应小于0！");
+        }
+        if (pageIndex == null) {
+            pageIndex = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 10;
+        }
+        if (pageIndex < 0) {
+            throw new BadRequestException("pageIndex不应小于0！");
+        }
+        if (pageSize <= 0) {
+            throw new BadRequestException("PageSize不应小于等于0！");
+        }
+
+        ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?userId={userId}&pageIndex={pageIndex}&pageSize={pageSize}", ScanRecord[].class, userId, pageIndex, pageSize);
+        List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
+        return scanRecordList;
     }
 
     private List<Logistics> ConvertToLogisticsDigest(List<LogisticsPath> logisticsPaths) {

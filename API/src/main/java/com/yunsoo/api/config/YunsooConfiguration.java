@@ -24,6 +24,9 @@ public class YunsooConfiguration {
     @Value("${yunsoo.dataapi.baseurl}")
     private String dataAPIBaseURL;
 
+    @Value("${yunsoo.productbase.picture.basepath}")
+    private String productBasePicURL;
+
     @Bean
     public static PropertyPlaceholderConfigurer yunsooProperties() throws IOException {
         PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
@@ -47,4 +50,11 @@ public class YunsooConfiguration {
         return dataAPIBaseURL;
     }
 
+    @Bean
+    public String productBasePicURL() {
+        if (productBasePicURL == null || productBasePicURL.equals("${yunsoo.productbase.picture.basepath}")) {
+            throw new ConfigurationErrorException("yunsoo.productbase.picture.basepath");
+        }
+        return productBasePicURL;
+    }
 }

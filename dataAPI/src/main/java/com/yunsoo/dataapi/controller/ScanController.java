@@ -34,7 +34,7 @@ public class ScanController {
     @RequestMapping(value = "/filterby", method = RequestMethod.GET)
     public List<ScanRecord> getScanRecordsByFilter(@RequestParam(value = "productKey", required = false) String productKey,
                                                    @RequestParam(value = "baseProductId", required = false) Integer baseProductId,
-                                                   @RequestParam(value = "userId", required = false) Integer userId,
+                                                   @RequestParam(value = "userId", required = false) Long userId,
                                                    @RequestParam(value = "createdDateTime", required = false, defaultValue = "") String createdDateTime,
                                                    @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                                    @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {

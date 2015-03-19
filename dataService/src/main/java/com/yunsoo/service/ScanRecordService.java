@@ -12,5 +12,5 @@ public interface ScanRecordService {
 
     public long save(ScanRecord scanRecord);
 
-    public List<ScanRecord> getScanRecordsByFilter(String productKey, Integer baseProductId, Integer userId, String createdDateTime, int pageIndex, int pageSize);
+    public List<ScanRecord> getScanRecordsByFilter(String productKey, Integer baseProductId, Long userId, String createdDateTime, int pageIndex, int pageSize);
 }

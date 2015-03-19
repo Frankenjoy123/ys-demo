@@ -13,5 +13,5 @@ public interface ScanRecordDao {
 
     public long save(ScanRecordModel scanRecordModel);
 
-    public List<ScanRecordModel> getScanRecordsByFilter(String productKey, Integer baseProductId, Integer userId, DateTime createdDateTime, int pageIndex, int pageSize);
+    public List<ScanRecordModel> getScanRecordsByFilter(String productKey, Integer baseProductId, Long userId, DateTime createdDateTime, int pageIndex, int pageSize);
 }

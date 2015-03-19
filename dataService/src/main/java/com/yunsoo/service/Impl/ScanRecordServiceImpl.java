@@ -32,7 +32,7 @@ public class ScanRecordServiceImpl implements ScanRecordService {
     }
 
     @Override
-    public List<ScanRecord> getScanRecordsByFilter(String productKey, Integer baseProductId, Integer userId, String createdDateTime, int pageIndex, int pageSize) {
+    public List<ScanRecord> getScanRecordsByFilter(String productKey, Integer baseProductId, Long userId, String createdDateTime, int pageIndex, int pageSize) {
         DateTime theCreatedDateTime = null;
         if (createdDateTime.isEmpty()) {
             theCreatedDateTime = null;

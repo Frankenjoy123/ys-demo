@@ -38,16 +38,16 @@ public class ScanRecordDaoImpl implements ScanRecordDao {
     }
 
     @Override
-    public List<ScanRecordModel> getScanRecordsByFilter(String productKey, Integer baseProductId, Integer userId, DateTime createdDateTime, int pageIndex, int pageSize) {
+    public List<ScanRecordModel> getScanRecordsByFilter(String productKey, Integer baseProductId, Long userId, DateTime createdDateTime, int pageIndex, int pageSize) {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(ScanRecordModel.class);
-        if (!productKey.isEmpty()) {
+        if (productKey != null && !productKey.isEmpty()) {
             c.add(Restrictions.eq("productKey", productKey));
         }
         if (baseProductId != null) {
             c.add(Restrictions.eq("baseProductId", baseProductId.intValue()));
         }
         if (userId != null) {
-            c.add(Restrictions.eq("userId", userId.intValue()));
+            c.add(Restrictions.eq("userId", userId.longValue()));
         }
         if (createdDateTime != null) {
             c.add(Restrictions.eq("createdDateTime", createdDateTime));

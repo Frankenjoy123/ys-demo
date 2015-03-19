@@ -1,6 +1,7 @@
 package com.yunsoo.api.biz;
 
 import com.yunsoo.api.dto.basic.Product;
+import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.api.dto.basic.ProductCategory;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
@@ -54,5 +55,11 @@ public class ProductDomain {
         product.setProductCategory(productCategory);
 
         return product;
+    }
+
+    //获取基本产品信息 - ProductBase
+    public ProductBase getProductBase(int productBaseId) {
+        ProductBase productBaseObject = dataAPIClient.get("productbase/{id}", ProductBase.class, productBaseId);
+        return productBaseObject;
     }
 }

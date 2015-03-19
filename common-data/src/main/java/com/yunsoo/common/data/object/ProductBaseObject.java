@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
  * Created by Zhe on 2015/3/13.
  */
 public class ProductBaseObject {
+
     private long Id;
     private int subCategoryId;
     private int manufacturerId;
@@ -110,4 +111,6 @@ public class ProductBaseObject {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+
 }
