@@ -2,7 +2,9 @@ package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
@@ -19,6 +21,8 @@ public class ProductBaseObject {
     private String details;
     private int shelfLife;
     private String shelfLifeInterval;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
     private Boolean active;
 
@@ -94,12 +98,10 @@ public class ProductBaseObject {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }

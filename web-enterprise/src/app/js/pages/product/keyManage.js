@@ -3,17 +3,20 @@
 
   app.factory("productKeyManageService", ["$http", function ($http) {
     return {
-      getProductKeyBatch: function () {
-
+      getProductKeyBatch: function (fnSuccess) {
+        $http.get("/api/productkey/batch").success(function (data) {
+          fnSuccess(data);
+        });
+        return this;
       },
-      getBaseProducts: function (fnSuccess) {
-        $http.get("mock/baseProducts.json").success(function (data) {
+      getProductBases: function (fnSuccess) {
+        $http.get("/api/product/base").success(function (data) {
           fnSuccess(data);
         });
         return this;
       },
       getProductKeyTypes: function (fnSuccess) {
-        $http.get("mock/productKeyTypes.json").success(function (data) {
+        $http.get("/api/productkeytype").success(function (data) {
           fnSuccess(data);
         });
         return this;
@@ -43,33 +46,12 @@
         productKeyManageService.createProductKeyBatch(requestData, function (data) {
 
         });
-
-        //$.ajax({
-        //  //url: 'http://admin.page/api/products',
-        //  url: 'http://wweb.chinacloudapp.cn/api/products',
-        //  type: 'PUT',
-        //  dataType: 'json',
-        //  data: requestData
-        //}).done(function (data) {
-        //  for (var i = 0; i < $scope.productTypeOptions.length; i++) {
-        //    if ($scope.productTypeOptions[i].value == newData.productTypeId) {
-        //      data.productTypeName = $scope.productTypeOptions[i].name;
-        //      break;
-        //    }
-        //  }
-        //  data.index = $scope.results.length;
-        //  //console.log(data);
-        //  $scope.results.splice(0, 0, data);
-        //  $scope.$apply();
-        //}).fail(function (err) {
-        //  console.log(err);
-        //});
       }
     };
 
     productKeyManageService
-      .getBaseProducts(function (data) {
-        $scope.creationPanel.baseProducts = data;
+      .getProductBases(function (data) {
+        $scope.creationPanel.productBases = data;
       })
       .getProductKeyTypes(function (data) {
         $scope.creationPanel.keyTypes = data;
