@@ -19,9 +19,9 @@
     <div class="form-inline">
         <div class="form-group">
             <label for="productKey">产品码</label>
-            <input type="text" class="form-control" id="productKey" placeholder="产品码">
+            <input type="text" class="form-control" id="productKey" placeholder="产品码" ng-model="productKey">
         </div>
-        <button type="submit" class="btn btn-default">查询</button>
+        <button type="submit" class="btn btn-default" ng-click="productKeyClick()">查询</button>
     </div>
     <div class="row form-inline">
 
