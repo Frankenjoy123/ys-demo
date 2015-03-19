@@ -12,10 +12,10 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'spring-boot'
 
-description = 'dataService'
+description = 'data-service'
 
 jar {
-    baseName = 'com.yunsoo-dataService'
+    baseName = 'com.yunsoo.data-service'
     version = '0.1.0'
 }
 

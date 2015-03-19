@@ -30,6 +30,7 @@ apply plugin: 'spring-boot'
 dependencies {
     compile project(":common-web")
     compile project(":common-data")
+    compile project(':data-service')
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
@@ -39,6 +40,5 @@ dependencies {
     compile("org.apache.commons:commons-dbcp2:2.0")
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("junit:junit")
-    compile project(':dataService')
     //providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }
