@@ -1,5 +1,7 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.dto.ProductBatchRequest;
+import org.springframework.web.bind.annotation.*;
 import com.yunsoo.api.biz.ProductDomain;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -9,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 /**
  * Created by:   Lijian
@@ -27,6 +31,11 @@ public class ProductController {
         if (key != null && key.length() > 0) {
             //productService.active(key);
         }
+
+    }
+
+    @RequestMapping(value = "batch/create", method = RequestMethod.POST)
+    public void batchCreateProductForKeyBatch(@Valid @RequestBody ProductBatchRequest request) {
     }
 
     @RequestMapping(value = "/base/{baseId}", method = RequestMethod.GET)
