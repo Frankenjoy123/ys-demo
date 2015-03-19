@@ -4,9 +4,11 @@ import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKey;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
+import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ public class ProductKeyController {
     @Autowired
     private ProductKeyDomain productKeyDomain;
 
+
+    //product key
 
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
     public ProductKey get(@PathVariable(value = "key") String key) {
@@ -60,10 +64,11 @@ public class ProductKeyController {
     }
 
 
-    //batch
+    //product key batch
 
     @RequestMapping(value = "batch/{id}", method = RequestMethod.GET)
     public ProductKeyBatch getBatchById(@PathVariable(value = "id") String idStr) {
+        int organizationId = 20;
         int idInt;
         try {
             idInt = Integer.parseInt(idStr);
@@ -73,6 +78,9 @@ public class ProductKeyController {
         ProductKeyBatchObject batch = dataAPIClient.get("productkey/batch/{id}", ProductKeyBatchObject.class, idInt);
         if (batch == null) {
             throw new NotFoundException("product batch");
+        }
+        if (batch.getOrganizationId() != organizationId) {
+            throw new ForbiddenException();
         }
         ProductKeyBatch batchDto = new ProductKeyBatch();
         batchDto.setId(batch.getId());
@@ -98,7 +106,7 @@ public class ProductKeyController {
             throw new BadRequestException("productKeyTypeCodes invalid");
         }
         int statusId = 0;
-        int organizationId = 1;
+        int organizationId = 20;
         int clientId = 1;
         int accountId = 1;
         DateTime createdDateTime = DateTime.now();
@@ -140,5 +148,6 @@ public class ProductKeyController {
 
         return newBatch;
     }
+
 
 }

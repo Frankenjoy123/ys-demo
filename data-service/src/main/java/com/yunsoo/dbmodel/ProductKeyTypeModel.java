@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Created by Zhe on 2015/1/13.
  */
 @Entity
-@Table(name = "product_key_type")
+@Table(name = "product_key_type_lkp")
 @XmlRootElement
 public class ProductKeyTypeModel {
 
@@ -20,6 +20,8 @@ public class ProductKeyTypeModel {
     private int id;
     @Column(name = "code")
     private String code;
+    @Column(name = "name")
+    private String name;
     @Column(name = "description")
     private String description;
     @Column(name = "active")
@@ -39,6 +41,14 @@ public class ProductKeyTypeModel {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public abstract class LookupBase<T extends LookupBase> implements Comparable<T> {
     private int id;
     private String code;
+    private String name;
     private String description;
     private boolean active;
 
@@ -31,6 +32,14 @@ public abstract class LookupBase<T extends LookupBase> implements Comparable<T> 
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCode() {
@@ -59,7 +68,7 @@ public abstract class LookupBase<T extends LookupBase> implements Comparable<T> 
 
     @Override
     public String toString() {
-        return this.code + "(" + this.id + ")";
+        return this.name + "(" + this.code + ": " + this.id + ")";
     }
 
     @Override

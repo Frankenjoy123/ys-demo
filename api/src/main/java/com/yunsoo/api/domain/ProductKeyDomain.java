@@ -30,13 +30,14 @@ public class ProductKeyDomain {
             ProductKeyType t = new ProductKeyType();
             t.setId(p.getId());
             t.setCode(p.getCode());
+            t.setName(p.getName());
             t.setDescription(p.getDescription());
             t.setActive(p.isActive());
             return t;
         }).collect(Collectors.toList());
     }
 
-    public List<Integer> changeProductKeyTypeCodeToId(List<String> productKeyTypeCodeList){
+    public List<Integer> changeProductKeyTypeCodeToId(List<String> productKeyTypeCodeList) {
         return LookupBase.changeCodeToId(getAllProductKeyTypes(true), productKeyTypeCodeList);
     }
 }
