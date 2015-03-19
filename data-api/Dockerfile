@@ -12,18 +12,18 @@ RUN cd /var/yunsoo/ && unzip dev.zip && mv yunsoo-dev/* . && rm -rf yunsoo-dev d
 #ADD src/ /app/src/
 #WORKDIR /app/
 
-RUN cd /var/yunsoo/ && chmod +x gradlew && ./gradlew dataAPI:bootRepackage
+RUN cd /var/yunsoo/ && chmod +x gradlew && ./gradlew data-api:bootRepackage
 
 EXPOSE 8080
 EXPOSE 8081
 
-CMD java -jar /var/yunsoo/dataAPI/build/libs/dataAPI-1.0.jar
-#ADD dataAPI/build/libs/dataAPI-1.0.jar /data/dataAPI-1.0.jar
+CMD java -jar /var/yunsoo/data-api/build/libs/data-api-1.0.jar
+#ADD data-api/build/libs/data-api-1.0.jar /data/data-api-1.0.jar
 
 # !Below shows how to deploy jar into AWS Beanstalk
 
 #RUN mkdir /var/yunsoo
-#RUN curl -o  /var/yunsoo/yunsoo-API.jar -L https://s3-us-west-2.amazonaws.com/todeploy/dataAPI-1.0.jar
+#RUN curl -o  /var/yunsoo/yunsoo-API.jar -L https://s3-us-west-2.amazonaws.com/todeploy/data-api-1.0.jar
 
 #EXPOSE 8080
 
