@@ -4,7 +4,6 @@ import com.yunsoo.api.dto.ProductBatchRequest;
 import org.springframework.web.bind.annotation.*;
 import com.yunsoo.api.biz.ProductDomain;
 import com.yunsoo.api.dto.basic.ProductBase;
-import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +30,6 @@ public class ProductController {
         if (key != null && key.length() > 0) {
             //productService.active(key);
         }
-
     }
 
     @RequestMapping(value = "batch/create", method = RequestMethod.POST)
