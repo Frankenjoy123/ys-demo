@@ -10,7 +10,6 @@ import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,7 +31,7 @@ public class ProductKeyController {
     private ProductKeyDomain productKeyDomain;
 
 
-    @RequestMapping(value = "/{key}", method = RequestMethod.GET)
+    @RequestMapping(value = "{key}", method = RequestMethod.GET)
     public ProductKey get(@PathVariable(value = "key") String key) {
         ProductKeyObject productKeyObj = dataAPIClient.get("productkey/{key}", ProductKeyObject.class, key);
         if (productKeyObj == null) {
@@ -52,10 +51,12 @@ public class ProductKeyController {
 
     @RequestMapping(value = "{key}/disable", method = RequestMethod.PUT)
     public void disableKey(@PathVariable(value = "key") String key) {
-        if (StringUtils.isEmpty(key)) {
-            throw new BadRequestException("please provide a valid product key");
-        }
-        dataAPIClient.put("productkey/{key}/disable", null, key);
+        dataAPIClient.put("productkey/{key}/disabled", true, key);
+    }
+
+    @RequestMapping(value = "{key}/enable", method = RequestMethod.PUT)
+    public void enableKey(@PathVariable(value = "key") String key) {
+        dataAPIClient.put("productkey/{key}/disabled", false, key);
     }
 
 
@@ -113,6 +114,7 @@ public class ProductKeyController {
         batchObj.setProductKeyTypeIds(productKeyTypeIds);
         requestObject.setProductKeyBatch(batchObj);
         if (productBaseId != null && productBaseId > 0) {
+            //create corresponding product according to the productBaseId
             int productStatusId = 0;
             ProductObject productObj = new ProductObject();
             productObj.setProductBaseId(productBaseId);
@@ -120,6 +122,7 @@ public class ProductKeyController {
             //productObj.setManufacturingDateTime(null);
             requestObject.setProductTemplate(productObj);
         }
+
         ProductKeyBatchObject newBatchObj = dataAPIClient.post(
                 "productkey/batch/create",
                 requestObject,

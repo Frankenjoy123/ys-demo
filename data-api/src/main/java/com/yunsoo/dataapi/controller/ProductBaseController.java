@@ -27,7 +27,7 @@ public class ProductBaseController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ProductBaseDto getByKey(@PathVariable(value = "id") Long id) {
+    public ProductBaseDto getById(@PathVariable(value = "id") Long id) {
         ProductBase productBase = productBaseService.getById(id);
         if (productBase == null) {
             throw new NotFoundException("Product");
@@ -52,7 +52,7 @@ public class ProductBaseController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PATCH)
-    public void updateUser(@RequestBody ProductBase productBase) throws Exception {
+    public void updateProductBase(@RequestBody ProductBase productBase) throws Exception {
         //patch update, we don't provide functions like update with set null properties.
         productBaseService.patchUpdate(productBase);
     }
