@@ -1,4 +1,4 @@
-﻿package com.yunsoo.api.biz;
+package com.yunsoo.api.biz;
 
 import com.yunsoo.api.dto.basic.Logistics;
 import com.yunsoo.api.dto.basic.Product;
