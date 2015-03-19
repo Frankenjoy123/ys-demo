@@ -1,5 +1,7 @@
 package com.yunsoo.api.biz;
 
+import com.yunsoo.api.config.YunsooConfiguration;
+import com.yunsoo.api.config.YunsooYamlConfig;
 import com.yunsoo.api.dto.basic.Product;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.api.dto.basic.ProductCategory;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Component;
 public class ProductDomain {
     @Autowired
     private RestClient dataAPIClient;
+    @Autowired
+    public YunsooYamlConfig yunsooYamlConfig;
 
     //Retrieve Product Key, ProductBase entry and Product-Category entry from Backend.
     public Product getProductByKey(String Key) {
@@ -59,7 +63,8 @@ public class ProductDomain {
 
     //获取基本产品信息 - ProductBase
     public ProductBase getProductBase(int productBaseId) {
-        ProductBase productBaseObject = dataAPIClient.get("productbase/{id}", ProductBase.class, productBaseId);
-        return productBaseObject;
+        ProductBase productBase = dataAPIClient.get("productbase/{id}", ProductBase.class, productBaseId);
+        productBase.setThumbnailURL(yunsooYamlConfig.getDataapi_productbase_picture_basepath() + "id" + productBase.getId() + ".jpg");
+        return productBase;
     }
 }

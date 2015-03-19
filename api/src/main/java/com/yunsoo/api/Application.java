@@ -1,16 +1,15 @@
 package com.yunsoo.api;
 
-import com.yunsoo.api.security.StatelessAuthenticationSecurityConfig;
+import com.yunsoo.api.config.YunsooYamlConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.Filter;
-import java.util.*;
 
 @SpringBootApplication
 //@Import(StatelessAuthenticationSecurityConfig.class)
@@ -25,7 +24,6 @@ public class Application {
         if (dispatcherServlet != null && dispatcherServlet instanceof DispatcherServlet) {
             ((DispatcherServlet) dispatcherServlet).setThrowExceptionIfNoHandlerFound(true);
         }
-
         System.out.println("Run API by Spring Boot. Successfully started...");
     }
 

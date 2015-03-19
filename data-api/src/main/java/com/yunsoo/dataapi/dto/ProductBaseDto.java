@@ -1,6 +1,10 @@
 package com.yunsoo.dataapi.dto;
 
-import java.util.Date;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.joda.time.DateTime;
 
 /**
  * Created by Zhe on 2015/3/13.
@@ -15,7 +19,9 @@ public class ProductBaseDto {
     private String details;
     private int shelfLife;
     private String shelfLifeInterval;
-    private Date createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime createdDateTime;
 
     public int getId() {
         return Id;
@@ -89,11 +95,11 @@ public class ProductBaseDto {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
-    public Date getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(Date createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 }

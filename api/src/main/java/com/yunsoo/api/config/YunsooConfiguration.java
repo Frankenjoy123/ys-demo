@@ -2,11 +2,14 @@ package com.yunsoo.api.config;
 
 import com.yunsoo.common.config.CommonConfig;
 import com.yunsoo.common.exception.ConfigurationErrorException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
@@ -16,6 +19,7 @@ import java.io.IOException;
  * Descriptions:
  */
 @Configuration
+@ComponentScan(basePackages = {"com.yunsoo.api.config"})
 public class YunsooConfiguration {
 
     @Value("${yunsoo.debug}")
@@ -25,7 +29,7 @@ public class YunsooConfiguration {
     private String dataAPIBaseURL;
 
     @Value("${yunsoo.productbase.picture.basepath}")
-    private String productBasePicURL;
+    public String productBasePicURL;
 
     @Bean
     public static PropertyPlaceholderConfigurer yunsooProperties() throws IOException {
@@ -48,13 +52,5 @@ public class YunsooConfiguration {
             throw new ConfigurationErrorException("yunsoo.dataapi.baseurl");
         }
         return dataAPIBaseURL;
-    }
-
-    @Bean
-    public String productBasePicURL() {
-        if (productBasePicURL == null || productBasePicURL.equals("${yunsoo.productbase.picture.basepath}")) {
-            throw new ConfigurationErrorException("yunsoo.productbase.picture.basepath");
-        }
-        return productBasePicURL;
     }
 }
