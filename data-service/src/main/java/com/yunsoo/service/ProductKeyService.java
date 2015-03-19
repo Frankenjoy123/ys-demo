@@ -6,6 +6,5 @@ public interface ProductKeyService {
 
     public ProductKey get(String key);
 
-    public void disable(String key);
-
+    public void setDisabled(String key, Boolean disable);
 }

@@ -12,6 +12,10 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * 产品域
  * Created by Zhe on 2015/3/17.
@@ -66,5 +70,10 @@ public class ProductDomain {
         ProductBase productBase = dataAPIClient.get("productbase/{id}", ProductBase.class, productBaseId);
         productBase.setThumbnailURL(yunsooYamlConfig.getDataapi_productbase_picture_basepath() + "id" + productBase.getId() + ".jpg");
         return productBase;
+    }
+
+    public List<ProductBase> getAllProductBaseByOrgId(int orgId){
+        ProductBase[] pa = dataAPIClient.get("productbase/get?manufacturerId={id}", ProductBase[].class, orgId);
+        return Arrays.asList(pa);
     }
 }

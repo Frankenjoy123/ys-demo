@@ -33,6 +33,7 @@ public class ProductKeyTypeController {
         ProductKeyTypeObject object = new ProductKeyTypeObject();
         object.setId(productKeyType.getId());
         object.setCode(productKeyType.getCode());
+        object.setName(productKeyType.getName());
         object.setDescription(productKeyType.getDescription());
         object.setActive(productKeyType.isActive());
         return object;
@@ -45,6 +46,7 @@ public class ProductKeyTypeController {
             ProductKeyTypeObject object = new ProductKeyTypeObject();
             object.setId(p.getId());
             object.setCode(p.getCode());
+            object.setName(p.getName());
             object.setDescription(p.getDescription());
             object.setActive(p.isActive());
             return object;

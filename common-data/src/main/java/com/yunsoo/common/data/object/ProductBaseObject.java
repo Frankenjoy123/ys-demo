@@ -98,12 +98,10 @@ public class ProductBaseObject {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }

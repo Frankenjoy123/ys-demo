@@ -47,9 +47,9 @@ public class ProductKeyController {
         return productKeyObj;
     }
 
-    @RequestMapping(value = "{key}/disable", method = RequestMethod.PUT)
-    public void disableKey(@PathVariable(value = "key") String key) {
-        productKeyService.disable(key);
+    @RequestMapping(value = "{key}/disabled", method = RequestMethod.PUT)
+    public void disableKey(@PathVariable(value = "key") String key, @RequestBody Boolean disabled) {
+        productKeyService.setDisabled(key, disabled);
     }
 
 
