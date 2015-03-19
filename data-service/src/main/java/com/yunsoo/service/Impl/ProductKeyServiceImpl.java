@@ -17,6 +17,7 @@ import org.springframework.util.Assert;
  */
 @Service("productKeyService")
 public class ProductKeyServiceImpl implements ProductKeyService {
+
     @Autowired
     private ProductDao productDao;
 
@@ -32,15 +33,14 @@ public class ProductKeyServiceImpl implements ProductKeyService {
     }
 
     @Override
-    public void disable(String key) {
+    public void setDisabled(String key, Boolean disable) {
         Assert.notNull(key, "productKey must not be null");
 
         ProductModel productModel = productDao.getByKey(key);
         if (productModel == null) {
             throw new ServiceException(this.getClass(), "ProductKey not found");
         }
-        productModel.setProductKeyDisabled(true);
+        productModel.setProductKeyDisabled(disable);
         productDao.save(productModel);
-
     }
 }

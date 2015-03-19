@@ -1,6 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.dto.ProductBatchRequest;
+import com.yunsoo.common.data.object.ProductBaseObject;
 import org.springframework.web.bind.annotation.*;
 import com.yunsoo.api.biz.ProductDomain;
 import com.yunsoo.api.dto.basic.ProductBase;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -34,14 +37,21 @@ public class ProductController {
 
     @RequestMapping(value = "batch/create", method = RequestMethod.POST)
     public void batchCreateProductForKeyBatch(@Valid @RequestBody ProductBatchRequest request) {
+        //create Product for exists product keys.
     }
 
     @RequestMapping(value = "/base/{baseId}", method = RequestMethod.GET)
     public ProductBase getProductBase(@PathVariable(value = "baseId") Integer baseId) {
-        if (baseId == null && baseId < 0) {
+        if (baseId == null || baseId < 0) {
             throw new BadRequestException("ProductBaseId不应小于0！");
         }
         return productDomain.getProductBase(baseId);
+    }
+
+    @RequestMapping(value = "/base", method = RequestMethod.GET)
+    public List<ProductBase> getAllProductBasesForCurrentOrg() {
+        int orgId = 20; //fetch from AuthContext
+        return productDomain.getAllProductBaseByOrgId(orgId);
     }
 }
 
