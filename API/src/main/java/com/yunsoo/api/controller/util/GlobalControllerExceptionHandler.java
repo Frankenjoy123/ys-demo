@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -58,6 +59,14 @@ public class GlobalControllerExceptionHandler {
                         .map(e -> e.getField() + ": " + e.getDefaultMessage())
                         .collect(Collectors.toList()));
         ErrorResult result = new ErrorResult(RestErrorResultCode.BAD_REQUEST, message);
+        return appendTraceInfo(result, ex);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResult handleMissingRequestParameterException(HttpServletRequest req, MissingServletRequestParameterException ex) {
+        ErrorResult result = new ErrorResult(RestErrorResultCode.BAD_REQUEST, ex.getMessage());
         return appendTraceInfo(result, ex);
     }
 

@@ -4,8 +4,6 @@ import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKey;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
-import com.yunsoo.api.dto.ProductKeyType;
-import com.yunsoo.api.dto.basic.Product;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -36,9 +34,6 @@ public class ProductKeyController {
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
     public ProductKey get(@PathVariable(value = "key") String key) {
-        if (StringUtils.isEmpty(key)) {
-            throw new BadRequestException("please provide a valid product key");
-        }
         ProductKeyObject productKeyObj = dataAPIClient.get("productkey/{key}", ProductKeyObject.class, key);
         if (productKeyObj == null) {
             throw new NotFoundException("product key");
@@ -90,14 +85,8 @@ public class ProductKeyController {
         return batchDto;
     }
 
-
-    @RequestMapping(value = "batch/test", method = RequestMethod.GET)
-    public List<ProductKeyType> batchCreateProductKeysTest(@Valid @RequestBody ProductKeyBatchRequest request) {
-        return productKeyDomain.getAllProductKeyTypes(null);
-    }
-
     @RequestMapping(value = "batch/create", method = RequestMethod.POST)
-    public ProductKeyBatch batchCreateProductKeys(@RequestBody ProductKeyBatchRequest request) {
+    public ProductKeyBatch batchCreateProductKeys(@Valid @RequestBody ProductKeyBatchRequest request) {
         int quantity = request.getQuantity();
         List<String> productKeyTypeCodes = request.getProductKeyTypeCodes();
         Integer productBaseId = request.getProductBaseId();
