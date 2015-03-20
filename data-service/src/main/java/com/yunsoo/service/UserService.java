@@ -1,5 +1,7 @@
 package com.yunsoo.service;
 
+import com.amazonaws.services.s3.model.S3Object;
+import com.yunsoo.model.ThumbnailFile;
 import com.yunsoo.service.contract.User;
 
 import java.io.IOException;
@@ -13,6 +15,8 @@ public interface UserService {
     public User get(Long id);
 
     public User get(String cellular);
+
+    public S3Object getUserThumbnail(String bucket, String key) throws IOException;
 
     public long save(User user) throws Exception;
 

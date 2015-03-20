@@ -1,16 +1,20 @@
 package com.yunsoo.dataapi.controller;
 
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
+import com.amazonaws.services.s3.model.S3Object;
+import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.dataapi.dto.ResultWrapper;
 import com.yunsoo.dataapi.dto.UserDto;
 import com.yunsoo.dataapi.factory.ResultFactory;
 import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.UserService;
 import com.yunsoo.service.contract.User;
-import com.yunsoo.util.SpringBeanUtil;
-import org.springframework.beans.BeanUtils;
+import com.yunsoo.util.AmazonYamlSetting;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +30,8 @@ public class UserController {
 
     @Autowired
     private final UserService userService;
+    @Autowired
+    private AmazonYamlSetting amazonYamlSetting;
 
     @Autowired
     UserController(UserService userService) {
@@ -51,6 +57,27 @@ public class UserController {
         if (users == null || users.size() <= 0)
             throw new ResourceNotFoundException("Users not found token=" + devicecode);
         return new ResponseEntity<User>(users.get(0), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/thumbnail/{id}/{key}", method = RequestMethod.GET)
+    public ResponseEntity<InputStreamResource> getThumbnail(
+            @PathVariable(value = "id") Long id,
+            @PathVariable(value = "key") String key) {
+
+        if (key == null || key.isEmpty()) throw new BadRequestException("Key不能为空！");
+        S3Object thumbnailFile;
+        try {
+            thumbnailFile = userService.getUserThumbnail(amazonYamlSetting.getS3_basebucket(), amazonYamlSetting.getS3_userbaseurl() + "/" + id + "/" + key);
+            if (thumbnailFile == null) throw new NotFoundException("找不到图片!");
+        } catch (IOException ex) {
+            //to-do: log
+            throw new NotFoundException("图片获取出错！");
+        }
+
+        return ResponseEntity.ok()
+//                .contentLength(gridFsFile.getLength())
+                .contentType(MediaType.parseMediaType(thumbnailFile.getObjectMetadata().getContentType()))
+                .body(new InputStreamResource(thumbnailFile.getObjectContent()));
     }
 
     @RequestMapping(value = "/nearby/{location}", method = RequestMethod.GET)
