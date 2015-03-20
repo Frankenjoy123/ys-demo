@@ -89,7 +89,7 @@ public class ProductKey {
         ProductKey productKey = new ProductKey();
         productKey.setProductKey(productModel.getProductKey());
         productKey.setProductKeyTypeId(productModel.getProductKeyTypeId());
-        Boolean isDisabled = productModel.isProductKeyDisabled();
+        Boolean isDisabled = productModel.getProductKeyDisabled();
         productKey.setProductKeyDisabled(isDisabled != null && isDisabled);
         productKey.setPrimary(productModel.isPrimary());
         productKey.setProductKeyBatchId(productModel.getProductKeyBatchId());

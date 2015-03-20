@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -32,45 +31,43 @@ public class GlobalControllerExceptionHandler {
     @Autowired
     private CommonConfig commonConfig;
 
+    //business
     @ExceptionHandler(RestErrorResultException.class)
     @ResponseBody
-    public ResponseEntity<ErrorResult> handleRestError(HttpServletRequest req, Exception ex) {
-        ErrorResult result;
-        HttpStatus status;
-        if (ex instanceof RestErrorResultException) {
-            RestErrorResultException apiEx = (RestErrorResultException) ex;
-            result = apiEx.getErrorResult();
-            status = apiEx.getHttpStatus();
-        } else {
-            result = ErrorResult.UNKNOWN;
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
+    public ResponseEntity<ErrorResult> handleRestError(HttpServletRequest req, RestErrorResultException ex) {
+        ErrorResult result = ex.getErrorResult();
+        HttpStatus status = ex.getHttpStatus();
         result = appendTraceInfo(result, ex);
         return new ResponseEntity<>(result, status);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    //400
+    @ExceptionHandler({
+            MethodArgumentNotValidException.class,
+            MissingServletRequestParameterException.class,
+            HttpMediaTypeNotSupportedException.class})
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResult handleValidationError(HttpServletRequest req, MethodArgumentNotValidException ex) {
-        String message = ObjectUtils.nullSafeToString(
-                ex.getBindingResult().getFieldErrors()
-                        .stream()
-                        .map(e -> e.getField() + ": " + e.getDefaultMessage())
-                        .collect(Collectors.toList()));
+    public ErrorResult handleMissingRequestParameterException(HttpServletRequest req, Exception ex) {
+        String message;
+        if (ex instanceof MethodArgumentNotValidException) {
+            MethodArgumentNotValidException mEx = (MethodArgumentNotValidException) ex;
+            message = ObjectUtils.nullSafeToString(
+                    mEx.getBindingResult().getFieldErrors()
+                            .stream()
+                            .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                            .collect(Collectors.toList()));
+        } else {
+            message = ex.getMessage();
+        }
         ErrorResult result = new ErrorResult(RestErrorResultCode.BAD_REQUEST, message);
         return appendTraceInfo(result, ex);
     }
 
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResult handleMissingRequestParameterException(HttpServletRequest req, MissingServletRequestParameterException ex) {
-        ErrorResult result = new ErrorResult(RestErrorResultCode.BAD_REQUEST, ex.getMessage());
-        return appendTraceInfo(result, ex);
-    }
-
-    @ExceptionHandler({NoHandlerFoundException.class, HttpRequestMethodNotSupportedException.class})
+    //404
+    @ExceptionHandler({
+            NoHandlerFoundException.class,
+            HttpRequestMethodNotSupportedException.class})
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResult handleNoHandlerFound(HttpServletRequest req, Exception ex) {
@@ -78,6 +75,7 @@ public class GlobalControllerExceptionHandler {
         return appendTraceInfo(result, ex);
     }
 
+    //500
     @ExceptionHandler(Exception.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

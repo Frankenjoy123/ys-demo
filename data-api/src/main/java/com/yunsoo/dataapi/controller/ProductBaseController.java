@@ -1,7 +1,7 @@
 package com.yunsoo.dataapi.controller;
 
+import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.dataapi.dto.ProductBaseDto;
 import com.yunsoo.service.ProductBaseService;
 import com.yunsoo.service.contract.ProductBase;
 import org.springframework.beans.BeanUtils;
@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Zhe
@@ -21,52 +22,55 @@ import java.util.List;
 public class ProductBaseController {
 
     @Autowired
-    private final ProductBaseService productBaseService;
-
-    @Autowired
-    ProductBaseController(ProductBaseService productBaseService) {
-        this.productBaseService = productBaseService;
-    }
+    private ProductBaseService productBaseService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ProductBaseDto getById(@PathVariable(value = "id") Long id) {
+    public ProductBaseObject getById(@PathVariable(value = "id") Long id) {
         ProductBase productBase = productBaseService.getById(id);
         if (productBase == null) {
             throw new NotFoundException("Product");
         }
-        ProductBaseDto productBaseDto = new ProductBaseDto();
-        BeanUtils.copyProperties(productBase, productBaseDto);
-        return productBaseDto;
+        ProductBaseObject productBaseObject = new ProductBaseObject();
+        BeanUtils.copyProperties(productBase, productBaseObject);
+        return productBaseObject;
     }
 
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductBase> query(@RequestParam(value = "manufacturerId", required = false) Integer manufacturerId,
-                                   @RequestParam(value = "categoryId", required = false) Integer categoryId
-    ) {
-        return productBaseService.getProductBaseByFilter(manufacturerId, categoryId);
+    public List<ProductBaseObject> getByFilter(
+            @RequestParam(value = "manufacturerId", required = false) Integer manufacturerId,
+            @RequestParam(value = "categoryId", required = false) Integer categoryId) {
+        return productBaseService.getByFilter(manufacturerId, categoryId, true).stream()
+                .map(p -> {
+                    ProductBaseObject o = new ProductBaseObject();
+                    BeanUtils.copyProperties(p, o);
+                    return o;
+                }).collect(Collectors.toList());
     }
 
     //create
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createProductBase(@RequestBody ProductBase productBase) {
-        if (productBase == null) throw new IllegalArgumentException("Input parameter ProductBase is invalid!");
-        productBaseService.save(productBase);
+    public void create(@RequestBody ProductBaseObject productBase) {
+        ProductBase p = new ProductBase();
+        BeanUtils.copyProperties(productBase, p);
+        productBaseService.save(p);
     }
 
-    //patch update
-    @RequestMapping(value = "", method = RequestMethod.PATCH)
-    public void updateProductBase(@RequestBody ProductBase productBase) throws Exception {
-        //patch update, we don't provide functions like update with set null properties.
-        productBaseService.patchUpdate(productBase);
+    //patch update, we don't provide functions like update with set null properties.
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public void patchUpdate(@PathVariable(value = "id") Long id, @RequestBody ProductBaseObject productBase) {
+        productBase.setId(id);
+        ProductBase p = new ProductBase();
+        BeanUtils.copyProperties(productBase, p);
+        productBaseService.patchUpdate(p);
     }
 
     //delete
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProductBase(@PathVariable(value = "id") Long id) {
-        productBaseService.delete(id);
+    public void delete(@PathVariable(value = "id") Long id) {
+        productBaseService.deactivate(id);
     }
 
 }

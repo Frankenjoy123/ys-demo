@@ -22,15 +22,15 @@ public class ProductBaseController {
     private ProductDomain productDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ProductBase getProductBase(@PathVariable(value = "id") Integer baseId) {
-        if (baseId == null || baseId < 0) {
+    public ProductBase get(@PathVariable(value = "id") Long id) {
+        if (id == null || id < 0) {
             throw new BadRequestException("ProductBaseId不应小于0！");
         }
-        return productDomain.getProductBase(baseId);
+        return productDomain.getProductBase(id);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductBase> getAllProductBasesForCurrentOrg() {
+    public List<ProductBase> getAllForCurrentOrg() {
         int orgId = 1; //fetch from AuthContext
         return productDomain.getAllProductBaseByOrgId(orgId);
     }
@@ -38,13 +38,13 @@ public class ProductBaseController {
     //create
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createProductBase(@RequestBody ProductBase productBase) {
+    public void create(@RequestBody ProductBase productBase) {
 
     }
 
     //patch update
-    @RequestMapping(value = "", method = RequestMethod.PATCH)
-    public void updateProductBase(@RequestBody ProductBase productBase) throws Exception {
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public void update(@PathVariable(value = "id") Integer id, @RequestBody ProductBase productBase) throws Exception {
         //patch update, we don't provide functions like update with set null properties.
 
 
@@ -53,7 +53,7 @@ public class ProductBaseController {
     //delete
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProductBase(@PathVariable(value = "id") Long id) {
+    public void delete(@PathVariable(value = "id") Long id) {
 
     }
 

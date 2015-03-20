@@ -58,7 +58,7 @@ public class ProductDomain {
         product.setManufacturerId(productBaseObject.getManufacturerId());
 
         //fill with ProductCategory information.
-        ProductCategory productCategory = dataAPIClient.get("productcategory/model?id={id}", ProductCategory.class, productBaseObject.getSubCategoryId());
+        ProductCategory productCategory = dataAPIClient.get("productcategory/model?id={id}", ProductCategory.class, productBaseObject.getCategoryId());
         product.setProductCategory(productCategory);
 
         return product;
@@ -69,7 +69,7 @@ public class ProductDomain {
     }
 
     //获取基本产品信息 - ProductBase
-    public ProductBase getProductBase(int productBaseId) {
+    public ProductBase getProductBase(long productBaseId) {
         ProductBase productBase = dataAPIClient.get("productbase/{id}", ProductBase.class, productBaseId);
         productBase.setThumbnailURL(yunsooYamlConfig.getDataapi_productbase_picture_basepath() + "id" + productBase.getId() + ".jpg");
         return productBase;

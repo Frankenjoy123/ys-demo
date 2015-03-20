@@ -71,7 +71,7 @@ public class ProductModel {
     }
 
     @DynamoDBAttribute(attributeName = "key_disabled") //product_key_disabled
-    public Boolean isProductKeyDisabled() {
+    public Boolean getProductKeyDisabled() {
         return productKeyDisabled;
     }
 
