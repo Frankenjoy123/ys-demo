@@ -20,9 +20,9 @@ public interface ProductBaseDao {
     public DaoStatus delete(long id);
 
     //Search by conditions
-    public List<ProductBaseModel> getMessagesByFilter(Integer manufacturerId, Integer categoryId);
+    public List<ProductBaseModel> getProductBaseByFilter(Integer manufacturerId, Integer categoryId);
 
-    public List<ProductBaseModel> getAllBaseProducts();
+    public List<ProductBaseModel> getAllProductsBase();
 
 }
 
