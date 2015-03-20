@@ -1,6 +1,5 @@
 package com.yunsoo.common.data.object;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
@@ -8,11 +7,13 @@ import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
- * Created by Zhe on 2015/3/13.
+ * Created by:   Zhe
+ * Created on:   2015/3/13
+ * Descriptions:
  */
 public class ProductBaseObject {
 
-    private long Id;
+    private long id;
     private int subCategoryId;
     private int manufacturerId;
     private String barcode;
@@ -27,11 +28,11 @@ public class ProductBaseObject {
     private Boolean active;
 
     public long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(long id) {
-        Id = id;
+        this.id = id;
     }
 
     public int getSubCategoryId() {

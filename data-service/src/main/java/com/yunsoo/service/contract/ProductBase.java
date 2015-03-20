@@ -159,12 +159,12 @@ public class ProductBase {
         return model;
     }
 
-    public static List<ProductBase> FromModelList(List<ProductBaseModel> modelList) {
+    public static List<ProductBase> fromModelList(List<ProductBaseModel> modelList) {
         if (modelList == null) return null;
         return modelList.stream().map(ProductBase::FromModel).collect(Collectors.toList());
     }
 
-    public static List<ProductBaseModel> ToModelList(List<ProductBase> productBaseList) {
+    public static List<ProductBaseModel> toModelList(List<ProductBase> productBaseList) {
         if (productBaseList == null) return null;
         return productBaseList.stream().map(ProductBase::ToModel).collect(Collectors.toList());
     }

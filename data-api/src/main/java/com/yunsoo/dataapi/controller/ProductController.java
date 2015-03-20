@@ -53,13 +53,9 @@ public class ProductController {
         return productKeyList.size();
     }
 
-    @RequestMapping(value = "/active/{key}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{key}/active", method = RequestMethod.POST)
     public void active(@PathVariable(value = "key") String key) {
-        if (key != null && key.length() > 0) {
-            //productService.update(key);
-
-        }
-
+        //change to update
     }
 
 }

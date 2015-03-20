@@ -30,7 +30,7 @@ public class ProductBaseDaoImpl implements ProductBaseDao {
     }
 
     @Override
-    public List<ProductBaseModel> getMessagesByFilter(Integer manufacturerId, Integer categoryId) {
+    public List<ProductBaseModel> getProductBaseByFilter(Integer manufacturerId, Integer categoryId) {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(ProductBaseModel.class);
         if (manufacturerId != null) {
             c.add(Restrictions.eq("manufacturerId", manufacturerId.intValue()));
@@ -83,7 +83,7 @@ public class ProductBaseDaoImpl implements ProductBaseDao {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<ProductBaseModel> getAllBaseProducts() {
+    public List<ProductBaseModel> getAllProductsBase() {
         return sessionFactory.getCurrentSession()
                 .createCriteria(ProductBaseModel.class).list();
     }

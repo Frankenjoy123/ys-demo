@@ -59,13 +59,13 @@ public class ProductBaseServiceImpl implements ProductBaseService {
 
     @Override
     public List<ProductBase> getProductBaseByFilter(Integer manufacturerId, Integer categoryId) {
-        return ProductBase.FromModelList(productBaseDao.getMessagesByFilter(manufacturerId, categoryId));
+        return ProductBase.fromModelList(productBaseDao.getProductBaseByFilter(manufacturerId, categoryId));
     }
 
     @Override
     @Transactional
     public List<ProductBase> getAllProducts() {
-        return ProductBase.FromModelList(productBaseDao.getAllBaseProducts());
+        return ProductBase.fromModelList(productBaseDao.getAllProductsBase());
     }
 
     //Convert Dto to Model,just copy properties which is not null.

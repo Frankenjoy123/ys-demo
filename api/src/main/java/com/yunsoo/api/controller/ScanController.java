@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.biz.LogisticsDomain;
-import com.yunsoo.api.biz.ProductDomain;
+import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.biz.UserDomain;
 import com.yunsoo.api.biz.ValidateProduct;
 import com.yunsoo.api.dto.LogisticsPath;
@@ -20,12 +20,15 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/2/27.
+ * Created by:   Zhe
+ * Created on:   2015/2/27
+ * Descriptions:
  */
 @RestController
 @RequestMapping("/scan")
 public class ScanController {
 
+    @Autowired
     private RestClient dataAPIClient;
     @Autowired
     private LogisticsDomain logisticsDomain;
@@ -34,10 +37,6 @@ public class ScanController {
     @Autowired
     private ProductDomain productDomain;
 
-    @Autowired
-    ScanController(RestClient dataAPIClient) {
-        this.dataAPIClient = dataAPIClient;
-    }
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
     public ScanResult getDetailByKey(@PathVariable(value = "key") String key,

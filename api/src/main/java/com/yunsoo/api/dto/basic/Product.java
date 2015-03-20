@@ -1,6 +1,8 @@
 package com.yunsoo.api.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 import java.util.Date;
@@ -22,7 +24,8 @@ public class Product {
     private String shelfLifeInterval;
     private String createdDateTime;
     private int statusId;
-    private String manufacturingDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    private DateTime manufacturingDateTime;
 
     public String getProductKey() {
         return productKey;
@@ -120,11 +123,11 @@ public class Product {
         this.statusId = statusId;
     }
 
-    public String getManufacturingDateTime() {
+    public DateTime getManufacturingDateTime() {
         return manufacturingDateTime;
     }
 
-    public void setManufacturingDateTime(String manufacturingDateTime) {
+    public void setManufacturingDateTime(DateTime manufacturingDateTime) {
         this.manufacturingDateTime = manufacturingDateTime;
     }
 }

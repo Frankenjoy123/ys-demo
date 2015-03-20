@@ -4,13 +4,13 @@
   app.factory("productKeyManageService", ["$http", function ($http) {
     return {
       getProductKeyBatch: function (fnSuccess) {
-        $http.get("/api/productkey/batch").success(function (data) {
+        $http.get("/api/productkeybatch").success(function (data) {
           fnSuccess(data);
         });
         return this;
       },
       getProductBases: function (fnSuccess) {
-        $http.get("/api/product/base").success(function (data) {
+        $http.get("/api/productbase").success(function (data) {
           fnSuccess(data);
         });
         return this;

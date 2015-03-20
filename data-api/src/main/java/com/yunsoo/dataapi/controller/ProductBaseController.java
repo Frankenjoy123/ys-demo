@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/3/13.
+ * Created by:   Zhe
+ * Created on:   2015/3/13
+ * Descriptions:
  */
 @RestController
 @RequestMapping("/productbase")
@@ -26,7 +28,7 @@ public class ProductBaseController {
         this.productBaseService = productBaseService;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductBaseDto getById(@PathVariable(value = "id") Long id) {
         ProductBase productBase = productBaseService.getById(id);
         if (productBase == null) {
@@ -37,29 +39,33 @@ public class ProductBaseController {
         return productBaseDto;
     }
 
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public List<ProductBase> getMessagesByFilter(@RequestParam(value = "manufacturerId", required = false) Integer manufacturerId,
-                                                 @RequestParam(value = "categoryId", required = false) Integer categoryId
+    //query
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<ProductBase> query(@RequestParam(value = "manufacturerId", required = false) Integer manufacturerId,
+                                   @RequestParam(value = "categoryId", required = false) Integer categoryId
     ) {
         return productBaseService.getProductBaseByFilter(manufacturerId, categoryId);
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    //create
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public void createProductBase(@RequestBody ProductBase productBase) {
         if (productBase == null) throw new IllegalArgumentException("Input parameter ProductBase is invalid!");
         productBaseService.save(productBase);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PATCH)
+    //patch update
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
     public void updateProductBase(@RequestBody ProductBase productBase) throws Exception {
         //patch update, we don't provide functions like update with set null properties.
         productBaseService.patchUpdate(productBase);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    //delete
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void createProductBase(@PathVariable(value = "id") Long id) {
+    public void deleteProductBase(@PathVariable(value = "id") Long id) {
         productBaseService.delete(id);
     }
 
