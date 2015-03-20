@@ -25,11 +25,11 @@ public class YunsooConfiguration {
     @Value("${yunsoo.debug}")
     private String debug;
 
-    @Value("${yunsoo.dataapi.baseurl}")
-    private String dataAPIBaseURL;
+//    @Value("${yunsoo.dataapi.baseurl}")
+//    private String dataAPIBaseURL;
 
-    @Value("${yunsoo.productbase.picture.basepath}")
-    public String productBasePicURL;
+//    @Value("${yunsoo.productbase.picture.basepath}")
+//    public String productBasePicURL;
 
     @Bean
     public static PropertyPlaceholderConfigurer yunsooProperties() throws IOException {
@@ -46,11 +46,11 @@ public class YunsooConfiguration {
         return config;
     }
 
-    @Bean
-    public String dataAPIBaseURL() {
-        if (dataAPIBaseURL == null || dataAPIBaseURL.equals("${yunsoo.dataapi.baseurl}")) {
-            throw new ConfigurationErrorException("yunsoo.dataapi.baseurl");
-        }
-        return dataAPIBaseURL;
-    }
+//    @Bean
+//    public String dataAPIBaseURL() {
+//        if (dataAPIBaseURL == null || dataAPIBaseURL.equals("${yunsoo.dataapi.baseurl}")) {
+//            throw new ConfigurationErrorException("yunsoo.dataapi.baseurl");
+//        }
+//        return dataAPIBaseURL;
+//    }
 }

@@ -20,16 +20,17 @@ public class YunsooConfigurationTest {
     private CommonConfig commonConfig;
 
     @Autowired
-    private String dataAPIBaseURL;
+    private YunsooYamlConfig yunsooYamlConfig;
 
     @Test
     public void test_debugConfig(){
+
         System.out.println(commonConfig.isDebugEnabled());
     }
 
     @Test
     public void test_dataAPIBaseURL(){
-        System.out.println(dataAPIBaseURL);
+        System.out.println(yunsooYamlConfig.getDataapi_baseurl());
     }
 
 }

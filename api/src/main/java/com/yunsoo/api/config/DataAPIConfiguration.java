@@ -2,6 +2,7 @@
 package com.yunsoo.api.config;
 
 import com.yunsoo.api.data.DataAPIClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,9 @@ import java.net.URI;
 @ComponentScan(basePackages = {"com.yunsoo.api.config"})
 public class DataAPIConfiguration {
 
+    @Autowired
+    private YunsooYamlConfig yunsooYamlConfig;
+
     @Bean
     public static PropertyPlaceholderConfigurer yunsooProperties() throws IOException {
         PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
@@ -30,9 +34,6 @@ public class DataAPIConfiguration {
         return ppc;
     }
 
-    @Value("${yunsoo.dataapi.baseurl}")
-    private String dataAPIBaseURL;
-
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
@@ -40,6 +41,7 @@ public class DataAPIConfiguration {
 
     @Bean
     public DataAPIClient dataAPIClient() {
+        String dataAPIBaseURL = yunsooYamlConfig.getDataapi_baseurl();
         if (!dataAPIBaseURL.endsWith("/")) {
             dataAPIBaseURL += "/";
         }
