@@ -10,7 +10,7 @@
         return this;
       },
       getProductBases: function (fnSuccess) {
-        $http.get("/api/product/base").success(function (data) {
+        $http.get("/api/productbase").success(function (data) {
           fnSuccess(data);
         });
         return this;

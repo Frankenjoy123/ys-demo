@@ -4,10 +4,8 @@ import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,17 +21,40 @@ public class ProductBaseController {
     @Autowired
     private ProductDomain productDomain;
 
-    @RequestMapping(value = "/base/{baseId}", method = RequestMethod.GET)
-    public ProductBase getProductBase(@PathVariable(value = "baseId") Integer baseId) {
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public ProductBase getProductBase(@PathVariable(value = "id") Integer baseId) {
         if (baseId == null || baseId < 0) {
             throw new BadRequestException("ProductBaseId不应小于0！");
         }
         return productDomain.getProductBase(baseId);
     }
 
-    @RequestMapping(value = "/base", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductBase> getAllProductBasesForCurrentOrg() {
         int orgId = 1; //fetch from AuthContext
         return productDomain.getAllProductBaseByOrgId(orgId);
     }
+
+    //create
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createProductBase(@RequestBody ProductBase productBase) {
+
+    }
+
+    //patch update
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public void updateProductBase(@RequestBody ProductBase productBase) throws Exception {
+        //patch update, we don't provide functions like update with set null properties.
+
+
+    }
+
+    //delete
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProductBase(@PathVariable(value = "id") Long id) {
+
+    }
+
 }
