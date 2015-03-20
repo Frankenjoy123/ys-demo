@@ -15,70 +15,66 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @DynamicUpdate
 public class AccountTokenModel {
+    private Long id;
+    private Integer status;
+    private AccountModel account;
+    private Long deviceId;
+    private String accessToken;
+    private DateTime accessTokenTs;
+    private DateTime accessTokenExpires;
+    private String refreshToken;
+    private DateTime refreshTokenTs;
+    private DateTime refreshTokenExpires;
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private long id;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     @Column(name = "status", nullable = true)
-    private Integer status;
-
-    @Column(name = "account_id", nullable = true)
-    private Long account;
-
-    @Column(name = "device_id", nullable = true)
-    private String device;
-
-    @Column(name = "access_token", nullable = true)
-    private String accessToken;
-
-    @Column(name = "access_token_ts", nullable = true)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime accessTokenTs;
-
-    @Column(name = "access_token_expires", nullable = true)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime accessTokenExpires;
-
-    @Column(name = "refresh_token", nullable = true)
-    private String refreshToken;
-
-    @Column(name = "refresh_token_ts", nullable = true)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime refreshTokenTs;
-
-    @Column(name = "refresh_token_expires", nullable = true)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime refreshTokenExpires;
-
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
-
     public Integer getStatus() { return status; }
     public void setStatus(Integer status) { this.status = status; }
 
-    public Long getAccount() { return account; }
-    public void setAccount(long account) { this.account = account; }
+    @Column(name = "device_id", nullable = true)
+    public Long getDeviceId() { return deviceId; }
+    public void setDeviceId(Long deviceId) { this.deviceId = deviceId; }
 
-    public String getDevice() { return device; }
-    public void setDevice(String device) { this.device = device; }
-
+    @Column(name = "access_token", nullable = true)
     public String getAccessToken() { return accessToken; }
     public void setAccessToken(String accessToken) { this.accessToken = accessToken; }
 
+    @Column(name = "access_token_ts", nullable = true)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     public DateTime getAccessTokenTs() { return accessTokenTs; }
     public void setAccessTokenTs(DateTime accessTokenTs) { this.accessTokenTs = accessTokenTs; }
 
+    @Column(name = "access_token_expires", nullable = true)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     public DateTime getAccessTokenExpires() { return accessTokenExpires; }
     public void setAccessTokenExpires(DateTime accessTokenExpires) { this.accessTokenExpires = accessTokenExpires; }
 
+    @Column(name = "refresh_token", nullable = true)
     public String getRefreshToken() { return refreshToken; }
     public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken; }
 
+    @Column(name = "refresh_token_ts", nullable = true)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     public DateTime getRefreshTokenTs() { return refreshTokenTs; }
     public void setRefreshTokenTs(DateTime refreshTokenTs) { this.refreshTokenTs = refreshTokenTs; }
 
+    @Column(name = "refresh_token_expires", nullable = true)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     public DateTime getRefreshTokenExpires() { return refreshTokenExpires; }
     public void setRefreshTokenExpires(DateTime refreshTokenExpires) { this.refreshTokenExpires = refreshTokenExpires; }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id", referencedColumnName = "id")
+    public AccountModel getAccount() {
+        return account;
+    }
+
+    public void setAccount(AccountModel account) {
+        this.account = account;
+    }
 
 }

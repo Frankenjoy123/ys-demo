@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Set;
 
 /**
  * KB on 3/8/2015
@@ -15,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @DynamicUpdate
 public class AccountModel {
-    private long id;
+    private Long id;
     private Integer status;
     private String SSID;
     private String identifier;
@@ -27,13 +28,13 @@ public class AccountModel {
     private String salt;
     private DateTime createdTs;
     private DateTime updatedTs;
-    private long updatedBy;
+    private Long updatedBy;
 
     @Id
     @GeneratedValue
     @Column(name = "id")
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     @Column(name = "status")
     public Integer getStatus() { return status; }
@@ -82,7 +83,16 @@ public class AccountModel {
     public void setUpdatedTs(DateTime updatedTs) { this.updatedTs = updatedTs; }
 
     @Column(name = "updated_by", nullable = true)
-    public long getUpdatedBy() { return updatedBy; }
-    public void setUpdatedBy(long updatedBy) {this.updatedBy = updatedBy; }
+    public Long getUpdatedBy() { return updatedBy; }
+    public void setUpdatedBy(Long updatedBy) {this.updatedBy = updatedBy; }
+
+    private Set<AccountTokenModel> tokens;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "account")
+    public Set<AccountTokenModel> getTokens() {
+        return tokens;
+    }
+    public void setTokens(Set<AccountTokenModel> tokens) {
+        this.tokens = tokens;
+    }
 
 }
