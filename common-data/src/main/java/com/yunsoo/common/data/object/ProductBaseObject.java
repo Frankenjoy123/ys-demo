@@ -1,49 +1,60 @@
 package com.yunsoo.common.data.object;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 /**
- * Created by Zhe on 2015/3/13.
+ * Created by:   Zhe
+ * Created on:   2015/3/13
+ * Descriptions:
  */
 public class ProductBaseObject {
-    private long Id;
-    private int subCategoryId;
-    private int manufacturerId;
+
+    private Long id;
+    private Integer categoryId;
+    private Integer manufacturerId;
     private String barcode;
     private String name;
     private String description;
     private String details;
-    private int shelfLife;
+    private Integer shelfLife;
     private String shelfLifeInterval;
-    private DateTime createdDateTime;
+    private List<Integer> productKeyTypeIds;
     private Boolean active;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime modifiedDateTime;
 
-    public long getId() {
-        return Id;
+    public Long getId() {
+        return id;
     }
 
-    public void setId(long id) {
-        Id = id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public int getSubCategoryId() {
-        return subCategoryId;
+    public Integer getCategoryId() {
+        return categoryId;
     }
 
-    public void setSubCategoryId(int subCategoryId) {
-        this.subCategoryId = subCategoryId;
+    public void setCategoryId(Integer baseProductId) {
+        this.categoryId = baseProductId;
     }
 
-    @JsonIgnore
-    public int getManufacturerId() {
-        return manufacturerId;
-    }
-
-    public void setManufacturerId(int manufacturerId) {
+    public void setManufacturerId(Integer manufacturerId) {
         this.manufacturerId = manufacturerId;
+    }
+
+    public Integer getManufacturerId() {
+        return manufacturerId;
     }
 
     public String getBarcode() {
@@ -78,11 +89,11 @@ public class ProductBaseObject {
         this.details = details;
     }
 
-    public int getShelfLife() {
+    public Integer getShelfLife() {
         return shelfLife;
     }
 
-    public void setShelfLife(int shelfLife) {
+    public void setShelfLife(Integer shelfLife) {
         this.shelfLife = shelfLife;
     }
 
@@ -94,14 +105,12 @@ public class ProductBaseObject {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
+    public List<Integer> getProductKeyTypeIds() {
+        return productKeyTypeIds;
     }
 
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
+    public void setProductKeyTypeIds(List<Integer> productKeyTypeIds) {
+        this.productKeyTypeIds = productKeyTypeIds;
     }
 
     public Boolean getActive() {
@@ -111,4 +120,21 @@ public class ProductBaseObject {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDate) {
+        this.createdDateTime = createdDate;
+    }
+
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
+    }
+
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
+    }
+
 }

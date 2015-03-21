@@ -1,0 +1,32 @@
+server:
+    port: 8080
+
+spring:
+    profiles.active: default
+---
+spring:
+    profiles: default
+management:
+    port: 8081
+    address: 127.0.0.1
+
+yunsoo:
+    debug: true
+
+AmazonSettings:
+    s3_basebucket:  yunsudev
+    s3_userbaseurl:  photo/users
+    s3_product_key_batch_path: product_key_batches
+
+dataServiceSetting:
+    message_created_status_id:  1
+    message_approved_status_id: 3
+    message_delete_status_id: 4
+    user_created_status_id: 2
+    user_delete_status_id: 5
+---
+spring:
+    profiles: qa
+management:
+    port: 8081
+    address: 127.0.0.1
