@@ -25,6 +25,8 @@
 
         $scope.productKey = "";
 
+        $scope.bodyShow = 0;
+
         $scope.getDateString = function (value) {
             var date = new Date(value);
             return new DateTime(date).toString('yyyy-MM-dd HH:mm:ss');
@@ -63,6 +65,7 @@
                 $scope.origialdata = data;
                 $scope.resultdata = [];
                 $scope.resultdata.push(listAllNode(data));
+                $scope.bodyShow = 1;
 
                 $('#tree').treeview({data: $scope.resultdata, color: "#3c8dbc"});
             });
