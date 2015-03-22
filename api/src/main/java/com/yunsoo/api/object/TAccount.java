@@ -84,7 +84,7 @@ public class TAccount implements UserDetails {
 
     public Account ToDto(TAccount account) {
         Account dto = new Account();
-        BeanUtils.copyProperties(account, dto, SpringBeanUtil.getNullPropertyNames(account));
+        BeanUtils.copyProperties(account, dto);
         return dto;
     }
 }
