@@ -19,7 +19,7 @@ public class ProductKeyObject {
     private int productKeyTypeId;
     private boolean productKeyDisabled;
     private boolean primary;
-    private int productKeyBatchId;
+    private Long productKeyBatchId;
     private String primaryProductKey;
     private Set<String> productKeySet;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
@@ -58,11 +58,11 @@ public class ProductKeyObject {
         this.primary = primary;
     }
 
-    public int getProductKeyBatchId() {
+    public Long getProductKeyBatchId() {
         return productKeyBatchId;
     }
 
-    public void setProductKeyBatchId(int productKeyBatchId) {
+    public void setProductKeyBatchId(Long productKeyBatchId) {
         this.productKeyBatchId = productKeyBatchId;
     }
 

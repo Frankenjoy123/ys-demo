@@ -39,7 +39,7 @@ public class PermissionDto {
     public static PermissionDto FromPermission(Permission permission) {
         if (permission == null) return null;
         PermissionDto dto = new PermissionDto();
-        BeanUtils.copyProperties(permission, dto, SpringBeanUtil.getNullPropertyNames(dto));
+        BeanUtils.copyProperties(permission, dto, SpringBeanUtil.getNullPropertyNames(permission));
         return dto;
     }
 

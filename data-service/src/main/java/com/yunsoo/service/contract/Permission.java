@@ -1,6 +1,7 @@
 package com.yunsoo.service.contract;
 
 import com.yunsoo.dbmodel.PermissionModel;
+import com.yunsoo.util.SpringBeanUtil;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 
@@ -30,14 +31,14 @@ public class Permission {
     public static PermissionModel ToModel(Permission permission) {
         if (permission == null) return  null;
         PermissionModel model = new PermissionModel();
-        BeanUtils.copyProperties(permission, model);
+        BeanUtils.copyProperties(permission, model, SpringBeanUtil.getNullPropertyNames(permission));
         return model;
     }
 
     public static Permission FromModel(PermissionModel model) {
         if (model == null) return null;
         Permission permission = new Permission();
-        BeanUtils.copyProperties(model, permission);
+        BeanUtils.copyProperties(model, permission, SpringBeanUtil.getNullPropertyNames(model));
         return permission;
     }
 

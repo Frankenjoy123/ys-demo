@@ -1,8 +1,10 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
+import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyBatchRequestObject;
 import com.yunsoo.common.data.object.ProductObject;
@@ -27,55 +29,50 @@ import java.util.List;
 public class ProductKeyBatchController {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private ProductDomain productDomain;
 
     @Autowired
     private ProductKeyDomain productKeyDomain;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductKeyBatch> getAllForCurrentOrg() {
-        int organizationId = 1;
-        return productKeyDomain.getAllProductKeyBatchByOrgId(organizationId);
-    }
-
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ProductKeyBatch getBatchById(@PathVariable(value = "id") String idStr) {
+    public ProductKeyBatch getById(@PathVariable(value = "id") String idStr) {
         int organizationId = 1;
-        int idInt;
+        long id;
         try {
-            idInt = Integer.parseInt(idStr);
+            id = Long.parseLong(idStr);
         } catch (NumberFormatException ex) {
             throw new BadRequestException("invalid id");
         }
-        ProductKeyBatchObject batch = dataAPIClient.get("productkey/batch/{id}", ProductKeyBatchObject.class, idInt);
+        ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
         if (batch == null) {
             throw new NotFoundException("product batch");
         }
         if (batch.getOrganizationId() != organizationId) {
             throw new ForbiddenException();
         }
-        ProductKeyBatch batchDto = new ProductKeyBatch();
-        batchDto.setId(batch.getId());
-        batchDto.setQuantity(batch.getQuantity());
-        batchDto.setStatusId(batch.getStatusId());
-        batchDto.setOrganizationId(batch.getOrganizationId());
-        batchDto.setCreatedClientId(batch.getCreatedClientId());
-        batchDto.setCreatedAccountId(batch.getCreatedAccountId());
-        batchDto.setCreatedDateTime(batch.getCreatedDateTime());
-        batchDto.setProductKeyTypeIds(batch.getProductKeyTypeIds());
-        return batchDto;
+        return batch;
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<ProductKeyBatch> getByFilter(@RequestParam(value = "productBaseId", required = false) Long productBaseId,
+                                             @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
+                                             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+        int organizationId = 1;
+        return productKeyDomain.getAllProductKeyBatchByOrgId(organizationId, productBaseId);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ProductKeyBatch batchCreateProductKeys(@Valid @RequestBody ProductKeyBatchRequest request) {
+    public ProductKeyBatch create(@Valid @RequestBody ProductKeyBatchRequest request) {
         int quantity = request.getQuantity();
+        Long productBaseId = request.getProductBaseId();
         List<String> productKeyTypeCodes = request.getProductKeyTypeCodes();
-        Integer productBaseId = request.getProductBaseId();
-        List<Integer> productKeyTypeIds;
-        try {
-            productKeyTypeIds = productKeyDomain.changeProductKeyTypeCodeToId(productKeyTypeCodes);
-        } catch (IllegalArgumentException ex) {
-            throw new BadRequestException("productKeyTypeCodes invalid");
+        List<Integer> productKeyTypeIds = null;
+        if (productKeyTypeCodes != null && !productKeyTypeCodes.isEmpty()) {
+            try {
+                productKeyTypeIds = productKeyDomain.changeProductKeyTypeCodeToId(productKeyTypeCodes);
+            } catch (IllegalArgumentException ex) {
+                throw new BadRequestException("productKeyTypeCodes invalid");
+            }
         }
         int statusId = 0;
         int organizationId = 1;
@@ -85,16 +82,15 @@ public class ProductKeyBatchController {
 
         ProductKeyBatchRequestObject requestObject = new ProductKeyBatchRequestObject();
         ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
-        batchObj.setQuantity(quantity);
-        batchObj.setStatusId(statusId);
-        batchObj.setOrganizationId(organizationId);
-        batchObj.setCreatedClientId(clientId);
-        batchObj.setCreatedAccountId(accountId);
-        batchObj.setCreatedDateTime(createdDateTime);
-        batchObj.setProductKeyTypeIds(productKeyTypeIds);
-        requestObject.setProductKeyBatch(batchObj);
         if (productBaseId != null && productBaseId > 0) {
             //create corresponding product according to the productBaseId
+            ProductBase productBase = productDomain.getProductBase(productBaseId);
+            if (productBase == null) {
+                throw new BadRequestException("product base id invalid");
+            }
+            if (productKeyTypeIds == null) {
+                productKeyTypeIds = productBase.getProductKeyTypeIds();
+            }
             int productStatusId = 0;
             ProductObject productObj = new ProductObject();
             productObj.setProductBaseId(productBaseId);
@@ -102,23 +98,17 @@ public class ProductKeyBatchController {
             //productObj.setManufacturingDateTime(null);
             requestObject.setProductTemplate(productObj);
         }
+        batchObj.setQuantity(quantity);
+        batchObj.setStatusId(statusId);
+        batchObj.setOrganizationId(organizationId);
+        batchObj.setProductBaseId(productBaseId);
+        batchObj.setCreatedClientId(clientId);
+        batchObj.setCreatedAccountId(accountId);
+        batchObj.setCreatedDateTime(createdDateTime);
+        batchObj.setProductKeyTypeIds(productKeyTypeIds);
+        requestObject.setProductKeyBatch(batchObj);
 
-        ProductKeyBatchObject newBatchObj = dataAPIClient.post(
-                "productkey/batch/create",
-                requestObject,
-                ProductKeyBatchObject.class);
-
-        ProductKeyBatch newBatch = new ProductKeyBatch();
-        newBatch.setId(newBatchObj.getId());
-        newBatch.setQuantity(newBatchObj.getQuantity());
-        newBatch.setStatusId(newBatchObj.getStatusId());
-        newBatch.setOrganizationId(newBatchObj.getOrganizationId());
-        newBatch.setCreatedClientId(newBatchObj.getCreatedClientId());
-        newBatch.setCreatedAccountId(newBatchObj.getCreatedAccountId());
-        newBatch.setCreatedDateTime(newBatchObj.getCreatedDateTime());
-        newBatch.setProductKeyTypeIds(newBatchObj.getProductKeyTypeIds());
-
-        return newBatch;
+        return productKeyDomain.createProductKeyBatch(requestObject);
     }
 
 }

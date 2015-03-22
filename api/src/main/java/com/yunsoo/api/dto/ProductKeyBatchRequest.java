@@ -13,13 +13,13 @@ import java.util.List;
  */
 public class ProductKeyBatchRequest {
 
-    @Range(min = 1, max = 10, message = "单次申请数量必须大于1并且不超过10") //10 for test only, this should be 100000
+    @Range(min = 1, max = 100, message = "单次申请数量必须大于1并且不超过100,[测试环境限制]")
     private int quantity;
 
-    @NotEmpty(message = "必须指定一个或多个产品码类型")
     private List<String> productKeyTypeCodes;
 
-    private Integer productBaseId;
+    private Long productBaseId;
+
 
     public int getQuantity() {
         return quantity;
@@ -37,11 +37,11 @@ public class ProductKeyBatchRequest {
         this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
-    public Integer getProductBaseId() {
+    public Long getProductBaseId() {
         return productBaseId;
     }
 
-    public void setProductBaseId(Integer productBaseId) {
+    public void setProductBaseId(Long productBaseId) {
         this.productBaseId = productBaseId;
     }
 }

@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @DynamicUpdate
 public class AccountPermissionModel {
     private Long id;
-    private Long accountOrgId;
+    private AccountOrgModel accountOrg;
     private Long permissionGroup1;
     private Long permissionGroup2;
     private DateTime createdTs;
@@ -27,10 +27,6 @@ public class AccountPermissionModel {
     @Column(name = "id")
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
-    @Column(name = "account_org_id")
-    public Long getAccountOrg() { return accountOrgId; }
-    public void setAccountOrg(Long accountOrgId) { this.accountOrgId = accountOrgId; }
 
     @Column(name = "permission_group1", nullable = true)
     public Long getPermissionGroup1() { return permissionGroup1; }
@@ -53,5 +49,15 @@ public class AccountPermissionModel {
     @Column(name = "updated_by", nullable = true)
     public Long getUpdatedBy() { return updatedBy; }
     public void setUpdatedBy(Long updatedBy) { this.updatedBy = updatedBy; }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_org_id")
+    public AccountOrgModel getAccountOrg() {
+        return accountOrg;
+    }
+    public void setAccountOrg(AccountOrgModel accountOrg) {
+        this.accountOrg = accountOrg;
+    }
+
 
 }

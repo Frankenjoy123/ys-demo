@@ -35,14 +35,14 @@ public class ProductModel {
 
     private int productKeyTypeId;
     private Boolean productKeyDisabled;
-    private int productKeyBatchId;
+    private Long productKeyBatchId;
     private String primaryProductKey; //if primaryProductKey is null, then it's a primary item.
     private Set<String> productKeySet; //only exists when primaryProductKey is null
 
     private Long createdDateTimeValue;
 
     //only a primary item can contain below product info
-    private Integer productBaseId;
+    private Long productBaseId;
     private Integer productStatusId;
     private Long manufacturingDateTimeValue;
 
@@ -80,11 +80,11 @@ public class ProductModel {
     }
 
     @DynamoDBAttribute(attributeName = "key_batch_id") //product_key_batch_id
-    public int getProductKeyBatchId() {
+    public Long getProductKeyBatchId() {
         return productKeyBatchId;
     }
 
-    public void setProductKeyBatchId(int productKeyBatchId) {
+    public void setProductKeyBatchId(Long productKeyBatchId) {
         this.productKeyBatchId = productKeyBatchId;
     }
 
@@ -128,11 +128,11 @@ public class ProductModel {
 
 
     @DynamoDBAttribute(attributeName = "base_id") //product_base_id
-    public Integer getProductBaseId() {
+    public Long getProductBaseId() {
         return productBaseId;
     }
 
-    public void setProductBaseId(Integer productBaseId) {
+    public void setProductBaseId(Long productBaseId) {
         this.productBaseId = productBaseId;
     }
 

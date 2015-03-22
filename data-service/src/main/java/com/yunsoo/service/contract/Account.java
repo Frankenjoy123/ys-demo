@@ -2,6 +2,7 @@ package com.yunsoo.service.contract;
 
 
 import com.yunsoo.dbmodel.AccountModel;
+import com.yunsoo.util.SpringBeanUtil;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 
@@ -46,13 +47,13 @@ public class Account {
     public static AccountModel ToModel(Account account) {
         if (account == null) return null;
         AccountModel model = new AccountModel();
-        BeanUtils.copyProperties(account, model);
+        BeanUtils.copyProperties(account, model, SpringBeanUtil.getNullPropertyNames(account));
         return model;
     }
     public static Account FromModel(AccountModel model) {
         if (model == null) { return null; }
         Account account = new Account();
-        BeanUtils.copyProperties(model, account);
+        BeanUtils.copyProperties(model, account, SpringBeanUtil.getNullPropertyNames(model));
         return account;
     }
 }

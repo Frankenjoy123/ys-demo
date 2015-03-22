@@ -14,7 +14,7 @@ import java.util.Date;
 public class Product {
     private String productKey;
     private ProductCategory productCategory;
-    private int ProductBaseId;
+    private long ProductBaseId;
     private int manufacturerId;
     private String barcode;
     private String name;
@@ -43,11 +43,11 @@ public class Product {
         this.productCategory = productCategory;
     }
 
-    public int getProductBaseId() {
+    public long getProductBaseId() {
         return ProductBaseId;
     }
 
-    public void setProductBaseId(int productBaseId) {
+    public void setProductBaseId(long productBaseId) {
         ProductBaseId = productBaseId;
     }
 

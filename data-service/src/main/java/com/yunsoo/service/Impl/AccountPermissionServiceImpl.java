@@ -2,6 +2,7 @@ package com.yunsoo.service.Impl;
 
 import com.yunsoo.dao.AccountDao;
 import com.yunsoo.dao.AccountPermissionDao;
+import com.yunsoo.dbmodel.AccountPermissionModel;
 import com.yunsoo.service.AccountPermissionService;
 import com.yunsoo.service.AccountService;
 import com.yunsoo.service.contract.Account;
@@ -18,11 +19,11 @@ import org.springframework.stereotype.Service;
 public class AccountPermissionServiceImpl implements AccountPermissionService {
 
     @Autowired
-    private AccountPermissionDao accountPermissionDao;
+    private AccountPermissionDao dao;
 
     @Override
-    public AccountPermission getPermissions(long accountId, long orgId) {
-        return null;
+    public AccountPermission getPermissions(long orgId, long accountId) {
+        return AccountPermission.FromModel(dao.get(orgId, accountId));
     }
 
 }

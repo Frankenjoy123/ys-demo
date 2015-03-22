@@ -11,7 +11,7 @@ import org.joda.time.DateTime;
 public class Product {
 
     private String productKey;
-    private int productBaseId;
+    private Long productBaseId;
     private int productStatusId;
     private DateTime manufacturingDateTime;
     private DateTime createdDateTime;
@@ -24,11 +24,11 @@ public class Product {
         this.productKey = productKey;
     }
 
-    public int getProductBaseId() {
+    public Long getProductBaseId() {
         return productBaseId;
     }
 
-    public void setProductBaseId(int productBaseId) {
+    public void setProductBaseId(Long productBaseId) {
         this.productBaseId = productBaseId;
     }
 

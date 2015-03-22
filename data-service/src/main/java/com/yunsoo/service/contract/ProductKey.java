@@ -16,7 +16,7 @@ public class ProductKey {
     private int productKeyTypeId;
     private boolean productKeyDisabled;
     private boolean primary;
-    private int productKeyBatchId;
+    private Long productKeyBatchId;
     private String primaryProductKey;
     private Set<String> productKeySet;
     private DateTime createdDateTime;
@@ -53,11 +53,11 @@ public class ProductKey {
         this.primary = primary;
     }
 
-    public int getProductKeyBatchId() {
+    public Long getProductKeyBatchId() {
         return productKeyBatchId;
     }
 
-    public void setProductKeyBatchId(int productKeyBatchId) {
+    public void setProductKeyBatchId(Long productKeyBatchId) {
         this.productKeyBatchId = productKeyBatchId;
     }
 

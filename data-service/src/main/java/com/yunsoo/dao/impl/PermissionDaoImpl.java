@@ -24,6 +24,32 @@ public class PermissionDaoImpl implements PermissionDao {
 
     @Override
     @Transactional
+    public List<PermissionModel> getList() {
+        String hql = "select p from PermissionModel p";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+
+        List<PermissionModel> permissoins = (List<PermissionModel>) query.list();
+        if (permissoins != null && !permissoins.isEmpty()) {
+            return  permissoins;
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public PermissionModel get(String resource, String action) {
+        String hql = "from PermissionModel where resource = :resource and action = :action";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql).setString("resource", resource).setString("action", action);
+
+        List<PermissionModel> permissions = (List<PermissionModel>) query.list();
+        if (permissions != null && !permissions.isEmpty()) {
+            return permissions.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional
     public PermissionModel get(long id) {
         String hql = "from PermissionModel where id = " + id;
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
@@ -46,34 +72,8 @@ public class PermissionDaoImpl implements PermissionDao {
 
     @Override
     @Transactional
-    public PermissionModel get(String resource, String action) {
-        String hql = "from PermissionModel where resource =" + resource + " and action = " + action;
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
-
-        List<PermissionModel> permissions = (List<PermissionModel>) query.list();
-        if (permissions != null && !permissions.isEmpty()) {
-            return permissions.get(0);
-        }
-        return null;
-    }
-
-    @Override
-    @Transactional
     public List<PermissionModel> getPermissions(long groupId) {
         String hql = "from PermissionModel where groupId = " + groupId;
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
-
-        List<PermissionModel> permissoins = (List<PermissionModel>) query.list();
-        if (permissoins != null && !permissoins.isEmpty()) {
-            return  permissoins;
-        }
-        return null;
-    }
-
-    @Override
-    @Transactional
-    public List<PermissionModel> getList() {
-        String hql = "from PermissionModel where 1 = 1";
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
 
         List<PermissionModel> permissoins = (List<PermissionModel>) query.list();

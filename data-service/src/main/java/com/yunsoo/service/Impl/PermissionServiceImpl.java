@@ -21,4 +21,9 @@ public class PermissionServiceImpl implements PermissionService {
     public List<Permission> getPermissions() {
         return Permission.FromModelList(permissionDao.getList());
     }
+
+    @Override
+    public Permission getPermission(String resource, String action) {
+        return Permission.FromModel(permissionDao.get(resource, action));
+    }
 }
