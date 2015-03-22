@@ -16,40 +16,40 @@ import java.util.stream.Collectors;
  */
 public class ProductKeyBatch {
 
-    private int id;
-    private int quantity;
-    private int statusId;
+    private Long id;
+    private Integer quantity;
+    private Integer statusId;
     private Integer organizationId;
-    private int createdClientId;
-    private int createdAccountId;
+    private Integer createdClientId;
+    private Integer createdAccountId;
     private DateTime createdDateTime;
     private List<Integer> productKeyTypeIds;
     private String productKeysAddress;
 
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
 
-    public int getStatusId() {
+    public Integer getStatusId() {
         return statusId;
     }
 
-    public void setStatusId(int statusId) {
+    public void setStatusId(Integer statusId) {
         this.statusId = statusId;
     }
 
@@ -61,20 +61,20 @@ public class ProductKeyBatch {
         this.organizationId = organizationId;
     }
 
-    public int getCreatedClientId() {
+    public Integer getCreatedClientId() {
         return createdClientId;
     }
 
-    public void setCreatedClientId(int createdClientId) {
+    public void setCreatedClientId(Integer createdClientId) {
         this.createdClientId = createdClientId;
     }
 
 
-    public int getCreatedAccountId() {
+    public Integer getCreatedAccountId() {
         return createdAccountId;
     }
 
-    public void setCreatedAccountId(int createdAccountId) {
+    public void setCreatedAccountId(Integer createdAccountId) {
         this.createdAccountId = createdAccountId;
     }
 

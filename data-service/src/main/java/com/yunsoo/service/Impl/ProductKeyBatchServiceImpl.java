@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -41,13 +42,24 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
 
     @Override
-    public ProductKeyBatch getById(int batchId) {
+    public ProductKeyBatch getById(Long batchId) {
         ProductKeyBatchModel model = productkeyBatchDao.getById(batchId);
         return model == null ? null : ProductKeyBatch.fromModel(model);
     }
 
     @Override
-    public List<List<String>> getProductKeysByBatchId(int batchId) {
+    public List<ProductKeyBatch> getByFilterPaged(Integer organizationId, int pageIndex, int pageSize) {
+        Map<String, Object> eqFilter = new HashMap<>();
+        if (organizationId != null) {
+            eqFilter.put("organizationId", organizationId);
+        }
+        return productkeyBatchDao.getByFilterPaged(eqFilter, pageIndex, pageSize).stream()
+                .map(ProductKeyBatch::fromModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<List<String>> getProductKeysByBatchId(Long batchId) {
         ProductKeyBatch keyBatch = this.getById(batchId);
         if (keyBatch == null) {
             return null;
@@ -78,7 +90,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         List<List<String>> keyList = generateProductKeys(batch);
 
         //save batch to get the id
-        batch.setId(0); //set to 0 for creating new item
+        batch.setId(0L); //set to 0 for creating new item
         if (batch.getCreatedDateTime() == null) batch.setCreatedDateTime(DateTime.now());
         ProductKeyBatch newBatch = saveProductKeyBatch(batch);
 
@@ -192,7 +204,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         model.setProductKeyTypeIds(batch.getProductKeyTypeIds());
         model.setProductKeys(keyList);
         String bucketName = amazonYamlSetting.getS3_basebucket(); // YunsooConfig.getBaseBucket();
-        String id = Integer.toString(batch.getId()) + "_" + UUID.randomUUID().toString();
+        String id = Long.toString(batch.getId()) + "_" + UUID.randomUUID().toString();
         String key = String.join("/", amazonYamlSetting.getS3_product_key_batch_path(), id);
         s3ItemDao.putItem(bucketName, key, model);
         return formatAddress(bucketName, key);

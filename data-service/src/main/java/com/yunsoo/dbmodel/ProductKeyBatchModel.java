@@ -17,22 +17,22 @@ public class ProductKeyBatchModel {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @Column(name = "quantity")
-    private int quantity;
+    private Integer quantity;
 
     @Column(name = "status_id")
-    private int statusId;
+    private Integer statusId;
 
     @Column(name = "organization_id")
     private Integer organizationId;
 
     @Column(name = "created_client_id")
-    private int createdClientId;
+    private Integer createdClientId;
 
     @Column(name = "created_account_id")
-    private int createdAccountId;
+    private Integer createdAccountId;
 
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -44,27 +44,27 @@ public class ProductKeyBatchModel {
     @Column(name = "product_keys_address")
     private String productKeysAddress;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
-    public int getStatusId() {
+    public Integer getStatusId() {
         return statusId;
     }
 
-    public void setStatusId(int statusId) {
+    public void setStatusId(Integer statusId) {
         this.statusId = statusId;
     }
 
@@ -76,19 +76,19 @@ public class ProductKeyBatchModel {
         this.organizationId = organizationId;
     }
 
-    public int getCreatedClientId() {
+    public Integer getCreatedClientId() {
         return createdClientId;
     }
 
-    public void setCreatedClientId(int createdClientId) {
+    public void setCreatedClientId(Integer createdClientId) {
         this.createdClientId = createdClientId;
     }
 
-    public int getCreatedAccountId() {
+    public Integer getCreatedAccountId() {
         return createdAccountId;
     }
 
-    public void setCreatedAccountId(int createdAccountId) {
+    public void setCreatedAccountId(Integer createdAccountId) {
         this.createdAccountId = createdAccountId;
     }
 
