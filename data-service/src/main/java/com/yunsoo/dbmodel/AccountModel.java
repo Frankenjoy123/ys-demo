@@ -30,6 +30,9 @@ public class AccountModel {
     private DateTime updatedTs;
     private Long updatedBy;
 
+    private Set<AccountTokenModel> tokens;
+    private Set<AccountOrgModel> accountOrgs;
+
     @Id
     @GeneratedValue
     @Column(name = "id")
@@ -86,13 +89,18 @@ public class AccountModel {
     public Long getUpdatedBy() { return updatedBy; }
     public void setUpdatedBy(Long updatedBy) {this.updatedBy = updatedBy; }
 
-    private Set<AccountTokenModel> tokens;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "account")
     public Set<AccountTokenModel> getTokens() {
         return tokens;
     }
     public void setTokens(Set<AccountTokenModel> tokens) {
         this.tokens = tokens;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "account")
+    public Set<AccountOrgModel> getAccountOrgs() { return accountOrgs; }
+    public void setAccountOrgs(Set<AccountOrgModel> accountOrgs) {
+        this.accountOrgs = accountOrgs;
     }
 
 }

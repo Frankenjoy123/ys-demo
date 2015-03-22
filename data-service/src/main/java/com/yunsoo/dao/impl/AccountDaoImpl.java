@@ -36,9 +36,9 @@ public class AccountDaoImpl implements AccountDao {
 
     @Override
     @Transactional
-    public AccountModel get(long id) {
-        String hql = "select a from AccountModel a where id = " + id;
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+    public AccountModel getByIdentifier(String identifier) {
+        String hql = "from AccountModel where identifier = :identifier";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql).setString("identifier", identifier);
 
         List<AccountModel> items = (List<AccountModel>) query.list();
         if (items != null && !items.isEmpty()) {
@@ -49,8 +49,8 @@ public class AccountDaoImpl implements AccountDao {
 
     @Override
     @Transactional
-    public AccountModel getByIdentifier(String identifier) {
-        String hql = "from AccountModel where identifier = " + identifier;
+    public AccountModel get(long id) {
+        String hql = "select a from AccountModel a where id = " + id;
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
 
         List<AccountModel> items = (List<AccountModel>) query.list();

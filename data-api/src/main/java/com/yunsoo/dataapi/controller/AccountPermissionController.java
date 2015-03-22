@@ -2,6 +2,8 @@ package com.yunsoo.dataapi.controller;
 
 import com.yunsoo.dataapi.dto.AccountDto;
 import com.yunsoo.service.AccountPermissionService;
+import com.yunsoo.service.PermissionService;
+import com.yunsoo.service.contract.AccountPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,29 +16,20 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by KB on 3/13/2015.
  */
 @RestController
-@RequestMapping("/device")
+@RequestMapping("/permission")
 public class AccountPermissionController {
     @Autowired
-    private final AccountPermissionService apService;
+    private final AccountPermissionService service;
 
     @Autowired
-    AccountPermissionController(AccountPermissionService apService) {
-        this.apService = apService;
+    AccountPermissionController(AccountPermissionService service) {
+        this.service = service;
     }
 
-    public Object getPermissoins(String token, long orgId) {
-        return null;
-    }
-
-    public boolean hasPermission(String token, long orgId, String resource, String action) {
-        return false;
-    }
-
-    public Object getPermissionMeta() {
-        return null;
-    }
-
-    private Object getPermissionsBySet(long groupId, long set) {
-        return null;
+    @RequestMapping(value = "/{orgId}/{userId}", method = RequestMethod.GET)
+    public Object getPermissions(@PathVariable(value = "orgId")Long orgId, @PathVariable(value = "userId")Long userId) {
+        AccountPermission ap = service.getPermissions(orgId, userId);
+        Long permissions[] = ap.getPermissionGroups();
+        return permissions;
     }
 }

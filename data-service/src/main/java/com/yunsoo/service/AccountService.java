@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface AccountService {
     public Account get(long id);
-    public Account get(String username);
+    public Account getByIdentifier(String identifier);
     public Account getByToken(String token);
     public Account verify(String identity, String password);
     public int add(Account account);

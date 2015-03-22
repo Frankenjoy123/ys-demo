@@ -26,26 +26,23 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
-    public ResponseEntity<AccountDto> getAccountById(@PathVariable(value = "id") int id) {
-        return new ResponseEntity<AccountDto>(AccountDto.FromAccount(accountService.get(id)), HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/username/{username}",method = RequestMethod.GET)
-    public ResponseEntity<AccountDto> getAccountByUsername(@PathVariable(value = "username") String username) {
-        return new ResponseEntity<AccountDto>(AccountDto.FromAccount(accountService.get(username)), HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/token/{token}", method = RequestMethod.GET)
     public ResponseEntity<AccountDto> getAccountByToken(@PathVariable(value = "token") String token) {
         return new ResponseEntity<AccountDto>(AccountDto.FromAccount(accountService.getByToken(token)), HttpStatus.OK);
     }
 
-    public boolean verify(String username, String password) {
-        return false;
+    @RequestMapping(value = "/identifier/{username}",method = RequestMethod.GET)
+    public ResponseEntity<AccountDto> getAccountByUsername(@PathVariable(value = "username") String username) {
+        return new ResponseEntity<AccountDto>(AccountDto.FromAccount(accountService.getByIdentifier(username)), HttpStatus.OK);
     }
 
-    public String getToken() {
-        return "";
+
+    @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
+    public ResponseEntity<AccountDto> getAccountById(@PathVariable(value = "id") int id) {
+        return new ResponseEntity<AccountDto>(AccountDto.FromAccount(accountService.get(id)), HttpStatus.OK);
+    }
+
+    public boolean verify(String username, String password) {
+        return false;
     }
 }
