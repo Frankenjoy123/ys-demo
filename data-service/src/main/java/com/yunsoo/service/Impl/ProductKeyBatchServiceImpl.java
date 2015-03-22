@@ -42,17 +42,29 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
 
     @Override
-    public ProductKeyBatch getById(Long batchId) {
-        ProductKeyBatchModel model = productkeyBatchDao.getById(batchId);
+    public ProductKeyBatch getById(Long id) {
+        ProductKeyBatchModel model = productkeyBatchDao.getById(id);
         return model == null ? null : ProductKeyBatch.fromModel(model);
     }
 
     @Override
-    public List<ProductKeyBatch> getByFilterPaged(Integer organizationId, int pageIndex, int pageSize) {
+    public List<ProductKeyBatch> getByOrganizationIdPaged(Integer organizationId, int pageIndex, int pageSize) {
         Map<String, Object> eqFilter = new HashMap<>();
         if (organizationId != null) {
             eqFilter.put("organizationId", organizationId);
         }
+        return productkeyBatchDao.getByFilterPaged(eqFilter, pageIndex, pageSize).stream()
+                .map(ProductKeyBatch::fromModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductKeyBatch> getByFilterPaged(Integer organizationId, Long productBaseId, int pageIndex, int pageSize) {
+        Map<String, Object> eqFilter = new HashMap<>();
+        if (organizationId != null) {
+            eqFilter.put("organizationId", organizationId);
+        }
+        eqFilter.put("productBaseId", productBaseId); //productBaseId can be null
         return productkeyBatchDao.getByFilterPaged(eqFilter, pageIndex, pageSize).stream()
                 .map(ProductKeyBatch::fromModel)
                 .collect(Collectors.toList());

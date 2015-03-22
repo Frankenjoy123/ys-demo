@@ -37,7 +37,7 @@ public class ProductKeyBatchDaoImpl implements ProductKeyBatchDao {
         if (eqFilter != null && !eqFilter.isEmpty()) {
             eqFilter.forEach((k, v) -> {
                 if (!StringUtils.isEmpty(k)) {
-                    c.add(Restrictions.eq(k, v));
+                    c.add(Restrictions.eqOrIsNull(k, v));
                 }
             });
         }

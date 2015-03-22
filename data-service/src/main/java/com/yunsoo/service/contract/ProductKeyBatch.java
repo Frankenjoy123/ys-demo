@@ -20,6 +20,7 @@ public class ProductKeyBatch {
     private Integer quantity;
     private Integer statusId;
     private Integer organizationId;
+    private Long productBaseId;
     private Integer createdClientId;
     private Integer createdAccountId;
     private DateTime createdDateTime;
@@ -61,6 +62,14 @@ public class ProductKeyBatch {
         this.organizationId = organizationId;
     }
 
+    public Long getProductBaseId() {
+        return productBaseId;
+    }
+
+    public void setProductBaseId(Long productBaseId) {
+        this.productBaseId = productBaseId;
+    }
+
     public Integer getCreatedClientId() {
         return createdClientId;
     }
@@ -68,7 +77,6 @@ public class ProductKeyBatch {
     public void setCreatedClientId(Integer createdClientId) {
         this.createdClientId = createdClientId;
     }
-
 
     public Integer getCreatedAccountId() {
         return createdAccountId;
@@ -86,7 +94,6 @@ public class ProductKeyBatch {
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
-
 
     public List<Integer> getProductKeyTypeIds() {
         return productKeyTypeIds;
@@ -113,6 +120,7 @@ public class ProductKeyBatch {
         batch.setQuantity(model.getQuantity());
         batch.setStatusId(model.getStatusId());
         batch.setOrganizationId(model.getOrganizationId());
+        batch.setProductBaseId(model.getProductBaseId());
         batch.setCreatedClientId(model.getCreatedClientId());
         batch.setCreatedAccountId(model.getCreatedAccountId());
         batch.setCreatedDateTime(model.getCreatedDateTime());
@@ -133,6 +141,7 @@ public class ProductKeyBatch {
         model.setQuantity(batch.getQuantity());
         model.setStatusId(batch.getStatusId());
         model.setOrganizationId(batch.getOrganizationId());
+        model.setProductBaseId(batch.getProductBaseId());
         model.setCreatedClientId(batch.getCreatedClientId());
         model.setCreatedAccountId(batch.getCreatedAccountId());
         model.setCreatedDateTime(batch.getCreatedDateTime());

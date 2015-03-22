@@ -19,6 +19,7 @@ public class ProductKeyBatchObject {
     private Integer quantity;
     private Integer statusId;
     private Integer organizationId;
+    private Long productBaseId;
     private Integer createdClientId;
     private Integer createdAccountId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
@@ -60,6 +61,14 @@ public class ProductKeyBatchObject {
 
     public void setOrganizationId(Integer organizationId) {
         this.organizationId = organizationId;
+    }
+
+    public Long getProductBaseId() {
+        return productBaseId;
+    }
+
+    public void setProductBaseId(Long productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
     public Integer getCreatedClientId() {

@@ -42,7 +42,7 @@ public class ProductModel {
     private Long createdDateTimeValue;
 
     //only a primary item can contain below product info
-    private Integer productBaseId;
+    private Long productBaseId;
     private Integer productStatusId;
     private Long manufacturingDateTimeValue;
 
@@ -128,11 +128,11 @@ public class ProductModel {
 
 
     @DynamoDBAttribute(attributeName = "base_id") //product_base_id
-    public Integer getProductBaseId() {
+    public Long getProductBaseId() {
         return productBaseId;
     }
 
-    public void setProductBaseId(Integer productBaseId) {
+    public void setProductBaseId(Long productBaseId) {
         this.productBaseId = productBaseId;
     }
 

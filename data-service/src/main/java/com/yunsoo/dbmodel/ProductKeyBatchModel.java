@@ -28,6 +28,9 @@ public class ProductKeyBatchModel {
     @Column(name = "organization_id")
     private Integer organizationId;
 
+    @Column(name = "product_base_id")
+    private Long productBaseId;
+
     @Column(name = "created_client_id")
     private Integer createdClientId;
 
@@ -74,6 +77,14 @@ public class ProductKeyBatchModel {
 
     public void setOrganizationId(Integer organizationId) {
         this.organizationId = organizationId;
+    }
+
+    public Long getProductBaseId() {
+        return productBaseId;
+    }
+
+    public void setProductBaseId(Long productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
     public Integer getCreatedClientId() {

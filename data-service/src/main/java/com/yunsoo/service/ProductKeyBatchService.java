@@ -14,7 +14,9 @@ public interface ProductKeyBatchService {
 
     public ProductKeyBatch getById(Long batchId);
 
-    public List<ProductKeyBatch> getByFilterPaged(Integer organizationId, int pageIndex, int pageSize);
+    public List<ProductKeyBatch> getByOrganizationIdPaged(Integer organizationId, int pageIndex, int pageSize);
+
+    public List<ProductKeyBatch> getByFilterPaged(Integer organizationId, Long productBaseId, int pageIndex, int pageSize);
 
     public List<List<String>> getProductKeysByBatchId(Long batchId);
 

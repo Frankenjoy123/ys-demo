@@ -3,8 +3,8 @@
 
   app.factory("productKeyManageService", ["$http", function ($http) {
     return {
-      getProductKeyBatches: function (fnSuccess) {
-        $http.get("/api/productkeybatch").success(function (data) {
+      getProductKeyBatches: function (productBaseId, fnSuccess) {
+        $http.get("/api/productkeybatch?productBaseId=" + productBaseId).success(function (data) {
           fnSuccess(data);
         });
         return this;
@@ -22,7 +22,10 @@
         return this;
       },
       createProductKeyBatch: function (request, fnSuccess, fnFail) {
-
+        $http.post("/api/productkeybatch", request).success(function (data) {
+          fnSuccess(data);
+        });
+        return this;
       }
     };
   }]);
@@ -46,7 +49,7 @@
           productBaseId: newData.productBaseId
         };
         productKeyManageService.createProductKeyBatch(requestData, function (data) {
-
+          $scope.$apply();
         }, function (data, error) {
 
         });
@@ -54,15 +57,25 @@
     };
 
     //init
+    $scope.productKeyBatches = [];
     productKeyManageService
       .getProductBases(function (data) {
-        $scope.creationPanel.productBases = data;
+        $scope.productBases = $scope.creationPanel.productBases = data;
+        if ($scope.productBases) {
+          $.each($scope.productBases, function (i, item) {
+            productKeyManageService.getProductKeyBatches(item.id, function (data) {
+              if (data && data.length) {
+                $scope.productKeyBatches.push({
+                  productBase: item,
+                  batches: data
+                });
+              }
+            });
+          });
+        }
       })
       .getProductKeyTypes(function (data) {
         $scope.creationPanel.keyTypes = data;
-      })
-      .getProductKeyBatches(function (data) {
-        $scope.productKeyBatches = data;
       });
 
 

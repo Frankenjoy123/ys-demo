@@ -40,21 +40,12 @@ public class ProductKeyBatchController {
         if (batch == null) {
             throw new NotFoundException("product batch");
         }
-        ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
-        batchObj.setId(batch.getId());
-        batchObj.setQuantity(batch.getQuantity());
-        batchObj.setStatusId(batch.getStatusId());
-        batchObj.setOrganizationId(batch.getOrganizationId());
-        batchObj.setCreatedClientId(batch.getCreatedClientId());
-        batchObj.setCreatedAccountId(batch.getCreatedAccountId());
-        batchObj.setCreatedDateTime(batch.getCreatedDateTime());
-        batchObj.setProductKeyTypeIds(batch.getProductKeyTypeIds());
-        batchObj.setProductKeysAddress(batch.getProductKeysAddress());
-        return batchObj;
+        return convertToProductKeyBatchObject(batch);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyBatchObject> getByFilter(@RequestParam(value = "organizationId") Integer organizationId,
+                                                   @RequestParam(value = "productBaseId") Long productBaseId,
                                                    @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
                                                    @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         if (pageIndex == null || pageIndex < 0) {
@@ -63,25 +54,13 @@ public class ProductKeyBatchController {
         if (pageSize == null || pageSize > 10000) {
             pageSize = 10000;
         }
-        return productKeyBatchService.getByFilterPaged(organizationId, pageIndex, pageSize).stream()
-                .map(b -> {
-                    ProductKeyBatchObject o = new ProductKeyBatchObject();
-                    o.setId(b.getId());
-                    o.setQuantity(b.getQuantity());
-                    o.setStatusId(b.getStatusId());
-                    o.setOrganizationId(b.getOrganizationId());
-                    o.setCreatedClientId(b.getCreatedClientId());
-                    o.setCreatedAccountId(b.getCreatedAccountId());
-                    o.setCreatedDateTime(b.getCreatedDateTime());
-                    o.setProductKeyTypeIds(b.getProductKeyTypeIds());
-                    o.setProductKeysAddress(b.getProductKeysAddress());
-                    return o;
-                })
+        return productKeyBatchService.getByFilterPaged(organizationId, productBaseId, pageIndex, pageSize).stream()
+                .map(this::convertToProductKeyBatchObject)
                 .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ProductKeyBatchObject batchCreateProductKeys(@RequestBody ProductKeyBatchRequestObject request) {
+    public ProductKeyBatchObject create(@RequestBody ProductKeyBatchRequestObject request) {
         ProductKeyBatchObject batchObj = request.getProductKeyBatch();
         ProductObject productDto = request.getProductTemplate();
 
@@ -89,6 +68,7 @@ public class ProductKeyBatchController {
         batch.setQuantity(batchObj.getQuantity());
         batch.setStatusId(batchObj.getStatusId());
         batch.setOrganizationId(batchObj.getOrganizationId());
+        batch.setProductBaseId(batchObj.getProductBaseId());
         batch.setCreatedClientId(batchObj.getCreatedClientId());
         batch.setCreatedAccountId(batchObj.getCreatedAccountId());
         batch.setCreatedDateTime(batchObj.getCreatedDateTime());
@@ -101,17 +81,21 @@ public class ProductKeyBatchController {
             product.setManufacturingDateTime(productDto.getManufacturingDateTime());
         }
         ProductKeyBatch newBatch = productKeyBatchService.create(batch, product);
-        ProductKeyBatchObject newBatchObj = new ProductKeyBatchObject();
-        newBatchObj.setId(newBatch.getId());
-        newBatchObj.setQuantity(newBatch.getQuantity());
-        newBatchObj.setStatusId(newBatch.getStatusId());
-        newBatchObj.setOrganizationId(newBatch.getOrganizationId());
-        newBatchObj.setCreatedClientId(newBatch.getCreatedClientId());
-        newBatchObj.setCreatedAccountId(newBatch.getCreatedAccountId());
-        newBatchObj.setCreatedDateTime(newBatch.getCreatedDateTime());
-        newBatchObj.setProductKeyTypeIds(newBatch.getProductKeyTypeIds());
-        newBatchObj.setProductKeysAddress(newBatch.getProductKeysAddress());
+        return convertToProductKeyBatchObject(newBatch);
+    }
 
-        return newBatchObj;
+    private ProductKeyBatchObject convertToProductKeyBatchObject(ProductKeyBatch batch) {
+        ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
+        batchObj.setId(batch.getId());
+        batchObj.setQuantity(batch.getQuantity());
+        batchObj.setStatusId(batch.getStatusId());
+        batchObj.setOrganizationId(batch.getOrganizationId());
+        batchObj.setProductBaseId(batch.getProductBaseId());
+        batchObj.setCreatedClientId(batch.getCreatedClientId());
+        batchObj.setCreatedAccountId(batch.getCreatedAccountId());
+        batchObj.setCreatedDateTime(batch.getCreatedDateTime());
+        batchObj.setProductKeyTypeIds(batch.getProductKeyTypeIds());
+        batchObj.setProductKeysAddress(batch.getProductKeysAddress());
+        return batchObj;
     }
 }
