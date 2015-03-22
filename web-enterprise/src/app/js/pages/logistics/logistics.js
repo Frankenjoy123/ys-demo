@@ -10,6 +10,11 @@
                     }).error(function (data, state) {
                         fnSuccess();
                     });
+                return this;
+            },
+            uploadPackageFile: function (file, fnSuccess, fnError) {
+                $http.post("api/package/file", file).success(function(data){}).error(function(data, state){});
+                return this;
             }
         };
     }]);

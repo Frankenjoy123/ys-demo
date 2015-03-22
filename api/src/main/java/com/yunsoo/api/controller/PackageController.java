@@ -1,17 +1,23 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.dto.PackageBound;
-import com.yunsoo.api.dto.ProductStatus;
-import com.yunsoo.api.dto.ScanResult;
-import com.yunsoo.api.dto.basic.*;
 import com.yunsoo.api.dto.basic.Package;
+import com.yunsoo.common.data.object.PackageBoundObject;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.InternalServerErrorException;
+import com.yunsoo.common.web.exception.NotAcceptableException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 //import org.joda.time.DateTime;
@@ -24,6 +30,7 @@ import java.util.List;
 public class PackageController {
 
     private RestClient dataAPIClient;
+
     @Autowired
     PackageController(RestClient dataAPIClient) {
         this.dataAPIClient = dataAPIClient;
@@ -44,14 +51,14 @@ public class PackageController {
 
     @RequestMapping(value = "/bind", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Boolean bind(@RequestBody PackageBound data) throws Exception {
+    public Boolean bind(@RequestBody PackageBoundObject data) throws Exception {
         boolean result = dataAPIClient.post("package/bind", data, Boolean.class);
         return result;
     }
 
     @RequestMapping(value = "/batch/bind", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Boolean batchBind(@RequestBody PackageBound[] data) throws Exception {
+    public Boolean batchBind(@RequestBody PackageBoundObject[] data) throws Exception {
         boolean result = dataAPIClient.post("package/batch/bind", data, Boolean.class);
         return result;
     }
@@ -61,6 +68,57 @@ public class PackageController {
     public Boolean revokePackage(@PathVariable(value = "key") String key) {
         dataAPIClient.delete("package/revoke/{key}", key);
         return true;
+    }
+
+
+    @RequestMapping(value = "/file", method = RequestMethod.POST)
+    public Boolean UploadFile(MultipartHttpServletRequest request, HttpServletResponse response) {
+
+        Iterator<String> itr = request.getFileNames();
+        MultipartFile file = request.getFile(itr.next());
+
+        try {
+            InputStreamReader in = new InputStreamReader(file.getInputStream());
+            BufferedReader reader = new BufferedReader(in);
+            // StringBuilder content = new StringBuilder();
+            String line = null;
+            List<PackageBoundObject> objects = new ArrayList<PackageBoundObject>();
+            while ((line = reader.readLine()) != null) {
+                if (StringUtils.isEmpty(line)) {
+                    continue;
+                }
+
+                objects.add(toPackageBoundObject(line));
+
+            }
+            reader.close();
+
+            boolean batchResult = dataAPIClient.post("/package/batch/bind", objects, Boolean.class);
+            if (!batchResult) {
+                throw new InternalServerErrorException("数据中有重复的码，请检查。");
+            }
+            return batchResult;
+        } catch (InternalServerErrorException e) {
+            throw new InternalServerErrorException(e.getMessage());
+        } catch (Exception e) {
+            throw new NotAcceptableException("数据解析失败，请检查文件。");
+        }
+    }
+
+    private static PackageBoundObject toPackageBoundObject(String line) {
+        String[] dataArray = line.split(",");
+        //TODO let these items pass.
+        if (dataArray.length < 2) {
+            throw new NotAcceptableException("错误的数据录入");
+        }
+        List<String> subKeys = new ArrayList<String>();
+        for (int i = 2; i < dataArray.length; i++) {
+            subKeys.add(dataArray[i]);
+        }
+        PackageBoundObject object = new PackageBoundObject(0, dataArray[1], subKeys);
+        return object;
+
+
     }
 
 

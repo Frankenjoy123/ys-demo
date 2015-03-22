@@ -1,21 +1,19 @@
-package com.yunsoo.dataapi.dto;
-
-import com.yunsoo.service.contract.PackageBoundContract;
+package com.yunsoo.common.data.object;
 
 import java.util.List;
 
 /**
  * Created by Hope on 2015/2/7.
  */
-public class PackageBoundDto {
-    private long operator;
+public class PackageBoundObject {
+    private Long operator;
     private String packageKey;
     private List<String> keys;
 
-    public PackageBoundDto() {
+    public PackageBoundObject() {
     }
 
-    public PackageBoundDto(long operator, String packageKey, List<String> keys) {
+    public PackageBoundObject(long operator, String packageKey, List<String> keys) {
         this.operator = operator;
         this.packageKey = packageKey;
         this.keys = keys;
@@ -45,12 +43,6 @@ public class PackageBoundDto {
         this.operator = operator;
     }
 
-    public PackageBoundContract toServiceContract() {
-        PackageBoundContract contract = new PackageBoundContract();
-        contract.setKeys(this.keys);
-        contract.setOperator(this.operator);
-        contract.setPackageKey(this.packageKey);
-        return contract;
-    }
+
 
 }

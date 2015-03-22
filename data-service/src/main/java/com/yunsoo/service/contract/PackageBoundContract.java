@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class PackageBoundContract {
     private List<String> keys;
-    private long operator;
+    private Long operator;
     private String packageKey;
 
     public PackageBoundContract() {
