@@ -15,8 +15,7 @@
   app.controller("productBaseManageCtrl", ["$scope", "productBaseManageService", function ($scope, productBaseManageService) {
 
     $scope.getDateString = function (value) {
-      var date = new Date(value);
-      return new DateTime(date).toString('yyyy-MM-dd HH:mm:ss');
+      return new DateTime(new Date(value)).toString('yyyy-MM-dd HH:mm:ss');
     };
 
     //init

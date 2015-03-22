@@ -32,42 +32,34 @@ public class ProductKeyBatchController {
     @Autowired
     private ProductKeyDomain productKeyDomain;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductKeyBatch> getAllForCurrentOrg() {
-        int organizationId = 1;
-        return productKeyDomain.getAllProductKeyBatchByOrgId(organizationId);
-    }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductKeyBatch getBatchById(@PathVariable(value = "id") String idStr) {
         int organizationId = 1;
-        int idInt;
+        long id;
         try {
-            idInt = Integer.parseInt(idStr);
+            id = Long.parseLong(idStr);
         } catch (NumberFormatException ex) {
             throw new BadRequestException("invalid id");
         }
-        ProductKeyBatchObject batch = dataAPIClient.get("productkey/batch/{id}", ProductKeyBatchObject.class, idInt);
+        ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
         if (batch == null) {
             throw new NotFoundException("product batch");
         }
         if (batch.getOrganizationId() != organizationId) {
             throw new ForbiddenException();
         }
-        ProductKeyBatch batchDto = new ProductKeyBatch();
-        batchDto.setId(batch.getId());
-        batchDto.setQuantity(batch.getQuantity());
-        batchDto.setStatusId(batch.getStatusId());
-        batchDto.setOrganizationId(batch.getOrganizationId());
-        batchDto.setCreatedClientId(batch.getCreatedClientId());
-        batchDto.setCreatedAccountId(batch.getCreatedAccountId());
-        batchDto.setCreatedDateTime(batch.getCreatedDateTime());
-        batchDto.setProductKeyTypeIds(batch.getProductKeyTypeIds());
-        return batchDto;
+        return batch;
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<ProductKeyBatch> getAllForCurrentOrg() {
+        int organizationId = 1;
+        return productKeyDomain.getAllProductKeyBatchByOrgId(organizationId);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ProductKeyBatch batchCreateProductKeys(@Valid @RequestBody ProductKeyBatchRequest request) {
+    public ProductKeyBatch create(@Valid @RequestBody ProductKeyBatchRequest request) {
         int quantity = request.getQuantity();
         List<String> productKeyTypeCodes = request.getProductKeyTypeCodes();
         Integer productBaseId = request.getProductBaseId();
@@ -104,7 +96,7 @@ public class ProductKeyBatchController {
         }
 
         ProductKeyBatchObject newBatchObj = dataAPIClient.post(
-                "productkey/batch/create",
+                "productkeybatch",
                 requestObject,
                 ProductKeyBatchObject.class);
 

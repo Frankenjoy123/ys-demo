@@ -63,7 +63,7 @@ public class ProductBaseDaoImpl implements ProductBaseDao {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(ProductBaseModel.class);
         if (eqFilter != null && !eqFilter.isEmpty()) {
             eqFilter.forEach((k, v) -> {
-                if (!StringUtils.isEmpty(k) && v != null) {
+                if (!StringUtils.isEmpty(k)) {
                     c.add(Restrictions.eq(k, v));
                 }
             });

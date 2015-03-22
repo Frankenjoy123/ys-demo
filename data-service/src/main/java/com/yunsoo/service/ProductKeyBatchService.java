@@ -12,9 +12,11 @@ import java.util.List;
  */
 public interface ProductKeyBatchService {
 
-    public ProductKeyBatch getById(int batchId);
+    public ProductKeyBatch getById(Long batchId);
 
-    public List<List<String>> getProductKeysByBatchId(int batchId);
+    public List<ProductKeyBatch> getByFilterPaged(Integer organizationId, int pageIndex, int pageSize);
+
+    public List<List<String>> getProductKeysByBatchId(Long batchId);
 
     public List<List<String>> getProductKeysByAddress(String address);
 
