@@ -9,4 +9,5 @@ import java.util.List;
  */
 public interface PermissionService {
     public List<Permission> getPermissions();
+    public Permission getPermission(String resource, String action);
 }
