@@ -13,7 +13,7 @@ import java.util.Comparator;
 public class ScanRecord implements Comparator<ScanRecord> {
 
     private String productKey;
-    private int baseProductId;
+    private long baseProductId;
     private int clientId;
     private String deviceId;
     private Long userId;
@@ -28,11 +28,11 @@ public class ScanRecord implements Comparator<ScanRecord> {
         this.productKey = productKey;
     }
 
-    public int getBaseProductId() {
+    public long getBaseProductId() {
         return baseProductId;
     }
 
-    public void setBaseProductId(int baseProductId) {
+    public void setBaseProductId(long baseProductId) {
         this.baseProductId = baseProductId;
     }
 

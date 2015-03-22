@@ -1,5 +1,6 @@
 package com.yunsoo.dataapi.controller;
 
+import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.dataapi.dto.ProductDto;
@@ -29,33 +30,42 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
-    public ProductDto getByKey(@PathVariable(value = "key") String key) {
+    public ProductObject getByKey(@PathVariable(value = "key") String key) {
         Product product = productService.getByKey(key);
         if (product == null) {
             throw new NotFoundException("Product");
         }
-        ProductDto productDto = new ProductDto();
-        productDto.setProductKey(product.getProductKey());
-        productDto.setProductBaseId(product.getProductBaseId());
-        productDto.setProductStatusId(product.getProductStatusId());
-        productDto.setManufacturingDateTime((product.getManufacturingDateTime()));
-        productDto.setCreatedDateTime(product.getCreatedDateTime());
-        return productDto;
+        return convertToProductObject(product);
     }
 
-    @RequestMapping(value = "/batchcreate/{productbaseid}", method = RequestMethod.POST)
-    public int create(@PathVariable(value = "productbaseid") int productBaseId, @RequestBody List<String> productKeyList) {
-        if (productBaseId > 0 || productKeyList == null || productKeyList.isEmpty()) {
-            throw new BadRequestException();
-        }
-        //productService.batchCreate(productBaseId, productKeyList);
+//    @RequestMapping(value = "/batchcreate/{productbaseid}", method = RequestMethod.POST)
+//    public int create(@PathVariable(value = "productbaseid") long productBaseId, @RequestBody List<String> productKeyList) {
+//        if (productBaseId > 0 || productKeyList == null || productKeyList.isEmpty()) {
+//            throw new BadRequestException();
+//        }
+//        //productService.batchCreate(productBaseId, productKeyList);
+//
+//        return productKeyList.size();
+//    }
 
-        return productKeyList.size();
+    @RequestMapping(value = "/{key}", method = RequestMethod.PATCH)
+    public void patchUpdate(@PathVariable(value = "key") String key, @RequestBody ProductObject productObject) {
+        Product product = new Product();
+        product.setProductKey(key);
+        product.setProductStatusId(productObject.getProductStatusId());
+        product.setManufacturingDateTime(productObject.getManufacturingDateTime());
+        productService.patchUpdate(product);
     }
 
-    @RequestMapping(value = "/{key}/active", method = RequestMethod.POST)
-    public void active(@PathVariable(value = "key") String key) {
-        //change to update
+
+    private ProductObject convertToProductObject(Product product) {
+        ProductObject object = new ProductObject();
+        object.setProductKey(product.getProductKey());
+        object.setProductBaseId(product.getProductBaseId());
+        object.setProductStatusId(product.getProductStatusId());
+        object.setManufacturingDateTime((product.getManufacturingDateTime()));
+        object.setCreatedDateTime(product.getCreatedDateTime());
+        return object;
     }
 
 }

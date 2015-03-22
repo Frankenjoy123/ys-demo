@@ -10,7 +10,7 @@ import com.yunsoo.dbmodel.ProductModel;
 import com.yunsoo.service.ProductKeyBatchService;
 import com.yunsoo.service.contract.Product;
 import com.yunsoo.service.contract.ProductKeyBatch;
-import com.yunsoo.util.AmazonYamlSetting;
+import com.yunsoo.config.AmazonSetting;
 import com.yunsoo.util.KeyGenerator;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -37,17 +38,40 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     private S3ItemDao s3ItemDao;
 
     @Autowired
-    private AmazonYamlSetting amazonYamlSetting;
+    private AmazonSetting amazonSetting;
 
 
     @Override
-    public ProductKeyBatch getById(int batchId) {
-        ProductKeyBatchModel model = productkeyBatchDao.getById(batchId);
+    public ProductKeyBatch getById(Long id) {
+        ProductKeyBatchModel model = productkeyBatchDao.getById(id);
         return model == null ? null : ProductKeyBatch.fromModel(model);
     }
 
     @Override
-    public List<List<String>> getProductKeysByBatchId(int batchId) {
+    public List<ProductKeyBatch> getByOrganizationIdPaged(Integer organizationId, int pageIndex, int pageSize) {
+        Map<String, Object> eqFilter = new HashMap<>();
+        if (organizationId != null) {
+            eqFilter.put("organizationId", organizationId);
+        }
+        return productkeyBatchDao.getByFilterPaged(eqFilter, pageIndex, pageSize).stream()
+                .map(ProductKeyBatch::fromModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductKeyBatch> getByFilterPaged(Integer organizationId, Long productBaseId, int pageIndex, int pageSize) {
+        Map<String, Object> eqFilter = new HashMap<>();
+        if (organizationId != null) {
+            eqFilter.put("organizationId", organizationId);
+        }
+        eqFilter.put("productBaseId", productBaseId); //productBaseId can be null
+        return productkeyBatchDao.getByFilterPaged(eqFilter, pageIndex, pageSize).stream()
+                .map(ProductKeyBatch::fromModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<List<String>> getProductKeysByBatchId(Long batchId) {
         ProductKeyBatch keyBatch = this.getById(batchId);
         if (keyBatch == null) {
             return null;
@@ -78,7 +102,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         List<List<String>> keyList = generateProductKeys(batch);
 
         //save batch to get the id
-        batch.setId(0); //set to 0 for creating new item
+        batch.setId(0L); //set to 0 for creating new item
         if (batch.getCreatedDateTime() == null) batch.setCreatedDateTime(DateTime.now());
         ProductKeyBatch newBatch = saveProductKeyBatch(batch);
 
@@ -191,9 +215,9 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         model.setCreatedDateTime(DateTimeUtils.toString(batch.getCreatedDateTime()));
         model.setProductKeyTypeIds(batch.getProductKeyTypeIds());
         model.setProductKeys(keyList);
-        String bucketName = amazonYamlSetting.getS3_basebucket(); // YunsooConfig.getBaseBucket();
-        String id = Integer.toString(batch.getId()) + "_" + UUID.randomUUID().toString();
-        String key = String.join("/", amazonYamlSetting.getS3_product_key_batch_path(), id);
+        String bucketName = amazonSetting.getS3_basebucket(); // YunsooConfig.getBaseBucket();
+        String id = Long.toString(batch.getId()) + "_" + UUID.randomUUID().toString();
+        String key = String.join("/", amazonSetting.getS3_product_key_batch_path(), id);
         s3ItemDao.putItem(bucketName, key, model);
         return formatAddress(bucketName, key);
     }

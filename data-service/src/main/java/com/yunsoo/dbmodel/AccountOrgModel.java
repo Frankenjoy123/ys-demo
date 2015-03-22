@@ -13,41 +13,44 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @DynamicUpdate
 public class AccountOrgModel {
+    private Long id;
+    private Integer status;
+    private AccountModel account;
+    private OrganizationModel org;
+    private String employeeId;
+    private Long roleId;
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private long id;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     @Column(name = "status")
-    private Integer status;
-
-    @Column(name = "account_id")
-    private long accountId;
-
-    @Column(name = "org_id")
-    private long orgId;
-
-    @Column(name = "employee_id", nullable = true)
-    private String employeeId;
-
-    @Column(name = "role_id", nullable = true)
-    private long roleId;
-
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
-
     public Integer getStatus() { return status; }
     public void setStatus(Integer status) { this.status = status; }
 
-    public long getAccount() { return accountId; }
-    public void setAccount(long accountId) { this.accountId = accountId; }
-
-    public long getOrg() { return orgId; }
-    public void setOrg(long orgId) { this.orgId = orgId; }
-
+    @Column(name = "employee_id", nullable = true)
     public String getEmployeeId() { return employeeId; }
     public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
 
-    public long getRole() { return roleId; }
-    public void setRole(long roleId) { this.roleId = roleId; }
+    @Column(name = "role_id", nullable = true)
+    public Long getRole() { return roleId; }
+    public void setRole(Long roleId) { this.roleId = roleId; }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    public AccountModel getAccount() { return account; }
+    public void setAccount(AccountModel account) { this.account = account; }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "org_id")
+    public OrganizationModel getOrg() {
+        return org;
+    }
+    public void setOrg(OrganizationModel org) {
+        this.org = org;
+    }
+
+
+
 }

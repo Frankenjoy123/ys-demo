@@ -24,9 +24,9 @@
                         <label>品名：</label>
                         <select name="productType"
                                 class="form-control inline"
-                                ng-model="newData.productTypeId">
-                            <option ng-repeat="item in creationPanel.productBases" value="{{item.id}}">
-                                {{item.name}}
+                                ng-model="newData.productBaseId">
+                            <option ng-repeat="pb in creationPanel.productBases" value="{{pb.id}}">
+                                {{pb.name}}
                             </option>
                         </select>
 
@@ -38,14 +38,12 @@
                     </div>
                     <div class="form-group col-xs-4">
                         <label>产品码类型：</label>
-                        <div class="checkbox inline" ng-repeat="type in creationPanel.keyTypes">
+
+                        <div class="checkbox inline" ng-repeat="t in creationPanel.keyTypes">
                             <label>
-                                <input type="checkbox" class="simple"
-                                       name="keyType[]"
-                                       value="{{type.value}}"
-                                       ng-checked="newData.keyTypeIds.indexOf(type.value) > -1"
-                                       ng-click="toggleKeyTypeOption(type.value)"/>
-                                {{type.name}}
+                                <input type="checkbox" class="simple disabled" disabled="disabled"
+                                       value="{{t.code}}"/>
+                                {{t.name}}
                             </label>
                         </div>
                     </div>
@@ -53,7 +51,7 @@
             </div>
             <!-- /.box-body -->
             <div class="box-footer">
-                <button type="submit" class="btn btn-primary" ng-click="create()">创建</button>
+                <button type="submit" class="btn btn-primary" ng-click="creationPanel.create()">创建</button>
             </div>
 
         </form>
@@ -63,38 +61,31 @@
 
     <div class="box-group" id="results">
         <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
-        <div class="panel box box-primary" ng-repeat="item in results track by $id(item)">
+        <div class="panel box box-primary" ng-repeat="batch in productKeyBatches track by $id(batch)">
             <!--track by $index-->
             <div class="box-header">
                 <h4 class="box-title">
-                    <a data-toggle="collapse" href="#collapse{{item.index}}">
-                        {{item.productTypeName}}&nbsp;
-                        <span ng-show="item.active" style="color:#45e40f"><i class="fa fa-fw fa-check"></i>已激活</span>
+                    <a data-toggle="collapse" href="#collapse{{batch.productBase.id}}">
+                        {{batch.productBase.name}}&nbsp;
                     </a>
                 </h4>
-
-                <div style="width:100%; text-align:right; padding:5px 5px 0px 0px">
-                    <button class="btn btn-primary btn-sm" ng-click="active(item.index)" ng-disabled="item.active">
-                        批量激活
-                    </button>
-                </div>
             </div>
-            <div id="collapse{{item.index}}" class="panel-collapse collapse in">
+            <div id="collapse{{batch.productBase.id}}" class="panel-collapse collapse in">
                 <div class="box-body">
                     <table class="table table-hover">
                         <tr>
                             <th>ID</th>
-                            <th>产品名称</th>
-                            <th ng-repeat="keyTypeId in item.productKeyTypeIds">
-                                {{getTypeName(keyTypeId)}}
-                            </th>
+                            <th>数量</th>
+                            <th>产品码类型</th>
                             <th>创建时间</th>
                         </tr>
-                        <tr ng-repeat="product in item.products">
-                            <td>{{product.productId}}</td>
-                            <td>{{item.productTypeName}}</td>
-                            <td ng-repeat="key in product.keys">http://io1s.com/{{key}}</td>
-                            <td>{{getDateString(item.createDateTime)}}</td>
+                        <tr ng-repeat="b in batch.batches">
+                            <td>{{b.id}}</td>
+                            <td>{{b.quantity}}</td>
+                            <td>
+
+                                {{b.productKeyTypeIds}}</td>
+                            <td>{{getDateString(b.createdDateTime)}}</td>
                         </tr>
                     </table>
                 </div>

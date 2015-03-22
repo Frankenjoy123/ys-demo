@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNull;
 @RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration
 //@ComponentScan
-@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
+@ContextConfiguration(locations = {"classpath:applicationContext.xml.bc"})
 //@SpringApplicationConfiguration(classes = ProductCategoryServiceImpl.class)
 public class ProductCategoryServiceTest {
 

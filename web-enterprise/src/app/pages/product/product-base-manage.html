@@ -16,7 +16,7 @@
         <div class="panel box box-primary">
             <div class="box-header">
                 <h4 class="box-title">
-                    当前产品列表
+                    产品列表
                 </h4>
             </div>
             <div class="panel-collapse collapse in">
@@ -26,12 +26,14 @@
                             <th>ID</th>
                             <th>名称</th>
                             <th>品类</th>
+                            <th>条码</th>
                             <th>创建时间</th>
                         </tr>
                         <tr ng-repeat="pb in productBases">
                             <td>{{pb.id}}</td>
                             <td>{{pb.name}}</td>
                             <td>TODO</td>
+                            <td>{{pb.barcode}}</td>
                             <td>{{getDateString(pb.createdDateTime)}}</td>
                         </tr>
                     </table>

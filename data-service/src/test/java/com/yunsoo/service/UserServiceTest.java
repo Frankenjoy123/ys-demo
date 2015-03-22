@@ -10,8 +10,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,7 +19,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
+@ContextConfiguration(locations = {"classpath:applicationContext.xml.bc"})
 public class UserServiceTest {
 
     @Autowired
@@ -31,7 +29,7 @@ public class UserServiceTest {
 
     @Before
     public void setUp() throws Exception {
-//        applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+//        applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml.bc");
 //        applicationContext = SpringDaoUtil.getApplicationContext();
 //        userService = (UserService) applicationContext
 //                .getBean("userService");

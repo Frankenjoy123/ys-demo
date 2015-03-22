@@ -35,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
         if (productModel == null || productModel.getProductBaseId() == null) {
             return null;
         }
-        int productBaseId = productModel.getProductBaseId();
+        long productBaseId = productModel.getProductBaseId();
         int productStatusId = productModel.getProductStatusId() == null ? 0 : productModel.getProductStatusId();
 
         Product product = new Product();
@@ -53,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
         Assert.notNull(productTemplate, "productTemplate must not be null");
         Assert.notEmpty(productKeyList, "productKeyList must not be empty");
 
-        int productBaseId = productTemplate.getProductBaseId();
+        long productBaseId = productTemplate.getProductBaseId();
         int statusId = productTemplate.getProductStatusId();
         DateTime manufacturingDateTime = productTemplate.getManufacturingDateTime();
         DateTime createdDateTime = productTemplate.getCreatedDateTime();
@@ -109,7 +109,7 @@ public class ProductServiceImpl implements ProductService {
         ProductModel productModel = productDao.getByKey(productKey);
         if (productModel == null) throw new ServiceException(this.getClass(), "Product not found");
 
-        if (statusId > 0) productModel.setProductStatusId(statusId);
+        if (statusId >= 0) productModel.setProductStatusId(statusId);
         if (manufacturingDateTime != null) productModel.setManufacturingDateTime(manufacturingDateTime);
 
         productDao.save(productModel);

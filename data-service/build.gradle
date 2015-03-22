@@ -38,8 +38,9 @@ dependencies {
     compile 'org.hibernate:hibernate-ehcache:4.3.5.Final'
     //compile("joda-time:joda-time:2.4") It's already included in common.
     compile("org.jadira.usertype:usertype.jodatime:2.0.1")
-    compile 'commons-pool:commons-pool:1.4'
-    compile 'commons-dbcp:commons-dbcp:1.4'
+    compile("org.apache.commons:commons-dbcp2:2.0")
+//    compile 'commons-pool:commons-pool:1.4'
+//    compile 'commons-dbcp:commons-dbcp:1.4'
     compile 'org.slf4j:slf4j-api:1.7.9'
     compile 'com.amazonaws:aws-java-sdk-dynamodb:1.9.14'
     compile 'com.amazonaws:aws-java-sdk-elasticache:1.9.14'

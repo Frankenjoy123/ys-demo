@@ -48,7 +48,7 @@ public class ProductDomain {
         product.setCreatedDateTime(productObject.getCreatedDateTime().toString());
 
         //fill with ProductBase information.
-        int productBaseId = productObject.getProductBaseId();
+        long productBaseId = productObject.getProductBaseId();
         ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         product.setProductBaseId(productBaseId);
         product.setBarcode(productBaseObject.getBarcode());

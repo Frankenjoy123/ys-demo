@@ -10,11 +10,6 @@
                     }).error(function (data, state) {
                         fnSuccess();
                     });
-                return this;
-            },
-            uploadPackageFile: function (file, fnSuccess, fnError) {
-                $http.post("api/package/file", file).success(function(data){}).error(function(data, state){});
-                return this;
             }
         };
     }]);
@@ -23,13 +18,22 @@
 
         $scope.productKey = "";
 
+        $scope.bodyShow = 0;
+
         $scope.getDateString = function (value) {
             var date = new Date(value);
             return new DateTime(date).toString('yyyy-MM-dd HH:mm:ss');
         };
 
         $scope.productKeyClick = function () {
+
+            if ($scope.productKey == null || $scope.productKey == "") {
+                $scope.bodyShow = 0;
+                return;
+            }
+
             logisticsService.getInfo($scope.productKey, function (data) {
+                $scope.bodyShow = 1;
                 $scope.data = data;
             });
         }

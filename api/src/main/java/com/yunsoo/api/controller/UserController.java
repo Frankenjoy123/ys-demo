@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('YUNSOO_ADMIN')")
+//    @PreAuthorize("hasRole('YUNSOO_ADMIN')")
     public User getById(@PathVariable(value = "id") int id) throws NotFoundException {
         User user = dataAPIClient.get("user/id/{id}", User.class, id);
         if (user == null) throw new NotFoundException("User not found id=" + id);
@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/cellular/{cellular}", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#user, 'getUserById')")
+//    @PreAuthorize("hasPermission(#user, 'getUserById')")
 //    @PostFilter("hasPermission(filterObject, 'read') or hasPermission(filterObject, 'admin')")
     public User getByCellular(@PathVariable(value = "cellular") int cellular) throws NotFoundException {
         User user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
@@ -45,7 +45,7 @@ public class UserController {
 
 
     @RequestMapping(value = "/token/{devicecode}", method = RequestMethod.GET)
-    @PreAuthorize("hasAnyRole('COM_USER','YUNSOO_ADMIN')")
+//    @PreAuthorize("hasAnyRole('COM_USER','YUNSOO_ADMIN')")
 //    @PreAuthorize("hasPermission(#contact, 'admin')")
     public User getByCellular(@PathVariable(value = "devicecode") String deviceCode) throws NotFoundException {
         User user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);

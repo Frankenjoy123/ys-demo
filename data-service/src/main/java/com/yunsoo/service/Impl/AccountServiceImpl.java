@@ -30,8 +30,8 @@ public class AccountServiceImpl implements AccountService {
         return Account.FromModel(accountDao.get(id));
     }
     @Override
-    public Account get(String username) {
-        return Account.FromModel(accountDao.getByIdentifier(username));
+    public Account getByIdentifier(String identifier) {
+        return Account.FromModel(accountDao.getByIdentifier(identifier));
     }
     @Override
     public Account getByToken(String token) {

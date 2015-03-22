@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
+@ContextConfiguration(locations = {"classpath:applicationContext.xml.bc"})
 public class LogisticsCheckActionServiceTest {
 
     @Autowired
@@ -24,7 +24,7 @@ public class LogisticsCheckActionServiceTest {
 
     @Before
     public void setUp() throws Exception {
-//        applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+//        applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml.bc");
 //        applicationContext = SpringDaoUtil.getApplicationContext();
 //        userService = (UserService) applicationContext
 //                .getBean("userService");

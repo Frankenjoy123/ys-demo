@@ -5,7 +5,7 @@ import com.yunsoo.dataapi.dto.PackageDto;
 import com.yunsoo.service.ProductPackageService;
 import com.yunsoo.service.contract.PackageBoundContract;
 import com.yunsoo.service.contract.PackageContract;
-import com.yunsoo.common.data.object.PackageBoundObject;
+import com.yunsoo.dataapi.dto.PackageBoundDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,32 +40,24 @@ public class PackageController {
      * @return
      */
     @RequestMapping(value = "/bind", method = RequestMethod.POST)
-    public Boolean bind(@RequestBody PackageBoundObject data) {
+    public Boolean bind(@RequestBody PackageBoundDto data) {
 
-        PackageBoundContract contract = toServiceContract(data);
+        PackageBoundContract contract = data.toServiceContract();
         boolean succeeded = packageService.bind(contract);
         return succeeded;
     }
 
     @RequestMapping(value = "/batch/bind", method = RequestMethod.POST)
-    public Boolean batchBind(@RequestBody PackageBoundObject[] dataList) {
+    public Boolean batchBind(@RequestBody PackageBoundDto[] dataList) {
         boolean result = false;
         if (dataList != null && dataList.length > 0) {
             List<PackageBoundContract> contracts = new ArrayList<PackageBoundContract>();
-            for (PackageBoundObject dto : dataList) {
-                contracts.add(toServiceContract(dto));
+            for (PackageBoundDto dto : dataList) {
+                contracts.add(dto.toServiceContract());
             }
             result = packageService.batchBind(contracts.toArray(new PackageBoundContract[0]));
         }
         return result;
-    }
-
-    private PackageBoundContract toServiceContract(PackageBoundObject dto) {
-        PackageBoundContract contract = new PackageBoundContract();
-        contract.setKeys(dto.getKeys());
-        contract.setOperator(dto.getOperator());
-        contract.setPackageKey(dto.getPackageKey());
-        return contract;
     }
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
@@ -94,9 +86,10 @@ public class PackageController {
             throw new IllegalArgumentException("数据为空");
         }
         List<String> allKeys = new ArrayList<String>();
-        for (String key : keys) {
+        for(String key : keys)
+        {
             List<String> itemKeys = packageService.loadAllKeys(key);
-            allKeys.addAll(allKeys.size(), itemKeys);
+            allKeys.addAll(allKeys.size(),itemKeys);
         }
         return allKeys;
     }

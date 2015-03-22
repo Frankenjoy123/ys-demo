@@ -1,22 +1,9 @@
-server:
-    port: 8080
 
 spring:
     profiles.active: default
 ---
 spring:
     profiles: default
-management:
-    port: 8081
-    address: 127.0.0.1
-
-yunsoo:
-    debug: true
-
-AmazonSettings:
-    s3_basebucket:  yunsudev
-    s3_userbaseurl:  photo/users
-    s3_product_key_batch_path: product_key_batches
 
 dataServiceSetting:
     message_created_status_id:  1
@@ -24,6 +11,11 @@ dataServiceSetting:
     message_delete_status_id: 4
     user_created_status_id: 2
     user_delete_status_id: 5
+
+AmazonSettings:
+    s3_basebucket:  yunsudev
+    s3_userbaseurl:  photo/users
+    s3_product_key_batch_path: product_key_batches
 
 jdbc:
     driver_class: com.mysql.jdbc.Driver
@@ -38,17 +30,10 @@ hibernate:
     show_sql: true
     hbm2ddl_auto: update
     package_to_scan: com.yunsoo.dbmodel
+
 ---
 spring:
     profiles: qa
-management:
-    port: 8081
-    address: 127.0.0.1
-
-AmazonSettings:
-    s3_basebucket:  yunsudev
-    s3_userbaseurl:  photo/users
-    s3_product_key_batch_path: product_key_batches
 
 dataServiceSetting:
     message_created_status_id:  1
@@ -57,16 +42,15 @@ dataServiceSetting:
     user_created_status_id: 2
     user_delete_status_id: 5
 
-#jdbc:
-#    driver_class: com.mysql.jdbc.Driver
-#    url: jdbc:mysql://yunsootestdb.czevfdgeevhl.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
-#    username: root
-#    password: admin201512
-#    pool_initialsize: 1
-#    pool_maxidle: 100
-#
-#hibernate:
-#    dialect: org.hibernate.dialect.MySQL5Dialect
-#    show_sql: false
-#    hbm2ddl_auto: update
-#    package_to_scan: com.yunsoo.dbmodel
+AmazonSettings:
+    s3_basebucket:  yunsudev
+    s3_userbaseurl:  photo/users
+    s3_product_key_batch_path: product_key_batches
+
+jdbc:
+    driver_class: com.mysql.jdbc.Driver
+    url: jdbc:mysql://yunsootestdb.czevfdgeevhl.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: admin201512
+    pool_initialsize: 1
+    pool_maxidle: 100

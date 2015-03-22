@@ -35,7 +35,7 @@
       })
       .when('/packageManage', {
         templateUrl: "pages/package/packageManage.html",
-          controller: "packageCtrl"
+        controller: "packageCtrl"
       })
       .when('/logistics', {
         templateUrl: "pages/logistics/logistics.html",
@@ -46,7 +46,7 @@
       });
   }]);
 
-  app.controller("rootCtrl", ["$scope", "$timeout", function ($scope, $timeout) {
+  app.controller("rootCtrl", ["$scope", function ($scope) {
     $scope.user = {
       name: "Jane Doe",
       pic: "img/avatar3.png",
@@ -54,16 +54,5 @@
       title: "Web Developer",
       since: "Nov. 2012"
     };
-    $scope.alertMsgs = [];
-    $scope.addAlertMsg = function (msg, level, autoHide) {
-      $scope.alertMsgs.push({
-        level: level,
-          message: msg
-      });
-      var index = $scope.alertMsgs.length - 1;
-      $timeout(function() {
-        $scope.alertMsgs.slice(index, 1);
-      }, 5000);
-    }
   }]);
 })();

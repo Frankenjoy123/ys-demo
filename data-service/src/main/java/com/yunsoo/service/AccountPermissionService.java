@@ -8,5 +8,5 @@ import java.util.List;
  * @author KB
  */
 public interface AccountPermissionService {
-    public AccountPermission getPermissions(long accountId, long orgId);
+    public AccountPermission getPermissions(long orgId, long accountId);
 }

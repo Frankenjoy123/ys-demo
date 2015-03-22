@@ -8,15 +8,14 @@ import com.yunsoo.dbmodel.ProductPackageModel;
 import com.yunsoo.service.ProductPackageService;
 import com.yunsoo.service.contract.PackageBoundContract;
 import com.yunsoo.service.contract.PackageContract;
+
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Created by: Lijian Created on: 2015/2/1 Descriptions:
@@ -87,11 +86,7 @@ public class ProductPackageServiceImpl implements ProductPackageService {
         if (packageBoundContract.getPackageKey() == null || subKeys == null || subKeys.size() == 0) {
             throw new IllegalArgumentException("非法数据");
         }
-        if (subKeys == null || subKeys.isEmpty()) {
-            model.setChildProductKeySet(null);
-        } else {
-            model.setChildProductKeySet(new HashSet<>(subKeys));
-        }
+        model.setChildProductKeySet(new HashSet<>(subKeys));
         model.setParentProductKey(null);//currently not know
         model.setCreatedDateTime(now);
         model.setOperator(packageBoundContract.getOperator());
@@ -143,12 +138,7 @@ public class ProductPackageServiceImpl implements ProductPackageService {
         ProductPackageModel model = new ProductPackageModel();
         model.setProductKey(packageBoundContract.getPackageKey());
         List<String> subKeys = packageBoundContract.getKeys();
-        if (subKeys == null || subKeys.isEmpty()) {
-            model.setChildProductKeySet(null);
-        } else {
-            model.setChildProductKeySet(new HashSet<>(subKeys));
-        }
-
+        model.setChildProductKeySet(new HashSet<>(subKeys));
         model.setParentProductKey(null);//currently not know
         model.setCreatedDateTime(now);
         model.setOperator(packageBoundContract.getOperator());
