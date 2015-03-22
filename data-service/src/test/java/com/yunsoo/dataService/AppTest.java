@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@Configuration
 //@EnableAutoConfiguration
-//@ContextConfiguration(locations={"classpath:**/applicationContext.xml"})
+//@ContextConfiguration(locations={"classpath:**/applicationContext.xml.bc"})
 public class AppTest
         extends TestCase {
 

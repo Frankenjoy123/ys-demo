@@ -1,5 +1,7 @@
 package com.yunsoo.dataapi;
 
+import com.yunsoo.config.DBSetting;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.*;
@@ -12,6 +14,10 @@ import java.util.Arrays;
 @EnableAutoConfiguration
 @Configuration
 public class Application {
+
+
+    @Autowired
+    public DBSetting dbSetting;
 
     public static void main(String[] args) {
         ApplicationContext context = SpringApplication.run(Application.class, args);

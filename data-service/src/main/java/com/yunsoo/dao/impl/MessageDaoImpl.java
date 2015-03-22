@@ -3,7 +3,7 @@ package com.yunsoo.dao.impl;
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.MessageDao;
 import com.yunsoo.dbmodel.MessageModel;
-import com.yunsoo.util.DataServiceYamlSetting;
+import com.yunsoo.config.DataServiceSetting;
 import com.yunsoo.util.SpringBeanUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -29,7 +29,7 @@ public class MessageDaoImpl implements MessageDao {
     private SessionFactory sessionFactory;
 
     @Autowired
-    private DataServiceYamlSetting dataServiceYamlSetting;
+    private DataServiceSetting dataServiceSetting;
 
     @Override
     public MessageModel get(long id) {
@@ -41,7 +41,7 @@ public class MessageDaoImpl implements MessageDao {
     public long save(MessageModel messageModel) {
 //       Session session =  sessionFactory.openSession();
 //       long result = (long)sessionFactory.getCurrentSession().save(messageModelForPatch);
-        messageModel.setStatus(dataServiceYamlSetting.getMessage_created_status_id());//always as newly created for newly created newMessage.
+        messageModel.setStatus(dataServiceSetting.getMessage_created_status_id());//always as newly created for newly created newMessage.
         sessionFactory.getCurrentSession().save(messageModel);
         return messageModel.getId();
     }
@@ -82,7 +82,7 @@ public class MessageDaoImpl implements MessageDao {
     @Override
     public DaoStatus delete(Long id) {
         //find in config file for deleted status
-        return updateStatus(id, dataServiceYamlSetting.getMessage_delete_status_id());
+        return updateStatus(id, dataServiceSetting.getMessage_delete_status_id());
 //        MyObject myObject = (MyObject) sessionFactory.getCurrentSession().load(MyObject.class,id);
 //        sessionFactory.getCurrentSession().deletePermanantly(myObject);
     }

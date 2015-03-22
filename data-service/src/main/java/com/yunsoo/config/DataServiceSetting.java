@@ -1,4 +1,4 @@
-package com.yunsoo.util;
+package com.yunsoo.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "dataServiceSetting")
-public class DataServiceYamlSetting {
+public class DataServiceSetting {
     //message and user status ID
     private Integer message_created_status_id;
     private Integer message_approved_status_id;

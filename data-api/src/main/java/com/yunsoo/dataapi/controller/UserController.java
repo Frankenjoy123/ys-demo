@@ -10,7 +10,7 @@ import com.yunsoo.dataapi.factory.ResultFactory;
 import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.UserService;
 import com.yunsoo.service.contract.User;
-import com.yunsoo.util.AmazonYamlSetting;
+import com.yunsoo.config.AmazonSetting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ public class UserController {
     @Autowired
     private final UserService userService;
     @Autowired
-    private AmazonYamlSetting amazonYamlSetting;
+    private AmazonSetting amazonSetting;
 
     @Autowired
     UserController(UserService userService) {
@@ -67,7 +67,7 @@ public class UserController {
         if (key == null || key.isEmpty()) throw new BadRequestException("Key不能为空！");
         S3Object thumbnailFile;
         try {
-            thumbnailFile = userService.getUserThumbnail(amazonYamlSetting.getS3_basebucket(), amazonYamlSetting.getS3_userbaseurl() + "/" + id + "/" + key);
+            thumbnailFile = userService.getUserThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_userbaseurl() + "/" + id + "/" + key);
             if (thumbnailFile == null) throw new NotFoundException("找不到图片!");
         } catch (IOException ex) {
             //to-do: log

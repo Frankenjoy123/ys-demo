@@ -1,4 +1,4 @@
-package com.yunsoo.dataapi.config;
+package com.yunsoo.config;
 
 /**
  * Created by:   Zhe
@@ -23,29 +23,32 @@ import java.util.Properties;
 @PropertySource("classpath:jdbc.properties")
 public class HibernateConfig {
 
-    private static final String PROPERTY_NAME_DAL_CLASSES_PACKAGE = "com.yunsoo.dbmodel";
-    private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "org.hibernate.dialect.MySQLDialect";
-    private static final String PROPERTY_NAME_HIBERNATE_SHOWSQL = "true";
-    @Resource
-    private Environment environment;
+//    private static final String PROPERTY_NAME_DAL_CLASSES_PACKAGE = "com.yunsoo.dbmodel";
+//    private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "org.hibernate.dialect.MySQLDialect";
+//    private static final String PROPERTY_NAME_HIBERNATE_SHOWSQL = "true";
+//    @Resource
+//    private Environment environment;
 
     @Autowired
     DataSource dataSource;
+
+    @Autowired
+    HibernateSetting hibernateSetting;
 
     // Bean which defines the FactoryBean for the SessionBean
     @Bean
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean lsfb = new LocalSessionFactoryBean();
 
-        lsfb.setPackagesToScan(PROPERTY_NAME_DAL_CLASSES_PACKAGE);
-        //System.out.println("PROPERTY_NAME_DAL_CLASSES_PACKAGE: " + PROPERTY_NAME_DAL_CLASSES_PACKAGE);
+        lsfb.setPackagesToScan(hibernateSetting.getPackage_to_scan());
+//        System.out.println("PROPERTY_NAME_DAL_CLASSES_PACKAGE: " + hibernateSetting.getPackage_to_scan());
         Properties hibernateProperties = new Properties();
-        hibernateProperties.put("dialect", PROPERTY_NAME_HIBERNATE_DIALECT);
-        hibernateProperties.put("show_sql", PROPERTY_NAME_HIBERNATE_SHOWSQL);
+        hibernateProperties.put("dialect", hibernateSetting.getDialect());
+        hibernateProperties.put("show_sql", hibernateSetting.getShow_sql());
+        hibernateProperties.put("hibernate.hbm2ddl.auto", hibernateSetting.getHbm2ddl_auto());
         lsfb.setHibernateProperties(hibernateProperties);
         lsfb.setDataSource(dataSource);
 
-//        lsfb.setConfigLocation("classpath:hibernate.cfg.xml.bc");
         return lsfb;
     }
 

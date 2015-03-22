@@ -1,4 +1,4 @@
-package com.yunsoo.dataapi.config;
+package com.yunsoo.config;
 
 /**
  * Created by:   Zhe
@@ -7,6 +7,7 @@ package com.yunsoo.dataapi.config;
  */
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbcp2.BasicDataSourceFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -24,27 +25,29 @@ import java.util.Properties;
 @PropertySource("classpath:jdbc.properties")
 public class DALConfig {
 
-    private static final String PROPERTY_NAME_DATABASE_DRIVER = "jdbc.driver_class";
-    private static final String PROPERTY_NAME_DATABASE_PASSWORD = "jdbc.password";
-    private static final String PROPERTY_NAME_DATABASE_URL = "jdbc.url";
-    private static final String PROPERTY_NAME_DATABASE_USERNAME = "jdbc.username";
-    private static final String PROPERTY_NAME_POOL_INITIAL_SIZE = "pool.initialsize";
-    private static final String PROPERTY_NAME_POOL_MAX_IDLE = "pool.maxidle";
+//    private static final String PROPERTY_NAME_DATABASE_DRIVER = "jdbc.driver_class";
+//    private static final String PROPERTY_NAME_DATABASE_PASSWORD = "jdbc.password";
+//    private static final String PROPERTY_NAME_DATABASE_URL = "jdbc.url";
+//    private static final String PROPERTY_NAME_DATABASE_USERNAME = "jdbc.username";
+//    private static final String PROPERTY_NAME_POOL_INITIAL_SIZE = "pool.initialsize";
+//    private static final String PROPERTY_NAME_POOL_MAX_IDLE = "pool.maxidle";
 
     // Needed to access property file
-    @Resource
-    private Environment environment;
+//    @Resource
+//    private Environment environment;
+    @Autowired
+    private DBSetting dbSetting;
 
     // The bean which defines the BasicDataSource (DBCP)
     @Bean
     public BasicDataSource dataSource() throws Exception {
         Properties props = new Properties();
-        props.put("driverClassName", environment.getProperty(PROPERTY_NAME_DATABASE_DRIVER));
-        props.put("url", environment.getProperty(PROPERTY_NAME_DATABASE_URL));
-        props.put("username", environment.getProperty(PROPERTY_NAME_DATABASE_USERNAME));
-        props.put("password", environment.getProperty(PROPERTY_NAME_DATABASE_PASSWORD));
-        props.put("initialSize", environment.getProperty(PROPERTY_NAME_POOL_INITIAL_SIZE));
-        props.put("maxIdle", environment.getProperty(PROPERTY_NAME_POOL_MAX_IDLE));
+        props.put("driverClassName", dbSetting.getDriver_class());
+        props.put("url", dbSetting.getUrl());
+        props.put("username", dbSetting.getUsername());
+        props.put("password", dbSetting.getPassword());
+        props.put("initialSize", dbSetting.getPool_initialsize());
+        props.put("maxIdle", dbSetting.getPool_maxidle());
         BasicDataSource bds = BasicDataSourceFactory.createDataSource(props);
         return bds;
     }

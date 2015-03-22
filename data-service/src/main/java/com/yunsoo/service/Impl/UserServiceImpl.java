@@ -4,7 +4,6 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
-import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.S3ItemDao;
 import com.yunsoo.dao.UserDao;
@@ -13,8 +12,8 @@ import com.yunsoo.model.ThumbnailFile;
 import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.UserService;
 import com.yunsoo.service.contract.User;
-import com.yunsoo.util.AmazonYamlSetting;
-import com.yunsoo.util.DataServiceYamlSetting;
+import com.yunsoo.config.DataServiceSetting;
+import com.yunsoo.config.AmazonSetting;
 import com.yunsoo.util.SpringBeanUtil;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,9 +39,9 @@ public class UserServiceImpl implements UserService {
     private S3ItemDao s3ItemDao;
 
     @Autowired
-    private DataServiceYamlSetting dataServiceYamlSetting;
+    private DataServiceSetting dataServiceSetting;
     @Autowired
-    private AmazonYamlSetting amazonYamlSetting;
+    private AmazonSetting amazonSetting;
 
 //    private String baseBucketName = YunsooConfig.getBaseBucket();
 //    private String userBaseURL = YunsooConfig.getUserBaseURL();
@@ -106,7 +104,7 @@ public class UserServiceImpl implements UserService {
         DateTime userCreatedTime = DateTime.now();
         String thumbnailKey = "thumb-" + Long.toString(userCreatedTime.getMillis());
         user.setThumbnail(thumbnailKey);
-        user.setStatusId(dataServiceYamlSetting.getUser_created_status_id()); //set newly created status
+        user.setStatusId(dataServiceSetting.getUser_created_status_id()); //set newly created status
         long userId = userDAO.save(User.ToModel(user));
 
         if (user.getThumbnailFile() != null) {
@@ -159,7 +157,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean delete(Long id) {
-        DaoStatus daoStatus = userDAO.delete(id, dataServiceYamlSetting.getMessage_delete_status_id());
+        DaoStatus daoStatus = userDAO.delete(id, dataServiceSetting.getMessage_delete_status_id());
         return daoStatus == DaoStatus.success ? true : false;
     }
 
@@ -191,8 +189,8 @@ public class UserServiceImpl implements UserService {
             objectMetadata.setContentType("image/gif");
         }
 
-        String key = amazonYamlSetting.getS3_userbaseurl() + "/" + userId + "/" + thumbnailKey;
-        s3ItemDao.putItem(amazonYamlSetting.getS3_basebucket(), key, inputStream, objectMetadata, CannedAccessControlList.BucketOwnerFullControl);
+        String key = amazonSetting.getS3_userbaseurl() + "/" + userId + "/" + thumbnailKey;
+        s3ItemDao.putItem(amazonSetting.getS3_basebucket(), key, inputStream, objectMetadata, CannedAccessControlList.BucketOwnerFullControl);
         //to-do: move the old thumb into history folder.
 
         return key;

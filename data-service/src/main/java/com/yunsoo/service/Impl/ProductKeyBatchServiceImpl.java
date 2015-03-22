@@ -10,7 +10,7 @@ import com.yunsoo.dbmodel.ProductModel;
 import com.yunsoo.service.ProductKeyBatchService;
 import com.yunsoo.service.contract.Product;
 import com.yunsoo.service.contract.ProductKeyBatch;
-import com.yunsoo.util.AmazonYamlSetting;
+import com.yunsoo.config.AmazonSetting;
 import com.yunsoo.util.KeyGenerator;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     private S3ItemDao s3ItemDao;
 
     @Autowired
-    private AmazonYamlSetting amazonYamlSetting;
+    private AmazonSetting amazonSetting;
 
 
     @Override
@@ -191,9 +191,9 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         model.setCreatedDateTime(DateTimeUtils.toString(batch.getCreatedDateTime()));
         model.setProductKeyTypeIds(batch.getProductKeyTypeIds());
         model.setProductKeys(keyList);
-        String bucketName = amazonYamlSetting.getS3_basebucket(); // YunsooConfig.getBaseBucket();
+        String bucketName = amazonSetting.getS3_basebucket(); // YunsooConfig.getBaseBucket();
         String id = Integer.toString(batch.getId()) + "_" + UUID.randomUUID().toString();
-        String key = String.join("/", amazonYamlSetting.getS3_product_key_batch_path(), id);
+        String key = String.join("/", amazonSetting.getS3_product_key_batch_path(), id);
         s3ItemDao.putItem(bucketName, key, model);
         return formatAddress(bucketName, key);
     }

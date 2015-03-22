@@ -1,4 +1,4 @@
-package com.yunsoo.util;
+package com.yunsoo.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "AmazonSettings")
-public class AmazonYamlSetting {
+public class AmazonSetting {
 
     private String s3_basebucket;
     private String s3_userbaseurl;
