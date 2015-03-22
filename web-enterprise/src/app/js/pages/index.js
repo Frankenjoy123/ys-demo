@@ -7,8 +7,7 @@
         "accountManage",
         "productKeyManage",
         "msg",
-        "logistics",
-        "package"
+        "logistics"
     ]);
 
     app.config(["$routeProvider", function ($routeProvider) {
@@ -29,8 +28,8 @@
                 templateUrl: "pages/empty.html"
             })
             .when('/packageManage', {
-                templateUrl: "pages/package/packageManage.html",
-                controller: "packageCtrl"
+                templateUrl: "pages/package/packageManage.html"
+
             })
             .when('/logistics', {
                 templateUrl: "pages/logistics/logistics.html",

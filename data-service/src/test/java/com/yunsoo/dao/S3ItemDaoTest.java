@@ -1,10 +1,11 @@
 package com.yunsoo.dao;
 
 import com.amazonaws.services.s3.model.Bucket;
+import com.yunsoo.util.AmazonYamlSetting;
 import com.yunsoo.util.SpringAppContextUtil;
-import com.yunsoo.util.YunsooConfig;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
@@ -17,6 +18,9 @@ import java.util.List;
 public class S3ItemDaoTest {
 
     private S3ItemDao s3ItemDao;
+
+    @Autowired
+    private AmazonYamlSetting amazonYamlSetting;
 
     @Before
     public void setUp() throws Exception {
@@ -37,7 +41,7 @@ public class S3ItemDaoTest {
 
     @Test
     public void test_putItem() throws Exception {
-        String bucketName = YunsooConfig.getBaseBucket();
+        String bucketName = amazonYamlSetting.getS3_basebucket(); // YunsooConfig.getBaseBucket();
         String key = "test_path/test_key1";
         String item = "test";
 

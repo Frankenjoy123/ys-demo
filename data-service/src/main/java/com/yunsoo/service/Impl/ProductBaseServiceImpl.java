@@ -1,8 +1,9 @@
 package com.yunsoo.service.Impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.ProductBaseDao;
 import com.yunsoo.dbmodel.ProductBaseModel;
 import com.yunsoo.service.contract.ProductBase;
@@ -11,7 +12,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.yunsoo.service.ProductBaseService;
 
@@ -19,7 +19,6 @@ import com.yunsoo.service.ProductBaseService;
 /**
  * @author Zhe Zhang
  */
-
 @Service("productBaseService")
 public class ProductBaseServiceImpl implements ProductBaseService {
 
@@ -28,44 +27,62 @@ public class ProductBaseServiceImpl implements ProductBaseService {
 
     @Override
     public ProductBase getById(long id) {
-        return ProductBase.FromModel(productBaseDao.getById(id));
+        return ProductBase.fromModel(productBaseDao.getById(id));
     }
 
     @Override
-    public void save(ProductBase productBaseModel) {
-        productBaseModel.setCreatedDateTime(DateTime.now()); //always set createddatetime.
-        productBaseDao.save(ProductBase.ToModel(productBaseModel));
+    public void save(ProductBase productBase) {
+        if (productBase.getCreatedDateTime() == null) {
+            productBase.setCreatedDateTime(DateTime.now()); //always set createdDateTime.
+        }
+        productBaseDao.save(ProductBase.toModel(productBase));
     }
 
     @Override
-    public void update(ProductBase productBaseModel) {
-        productBaseDao.update(ProductBase.ToModel((productBaseModel)));
+    public void update(ProductBase productBase) {
+        productBaseDao.update(ProductBase.toModel((productBase)));
+    }
+
+    @Override
+    public void patchUpdate(ProductBase productBase) {
+        productBaseDao.patchUpdate(this.getPatchModel(productBase));
     }
 
     @Override
     public void delete(ProductBase productBase) {
-        productBaseDao.deletePermanently(ProductBase.ToModel(productBase));
+        productBaseDao.delete(ProductBase.toModel(productBase));
     }
 
     @Override
-    public Boolean patchUpdate(ProductBase productBaseModel) {
-        return productBaseDao.patchUpdate(this.getPatchModel(productBaseModel)) == DaoStatus.success ? true : false;
+    public void delete(long id) {
+        ProductBaseModel model = new ProductBaseModel();
+        model.setId(id);
+        productBaseDao.delete(model);
     }
 
     @Override
-    public Boolean delete(long id) {
-        return productBaseDao.delete(id) == DaoStatus.success;
+    public void deactivate(long id) {
+
     }
 
     @Override
-    public List<ProductBase> getProductBaseByFilter(Integer manufacturerId, Integer categoryId) {
-        return ProductBase.FromModelList(productBaseDao.getMessagesByFilter(manufacturerId, categoryId));
+    public List<ProductBase> getByFilter(Integer manufacturerId, Integer categoryId, Boolean active) {
+        Map<String, Object> eqFilter = new HashMap<>();
+        if (manufacturerId != null) {
+            eqFilter.put("manufacturerId", manufacturerId);
+        }
+        if (categoryId != null) {
+            eqFilter.put("categoryId", categoryId);
+        }
+        if (active != null) {
+            eqFilter.put("active", active);
+        }
+        return ProductBase.fromModelList(productBaseDao.getByFilter(eqFilter));
     }
 
     @Override
-    @Transactional
-    public List<ProductBase> getAllProducts() {
-        return ProductBase.FromModelList(productBaseDao.getAllBaseProducts());
+    public List<ProductBase> getAll() {
+        return ProductBase.fromModelList(productBaseDao.getAll());
     }
 
     //Convert Dto to Model,just copy properties which is not null.

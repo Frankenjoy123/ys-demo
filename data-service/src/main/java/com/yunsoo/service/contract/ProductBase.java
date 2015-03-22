@@ -6,7 +6,9 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.dbmodel.ProductBaseModel;
 import org.joda.time.DateTime;
+import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,34 +19,38 @@ import java.util.stream.Collectors;
  */
 public class ProductBase {
 
-    private Long Id;
-    private Integer subCategoryId;
+    private Long id;
+    private Integer categoryId;
     private Integer manufacturerId;
     private String barcode;
     private String name;
     private String description;
     private String details;
-    private int shelfLife;
+    private Integer shelfLife;
     private String shelfLifeInterval;
+    private List<Integer> productKeyTypeIds;
+    private Boolean active;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
-    private Boolean active;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime modifiedDateTime;
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        this.Id = id;
+        this.id = id;
     }
 
-    public Integer getSubCategoryId() {
-        return subCategoryId;
+    public Integer getCategoryId() {
+        return categoryId;
     }
 
-    public void setSubCategoryId(Integer baseProductId) {
-        this.subCategoryId = baseProductId;
+    public void setCategoryId(Integer baseProductId) {
+        this.categoryId = baseProductId;
     }
 
     public void setManufacturerId(Integer manufacturerId) {
@@ -87,11 +93,11 @@ public class ProductBase {
         this.details = details;
     }
 
-    public int getShelfLife() {
+    public Integer getShelfLife() {
         return shelfLife;
     }
 
-    public void setShelfLife(int shelfLife) {
+    public void setShelfLife(Integer shelfLife) {
         this.shelfLife = shelfLife;
     }
 
@@ -101,6 +107,14 @@ public class ProductBase {
 
     public void setShelfLifeInterval(String shelfLifeInterval) {
         this.shelfLifeInterval = shelfLifeInterval;
+    }
+
+    public List<Integer> getProductKeyTypeIds() {
+        return productKeyTypeIds;
+    }
+
+    public void setProductKeyTypeIds(List<Integer> productKeyTypeIds) {
+        this.productKeyTypeIds = productKeyTypeIds;
     }
 
     public Boolean getActive() {
@@ -119,28 +133,44 @@ public class ProductBase {
         this.createdDateTime = createdDate;
     }
 
-    public static ProductBase FromModel(ProductBaseModel model) {
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
+    }
+
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
+    }
+
+    public static ProductBase fromModel(ProductBaseModel model) {
         if (model == null) return null;
         ProductBase productBase = new ProductBase();
         productBase.setId(model.getId());
-        productBase.setSubCategoryId(model.getCategoryId());
+        productBase.setCategoryId(model.getCategoryId());
         productBase.setManufacturerId(model.getManufacturerId());
         productBase.setName(model.getName());
         productBase.setDescription(model.getDescription());
-        productBase.setCreatedDateTime(model.getCreatedDateTime());
         productBase.setBarcode(model.getBarcode());
         productBase.setDetails(model.getDetails());
         productBase.setShelfLife(model.getShelfLife());
         productBase.setShelfLifeInterval(model.getShelfLifeInterval());
+        String ids = model.getProductKeyTypeIds();
+        if (!StringUtils.isEmpty(ids)) {
+            productBase.setProductKeyTypeIds(
+                    Arrays.stream(StringUtils.delimitedListToStringArray(ids, ","))
+                            .map(Integer::parseInt)
+                            .collect(Collectors.toList()));
+        }
         productBase.setActive(model.getActive());
+        productBase.setCreatedDateTime(model.getCreatedDateTime());
+        productBase.setModifiedDateTime(model.getModifiedDateTime());
         return productBase;
     }
 
-    public static ProductBaseModel ToModel(ProductBase productBase) {
+    public static ProductBaseModel toModel(ProductBase productBase) {
         if (productBase == null) return null;
         ProductBaseModel model = new ProductBaseModel();
         model.setId(productBase.getId());
-        model.setCategoryId(productBase.getSubCategoryId());
+        model.setCategoryId(productBase.getCategoryId());
         model.setManufacturerId(productBase.getManufacturerId());
         model.setName(productBase.getName());
         model.setDescription(productBase.getDescription());
@@ -148,25 +178,24 @@ public class ProductBase {
         model.setDetails(productBase.getDetails());
         model.setShelfLife(productBase.getShelfLife());
         model.setShelfLifeInterval(productBase.getShelfLifeInterval());
-        if (productBase.getCreatedDateTime() != null) {
-            model.setCreatedDateTime(productBase.getCreatedDateTime()); //convert string to datetime
+        List<Integer> ids = productBase.getProductKeyTypeIds();
+        if (ids != null) {
+            model.setProductKeyTypeIds(StringUtils.collectionToDelimitedString(ids, ","));
         }
-        if (productBase.getActive() == null) {
-            model.setActive(true); //default as true.
-        } else {
-            model.setActive(productBase.getActive());
-        }
+        model.setActive(productBase.getActive());
+        model.setCreatedDateTime(productBase.getCreatedDateTime());
+        model.setModifiedDateTime(productBase.getModifiedDateTime());
         return model;
     }
 
-    public static List<ProductBase> FromModelList(List<ProductBaseModel> modelList) {
+    public static List<ProductBase> fromModelList(List<ProductBaseModel> modelList) {
         if (modelList == null) return null;
-        return modelList.stream().map(ProductBase::FromModel).collect(Collectors.toList());
+        return modelList.stream().map(ProductBase::fromModel).collect(Collectors.toList());
     }
 
-    public static List<ProductBaseModel> ToModelList(List<ProductBase> productBaseList) {
+    public static List<ProductBaseModel> toModelList(List<ProductBase> productBaseList) {
         if (productBaseList == null) return null;
-        return productBaseList.stream().map(ProductBase::ToModel).collect(Collectors.toList());
+        return productBaseList.stream().map(ProductBase::toModel).collect(Collectors.toList());
     }
 
 }

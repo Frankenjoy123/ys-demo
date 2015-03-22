@@ -26,7 +26,7 @@ public class ProductServiceImpl implements ProductService {
 
         ProductModel productModel = productDao.getByKey(productKey);
         if (productModel == null
-                || (productModel.isProductKeyDisabled() != null && productModel.isProductKeyDisabled())) {
+                || (productModel.getProductKeyDisabled() != null && productModel.getProductKeyDisabled())) {
             return null;
         }
         if (!productModel.isPrimary() && productModel.getPrimaryProductKey() != null) {

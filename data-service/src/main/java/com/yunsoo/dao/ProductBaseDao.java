@@ -1,6 +1,7 @@
 package com.yunsoo.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.yunsoo.dbmodel.ProductBaseModel;
 
@@ -12,17 +13,14 @@ public interface ProductBaseDao {
 
     public void update(ProductBaseModel productBaseModel);
 
-    public DaoStatus patchUpdate(ProductBaseModel productBaseModel);
+    public void patchUpdate(ProductBaseModel productBaseModelForPatch);
 
-    public void deletePermanently(ProductBaseModel productBaseModel);
-
-    //Just inactive the item in database
-    public DaoStatus delete(long id);
+    public void delete(ProductBaseModel productBaseModel);
 
     //Search by conditions
-    public List<ProductBaseModel> getMessagesByFilter(Integer manufacturerId, Integer categoryId);
+    public List<ProductBaseModel> getByFilter(Map<String, Object> eqFilter);
 
-    public List<ProductBaseModel> getAllBaseProducts();
+    public List<ProductBaseModel> getAll();
 
 }
 

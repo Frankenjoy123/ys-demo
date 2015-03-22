@@ -2,7 +2,9 @@ package com.yunsoo.dao.impl;
 
 import com.yunsoo.dao.AccountDao;
 import com.yunsoo.dbmodel.AccountModel;
+import com.yunsoo.dbmodel.AccountTokenModel;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -22,8 +24,20 @@ public class AccountDaoImpl implements AccountDao {
 
     @Override
     @Transactional
+    public AccountModel getByToken(String token) {
+        String hql = "select a from AccountModel a left join a.tokens at where at.accessToken = :token";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql).setString("token", token);
+        List<AccountModel> items = (List<AccountModel>) query.list();
+        if (items != null && !items.isEmpty()) {
+            return items.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional
     public AccountModel get(long id) {
-        String hql = "from AccountModel where id=" + id;
+        String hql = "select a from AccountModel a where id = " + id;
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
 
         List<AccountModel> items = (List<AccountModel>) query.list();
@@ -36,20 +50,7 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     @Transactional
     public AccountModel getByIdentifier(String identifier) {
-        String hql = "from AccountModel where identifier=" + identifier;
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
-
-        List<AccountModel> items = (List<AccountModel>) query.list();
-        if (items != null && !items.isEmpty()) {
-            return items.get(0);
-        }
-        return null;
-    }
-
-    @Override
-    @Transactional
-    public AccountModel getByToken(String token) {
-        String hql = "from AccountModel a left join AccountTokenModel at on a.id = at.accountId where at.accessToken = " + token;
+        String hql = "from AccountModel where identifier = " + identifier;
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
 
         List<AccountModel> items = (List<AccountModel>) query.list();

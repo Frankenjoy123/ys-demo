@@ -67,7 +67,7 @@ public class PackageController {
         return dto;
     }
 
-    @RequestMapping(value = "/revoke/{key}", method = RequestMethod.GET)
+    @RequestMapping(value = "/revoke/{key}", method = RequestMethod.DELETE)
     public Boolean revokeAll(@PathVariable(value = "key") String key) {
         boolean result = packageService.revoke(key);
         return result;

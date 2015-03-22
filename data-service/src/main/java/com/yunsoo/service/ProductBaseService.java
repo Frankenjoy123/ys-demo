@@ -8,17 +8,19 @@ public interface ProductBaseService {
 
     public ProductBase getById(long id);
 
-    public void save(ProductBase productBaseModel);
+    public void save(ProductBase productBase);
 
-    public void update(ProductBase productBaseModel);
+    public void update(ProductBase productBase);
 
-    public Boolean patchUpdate(ProductBase productBaseModel);
+    public void patchUpdate(ProductBase productBase);
 
-    public void delete(ProductBase productBaseModel);
+    public void delete(ProductBase productBase);
 
-    public Boolean delete(long id);
+    public void delete(long id);
 
-    public List<ProductBase> getAllProducts();
+    public void deactivate(long id);
 
-    public List<ProductBase> getProductBaseByFilter(Integer manufacturerId, Integer categoryId);
+    public List<ProductBase> getByFilter(Integer manufacturerId, Integer categoryId, Boolean active);
+
+    public List<ProductBase> getAll();
 }

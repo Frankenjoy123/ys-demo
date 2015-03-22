@@ -27,6 +27,7 @@ public class RestClient {
     }
 
     public RestClient(String baseURL, ResponseErrorHandler responseErrorHandler) {
+        //added this request factory for PATCH method support
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         this.restTemplate = new RestTemplate(requestFactory);
 

@@ -1,17 +1,16 @@
-package com.yunsoo.dataapi.config;
+package com.yunsoo.util;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 新项目用Spring boot，选择YAML配置，优先于传统的properties文件。
  * Created by Zhe on 2015/3/20.
  */
 @Configuration
 @EnableConfigurationProperties
-@ConfigurationProperties(prefix = "yunsoo")
-public class YunsooYamlConfiguration {
+@ConfigurationProperties(prefix = "AmazonSettings")
+public class AmazonYamlSetting {
 
     private String s3_basebucket;
     private String s3_userbaseurl;
@@ -50,4 +49,3 @@ public class YunsooYamlConfiguration {
         this.debug = debug;
     }
 }
-
