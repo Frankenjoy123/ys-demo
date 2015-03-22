@@ -61,6 +61,12 @@
         }
 
         $scope.productKeyClick = function () {
+
+            if ($scope.productKey == null || $scope.productKey == "") {
+                $scope.bodyShow = 0;
+                return;
+            }
+
             packageService.getInfo($scope.productKey, function (data) {
                 $scope.origialdata = data;
                 $scope.resultdata = [];
