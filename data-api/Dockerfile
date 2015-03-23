@@ -17,7 +17,7 @@ RUN cd /var/yunsoo/ && chmod +x gradlew && ./gradlew data-api:bootRepackage
 EXPOSE 8080
 EXPOSE 8081
 
-CMD java -jar /var/yunsoo/data-api/build/libs/data-api-1.0.jar
+CMD java -jar  -Dspring.profiles.active=qa /var/yunsoo/data-api/build/libs/data-api-1.0.jar
 #ADD data-api/build/libs/data-api-1.0.jar /data/data-api-1.0.jar
 
 # !Below shows how to deploy jar into AWS Beanstalk
