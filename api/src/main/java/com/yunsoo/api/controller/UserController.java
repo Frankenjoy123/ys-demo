@@ -76,11 +76,9 @@ public class UserController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public User createUser(@RequestBody User user) throws Exception {
+    public Long createUser(@RequestBody User user) throws Exception {
         long id = dataAPIClient.post("user/create", user, Long.class);
-        User resultUser = new User();
-        resultUser.setId(id);
-        return resultUser;
+        return id;
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PATCH)

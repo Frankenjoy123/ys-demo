@@ -1,4 +1,4 @@
-package com.yunsoo.api.biz;
+package com.yunsoo.api.domain;
 
 import com.yunsoo.api.dto.basic.User;
 import com.yunsoo.common.web.client.RestClient;

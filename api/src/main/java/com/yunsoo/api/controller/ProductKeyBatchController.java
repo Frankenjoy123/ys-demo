@@ -77,7 +77,7 @@ public class ProductKeyBatchController {
         int statusId = 0;
         int organizationId = 1;
         int clientId = 1;
-        int accountId = 1;
+        Long accountId = 1L;
         DateTime createdDateTime = DateTime.now();
 
         ProductKeyBatchRequestObject requestObject = new ProductKeyBatchRequestObject();

@@ -13,6 +13,7 @@ public class Organization {
     private String imageUrl;
     private String detail;
     private Integer type;
+    private Integer status;
 
     public Long getId() {
         return id;
@@ -60,5 +61,13 @@ public class Organization {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

@@ -90,24 +90,24 @@ public class UserController {
 
     //Return -1L if Fail, or the userId if Success.
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<ResultWrapper> createUser(@RequestBody UserDto userDto) throws Exception {
+    public ResponseEntity<?> createUser(@RequestBody UserDto userDto) throws Exception {
         User user = UserDto.ToUser(userDto);
         long id = userService.save(user);
         HttpStatus status = id > 0L ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
+        return new ResponseEntity<Long>(id, status);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PATCH)
-    public ResponseEntity<ResultWrapper> updateUser(@RequestBody UserDto userDto) throws Exception {
+    public ResponseEntity<?> updateUser(@RequestBody UserDto userDto) throws Exception {
         //patch update, we don't provide functions like update with set null properties.
         User user = UserDto.ToUser(userDto);
         Boolean result = userService.patchUpdate(user).equals(ServiceOperationStatus.Success) ? true : false;
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.OK);
+        return new ResponseEntity<Boolean>(result, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<ResultWrapper> deleteUser(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable(value = "id") Long id) {
         Boolean result = userService.delete(id); //deletePermanantly status is 5 in dev DB
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<Boolean>(result, HttpStatus.NO_CONTENT);
     }
 }
