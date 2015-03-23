@@ -14,7 +14,6 @@ import org.joda.time.DateTime;
  * Created by Jerry on 3/16/2015.
  */
 public class LogisticsPath {
-    private long Id;
     private String productKey;
 
     private LogisticsCheckActionObject actionObject;
@@ -32,10 +31,6 @@ public class LogisticsPath {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime endDate;
     private Long operator;
-
-    public long getId() {
-        return Id;
-    }
 
     public void setActionObject(LogisticsCheckActionObject actionObject)
     {
@@ -75,10 +70,6 @@ public class LogisticsPath {
     public OrganizationObject getStartCheckPointOrgObject()
     {
         return startCheckPointOrgObject;
-    }
-
-    public void setId(long id) {
-        this.Id = id;
     }
 
     public String getProductKey() {
