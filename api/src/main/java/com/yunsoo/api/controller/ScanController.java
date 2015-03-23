@@ -1,9 +1,9 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.biz.LogisticsDomain;
+import com.yunsoo.api.biz.ValidateProduct;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.UserDomain;
-import com.yunsoo.api.biz.ValidateProduct;
 import com.yunsoo.api.dto.LogisticsPath;
 import com.yunsoo.api.dto.ScanResult;
 import com.yunsoo.api.dto.basic.*;
@@ -44,6 +44,10 @@ public class ScanController {
                                      @RequestParam(value = "userId", required = false) Integer userId,
                                      @RequestParam(value = "device", required = false) String deviceCode) {
 
+        if (key == null || key.isEmpty()) {
+            throw new BadRequestException("Key不能为空！");
+        }
+
         //1, get user
         User currentUser = userDomain.getUser(userId, deviceCode);
         if (currentUser == null) {
@@ -69,7 +73,7 @@ public class ScanController {
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
         //4, retrieve logistics information
-        scanResult.setLogisticses(ConvertToLogisticsDigest(logisticsDomain.getLogisticsPathsOrderByStartDate(key)));
+        scanResult.setLogisticses(getLogisticsInfo(key));
 
         //5, get company information.
         Organization organization = dataAPIClient.get("organization/id/{id}", Organization.class, scanResult.getProduct().getManufacturerId());
@@ -111,16 +115,24 @@ public class ScanController {
         return scanRecordList;
     }
 
-    private List<Logistics> ConvertToLogisticsDigest(List<LogisticsPath> logisticsPaths) {
+    private List<Logistics> getLogisticsInfo(String key) {
+        List<LogisticsPath> logisticsPaths;
+        try {
+            logisticsPaths = logisticsDomain.getLogisticsPathsOrderByStartDate(key);
+        } catch (NotFoundException ex) {
+            //to do: log
+            return null;
+        }
+
         List<Logistics> logisticsList = new ArrayList<Logistics>();
         for (LogisticsPath path : logisticsPaths) {
-            Logistics logistics1 = new Logistics();
-            logistics1.setOrgId(path.getStartCheckPointObject().getOrgId());
-            logistics1.setOrgName(path.getStartCheckPointOrgObject().getName());
-            logistics1.setMessage(path.getActionObject().getName());
-            logistics1.setLocation(path.getStartCheckPointObject().getName());
-            logistics1.setDateTime(DateTimeUtils.toString(path.getStartDate()));
-            logisticsList.add(logistics1);
+            Logistics logistics = new Logistics();
+            logistics.setOrgId(path.getStartCheckPointObject().getOrgId());
+            logistics.setOrgName(path.getStartCheckPointOrgObject().getName());
+            logistics.setMessage(path.getActionObject().getName());
+            logistics.setLocation(path.getStartCheckPointObject().getName());
+            logistics.setDateTime(DateTimeUtils.toString(path.getStartDate()));
+            logisticsList.add(logistics);
         }
         return logisticsList;
     }
