@@ -2,22 +2,22 @@ package com.yunsoo.dataapi.controller;
 
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.dataapi.dto.ResultWrapper;
 import com.yunsoo.dataapi.dto.UserDto;
 import com.yunsoo.dataapi.factory.ResultFactory;
+import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.UserService;
 import com.yunsoo.service.contract.User;
 import com.yunsoo.config.AmazonSetting;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -60,24 +60,26 @@ public class UserController {
     }
 
     @RequestMapping(value = "/thumbnail/{id}/{key}", method = RequestMethod.GET)
-    public ResponseEntity<InputStreamResource> getThumbnail(
+    public ResponseEntity getThumbnail(
             @PathVariable(value = "id") Long id,
             @PathVariable(value = "key") String key) {
 
         if (key == null || key.isEmpty()) throw new BadRequestException("Key不能为空！");
-        S3Object thumbnailFile;
+        S3Object s3Object;
         try {
-            thumbnailFile = userService.getUserThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_userbaseurl() + "/" + id + "/" + key);
-            if (thumbnailFile == null) throw new NotFoundException("找不到图片!");
+            s3Object = userService.getUserThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_userbaseurl() + "/" + id + "/" + key);
+            if (s3Object == null) throw new NotFoundException("找不到图片!");
+
+            FileObject fileObject = new FileObject();
+            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+            fileObject.setThumbnailData(IOUtils.toByteArray(s3Object.getObjectContent()));
+            fileObject.setLenth(s3Object.getObjectMetadata().getContentLength());
+            return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
+
         } catch (IOException ex) {
             //to-do: log
-            throw new NotFoundException("图片获取出错！");
+            throw new InternalServerErrorException("图片获取出错！");
         }
-
-        return ResponseEntity.ok()
-//                .contentLength(gridFsFile.getLength())
-                .contentType(MediaType.parseMediaType(thumbnailFile.getObjectMetadata().getContentType()))
-                .body(new InputStreamResource(thumbnailFile.getObjectContent()));
     }
 
     @RequestMapping(value = "/nearby/{location}", method = RequestMethod.GET)
@@ -88,24 +90,24 @@ public class UserController {
 
     //Return -1L if Fail, or the userId if Success.
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<ResultWrapper> createUser(@RequestBody UserDto userDto) throws Exception {
+    public ResponseEntity<?> createUser(@RequestBody UserDto userDto) throws Exception {
         User user = UserDto.ToUser(userDto);
         long id = userService.save(user);
         HttpStatus status = id > 0L ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
+        return new ResponseEntity<Long>(id, status);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PATCH)
-    public ResponseEntity<ResultWrapper> updateUser(@RequestBody UserDto userDto) throws Exception {
+    public ResponseEntity<?> updateUser(@RequestBody UserDto userDto) throws Exception {
         //patch update, we don't provide functions like update with set null properties.
         User user = UserDto.ToUser(userDto);
         Boolean result = userService.patchUpdate(user).equals(ServiceOperationStatus.Success) ? true : false;
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.OK);
+        return new ResponseEntity<Boolean>(result, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<ResultWrapper> deleteUser(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable(value = "id") Long id) {
         Boolean result = userService.delete(id); //deletePermanantly status is 5 in dev DB
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<Boolean>(result, HttpStatus.NO_CONTENT);
     }
 }

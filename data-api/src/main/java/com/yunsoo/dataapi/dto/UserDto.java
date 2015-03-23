@@ -1,6 +1,6 @@
 package com.yunsoo.dataapi.dto;
 
-import com.yunsoo.model.ThumbnailFile;
+import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.service.contract.User;
 import com.yunsoo.util.SpringBeanUtil;
 import org.springframework.beans.BeanUtils;
@@ -20,6 +20,7 @@ public class UserDto {
     private String thumbnailName;
     private String thumbnailSuffix;
     private String thumbnailContentType;
+    private Long thumbnailContentLength;
     private int statusId;
     private String createdDateTime;
 
@@ -103,6 +104,14 @@ public class UserDto {
         this.thumbnailContentType = thumbnailContentType;
     }
 
+    public Long getThumbnailContentLength() {
+        return thumbnailContentLength;
+    }
+
+    public void setThumbnailContentLength(Long thumbnailContentLength) {
+        this.thumbnailContentLength = thumbnailContentLength;
+    }
+
     public int getStatusId() {
         return statusId;
     }
@@ -124,19 +133,20 @@ public class UserDto {
         User user = new User();
         BeanUtils.copyProperties(userDto, user, SpringBeanUtil.getNullPropertyNames(userDto));
         if (userDto.getThumbnailData() != null && userDto.getThumbnailData().length > 0) {
-            ThumbnailFile thumbnailFile = new ThumbnailFile();
-            thumbnailFile.setThumbnailData(userDto.getThumbnailData());
+            FileObject fileObject = new FileObject();
+            fileObject.setThumbnailData(userDto.getThumbnailData());
             if (userDto.getThumbnailName() != null && !userDto.getThumbnailName().isEmpty()) {
-                thumbnailFile.setName(userDto.getThumbnailName());
+                fileObject.setName(userDto.getThumbnailName());
             }
             if (userDto.getThumbnailSuffix() != null) {
-                thumbnailFile.setSuffix(userDto.getThumbnailSuffix());
+                fileObject.setSuffix(userDto.getThumbnailSuffix());
             }
             if (userDto.getThumbnailContentType() != null) {
-                thumbnailFile.setContentType(userDto.getThumbnailContentType());
+                fileObject.setContentType(userDto.getThumbnailContentType());
             }
+            fileObject.setLenth(userDto.getThumbnailContentLength());
 
-            user.setThumbnailFile(thumbnailFile); //set user's ThumbnailFile
+            user.setFileObject(fileObject); //set user's ThumbnailFile
         }
         return user;
     }

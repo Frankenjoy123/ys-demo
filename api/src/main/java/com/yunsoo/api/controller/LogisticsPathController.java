@@ -5,6 +5,7 @@ import com.yunsoo.api.dto.LogisticsPath;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
 import com.yunsoo.common.data.object.LogisticsCheckPathObject;
 import com.yunsoo.common.data.object.LogisticsCheckPointObject;
+import com.yunsoo.common.data.object.LogisticsPathObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +30,13 @@ public class LogisticsPathController {
     private LogisticsDomain logisticsDomain;
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
-    public List<LogisticsPath> getLogisticsPathsOrderByStartDate(@PathVariable(value = "key") String key) {
+    public List<LogisticsPath> get(@PathVariable(value = "key") String key) {
         return logisticsDomain.getLogisticsPathsOrderByStartDate(key);
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public long createLogisticsPath(@RequestBody LogisticsCheckPathObject logisticsCheckPathObject) {
-        long id = dataAPIClient.post("logisticscheckpath/create", logisticsCheckPathObject, Long.class);
-        return id;
+    public void create(@RequestBody LogisticsPathObject logisticsPathObject) {
+        dataAPIClient.post("logisticspath/create", logisticsPathObject, Long.class);
     }
 }

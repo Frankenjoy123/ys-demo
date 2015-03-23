@@ -1,10 +1,7 @@
 package com.yunsoo.api.biz;
 
 import com.yunsoo.api.dto.LogisticsPath;
-import com.yunsoo.common.data.object.LogisticsCheckActionObject;
-import com.yunsoo.common.data.object.LogisticsCheckPathObject;
-import com.yunsoo.common.data.object.LogisticsCheckPointObject;
-import com.yunsoo.common.data.object.OrganizationObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +26,14 @@ public class LogisticsDomain {
     public List<LogisticsPath> getLogisticsPathsOrderByStartDate(String key) {
         List<LogisticsPath> logisticsPaths = new ArrayList<LogisticsPath>();
 
-        LogisticsCheckPathObject[] logisticsCheckPathObjects = dataAPIClient.get("logisticscheckpath/key/{key}", LogisticsCheckPathObject[].class, key);
-        if(logisticsCheckPathObjects == null || logisticsCheckPathObjects.length == 0)
+        LogisticsPathObject[] logisticsPathObjects = dataAPIClient.get("logisticspath/key/{key}", LogisticsPathObject[].class, key);
+        if(logisticsPathObjects == null || logisticsPathObjects.length == 0)
             throw new NotFoundException("Logistics path not found key=" + key);
 
-        List<LogisticsCheckPathObject> logisticsCheckPathObjectsList = Arrays.asList(logisticsCheckPathObjects);
-        for(LogisticsCheckPathObject path : logisticsCheckPathObjectsList)
+        List<LogisticsPathObject> logisticsPathObjectsList = Arrays.asList(logisticsPathObjects);
+        for(LogisticsPathObject path : logisticsPathObjectsList)
         {
             LogisticsPath logisticsPath = new LogisticsPath();
-            logisticsPath.setId(path.getId());
             logisticsPath.setDesc(path.getDesc());
             logisticsPath.setEndDate(path.getEndDate());
             logisticsPath.setOperator(path.getOperator());

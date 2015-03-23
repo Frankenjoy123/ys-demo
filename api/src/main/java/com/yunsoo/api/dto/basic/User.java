@@ -15,6 +15,7 @@ public class User {
     private String thumbnailName;
     private String thumbnailSuffix;
     private String thumbnailContentType;
+    private Long thumbnailContentLength;
     private int statusId;
     private String createdDateTime;
 
@@ -96,6 +97,14 @@ public class User {
 
     public void setThumbnailContentType(String thumbnailContentType) {
         this.thumbnailContentType = thumbnailContentType;
+    }
+
+    public Long getThumbnailContentLength() {
+        return thumbnailContentLength;
+    }
+
+    public void setThumbnailContentLength(Long thumbnailContentLength) {
+        this.thumbnailContentLength = thumbnailContentLength;
     }
 
     public int getStatusId() {

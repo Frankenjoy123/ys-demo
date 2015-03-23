@@ -18,6 +18,7 @@ public class DataServiceSetting {
     private Integer message_delete_status_id;
     private Integer user_created_status_id;
     private Integer user_delete_status_id;
+    private Integer org_verified_status_id;
 
     public Integer getMessage_created_status_id() {
         return message_created_status_id;
@@ -57,5 +58,13 @@ public class DataServiceSetting {
 
     public void setUser_delete_status_id(Integer user_delete_status_id) {
         this.user_delete_status_id = user_delete_status_id;
+    }
+
+    public Integer getOrg_verified_status_id() {
+        return org_verified_status_id;
+    }
+
+    public void setOrg_verified_status_id(Integer org_verified_status_id) {
+        this.org_verified_status_id = org_verified_status_id;
     }
 }

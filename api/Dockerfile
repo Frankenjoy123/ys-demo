@@ -14,7 +14,7 @@ RUN cd /var/yunsoo/ && unzip dev.zip && mv yunsoo-dev/* . && rm -rf yunsoo-dev d
 
 RUN cd /var/yunsoo/ && chmod +x gradlew && ./gradlew api:bootRepackage
 
-RUN echo 54.223.176.46 dataapi >> /etc/hosts
+#RUN echo 54.223.176.46 dataapi >> /etc/hosts
 
 EXPOSE 6080
 EXPOSE 6081

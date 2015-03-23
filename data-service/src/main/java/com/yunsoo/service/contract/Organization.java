@@ -17,6 +17,7 @@ public class Organization {
     private String imageUrl;
     private String detail;
     private int type;
+    private int status;
 
     public long getId() {
         return id;
@@ -66,6 +67,14 @@ public class Organization {
         this.type = type;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public static Organization FromModel(OrganizationModel model) {
         if (model == null) return null;
         Organization org = new Organization();
@@ -75,6 +84,7 @@ public class Organization {
         org.setImageUrl(model.getImageUrl());
         org.setDetail(model.getDetail());
         org.setType(model.getType());
+        org.setStatus(model.getStatus());
 
         return org;
     }
@@ -90,6 +100,7 @@ public class Organization {
         model.setImageUrl(org.getImageUrl());
         model.setDetail(org.getDetail());
         model.setType(org.getType());
+        model.setStatus(org.getStatus());
 
         return model;
     }

@@ -35,21 +35,21 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<ResultWrapper> createOrganization(@RequestBody Organization org) {
+    public ResponseEntity<?> createOrganization(@RequestBody Organization org) {
         long id = organizationService.save(org);
         HttpStatus status = id > 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
+        return new ResponseEntity<Long>(id, status);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResponseEntity<ResultWrapper> updateOrganization(@RequestBody Organization org) {
+    public ResponseEntity<?> updateOrganization(@RequestBody Organization org) {
         Boolean result = organizationService.update(org).equals(ServiceOperationStatus.Success) ? true : false;
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.OK);
+        return new ResponseEntity<Boolean>(result, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<ResultWrapper> deleteOrganization(@PathVariable(value = "id") int id) {
+    public ResponseEntity<?> deleteOrganization(@PathVariable(value = "id") int id) {
         Boolean result = organizationService.delete(id, 5); //deletePermanantly status is 5 in dev DB
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<Boolean>(result, HttpStatus.NO_CONTENT);
     }
 }
