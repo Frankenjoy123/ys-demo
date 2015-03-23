@@ -25,7 +25,7 @@ public class OrganizationModel {
         return id;
     }
     public void setId(Long id) {
-        id = id;
+        this.id = id;
     }
     @Column(name = "name")
     public String getName() {
@@ -64,7 +64,7 @@ public class OrganizationModel {
     }
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "org")
-    public Set<AccountOrgModel> getAccountOrgs() { return accountOrgs; }
+         public Set<AccountOrgModel> getAccountOrgs() { return accountOrgs; }
     public void setAccountOrgs(Set<AccountOrgModel> accountOrgs) {
         this.accountOrgs = accountOrgs;
     }
