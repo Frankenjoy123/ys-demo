@@ -2,22 +2,22 @@ package com.yunsoo.dataapi.controller;
 
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.dataapi.dto.ResultWrapper;
 import com.yunsoo.dataapi.dto.UserDto;
 import com.yunsoo.dataapi.factory.ResultFactory;
+import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.UserService;
 import com.yunsoo.service.contract.User;
 import com.yunsoo.config.AmazonSetting;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -60,24 +60,26 @@ public class UserController {
     }
 
     @RequestMapping(value = "/thumbnail/{id}/{key}", method = RequestMethod.GET)
-    public ResponseEntity<InputStreamResource> getThumbnail(
+    public ResponseEntity getThumbnail(
             @PathVariable(value = "id") Long id,
             @PathVariable(value = "key") String key) {
 
         if (key == null || key.isEmpty()) throw new BadRequestException("Key不能为空！");
-        S3Object thumbnailFile;
+        S3Object s3Object;
         try {
-            thumbnailFile = userService.getUserThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_userbaseurl() + "/" + id + "/" + key);
-            if (thumbnailFile == null) throw new NotFoundException("找不到图片!");
+            s3Object = userService.getUserThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_userbaseurl() + "/" + id + "/" + key);
+            if (s3Object == null) throw new NotFoundException("找不到图片!");
+
+            FileObject fileObject = new FileObject();
+            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+            fileObject.setThumbnailData(IOUtils.toByteArray(s3Object.getObjectContent()));
+            fileObject.setLenth(s3Object.getObjectMetadata().getContentLength());
+            return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
+
         } catch (IOException ex) {
             //to-do: log
-            throw new NotFoundException("图片获取出错！");
+            throw new InternalServerErrorException("图片获取出错！");
         }
-
-        return ResponseEntity.ok()
-//                .contentLength(gridFsFile.getLength())
-                .contentType(MediaType.parseMediaType(thumbnailFile.getObjectMetadata().getContentType()))
-                .body(new InputStreamResource(thumbnailFile.getObjectContent()));
     }
 
     @RequestMapping(value = "/nearby/{location}", method = RequestMethod.GET)

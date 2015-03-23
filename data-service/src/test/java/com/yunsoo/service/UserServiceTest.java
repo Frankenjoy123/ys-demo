@@ -1,6 +1,6 @@
 package com.yunsoo.service;
 
-import com.yunsoo.model.ThumbnailFile;
+import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.service.contract.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,16 +56,16 @@ public class UserServiceTest {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-        ThumbnailFile thumbnailFile = new ThumbnailFile();
-        thumbnailFile.setSuffix("jpg");
-        thumbnailFile.setThumbnailData(demBytes);
+        FileObject fileObject = new FileObject();
+        fileObject.setSuffix("jpg");
+        fileObject.setThumbnailData(demBytes);
 
         User user = new User();
         user.setName("宁波JY");
         user.setDeviceCode("65-KDJ=DSDl-LKJNN-NOLDK");
         user.setCellular("67548093");
         user.setAddress("宁波大学**寝室");
-        user.setThumbnailFile(thumbnailFile);
+        user.setFileObject(fileObject);
 
         long uID = userService.save(user);
         assertTrue(uID > 0L);
@@ -78,12 +78,12 @@ public class UserServiceTest {
         Path path = Paths.get(url.toURI());
         byte[] demBytes = Files.readAllBytes(path);
 
-        ThumbnailFile thumbnailFile = new ThumbnailFile();
-        thumbnailFile.setSuffix("png");
-        thumbnailFile.setThumbnailData(demBytes);
+        FileObject fileObject = new FileObject();
+        fileObject.setSuffix("png");
+        fileObject.setThumbnailData(demBytes);
 
         User user = userService.get(38L);
-        user.setThumbnailFile(thumbnailFile);
+        user.setFileObject(fileObject);
         user.setAddress("Hangzhou 中山路99号1nong");
         ServiceOperationStatus serviceOperationStatus = userService.update(user);
         assertTrue(serviceOperationStatus == ServiceOperationStatus.Success);
@@ -96,13 +96,13 @@ public class UserServiceTest {
         Path path = Paths.get(url.toURI());
         byte[] demBytes = Files.readAllBytes(path);
 
-        ThumbnailFile thumbnailFile = new ThumbnailFile();
-        thumbnailFile.setSuffix("png");
-        thumbnailFile.setThumbnailData(demBytes);
+        FileObject fileObject = new FileObject();
+        fileObject.setSuffix("png");
+        fileObject.setThumbnailData(demBytes);
 
         User user = new User();
         user.setId("39");
-        user.setThumbnailFile(thumbnailFile);
+        user.setFileObject(fileObject);
         user.setAddress("Shanghai - 中山路99号");
         ServiceOperationStatus serviceOperationStatus = userService.patchUpdate(user);
         assertTrue(serviceOperationStatus == ServiceOperationStatus.Success);

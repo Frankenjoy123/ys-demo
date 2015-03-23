@@ -1,7 +1,6 @@
 package com.yunsoo.service;
 
 import com.amazonaws.services.s3.model.S3Object;
-import com.yunsoo.model.ThumbnailFile;
 import com.yunsoo.service.contract.User;
 
 import java.io.IOException;
