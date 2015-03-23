@@ -1,8 +1,8 @@
 package com.yunsoo.service.Impl;
 
-import com.yunsoo.dao.ProductKeyTypeDao;
+import com.yunsoo.jpa.repository.ProductKeyTypeRepository;
 import com.yunsoo.service.ProductKeyTypeService;
-import com.yunsoo.service.contract.ProductKeyType;
+import com.yunsoo.service.contract.lookup.ProductKeyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,32 +18,32 @@ import java.util.List;
 public class ProductKeyTypeServiceImpl implements ProductKeyTypeService {
 
     @Autowired
-    private ProductKeyTypeDao productKeyTypeDao;
+    private ProductKeyTypeRepository productKeyTypeRepository;
 
     @Override
     public ProductKeyType getById(int id) {
-        return ProductKeyType.fromModel(productKeyTypeDao.getById(id));
+        return ProductKeyType.fromEntity(productKeyTypeRepository.findOne(id));
     }
 
     @Override
     public void save(ProductKeyType productKeyTypeModel) {
-        productKeyTypeDao.save(ProductKeyType.toModel(productKeyTypeModel));
+        productKeyTypeRepository.save(ProductKeyType.toEntity(productKeyTypeModel));
     }
 
     @Override
     public void update(ProductKeyType productKeyTypeModel) {
-        productKeyTypeDao.update(ProductKeyType.toModel(productKeyTypeModel));
+        productKeyTypeRepository.save(ProductKeyType.toEntity(productKeyTypeModel));
     }
 
     @Override
     public void delete(ProductKeyType productKeyTypeModel) {
-        productKeyTypeDao.delete(ProductKeyType.toModel(productKeyTypeModel));
+        productKeyTypeRepository.delete(ProductKeyType.toEntity(productKeyTypeModel));
     }
 
     @Override
     @Transactional
     public List<ProductKeyType> getAllProductKeyTypes(boolean active) {
-        return ProductKeyType.fromModelList(productKeyTypeDao.getAllProductKeyTypes(active));
+        return ProductKeyType.fromEntityList(productKeyTypeRepository.findAll());
     }
 
 }
