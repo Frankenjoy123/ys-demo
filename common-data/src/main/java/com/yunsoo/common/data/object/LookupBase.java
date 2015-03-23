@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
  * Descriptions:
  */
 public abstract class LookupBase<T extends LookupBase> implements Comparable<T> {
-    private int id;
+    private Integer id;
     private String code;
     private String name;
     private String description;
@@ -19,18 +19,18 @@ public abstract class LookupBase<T extends LookupBase> implements Comparable<T> 
     }
 
 
-    public LookupBase(int id, String code) {
+    public LookupBase(Integer id, String code) {
         this.id = id;
         this.code = code;
         this.description = null;
         this.active = true;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

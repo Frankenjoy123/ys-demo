@@ -2,12 +2,13 @@ package com.yunsoo.dataapi.controller;
 
 import com.yunsoo.common.data.object.ProductKeyTypeObject;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.jpa.entity.ProductKeyTypeEntity;
+import com.yunsoo.jpa.repository.ProductKeyTypeRepository;
 import com.yunsoo.service.ProductKeyTypeService;
-import com.yunsoo.service.contract.ProductKeyType;
+import com.yunsoo.service.contract.lookup.ProductKeyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
