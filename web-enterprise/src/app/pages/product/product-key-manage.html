@@ -21,10 +21,11 @@
             <div class="box-body">
                 <div class="row">
                     <div class="form-group col-xs-4">
-                        <label>品名：</label>
+                        <label>产品：</label>
                         <select name="productType"
                                 class="form-control inline"
                                 ng-model="newData.productBaseId">
+                            <option value="0">请选择</option>
                             <option ng-repeat="pb in creationPanel.productBases" value="{{pb.id}}">
                                 {{pb.name}}
                             </option>
@@ -83,8 +84,8 @@
                             <td>{{b.id}}</td>
                             <td>{{b.quantity}}</td>
                             <td>
-
-                                {{b.productKeyTypeIds}}</td>
+                                {{b.productKeyTypeIds}}
+                            </td>
                             <td>{{getDateString(b.createdDateTime)}}</td>
                         </tr>
                     </table>
