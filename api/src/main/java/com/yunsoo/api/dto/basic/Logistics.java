@@ -10,7 +10,7 @@ import org.joda.time.DateTime;
 public class Logistics {
     private int OrgId;
     private String OrgName;
-    private String OrgVerified;
+    //    private String OrgVerified; //removed
     private String message;
     private String location;
     private String dateTime;
@@ -29,14 +29,6 @@ public class Logistics {
 
     public void setOrgName(String orgName) {
         OrgName = orgName;
-    }
-
-    public String getOrgVerified() {
-        return OrgVerified;
-    }
-
-    public void setOrgVerified(String orgVerified) {
-        OrgVerified = orgVerified;
     }
 
     public String getMessage() {

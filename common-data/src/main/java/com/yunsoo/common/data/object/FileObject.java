@@ -1,14 +1,15 @@
-package com.yunsoo.model;
+package com.yunsoo.common.data.object;
 
 /**
- * Object represent user's thumbnail
+ * FileObject represent File hosted in AWS S3.
  * Created by Zhe on 2015/3/2.
  */
-public class ThumbnailFile {
+public class FileObject {
     private byte[] thumbnailData;
     private String name;
     private String suffix;
     private String contentType;
+    private Long lenth;
 
     public byte[] getThumbnailData() {
         return thumbnailData;
@@ -40,5 +41,13 @@ public class ThumbnailFile {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
+    }
+
+    public Long getLenth() {
+        return lenth;
+    }
+
+    public void setLenth(Long lenth) {
+        this.lenth = lenth;
     }
 }

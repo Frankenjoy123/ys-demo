@@ -20,7 +20,7 @@ public class ProductKeyBatch {
     private Integer statusId;
     private Integer organizationId;
     private Integer createdClientId;
-    private Integer createdAccountId;
+    private Long createdAccountId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
@@ -70,11 +70,11 @@ public class ProductKeyBatch {
     }
 
 
-    public Integer getCreatedAccountId() {
+    public Long getCreatedAccountId() {
         return createdAccountId;
     }
 
-    public void setCreatedAccountId(Integer createdAccountId) {
+    public void setCreatedAccountId(Long createdAccountId) {
         this.createdAccountId = createdAccountId;
     }
 

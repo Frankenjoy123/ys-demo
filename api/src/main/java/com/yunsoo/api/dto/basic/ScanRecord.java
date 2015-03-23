@@ -20,6 +20,7 @@ public class ScanRecord implements Comparator<ScanRecord> {
     private String detail;
     private String createdDateTime;
 
+    @JsonIgnore
     public String getProductKey() {
         return productKey;
     }

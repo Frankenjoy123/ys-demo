@@ -22,7 +22,7 @@ public class ProductKeyBatch {
     private Integer organizationId;
     private Long productBaseId;
     private Integer createdClientId;
-    private Integer createdAccountId;
+    private Long createdAccountId;
     private DateTime createdDateTime;
     private List<Integer> productKeyTypeIds;
     private String productKeysAddress;
@@ -78,11 +78,11 @@ public class ProductKeyBatch {
         this.createdClientId = createdClientId;
     }
 
-    public Integer getCreatedAccountId() {
+    public Long getCreatedAccountId() {
         return createdAccountId;
     }
 
-    public void setCreatedAccountId(Integer createdAccountId) {
+    public void setCreatedAccountId(Long createdAccountId) {
         this.createdAccountId = createdAccountId;
     }
 

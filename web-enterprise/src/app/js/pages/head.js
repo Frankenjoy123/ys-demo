@@ -20,7 +20,7 @@
                     type: "warning",
                     title: "warnings"
                 }];
-            $scope.tasks = [{
+            $scope.data.tasks = [{
                     percentage: "20%"
                 }];
         }]);

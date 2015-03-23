@@ -2,11 +2,12 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.biz.LogisticsDomain;
 import com.yunsoo.api.domain.ProductDomain;
-import com.yunsoo.api.biz.UserDomain;
+import com.yunsoo.api.domain.UserDomain;
 import com.yunsoo.api.biz.ValidateProduct;
 import com.yunsoo.api.dto.LogisticsPath;
 import com.yunsoo.api.dto.ScanResult;
 import com.yunsoo.api.dto.basic.*;
+import com.yunsoo.api.object.TScanRecord;
 import com.yunsoo.api.object.ValidationResult;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
@@ -125,7 +126,7 @@ public class ScanController {
     }
 
     private long SaveScanRecord(User currentUser, Product currentProduct) {
-        ScanRecord scanRecord = new ScanRecord();
+        TScanRecord scanRecord = new TScanRecord();
         scanRecord.setUserId(currentUser.getId());
         scanRecord.setDeviceId(currentUser.getDeviceCode());
         scanRecord.setClientId(123456);

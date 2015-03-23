@@ -1,12 +1,11 @@
 package com.yunsoo.service.contract;
 
 import com.yunsoo.dbmodel.UserModel;
-import com.yunsoo.model.ThumbnailFile;
+import com.yunsoo.common.data.object.FileObject;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -20,7 +19,7 @@ public class User {
     private String cellular;
     private String deviceCode;
     private String thumbnail;
-    private ThumbnailFile thumbnailFile;
+    private FileObject fileObject;
     //    private byte[] thumbnailData;
 //    private HashMap<String, String> thumbnailDataProperties;
     private int statusId;
@@ -90,12 +89,12 @@ public class User {
         this.createdDateTime = createdDateTime;
     }
 
-    public ThumbnailFile getThumbnailFile() {
-        return thumbnailFile;
+    public FileObject getFileObject() {
+        return fileObject;
     }
 
-    public void setThumbnailFile(ThumbnailFile thumbnailFile) {
-        this.thumbnailFile = thumbnailFile;
+    public void setFileObject(FileObject fileObject) {
+        this.fileObject = fileObject;
     }
 
     public static User FromModel(UserModel model) {

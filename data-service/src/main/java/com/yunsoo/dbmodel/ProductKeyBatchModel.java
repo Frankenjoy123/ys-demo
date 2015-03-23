@@ -35,7 +35,7 @@ public class ProductKeyBatchModel {
     private Integer createdClientId;
 
     @Column(name = "created_account_id")
-    private Integer createdAccountId;
+    private Long createdAccountId;
 
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -95,11 +95,11 @@ public class ProductKeyBatchModel {
         this.createdClientId = createdClientId;
     }
 
-    public Integer getCreatedAccountId() {
+    public Long getCreatedAccountId() {
         return createdAccountId;
     }
 
-    public void setCreatedAccountId(Integer createdAccountId) {
+    public void setCreatedAccountId(Long createdAccountId) {
         this.createdAccountId = createdAccountId;
     }
 

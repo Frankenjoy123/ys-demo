@@ -8,7 +8,7 @@ import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.S3ItemDao;
 import com.yunsoo.dao.UserDao;
 import com.yunsoo.dbmodel.UserModel;
-import com.yunsoo.model.ThumbnailFile;
+import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.UserService;
 import com.yunsoo.service.contract.User;
@@ -34,7 +34,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDAO;
-
     @Autowired
     private S3ItemDao s3ItemDao;
 
@@ -42,9 +41,6 @@ public class UserServiceImpl implements UserService {
     private DataServiceSetting dataServiceSetting;
     @Autowired
     private AmazonSetting amazonSetting;
-
-//    private String baseBucketName = YunsooConfig.getBaseBucket();
-//    private String userBaseURL = YunsooConfig.getUserBaseURL();
 
     @Override
     public User get(Long id) {
@@ -107,8 +103,8 @@ public class UserServiceImpl implements UserService {
         user.setStatusId(dataServiceSetting.getUser_created_status_id()); //set newly created status
         long userId = userDAO.save(User.ToModel(user));
 
-        if (user.getThumbnailFile() != null) {
-            String thumbKey = saveUserThumbnail(userId, user.getThumbnailFile(), thumbnailKey);
+        if (user.getFileObject() != null) {
+            String thumbKey = saveUserThumbnail(userId, user.getFileObject(), thumbnailKey);
         }
         return userId;
 
@@ -134,22 +130,22 @@ public class UserServiceImpl implements UserService {
         if (user == null || user.getId().isEmpty()) {
             return ServiceOperationStatus.InvalidArgument;
         }
-        if (user.getThumbnailFile() != null) {
+        if (user.getFileObject() != null) {
             DateTime userCreatedTime = DateTime.now();
             String thumbnailKey = "thumb-" + Long.toString(userCreatedTime.getMillis());
             user.setThumbnail(thumbnailKey);
-            String thumbKey = saveUserThumbnail(Long.parseLong(user.getId()), user.getThumbnailFile(), thumbnailKey);
+            String thumbKey = saveUserThumbnail(Long.parseLong(user.getId()), user.getFileObject(), thumbnailKey);
         }
         return userDAO.update(User.ToModel(user)) == DaoStatus.success ? ServiceOperationStatus.Success : ServiceOperationStatus.Fail;
     }
 
     @Override
     public ServiceOperationStatus patchUpdate(User user) throws Exception {
-        if (user.getThumbnailFile() != null) {
+        if (user.getFileObject() != null) {
             DateTime userCreatedTime = DateTime.now();
             String thumbnailKey = "thumb-" + Long.toString(userCreatedTime.getMillis());
             user.setThumbnail(thumbnailKey);
-            saveUserThumbnail(Long.parseLong(user.getId()), user.getThumbnailFile(), thumbnailKey);
+            saveUserThumbnail(Long.parseLong(user.getId()), user.getFileObject(), thumbnailKey);
         }
         UserModel model = getPatchModel(user);
         return userDAO.patchUpdate(model) == DaoStatus.success ? ServiceOperationStatus.Success : ServiceOperationStatus.Fail;
@@ -174,26 +170,27 @@ public class UserServiceImpl implements UserService {
     }
 
     //Save thumbnail into S3 bucket
-    private String saveUserThumbnail(long userId, ThumbnailFile thumbnailFile, String thumbnailKey) throws IOException, Exception {
-        if (thumbnailFile == null) throw new Exception("ThumbnailFile is null!");
-        InputStream inputStream = new ByteArrayInputStream(thumbnailFile.getThumbnailData());
+    private String saveUserThumbnail(long userId, FileObject fileObject, String thumbnailKey) throws IOException, Exception {
+        if (fileObject == null) throw new Exception("ThumbnailFile is null!");
+        InputStream inputStream = new ByteArrayInputStream(fileObject.getThumbnailData());
         //to-do:
         ObjectMetadata objectMetadata = new ObjectMetadata();
-        if (thumbnailFile.getSuffix().toLowerCase().equals("jpg") || thumbnailFile.getSuffix().toLowerCase().equals("jpeg")) {
+        if (fileObject.getSuffix().toLowerCase().equals("jpg") || fileObject.getSuffix().toLowerCase().equals("jpeg")) {
             objectMetadata.setContentType("image/jpeg");
-        } else if (thumbnailFile.getSuffix().toLowerCase().equals("png")) {
+        } else if (fileObject.getSuffix().toLowerCase().equals("png")) {
             objectMetadata.setContentType("image/png");
-        } else if (thumbnailFile.getSuffix().toLowerCase().equals("bmp")) {
+        } else if (fileObject.getSuffix().toLowerCase().equals("bmp")) {
             objectMetadata.setContentType("image/bmp");
-        } else if (thumbnailFile.getSuffix().toLowerCase().equals("gif")) {
+        } else if (fileObject.getSuffix().toLowerCase().equals("gif")) {
             objectMetadata.setContentType("image/gif");
         }
 
-        String key = amazonSetting.getS3_userbaseurl() + "/" + userId + "/" + thumbnailKey;
-        s3ItemDao.putItem(amazonSetting.getS3_basebucket(), key, inputStream, objectMetadata, CannedAccessControlList.BucketOwnerFullControl);
+        objectMetadata.setContentLength(fileObject.getLenth()); //set content-length
+        String fullKey = amazonSetting.getS3_userbaseurl() + "/" + userId + "/" + thumbnailKey;
+        s3ItemDao.putItem(amazonSetting.getS3_basebucket(), fullKey, inputStream, objectMetadata, CannedAccessControlList.BucketOwnerFullControl);
         //to-do: move the old thumb into history folder.
 
-        return key;
+        return fullKey;
     }
 
     //Convert Dto to Model,just copy properties which is not null.
