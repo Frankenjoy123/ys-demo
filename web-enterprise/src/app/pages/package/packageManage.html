@@ -1,29 +1,83 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        包装关系查询
+        包装关系管理
         <!--<small>Control panel</small>-->
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i>首页</a></li>
-        <li class="active">包装关系查询</li>
+        <li class="active">包装关系管理</li>
     </ol>
 </section>
+<!-- Main content -->
+<section class="content" ng-controller="packageCtrl" uploader="uploader" filters="queueLimit, customFilter">
 
-<section class="content">
-    <div class="form-group">
-        <div class="col-md-4">
-            <input type="text" class="form-control" id="productKey" placeholder="产品码" ng-model="productKey">
+    <div class="box box-solid">
+        <div class="box-header">
+            <h3 class="box-title">上传包装关系</h3>
         </div>
-        <div>
-            <button type="submit" class="btn btn-primary" ng-click="productKeyClick()">查询</button>
+
+        <div class="box-body">
+           <span class="btn btn-primary fileinput-button " ng-class="{disabled: disabled}">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>上传文件</span>
+                  <input type="file" nv-file-select="" uploader="uploader" ng-disabled="disabled"/>
+
+                </span>
+
         </div>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th width="50%">文件名</th>
+                <th ng-show="uploader.isHTML5">大小</th>
+                <th ng-show="uploader.isHTML5">进度</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in uploader.queue">
+                <td><strong>{{ item.file.name }}</strong></td>
+                <td ng-show="uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+                <td ng-show="uploader.isHTML5">
+                    <div class="progress" style="margin-bottom: 0;">
+                        <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <!--<span ng-show="item.isUploaded"><i class="glyphicon glyphicon-remove"></i></span>
+                    <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                    <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                    <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>-->
+                    <!--<span ng-show="item.isUploaded">上传成功，解析打包中</span>-->
+                    <span ng-show="item.isSuccess">包装关系建立成功</span>
+                    <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                    <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+
+                </td>
+                <td nowrap>
+                    <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()"
+                            ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                        <span class="glyphicon glyphicon-upload"></span> 上传
+                    </button>
+                    <button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()"
+                            ng-disabled="!item.isUploading">
+                        <span class="glyphicon glyphicon-ban-circle"></span> 取消
+                    </button>
+                    <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                        <span class="glyphicon glyphicon-trash"></span> 删除
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <!-- /.box-header -->
+        <!-- Form -->
+
     </div>
-    <div class="box-group" ng-show="bodyShow">
-        <div class="panel box box-primary">
-            <div class="box-body">
-                <div id="tree"></div>
-            </div>
-        </div>
-    </div>
-</section>
+    <!-- /.box -->
+
+
+</section><!-- /.content -->

@@ -4,7 +4,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
-import com.yunsoo.service.contract.Product;
 import org.joda.time.DateTime;
 
 import java.util.Set;
@@ -108,6 +107,6 @@ public class ProductPackageModel {
     @Override
     public boolean equals(Object obj) {
         ProductPackageModel rightModel = (ProductPackageModel)obj;
-        return this.getProductKey().equals(rightModel.getParentProductKey());
+        return this.getProductKey().equals(rightModel.getProductKey());
     }
 }

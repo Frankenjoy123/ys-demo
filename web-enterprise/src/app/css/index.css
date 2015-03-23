@@ -1,3 +1,9 @@
 .main-content {
     min-height: 300px;
 }
+.alert-wrap {
+    position: absolute;
+    top: 50px;
+    width: 100%;
+    text-align: center;
+}

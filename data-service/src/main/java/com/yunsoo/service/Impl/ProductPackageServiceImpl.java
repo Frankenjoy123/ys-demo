@@ -8,14 +8,12 @@ import com.yunsoo.dbmodel.ProductPackageModel;
 import com.yunsoo.service.ProductPackageService;
 import com.yunsoo.service.contract.PackageBoundContract;
 import com.yunsoo.service.contract.PackageContract;
-
-import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by: Lijian Created on: 2015/2/1 Descriptions:
@@ -86,9 +84,13 @@ public class ProductPackageServiceImpl implements ProductPackageService {
         if (packageBoundContract.getPackageKey() == null || subKeys == null || subKeys.size() == 0) {
             throw new IllegalArgumentException("非法数据");
         }
-        model.setChildProductKeySet(new HashSet<>(subKeys));
+        if (subKeys == null || subKeys.isEmpty()) {
+            model.setChildProductKeySet(null);
+        } else {
+            model.setChildProductKeySet(new HashSet<>(subKeys));
+        }
         model.setParentProductKey(null);//currently not know
-        model.setCreatedDateTime(now);
+        model.setCreatedDateTime(packageBoundContract.getCreated_date());
         model.setOperator(packageBoundContract.getOperator());
         packageDao.save(model);
 
@@ -120,7 +122,7 @@ public class ProductPackageServiceImpl implements ProductPackageService {
             ProductPackageModel subModel = new ProductPackageModel();
             subModel.setProductKey(key);
             subModel.setParentProductKey(parentKey);
-            subModel.setCreatedDateTimeValue(now.getMillis());
+            subModel.setCreatedDateTime(packageBoundContract.getCreated_date());
             subModel.setOperator(operatorId);//可设可不设
             batchModels.add(subModel);
         }
@@ -138,9 +140,14 @@ public class ProductPackageServiceImpl implements ProductPackageService {
         ProductPackageModel model = new ProductPackageModel();
         model.setProductKey(packageBoundContract.getPackageKey());
         List<String> subKeys = packageBoundContract.getKeys();
-        model.setChildProductKeySet(new HashSet<>(subKeys));
+        if (subKeys == null || subKeys.isEmpty()) {
+            model.setChildProductKeySet(null);
+        } else {
+            model.setChildProductKeySet(new HashSet<>(subKeys));
+        }
+
         model.setParentProductKey(null);//currently not know
-        model.setCreatedDateTime(now);
+        model.setCreatedDateTime(packageBoundContract.getCreated_date());
         model.setOperator(packageBoundContract.getOperator());
 
 
@@ -152,9 +159,9 @@ public class ProductPackageServiceImpl implements ProductPackageService {
         List<ProductPackageModel> batchModels = new ArrayList<>();
         batchModels.add(model);
         // 加载子包装，也有可能是产品。
-        List<ProductPackageModel> subModels = packageDao.batchLoad(new HashSet<>(packageBoundContract.getKeys()));
+        //List<ProductPackageModel> subModels = packageDao.batchLoad(new HashSet<>(packageBoundContract.getKeys()));
         List<String> existKeys = new ArrayList<>();
-        if (subModels != null && subModels.size() > 0) {
+        /*if (subModels != null && subModels.size() > 0) {
             for (ProductPackageModel subModel : subModels) {
                 //redefine the parent key, overwrite it.
                 //TODO 如果我们要强制要求只有未被绑定过的才可以被绑定，也就是说如果parentkey为空的话，即为未被绑定
@@ -163,7 +170,7 @@ public class ProductPackageServiceImpl implements ProductPackageService {
                 existKeys.add(subModel.getProductKey());
             }
             batchModels.addAll(subModels);
-        }
+        }*/
 
 
         for (String key : packageBoundContract.getKeys()) {
@@ -173,7 +180,7 @@ public class ProductPackageServiceImpl implements ProductPackageService {
             ProductPackageModel subModel = new ProductPackageModel();
             subModel.setProductKey(key);
             subModel.setParentProductKey(parentKey);
-            subModel.setCreatedDateTimeValue(now.getMillis());
+            subModel.setCreatedDateTime(packageBoundContract.getCreated_date());
             subModel.setOperator(operatorId);//可设可不设
             batchModels.add(subModel);
         }
@@ -188,11 +195,34 @@ public class ProductPackageServiceImpl implements ProductPackageService {
             throw new IllegalArgumentException("数据为空");
         }
         List<ProductPackageModel> models = new ArrayList<>();
+        HashMap<String, ProductPackageModel> packagesHashMap = new HashMap<>();
+        HashMap<String, ProductPackageModel> productsHashMap = new HashMap<>();
         for (PackageBoundContract contract : dataArray) {
             List<ProductPackageModel> packageModels = bindForBatchOperate(contract);
-            int pos = models.size();
-            models.addAll(pos, packageModels);
+            ProductPackageModel packageModel = packageModels.get(0);
+            if (packagesHashMap.containsKey(packageModel.getProductKey())) {
+                throw new IllegalArgumentException("包装码被重复打包。");
+            } else {
+                packagesHashMap.put(packageModel.getProductKey(), packageModel);
+            }
+            for (int i = 1; i < packageModels.size(); i++) {
+                ProductPackageModel productModel = packageModels.get(i);
+                // 被打包到更大的包
+                if (packagesHashMap.containsKey(packageModels.get(i).getProductKey())) {
+                    ProductPackageModel packingModel = packagesHashMap.get(productModel.getProductKey());
+                    packingModel.setParentProductKey(packageModel.getProductKey());
+                } else {
+                    // 被打包2次
+                    if (productsHashMap.containsKey(productModel.getProductKey())) {
+                        throw new IllegalArgumentException("产品码或包装码被重复打包。");
+                    }
+                    productsHashMap.put(productModel.getProductKey(),productModel);
+                }
+            }
         }
+        models.addAll(packagesHashMap.values());
+        models.addAll(productsHashMap.values());
+
         //remove duplicated key
         int size = models.size();
         List<ProductPackageModel> distinctModels = models.stream().distinct().collect(Collectors.toList());
