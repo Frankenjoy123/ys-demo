@@ -8,15 +8,18 @@ import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyBatchRequestObject;
 import com.yunsoo.common.data.object.ProductObject;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 /**
@@ -53,12 +56,20 @@ public class ProductKeyBatchController {
         return batch;
     }
 
+    @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
+    public ResponseEntity<?> getKeysById(@PathVariable(value = "id") Long id) {
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/vnd+yunsoo.pks"))
+                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + ".pks\"")
+                .body(new InputStreamResource(new ByteArrayInputStream(productKeyDomain.getProductKeysByBatchId(id))));
+    }
+
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyBatch> getByFilter(@RequestParam(value = "productBaseId", required = false) Long productBaseId,
                                              @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
                                              @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         int organizationId = 1;
-        return productKeyDomain.getAllProductKeyBatchByOrgId(organizationId, productBaseId);
+        return productKeyDomain.getAllProductKeyBatchesByOrgId(organizationId, productBaseId);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

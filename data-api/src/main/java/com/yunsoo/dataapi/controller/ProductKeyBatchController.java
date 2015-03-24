@@ -8,7 +8,9 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.service.ProductKeyBatchService;
 import com.yunsoo.service.contract.Product;
 import com.yunsoo.service.contract.ProductKeyBatch;
+import com.yunsoo.service.contract.ProductKeys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +43,15 @@ public class ProductKeyBatchController {
             throw new NotFoundException("product batch");
         }
         return convertToProductKeyBatchObject(batch);
+    }
+
+    @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
+    public ProductKeys getKeysById(@PathVariable(value = "id") Long id) {
+        ProductKeys productKeys = productKeyBatchService.getProductKeysByBatchId(id);
+        if (productKeys == null) {
+            throw new NotFoundException("ProductKeys");
+        }
+        return productKeys;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)

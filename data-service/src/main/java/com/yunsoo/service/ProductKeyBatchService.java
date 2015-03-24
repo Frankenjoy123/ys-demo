@@ -1,6 +1,7 @@
 package com.yunsoo.service;
 
 import com.yunsoo.service.contract.Product;
+import com.yunsoo.service.contract.ProductKeys;
 import com.yunsoo.service.contract.ProductKeyBatch;
 
 import java.util.List;
@@ -18,9 +19,9 @@ public interface ProductKeyBatchService {
 
     public List<ProductKeyBatch> getByFilterPaged(Integer organizationId, Long productBaseId, int pageIndex, int pageSize);
 
-    public List<List<String>> getProductKeysByBatchId(Long batchId);
+    public ProductKeys getProductKeysByBatchId(Long batchId);
 
-    public List<List<String>> getProductKeysByAddress(String address);
+    public ProductKeys getProductKeysByAddress(String address);
 
     public ProductKeyBatch create(ProductKeyBatch batch);
 
