@@ -21,6 +21,7 @@ public class ScanResult {
     private List<Logistics> logisticses;
     private ValidationResult validationResult;
     private int scanCounter;
+    private Long userId;
 
     public String getKey() {
         return Key;
@@ -76,5 +77,13 @@ public class ScanResult {
 
     public void setScanCounter(int scanCounter) {
         this.scanCounter = scanCounter;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

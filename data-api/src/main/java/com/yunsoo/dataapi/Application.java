@@ -29,6 +29,5 @@ public class Application {
         }
 
         System.out.println("Run DataAPI by Spring Boot. Successfully started...");
-
     }
 }

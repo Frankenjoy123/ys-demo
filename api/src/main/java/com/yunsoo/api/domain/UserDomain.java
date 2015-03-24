@@ -2,6 +2,8 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.api.dto.basic.User;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.NotFoundException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,12 +19,29 @@ public class UserDomain {
     private RestClient dataAPIClient;
 
     //call dataAPI to get current User
-    public User getUser(Integer userId, String deviceCode) {
+    public User ensureUser(Integer userId, String deviceCode) {
         User user = null;
         if (userId != null && userId > 0) {
             user = dataAPIClient.get("user/id/{id}", User.class, userId);
         } else {
-            user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);
+            try {
+                user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);
+            } catch (NotFoundException ex) {
+            }
+
+            if (user == null) {
+                User newUser = new User();
+                newUser.setDeviceCode(deviceCode);
+                newUser.setName(Long.toString(DateTime.now().getMillis())); //default name is the time.
+
+                long id = dataAPIClient.post("user/create", newUser, Long.class); //save user
+                if (id >= 0) {
+                    newUser.setId(id);
+                    return newUser;
+                } else {
+                    return null;
+                }
+            }
         }
         return user;
     }

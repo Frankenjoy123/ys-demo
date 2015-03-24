@@ -52,9 +52,17 @@ public class UserController {
 //    @PreAuthorize("hasAnyRole('COM_USER','YUNSOO_ADMIN')")
 //    @PreAuthorize("hasPermission(#contact, 'admin')")
     public User getByCellular(@PathVariable(value = "devicecode") String deviceCode) throws NotFoundException {
-        User user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);
-        if (user == null) throw new NotFoundException("User not found token=" + deviceCode);
-        return user;
+        User user = null;
+        try {
+            user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);
+            return user;
+        } catch (NotFoundException ex) {
+            //log
+            throw new NotFoundException("User not found by device code=" + deviceCode);
+        } catch (Exception ex) {
+            //log
+            return null;
+        }
     }
 
     @RequestMapping(value = "/thumbnail/{id}/{key}", method = RequestMethod.GET)

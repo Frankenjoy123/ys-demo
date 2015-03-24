@@ -55,7 +55,7 @@ public class UserController {
         //to-do
         List<User> users = userService.getUsersByFilter(null, devicecode, "", null);
         if (users == null || users.size() <= 0)
-            throw new ResourceNotFoundException("Users not found token=" + devicecode);
+            throw new NotFoundException("Users not found token=" + devicecode);
         return new ResponseEntity<User>(users.get(0), HttpStatus.OK);
     }
 

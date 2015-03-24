@@ -19,6 +19,7 @@ public class ScanRecord implements Comparator<ScanRecord> {
     private Long userId;
     private String detail;
     private String createdDateTime;
+    private String location;
 
     @JsonIgnore
     public String getProductKey() {
@@ -75,6 +76,14 @@ public class ScanRecord implements Comparator<ScanRecord> {
 
     public void setCreatedDateTime(String createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     /**

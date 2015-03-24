@@ -39,26 +39,24 @@ public class ScanController {
     private ProductDomain productDomain;
 
 
-    @RequestMapping(value = "/{key}", method = RequestMethod.GET)
-    public ScanResult getDetailByKey(@PathVariable(value = "key") String key,
-                                     @RequestParam(value = "userId", required = false) Integer userId,
-                                     @RequestParam(value = "device", required = false) String deviceCode) {
+    @RequestMapping(value = "/{key}", method = RequestMethod.POST)
+    public ScanResult getDetailByKey(@RequestBody ScanRequestBody scanRequestBody) {
 
-        if (key == null || key.isEmpty()) {
-            throw new BadRequestException("Key不能为空！");
-        }
+        //0，validate input
+        scanRequestBody.validateForScan();
 
         //1, get user
-        User currentUser = userDomain.getUser(userId, deviceCode);
+        User currentUser = userDomain.ensureUser(scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
         if (currentUser == null) {
-            throw new NotFoundException("User not found by userId = " + userId + " deviceCode = " + deviceCode);
+            throw new NotFoundException("User not found by userId = " + scanRequestBody.getUserId() + " deviceCode = " + scanRequestBody.getDeviceCode());
         }
 
         ScanResult scanResult = new ScanResult();
-        scanResult.setKey(key);
+        scanResult.setUserId(currentUser.getId());
+        scanResult.setKey(scanRequestBody.getKey());
 
         //2, set product information
-        Product currentExistProduct = productDomain.getProductByKey(key);
+        Product currentExistProduct = productDomain.getProductByKey(scanRequestBody.getKey());
         if (currentExistProduct == null) {
             //Not found by the product Key
             scanResult.setValidationResult(ValidationResult.Fake);  //no such key in our Yunsoo Platform.
@@ -67,13 +65,15 @@ public class ScanController {
         scanResult.setProduct(currentExistProduct);
 
         //3, retrieve scan records
-        ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}", ScanRecord[].class, key);
+        ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}", ScanRecord[].class, scanRequestBody.getKey());
         List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
+        //to-do
+        scanRecordList.forEach(r -> r.setLocation("XX市X区**街道"));
         scanResult.setScanRecord(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
         //4, retrieve logistics information
-        scanResult.setLogisticses(getLogisticsInfo(key));
+        scanResult.setLogisticses(getLogisticsInfo(scanRequestBody.getKey()));
 
         //5, get company information.
         Organization organization = dataAPIClient.get("organization/id/{id}", Organization.class, scanResult.getProduct().getManufacturerId());
@@ -83,7 +83,7 @@ public class ScanController {
         scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), currentUser, scanRecordList));
 
         //7, save scan Record
-        long scanSave = SaveScanRecord(currentUser, currentExistProduct);
+        long scanSave = SaveScanRecord(currentUser, currentExistProduct, scanRequestBody);
         return scanResult;
     }
 
@@ -137,15 +137,16 @@ public class ScanController {
         return logisticsList;
     }
 
-    private long SaveScanRecord(User currentUser, Product currentProduct) {
+    private long SaveScanRecord(User currentUser, Product currentProduct, ScanRequestBody scanRequestBody) {
         TScanRecord scanRecord = new TScanRecord();
         scanRecord.setUserId(currentUser.getId());
         scanRecord.setDeviceId(currentUser.getDeviceCode());
         scanRecord.setClientId(123456);
         scanRecord.setProductKey(currentProduct.getProductKey());
         scanRecord.setBaseProductId(currentProduct.getProductBaseId());
-        scanRecord.setDetail(currentUser.getName() + "扫描验证真伪。");
-
+        scanRecord.setDetail("某用户通过手机扫描验证真伪。");
+        scanRecord.setLongitude(scanRequestBody.getLongitude());
+        scanRecord.setLatitude(scanRequestBody.getLatitude());
         return dataAPIClient.post("scan/save", scanRecord, Long.class);
     }
 }

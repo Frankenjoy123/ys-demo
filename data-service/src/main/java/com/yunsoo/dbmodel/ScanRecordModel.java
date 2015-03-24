@@ -40,6 +40,11 @@ public class ScanRecordModel {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
+    @Column(name = "latitude")
+    private Double latitude;
+    @Column(name = "longitude")
+    private Double longitude;
+
     public long getId() {
         return id;
     }
@@ -102,5 +107,21 @@ public class ScanRecordModel {
 
     public void setCreatedDateTime(DateTime createDateTime) {
         this.createdDateTime = createDateTime;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 }
