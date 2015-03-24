@@ -1,12 +1,8 @@
 package com.yunsoo.dataapi.controller;
 
-import com.yunsoo.dataapi.dto.ResultWrapper;
-import com.yunsoo.dataapi.factory.ResultFactory;
 import com.yunsoo.service.ProductStatusService;
 import com.yunsoo.service.contract.ProductStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,21 +16,18 @@ import java.util.List;
 @RequestMapping("/productstatus")
 public class ProductStatusController {
 
-    private final ProductStatusService productStatusService;
-
     @Autowired
-    public ProductStatusController(ProductStatusService productStatusService) {
-        this.productStatusService = productStatusService;
-    }
+    private ProductStatusService productStatusService;
+
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ProductStatus getProductStatusById(@PathVariable(value = "id") Integer id) {
+    public ProductStatus getById(@PathVariable(value = "id") Integer id) {
         return productStatusService.getById(id);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductStatus> getAllProductStatus(@RequestParam(value = "active", required = false) Boolean active) {
-        return productStatusService.getAllProductStatus(active == null ? false : active);
+    public List<ProductStatus> getAll(@RequestParam(value = "active", required = false) Boolean active) {
+        return productStatusService.getAll(active);
     }
 
 //    @RequestMapping(value = "/create", method = RequestMethod.POST)

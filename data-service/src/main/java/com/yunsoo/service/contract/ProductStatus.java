@@ -1,79 +1,29 @@
 package com.yunsoo.service.contract;
 
-import com.yunsoo.dbmodel.ProductStatusModel;
-import org.springframework.beans.BeanUtils;
+import com.yunsoo.entity.ProductStatusEntity;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 /**
- * Created by Zhe on 2015/1/16.
- * <p>
- * Convert methods for DBModel <=> Contract
+ * Created by:   Lijian
+ * Created on:   2015/3/24
+ * Descriptions:
  */
-public class ProductStatus {
-    private Integer Id;
-    private String code;
-    private String description;
-    private Boolean active;
+public class ProductStatus extends AbstractLookup {
 
-    public Integer getId() {
-        return Id;
+    public static ProductStatusEntity toEntity(ProductStatus lookup) {
+        return toEntity(ProductStatusEntity.class, lookup);
     }
 
-    public void setId(Integer id) {
-        Id = id;
+    public static List<ProductStatusEntity> toEntities(List<ProductStatus> lookupList) {
+        return toEntities(ProductStatusEntity.class, lookupList);
     }
 
-    public String getCode() {
-        return code;
+    public static ProductStatus fromEntity(ProductStatusEntity entity) {
+        return fromEntity(ProductStatus.class, entity);
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Boolean isActive() {
-        return active;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public static ProductStatus FromModel(ProductStatusModel model) {
-        if (model == null) return null;
-        ProductStatus productStatus = new ProductStatus();
-        BeanUtils.copyProperties(model, productStatus);
-        return productStatus;
-    }
-
-    public static ProductStatusModel ToModel(ProductStatus productStatus) {
-        if (productStatus == null) return null;
-        ProductStatusModel model = new ProductStatusModel();
-        BeanUtils.copyProperties(productStatus, model);
-        return model;
-    }
-
-    public static List<ProductStatus> FromModelList(List<ProductStatusModel> modelList) {
-        if (modelList == null) return null;
-        return modelList.stream().map(ProductStatus::FromModel).collect(Collectors.toList());
-    }
-
-    public static List<ProductStatusModel> ToModelList(List<ProductStatus> productStatusList) {
-        if (productStatusList == null) return null;
-        return productStatusList.stream().map(ProductStatus::ToModel).collect(Collectors.toList());
+    public static List<ProductStatus> fromEntities(Iterable<ProductStatusEntity> entities) {
+        return fromEntities(ProductStatus.class, entities);
     }
 }

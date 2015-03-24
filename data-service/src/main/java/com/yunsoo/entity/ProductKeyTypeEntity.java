@@ -1,4 +1,4 @@
-package com.yunsoo.jpa.entity;
+package com.yunsoo.entity;
 
 import javax.persistence.*;
 
@@ -9,5 +9,5 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "product_key_type_lkp")
-public class ProductKeyTypeEntity extends LookupEntity {
+public class ProductKeyTypeEntity extends AbstractLookupEntity {
 }

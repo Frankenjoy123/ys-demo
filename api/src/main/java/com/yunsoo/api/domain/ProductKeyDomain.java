@@ -2,7 +2,7 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyType;
-import com.yunsoo.common.data.object.LookupBase;
+import com.yunsoo.common.data.object.AbstractLookupObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyBatchRequestObject;
 import com.yunsoo.common.data.object.ProductKeyTypeObject;
@@ -43,7 +43,7 @@ public class ProductKeyDomain {
     }
 
     public List<Integer> changeProductKeyTypeCodeToId(List<String> productKeyTypeCodeList) {
-        return LookupBase.changeCodeToId(getAllProductKeyTypes(true), productKeyTypeCodeList);
+        return AbstractLookupObject.changeCodeToId(getAllProductKeyTypes(true), productKeyTypeCodeList);
     }
 
 

@@ -2,10 +2,8 @@ package com.yunsoo.dataapi.controller;
 
 import com.yunsoo.common.data.object.ProductKeyTypeObject;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.jpa.entity.ProductKeyTypeEntity;
-import com.yunsoo.jpa.repository.ProductKeyTypeRepository;
 import com.yunsoo.service.ProductKeyTypeService;
-import com.yunsoo.service.contract.lookup.ProductKeyType;
+import com.yunsoo.service.contract.ProductKeyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +40,7 @@ public class ProductKeyTypeController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyTypeObject> getAll(@RequestParam(value = "active", required = false) Boolean active) {
-        List<ProductKeyType> productKeyTypes = productKeyTypeService.getAllProductKeyTypes(active == null ? false : active);
+        List<ProductKeyType> productKeyTypes = productKeyTypeService.getAll(active);
         return productKeyTypes.stream().map(p -> {
             ProductKeyTypeObject object = new ProductKeyTypeObject();
             object.setId(p.getId());

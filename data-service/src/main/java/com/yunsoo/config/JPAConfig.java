@@ -16,7 +16,7 @@ import javax.sql.DataSource;
  * Descriptions:
  */
 @Configuration
-@EnableJpaRepositories(basePackages = "com.yunsoo.jpa.repository")
+@EnableJpaRepositories(basePackages = "com.yunsoo.repository")
 public class JPAConfig {
 
     @Autowired
@@ -31,9 +31,16 @@ public class JPAConfig {
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
-        factory.setPackagesToScan("com.yunsoo.jpa.entity");
+        factory.setPackagesToScan("com.yunsoo.entity");
         factory.setDataSource(dataSource);
 
         return factory;
     }
+
+//    @Bean
+//    public PlatformTransactionManager transactionManager() {
+//        JpaTransactionManager txManager = new JpaTransactionManager();
+//        txManager.setEntityManagerFactory(entityManagerFactory().getObject());
+//        return txManager;
+//    }
 }

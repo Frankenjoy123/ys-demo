@@ -1,4 +1,4 @@
-package com.yunsoo.jpa.entity;
+package com.yunsoo.entity;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -11,12 +11,12 @@ import javax.persistence.MappedSuperclass;
  * Descriptions:
  */
 @MappedSuperclass
-public class LookupEntity {
+public abstract class AbstractLookupEntity {
 
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private int id;
+    private Integer id;
 
     @Column(name = "code")
     private String code;
@@ -30,11 +30,11 @@ public class LookupEntity {
     @Column(name = "active")
     private boolean active;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

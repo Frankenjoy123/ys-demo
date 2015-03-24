@@ -1,15 +1,11 @@
 package com.yunsoo.service.Impl;
 
-import com.yunsoo.dao.DaoStatus;
-import com.yunsoo.dao.ProductStatusDao;
-import com.yunsoo.dbmodel.ProductStatusModel;
+import com.yunsoo.repository.ProductStatusRepository;
 import com.yunsoo.service.ProductStatusService;
 import com.yunsoo.service.contract.ProductStatus;
-import com.yunsoo.util.SpringBeanUtil;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 /**
@@ -17,55 +13,32 @@ import java.util.List;
  * Created on:   2015/1/13
  * Descriptions:
  */
-@Service("productKeyStatusService")
+@Service("productStatusService")
 public class ProductStatusServiceImpl implements ProductStatusService {
 
     @Autowired
-    private ProductStatusDao productStatusDao;
+    private ProductStatusRepository productStatusRepository;
 
     @Override
     public ProductStatus getById(int id) {
-        return ProductStatus.FromModel(productStatusDao.getById(id));
+        return ProductStatus.fromEntity(productStatusRepository.findOne(id));
     }
 
     @Override
-    public int save(ProductStatus productStatus) {
-        return productStatusDao.save(ProductStatus.ToModel(productStatus));
+    public List<ProductStatus> getAll(Boolean activeOnly) {
+        return ProductStatus.fromEntities(
+                activeOnly == null
+                        ? productStatusRepository.findAll()
+                        : productStatusRepository.findByActive(activeOnly));
     }
 
     @Override
-    public Boolean patchUpdate(ProductStatus productStatus) {
-        ProductStatusModel model = getPatchModel(productStatus);
-        return productStatusDao.patchUpdate(model) == DaoStatus.success ? true : false;
+    public ProductStatus save(ProductStatus lookup) {
+        return ProductStatus.fromEntity(productStatusRepository.save(ProductStatus.toEntity(lookup)));
     }
 
     @Override
-    public Boolean update(ProductStatus productStatus) {
-        ProductStatusModel model = getPatchModel(productStatus);
-        return productStatusDao.update(model) == DaoStatus.success ? true : false;
-    }
-
-    @Override
-    public void delete(ProductStatus productStatus) {
-        productStatusDao.delete(ProductStatus.ToModel(productStatus));
-    }
-
-    @Override
-    public boolean delete(int id) {
-        return productStatusDao.delete(id) == DaoStatus.success;
-    }
-
-    @Override
-    @Transactional
-    public List<ProductStatus> getAllProductStatus(boolean active) {
-        return ProductStatus.FromModelList(productStatusDao.getAll(active));
-    }
-
-    //Convert Dto to Model,just copy properties which is not null.
-    private ProductStatusModel getPatchModel(ProductStatus productStatus) {
-        //ProductStatusModel model = productStatusDao.getById(id);
-        ProductStatusModel model = new ProductStatusModel();
-        BeanUtils.copyProperties(productStatus, model, SpringBeanUtil.getNullPropertyNames(productStatus));
-        return model;
+    public void delete(ProductStatus lookup) {
+        productStatusRepository.delete(ProductStatus.toEntity(lookup));
     }
 }

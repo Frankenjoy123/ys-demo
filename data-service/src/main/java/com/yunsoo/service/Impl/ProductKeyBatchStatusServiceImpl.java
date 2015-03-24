@@ -1,13 +1,12 @@
 package com.yunsoo.service.Impl;
 
-import com.yunsoo.dao.ProductKeyBatchStatusDao;
+import com.yunsoo.repository.ProductKeyBatchStatusRepository;
 import com.yunsoo.service.ProductKeyBatchStatusService;
 import com.yunsoo.service.contract.ProductKeyBatchStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -18,21 +17,28 @@ import java.util.stream.Collectors;
 public class ProductKeyBatchStatusServiceImpl implements ProductKeyBatchStatusService {
 
     @Autowired
-    private ProductKeyBatchStatusDao productKeyBatchStatusDao;
+    private ProductKeyBatchStatusRepository productKeyBatchStatusRepository;
 
     @Override
-    public List<ProductKeyBatchStatus> getAll() {
-        return productKeyBatchStatusDao.getAll(false)
-                .stream()
-                .map(ProductKeyBatchStatus::fromModel)
-                .collect(Collectors.toList());
+    public ProductKeyBatchStatus getById(int id) {
+        return ProductKeyBatchStatus.fromEntity(productKeyBatchStatusRepository.findOne(id));
     }
 
     @Override
-    public List<ProductKeyBatchStatus> getAllActive() {
-        return productKeyBatchStatusDao.getAll(true)
-                .stream()
-                .map(ProductKeyBatchStatus::fromModel)
-                .collect(Collectors.toList());
+    public List<ProductKeyBatchStatus> getAll(Boolean activeOnly) {
+        return ProductKeyBatchStatus.fromEntities(
+                activeOnly == null
+                        ? productKeyBatchStatusRepository.findAll()
+                        : productKeyBatchStatusRepository.findByActive(activeOnly));
+    }
+
+    @Override
+    public ProductKeyBatchStatus save(ProductKeyBatchStatus lookup) {
+        return ProductKeyBatchStatus.fromEntity(productKeyBatchStatusRepository.save(ProductKeyBatchStatus.toEntity(lookup)));
+    }
+
+    @Override
+    public void delete(ProductKeyBatchStatus lookup) {
+        productKeyBatchStatusRepository.delete(ProductKeyBatchStatus.toEntity(lookup));
     }
 }

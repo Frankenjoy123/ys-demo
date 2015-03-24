@@ -1,11 +1,10 @@
 package com.yunsoo.service.Impl;
 
-import com.yunsoo.jpa.repository.ProductKeyTypeRepository;
+import com.yunsoo.repository.ProductKeyTypeRepository;
 import com.yunsoo.service.ProductKeyTypeService;
-import com.yunsoo.service.contract.lookup.ProductKeyType;
+import com.yunsoo.service.contract.ProductKeyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,24 +25,20 @@ public class ProductKeyTypeServiceImpl implements ProductKeyTypeService {
     }
 
     @Override
-    public void save(ProductKeyType productKeyTypeModel) {
-        productKeyTypeRepository.save(ProductKeyType.toEntity(productKeyTypeModel));
+    public List<ProductKeyType> getAll(Boolean activeOnly) {
+        return ProductKeyType.fromEntities(
+                activeOnly == null
+                        ? productKeyTypeRepository.findAll()
+                        : productKeyTypeRepository.findByActive(activeOnly));
     }
 
     @Override
-    public void update(ProductKeyType productKeyTypeModel) {
-        productKeyTypeRepository.save(ProductKeyType.toEntity(productKeyTypeModel));
+    public ProductKeyType save(ProductKeyType lookup) {
+        return ProductKeyType.fromEntity(productKeyTypeRepository.save(ProductKeyType.toEntity(lookup)));
     }
 
     @Override
-    public void delete(ProductKeyType productKeyTypeModel) {
-        productKeyTypeRepository.delete(ProductKeyType.toEntity(productKeyTypeModel));
+    public void delete(ProductKeyType lookup) {
+        productKeyTypeRepository.delete(ProductKeyType.toEntity(lookup));
     }
-
-    @Override
-    @Transactional
-    public List<ProductKeyType> getAllProductKeyTypes(boolean active) {
-        return ProductKeyType.fromEntityList(productKeyTypeRepository.findAll());
-    }
-
 }
