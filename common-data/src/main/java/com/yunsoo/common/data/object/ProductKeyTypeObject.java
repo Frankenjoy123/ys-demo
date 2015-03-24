@@ -5,5 +5,5 @@ package com.yunsoo.common.data.object;
  * Created on:   2015/3/17
  * Descriptions:
  */
-public class ProductKeyTypeObject extends LookupBase<ProductKeyTypeObject> {
+public class ProductKeyTypeObject extends AbstractLookupObject {
 }

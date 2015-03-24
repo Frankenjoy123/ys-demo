@@ -8,18 +8,18 @@ import java.util.stream.Collectors;
  * Created on:   2015/2/27
  * Descriptions:
  */
-public abstract class LookupBase<T extends LookupBase> implements Comparable<T> {
+public abstract class AbstractLookupObject {
     private Integer id;
     private String code;
     private String name;
     private String description;
     private boolean active;
 
-    public LookupBase() {
+    public AbstractLookupObject() {
     }
 
 
-    public LookupBase(Integer id, String code) {
+    public AbstractLookupObject(Integer id, String code) {
         this.id = id;
         this.code = code;
         this.description = null;
@@ -73,21 +73,19 @@ public abstract class LookupBase<T extends LookupBase> implements Comparable<T> 
 
     @Override
     public int hashCode() {
-        return this.getId();
+        return id == null ? 0 : this.getId();
     }
 
     @Override
     public boolean equals(Object obj) {
         return this == obj
-                || (this.getClass().isInstance(obj) && this.getId() == ((LookupBase) obj).getId());
+                || (obj != null
+                && this.getId() != null
+                && this.getClass().equals(obj.getClass())
+                && this.getId().equals(((AbstractLookupObject) obj).getId()));
     }
 
-    @Override
-    public int compareTo(T obj) {
-        return Integer.compare(this.getId(), obj.getId());
-    }
-
-    public static <T extends LookupBase> List<Integer> changeCodeToId(List<T> lookup, List<String> codeList) {
+    public static <T extends AbstractLookupObject> List<Integer> changeCodeToId(List<T> lookup, List<String> codeList) {
         if (lookup == null) {
             throw new IllegalArgumentException("lookup is null");
         }
@@ -98,7 +96,7 @@ public abstract class LookupBase<T extends LookupBase> implements Comparable<T> 
             if (c == null) {
                 throw new IllegalArgumentException("null String found in codeList");
             }
-            for (LookupBase i : lookup) {
+            for (AbstractLookupObject i : lookup) {
                 if (c.equals(i.getCode())) {
                     return i.getId();
                 }

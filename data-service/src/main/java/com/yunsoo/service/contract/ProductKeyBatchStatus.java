@@ -1,63 +1,29 @@
 package com.yunsoo.service.contract;
 
-import com.yunsoo.dbmodel.ProductKeyBatchStatusModel;
-import org.springframework.beans.BeanUtils;
+import com.yunsoo.entity.ProductKeyBatchStatusEntity;
+
+import java.util.List;
 
 /**
  * Created by:   Lijian
- * Created on:   2015/3/11
+ * Created on:   2015/3/24
  * Descriptions:
  */
-public class ProductKeyBatchStatus {
-    private int id;
-    private String code;
-    private String description;
-    private Boolean active;
+public class ProductKeyBatchStatus extends AbstractLookup {
 
-    public int getId() {
-        return id;
+    public static ProductKeyBatchStatusEntity toEntity(ProductKeyBatchStatus lookup) {
+        return toEntity(ProductKeyBatchStatusEntity.class, lookup);
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public static List<ProductKeyBatchStatusEntity> toEntities(List<ProductKeyBatchStatus> lookupList) {
+        return toEntities(ProductKeyBatchStatusEntity.class, lookupList);
     }
 
-    public String getCode() {
-        return code;
+    public static ProductKeyBatchStatus fromEntity(ProductKeyBatchStatusEntity entity) {
+        return fromEntity(ProductKeyBatchStatus.class, entity);
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Boolean isActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-
-    //util methods
-
-    public static ProductKeyBatchStatus fromModel(ProductKeyBatchStatusModel model) {
-        ProductKeyBatchStatus status = new ProductKeyBatchStatus();
-        BeanUtils.copyProperties(model, status);
-        return status;
-    }
-
-    public static ProductKeyBatchStatusModel toModel(ProductKeyBatchStatus status) {
-        ProductKeyBatchStatusModel model = new ProductKeyBatchStatusModel();
-        BeanUtils.copyProperties(status, model);
-        return model;
+    public static List<ProductKeyBatchStatus> fromEntities(Iterable<ProductKeyBatchStatusEntity> entities) {
+        return fromEntities(ProductKeyBatchStatus.class, entities);
     }
 }

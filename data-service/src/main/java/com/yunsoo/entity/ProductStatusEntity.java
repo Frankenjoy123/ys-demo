@@ -1,4 +1,4 @@
-package com.yunsoo.jpa.entity;
+package com.yunsoo.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -9,6 +9,6 @@ import javax.persistence.Table;
  * Descriptions:
  */
 @Entity
-@Table(name = "product_key_batch_status_lkp")
-public class ProductKeyBatchStatusEntity extends LookupEntity {
+@Table(name = "product_status_lkp")
+public class ProductStatusEntity extends AbstractLookupEntity {
 }

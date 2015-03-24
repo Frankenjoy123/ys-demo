@@ -1,6 +1,6 @@
 package com.yunsoo.service;
 
-import com.yunsoo.service.contract.lookup.AbstractLookup;
+import com.yunsoo.service.contract.AbstractLookup;
 
 import java.util.List;
 
@@ -9,15 +9,13 @@ import java.util.List;
  * Created on:   2015/3/23
  * Descriptions:
  */
-public interface LookupService {
+public interface LookupService<T extends AbstractLookup> {
 
-    public <T extends AbstractLookup> T getById(Class<T> lookupType, int id);
+    public T getById(int id);
 
-    public <T extends AbstractLookup> List<T> getAll(Class<T> lookupType, Boolean active);
+    public List<T> getAll(Boolean activeOnly);
 
-    public <T extends AbstractLookup> void save(T model);
+    public T save(T lookup);
 
-    public <T extends AbstractLookup> void update(T model);
-
-    public <T extends AbstractLookup> void delete(T model);
+    public void delete(T lookup);
 }

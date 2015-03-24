@@ -1,43 +1,34 @@
 package com.yunsoo.service.Impl;
 
 import com.yunsoo.service.LookupService;
-import com.yunsoo.service.contract.lookup.AbstractLookup;
-import org.springframework.stereotype.Service;
+import com.yunsoo.service.contract.AbstractLookup;
 
 import java.util.List;
 
 /**
  * Created by:   Lijian
- * Created on:   2015/3/23
- * Descriptions:
+ * Created on:   2015/3/24
+ * Descriptions: To be deleted
  */
-@Service("lookupService")
-public class LookupServiceImpl implements LookupService {
+public class LookupServiceImpl<T extends AbstractLookup> implements LookupService<T> {
 
     @Override
-    public <T extends AbstractLookup> T getById(Class<T> lookupType, int id) {
+    public T getById(int id) {
         return null;
     }
 
     @Override
-    public <T extends AbstractLookup> List<T> getAll(Class<T> lookupType, Boolean active) {
+    public List<T> getAll(Boolean activeOnly) {
         return null;
     }
 
     @Override
-    public <T extends AbstractLookup> void save(T model) {
-
+    public T save(T model) {
+        return null;
     }
 
     @Override
-    public <T extends AbstractLookup> void update(T model) {
+    public void delete(T model) {
 
     }
-
-    @Override
-    public <T extends AbstractLookup> void delete(T model) {
-
-    }
-
-
 }
