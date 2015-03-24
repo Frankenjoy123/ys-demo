@@ -208,7 +208,7 @@ public class ProductPackageServiceImpl implements ProductPackageService {
             for (int i = 1; i < packageModels.size(); i++) {
                 ProductPackageModel productModel = packageModels.get(i);
                 // 被打包到更大的包
-                if (packagesHashMap.containsKey(packageModels.get(i).getProductKey())) {
+                if (packagesHashMap.containsKey(productModel.getProductKey())) {
                     ProductPackageModel packingModel = packagesHashMap.get(productModel.getProductKey());
                     packingModel.setParentProductKey(packageModel.getProductKey());
                 } else {

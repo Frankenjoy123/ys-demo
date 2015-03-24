@@ -109,4 +109,9 @@ public class ProductPackageModel {
         ProductPackageModel rightModel = (ProductPackageModel)obj;
         return this.getProductKey().equals(rightModel.getProductKey());
     }
+
+    @Override
+    public int hashCode() {
+        return productKey.hashCode();
+    }
 }

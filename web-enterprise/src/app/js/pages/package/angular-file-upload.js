@@ -1101,6 +1101,8 @@ module
                 if (!this.uploader.isHTML5) this.destroy();
                 this.uploader.addToQueue(files, options, filters);
                 if (this.isEmptyAfterSelection()) this.element.prop('value', null);
+                //reset input
+                $(this.element[0]).val('');
             };
 
             // ---------------------------
