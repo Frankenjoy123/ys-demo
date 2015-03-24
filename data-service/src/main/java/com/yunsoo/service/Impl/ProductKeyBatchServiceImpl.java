@@ -11,6 +11,7 @@ import com.yunsoo.service.ProductKeyBatchService;
 import com.yunsoo.service.contract.Product;
 import com.yunsoo.service.contract.ProductKeyBatch;
 import com.yunsoo.config.AmazonSetting;
+import com.yunsoo.service.contract.ProductKeys;
 import com.yunsoo.util.KeyGenerator;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     }
 
     @Override
-    public List<List<String>> getProductKeysByBatchId(Long batchId) {
+    public ProductKeys getProductKeysByBatchId(Long batchId) {
         ProductKeyBatch keyBatch = this.getById(batchId);
         if (keyBatch == null) {
             return null;
@@ -80,9 +81,18 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     }
 
     @Override
-    public List<List<String>> getProductKeysByAddress(String address) {
+    public ProductKeys getProductKeysByAddress(String address) {
         ProductKeyBatchS3ObjectModel model = getProductKeyListFromS3(address);
-        return model == null ? null : model.getProductKeys();
+        if (model == null) {
+            return null;
+        }
+        ProductKeys productKeys = new ProductKeys();
+        productKeys.setBatchId(model.getId());
+        productKeys.setQuantity(model.getQuantity());
+        productKeys.setCreatedDateTime(DateTimeUtils.parse(model.getCreatedDateTime()));
+        productKeys.setProductKeyTypeIds(model.getProductKeyTypeIds());
+        productKeys.setProductKeys(model.getProductKeys());
+        return productKeys;
     }
 
     @Override
