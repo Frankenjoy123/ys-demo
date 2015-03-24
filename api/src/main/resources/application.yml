@@ -10,6 +10,13 @@ management:
     port: 6081
     address: 127.0.0.1
 
+logging:
+    path: c:/logs
+    file: yunsoo-api.log
+    level:
+        org.springframework: 'INFO'
+        org.hibernate: 'ERROR'
+
 yunsoo:
     dataapi_baseurl: http://dataapi:8080/
     dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
@@ -24,6 +31,13 @@ spring:
 management:
     port: 6081
     address: 127.0.0.1
+
+logging:
+    path: /var/logs
+    file: yunsoo-api.log
+    level:
+        org.springframework: 'INFO'
+        org.hibernate: 'INFO'
 
 yunsoo:
     dataapi_baseurl: http://dataapi:8080/

@@ -13,6 +13,8 @@ import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +40,7 @@ public class ScanController {
     @Autowired
     private ProductDomain productDomain;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
 
     @RequestMapping(value = "/{key}", method = RequestMethod.POST)
     public ScanResult getDetailByKey(@RequestBody ScanRequestBody scanRequestBody) {
@@ -48,6 +51,7 @@ public class ScanController {
         //1, get user
         User currentUser = userDomain.ensureUser(scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
         if (currentUser == null) {
+            LOGGER.error("User not found by userId ={}, deviceCode = {}", scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
             throw new NotFoundException("User not found by userId = " + scanRequestBody.getUserId() + " deviceCode = " + scanRequestBody.getDeviceCode());
         }
 
@@ -59,6 +63,7 @@ public class ScanController {
         Product currentExistProduct = productDomain.getProductByKey(scanRequestBody.getKey());
         if (currentExistProduct == null) {
             //Not found by the product Key
+            LOGGER.warn("Key = {} 不存在！", scanRequestBody.getKey());
             scanResult.setValidationResult(ValidationResult.Fake);  //no such key in our Yunsoo Platform.
             return scanResult;
         }
@@ -120,6 +125,7 @@ public class ScanController {
             logisticsPaths = logisticsDomain.getLogisticsPathsOrderByStartDate(key);
         } catch (NotFoundException ex) {
             //to do: log
+            LOGGER.warn("物流信息找不到 - Key = " + key);
             return null;
         }
 
