@@ -12,6 +12,7 @@ public class ScanRequestBody {
     private String deviceCode;
     private Double latitude;
     private Double longitude;
+    private String location;
 
     public String getKey() {
         return Key;
@@ -51,6 +52,14 @@ public class ScanRequestBody {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public Boolean validateForScan() {

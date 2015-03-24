@@ -68,7 +68,6 @@ public class ScanController {
         ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}", ScanRecord[].class, scanRequestBody.getKey());
         List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
         //to-do
-        scanRecordList.forEach(r -> r.setLocation("XX市X区**街道"));
         scanResult.setScanRecord(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
@@ -147,6 +146,11 @@ public class ScanController {
         scanRecord.setDetail("某用户通过手机扫描验证真伪。");
         scanRecord.setLongitude(scanRequestBody.getLongitude());
         scanRecord.setLatitude(scanRequestBody.getLatitude());
+        if (scanRequestBody.getLocation() != null || !scanRequestBody.getLocation().isEmpty()) {
+            scanRecord.setLocation(scanRequestBody.getLocation());
+        } else {
+            scanRecord.setLocation("未公开地址"); //用户选择不公开隐私地址信息
+        }
         return dataAPIClient.post("scan/save", scanRecord, Long.class);
     }
 }

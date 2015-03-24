@@ -29,5 +29,5 @@ public interface MessageDao {
 
     public List<MessageModel> getMessagesByFilter(Integer type, Integer status, Long companyId, Boolean ignoreExpireDate);
 
-    public List<MessageModel> getUnreadMessages(Long userId, Long companyId);
+    public List<MessageModel> getUnreadMessages(Long companyId, Long lastReadMessageId);
 }

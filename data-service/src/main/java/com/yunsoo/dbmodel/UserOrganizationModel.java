@@ -1,5 +1,8 @@
 package com.yunsoo.dbmodel;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -27,23 +30,13 @@ public class UserOrganizationModel {
     @Column(name = "is_following")
     private long isFollowing;
 
-//    @ManyToOne
-//    @JoinColumn(name="user_id")
-//    private UserModel userModel;
-//
-//    @ManyToOne
-//    @JoinColumn(name="last_read_message_id")
-//    private MessageModel messageModel;
+    @Column(name = "created_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdDateTime;
 
-//    @ManyToOne
-//    @JoinColumn(name = "last_read_message_id")
-//    public MessageModel getMessageModel() {
-//        return messageModel;
-//    }
-//
-//    public void setMessageModel(MessageModel messageModel) {
-//        this.messageModel = messageModel;
-//    }
+    @Column(name = "last_update_time", nullable = true)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedDateTime;
 
     public void setId(long id) {
         this.id = id;
@@ -85,14 +78,19 @@ public class UserOrganizationModel {
         this.isFollowing = isFollowing;
     }
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_Id")
-//    public UserModel getUserModel() {
-//        return userModel;
-//    }
-//
-//    public void setUserModel(UserModel userModel) {
-//        this.userModel = userModel;
-//    }
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
 
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    public DateTime getLastUpdatedDateTime() {
+        return lastUpdatedDateTime;
+    }
+
+    public void setLastUpdatedDateTime(DateTime lastUpdatedDateTime) {
+        this.lastUpdatedDateTime = lastUpdatedDateTime;
+    }
 }

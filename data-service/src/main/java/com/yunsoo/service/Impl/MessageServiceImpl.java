@@ -95,8 +95,9 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> getUnreadMessages(Long userId, Long companyId) {
-        return Message.FromModelList(messageDao.getUnreadMessages(userId, companyId));
+    public List<Message> getUnreadMessages(Long userId, Long companyId, Long lastReadMessageId) {
+        //to do: log user read someone's message
+        return Message.FromModelList(messageDao.getUnreadMessages(companyId, lastReadMessageId));
     }
 
     //Convert Dto to Model,just copy properties which is not null.

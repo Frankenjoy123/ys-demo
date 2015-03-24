@@ -17,6 +17,7 @@ public class TScanRecord {
     private String createdDateTime;
     private Double latitude;
     private Double longitude;
+    private String location;
 
     public String getProductKey() {
         return productKey;
@@ -88,5 +89,13 @@ public class TScanRecord {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

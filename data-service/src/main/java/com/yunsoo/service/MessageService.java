@@ -29,5 +29,5 @@ public interface MessageService {
 
     public List<Message> getMessagesByFilter(Integer type, Integer status, Long companyId, Boolean ignoreExpireDate);
 
-    public List<Message> getUnreadMessages(Long userId, Long companyId);
+    public List<Message> getUnreadMessages(Long userId, Long companyId, Long lastReadMessageId);
 }

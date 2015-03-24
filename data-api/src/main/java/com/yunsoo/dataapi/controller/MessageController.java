@@ -45,16 +45,17 @@ public class MessageController {
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity<List<Message>> getMessagesByFilter(@RequestParam(value = "type", required = false) Integer type,
                                              @RequestParam(value = "status", required = false) Integer status,
-                                             @RequestParam(value = "companyId", required = false) Long companyId,
-                                             @RequestParam(value = "ignoreExpireDate", required = false, defaultValue = "true") boolean ignoreExpireDate) {
+                                             @RequestParam(value = "companyid", required = false) Long companyId,
+                                             @RequestParam(value = "ignoreexpiredate", required = false, defaultValue = "true") boolean ignoreExpireDate) {
         List<Message> messageList = messageService.getMessagesByFilter(type, status, companyId, ignoreExpireDate);
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/getUnread", method = RequestMethod.GET)
-    public ResponseEntity<List<Message>> getUnreadMessagesBy(@RequestParam(value = "userId", required = true) Long userId,
-                                                             @RequestParam(value = "companyId", required = true) Long companyId) {
-        List<Message> messageList = messageService.getUnreadMessages(userId, companyId);
+    public ResponseEntity<List<Message>> getUnreadMessagesBy(@RequestParam(value = "userid", required = true) Long userId,
+                                                             @RequestParam(value = "companyid", required = true) Long companyId,
+                                                             @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
+        List<Message> messageList = messageService.getUnreadMessages(userId, companyId, lastReadMessageId);
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 

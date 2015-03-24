@@ -3,11 +3,8 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.dto.basic.Message;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,10 +37,11 @@ public class MessageController {
         return message;
     }
 
-    @RequestMapping(value = "/getUnread", method = RequestMethod.GET)
-    public List<Message> getUnreadMessagesBy(@RequestParam(value = "userId", required = true) Long userId,
-                                             @RequestParam(value = "companyId", required = true) Long companyId) {
-        List<Message> messageList = dataAPIClient.get("message/getUnread", List.class, userId, companyId);
+    @RequestMapping(value = "/getunread", method = RequestMethod.GET)
+    public List<Message> getUnreadMessagesBy(@RequestParam(value = "userid", required = true) Long userId,
+                                             @RequestParam(value = "companyid", required = true) Long companyId,
+                                             @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
+        List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&companyid={1}&lastreadmessageid={2}", List.class, userId, companyId, lastReadMessageId);
         return messageList;
     }
 

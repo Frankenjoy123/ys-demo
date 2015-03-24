@@ -132,48 +132,19 @@ public class MessageDaoImpl implements MessageDao {
     }
 
     @Override
-    public List<MessageModel> getUnreadMessages(Long userId, Long companyId) {
+    public List<MessageModel> getUnreadMessages(Long companyId, Long lastReadMessageId) {
         Session session = sessionFactory.getCurrentSession();
-//        Criteria criteria = session.createCriteria(MessageModel.class);
-//        criteria.add(Restrictions.eq("status", 3)); //approved message status = 3
-//        criteria.add(Restrictions.eq("companyId", companyId));
-//
-//        Criteria criteriaUserOrg = criteria.createCriteria("userOrganizationModelSet");
-//        criteriaUserOrg.add(Restrictions.eq("organizationId", companyId));
-//        criteriaUserOrg.add(Restrictions.eq("userId", userId));
-//
-//        Criteria nestedCriteriaUser = criteriaUserOrg.createCriteria("userModel");
-//        nestedCriteriaUser.add(Restrictions.eq("id", userId));
-////        criteriaMessage.add(Restrictions.gt("id", Property.forName("lastReadMessageId").in(criteria)));
-//        criteria.setProjection(
-//                Projections.projectionList()
-//                        .add(Property.forName("id"))
-//                        .add(Property.forName("title"))
-//                        .add(Property.forName("body"))
-//                        .add(Property.forName("digest"))
-//        );
-//        List<object> list = criteria.list();
-//        Iterator it = list.iterator();
-//        while (it.hasNext()) {
-//            object[] objects = (object[]) it.next();
-//        }
 
-//        String hql = "from UserOrganizationModel where id=" + userId + " from MessageModel where companyId=" + companyId;
-//        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        Criteria c = sessionFactory.getCurrentSession().createCriteria(MessageModel.class);
+        if (lastReadMessageId != null) {
+            c.add(Restrictions.gt("id", lastReadMessageId.longValue()));
+        }
+        if (companyId != null) {
+            c.add(Restrictions.eq("companyId", companyId.longValue()));
+        }
+        c.add(Restrictions.eq("status", dataServiceSetting.getMessage_approved_status_id()));
+        c.add(Restrictions.gt("expiredDateTime", DateTime.now()));
 
-//        String hql = "select m from MessageModel m  " +
-//                "inner join m.userOrganizationModelSet ua " +
-//                "inner join ua.userModel u " +
-//                "on ua.userId = u.id and m.id > ua.lastReadMessageId " +
-//                "where m.status = "+ YunsooConfig.getMessageApprovedStatus() +
-//                " and m.companyId = "+ companyId +
-//                " and u.id = "+ userId +
-//                " and ua.organizationId = " + companyId;
-//        Query query = session.createQuery(hql);
-//        List<MessageModel> messageModelList = query.list();
-
-//        return messageModelList;
-
-        return getMessagesByFilter(null, null, 18L, false);
+        return c.list();
     }
 }
