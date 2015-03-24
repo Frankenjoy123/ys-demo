@@ -1,6 +1,6 @@
 package com.yunsoo.service;
 
-import com.yunsoo.service.contract.ProductKeyType;
+import com.yunsoo.service.contract.lookup.ProductKeyType;
 
 import java.util.List;
 

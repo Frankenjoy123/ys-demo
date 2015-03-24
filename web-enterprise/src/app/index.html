@@ -33,8 +33,7 @@
     <script src="js/pages/msg/msg.js" type="text/javascript"></script>
     <script src="js/pages/logistics/logistics.js" type="text/javascript"></script>
     <script src="js/pages/package/package.js" type="text/javascript"></script>
-
-
+    <script src="js/pages/package/angular-file-upload.js" type="text/javascript"></script>
     <link href="js/lib/bootstrap-3.3.2-dist/css/bootstrap.css" rel="stylesheet" type="text/css"/>
     <link href="js/lib/bootstrap-3.3.2-dist/css/bootstrap-treeview.css" rel="stylesheet" type="text/css"/>
     <link href="css/lib/font-awesome-4.1.0.min.css" rel="stylesheet" type="text/css"/>
@@ -43,6 +42,7 @@
     <link href="css/nav.css" rel="stylesheet" type="text/css"/>
     <link href="css/ngview.css" rel="stylesheet" type="text/css"/>
     <link href="css/pages/account/manage.css" rel="stylesheet" type="text/css"/>
+    <link href="css/pages/package/jquery.fileupload.css" type="text/css" rel="stylesheet"/>
 </head>
 <body class="skin-blue pace-done">
 <div ng-controller="rootCtrl">
@@ -50,6 +50,15 @@
     <div class="main-content wrapper row-offcanvas row-offcanvas-left active relative">
         <aside class="left-side sidebar-offcanvas" ng-include="'pages/nav.html'"></aside>
         <aside class="right-side" ng-view></aside>
+    </div>
+    <div class="alert-wrap" ng-repeat="alert in alertMsgs">
+        <div class="alert" ng-class="{
+        'alert-success': level === 'success',
+        'alert-danger': level === 'danger',
+        'alert-info': level === 'info'
+        }">
+            {{alert.message}}
+        </div>
     </div>
 </div>
 </body>

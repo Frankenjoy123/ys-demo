@@ -1,7 +1,6 @@
 package com.yunsoo.api.config;
 
-import com.yunsoo.api.domain.ProductKeyDomain;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -10,11 +9,6 @@ import org.springframework.context.annotation.Configuration;
  * Descriptions:
  */
 @Configuration
+@ComponentScan(basePackages = "com.yunsoo.api.domain")
 public class DomainConfiguration {
-
-    @Bean
-    public ProductKeyDomain productKeyDomain() {
-        return new ProductKeyDomain();
-    }
-
 }

@@ -1,80 +1,81 @@
 (function () {
-    var app = angular.module("package", ["interceptor"]);
+    var app = angular.module("package", ["interceptor", "angularFileUpload"]);
 
     app.factory("packageService", ["$http", function ($http) {
         return {
-            getInfo: function (productKey, fnSuccess, fnError) {
+            getInfo: function (packageKey, fnSuccess, fnError) {
                 $http.get("/api/package/" + productKey)
                     .success(function (data) {
                         fnSuccess(data);
                     }).error(function (data, state) {
                         fnSuccess();
                     });
+                return this;
+            },
+            uploadPackageFile: function (file, fnSuccess, fnError) {
+                $http.post("/api/package/file", file).success(function (data) {
+                }).error(function (data, state) {
+                });
+                return this;
             }
-
-            //getInfo: function(productKey, fnSuccess, fnError){
-            //    $http.get("mock/package.json")
-            //        .success(function(data){
-            //            fnSuccess(data);
-            //        });
-            //}
         };
     }]);
 
-    app.controller("packageCtrl", ["$scope", "packageService", function ($scope, packageService) {
+    app.controller("packageCtrl", ["$scope", "FileUploader", function ($scope, FileUploader) {
+        var uploader = $scope.uploader = new FileUploader({
+            url: '/api/package/file'
+            /*headers:{"Content-Type":"multipart/form-data; charset=utf-8"}*/
+        });
 
-        $scope.productKey = "";
+        uploader.filters.push({
+            name: 'customFilter',
+            fn: function (item /*{File|FileLikeObject}*/, options) {
+                return this.queue.length < 10;
+            },
+            name: ''
+        });
+        // CALLBACKS
 
-        $scope.bodyShow = 0;
+        uploader.onWhenAddingFileFailed = function (item /*{File|FileLikeObject}*/, filter, options) {
+            console.info('onWhenAddingFileFailed', item, filter, options);
+        };
+        uploader.onAfterAddingFile = function (fileItem) {
+            console.info('onAfterAddingFile', fileItem);
+        };
+        uploader.onAfterAddingAll = function (addedFileItems) {
+            console.info('onAfterAddingAll', addedFileItems);
+        };
+        uploader.onBeforeUploadItem = function (item) {
+            console.info('onBeforeUploadItem', item);
+        };
+        uploader.onProgressItem = function (fileItem, progress) {
+            console.info('onProgressItem', fileItem, progress);
+        };
+        uploader.onProgressAll = function (progress) {
+            console.info('onProgressAll', progress);
+        };
+        uploader.onSuccessItem = function (fileItem, response, status, headers) {
+            //console.info('onSuccessItem', fileItem, response, status, headers);
+            console.info('onSuccessItem', response, status);
+        };
+        uploader.onErrorItem = function (fileItem, response, status, headers) {
+            console.info('onErrorItem', fileItem, response, status, headers);
+            // var dataObj=eval("("+response+")");
 
-        $scope.getDateString = function (value) {
-            var date = new Date(value);
-            return new DateTime(date).toString('yyyy-MM-dd HH:mm:ss');
+        };
+        uploader.onCancelItem = function (fileItem, response, status, headers) {
+            console.info('onCancelItem', fileItem, response, status, headers);
+        };
+        uploader.onCompleteItem = function (fileItem, response, status, headers) {
+            // console.info('onCompleteItem', fileItem, response, status, headers);
+            console.info('onCompleteItem', response, status);
+
+            $scope.addAlertMsg(response.message, "info", true);
+        };
+        uploader.onCompleteAll = function () {
+            // console.info('onCompleteAll');
         };
 
-        function listAllNode(thejson) {
-
-            if (thejson == null)
-                return;
-
-            var item = {};
-            item.text = thejson["key"];
-            item.nodes = [];
-
-            var rootNode = {};
-            rootNode.text = "产品数量: " + '(' + thejson["productCount"] + ')';
-            item.nodes.push(rootNode);
-
-            if (thejson["subPackages"] == null)
-                return;
-
-            if (thejson["subPackages"] instanceof Array) {
-                for (var e in thejson["subPackages"]) {
-                    item.nodes.push(listAllNode(thejson["subPackages"][e]));
-                }
-            }
-            else {
-                item.nodes.push(listAllNode(thejson["subPackages"]));
-            }
-
-            return item;
-        }
-
-        $scope.productKeyClick = function () {
-
-            if ($scope.productKey == null || $scope.productKey == "") {
-                $scope.bodyShow = 0;
-                return;
-            }
-
-            packageService.getInfo($scope.productKey, function (data) {
-                $scope.origialdata = data;
-                $scope.resultdata = [];
-                $scope.resultdata.push(listAllNode(data));
-                $scope.bodyShow = 1;
-
-                $('#tree').treeview({data: $scope.resultdata, color: "#3c8dbc"});
-            });
-        };
+        console.info('uploader', uploader);
     }]);
 })();

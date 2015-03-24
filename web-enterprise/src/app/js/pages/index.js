@@ -46,7 +46,7 @@
       });
   }]);
 
-  app.controller("rootCtrl", ["$scope", function ($scope) {
+  app.controller("rootCtrl", ["$scope", "$timeout", function ($scope, $timeout) {
     $scope.user = {
       name: "Jane Doe",
       pic: "img/avatar3.png",
@@ -54,5 +54,16 @@
       title: "Web Developer",
       since: "Nov. 2012"
     };
+    $scope.alertMsgs = [];
+    $scope.addAlertMsg = function (msg, level, autoHide) {
+      $scope.alertMsgs.push({
+        level: level,
+        message: msg
+      });
+      var index = $scope.alertMsgs.length - 1;
+      $timeout(function() {
+        $scope.alertMsgs.slice(index, 1);
+      }, 5000);
+    }
   }]);
 })();

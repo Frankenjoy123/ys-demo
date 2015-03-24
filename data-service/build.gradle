@@ -27,6 +27,7 @@ repositories {
 dependencies {
     compile project(":common")
     compile project(":common-data")
+    //complie project("org.springframework.data:spring-data-jpa:1.7.2.RELEASE")
     compile("org.springframework.boot:spring-boot-starter-actuator")
     compile 'org.springframework:spring-context:4.1.4.RELEASE'
     compile 'org.springframework:spring-orm:4.1.4.RELEASE'
