@@ -38,6 +38,11 @@ public class LogisticsCheckActionController {
         return new ResponseEntity<LogisticsCheckAction>(actionService.get(name), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/org/{id}", method = RequestMethod.GET)
+    public ResponseEntity<List<LogisticsCheckAction>> getLogisticsCheckActionByOrg(@PathVariable(value = "id") int id) {
+        return new ResponseEntity<List<LogisticsCheckAction>>(actionService.getLogisticsCheckActionsByOrg(id), HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<ResultWrapper> createLogisticsCheckAction(@RequestBody LogisticsCheckAction action) {
         int id = actionService.save(action);

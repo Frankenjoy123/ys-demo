@@ -21,4 +21,6 @@ public interface LogisticsCheckActionDao {
     public List<LogisticsCheckActionModel> getAllLogisticsCheckActionModels();
 
     public List<LogisticsCheckActionModel> getLogisticsCheckActionModelsByFilter(int id, String name);
+
+    public List<LogisticsCheckActionModel> getLogisticsCheckActionModelsByOrg(int orgId);
 }

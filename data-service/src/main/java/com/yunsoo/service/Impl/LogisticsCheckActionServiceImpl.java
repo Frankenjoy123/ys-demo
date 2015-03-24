@@ -77,4 +77,10 @@ public class LogisticsCheckActionServiceImpl implements LogisticsCheckActionServ
     public List<LogisticsCheckAction> getLogisticsCheckActionsByFilter(int id, String name) {
         return LogisticsCheckAction.FromModelList(logisticsCheckActionDao.getLogisticsCheckActionModelsByFilter(id, name));
     }
+
+    @Override
+    public List<LogisticsCheckAction> getLogisticsCheckActionsByOrg(int orgId)
+    {
+        return LogisticsCheckAction.FromModelList(logisticsCheckActionDao.getLogisticsCheckActionModelsByOrg(orgId));
+    }
 }
