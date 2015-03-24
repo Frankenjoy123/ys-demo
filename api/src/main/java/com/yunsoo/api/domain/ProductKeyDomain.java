@@ -1,11 +1,9 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.dto.ProductKeyBatch;
-import com.yunsoo.api.dto.ProductKeyType;
-import com.yunsoo.common.data.object.AbstractLookupObject;
+import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyBatchRequestObject;
-import com.yunsoo.common.data.object.ProductKeyTypeObject;
 import com.yunsoo.common.web.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,25 +23,11 @@ public class ProductKeyDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    //ProductKeyType
-
-    public List<ProductKeyType> getAllProductKeyTypes(Boolean active) {
-
-        ProductKeyTypeObject[] objects = dataAPIClient.get("productkeytype?active={active}", ProductKeyTypeObject[].class, active);
-
-        return Arrays.stream(objects).map(p -> {
-            ProductKeyType t = new ProductKeyType();
-            t.setId(p.getId());
-            t.setCode(p.getCode());
-            t.setName(p.getName());
-            t.setDescription(p.getDescription());
-            t.setActive(p.isActive());
-            return t;
-        }).collect(Collectors.toList());
-    }
+    @Autowired
+    private LookupDomain lookupDomain;
 
     public List<Integer> changeProductKeyTypeCodeToId(List<String> productKeyTypeCodeList) {
-        return AbstractLookupObject.changeCodeToId(getAllProductKeyTypes(true), productKeyTypeCodeList);
+        return LookupObject.changeCodeToId(lookupDomain.getAllProductKeyTypes(true), productKeyTypeCodeList);
     }
 
 

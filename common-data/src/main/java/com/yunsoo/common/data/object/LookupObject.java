@@ -8,23 +8,13 @@ import java.util.stream.Collectors;
  * Created on:   2015/2/27
  * Descriptions:
  */
-public abstract class AbstractLookupObject {
+public class LookupObject {
     private Integer id;
     private String code;
     private String name;
     private String description;
     private boolean active;
 
-    public AbstractLookupObject() {
-    }
-
-
-    public AbstractLookupObject(Integer id, String code) {
-        this.id = id;
-        this.code = code;
-        this.description = null;
-        this.active = true;
-    }
 
     public Integer getId() {
         return id;
@@ -82,10 +72,10 @@ public abstract class AbstractLookupObject {
                 || (obj != null
                 && this.getId() != null
                 && this.getClass().equals(obj.getClass())
-                && this.getId().equals(((AbstractLookupObject) obj).getId()));
+                && this.getId().equals(((LookupObject) obj).getId()));
     }
 
-    public static <T extends AbstractLookupObject> List<Integer> changeCodeToId(List<T> lookup, List<String> codeList) {
+    public static <T extends LookupObject> List<Integer> changeCodeToId(List<T> lookup, List<String> codeList) {
         if (lookup == null) {
             throw new IllegalArgumentException("lookup is null");
         }
@@ -96,7 +86,7 @@ public abstract class AbstractLookupObject {
             if (c == null) {
                 throw new IllegalArgumentException("null String found in codeList");
             }
-            for (AbstractLookupObject i : lookup) {
+            for (LookupObject i : lookup) {
                 if (c.equals(i.getCode())) {
                     return i.getId();
                 }

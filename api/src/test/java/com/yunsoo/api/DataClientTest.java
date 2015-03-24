@@ -1,9 +1,8 @@
 package com.yunsoo.api;
 
 import com.yunsoo.api.config.DataAPIConfiguration;
-import com.yunsoo.common.data.object.ProductKeyTypeObject;
+import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.api.dto.ProductStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,7 @@ public class DataClientTest {
 
     @Test
     public void testGet() {
-        ProductKeyTypeObject[] array = dataAPIClient.get("productkeytype?active={active}", ProductKeyTypeObject[].class, true);
+        ProductKeyType[] array = dataAPIClient.get("productkeytype?active={active}", ProductKeyType[].class, true);
         System.out.println(Arrays.asList(array));
     }
 

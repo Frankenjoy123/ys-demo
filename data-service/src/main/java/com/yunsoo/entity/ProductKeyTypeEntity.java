@@ -1,6 +1,7 @@
 package com.yunsoo.entity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Created by:   Lijian

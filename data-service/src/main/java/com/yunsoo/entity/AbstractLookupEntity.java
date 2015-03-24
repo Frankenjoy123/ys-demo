@@ -1,7 +1,6 @@
 package com.yunsoo.entity;
 
 import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
@@ -14,7 +13,6 @@ import javax.persistence.MappedSuperclass;
 public abstract class AbstractLookupEntity {
 
     @Id
-    @GeneratedValue
     @Column(name = "id")
     private Integer id;
 
