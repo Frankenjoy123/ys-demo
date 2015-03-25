@@ -9,6 +9,7 @@
         "productKeyManage",
         "msg",
         "logistics",
+        "logisticsManage",
         "package",
         "packageSearch"
     ]);
@@ -44,7 +45,7 @@
             })
             .when('/logistics', {
                 templateUrl: "pages/logistics/logistics.html",
-                controller: "logisticsCtrl"
+                controller: "logisticsManageCtrl"
             })
             .when('/search', {
                 templateUrl: "pages/search/search.html"

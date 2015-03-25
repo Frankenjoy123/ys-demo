@@ -1,8 +1,10 @@
 package com.yunsoo.dataapi.controller;
 
+import com.yunsoo.common.data.object.LogisticsBatchPathObject;
 import com.yunsoo.common.data.object.LogisticsPathObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
+import com.yunsoo.dataapi.dto.LogisticsPathsDto;
 import com.yunsoo.service.LogisticsPathService;
 import com.yunsoo.service.ProductPackageService;
 import com.yunsoo.service.contract.LogisticsPath;
@@ -94,6 +96,39 @@ public class LogisticsPathController {
         }
 
         pathService.save(logisticsPathList);
+    }
+
+    @RequestMapping(value = "/batchcreate", method = RequestMethod.POST)
+    public void batchCreate(@RequestBody LogisticsBatchPathObject logisticsBatchPathObject) {
+
+        if(logisticsBatchPathObject == null || logisticsBatchPathObject.getProductKey() == null || logisticsBatchPathObject.getProductKey().isEmpty())
+            throw new NotFoundException("LogisticsBatchPathObject");
+
+        List<String> allKeys = new ArrayList<String>();
+        for(String key : logisticsBatchPathObject.getProductKey())
+        {
+            List<String> itemKeys = packageService.loadAllKeys(key);
+            allKeys.addAll(allKeys.size(),itemKeys);
+        }
+
+        List<LogisticsPath> paths = new ArrayList<LogisticsPath>();
+        for (String key : allKeys) {
+            LogisticsPath path = new LogisticsPath();
+            path.setProductKey(key);
+            path.setStartCheckPoint(logisticsBatchPathObject.getStartCheckPoint());
+
+            //Use the sever time
+            path.setStartDate(DateTime.now());
+            path.setEndCheckPoint(logisticsBatchPathObject.getEndCheckPoint());
+            path.setEndDate(logisticsBatchPathObject.getEndDate());
+            path.setOperator(logisticsBatchPathObject.getOperator());
+            path.setAction_id(logisticsBatchPathObject.getAction_id());
+            path.setDesc(logisticsBatchPathObject.getDesc());
+
+            paths.add(path);
+        }
+
+        pathService.save(paths);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
