@@ -60,7 +60,7 @@ public class ProductKeyBatchController {
     public ResponseEntity<?> getKeysById(@PathVariable(value = "id") Long id) {
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/vnd+yunsoo.pks"))
-                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + ".pks\"")
+                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + ".csv\"")
                 .body(new InputStreamResource(new ByteArrayInputStream(productKeyDomain.getProductKeysByBatchId(id))));
     }
 
