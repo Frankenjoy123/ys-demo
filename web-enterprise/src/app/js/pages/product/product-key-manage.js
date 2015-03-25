@@ -10,21 +10,15 @@
                 return this;
             },
             getProductBases: function (fnSuccess) {
-                $http.get("/api/productbase").success(function (data) {
-                    fnSuccess(data);
-                });
+                $http.get("/api/productbase").success(fnSuccess);
                 return this;
             },
             getProductKeyTypes: function (fnSuccess) {
-                $http.get("/api/productkeytype").success(function (data) {
-                    fnSuccess(data);
-                });
+                $http.get("/api/productkeytype").success(fnSuccess);
                 return this;
             },
             createProductKeyBatch: function (request, fnSuccess, fnFail) {
-                $http.post("/api/productkeybatch", request).success(function (data) {
-                    fnSuccess(data);
-                }).fail(fnFail);
+                $http.post("/api/productkeybatch", request).success(fnSuccess).error(fnFail);
                 return this;
             },
             downloadProductKeys: function (listPanel, batchId) {
@@ -43,7 +37,7 @@
             return new DateTime(new Date(value)).toString('yyyy-MM-dd HH:mm:ss');
         };
 
-        $scope.getProductKeyTypeCodes = function (productKeyTypes) {
+        $scope.formatProductKeyTypes = function (productKeyTypes) {
             var result = '';
             if (productKeyTypes) {
                 $.each(productKeyTypes, function (i, item) {
@@ -56,26 +50,33 @@
             return result;
         };
 
-        $scope.$watch($scope.creationModel.productBaseId, function (oldValue, newValue) {
-            console.log(oldValue, newValue);
-        });
-
         $scope.creationPanel = {
             create: function () {
                 var model = $scope.creationModel;
-                console.log(model);
+                console.log('[before productKeyBatch create]: ', model);
                 var requestData = {
                     quantity: model.quantity,
                     productBaseId: model.productBaseId
                 };
                 productKeyManageService.createProductKeyBatch(requestData, function (data) {
-
                     $scope.addAlertMsg('创建成功', 'success', true);
-                    $scope.$apply();
+
+                    //$scope.$apply();
                 }, function (error, data) {
                     console.log(error, data);
                     $scope.addAlertMsg(error.message, 'danger', true);
                 });
+            },
+            productBaseIdChanged: function (productBaseId) {
+                console.log('[productBaseId changed]: ', productBaseId);
+                var productKeyTypes;
+                $.each(this.productBases, function (i, item) {
+                    if (item && item.id === +productBaseId) {
+                        productKeyTypes = item.productKeyTypes;
+                        console.log('[found productKeyTypes]: ', productKeyTypes);
+                    }
+                });
+                this.productKeyTypes = productKeyTypes;
             }
         };
 
@@ -103,51 +104,8 @@
                         });
                     });
                 }
-            })
-            .getProductKeyTypes(function (data) {
-                $scope.creationPanel.keyTypes = data;
             });
 
-
-        //$scope.getTypeName = function (value) {
-        //  var output = '';
-        //  $.each($scope.keyTypeOptions, function (i, k) {
-        //    if (k.value == value) {
-        //      output = k.name;
-        //    }
-        //  });
-        //  return output;
-        //};
-
-        //$scope.active = function (index) {
-        //  var data;
-        //  $.each($scope.results, function (i, d) {
-        //    if (d.index == index) {
-        //      data = d;
-        //    }
-        //  });
-        //  //console.log(data);
-        //  var requestData = {manufacturingDate: new DateTime(new Date()).toString('yyyy-MM-dd')};
-        //  console.log(requestData);
-        //  $.each(data.products, function (i, p) {
-        //    $.ajax({
-        //      //url: 'http://admin.page/api/products/' + p.keys[0] + '/active',
-        //      url: '/api/products/' + p.keys[0] + '/active',
-        //      type: 'POST',
-        //      dataType: 'json',
-        //      data: requestData
-        //    }).done(function (r) {
-        //      data.active = true;
-        //      $scope.$apply();
-        //    }).fail(function (err) {
-        //      console.log(err);
-        //    });
-        //  });
-        //};
-        //productKeyManageService.getInfo(function (data) {
-        //  $scope.data.accounts = data;
-        //});
     }]);
-
 
 })();

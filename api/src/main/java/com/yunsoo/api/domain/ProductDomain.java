@@ -1,9 +1,11 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.config.YunsooYamlConfig;
+import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.basic.Product;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.api.dto.basic.ProductCategory;
+import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -24,6 +27,9 @@ public class ProductDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+
+    @Autowired
+    private LookupDomain lookupDomain;
 
     @Autowired
     public YunsooYamlConfig yunsooYamlConfig;
@@ -64,19 +70,47 @@ public class ProductDomain {
         return product;
     }
 
-    public void activeProduct(String key){
+    public void activeProduct(String key) {
 
     }
 
     //获取基本产品信息 - ProductBase
-    public ProductBase getProductBase(long productBaseId) {
-        ProductBase productBase = dataAPIClient.get("productbase/{id}", ProductBase.class, productBaseId);
+    public ProductBase getProductBaseById(long productBaseId) {
+        ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
+        if (productBaseObject == null) {
+            return null;
+        }
+        ProductBase productBase = convertFromProductBaseObject(productBaseObject, lookupDomain.getAllProductKeyTypes(null));
         productBase.setThumbnailURL(yunsooYamlConfig.getDataapi_productbase_picture_basepath() + "id" + productBase.getId() + ".jpg");
         return productBase;
     }
 
     public List<ProductBase> getAllProductBaseByOrgId(int orgId) {
-        ProductBase[] pa = dataAPIClient.get("productbase?manufacturerId={id}", ProductBase[].class, orgId);
-        return Arrays.asList(pa);
+        ProductBaseObject[] objects = dataAPIClient.get("productbase?manufacturerId={id}", ProductBaseObject[].class, orgId);
+        if (objects == null) {
+            return null;
+        }
+        List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes(null);
+        return Arrays.stream(objects).map(p -> convertFromProductBaseObject(p, productKeyTypes)).collect((Collectors.toList()));
+    }
+
+    public ProductBase convertFromProductBaseObject(ProductBaseObject productBaseObject, List<ProductKeyType> productKeyTypes) {
+        ProductBase productBase = new ProductBase();
+        productBase.setId(productBaseObject.getId());
+        productBase.setName(productBaseObject.getName());
+        productBase.setDescription(productBaseObject.getDescription());
+        productBase.setBarcode(productBaseObject.getBarcode());
+        productBase.setActive(productBaseObject.getActive());
+        productBase.setCategoryId(productBaseObject.getCategoryId());
+        productBase.setDetails(productBaseObject.getDetails());
+        productBase.setManufacturerId(productBaseObject.getManufacturerId());
+        productBase.setShelfLife(productBaseObject.getShelfLife());
+        productBase.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
+        productBase.setCreatedDateTime(productBaseObject.getCreatedDateTime());
+        productBase.setModifiedDateTime(productBaseObject.getModifiedDateTime());
+        if (productBaseObject.getProductKeyTypeIds() != null) {
+            productBase.setProductKeyTypes(LookupObject.fromIdList(productKeyTypes, productBaseObject.getProductKeyTypeIds()));
+        }
+        return productBase;
     }
 }

@@ -12,9 +12,9 @@
 
 .alert-wrap .alert {
     margin-top: 0;
-    padding: 10px;
+    padding: 10px 20px;
     display: inline-block;
     vertical-align: middle;
     text-align: center;
-    width: 200px;
+    /*width: 200px;*/
 }
