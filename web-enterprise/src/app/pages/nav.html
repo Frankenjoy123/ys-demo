@@ -41,18 +41,26 @@
                 <small class="badge pull-right bg-green">new</small>
             </a>
         </li>
-        <li>
+        <li treeview class="treeview">
             <a href="#/product-base-manage">
-                <i class="fa fa-th"></i>
-                <span>产品管理</span>
-            </a>
-        </li>
-        <li>
-            <a href="#/product-key-manage">
                 <i class="fa fa-tags"></i>
-                <span>产品码管理</span>
-                <!--<small class="badge pull-right bg-green">new</small>-->
+                <span>产品</span>
+                <i class="fa fa-angle-left pull-right"></i>
             </a>
+            <ul class="treeview-menu">
+                <li>
+                    <a href="#/product-base-manage">
+                        <i class="fa fa-angle-double-right"></i>
+                        <span>产品</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#/product-key-manage">
+                        <i class="fa fa-angle-double-right"></i>
+                        <span>产品码</span>
+                    </a>
+                </li>
+            </ul>
         </li>
         <li>
             <a href="#/logistics">
@@ -82,27 +90,21 @@
                 <!--<small class="badge pull-right bg-green">new</small>-->
             </a>
         </li>
-        <li treeview class="treeview">
-            <a href="#">
-                <i class="fa fa-bar-chart-o"></i>
-                <span>Tree view</span>
-                <i class="fa fa-angle-left pull-right"></i>
-            </a>
-            <ul class="treeview-menu">
-                <li><a href="#/a"><i class="fa fa-angle-double-right"></i>AAA</a></li>
-                <li><a href="#/b"><i class="fa fa-angle-double-right"></i>BBB</a></li>
-            </ul>
-        </li>
+        <!--<li treeview class="treeview">-->
+            <!--<a href="#">-->
+                <!--<i class="fa fa-bar-chart-o"></i>-->
+                <!--<span>Tree view</span>-->
+                <!--<i class="fa fa-angle-left pull-right"></i>-->
+            <!--</a>-->
+            <!--<ul class="treeview-menu">-->
+                <!--<li><a href="#/a"><i class="fa fa-angle-double-right"></i>AAA</a></li>-->
+                <!--<li><a href="#/b"><i class="fa fa-angle-double-right"></i>BBB</a></li>-->
+            <!--</ul>-->
+        <!--</li>-->
         <li>
             <a href="template">
                 <i class="fa fa-file"></i>
                 <span>Template</span>
-            </a>
-        </li>
-        <li>
-            <a href="#/test">
-                <i class="fa fa-file"></i>
-                <span>测试</span>
             </a>
         </li>
     </ul>

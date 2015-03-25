@@ -11,7 +11,8 @@
         "logistics",
         "logisticsManage",
         "package",
-        "packageSearch"
+        "packageSearch",
+        "ngAnimate"
     ]);
 
     app.config(["$routeProvider", function ($routeProvider) {
@@ -69,10 +70,14 @@
                 level: level,
                 message: msg
             });
-            var index = $scope.alertMsgs.length - 1;
-            $timeout(function () {
-                $scope.alertMsgs.slice(index, 1);
-            }, 5000);
+            if (autoHide) {
+                var index = $scope.alertMsgs.length - 1;
+                $timeout((function (i) {
+                    return function (i) {
+                        $scope.alertMsgs.splice(i, 1);
+                    };
+                })(index), 3 * 1000);
+            }
         }
     }]);
 })();

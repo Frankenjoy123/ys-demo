@@ -1,6 +1,8 @@
 package com.yunsoo.common.data.object;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -75,43 +77,50 @@ public class LookupObject {
                 && this.getId().equals(((LookupObject) obj).getId()));
     }
 
-    public static <T extends LookupObject> List<Integer> changeCodeToId(List<T> lookup, List<String> codeList) {
-        if (lookup == null) {
-            throw new IllegalArgumentException("lookup is null");
-        }
-        if (codeList == null) {
-            throw new IllegalArgumentException("codeList is null");
-        }
-        return codeList.stream().map(c -> {
-            if (c == null) {
-                throw new IllegalArgumentException("null String found in codeList");
-            }
-            for (LookupObject i : lookup) {
-                if (c.equals(i.getCode())) {
-                    return i.getId();
-                }
-            }
-            throw new IllegalArgumentException("invalid code: " + c);
-        }).collect(Collectors.toList());
-    }
 
     public static <T extends LookupObject> List<String> changeIdToCode(List<T> lookup, List<Integer> idList) {
+        return fromIdList(lookup, idList).stream().map(LookupObject::getCode).collect(Collectors.toList());
+    }
+
+    public static <T extends LookupObject> List<Integer> changeCodeToId(List<T> lookup, List<String> codeList) {
+        return fromCodeList(lookup, codeList).stream().map(LookupObject::getId).collect(Collectors.toList());
+    }
+
+    public static <T extends LookupObject> List<T> fromIdList(List<T> lookup, List<Integer> list) {
         if (lookup == null) {
             throw new IllegalArgumentException("lookup is null");
         }
-        if (idList == null) {
-            throw new IllegalArgumentException("idList is null");
+        if (list == null) {
+            throw new IllegalArgumentException("list is null");
         }
-        return idList.stream().map(id -> {
-            if (id == null) {
-                throw new IllegalArgumentException("null Integer found in idList");
-            }
-            for (LookupObject i : lookup) {
-                if (id.equals(i.getId())) {
-                    return i.getCode();
+        return list.stream().map(id -> {
+            if (id != null) {
+                for (T i : lookup) {
+                    if (id.equals(i.getId())) {
+                        return i;
+                    }
                 }
             }
             throw new IllegalArgumentException("invalid id: " + id);
+        }).collect(Collectors.toList());
+    }
+
+    public static <T extends LookupObject> List<T> fromCodeList(List<T> lookup, List<String> list) {
+        if (lookup == null) {
+            throw new IllegalArgumentException("lookup is null");
+        }
+        if (list == null) {
+            throw new IllegalArgumentException("list is null");
+        }
+        return list.stream().map(code -> {
+            if (code != null) {
+                for (T i : lookup) {
+                    if (code.equals(i.getCode())) {
+                        return i;
+                    }
+                }
+            }
+            throw new IllegalArgumentException("invalid code: " + code);
         }).collect(Collectors.toList());
     }
 }

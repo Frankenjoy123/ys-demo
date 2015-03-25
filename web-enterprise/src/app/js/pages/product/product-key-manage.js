@@ -24,7 +24,7 @@
             createProductKeyBatch: function (request, fnSuccess, fnFail) {
                 $http.post("/api/productkeybatch", request).success(function (data) {
                     fnSuccess(data);
-                });
+                }).fail(fnFail);
                 return this;
             },
             downloadProductKeys: function (listPanel, batchId) {
@@ -34,7 +34,7 @@
     }]);
 
     app.controller("productKeyManageCtrl", ["$scope", "productKeyManageService", function ($scope, productKeyManageService) {
-        $scope.newData = {
+        $scope.creationModel = {
             productBaseId: 0,
             quantity: 0
         };
@@ -43,18 +43,38 @@
             return new DateTime(new Date(value)).toString('yyyy-MM-dd HH:mm:ss');
         };
 
+        $scope.getProductKeyTypeCodes = function (productKeyTypes) {
+            var result = '';
+            if (productKeyTypes) {
+                $.each(productKeyTypes, function (i, item) {
+                    result += item.name;
+                    if (i < productKeyTypes.length - 1) {
+                        result += ', ';
+                    }
+                });
+            }
+            return result;
+        };
+
+        $scope.$watch($scope.creationModel.productBaseId, function (oldValue, newValue) {
+            console.log(oldValue, newValue);
+        });
+
         $scope.creationPanel = {
             create: function () {
-                var newData = $scope.newData;
-                console.log(newData);
+                var model = $scope.creationModel;
+                console.log(model);
                 var requestData = {
-                    quantity: newData.quantity,
-                    productBaseId: newData.productBaseId
+                    quantity: model.quantity,
+                    productBaseId: model.productBaseId
                 };
                 productKeyManageService.createProductKeyBatch(requestData, function (data) {
-                    $scope.$apply();
-                }, function (data, error) {
 
+                    $scope.addAlertMsg('创建成功', 'success', true);
+                    $scope.$apply();
+                }, function (error, data) {
+                    console.log(error, data);
+                    $scope.addAlertMsg(error.message, 'danger', true);
                 });
             }
         };

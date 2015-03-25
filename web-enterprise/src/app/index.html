@@ -55,11 +55,7 @@
         <aside class="right-side" ng-view></aside>
     </div>
     <div class="alert-wrap" ng-repeat="alert in alertMsgs">
-        <div class="alert" ng-class="{
-        'alert-success': level === 'success',
-        'alert-danger': level === 'danger',
-        'alert-info': level === 'info'
-        }">
+        <div class="alert" ng-class="'alert-{{alert.level}}'">
             {{alert.message}}
         </div>
     </div>
