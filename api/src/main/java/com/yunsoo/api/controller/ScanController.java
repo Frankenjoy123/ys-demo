@@ -1,6 +1,6 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.biz.LogisticsDomain;
+import com.yunsoo.api.domain.LogisticsDomain;
 import com.yunsoo.api.biz.ValidateProduct;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.UserDomain;

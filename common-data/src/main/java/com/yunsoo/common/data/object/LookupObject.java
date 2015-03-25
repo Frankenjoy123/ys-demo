@@ -94,4 +94,24 @@ public class LookupObject {
             throw new IllegalArgumentException("invalid code: " + c);
         }).collect(Collectors.toList());
     }
+
+    public static <T extends LookupObject> List<String> changeIdToCode(List<T> lookup, List<Integer> idList) {
+        if (lookup == null) {
+            throw new IllegalArgumentException("lookup is null");
+        }
+        if (idList == null) {
+            throw new IllegalArgumentException("idList is null");
+        }
+        return idList.stream().map(id -> {
+            if (id == null) {
+                throw new IllegalArgumentException("null Integer found in idList");
+            }
+            for (LookupObject i : lookup) {
+                if (id.equals(i.getId())) {
+                    return i.getCode();
+                }
+            }
+            throw new IllegalArgumentException("invalid id: " + id);
+        }).collect(Collectors.toList());
+    }
 }

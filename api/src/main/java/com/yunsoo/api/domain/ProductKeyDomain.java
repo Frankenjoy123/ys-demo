@@ -9,6 +9,7 @@ import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,6 +31,9 @@ public class ProductKeyDomain {
 
     @Autowired
     private LookupDomain lookupDomain;
+
+    private final byte[] CR_LF = new byte[]{13, 10};
+
 
     public List<Integer> changeProductKeyTypeCodeToId(List<String> productKeyTypeCodeList) {
         return LookupObject.changeCodeToId(lookupDomain.getAllProductKeyTypes(true), productKeyTypeCodeList);
@@ -71,12 +75,16 @@ public class ProductKeyDomain {
             return null;
         }
         try {
+            List<String> productKeyTypeCodes = LookupObject.changeIdToCode(lookupDomain.getAllProductKeyTypes(null), object.getProductKeyTypeIds());
+            outputStream.write(
+                    StringUtils.collectionToDelimitedString(productKeyTypeCodes, ",")
+                            .getBytes(Charset.forName("UTF-8")));
+            outputStream.write(CR_LF);
             for (List<String> i : object.getProductKeys()) {
-                for (String j : i) {
-                    outputStream.write(j.getBytes(Charset.forName("UTF-8")));
-                    outputStream.write(",".getBytes());
-                }
-                outputStream.write("\r\n".getBytes());
+                outputStream.write(
+                        StringUtils.collectionToDelimitedString(i, ",")
+                                .getBytes(Charset.forName("UTF-8")));
+                outputStream.write(CR_LF);
             }
         } catch (IOException e) {
             throw new InternalServerErrorException("product keys format issue");
