@@ -1,6 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.dto.ProductKeyBatch;
+import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyBatchRequestObject;
@@ -51,12 +52,17 @@ public class ProductKeyDomain {
         if (objects == null) {
             return null;
         } else {
-            return Arrays.stream(objects).map(this::convertFromProductKeyBatchObject).collect(Collectors.toList());
+            List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes(null);
+            return Arrays.stream(objects)
+                    .map(i -> convertFromProductKeyBatchObject(i, productKeyTypes))
+                    .collect(Collectors.toList());
         }
     }
 
     public ProductKeyBatch getProductKeyBatchById(Long id) {
-        return convertFromProductKeyBatchObject(dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id));
+        return convertFromProductKeyBatchObject(
+                dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id),
+                lookupDomain.getAllProductKeyTypes(true));
     }
 
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchRequestObject requestObject) {
@@ -65,7 +71,7 @@ public class ProductKeyDomain {
                 requestObject,
                 ProductKeyBatchObject.class);
 
-        return convertFromProductKeyBatchObject(newBatchObj);
+        return convertFromProductKeyBatchObject(newBatchObj, lookupDomain.getAllProductKeyTypes(true));
     }
 
     public byte[] getProductKeysByBatchId(long id) {
@@ -92,7 +98,7 @@ public class ProductKeyDomain {
         return outputStream.toByteArray();
     }
 
-    private ProductKeyBatch convertFromProductKeyBatchObject(ProductKeyBatchObject object) {
+    private ProductKeyBatch convertFromProductKeyBatchObject(ProductKeyBatchObject object, List<ProductKeyType> productKeyTypes) {
         if (object == null) {
             return null;
         }
@@ -104,7 +110,8 @@ public class ProductKeyDomain {
         batch.setCreatedClientId(object.getCreatedClientId());
         batch.setCreatedAccountId(object.getCreatedAccountId());
         batch.setCreatedDateTime(object.getCreatedDateTime());
-        batch.setProductKeyTypeIds(object.getProductKeyTypeIds());
+        batch.setProductKeyTypes(LookupObject.fromIdList(productKeyTypes, object.getProductKeyTypeIds()));
+
         return batch;
     }
 

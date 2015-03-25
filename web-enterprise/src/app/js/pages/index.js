@@ -69,12 +69,14 @@
                 level: level,
                 message: msg
             });
-            var index = $scope.alertMsgs.length - 1;
-            $timeout((function (i) {
-                return function (i) {
-                    $scope.alertMsgs.splice(i, 1);
-                };
-            })(index), 3 * 1000);
+            if (autoHide) {
+                var index = $scope.alertMsgs.length - 1;
+                $timeout((function (i) {
+                    return function (i) {
+                        $scope.alertMsgs.splice(i, 1);
+                    };
+                })(index), 3 * 1000);
+            }
         }
     }]);
 })();
