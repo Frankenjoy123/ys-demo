@@ -38,13 +38,13 @@
                         <input type="text" name="quantity" ng-model="creationModel.quantity" class="form-control inline"
                                placeholder=""/>
                     </div>
+                </div>
+                <div class="row">
                     <div class="form-group col-xs-4">
                         <label>产品码类型：</label>
 
                         <div class="checkbox inline">
-                            <label>
-                                {{formatProductKeyTypes(creationPanel.productKeyTypes)}}
-                            </label>
+                            {{formatProductKeyTypes(creationPanel.productKeyTypes)}}
                         </div>
                     </div>
                 </div>
@@ -52,6 +52,7 @@
             <!-- /.box-body -->
             <div class="box-footer">
                 <button type="submit" class="btn btn-primary" ng-click="creationPanel.create()">创建</button>
+                <!--<div class="clearfix"></div>-->
             </div>
 
         </form>
@@ -75,11 +76,11 @@
                 <div class="box-body">
                     <table class="table table-hover">
                         <tr>
-                            <th>ID</th>
-                            <th>数量</th>
-                            <th>产品码类型</th>
+                            <th style="width: 10%">ID</th>
+                            <th style="width: 10%">数量</th>
+                            <th style="width: 25%">产品码类型</th>
                             <th>创建时间</th>
-                            <th>操作</th>
+                            <th style="width: 10%">操作</th>
                         </tr>
                         <tr ng-repeat="b in batch.batches">
                             <td>{{b.id}}</td>
