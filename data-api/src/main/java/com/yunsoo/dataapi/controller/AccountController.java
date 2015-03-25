@@ -1,5 +1,6 @@
 package com.yunsoo.dataapi.controller;
 
+import com.yunsoo.dataapi.controller.util.MD5Util;
 import com.yunsoo.dataapi.dto.AccountDto;
 import com.yunsoo.dataapi.dto.ResultWrapper;
 import com.yunsoo.dataapi.factory.ResultFactory;
@@ -34,6 +35,16 @@ public class AccountController {
     @RequestMapping(value = "/identifier/{username}",method = RequestMethod.GET)
     public ResponseEntity<AccountDto> getAccountByUsername(@PathVariable(value = "username") String username) {
         return new ResponseEntity<AccountDto>(AccountDto.FromAccount(accountService.getByIdentifier(username)), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/verify", method = RequestMethod.POST)
+    public ResponseEntity<Boolean> verify(@RequestBody Account input) {
+        Account account = accountService.getByIdentifier(input.getIdentifier());
+        String salt = account.getSalt();
+        String dbPassword = account.getPassword();
+        String inputPassword = input.getPassword();
+        Boolean result = MD5Util.MD5(inputPassword + salt) == dbPassword;
+        return new ResponseEntity<Boolean>(result, HttpStatus.OK);
     }
 
 

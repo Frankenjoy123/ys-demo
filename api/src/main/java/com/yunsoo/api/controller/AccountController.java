@@ -1,6 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.object.TAccount;
+import com.yunsoo.api.object.TAccountToken;
 import com.yunsoo.api.security.AccountAuthentication;
 import com.yunsoo.common.web.client.RestClient;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ import java.util.List;
  * Handle with accounts which consumes this API.
  */
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/account")
 public class AccountController {
 
     private RestClient dataAPIClient;
@@ -36,5 +37,25 @@ public class AccountController {
         //return userRepository.findAll();
         return null;
     }
+
+    @RequestMapping(value = "/generateToken", method = RequestMethod.POST)
+    public TAccountToken generateToken(@RequestBody TAccount account) {
+        String identifier = account.getUsername();
+        TAccountToken token = dataAPIClient.get("/accountToken/identifier/{identifier}", TAccountToken.class, identifier);
+        if (token != null) {
+            dataAPIClient.put("/accountToken/update", token);
+            return dataAPIClient.get("/accountToken/identifier/{identifier}", TAccountToken.class, identifier);
 }
 
+        return dataAPIClient.post("/accountToken/create", account, TAccountToken.class);
+    }
+
+    @RequestMapping(value = "login", method = RequestMethod.POST)
+    public TAccountToken login(@RequestBody TAccount account) {
+        Boolean result = dataAPIClient.post("/account/verify", account, Boolean.class);
+        if (result) {
+            return this.generateToken(account);
+        }
+        return null;
+    }
+}
