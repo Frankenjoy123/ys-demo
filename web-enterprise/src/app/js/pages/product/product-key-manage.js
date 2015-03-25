@@ -34,7 +34,7 @@
     }]);
 
     app.controller("productKeyManageCtrl", ["$scope", "productKeyManageService", function ($scope, productKeyManageService) {
-        $scope.newData = {
+        $scope.creationModel = {
             productBaseId: 0,
             quantity: 0
         };
@@ -43,13 +43,17 @@
             return new DateTime(new Date(value)).toString('yyyy-MM-dd HH:mm:ss');
         };
 
+        $scope.$watch($scope.creationModel.productBaseId, function (oldValue, newValue) {
+            console.log(oldValue, newValue);
+        });
+
         $scope.creationPanel = {
             create: function () {
-                var newData = $scope.newData;
-                console.log(newData);
+                var model = $scope.creationModel;
+                console.log(model);
                 var requestData = {
-                    quantity: newData.quantity,
-                    productBaseId: newData.productBaseId
+                    quantity: model.quantity,
+                    productBaseId: model.productBaseId
                 };
                 productKeyManageService.createProductKeyBatch(requestData, function (data) {
                     $scope.$apply();

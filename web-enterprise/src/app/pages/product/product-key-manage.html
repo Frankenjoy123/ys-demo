@@ -24,7 +24,7 @@
                         <label>产品：</label>
                         <select name="productType"
                                 class="form-control inline"
-                                ng-model="newData.productBaseId">
+                                ng-model="creationModel.productBaseId">
                             <option value="0">请选择</option>
                             <option ng-repeat="pb in creationPanel.productBases" value="{{pb.id}}">
                                 {{pb.name}}
@@ -34,7 +34,7 @@
                     </div>
                     <div class="form-group col-xs-4">
                         <label>数量：</label>
-                        <input type="text" name="quantity" ng-model="newData.quantity" class="form-control inline"
+                        <input type="text" name="quantity" ng-model="creationModel.quantity" class="form-control inline"
                                placeholder=""/>
                     </div>
                     <div class="form-group col-xs-4">
@@ -67,7 +67,7 @@
             <a data-toggle="collapse" href="" data-target="#collapse{{batch.productBase.id}}">
                 <div class="box-header">
                     <h4 class="box-title">
-                        {{batch.productBase.name}}&nbsp;
+                        {{batch.productBase.name}}
                     </h4>
                 </div>
             </a>
