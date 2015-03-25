@@ -65,9 +65,13 @@ public class LogisticsPathController {
         if (logisticsPathObject == null)
             throw new NotFoundException("LogisticsPathObject");
 
-        List<String> allKeys = packageService.loadAllKeys(logisticsPathObject.getProductKey());
-        if (allKeys == null)
-            throw new UnprocessableEntityException();
+        List<String> allKeys = new ArrayList<String>();
+        try {
+            List<String> itemKeys = packageService.loadAllKeys(logisticsPathObject.getProductKey());
+            allKeys.addAll(allKeys.size(), itemKeys);
+        } catch (IllegalArgumentException ex) {
+            allKeys.add(logisticsPathObject.getProductKey());
+        }
 
         List<LogisticsPathObject> logisticsPathObjectList = new ArrayList<LogisticsPathObject>();
         for (String key : allKeys) {
@@ -101,14 +105,17 @@ public class LogisticsPathController {
     @RequestMapping(value = "/batchcreate", method = RequestMethod.POST)
     public void batchCreate(@RequestBody LogisticsBatchPathObject logisticsBatchPathObject) {
 
-        if(logisticsBatchPathObject == null || logisticsBatchPathObject.getProductKey() == null || logisticsBatchPathObject.getProductKey().isEmpty())
+        if (logisticsBatchPathObject == null || logisticsBatchPathObject.getProductKey() == null || logisticsBatchPathObject.getProductKey().isEmpty())
             throw new NotFoundException("LogisticsBatchPathObject");
 
         List<String> allKeys = new ArrayList<String>();
-        for(String key : logisticsBatchPathObject.getProductKey())
-        {
-            List<String> itemKeys = packageService.loadAllKeys(key);
-            allKeys.addAll(allKeys.size(),itemKeys);
+        for (String key : logisticsBatchPathObject.getProductKey()) {
+            try {
+                List<String> itemKeys = packageService.loadAllKeys(key);
+                allKeys.addAll(allKeys.size(), itemKeys);
+            } catch (IllegalArgumentException ex) {
+                allKeys.add(key);
+            }
         }
 
         List<LogisticsPath> paths = new ArrayList<LogisticsPath>();

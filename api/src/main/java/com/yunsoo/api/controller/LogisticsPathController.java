@@ -64,7 +64,7 @@ public class LogisticsPathController {
                 }
 
                 String[] dataArray = line.split(",");
-                if (dataArray.length < 2) {
+                if (dataArray.length < 1) {
                     throw new NotAcceptableException("错误的数据录入");
                 }
 
