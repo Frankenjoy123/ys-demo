@@ -1,4 +1,4 @@
-FROM dockerfile/java:oracle-java8
+FROM java:8
 MAINTAINER Zhe Zhang <zhe@yunsu.co>
 
 # BELOW shows the docker file for Dockerhub auto-build.
