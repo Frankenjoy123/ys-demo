@@ -14,20 +14,23 @@
 
     <div class="box box-solid">
         <div class="box-header">
-            <h3 class="box-title">上传物流信息</h3>
+            <h3 class="box-title">物流文件上传</h3>
         </div>
 
         <div class="box-body">
            <span class="btn btn-primary fileinput-button " ng-class="{disabled: disabled}">
                     <i class="glyphicon glyphicon-plus"></i>
-                    <span>上传文件</span>
+                    <span>选择上传文件</span>
                   <input type="file" nv-file-select="" uploader="uploader" ng-disabled="disabled"/>
 
                 </span>
-
+            <button type="button" class="btn btn-success btn-s" ng-click="uploader.uploadAll()"
+                    ng-disabled="!uploader.getNotUploadedItems().length" disabled="disabled">
+                <i class="glyphicon glyphicon-upload"></i> <span>全部同步</span>
+            </button>
         </div>
 
-        <table class="table">
+        <table class="table" ng-show="uploader.queue.length">
             <thead>
             <tr>
                 <th width="50%">文件名</th>
@@ -46,15 +49,15 @@
                         <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
                     </div>
                 </td>
-                <td class="text-center">
+                <td class="text-left">
                     <!--<span ng-show="item.isUploaded"><i class="glyphicon glyphicon-remove"></i></span>
                     <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
                     <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
                     <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>-->
                     <!--<span ng-show="item.isUploaded">上传成功，解析打包中</span>-->
-                    <span ng-show="item.isSuccess">物流上传成功</span>
-                    <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
-                    <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                    <span ng-show="item.isSuccess"><span class="label label-success">上传成功</span></span>
+                    <span ng-show="item.isCancel"><span class="label label-warning">已取消</span></span>
+                    <span ng-show="item.isError"><span class="label label-danger">失败</span></span>
 
                 </td>
                 <td nowrap>
