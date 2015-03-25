@@ -1,6 +1,5 @@
 server:
     port: 6080
-    servlet-path: /api
 
 spring:
     profiles.active: default

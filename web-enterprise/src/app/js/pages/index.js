@@ -10,7 +10,8 @@
         "msg",
         "logistics",
         "package",
-        "packageSearch"
+        "packageSearch",
+        "ngAnimate"
     ]);
 
     app.config(["$routeProvider", function ($routeProvider) {
@@ -67,8 +68,8 @@
             });
             var index = $scope.alertMsgs.length - 1;
             $timeout(function () {
-                $scope.alertMsgs.slice(index, 1);
-            }, 5000);
+                //$scope.alertMsgs.splice(index, 1);
+            }, 3 * 1000);
         }
     }]);
 })();

@@ -1,4 +1,6 @@
 (function () {
+  var HEADER_CSRF_TOKEN = "CSRF-TOKEN";
+  var E_CSRF_TOKEN = "SESSION-CSRF-TOKEN";
   function startAjax(otherSettings) {
   }
 
@@ -67,10 +69,8 @@
           if ($templateCache && $templateCache.get(config.url)) {
             return config;
           } else {
-            if (!config.noLoading) {
               // show global loading.gif
               config.loading = startAjax();
-            }
 
             config.url = absolute(config.url);
             config.cache = false;
@@ -101,7 +101,9 @@
           return response;
         },
         responseError: function (rejection) {
-          endAjax(rejection.config.loading);
+          if (rejection.config) {
+            endAjax(rejection.config.loading);
+          }
           return $q.reject(rejection);
         }
       };

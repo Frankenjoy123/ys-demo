@@ -7,3 +7,8 @@
     width: 100%;
     text-align: center;
 }
+
+.alert-wrap .alert {
+    margin-left: 0;
+    padding: 10px;
+}
