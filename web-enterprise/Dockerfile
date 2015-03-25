@@ -13,4 +13,4 @@ RUN mkdir -p /var/yunsoo && \
     cp -f /var/yunsoo/web-enterprise/nginx.server.conf /etc/nginx/conf.d/default.conf && \
     rm -rf /var/yunsoo
 
-EXPOSE 80
+EXPOSE 8020
