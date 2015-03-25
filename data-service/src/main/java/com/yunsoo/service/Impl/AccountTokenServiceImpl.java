@@ -33,6 +33,11 @@ public class AccountTokenServiceImpl implements AccountTokenService {
     }
 
     @Override
+    public AccountToken getByIdentifier(String identifier) {
+        return AccountToken.FromModel(accountTokenDao.getByIdentifier(identifier));
+    }
+
+    @Override
     public long save(AccountToken accountToken) {
         if (accountToken == null ) {
             return -1;
@@ -63,8 +68,14 @@ public class AccountTokenServiceImpl implements AccountTokenService {
             return ServiceOperationStatus.InvalidArgument;
         }
 
-        AccountTokenModel model = new AccountTokenModel();
-        BeanUtils.copyProperties(accountToken, model, SpringBeanUtil.getNullPropertyNames(accountToken));
+        AccountTokenModel model = accountTokenDao.get(accountToken.getId());
+        DateTime now = DateTime.now();
+        model.setAccessToken(UUID.randomUUID().toString());
+        model.setAccessTokenTs(now);
+        model.setAccessTokenExpires(now.plusDays(30));
+        model.setRefreshToken(UUID.randomUUID().toString());
+        model.setRefreshTokenTs(now);
+        model.setRefreshTokenExpires(now.plusDays(60));
 
         DaoStatus daoStatus = accountTokenDao.update(model);
         if (daoStatus == DaoStatus.success) return ServiceOperationStatus.Success;

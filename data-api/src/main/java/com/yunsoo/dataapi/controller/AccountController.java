@@ -40,10 +40,13 @@ public class AccountController {
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
     public ResponseEntity<Boolean> verify(@RequestBody Account input) {
         Account account = accountService.getByIdentifier(input.getIdentifier());
+        if (account == null) {
+            return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+        }
         String salt = account.getSalt();
         String dbPassword = account.getPassword();
         String inputPassword = input.getPassword();
-        Boolean result = MD5Util.MD5(inputPassword + salt) == dbPassword;
+        Boolean result = MD5Util.MD5(inputPassword + salt).equals(dbPassword);
         return new ResponseEntity<Boolean>(result, HttpStatus.OK);
     }
 
@@ -51,9 +54,5 @@ public class AccountController {
     @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
     public ResponseEntity<AccountDto> getAccountById(@PathVariable(value = "id") int id) {
         return new ResponseEntity<AccountDto>(AccountDto.FromAccount(accountService.get(id)), HttpStatus.OK);
-    }
-
-    public boolean verify(String username, String password) {
-        return false;
     }
 }

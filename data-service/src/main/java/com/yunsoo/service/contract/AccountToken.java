@@ -55,7 +55,6 @@ public class AccountToken {
         AccountToken accountToken = new AccountToken();
         accountToken.setId(model.getId());
         accountToken.setStatus(model.getStatus());
-        accountToken.setAccount(Account.FromModel(model.getAccount()));
         accountToken.setDeviceId(model.getDeviceId());
         accountToken.setAccessToken(model.getAccessToken());
         accountToken.setAccessTokenExpires(model.getAccessTokenExpires());
@@ -74,7 +73,6 @@ public class AccountToken {
             model.setId(accountToken.getId());
         }
         model.setStatus(accountToken.getStatus());
-        model.setAccount(Account.ToModel(accountToken.getAccount()));
         model.setDeviceId(accountToken.getDeviceId());
         model.setAccessToken(accountToken.getAccessToken());
         model.setAccessTokenExpires(accountToken.getAccessTokenExpires());

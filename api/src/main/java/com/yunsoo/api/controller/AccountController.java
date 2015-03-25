@@ -4,6 +4,7 @@ import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TAccountToken;
 import com.yunsoo.api.security.AccountAuthentication;
 import com.yunsoo.common.web.client.RestClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequestMapping("/account")
 public class AccountController {
 
+    @Autowired
     private RestClient dataAPIClient;
 
     @RequestMapping(value = "/current", method = RequestMethod.GET)
@@ -40,12 +42,16 @@ public class AccountController {
 
     @RequestMapping(value = "/generateToken", method = RequestMethod.POST)
     public TAccountToken generateToken(@RequestBody TAccount account) {
+        return _generateToken(account);
+    }
+
+    private TAccountToken _generateToken(TAccount account) {
         String identifier = account.getUsername();
         TAccountToken token = dataAPIClient.get("/accountToken/identifier/{identifier}", TAccountToken.class, identifier);
         if (token != null) {
             dataAPIClient.put("/accountToken/update", token);
             return dataAPIClient.get("/accountToken/identifier/{identifier}", TAccountToken.class, identifier);
-}
+        }
 
         return dataAPIClient.post("/accountToken/create", account, TAccountToken.class);
     }
@@ -54,7 +60,7 @@ public class AccountController {
     public TAccountToken login(@RequestBody TAccount account) {
         Boolean result = dataAPIClient.post("/account/verify", account, Boolean.class);
         if (result) {
-            return this.generateToken(account);
+            return _generateToken(account);
         }
         return null;
     }

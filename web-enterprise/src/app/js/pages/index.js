@@ -57,6 +57,9 @@
     }]);
 
     app.controller("rootCtrl", ["$scope", "$timeout", function ($scope, $timeout) {
+        if(!$.cookie("AdminLTEToken")) {
+            window.location.href = "login.html";
+        }
         $scope.user = {
             name: "Jane Doe",
             pic: "img/avatar3.png",
@@ -65,13 +68,25 @@
             since: "Nov. 2012"
         };
         $scope.alertMsgs = [];
+        function getMsgIndex(msgs, msg, level) {
+            var index = -1;
+            for (var i = 0; i < msgs.length; i++) {
+                var item = msgs[i];
+                if (item.level == level && item.message == msg) {
+                    index = i;
+                    break;
+                }
+            }
+            return index;
+        }
+
         $scope.addAlertMsg = function (msg, level, autoHide) {
             $scope.alertMsgs.push({
                 level: level,
                 message: msg
             });
             if (autoHide) {
-                var index = $scope.alertMsgs.length - 1;
+                var index = getMsgIndex($scope.alertMsgs, msg, level);
                 $timeout((function (i) {
                     return function (i) {
                         $scope.alertMsgs.splice(i, 1);

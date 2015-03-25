@@ -47,6 +47,7 @@ public class TAccount implements UserDetails {
     public String getUsername() {
         return identifier;
     }
+    public String getIdentifier() { return identifier; }
     @Override
     public boolean isAccountNonExpired() {
         return !(status == TAccountStatusEnum.EXPIRED);

@@ -7,6 +7,7 @@ import com.yunsoo.service.contract.AccountToken;
  */
 public interface AccountTokenService {
     public AccountToken get(long id);
+    public AccountToken getByIdentifier(String identifier);
 
     public long save(AccountToken accountToken);
 

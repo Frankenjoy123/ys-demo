@@ -2,9 +2,11 @@
   var HEADER_CSRF_TOKEN = "CSRF-TOKEN";
   var E_CSRF_TOKEN = "SESSION-CSRF-TOKEN";
   function startAjax(otherSettings) {
+    $("body").append('<div class="ajax-loading-wrap"><div class="ajax-loading"></div></div>');
   }
 
   function endAjax(loading) {
+    $("body .ajax-loading-wrap").remove();
   }
 
   function absolute(url) {
