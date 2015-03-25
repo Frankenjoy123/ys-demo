@@ -13,4 +13,7 @@ build
 .classpath
 .project
 
+# log files
+*.log
+
 /.nb-gradle/private/
