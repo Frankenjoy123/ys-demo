@@ -3,12 +3,18 @@
 }
 .alert-wrap {
     position: absolute;
+    display: table;
     top: 50px;
     width: 100%;
     text-align: center;
+    z-index: 9999;
 }
 
 .alert-wrap .alert {
-    margin-left: 0;
+    margin-top: 0;
     padding: 10px;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: 200px;
 }

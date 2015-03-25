@@ -1,6 +1,9 @@
 server:
     port: 6080
 
+multipart.maxFileSize: 20MB
+multipart.maxRequestSize: 20MB
+
 spring:
     profiles.active: default
 ---
@@ -10,11 +13,8 @@ management:
     port: 6081
     address: 127.0.0.1
 
-multipart.maxFileSize: 12800KB
-multipart.maxRequestSize: 12800KB
-
 logging:
-    file: c:/logs/yunsoo-api.log
+#    file: c:/logs/yunsoo-api.log
     level:
         org.springframework: 'INFO'
         org.hibernate: 'ERROR'

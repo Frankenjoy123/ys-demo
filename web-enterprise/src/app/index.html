@@ -54,11 +54,13 @@
         <aside class="left-side sidebar-offcanvas" ng-include="'pages/nav.html'"></aside>
         <aside class="right-side" ng-view></aside>
     </div>
+
     <div class="alert-wrap" ng-repeat="alert in alertMsgs">
         <div class="alert" ng-class="'alert-{{alert.level}}'">
             {{alert.message}}
         </div>
     </div>
+
 </div>
 </body>
 </html>

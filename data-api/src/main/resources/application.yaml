@@ -1,6 +1,9 @@
 server:
     port: 8080
 
+multipart.maxFileSize: 20MB
+multipart.maxRequestSize: 20MB
+
 spring:
     profiles.active: default
 ---
@@ -10,9 +13,10 @@ management:
     port: 8081
     address: 127.0.0.1
 
-multipart.maxFileSize: 12800KB
-multipart.maxRequestSize: 12800KB
-
+logging:
+    level:
+        org.springframework: 'INFO'
+        org.hibernate: 'ERROR'
 yunsoo:
     debug: true
 
@@ -47,6 +51,13 @@ spring:
 management:
     port: 8081
     address: 127.0.0.1
+
+logging:
+    path: /var/logs
+    file: yunsoo-data-api.log
+    level:
+        org.springframework: 'INFO'
+        org.hibernate: 'INFO'
 
 AmazonSettings:
     s3_basebucket:  yunsudev
