@@ -5,7 +5,6 @@ import com.yunsoo.api.biz.ValidateProduct;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.UserDomain;
 import com.yunsoo.api.dto.LogisticsPath;
-import com.yunsoo.api.dto.ScanResult;
 import com.yunsoo.api.dto.basic.*;
 import com.yunsoo.api.object.TScanRecord;
 import com.yunsoo.api.object.ValidationResult;
@@ -42,7 +41,7 @@ public class ScanController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
 
-    @RequestMapping(value = "/{key}", method = RequestMethod.POST)
+    @RequestMapping(value = "/mobile", method = RequestMethod.POST)
     public ScanResult getDetailByKey(@RequestBody ScanRequestBody scanRequestBody) {
 
         //0，validate input
@@ -51,7 +50,7 @@ public class ScanController {
         //1, get user
         User currentUser = userDomain.ensureUser(scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
         if (currentUser == null) {
-            LOGGER.error("User not found by userId ={}, deviceCode = {}", scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
+            LOGGER.error("User not found by userId ={0}, deviceCode = {1}", scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
             throw new NotFoundException("User not found by userId = " + scanRequestBody.getUserId() + " deviceCode = " + scanRequestBody.getDeviceCode());
         }
 
@@ -63,7 +62,7 @@ public class ScanController {
         Product currentExistProduct = productDomain.getProductByKey(scanRequestBody.getKey());
         if (currentExistProduct == null) {
             //Not found by the product Key
-            LOGGER.warn("Key = {} 不存在！", scanRequestBody.getKey());
+            LOGGER.warn("Key = {0} 不存在！", scanRequestBody.getKey());
             scanResult.setValidationResult(ValidationResult.Fake);  //no such key in our Yunsoo Platform.
             return scanResult;
         }
@@ -88,6 +87,45 @@ public class ScanController {
 
         //7, save scan Record
         long scanSave = SaveScanRecord(currentUser, currentExistProduct, scanRequestBody);
+        return scanResult;
+    }
+
+
+    @RequestMapping(value = "/web/{orgid}/{key}", method = RequestMethod.GET)
+    public ScanResultWeb getDetailForWebByKey(@PathVariable(value = "orgid") Integer orgid,
+                                              @PathVariable(value = "key") String key) {
+
+        if (key == null || key.isEmpty()) {
+            throw new BadRequestException("查询码不能为空！");
+        }
+
+        ScanResultWeb scanResult = new ScanResultWeb();
+        scanResult.setKey(key);
+
+        //set product information
+        Product currentExistProduct = productDomain.getProductByKey(key);
+        if (currentExistProduct == null) {
+            //Not found by the product Key
+            scanResult.setResultCode(0);
+            scanResult.setMessage(String.format("该码 %s 不存在！", key));  //no such key in our Yunsoo Platform.
+        } else {
+            if (currentExistProduct.getManufacturerId() == orgid) {
+                scanResult.setProduct(currentExistProduct);
+                //retrieve scan records
+                ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}", ScanRecord[].class, key);
+                List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
+                scanResult.setScanRecord(scanRecordList);
+                scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
+
+                //retrieve logistics information
+                scanResult.setLogisticses(getLogisticsInfo(key));
+                scanResult.setResultCode(1); //产品码存在
+                scanResult.setMessage("查询成功！");
+            } else {
+                scanResult.setResultCode(2); //无权查看别人的码
+                scanResult.setMessage(String.format("无权查看，该码不属于贵公司！", key));
+            }
+        }
         return scanResult;
     }
 

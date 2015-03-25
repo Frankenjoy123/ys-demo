@@ -1,27 +1,24 @@
-package com.yunsoo.api.dto;
+package com.yunsoo.api.dto.basic;
 
 
-import com.yunsoo.api.dto.basic.Logistics;
-import com.yunsoo.api.dto.basic.Organization;
-import com.yunsoo.api.dto.basic.Product;
-import com.yunsoo.api.dto.basic.ScanRecord;
 import com.yunsoo.api.object.ValidationResult;
 
 import java.util.List;
 
 /**
+ * 用做和Web端交互的返回对象。
  * Created by Zhe on 2015/2/27.
  */
-public class ScanResult {
+public class ScanResultWeb {
 
     private String Key;
     private Product product;
-    private Organization manufacturer;
     private List<ScanRecord> scanRecordList;
     private List<Logistics> logisticses;
-    private ValidationResult validationResult;
     private int scanCounter;
-    private Long userId;
+    private String message;
+    //0 - 查询key不存在， 1 - ，成功， 2 - 无权查看
+    private int resultCode;
 
     public String getKey() {
         return Key;
@@ -37,14 +34,6 @@ public class ScanResult {
 
     public void setProduct(Product product) {
         this.product = product;
-    }
-
-    public Organization getManufacturer() {
-        return manufacturer;
-    }
-
-    public void setManufacturer(Organization manufacturer) {
-        this.manufacturer = manufacturer;
     }
 
     public List<ScanRecord> getScanRecord() {
@@ -63,14 +52,6 @@ public class ScanResult {
         this.logisticses = logisticses;
     }
 
-    public ValidationResult getValidationResult() {
-        return validationResult;
-    }
-
-    public void setValidationResult(ValidationResult validationResult) {
-        this.validationResult = validationResult;
-    }
-
     public int getScanCounter() {
         return scanCounter;
     }
@@ -79,11 +60,19 @@ public class ScanResult {
         this.scanCounter = scanCounter;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getMessage() {
+        return message;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public int getResultCode() {
+        return resultCode;
+    }
+
+    public void setResultCode(int resultCode) {
+        this.resultCode = resultCode;
     }
 }

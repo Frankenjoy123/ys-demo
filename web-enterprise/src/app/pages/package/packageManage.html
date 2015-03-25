@@ -14,17 +14,22 @@
 
     <div class="box box-solid">
         <div class="box-header">
-            <h3 class="box-title">上传包装关系</h3>
+            <h3 class="box-title">同步包装关系</h3>
         </div>
 
         <div class="box-body">
            <span class="btn btn-primary fileinput-button " ng-class="{disabled: disabled}">
                     <i class="glyphicon glyphicon-plus"></i>
-                    <span>上传文件</span>
+                    <span>选择上传文件</span>
                   <input type="file" nv-file-select="" uploader="uploader" ng-disabled="disabled"/>
 
                 </span>
+           <span class="btn btn-primary fileinput-button " ng-class="{disabled: disabled}">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>全部同步</span>
+                  <input type="file" nv-file-select="" uploader="uploader" ng-disabled="disabled"/>
 
+                </span>
         </div>
 
         <table class="table">
