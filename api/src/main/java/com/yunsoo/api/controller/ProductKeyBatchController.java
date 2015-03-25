@@ -4,7 +4,9 @@ import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
+import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.basic.ProductBase;
+import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyBatchRequestObject;
 import com.yunsoo.common.data.object.ProductObject;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -95,12 +98,12 @@ public class ProductKeyBatchController {
         ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
         if (productBaseId != null && productBaseId > 0) {
             //create corresponding product according to the productBaseId
-            ProductBase productBase = productDomain.getProductBase(productBaseId);
+            ProductBase productBase = productDomain.getProductBaseById(productBaseId);
             if (productBase == null) {
                 throw new BadRequestException("product base id invalid");
             }
             if (productKeyTypeIds == null) {
-                productKeyTypeIds = productBase.getProductKeyTypeIds();
+                productKeyTypeIds = productBase.getProductKeyTypes().stream().map(ProductKeyType::getId).collect(Collectors.toList());
             }
             int productStatusId = 0;
             ProductObject productObj = new ProductObject();

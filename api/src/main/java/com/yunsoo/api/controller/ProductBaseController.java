@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,11 @@ public class ProductBaseController {
         if (id == null || id < 0) {
             throw new BadRequestException("ProductBaseId不应小于0！");
         }
-        return productDomain.getProductBase(id);
+        ProductBase productBase = productDomain.getProductBaseById(id);
+        if (productBase == null) {
+            throw new NotFoundException("找不到产品");
+        }
+        return productBase;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)

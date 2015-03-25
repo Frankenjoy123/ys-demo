@@ -2,6 +2,7 @@ package com.yunsoo.api.dto.basic;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
@@ -24,7 +25,7 @@ public class ProductBase {
     private String details;
     private Integer shelfLife;
     private String shelfLifeInterval;
-    private List<Integer> productKeyTypeIds;
+    private List<ProductKeyType> productKeyTypes;
     private Boolean active;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -107,12 +108,12 @@ public class ProductBase {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
-    public List<Integer> getProductKeyTypeIds() {
-        return productKeyTypeIds;
+    public List<ProductKeyType> getProductKeyTypes() {
+        return productKeyTypes;
     }
 
-    public void setProductKeyTypeIds(List<Integer> productKeyTypeIds) {
-        this.productKeyTypeIds = productKeyTypeIds;
+    public void setProductKeyTypes(List<ProductKeyType> productKeyTypes) {
+        this.productKeyTypes = productKeyTypes;
     }
 
     public Boolean getActive() {
