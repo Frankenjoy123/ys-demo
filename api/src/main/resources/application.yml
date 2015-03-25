@@ -10,6 +10,9 @@ management:
     port: 6081
     address: 127.0.0.1
 
+multipart.maxFileSize: 12800KB
+multipart.maxRequestSize: 12800KB
+
 logging:
     file: c:/logs/yunsoo-api.log
     level:

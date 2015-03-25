@@ -76,6 +76,7 @@ public class PackageController {
     @RequestMapping(value = "/file", method = RequestMethod.POST)
     public Boolean UploadFile(MultipartHttpServletRequest request, HttpServletResponse response) {
 
+
         Iterator<String> itr = request.getFileNames();
         MultipartFile file = request.getFile(itr.next());
 
@@ -95,13 +96,13 @@ public class PackageController {
 
             boolean batchResult = dataAPIClient.post("/package/batch/bind", objects, Boolean.class);
             if (!batchResult) {
-                throw new InternalServerErrorException("数据中有重复的码，请检查。");
+                throw new NotAcceptableException("数据中有重复的码，请检查。");
             }
             return batchResult;
-        } catch (InternalServerErrorException e) {
-            throw new InternalServerErrorException(e.getMessage());
+        } catch (NotAcceptableException ex) {
+            throw ex;
         } catch (Exception e) {
-            throw new NotAcceptableException("数据解析失败，请检查文件。");
+            throw new InternalServerErrorException("未知错误，请确保没有重复打包的情况");
         }
     }
 
@@ -116,7 +117,7 @@ public class PackageController {
             subKeys.add(dataArray[i].trim());
         }
 
-        DateTime datetime =   DateTimeUtils.parse(dataArray[0]);
+        DateTime datetime = DateTimeUtils.parse(dataArray[0]);
         PackageBoundObject object = new PackageBoundObject(0, dataArray[1].trim(), subKeys, datetime);
         return object;
 

@@ -1,12 +1,14 @@
 package com.yunsoo.dataapi.controller;
 
 
+import com.yunsoo.common.data.object.PackageBoundObject;
+import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.InternalServerErrorException;
+import com.yunsoo.common.web.exception.NotAcceptableException;
 import com.yunsoo.dataapi.dto.PackageDto;
 import com.yunsoo.service.ProductPackageService;
 import com.yunsoo.service.contract.PackageBoundContract;
 import com.yunsoo.service.contract.PackageContract;
-import com.yunsoo.common.data.object.PackageBoundObject;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +57,14 @@ public class PackageController {
             for (PackageBoundObject dto : dataList) {
                 contracts.add(toServiceContract(dto));
             }
-            result = packageService.batchBind(contracts.toArray(new PackageBoundContract[0]));
+            try {
+                result = packageService.batchBind(contracts.toArray(new PackageBoundContract[0]));
+            } catch (IllegalArgumentException e) {
+                throw new NotAcceptableException(e.getMessage());
+            } catch (Exception ex) {
+                throw new InternalServerErrorException(ex.getMessage());
+            }
+
         }
         return result;
     }
@@ -92,7 +101,7 @@ public class PackageController {
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     public List<String> batchFlatQuery(@RequestBody List<String> keys) {
         if (keys == null || keys.isEmpty()) {
-            throw new IllegalArgumentException("数据为空");
+            throw new BadRequestException("数据为空");
         }
         List<String> allKeys = new ArrayList<String>();
         for (String key : keys) {

@@ -70,9 +70,11 @@
                 message: msg
             });
             var index = $scope.alertMsgs.length - 1;
-            $timeout(function () {
-                //$scope.alertMsgs.splice(index, 1);
-            }, 3 * 1000);
+            $timeout((function (i) {
+                return function (i) {
+                    $scope.alertMsgs.splice(i, 1);
+                };
+            })(index), 3 * 1000);
         }
     }]);
 })();
