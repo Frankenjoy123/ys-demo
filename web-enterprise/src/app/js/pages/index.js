@@ -47,6 +47,9 @@
                 templateUrl: "pages/logistics/logistics.html",
                 controller: "logisticsCtrl"
             })
+            .when('/search', {
+                templateUrl: "pages/search/search.html"
+            })
             .otherwise({
                 redirectTo: "/"
             });
