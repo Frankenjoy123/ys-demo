@@ -24,7 +24,8 @@
                         <label>产品：</label>
                         <select name="productType"
                                 class="form-control inline"
-                                ng-model="creationModel.productBaseId">
+                                ng-model="creationModel.productBaseId"
+                                ng-change="creationPanel.productBaseIdChanged(creationModel.productBaseId)">
                             <option value="0">请选择</option>
                             <option ng-repeat="pb in creationPanel.productBases" value="{{pb.id}}">
                                 {{pb.name}}
@@ -40,11 +41,9 @@
                     <div class="form-group col-xs-4">
                         <label>产品码类型：</label>
 
-                        <div class="checkbox inline" ng-repeat="t in creationPanel.keyTypes">
+                        <div class="checkbox inline">
                             <label>
-                                <input type="checkbox" class="simple disabled" disabled="disabled"
-                                       value="{{t.code}}"/>
-                                {{t.name}}
+                                {{formatProductKeyTypes(creationPanel.productKeyTypes)}}
                             </label>
                         </div>
                     </div>
@@ -86,7 +85,7 @@
                             <td>{{b.id}}</td>
                             <td>{{b.quantity}}</td>
                             <td>
-                                {{getProductKeyTypeCodes(b.productKeyTypes)}}
+                                {{formatProductKeyTypes(b.productKeyTypes)}}
                             </td>
                             <td>{{getDateString(b.createdDateTime)}}</td>
                             <td>
