@@ -1,0 +1,105 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        查询
+        <!--<small>Control panel</small>-->
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>首页</a></li>
+        <li class="active">查询</li>
+    </ol>
+</section>
+
+<section class="content">
+    <nav class="navbar navbar-default navbar-static-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div>
+                <a class="navbar-brand" data-toggle="collapse" data-target="#collapse-package"><i
+                        class="fa fa-briefcase"></i>包装查询</a>
+            </div>
+
+            <div>
+                <a class="navbar-brand" data-toggle="collapse" data-target="#collapse-logistics"><i
+                        class="fa fa-truck"></i>物流查询</a>
+            </div>
+
+            <!--<div class="navbar-header">-->
+                <!--<a class="navbar-brand" href=""><i class="fa fa-search"></i>扫描记录查询</a>-->
+            <!--</div>-->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <div class="panel panel-default" id="collapse-package">
+        <div class="panel-heading">包装查询</div>
+        <div class="panel-body">
+            <div ng-controller="packageSearchCtrl">
+                <div class="form-group">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="packageKey" placeholder="产品码" ng-model="productKey">
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary" ng-click="productKeyClick()">查询</button>
+                    </div>
+                </div>
+                <div class="box-group" ng-show="bodyShow">
+                    <div class="panel box box-primary">
+                        <div class="box-body">
+                            <div id="tree"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default" id="collapse-logistics">
+        <div class="panel-heading">物流查询</div>
+        <div class="panel-body">
+            <div ng-controller="logisticsCtrl">
+                <style type="text/css">
+                    li {
+                        list-style-type: none;
+                    }
+                </style>
+                <div class="form-group">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="productKey" placeholder="产品码" ng-model="productKey">
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary" ng-click="productKeyClick()">查询</button>
+                    </div>
+                </div>
+                <div class="box-group" ng-show="bodyShow">
+
+                    <div class="panel box box-primary">
+                        <div class="box-body">
+                            <table class="table table-hover">
+                                <tr>
+                                    <th>时间</th>
+                                    <th>地点</th>
+                                    <th>动作</th>
+                                    <th>描述</th>
+                                </tr>
+                                <tr ng-repeat="da in data">
+                                    <td>{{getDateString(da.startDate)}}</td>
+                                    <td>
+                                        【{{da.startCheckPointObject.name}}】
+                                    </td>
+                                    <td>
+                                        【{{da.actionObject.name}}】
+                                    </td>
+                                    <td>
+                                        {{da.desc}}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
