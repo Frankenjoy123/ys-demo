@@ -17,7 +17,7 @@ import java.util.List;
 public class ProductBase {
 
     private Long id;
-    private Integer categoryId;
+    private ProductCategory category;
     private Integer manufacturerId;
     private String barcode;
     private String name;
@@ -44,12 +44,12 @@ public class ProductBase {
         this.id = id;
     }
 
-    public Integer getCategoryId() {
-        return categoryId;
+    public ProductCategory getCategory() {
+        return category;
     }
 
-    public void setCategoryId(Integer baseProductId) {
-        this.categoryId = baseProductId;
+    public void setCategory(ProductCategory category) {
+        this.category = category;
     }
 
     public void setManufacturerId(Integer manufacturerId) {

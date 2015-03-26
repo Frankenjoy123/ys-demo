@@ -1,14 +1,18 @@
 package com.yunsoo.dataapi.controller;
 
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.service.ProductCategoryService;
 import com.yunsoo.service.contract.ProductCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/1/16.
+ * Created by:   Zhe
+ * Created on:   2015/1/16
+ * Descriptions:
  */
 @RestController
 @RequestMapping("/productcategory")
@@ -22,9 +26,13 @@ public class ProductCategoryController {
         this.productCategoryService = productCategoryService;
     }
 
-    @RequestMapping(value = "/model", method = RequestMethod.GET)
-    public ProductCategory getRootProductCategories(@RequestParam(value = "id", required = true) Integer id) {
-        return productCategoryService.getById(id);
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public ProductCategory getById(@PathVariable(value = "id") Integer id) {
+        ProductCategory pc = productCategoryService.getById(id);
+        if (pc == null) {
+            throw new NotFoundException("product category not found with id: " + id);
+        }
+        return pc;
     }
 
 //    @RequestMapping(value = "/{productCategoryId}", method = RequestMethod.GET)
@@ -32,7 +40,7 @@ public class ProductCategoryController {
 //        return this.productCategoryService.getById(productCategoryId);
 //    }
 
-    @RequestMapping(value = "/rootlevel", method = RequestMethod.GET)
+    @RequestMapping(value = "/list/rootlevel", method = RequestMethod.GET)
     public List<ProductCategory> getRootProductCategories() {
         return productCategoryService.getRootProductCategories();
     }
@@ -42,10 +50,4 @@ public class ProductCategoryController {
 //                () -> new UserNotFoundException(userId));
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    class UserNotFoundException extends RuntimeException {
-        public UserNotFoundException(String userId) {
-            super("could not find user '" + userId + "'.");
-        }
-    }
 }

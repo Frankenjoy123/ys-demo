@@ -4,9 +4,11 @@
     app.factory("productBaseManageService", ["$http", function ($http) {
         return {
             getProductBases: function (fnSuccess) {
-                $http.get("/api/productbase").success(function (data) {
-                    fnSuccess(data);
-                });
+                $http.get("/api/productbase").success(fnSuccess);
+                return this;
+            },
+            getShelfLifeInterval: function (fnSuccess) {
+                $http.get("mock/shelf_life_interval.json").success(fnSuccess);
                 return this;
             }
         };
@@ -34,6 +36,8 @@
         //init
         productBaseManageService.getProductBases(function (data) {
             $scope.productBases = data;
+        }).getShelfLifeInterval(function (data) {
+            $scope.shelfLifeIntervals = data;
         });
     }]);
 })();

@@ -28,14 +28,16 @@
                             <th>品类</th>
                             <th>条码</th>
                             <th>产品码类型</th>
+                            <th>保质期</th>
                             <th>创建时间</th>
                         </tr>
                         <tr ng-repeat="pb in productBases">
                             <td>{{pb.id}}</td>
                             <td>{{pb.name}}</td>
-                            <td>TODO</td>
+                            <td>{{pb.category ? pb.category.name : '未知'}}</td>
                             <td>{{pb.barcode}}</td>
                             <td>{{formatProductKeyTypes(pb.productKeyTypes)}}</td>
+                            <td>{{pb.shelfLife + " " + shelfLifeIntervals[pb.shelfLifeInterval]}}</td>
                             <td>{{getDateString(pb.createdDateTime)}}</td>
                         </tr>
                     </table>

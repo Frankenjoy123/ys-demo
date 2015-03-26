@@ -64,7 +64,7 @@ public class ProductDomain {
         product.setManufacturerId(productBaseObject.getManufacturerId());
 
         //fill with ProductCategory information.
-        ProductCategory productCategory = dataAPIClient.get("productcategory/model?id={id}", ProductCategory.class, productBaseObject.getCategoryId());
+        ProductCategory productCategory = getProductCategoryById(productBaseObject.getCategoryId());
         product.setProductCategory(productCategory);
 
         return product;
@@ -72,6 +72,13 @@ public class ProductDomain {
 
     public void activeProduct(String key) {
 
+    }
+
+    public ProductCategory getProductCategoryById(Integer id) {
+        if (id == null) {
+            return null;
+        }
+        return dataAPIClient.get("productcategory/{id}", ProductCategory.class, id);
     }
 
     //获取基本产品信息 - ProductBase
@@ -101,13 +108,14 @@ public class ProductDomain {
         productBase.setDescription(productBaseObject.getDescription());
         productBase.setBarcode(productBaseObject.getBarcode());
         productBase.setActive(productBaseObject.getActive());
-        productBase.setCategoryId(productBaseObject.getCategoryId());
         productBase.setDetails(productBaseObject.getDetails());
         productBase.setManufacturerId(productBaseObject.getManufacturerId());
         productBase.setShelfLife(productBaseObject.getShelfLife());
         productBase.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
         productBase.setCreatedDateTime(productBaseObject.getCreatedDateTime());
         productBase.setModifiedDateTime(productBaseObject.getModifiedDateTime());
+
+        productBase.setCategory(getProductCategoryById(productBaseObject.getCategoryId()));
         if (productBaseObject.getProductKeyTypeIds() != null) {
             productBase.setProductKeyTypes(LookupObject.fromIdList(productKeyTypes, productBaseObject.getProductKeyTypeIds()));
         }
