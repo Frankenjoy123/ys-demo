@@ -58,15 +58,22 @@
 
     app.controller("rootCtrl", ["$scope", "$timeout", function ($scope, $timeout) {
         if(!$.cookie("AdminLTEToken")) {
+            //todo
             window.location.href = "login.html";
         }
         $scope.user = {
             name: "Jane Doe",
             pic: "img/avatar3.png",
             status: "online",
-            title: "Web Developer",
-            since: "Nov. 2012"
+            title: "支持工程师",
+            since: "2015-03-01"
         };
+        $scope.logout = function(){
+            console.log('[logout]');
+            $.removeCookie("AdminLTEToken"); //todo
+            window.location.href = "login.html";
+        };
+
         $scope.alertMsgs = [];
         function getMsgIndex(msgs, msg, level) {
             var index = -1;
