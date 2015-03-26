@@ -47,21 +47,29 @@
         <!--<a href="#" class="text-center">注册新用户</a>-->
     </div>
 
-    <div class="margin text-center">
-        <span>联系云溯科技</span>
-        <br/>
-        <button class="btn bg-light-blue btn-circle"><i class="fa fa-facebook"></i></button>
-        <button class="btn bg-aqua btn-circle"><i class="fa fa-twitter"></i></button>
-        <button class="btn bg-red btn-circle"><i class="fa fa-google-plus"></i></button>
-
-    </div>
+    <!--<div class="margin text-center">-->
+    <!--<h2>联系云溯科技</h2>-->
+    <!--&lt;!&ndash;<button class="btn bg-light-blue btn-circle"><i class="fa fa-facebook"></i></button>&ndash;&gt;-->
+    <!--&lt;!&ndash;<button class="btn bg-aqua btn-circle"><i class="fa fa-twitter"></i></button>&ndash;&gt;-->
+    <!--&lt;!&ndash;<button class="btn bg-red btn-circle"><i class="fa fa-google-plus"></i></button>&ndash;&gt;-->
+    <!--</div>-->
 
     <div class="alert-wrap" ng-repeat="alert in alertMsgs">
         <div class="alert" ng-class="'alert-{{alert.level}}'">
             {{alert.message}}
         </div>
     </div>
-</div>
 
+</div>
+<footer>
+    <div class="margin text-center">
+        <p>云溯科技支持热线： 400-000-0000</p>
+
+        <p class="login-font"><a href="mailto:info@yunsu.co">info@yunsu.co</a></p>
+    </div>
+    <div class="container text-center login-font">
+        <p>Copyright © 广州云溯科技有限公司 2015</p>
+    </div>
+</footer>
 </body>
 </html>

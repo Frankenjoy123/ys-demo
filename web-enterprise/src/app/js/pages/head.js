@@ -6,14 +6,14 @@
             }
             $scope.data.messages = [{
                     pic: "img/avatar3.png",
-                    title: "Support Team",
+                title: "支持工程师",
                     desc: "Why not buy a new awesome theme?",
-                    time: "5 mins"
+                time: "5 分钟前"
                 }, {
                     pic: "img/avatar3.png",
-                    title: "AdminLTE Design Team",
+                title: "设计工程师",
                     desc: "Why not buy a new awesome theme?",
-                    time: "2 hours"
+                time: "2 小时前"
                 }
             ];
             $scope.data.notifications = [{
