@@ -17,7 +17,7 @@ import java.util.UUID;
  * Created by Jerry on 3/15/2015.
  */
 @RestController
-@RequestMapping("/accounttoken")
+@RequestMapping("/accountToken")
 public class AccountTokenController {
 
     @Autowired
@@ -31,6 +31,11 @@ public class AccountTokenController {
     @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
     public ResponseEntity<AccountToken> getAccountTokenById(@PathVariable(value = "id") int id) {
         return new ResponseEntity<AccountToken>(accountTokenService.get(id), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/identifier/{identifier}", method = RequestMethod.GET)
+    public ResponseEntity<AccountToken> getAccountTokenByIdentifier(@PathVariable(value = "identifier")String identifier) {
+        return new ResponseEntity<AccountToken>(accountTokenService.getByIdentifier(identifier), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)

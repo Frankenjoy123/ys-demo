@@ -3,10 +3,13 @@ package com.yunsoo.dao.impl;
 import com.yunsoo.dao.AccountTokenDao;
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dbmodel.AccountTokenModel;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Created by Jerry on 3/15/2015.
@@ -22,6 +25,18 @@ public class AccountTokenDaoImpl implements AccountTokenDao {
     public AccountTokenModel get(long id) {
         return (AccountTokenModel) sessionFactory.getCurrentSession().get(
                 AccountTokenModel.class, id);
+    }
+
+    @Override
+    public AccountTokenModel getByIdentifier(String identifier) {
+        String hql = "select at from AccountTokenModel at left join at.account a where a.identifier = :identifier";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql).setString("identifier", identifier);
+        List<AccountTokenModel> items = (List<AccountTokenModel>) query.list();
+        if (items != null && !items.isEmpty()) {
+            AccountTokenModel item = items.get(0);
+            return item;
+        }
+        return null;
     }
 
     @Override

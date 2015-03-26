@@ -7,6 +7,7 @@ import com.yunsoo.dbmodel.AccountTokenModel;
  */
 public interface AccountTokenDao {
     public AccountTokenModel get(long id);
+    public AccountTokenModel getByIdentifier(String identifier);
 
     public long save(AccountTokenModel accountTokenModel);
 
