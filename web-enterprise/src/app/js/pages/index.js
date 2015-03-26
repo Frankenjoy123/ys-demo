@@ -57,7 +57,7 @@
     }]);
 
     app.controller("rootCtrl", ["$scope", "$timeout", function ($scope, $timeout) {
-        if(!$.cookie("AdminLTEToken")) {
+        if (!$.cookie("AdminLTEToken")) {
             //todo
             window.location.href = "login.html";
         }
@@ -68,9 +68,9 @@
             title: "支持工程师",
             since: "2015-03-01"
         };
-        $scope.logout = function(){
+        $scope.logout = function () {
             console.log('[logout]');
-            $.removeCookie("AdminLTEToken"); //todo
+            $.removeCookie("AdminLTEToken", {path: '/'});
             window.location.href = "login.html";
         };
 
