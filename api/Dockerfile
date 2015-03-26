@@ -18,4 +18,4 @@ RUN cd /var/yunsoo/ && chmod +x gradlew && ./gradlew api:bootRepackage
 
 EXPOSE 6080
 EXPOSE 6081
-CMD java -jar /var/yunsoo/api/build/libs/api-1.0.jar
+CMD java -jar  -Dspring.profiles.active=qa /var/yunsoo/api/build/libs/api-1.0.jar
