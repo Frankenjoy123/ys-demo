@@ -19,32 +19,28 @@
     </style>
     <div class="row form-inline">
         <div class="col-xs-6 angular-data-table">
-            <select name="pageSize" class="form-control input-sm"
-                    ng-model="dataTable.pageSize">
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
-            <label for="pageSize" class="control-label">records per
-            page</label>
-        </div>
-        <div class="col-xs-6 angular-data-table input-group-btn">
-            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">Action <span
+            <!--<select name="pageSize" class="form-control input-sm"-->
+            <!--ng-model="dataTable.pageSize">-->
+            <!--<option value="10">10</option>-->
+            <!--<option value="25">25</option>-->
+            <!--<option value="50">50</option>-->
+            <!--<option value="100">100</option>-->
+            <!--</select>-->
+            <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">每页记录数<span
                     class="fa fa-caret-down"></span></button>
             <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li class="divider"></li>
-                <li><a href="#">Separated link</a></li>
+                <li ng-click="dataTable.pageSize = 10"><a>10</a></li>
+                <li ng-click="dataTable.pageSize = 25"><a>25</a></li>
+                <li ng-click="dataTable.pageSize = 50"><a>50</a></li>
+                <li ng-click="dataTable.pageSize = 100"><a>100</a></li>
             </ul>
         </div>
+
         <div class="col-xs-6">
-            <input type="search" name="filter"
+            <input type="search" name="filter1"
                    class="form-control input-sm pull-right"
                    ng-model="dataTable.filter" ng-change="dataTable.resetPaging()">
-            <label for="filter" class="control-label pull-right">filter:
+            <label for="filter1" class="control-label pull-right">查询:
                 &nbsp;</label>
         </div>
         <div class="box-group">
@@ -95,18 +91,18 @@
             </div>
         </div>
         <div class="col-xs-6">
-            <p>Showing {{dataTable.currentPageStart()}} to
-                {{dataTable.currentPageEnd()}} of {{projects.length}} entries</p>
+            <p>显示 {{dataTable.currentPageStart()}} 到
+                {{dataTable.currentPageEnd()}} 条记录</p>
         </div>
         <div class="col-xs-6">
             <ul class="pagination pull-right">
                 <li class="prev" ng-class="{ disabled: dataTable.onFirstPage()}"><a
-                        ng-click="dataTable.previous()">Previous</a></li>
+                        ng-click="dataTable.previous()">上一页</a></li>
                 <li ng-repeat-start="page in dataTable.pages()" ng-repeat-end
                     ng-class="{active: dataTable.currentPage === page - 1}"><a
                         ng-click="dataTable.goToPage(page)">{{page}}</a></li>
                 <li class="next" ng-class="{ disabled: dataTable.onLastPage()}"><a
-                        ng-click="dataTable.next()">Next</a></li>
+                        ng-click="dataTable.next()">下一页</a></li>
             </ul>
         </div>
     </div>
