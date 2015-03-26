@@ -28,10 +28,6 @@
     }]);
 
     app.controller("productKeyManageCtrl", ["$scope", "productKeyManageService", function ($scope, productKeyManageService) {
-        $scope.creationModel = {
-            productBaseId: 0,
-            quantity: 0
-        };
 
         $scope.getDateString = function (value) {
             return new DateTime(new Date(value)).toString('yyyy-MM-dd HH:mm:ss');
@@ -51,16 +47,25 @@
         };
 
         $scope.creationPanel = {
+            model: {
+                productBaseId: 0,
+                quantity: 0
+            },
             create: function () {
-                var model = $scope.creationModel;
+                var model = this.model;
                 console.log('[before productKeyBatch create]: ', model);
                 var requestData = {
                     quantity: model.quantity,
                     productBaseId: model.productBaseId
                 };
+                var selectedProductBase = this.selectedProductBase;
                 productKeyManageService.createProductKeyBatch(requestData, function (data) {
+                    console.log('[newProductKeyBatch created]:', data);
                     $scope.addAlertMsg('创建成功', 'success', true);
-
+                    if (!data.productBase) {
+                        data.productBase = selectedProductBase;
+                    }
+                    $scope.listPanel.newProductKeyBatches.push(data);
                     //$scope.$apply();
                 }, function (error, data) {
                     console.log(error, data);
@@ -68,19 +73,21 @@
                 });
             },
             productBaseIdChanged: function (productBaseId) {
-                console.log('[productBaseId changed]: ', productBaseId);
-                var productKeyTypes;
+                console.log('[productBaseId changed]:', productBaseId);
+                var selectedProductBase;
                 $.each(this.productBases, function (i, item) {
                     if (item && item.id === +productBaseId) {
-                        productKeyTypes = item.productKeyTypes;
-                        console.log('[found productKeyTypes]: ', productKeyTypes);
+                        selectedProductBase = item;
+                        console.log('[selectedProductBase]:', selectedProductBase);
                     }
                 });
-                this.productKeyTypes = productKeyTypes;
+                this.selectedProductBase = selectedProductBase;
             }
         };
 
         $scope.listPanel = {
+            productKeyBatches: [],
+            newProductKeyBatches: [],
             download: function (batchId) {
                 batchId && productKeyManageService.downloadProductKeys(this, batchId);
             },
@@ -88,7 +95,6 @@
         };
 
         //init
-        $scope.productKeyBatches = [];
         productKeyManageService
             .getProductBases(function (data) {
                 $scope.productBases = $scope.creationPanel.productBases = data;
@@ -96,7 +102,7 @@
                     $.each($scope.productBases, function (i, item) {
                         productKeyManageService.getProductKeyBatches(item.id, function (data) {
                             if (data && data.length) {
-                                $scope.productKeyBatches.push({
+                                $scope.listPanel.productKeyBatches.push({
                                     productBase: item,
                                     batches: data
                                 });
