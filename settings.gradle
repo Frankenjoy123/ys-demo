@@ -4,6 +4,6 @@ include 'common-web'
 include 'common-data'
 include 'data-service'
 include 'data-api'
-include 'API'
+include 'api'
 include 'setup'
 
