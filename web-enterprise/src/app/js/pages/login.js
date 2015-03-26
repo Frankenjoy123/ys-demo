@@ -4,7 +4,7 @@
     app.factory("loginService", ["$http", function ($http) {
         return {
             login: function (username, password, fnSuccess, fnError) {
-                $http.post("/account/login", {
+                $http.post("/api/account/login", {
                     username: username,
                     password: password
                 }).success(function (data) {
