@@ -1,5 +1,12 @@
 package com.yunsoo.dataapi.controller;
 
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
+import com.yunsoo.common.data.object.FileObject;
+import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.InternalServerErrorException;
+import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.config.AmazonSetting;
 import com.yunsoo.dataapi.dto.ResultWrapper;
 import com.yunsoo.dataapi.factory.ResultFactory;
 import com.yunsoo.service.contract.Message;
@@ -11,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -22,6 +30,8 @@ public class MessageController {
 
     @Autowired
     private final MessageService messageService;
+    @Autowired
+    private AmazonSetting amazonSetting;
 
     @Autowired
     MessageController(MessageService messageService) {
@@ -76,5 +86,27 @@ public class MessageController {
     public ResponseEntity<ResultWrapper> deleteMessages(@PathVariable(value = "id") Long id) {
         boolean result = messageService.delete(id);
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/image/{imagekey}", method = RequestMethod.GET)
+    public ResponseEntity getThumbnail(
+            @PathVariable(value = "imagekey") String imagekey) {
+
+        if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("ImageKey不能为空！");
+        S3Object s3Object;
+        try {
+            s3Object = messageService.getMessageImage(amazonSetting.getS3_basebucket(), amazonSetting.getS3_message_image_url() + "/" + imagekey);
+            if (s3Object == null) throw new NotFoundException("找不到图片!");
+
+            FileObject fileObject = new FileObject();
+            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+            fileObject.setThumbnailData(IOUtils.toByteArray(s3Object.getObjectContent()));
+            fileObject.setLenth(s3Object.getObjectMetadata().getContentLength());
+            return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
+
+        } catch (IOException ex) {
+            //to-do: log
+            throw new InternalServerErrorException("图片获取出错！");
+        }
     }
 }

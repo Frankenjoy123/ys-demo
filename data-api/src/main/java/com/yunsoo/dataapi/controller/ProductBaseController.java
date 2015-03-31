@@ -1,14 +1,23 @@
 package com.yunsoo.dataapi.controller;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
+import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.config.AmazonSetting;
 import com.yunsoo.service.ProductBaseService;
 import com.yunsoo.service.contract.ProductBase;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +32,8 @@ public class ProductBaseController {
 
     @Autowired
     private ProductBaseService productBaseService;
+    @Autowired
+    private AmazonSetting amazonSetting;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductBaseObject getById(@PathVariable(value = "id") Long id) {
@@ -33,6 +44,37 @@ public class ProductBaseController {
         ProductBaseObject productBaseObject = new ProductBaseObject();
         BeanUtils.copyProperties(productBase, productBaseObject);
         return productBaseObject;
+    }
+
+    @RequestMapping(value = "/thumbnail/{id}/{client}", method = RequestMethod.GET)
+    public ResponseEntity getThumbnail(
+            @PathVariable(value = "id") Long id,
+            @PathVariable(value = "client") String client) {
+        if (id == null || id <= 0) throw new BadRequestException("ID不能小于0！");
+        if (client == null || client.isEmpty()) throw new BadRequestException("client不能为空！");
+        S3Object s3Object;
+        try {
+            s3Object = productBaseService.getProductThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_productbaseurl() + "/" + id + "/" + client);
+            if (s3Object == null) {
+                //throw new NotFoundException(40402, "找不到图片 id = " + id +"  client = " + client);
+                s3Object = productBaseService.getProductThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_product_default_image_url());
+            }
+
+            FileObject fileObject = new FileObject();
+            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+            fileObject.setThumbnailData(IOUtils.toByteArray(s3Object.getObjectContent()));
+            fileObject.setLenth(s3Object.getObjectMetadata().getContentLength());
+            return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
+
+        } catch (AmazonS3Exception s3ex) {
+            if (s3ex.getErrorCode() == "NoSuchKey") {
+                throw new NotFoundException(40402, "找不到图片 id = " + id + "  client = " + client);
+            }
+            throw new InternalServerErrorException(50001, s3ex.getErrorMessage());
+        } catch (IOException ex) {
+            //to-do: log
+            throw new InternalServerErrorException(50002, "图片获取出错！");
+        }
     }
 
     //query

@@ -53,7 +53,6 @@ public class UserController {
 
     @RequestMapping(value = "/token/{devicecode}", method = RequestMethod.GET)
     public ResponseEntity<User> getUserByDeviceCode(@PathVariable(value = "devicecode") String devicecode) {
-        //to-do
         List<User> users = userService.getUsersByFilter(null, devicecode, "", null);
         if (users == null || users.size() <= 0)
             throw new NotFoundException("Users not found token=" + devicecode);

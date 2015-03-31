@@ -14,7 +14,10 @@ public class AmazonSetting {
 
     private String s3_basebucket;
     private String s3_userbaseurl;
+    private String s3_productbaseurl;
+    private String s3_product_default_image_url;
     private String s3_product_key_batch_path;
+    private String s3_message_image_url;
     private String debug;
 
     public String getS3_basebucket() {
@@ -33,12 +36,36 @@ public class AmazonSetting {
         this.s3_userbaseurl = s3_userbaseurl;
     }
 
+    public String getS3_productbaseurl() {
+        return s3_productbaseurl;
+    }
+
+    public void setS3_productbaseurl(String s3_productbaseurl) {
+        this.s3_productbaseurl = s3_productbaseurl;
+    }
+
+    public String getS3_product_default_image_url() {
+        return s3_product_default_image_url;
+    }
+
+    public void setS3_product_default_image_url(String s3_product_default_image_url) {
+        this.s3_product_default_image_url = s3_product_default_image_url;
+    }
+
     public String getS3_product_key_batch_path() {
         return s3_product_key_batch_path;
     }
 
     public void setS3_product_key_batch_path(String s3_product_key_batch_path) {
         this.s3_product_key_batch_path = s3_product_key_batch_path;
+    }
+
+    public String getS3_message_image_url() {
+        return s3_message_image_url;
+    }
+
+    public void setS3_message_image_url(String s3_message_image_url) {
+        this.s3_message_image_url = s3_message_image_url;
     }
 
     public String getDebug() {
