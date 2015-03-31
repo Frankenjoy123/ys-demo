@@ -34,7 +34,7 @@ public class UserDaoImpl implements UserDao {
         String hql = "from UserModel where id=" + id;
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
 
-        @SuppressWarnings("unchecked")
+//        @SuppressWarnings("unchecked")
         List<UserModel> listUser = (List<UserModel>) query.list();
         if (listUser != null && !listUser.isEmpty()) {
             return listUser.get(0);

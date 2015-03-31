@@ -40,8 +40,9 @@ public class UserController {
 
     @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
     public ResponseEntity<UserDto> getUserById(@PathVariable(value = "id") Long id) {
-        UserDto userDto = UserDto.FromUser(userService.get(id));
-        if (userDto == null) throw new ResourceNotFoundException("UserDto not found id=" + id);
+        User user = userService.get(id);
+        if (user == null) throw new NotFoundException("User not found for id = " + id);
+        UserDto userDto = UserDto.FromUser(user);
         return new ResponseEntity<UserDto>(userDto, HttpStatus.OK);
     }
 
