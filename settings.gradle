@@ -5,5 +5,5 @@ include 'common-data'
 include 'data-service'
 include 'data-api'
 include 'api'
+include 'web-scan'
 include 'setup'
-
