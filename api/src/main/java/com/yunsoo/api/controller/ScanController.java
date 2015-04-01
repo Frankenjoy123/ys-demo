@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.LogisticsDomain;
 import com.yunsoo.api.biz.ValidateProduct;
+import com.yunsoo.api.domain.LogisticsDomain;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.UserDomain;
 import com.yunsoo.api.dto.LogisticsPath;
@@ -25,12 +25,12 @@ import java.util.List;
  * Created by:   Zhe
  * Created on:   2015/2/27
  * Descriptions:
- *
+ * <p>
  * ErrorCode
- *  40001    :   查询码不能为空
- *  40002    :   查询参数UserId不能为空
- *  40401    :   User not found!
- *  40402    :   ProductKey not found!
+ * 40001    :   查询码不能为空
+ * 40002    :   查询参数UserId不能为空
+ * 40401    :   User not found!
+ * 40402    :   ProductKey not found!
  */
 
 @RestController
@@ -163,6 +163,43 @@ public class ScanController {
         }
 
         ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?userId={userId}&pageIndex={pageIndex}&pageSize={pageSize}", ScanRecord[].class, userId, pageIndex, pageSize);
+        List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
+        return scanRecordList;
+    }
+
+    @RequestMapping(value = "/searchback/{isbackward}/user/{userId}/from/{Id}/paging/{pageIndex}/{pageSize}", method = RequestMethod.GET)
+    public List<ScanRecord> getScanRecordsByFilter(
+            @PathVariable(value = "Id") Long Id,
+            @PathVariable(value = "userId") Long userId,
+            @PathVariable(value = "isbackward") Boolean isbackward,
+            @PathVariable(value = "pageIndex") Integer pageIndex,
+            @PathVariable(value = "pageSize") Integer pageSize) {
+
+        //验证输入参数
+        if (userId == null || userId <= 0) {
+            throw new BadRequestException(40001, "用户ID不应小于0！");
+        }
+        if (Id == null || Id <= 0) {
+            Id = 0L; //default value
+        }
+        if (isbackward == null) {
+            throw new BadRequestException(40001, "isbackward未赋值！");
+        }
+        if (pageIndex == null) {
+            pageIndex = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 10;
+        }
+        if (pageIndex < 0) {
+            throw new BadRequestException("pageIndex不应小于0！");
+        }
+        if (pageSize <= 0) {
+            throw new BadRequestException("PageSize不应小于等于0！");
+        }
+
+        ScanRecord[] scanRecords = dataAPIClient.get("scan/filter?userId={userId}&Id={Id}&backward={backward}&pageIndex={pageIndex}&pageSize={pageSize}",
+                ScanRecord[].class, userId, Id, isbackward, pageIndex, pageSize);
         List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
         return scanRecordList;
     }

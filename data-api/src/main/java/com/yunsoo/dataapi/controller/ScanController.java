@@ -1,7 +1,5 @@
 package com.yunsoo.dataapi.controller;
 
-import com.yunsoo.dataapi.dto.ResultWrapper;
-import com.yunsoo.dataapi.factory.ResultFactory;
 import com.yunsoo.service.ScanRecordService;
 import com.yunsoo.service.contract.ScanRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +38,16 @@ public class ScanController {
                                                    @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         List<ScanRecord> scanRecordList = scanRecordService.getScanRecordsByFilter(productKey, baseProductId, userId, createdDateTime,
                 pageIndex, pageSize);
+        return scanRecordList;
+    }
+
+    @RequestMapping(value = "/filter", method = RequestMethod.GET)
+    public List<ScanRecord> filterScanRecords(@RequestParam(value = "Id", required = false) Long Id,
+                                              @RequestParam(value = "userId", required = false) Long userId,
+                                              @RequestParam(value = "backward", required = false) Boolean backward,
+                                              @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
+                                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        List<ScanRecord> scanRecordList = scanRecordService.filterScanRecords(Id, userId, backward, pageIndex, pageSize);
         return scanRecordList;
     }
 

@@ -12,6 +12,7 @@ import java.util.Comparator;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ScanRecord implements Comparator<ScanRecord> {
 
+    private Long Id;
     private String productKey;
     private long baseProductId;
     private int clientId;
@@ -20,6 +21,14 @@ public class ScanRecord implements Comparator<ScanRecord> {
     private String detail;
     private String createdDateTime;
     private String location;
+
+    public Long getId() {
+        return Id;
+    }
+
+    public void setId(Long id) {
+        Id = id;
+    }
 
     @JsonIgnore
     public String getProductKey() {
