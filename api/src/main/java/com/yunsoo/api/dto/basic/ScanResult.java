@@ -1,6 +1,5 @@
 package com.yunsoo.api.dto.basic;
 
-
 import com.yunsoo.api.dto.basic.Logistics;
 import com.yunsoo.api.dto.basic.Organization;
 import com.yunsoo.api.dto.basic.Product;
