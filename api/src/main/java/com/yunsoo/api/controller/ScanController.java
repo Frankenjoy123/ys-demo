@@ -48,6 +48,7 @@ public class ScanController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
 
+    //能够访问所有的Key
     @RequestMapping(value = "/mobile", method = RequestMethod.POST)
     public ScanResult getDetailByKey(@RequestBody ScanRequestBody scanRequestBody) {
 
@@ -98,6 +99,7 @@ public class ScanController {
     }
 
 
+    //仅仅能够访问属于特定组织的Key
     @RequestMapping(value = "/web/{orgid}/{key}", method = RequestMethod.GET)
     public ScanResultWeb getDetailForWebByKey(@PathVariable(value = "orgid") Integer orgid,
                                               @PathVariable(value = "key") String key) {
@@ -135,6 +137,7 @@ public class ScanController {
         }
         return scanResult;
     }
+
 
     @RequestMapping(value = "/history/user/{userId}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
     public List<ScanRecord> getScanRecordsByFilter(
