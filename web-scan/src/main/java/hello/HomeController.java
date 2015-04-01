@@ -11,7 +11,7 @@ public class HomeController {
     @RequestMapping("{key}")
     public String scan(@PathVariable(value = "key") String key, Model model) {
         model.addAttribute("key", key);
-        return "hello";
+        return "home";
     }
 
 }
