@@ -1,0 +1,57 @@
+{
+  "product": {
+    "productKey": "1qznsHprQUGpYSksur1vGx",
+    "productCategory": {
+      "name": "饮料",
+      "description": "各种",
+      "parentId": -1,
+      "active": true,
+      "id": 2
+    },
+    "manufacturerId": 1,
+    "barcode": "87654321",
+    "name": "王老吉",
+    "description": "Des TBD",
+    "details": "二维码:DLKJLKLKSDSDF;规格:24瓶一箱;型号:788;生产厂家:杭州西湖区某街道404号",
+    "shelfLife": 0,
+    "shelfLifeInterval": null,
+    "createdDateTime": "2015-03-22T18:15:36.259+08:00",
+    "statusId": 0,
+    "manufacturingDateTime": null,
+    "productBaseId": 1
+  },
+  "manufacturer": {
+    "id": 1,
+    "name": "某凉茶有限公司",
+    "description": "喝凉茶，不上火",
+    "imageUrl": null,
+    "detail": null,
+    "type": 1,
+    "status": 1
+  },
+  "logisticses": null,
+  "validationResult": "Uncertain",
+  "scanCounter": 3,
+  "userId": 82,
+  "key": "1qznsHprQUGpYSksur1vGx",
+  "scanRecord": [
+    {
+      "baseProductId": 1,
+      "clientId": 123456,
+      "deviceId": "UIDSL-SD832-230DS-623043",
+      "userId": 82,
+      "detail": "某用户通过手机扫描验证真伪。",
+      "createdDateTime": "2015-03-31T15:29:04.000+08:00",
+      "location": null
+    },
+    {
+      "baseProductId": 1,
+      "clientId": 123456,
+      "deviceId": "UIDSL-SD832-230DS-623043",
+      "userId": 82,
+      "detail": "某用户通过手机扫描验证真伪。",
+      "createdDateTime": "2015-03-25T11:29:45.000+08:00",
+      "location": null
+    }
+  ]
+}
