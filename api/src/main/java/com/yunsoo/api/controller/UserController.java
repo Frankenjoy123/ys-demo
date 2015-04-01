@@ -4,6 +4,8 @@ import com.yunsoo.api.dto.basic.User;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -18,12 +20,16 @@ import java.io.ByteArrayInputStream;
  * Created by:   Zhe
  * Created on:   2015/3/3
  * Descriptions: This controller manage end user.
+ *
+ *  ErrorCode
+ *  40401    :   User not found!
  */
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
     private RestClient dataAPIClient;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     UserController(RestClient dataAPIClient) {
@@ -34,7 +40,7 @@ public class UserController {
 //    @PreAuthorize("hasRole('YUNSOO_ADMIN')")
     public User getById(@PathVariable(value = "id") int id) throws NotFoundException {
         User user = dataAPIClient.get("user/id/{id}", User.class, id);
-        if (user == null) throw new NotFoundException("User not found id=" + id);
+        if (user == null) throw new NotFoundException(40401, "User not found id=" + id);
         return user;
     }
 
@@ -43,7 +49,7 @@ public class UserController {
 //    @PostFilter("hasPermission(filterObject, 'read') or hasPermission(filterObject, 'admin')")
     public User getByCellular(@PathVariable(value = "cellular") int cellular) throws NotFoundException {
         User user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
-        if (user == null) throw new NotFoundException("User not found cellular=" + cellular);
+        if (user == null) throw new NotFoundException(40401, "User not found cellular=" + cellular);
         return user;
     }
 
@@ -57,11 +63,7 @@ public class UserController {
             user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);
             return user;
         } catch (NotFoundException ex) {
-            //log
-            throw new NotFoundException("User not found by device code=" + deviceCode);
-        } catch (Exception ex) {
-            //log
-            return null;
+            throw new NotFoundException(40401, "User not found by device code=" + deviceCode);
         }
     }
 
@@ -84,9 +86,9 @@ public class UserController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Long createUser(@RequestBody User user) throws Exception {
+    public ResponseEntity<?> createUser(@RequestBody User user) throws Exception {
         long id = dataAPIClient.post("user/create", user, Long.class);
-        return id;
+        return new ResponseEntity<Long>(id, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PATCH)

@@ -23,7 +23,10 @@ yunsoo:
 AmazonSettings:
     s3_basebucket:  yunsudev
     s3_userbaseurl:  photo/users
+    s3_productbaseurl: photo/coms/products
+    s3_product_default_image_url: photo/coms/products/ysdefault
     s3_product_key_batch_path: product_key_batches
+    s3_message_image_url: photo/coms/messages
 
 dataServiceSetting:
     message_created_status_id:  1
@@ -62,7 +65,11 @@ logging:
 AmazonSettings:
     s3_basebucket:  yunsudev
     s3_userbaseurl:  photo/users
+    s3_productbaseurl: photo/coms/products
+    s3_product_default_image_url: photo/coms/products/ysdefault
     s3_product_key_batch_path: product_key_batches
+    s3_message_image_url: photo/coms/messages
+
 
 dataServiceSetting:
     message_created_status_id:  1

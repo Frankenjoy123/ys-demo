@@ -25,7 +25,14 @@ import java.util.List;
  * Created by:   Zhe
  * Created on:   2015/2/27
  * Descriptions:
+ *
+ * ErrorCode
+ *  40001    :   查询码不能为空
+ *  40002    :   查询参数UserId不能为空
+ *  40401    :   User not found!
+ *  40402    :   ProductKey not found!
  */
+
 @RestController
 @RequestMapping("/scan")
 public class ScanController {
@@ -50,8 +57,8 @@ public class ScanController {
         //1, get user
         User currentUser = userDomain.ensureUser(scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
         if (currentUser == null) {
-            LOGGER.error("User not found by userId ={0}, deviceCode = {1}", scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
-            throw new NotFoundException("User not found by userId = " + scanRequestBody.getUserId() + " deviceCode = " + scanRequestBody.getDeviceCode());
+//            LOGGER.error("User not found by userId ={0}, deviceCode = {1}", scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
+            throw new NotFoundException(40401, "User not found by userId = " + scanRequestBody.getUserId() + " deviceCode = " + scanRequestBody.getDeviceCode());
         }
 
         ScanResult scanResult = new ScanResult();
@@ -137,7 +144,7 @@ public class ScanController {
 
         //验证输入参数
         if (userId == null || userId <= 0) {
-            throw new BadRequestException("用户ID不应小于0！");
+            throw new BadRequestException(40001, "用户ID不应小于0！");
         }
         if (pageIndex == null) {
             pageIndex = 0;
@@ -184,7 +191,7 @@ public class ScanController {
         TScanRecord scanRecord = new TScanRecord();
         scanRecord.setUserId(currentUser.getId());
         scanRecord.setDeviceId(currentUser.getDeviceCode());
-        scanRecord.setClientId(123456);
+        scanRecord.setClientId(123456); //to-do
         scanRecord.setProductKey(currentProduct.getProductKey());
         scanRecord.setBaseProductId(currentProduct.getProductBaseId());
         scanRecord.setDetail("某用户通过手机扫描验证真伪。");

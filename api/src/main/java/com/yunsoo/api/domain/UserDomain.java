@@ -4,6 +4,8 @@ import com.yunsoo.api.dto.basic.User;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,16 +19,22 @@ public class UserDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserDomain.class);
 
     //call dataAPI to get current User
     public User ensureUser(Integer userId, String deviceCode) {
         User user = null;
         if (userId != null && userId > 0) {
-            user = dataAPIClient.get("user/id/{id}", User.class, userId);
+            try {
+                user = dataAPIClient.get("user/id/{id}", User.class, userId);
+            } catch (NotFoundException ex) {
+                LOGGER.info("Notfound user id = {0}", userId);
+            }
         } else {
             try {
                 user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);
             } catch (NotFoundException ex) {
+                LOGGER.info("Notfound user for deviceCode = {0}", deviceCode);
             }
 
             if (user == null) {

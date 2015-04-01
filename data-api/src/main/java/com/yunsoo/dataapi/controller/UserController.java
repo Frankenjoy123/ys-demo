@@ -40,8 +40,9 @@ public class UserController {
 
     @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
     public ResponseEntity<UserDto> getUserById(@PathVariable(value = "id") Long id) {
-        UserDto userDto = UserDto.FromUser(userService.get(id));
-        if (userDto == null) throw new ResourceNotFoundException("UserDto not found id=" + id);
+        User user = userService.get(id);
+        if (user == null) throw new NotFoundException("User not found for id = " + id);
+        UserDto userDto = UserDto.FromUser(user);
         return new ResponseEntity<UserDto>(userDto, HttpStatus.OK);
     }
 
@@ -52,7 +53,6 @@ public class UserController {
 
     @RequestMapping(value = "/token/{devicecode}", method = RequestMethod.GET)
     public ResponseEntity<User> getUserByDeviceCode(@PathVariable(value = "devicecode") String devicecode) {
-        //to-do
         List<User> users = userService.getUsersByFilter(null, devicecode, "", null);
         if (users == null || users.size() <= 0)
             throw new NotFoundException("Users not found token=" + devicecode);

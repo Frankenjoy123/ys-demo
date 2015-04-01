@@ -1,7 +1,9 @@
 package com.yunsoo.service;
 
+import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.service.contract.Message;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -30,4 +32,6 @@ public interface MessageService {
     public List<Message> getMessagesByFilter(Integer type, Integer status, Long companyId, Boolean ignoreExpireDate);
 
     public List<Message> getUnreadMessages(Long userId, Long companyId, Long lastReadMessageId);
+
+    public S3Object getMessageImage(String bucket, String imgKey) throws IOException;
 }

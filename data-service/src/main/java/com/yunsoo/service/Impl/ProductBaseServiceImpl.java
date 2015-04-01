@@ -1,10 +1,14 @@
 package com.yunsoo.service.Impl;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.dao.ProductBaseDao;
+import com.yunsoo.dao.S3ItemDao;
 import com.yunsoo.dbmodel.ProductBaseModel;
 import com.yunsoo.service.contract.ProductBase;
 import com.yunsoo.util.SpringBeanUtil;
@@ -24,10 +28,29 @@ public class ProductBaseServiceImpl implements ProductBaseService {
 
     @Autowired
     private ProductBaseDao productBaseDao;
+    @Autowired
+    private S3ItemDao s3ItemDao;
 
     @Override
     public ProductBase getById(long id) {
         return ProductBase.fromModel(productBaseDao.getById(id));
+    }
+
+    @Override
+    public S3Object getProductThumbnail(String bucketName, String client) throws IOException {
+
+        try {
+            S3Object item = s3ItemDao.getItem(bucketName, client);
+            return item;
+        } catch (AmazonS3Exception s3ex) {
+            if (s3ex.getErrorCode() == "NoSuchKey") {
+                //log
+            }
+            return null;
+        } catch (Exception ex) {
+            //to-do: log
+            return null;
+        }
     }
 
     @Override

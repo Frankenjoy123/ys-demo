@@ -1,7 +1,10 @@
 package com.yunsoo.service.Impl;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.MessageDao;
+import com.yunsoo.dao.S3ItemDao;
 import com.yunsoo.dbmodel.MessageModel;
 import com.yunsoo.service.contract.Message;
 import com.yunsoo.service.MessageService;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -22,6 +26,8 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     private MessageDao messageDao;
+    @Autowired
+    private S3ItemDao s3ItemDao;
 
     @Override
     public Message get(long id) {
@@ -106,5 +112,21 @@ public class MessageServiceImpl implements MessageService {
         MessageModel model = new MessageModel();
         BeanUtils.copyProperties(message, model, SpringBeanUtil.getNullPropertyNames(message));
         return model;
+    }
+
+    @Override
+    public S3Object getMessageImage(String bucket, String imgKey) throws IOException {
+        try {
+            S3Object item = s3ItemDao.getItem(bucket, imgKey);
+            return item;
+        } catch (AmazonS3Exception s3ex) {
+            if (s3ex.getErrorCode() == "NoSuchKey") {
+                //log
+            }
+            return null;
+        } catch (Exception ex) {
+            //to-do: log
+            return null;
+        }
     }
 }
