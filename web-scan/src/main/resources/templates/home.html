@@ -20,21 +20,21 @@
 
         app.factory("productService", ["$http", function ($http) {
             return {
-//                getInfo: function (postObject, fnSuccess, fnError) {
-//                    $http.post("/api/scan/mobile", postObject)
-//                            .success(function (data) {
-//                                fnSuccess(data);
-//                            }).error(function (data, state) {
-//                                fnSuccess();
-//                            });
-//                }
-
                 getInfo: function (postObject, fnSuccess, fnError) {
-                    $http.get("mock/mock.json")
+                    $http.post("/api/scan/mobile", postObject)
                             .success(function (data) {
                                 fnSuccess(data);
+                            }).error(function (data, state) {
+                                fnSuccess();
                             });
                 }
+
+//                getInfo: function (postObject, fnSuccess, fnError) {
+//                    $http.get("mock/mock.json")
+//                            .success(function (data) {
+//                                fnSuccess(data);
+//                            });
+//                }
             };
         }]);
 
@@ -81,10 +81,13 @@
                         }
                     }
 
+                    $scope.logisticsShow = 0;
+
                     if ($scope.data.logisticses != null) {
                         $scope.latestLogistics = $scope.data.logisticses[0];
-
                         $scope.otherLogistics = $scope.data.logisticses.slice(1);
+
+                        $scope.logisticsShow = 1;
                     }
                 });
             };
@@ -173,10 +176,17 @@
 
                     <div class="tab-pane" id="tab_3">
                         <div class="panel box box-primary">
-                            <ul class="timeline">
-                                <li>
+                            <ul class="timeline" ng-show="!logisticsShow">
+                                <li >
+                                    <i class="fa fa-envelope bg-blue"></i>
+                                    <div class="timeline-item">
+                                        <h3 class="timeline-header">您没有物流信息！</h3>
+                                    </div>
+                                </li>
+                            </ul>
+                            <ul class="timeline" ng-show="logisticsShow">
+                                <li >
                                     <i class="fa fa-envelope bg-red"></i>
-
                                     <div class="timeline-item">
                                         <h3 class="timeline-header">{{getDateString(latestLogistics.dateTime)}}
                                             {{latestLogistics.message}} {{latestLogistics.location}}</h3>
