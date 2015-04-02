@@ -24,34 +24,30 @@ import java.util.Map;
 @RequestMapping("/sqs")
 public class SqsController {
 
-    private static final String HEADER_PAYLOADNAME = "PayloadName";
+    private static final String HEADER_PAYLOAD_NAME = "PayloadName";
 
     private static final String QUEUE_NAME = "dev-productkeybatch";
 
     @Autowired
     private QueueMessagingTemplate queueMessagingTemplate;
 
+    @Autowired
+    private ProductKeyBatchHandler productKeyBatchHandler;
+
     @RequestMapping(value = "/productkeybatch", method = RequestMethod.POST)
     public void sendToMessageQueue(@RequestBody ProductKeyBatchMassage message) {
         Map<String, Object> headers = new HashMap<>();
-        headers.put(HEADER_PAYLOADNAME, "productkeybatch");
+        headers.put(HEADER_PAYLOAD_NAME, "productkeybatch");
         queueMessagingTemplate.convertAndSend(QUEUE_NAME, message, headers);
     }
 
 
     @MessageMapping(QUEUE_NAME)
     private void receiveMessage(ProductKeyBatchMassage message,
-                                @Header(value = HEADER_PAYLOADNAME, required = false) String payloadName,
-                                @Headers Map<String, Object> headers) {
-        switch (payloadName) {
-            case "productkeybatch":
-                new ProductKeyBatchHandler();
-
-
-                break;
-            default:
-                throw new RuntimeException("PayloadName invalid. MessageId:" + headers.get("MessageId"));
+                                @Header(value = HEADER_PAYLOAD_NAME, required = false) String payloadName) {
+        if (payloadName == null || !payloadName.equals("productkeybatch")) {
+            throw new RuntimeException("PayloadName invalid.");
         }
-        throw new RuntimeException("new exception");
+        productKeyBatchHandler.execute(message);
     }
 }

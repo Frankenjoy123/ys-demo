@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * Descriptions:
  */
 @Configuration
-public class AmazonSqsConfig {
+public class AmazonSqsConfiguration {
 
     @Bean
     public QueueMessagingTemplate queueMessagingTemplate(AmazonSQS amazonSqs, ResourceIdResolver resourceIdResolver) {
