@@ -41,4 +41,9 @@ public class ScanRecordServiceImpl implements ScanRecordService {
         }
         return ScanRecord.FromModelList(scanRecordDao.getScanRecordsByFilter(productKey, baseProductId, userId, theCreatedDateTime, pageIndex, pageSize));
     }
+
+    @Override
+    public List<ScanRecord> filterScanRecords(Long Id, Long userId, Boolean getOlder, int pageIndex, int pageSize) {
+        return ScanRecord.FromModelList(scanRecordDao.filterScanRecords(Id, userId, getOlder, pageIndex, pageSize));
+    }
 }

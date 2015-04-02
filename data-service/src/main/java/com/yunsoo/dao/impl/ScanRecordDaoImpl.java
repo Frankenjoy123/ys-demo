@@ -57,4 +57,24 @@ public class ScanRecordDaoImpl implements ScanRecordDao {
         c.setMaxResults(pageSize);
         return c.list();
     }
+
+    @Override
+    public List<ScanRecordModel> filterScanRecords(Long Id, Long userId, Boolean getOlder, int pageIndex, int pageSize) {
+        Criteria c = sessionFactory.getCurrentSession().createCriteria(ScanRecordModel.class);
+        if (Id != null) {
+            if (getOlder) {
+                c.add(Restrictions.lt("id", Id)); //get scan records that older than current ScanRecordId.
+            } else {
+                c.add(Restrictions.gt("id", Id));  //newer scan records should be larger.
+            }
+        }
+        if (userId != null) {
+            c.add(Restrictions.eq("userId", userId.longValue()));
+        }
+
+        c.addOrder(Order.desc("createdDateTime"));
+        c.setFirstResult(pageIndex * pageSize);
+        c.setMaxResults(pageSize);
+        return c.list();
+    }
 }
