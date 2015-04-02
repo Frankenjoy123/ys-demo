@@ -1,4 +1,4 @@
-package com.yunsoo.processor;
+package com.yunsoo.processor.config;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import org.springframework.cloud.aws.core.env.ResourceIdResolver;

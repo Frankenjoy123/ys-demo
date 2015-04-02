@@ -1,4 +1,4 @@
-package com.yunsoo.processor.controller.task;
+package com.yunsoo.processor.message;
 
 /**
  * Created by:   Lijian
