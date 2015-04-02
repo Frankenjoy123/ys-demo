@@ -1,4 +1,4 @@
-package com.yunsoo.processor;
+package com.yunsoo.processor.config;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import org.springframework.cloud.aws.core.env.ResourceIdResolver;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * Descriptions:
  */
 @Configuration
-public class AmazonSqsConfig {
+public class AmazonSqsConfiguration {
 
     @Bean
     public QueueMessagingTemplate queueMessagingTemplate(AmazonSQS amazonSqs, ResourceIdResolver resourceIdResolver) {

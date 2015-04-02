@@ -17,7 +17,7 @@ import java.io.IOException;
 @Configuration
 public class YunsooConfiguration {
 
-    @Value("${yunsoo.debug}")
+    @Value("${yunsoo.debug:false}")
     private String debug;
 
     @Bean

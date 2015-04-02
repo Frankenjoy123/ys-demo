@@ -1,4 +1,4 @@
-rootProject.name = 'com.yunsoo'
+rootProject.name = 'yunsoo'
 include 'common'
 include 'common-web'
 include 'common-data'
