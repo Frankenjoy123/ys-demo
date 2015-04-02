@@ -1,7 +1,9 @@
 package com.yunsoo.service;
 
+import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.service.contract.Organization;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -9,6 +11,8 @@ import java.util.List;
  */
 public interface OrganizationService {
     public Organization get(int id);
+
+    public S3Object getOrgThumbnail(String bucketName, String imgKey) throws IOException;
 
     public Organization get(String name);
 

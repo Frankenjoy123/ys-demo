@@ -15,4 +15,10 @@ public class HomeController {
         System.out.println("HomeController: Passing through...");
         return "Welcome to YUNSOO API!";
     }
+
+    @RequestMapping(value = "home/health")
+    public String health() {
+        System.out.println("HomeController: Passing through heath check...");
+        return "Hi, I am still working!";
+    }
 }

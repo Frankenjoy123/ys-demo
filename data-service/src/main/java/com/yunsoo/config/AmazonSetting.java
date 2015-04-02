@@ -18,6 +18,8 @@ public class AmazonSetting {
     private String s3_product_default_image_url;
     private String s3_product_key_batch_path;
     private String s3_message_image_url;
+    private String s3_org_image_url;
+    private String s3_org_default_image_url;
     private String debug;
 
     public String getS3_basebucket() {
@@ -66,6 +68,22 @@ public class AmazonSetting {
 
     public void setS3_message_image_url(String s3_message_image_url) {
         this.s3_message_image_url = s3_message_image_url;
+    }
+
+    public String getS3_org_image_url() {
+        return s3_org_image_url;
+    }
+
+    public void setS3_org_image_url(String s3_org_image_url) {
+        this.s3_org_image_url = s3_org_image_url;
+    }
+
+    public String getS3_org_default_image_url() {
+        return s3_org_default_image_url;
+    }
+
+    public void setS3_org_default_image_url(String s3_org_default_image_url) {
+        this.s3_org_default_image_url = s3_org_default_image_url;
     }
 
     public String getDebug() {

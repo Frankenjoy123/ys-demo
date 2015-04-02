@@ -1,7 +1,10 @@
 package com.yunsoo.service.Impl;
 
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.dao.DaoStatus;
 import com.yunsoo.dao.OrganizationDao;
+import com.yunsoo.dao.S3ItemDao;
 import com.yunsoo.dbmodel.OrganizationModel;
 import com.yunsoo.service.OrganizationService;
 import com.yunsoo.service.ServiceOperationStatus;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -21,10 +25,28 @@ import java.util.List;
 public class OrganizationServiceImpl implements OrganizationService {
     @Autowired
     private OrganizationDao organizationDao;
+    @Autowired
+    private S3ItemDao s3ItemDao;
 
     @Override
     public Organization get(int id) {
         return Organization.FromModel(organizationDao.get(id));
+    }
+
+    @Override
+    public S3Object getOrgThumbnail(String bucketName, String imgKey) throws IOException {
+        try {
+            S3Object item = s3ItemDao.getItem(bucketName, imgKey);
+            return item;
+        } catch (AmazonS3Exception s3ex) {
+            if (s3ex.getErrorCode() == "NoSuchKey") {
+                //log
+            }
+            return null;
+        } catch (Exception ex) {
+            //to-do: log
+            return null;
+        }
     }
 
     @Override
