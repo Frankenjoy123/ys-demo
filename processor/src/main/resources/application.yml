@@ -1,0 +1,14 @@
+server:
+  port: 4080
+
+yunsoo:
+  debug: true
+
+cloud:
+  aws:
+    credentials:
+      instanceProfile: true
+    region:
+      auto: true
+      static: cn-north-1
+

@@ -1,0 +1,24 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath('org.springframework.boot:spring-boot-gradle-plugin:1.2.2.RELEASE')
+    }
+}
+
+apply plugin: 'spring-boot'
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile project(':common-web')
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.cloud:spring-cloud-aws-messaging:1.0.0.RELEASE'
+    compile 'org.springframework.cloud:spring-cloud-aws-autoconfigure:1.0.0.RELEASE'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
