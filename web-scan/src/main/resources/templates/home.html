@@ -12,8 +12,8 @@
 <body>
 <!-- Content Header (Page header) -->
 <script type="text/javascript">
-    $(document).ready(function(){
-        $("#tab_a_1").click(function(){
+    $(document).ready(function () {
+        $("#tab_a_1").click(function () {
             $("#tab_1").addClass("active");
             $("#li_tab_a_1").addClass("active");
 
@@ -24,7 +24,7 @@
             $("#li_tab_a_3").removeClass("active");
         });
 
-        $("#tab_a_2").click(function(){
+        $("#tab_a_2").click(function () {
             $("#tab_2").addClass("active");
             $("#li_tab_a_2").addClass("active");
 
@@ -35,7 +35,7 @@
             $("#li_tab_a_3").removeClass("active");
         });
 
-        $("#tab_a_3").click(function(){
+        $("#tab_a_3").click(function () {
             $("#tab_3").addClass("active");
             $("#li_tab_a_3").addClass("active");
 
@@ -89,6 +89,10 @@
                 }
 
                 productService.getInfo(postObject, function (data) {
+
+                    if (data == null)
+                        return;
+
                     $scope.data = data;
 
                     if ($scope.data.product.details != null) {
@@ -114,6 +118,20 @@
 
                         $scope.logisticsShow = 1;
                     }
+
+                    $("#imgProduct").attr("src", "/api/productbase/thumbnail/" + $scope.data.product.productBaseId + "/thumb-mobile");
+                    if($scope.data.validationResult.toLowerCase() == "uncertain")
+                    {
+                        $("#imgReal").attr("src", "images/jinggao_53.png");
+                    }
+                    else if($scope.data.validationResult.toLowerCase() == "fake")
+                    {
+                        $("#imgReal").attr("src", "images/jiahuo_52.png");
+                    }
+                    else if($scope.data.validationResult.toLowerCase() == "real")
+                    {
+                        $("#imgReal").attr("src", "images/zhengpin_54.png");
+                    }
                 });
             };
 
@@ -125,13 +143,13 @@
 <div ng-controller="productCtrl" class="container">
 
     <div class="row">
-        <div class="col-xs-12 col-md-8">
-            <img src="" class="img-rounded"/>
-        </div>
-        <div class="col-xs-6 col-md-4">
-            <img src="" class="img-rounded"/>
+        <div class="col-xs-18 col-md-12">
+            <img id="imgProduct" src="" width="60%"/>
+            <img id="imgReal" src="" width="30%"/>
         </div>
     </div>
+
+    <br></br>
 
     <div class="row">
         <div class="col-xs-18 col-md-12">
