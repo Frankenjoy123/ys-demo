@@ -16,15 +16,15 @@ public class NotFoundException extends RestErrorResultException {
     }
 
     public NotFoundException(int code) {
-        this(code, "Resource");
+        this(code, "Resource not found");
     }
 
-    public NotFoundException(String resourceName) {
-        this(RestErrorResultCode.NOT_FOUND, resourceName);
+    public NotFoundException(String message) {
+        this(RestErrorResultCode.NOT_FOUND, message);
     }
 
-    public NotFoundException(int code, String resourceName) {
-        this(new ErrorResult(code, resourceName + " not found"));
+    public NotFoundException(int code, String message) {
+        this(new ErrorResult(code, message));
     }
 
     public NotFoundException(ErrorResult errorResult) {

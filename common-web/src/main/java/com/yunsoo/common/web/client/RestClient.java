@@ -1,4 +1,3 @@
-
 package com.yunsoo.common.web.client;
 
 import org.springframework.http.HttpEntity;
@@ -27,7 +26,10 @@ public class RestClient {
     }
 
     public RestClient(String baseURL, ResponseErrorHandler responseErrorHandler) {
+        //added this request factory for PATCH method support
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        requestFactory.setReadTimeout(3 * 60 * 1000);
+        requestFactory.setConnectTimeout(5 * 1000);
         this.restTemplate = new RestTemplate(requestFactory);
 
         this.baseURL = baseURL;

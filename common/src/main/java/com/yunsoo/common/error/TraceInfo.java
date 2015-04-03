@@ -11,6 +11,9 @@ public class TraceInfo {
     private StackTraceElement[] stackTrace;
     private TraceInfo innerTraceInfo;
 
+    public TraceInfo() {
+    }
+
     public TraceInfo(String message) {
         this.message = message;
     }

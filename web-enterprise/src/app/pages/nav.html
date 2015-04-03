@@ -1,0 +1,111 @@
+<!-- sidebar: style can be found in sidebar.less -->
+<section class="sidebar">
+    <!-- Sidebar user panel -->
+    <div class="user-panel">
+        <div class="pull-left image">
+            <img ng-src="{{user.pic}}" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+            <p>你好, {{user.name}}</p>
+            <a href="#"><i class="fa fa-circle text-success"></i> {{user.status}}</a>
+        </div>
+    </div>
+    <form action="#" method="get" class="sidebar-form">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="查询...">
+            <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                </button>
+            </span>
+        </div>
+    </form>
+    <ul class="sidebar-menu">
+        <li>
+            <a href="#">
+                <i class="fa fa-dashboard"></i>
+                <span>仪表板</span>
+                <small class="badge pull-right bg-green">new</small>
+            </a>
+        </li>
+        <li>
+            <a href="#/msg">
+                <i class="fa fa-comment-o"></i>
+                <span>消息</span>
+                <small class="badge pull-right bg-green">new</small>
+            </a>
+        </li>
+        <li>
+            <a href="#/account">
+                <i class="fa fa-key"></i>
+                <span>企业账号</span>
+                <small class="badge pull-right bg-green">new</small>
+            </a>
+        </li>
+        <li treeview class="treeview">
+            <a href="#/product-base-manage">
+                <i class="fa fa-tags"></i>
+                <span>产品</span>
+                <i class="fa fa-angle-left pull-right"></i>
+            </a>
+            <ul class="treeview-menu">
+                <li>
+                    <a href="#/product-base-manage">
+                        <i class="fa fa-angle-double-right"></i>
+                        <span>产品</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#/product-key-manage">
+                        <i class="fa fa-angle-double-right"></i>
+                        <span>产品码</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="#/logistics">
+                <i class="fa fa-truck"></i>
+                <span>物流</span>
+                <!--<small class="badge pull-right bg-green">new</small>-->
+            </a>
+        </li>
+        <li>
+            <a href="#/packageManage">
+                <i class="fa fa-briefcase"></i>
+                <span>包装</span>
+                <!--<small class="badge pull-right bg-green">new</small>-->
+            </a>
+        </li>
+        <!--<li>-->
+            <!--<a href="#/packageSearch">-->
+                <!--<i class="fa fa-search"></i>-->
+                <!--<span>包装查询</span>-->
+                <!--&lt;!&ndash;<small class="badge pull-right bg-green">new</small>&ndash;&gt;-->
+            <!--</a>-->
+        <!--</li>-->
+        <li>
+            <a href="#/search">
+                <i class="fa fa-search"></i>
+                <span>查询</span>
+                <!--<small class="badge pull-right bg-green">new</small>-->
+            </a>
+        </li>
+        <!--<li treeview class="treeview">-->
+            <!--<a href="#">-->
+                <!--<i class="fa fa-bar-chart-o"></i>-->
+                <!--<span>Tree view</span>-->
+                <!--<i class="fa fa-angle-left pull-right"></i>-->
+            <!--</a>-->
+            <!--<ul class="treeview-menu">-->
+                <!--<li><a href="#/a"><i class="fa fa-angle-double-right"></i>AAA</a></li>-->
+                <!--<li><a href="#/b"><i class="fa fa-angle-double-right"></i>BBB</a></li>-->
+            <!--</ul>-->
+        <!--</li>-->
+        <li>
+            <a href="template/">
+                <i class="fa fa-file"></i>
+                <span>模板 - Beta</span>
+            </a>
+        </li>
+    </ul>
+</section>

@@ -1,0 +1,31 @@
+package com.yunsoo.service;
+
+import java.io.IOException;
+import java.util.List;
+
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.S3Object;
+import com.yunsoo.service.contract.ProductBase;
+
+public interface ProductBaseService {
+
+    public ProductBase getById(long id);
+
+    public S3Object getProductThumbnail(String bucketName, String key) throws IOException;
+
+    public void save(ProductBase productBase);
+
+    public void update(ProductBase productBase);
+
+    public void patchUpdate(ProductBase productBase);
+
+    public void delete(ProductBase productBase);
+
+    public void delete(long id);
+
+    public void deactivate(long id);
+
+    public List<ProductBase> getByFilter(Integer manufacturerId, Integer categoryId, Boolean active);
+
+    public List<ProductBase> getAll();
+}
