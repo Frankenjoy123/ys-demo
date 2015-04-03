@@ -45,6 +45,38 @@
             $("#tab_2").removeClass("active");
             $("#li_tab_a_2").removeClass("active");
         });
+
+        Date.prototype.toCommonCase = function () {
+            var xYear = this.getYear();
+            xYear = xYear + 1900;
+
+            var xMonth = this.getMonth() + 1;
+            if (!(xMonth > 9)) {
+                xMonth = "0" + xMonth;
+            }
+
+            var xDay = this.getDate();
+            if (!(xDay > 9)) {
+                xDay = "0" + xDay;
+            }
+
+            var xHours = this.getHours();
+            if (!(xHours > 9)) {
+                xHours = "0" + xHours;
+            }
+
+            var xMinutes = this.getMinutes();
+            if (!(xMinutes > 9)) {
+                xMinutes = "0" + xMinutes;
+            }
+
+            var xSeconds = this.getSeconds();
+            if (!(xSeconds > 9)) {
+                xSeconds = "0" + xSeconds;
+            }
+
+            return xYear + "-" + xMonth + "-" + xDay + " " + xHours + ":" + xMinutes + ":" + xSeconds;
+        }
     });
 
     (function () {
@@ -79,7 +111,7 @@
 
             $scope.getDateString = function (value) {
                 var date = new Date(value);
-                return date.toLocaleString();
+                return date.toCommonCase();
             };
 
             $scope.productKeyClick = function () {
@@ -120,16 +152,13 @@
                     }
 
                     $("#imgProduct").attr("src", "/api/productbase/thumbnail/" + $scope.data.product.productBaseId + "/thumb-mobile");
-                    if($scope.data.validationResult.toLowerCase() == "uncertain")
-                    {
+                    if ($scope.data.validationResult.toLowerCase() == "uncertain") {
                         $("#imgReal").attr("src", "images/jinggao_53.png");
                     }
-                    else if($scope.data.validationResult.toLowerCase() == "fake")
-                    {
+                    else if ($scope.data.validationResult.toLowerCase() == "fake") {
                         $("#imgReal").attr("src", "images/jiahuo_52.png");
                     }
-                    else if($scope.data.validationResult.toLowerCase() == "real")
-                    {
+                    else if ($scope.data.validationResult.toLowerCase() == "real") {
                         $("#imgReal").attr("src", "images/zhengpin_54.png");
                     }
                 });
