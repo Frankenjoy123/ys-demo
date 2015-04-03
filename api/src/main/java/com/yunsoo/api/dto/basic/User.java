@@ -16,6 +16,7 @@ public class User {
     private String thumbnailSuffix;
     private String thumbnailContentType;
     private Long thumbnailContentLength;
+    private int ysCreadit;
     private int statusId;
     private String createdDateTime;
 
@@ -105,6 +106,14 @@ public class User {
 
     public void setThumbnailContentLength(Long thumbnailContentLength) {
         this.thumbnailContentLength = thumbnailContentLength;
+    }
+
+    public int getYsCreadit() {
+        return ysCreadit;
+    }
+
+    public void setYsCreadit(int ysCreadit) {
+        this.ysCreadit = ysCreadit;
     }
 
     public int getStatusId() {

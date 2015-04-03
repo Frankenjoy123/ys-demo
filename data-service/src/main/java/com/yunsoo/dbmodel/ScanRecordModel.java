@@ -44,6 +44,8 @@ public class ScanRecordModel {
     private Double latitude;
     @Column(name = "longitude")
     private Double longitude;
+    @Column(name = "location")
+    private String location;
 
     public long getId() {
         return id;
@@ -123,5 +125,13 @@ public class ScanRecordModel {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

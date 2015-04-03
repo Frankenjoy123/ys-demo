@@ -40,6 +40,8 @@ public class UserModel {
     private String thumbnail;
     @Transient
     private FileObject fileObject;
+    @Column(name = "ys_creadit")
+    private int ysCreadit;
     @Column(name = "status_id")
     private int statusId;
     @Column(name = "created_datetime", nullable = true, updatable = false)
@@ -134,6 +136,14 @@ public class UserModel {
 
     public void setFileObject(FileObject fileObject) {
         this.fileObject = fileObject;
+    }
+
+    public int getYsCreadit() {
+        return ysCreadit;
+    }
+
+    public void setYsCreadit(int ysCreadit) {
+        this.ysCreadit = ysCreadit;
     }
 
     //    public Set<UserOrganizationModel> getUserOrganizationModelSet() {

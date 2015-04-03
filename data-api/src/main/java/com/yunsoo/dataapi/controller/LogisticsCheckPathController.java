@@ -8,7 +8,6 @@ import com.yunsoo.dataapi.factory.ResultFactory;
 import com.yunsoo.service.LogisticsCheckPathService;
 import com.yunsoo.service.ProductPackageService;
 import com.yunsoo.service.ServiceOperationStatus;
-import com.yunsoo.service.contract.LogisticsCheckPath;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

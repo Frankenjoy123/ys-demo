@@ -1,14 +1,11 @@
 package com.yunsoo.dataapi.controller;
 
-import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.dataapi.dto.ResultWrapper;
 import com.yunsoo.dataapi.dto.UserDto;
-import com.yunsoo.dataapi.factory.ResultFactory;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.service.ServiceOperationStatus;
 import com.yunsoo.service.UserService;
