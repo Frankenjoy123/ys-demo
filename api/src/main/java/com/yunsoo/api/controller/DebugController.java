@@ -2,8 +2,10 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.ErrorResultCode;
+import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.RestErrorResultException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/debug")
 public class DebugController {
+
+    @Autowired
+    private RestClient dataAPIClient;
+
+    @Autowired
+    private RestClient processorClient;
 
     @RequestMapping(value = "ok")
     @ResponseStatus(HttpStatus.OK)
@@ -63,5 +71,11 @@ public class DebugController {
     @RequestMapping(value = "echo/{value}")
     public String echo(@PathVariable(value = "value") String value) {
         return value;
+    }
+
+    @RequestMapping(value = "client")
+    public String client() {
+        return "DataApiClient: " + dataAPIClient.getBaseURL() + "\r\n"
+                + "ProcessorClient: " + processorClient.getBaseURL();
     }
 }

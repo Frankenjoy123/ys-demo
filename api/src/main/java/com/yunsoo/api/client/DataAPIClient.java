@@ -1,4 +1,4 @@
-package com.yunsoo.api.data;
+package com.yunsoo.api.client;
 
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.client.RestResponseErrorHandler;

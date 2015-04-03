@@ -13,18 +13,9 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "yunsoo")
 public class YunsooYamlConfig {
 
-    private String dataapi_baseurl;
     private String dataapi_productbase_picture_basepath;
     private String token_secret;
     private String debug;
-
-    public String getDataapi_baseurl() {
-        return dataapi_baseurl;
-    }
-
-    public void setDataapi_baseurl(String dataapi_baseurl) {
-        this.dataapi_baseurl = dataapi_baseurl;
-    }
 
     public String getDataapi_productbase_picture_basepath() {
         return dataapi_productbase_picture_basepath;
