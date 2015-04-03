@@ -5,10 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import java.util.Arrays;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/4/1
- * Descriptions: It's added only for avoid bootRepackage issue during building.
+ * Descriptions:
  */
 @SpringBootApplication
 public class Application {
@@ -22,6 +24,9 @@ public class Application {
         if (dispatcherServlet != null && dispatcherServlet instanceof DispatcherServlet) {
             ((DispatcherServlet) dispatcherServlet).setThrowExceptionIfNoHandlerFound(true);
         }
+
+        System.out.println(Arrays.asList(context.getBeanDefinitionNames()));
+
 
         System.out.println("processor started...");
     }

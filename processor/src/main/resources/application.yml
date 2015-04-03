@@ -7,5 +7,9 @@ cloud:
       auto: true
       static: cn-north-1
 
+amazon:
+    dynamodb:
+        region: cn-north-1
+
 yunsoo:
   debug: true

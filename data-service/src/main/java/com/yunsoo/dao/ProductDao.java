@@ -7,12 +7,10 @@ import java.util.List;
 
 public interface ProductDao {
 
-    public ProductModel getByKey(String key);
+   ProductModel getByKey(String key);
 
-    public void save(ProductModel product);
+   void save(ProductModel product);
 
-    public void batchSave(List<ProductModel> product);
-
-//    public void update(ProductModel product);
+   void batchSave(List<ProductModel> products);
 
 }

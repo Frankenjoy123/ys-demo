@@ -10,7 +10,6 @@ import com.yunsoo.service.contract.Product;
 import com.yunsoo.service.contract.ProductKeyBatch;
 import com.yunsoo.service.contract.ProductKeys;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,7 +45,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
-    public ProductKeys getKeysById(@PathVariable(value = "id") Long id) {
+    public ProductKeys getProductKeysById(@PathVariable(value = "id") Long id) {
         ProductKeys productKeys = productKeyBatchService.getProductKeysByBatchId(id);
         if (productKeys == null) {
             throw new NotFoundException("ProductKeys");
@@ -71,7 +70,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ProductKeyBatchObject create(@RequestBody ProductKeyBatchRequestObject request) {
+    public ProductKeyBatchObject createAsync(@RequestBody ProductKeyBatchRequestObject request) {
         ProductKeyBatchObject batchObj = request.getProductKeyBatch();
         ProductObject productDto = request.getProductTemplate();
 
@@ -84,14 +83,18 @@ public class ProductKeyBatchController {
         batch.setCreatedAccountId(batchObj.getCreatedAccountId());
         batch.setCreatedDateTime(batchObj.getCreatedDateTime());
         batch.setProductKeyTypeIds(batchObj.getProductKeyTypeIds());
-        Product product = null;
+        Product product;
         if (productDto != null) {
             product = new Product();
             product.setProductBaseId(productDto.getProductBaseId());
             product.setProductStatusId(productDto.getProductStatusId());
             product.setManufacturingDateTime(productDto.getManufacturingDateTime());
         }
-        ProductKeyBatch newBatch = productKeyBatchService.create(batch, product);
+        ProductKeyBatch newBatch = productKeyBatchService.create(batch);
+
+        //send batch save product keys message
+
+
         return convertToProductKeyBatchObject(newBatch);
     }
 
