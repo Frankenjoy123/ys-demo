@@ -22,6 +22,7 @@ public class User {
     private FileObject fileObject;
     //    private byte[] thumbnailData;
 //    private HashMap<String, String> thumbnailDataProperties;
+    private int ysCreadit;
     private int statusId;
     private String createdDateTime;
 
@@ -73,6 +74,14 @@ public class User {
         this.thumbnail = thumbnail;
     }
 
+    public int getYsCreadit() {
+        return ysCreadit;
+    }
+
+    public void setYsCreadit(int ysCreadit) {
+        this.ysCreadit = ysCreadit;
+    }
+
     public int getStatusId() {
         return statusId;
     }
@@ -101,13 +110,6 @@ public class User {
         if (model == null) return null;
         User user = new User();
         BeanUtils.copyProperties(model, user, new String[]{"createdDateTime"});
-//        user.setName(model.getName());
-//        user.setAddress(model.getAddress());
-//        user.setCellular(model.getCellular());
-//        user.setDeviceCode(model.getDeviceCode());
-//        user.setId(Long.toString(model.getId()));
-//        user.setThumbnail(model.getThumbnail());
-//        user.setStatusId(model.getStatusId());
         user.setId(String.valueOf(model.getId()));
         if (model.getCreatedDateTime() != null) {
             user.setCreatedDateTime(model.getCreatedDateTime().toString());
@@ -122,12 +124,6 @@ public class User {
         if (user.getId() != null && !user.getId().isEmpty()) {
             model.setId(Long.parseLong(user.getId()));
         }
-//        model.setName(user.getName());
-//        model.setDeviceCode(user.getDeviceCode());
-//        model.setCellular(user.getCellular());
-//        model.setAddress(user.getAddress());
-//        model.setThumbnail(user.getThumbnail());
-//        model.setStatusId(user.getStatusId());
         if (user.getCreatedDateTime() != null) {
             model.setCreatedDateTime(DateTime.parse(user.getCreatedDateTime()));
         }

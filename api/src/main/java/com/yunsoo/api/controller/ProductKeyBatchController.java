@@ -5,6 +5,7 @@ import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
 import com.yunsoo.api.dto.ProductKeyType;
+import com.yunsoo.api.dto.ProductStatus;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
@@ -105,7 +106,7 @@ public class ProductKeyBatchController {
             if (productKeyTypeIds == null) {
                 productKeyTypeIds = productBase.getProductKeyTypes().stream().map(ProductKeyType::getId).collect(Collectors.toList());
             }
-            int productStatusId = 0;
+            int productStatusId = ProductStatus.ACTIVATED.getId();
             ProductObject productObj = new ProductObject();
             productObj.setProductBaseId(productBaseId);
             productObj.setProductStatusId(productStatusId);

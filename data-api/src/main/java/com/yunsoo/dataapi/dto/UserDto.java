@@ -21,6 +21,7 @@ public class UserDto {
     private String thumbnailSuffix;
     private String thumbnailContentType;
     private Long thumbnailContentLength;
+    private Integer ysCreadit;
     private int statusId;
     private String createdDateTime;
 
@@ -110,6 +111,14 @@ public class UserDto {
 
     public void setThumbnailContentLength(Long thumbnailContentLength) {
         this.thumbnailContentLength = thumbnailContentLength;
+    }
+
+    public Integer getYsCreadit() {
+        return ysCreadit;
+    }
+
+    public void setYsCreadit(Integer ysCreadit) {
+        this.ysCreadit = ysCreadit;
     }
 
     public int getStatusId() {
