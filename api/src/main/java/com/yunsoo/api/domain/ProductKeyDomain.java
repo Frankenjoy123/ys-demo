@@ -87,8 +87,9 @@ public class ProductKeyDomain {
                             .getBytes(Charset.forName("UTF-8")));
             outputStream.write(CR_LF);
             for (List<String> i : object.getProductKeys()) {
+                List<String> ks = i.stream().map(k -> "http://t.m.yunsu.co/" + k).collect(Collectors.toList());
                 outputStream.write(
-                        StringUtils.collectionToDelimitedString(i, ",")
+                        StringUtils.collectionToDelimitedString(ks, ",")
                                 .getBytes(Charset.forName("UTF-8")));
                 outputStream.write(CR_LF);
             }
