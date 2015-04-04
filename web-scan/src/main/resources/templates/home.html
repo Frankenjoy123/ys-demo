@@ -45,38 +45,6 @@
             $("#tab_2").removeClass("active");
             $("#li_tab_a_2").removeClass("active");
         });
-
-        Date.prototype.toCommonCase = function () {
-            var xYear = this.getYear();
-            xYear = xYear + 1900;
-
-            var xMonth = this.getMonth() + 1;
-            if (!(xMonth > 9)) {
-                xMonth = "0" + xMonth;
-            }
-
-            var xDay = this.getDate();
-            if (!(xDay > 9)) {
-                xDay = "0" + xDay;
-            }
-
-            var xHours = this.getHours();
-            if (!(xHours > 9)) {
-                xHours = "0" + xHours;
-            }
-
-            var xMinutes = this.getMinutes();
-            if (!(xMinutes > 9)) {
-                xMinutes = "0" + xMinutes;
-            }
-
-            var xSeconds = this.getSeconds();
-            if (!(xSeconds > 9)) {
-                xSeconds = "0" + xSeconds;
-            }
-
-            return xYear + "-" + xMonth + "-" + xDay + " " + xHours + ":" + xMinutes + ":" + xSeconds;
-        }
     });
 
     (function () {
@@ -108,6 +76,38 @@
                 latitude: 120.798,
                 longitude: 34.678
             };
+
+            Date.prototype.toCommonCase = function () {
+                var xYear = this.getYear();
+                xYear = xYear + 1900;
+
+                var xMonth = this.getMonth() + 1;
+                if (!(xMonth > 9)) {
+                    xMonth = "0" + xMonth;
+                }
+
+                var xDay = this.getDate();
+                if (!(xDay > 9)) {
+                    xDay = "0" + xDay;
+                }
+
+                var xHours = this.getHours();
+                if (!(xHours > 9)) {
+                    xHours = "0" + xHours;
+                }
+
+                var xMinutes = this.getMinutes();
+                if (!(xMinutes > 9)) {
+                    xMinutes = "0" + xMinutes;
+                }
+
+                var xSeconds = this.getSeconds();
+                if (!(xSeconds > 9)) {
+                    xSeconds = "0" + xSeconds;
+                }
+
+                return xYear + "-" + xMonth + "-" + xDay + " " + xHours + ":" + xMinutes + ":" + xSeconds;
+            }
 
             $scope.getDateString = function (value) {
                 var date = new Date(value);
