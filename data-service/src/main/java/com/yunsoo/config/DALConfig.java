@@ -5,6 +5,7 @@ package com.yunsoo.config;
  * Created on:   2015/1/24
  * Descriptions:
  */
+
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbcp2.BasicDataSourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 
-import javax.annotation.Resource;
 import java.util.Properties;
 
 // Needed by Spring to add this class to the ApplicationContext's configuration
@@ -25,16 +24,6 @@ import java.util.Properties;
 @PropertySource("classpath:jdbc.properties")
 public class DALConfig {
 
-//    private static final String PROPERTY_NAME_DATABASE_DRIVER = "jdbc.driver_class";
-//    private static final String PROPERTY_NAME_DATABASE_PASSWORD = "jdbc.password";
-//    private static final String PROPERTY_NAME_DATABASE_URL = "jdbc.url";
-//    private static final String PROPERTY_NAME_DATABASE_USERNAME = "jdbc.username";
-//    private static final String PROPERTY_NAME_POOL_INITIAL_SIZE = "pool.initialsize";
-//    private static final String PROPERTY_NAME_POOL_MAX_IDLE = "pool.maxidle";
-
-    // Needed to access property file
-//    @Resource
-//    private Environment environment;
     @Autowired
     private DBSetting dbSetting;
 
