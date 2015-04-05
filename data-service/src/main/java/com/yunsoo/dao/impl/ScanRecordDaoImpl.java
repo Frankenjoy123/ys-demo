@@ -71,7 +71,6 @@ public class ScanRecordDaoImpl implements ScanRecordDao {
         if (userId != null) {
             c.add(Restrictions.eq("userId", userId.longValue()));
         }
-
         c.addOrder(Order.desc("createdDateTime"));
         c.setFirstResult(pageIndex * pageSize);
         c.setMaxResults(pageSize);
