@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" ng-app="product">
+<html ng-app="product">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -172,19 +172,23 @@
 <div ng-controller="productCtrl" class="container">
 
     <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <img id="imgProduct" src="" width="30%" class="img-circle"/>
+            <img id="imgReal" src="" width="30%" class="img-circle"/>
+        </div>
+    </div>
+    <br/>
+    <!--<div class="bs-callout bs-callout-info" id="callout-alerts-no-default">-->
+    <!--<p class="bg-info">云溯科技提醒： 您是第{{data.scanCounter}}次扫描！</p>-->
+    <!--</div>-->
+
+    <div class="row bg-primary">
         <div class="col-xs-18 col-md-12">
-            <img id="imgProduct" src="" width="60%" class="img-rounded"/>
-            <img id="imgReal" src="" width="30%" class="img-rounded"/>
+            <h3><p class="">云溯科技提醒： 您是第{{data.scanCounter}}次扫描！</p></h3>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-xs-18 col-md-12">
-            <h3><p class="bg-info">您是第{{data.scanCounter}}次扫描！</p></h3>
-        </div>
-    </div>
-
-    <!--<br></br>-->
+    <br/>
 
     <div class="row">
         <div class="col-xs-18 col-md-12">
