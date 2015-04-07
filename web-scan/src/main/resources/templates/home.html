@@ -181,28 +181,31 @@
 
     <br/>
 
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12">
+    <div class="row" ng-show="showSection">
+        <div class="col-xs-18 col-sm-12 col-md-12" ng-show="isValidKey">
             <img id="imgProduct" src="" width="30%" class="img-circle"/>
             <img id="imgReal" src="" width="30%" class="img-circle"/>
         </div>
+        <div class="col-xs-18 col-sm-12 col-md-12" ng-show="!isValidKey" align="center">
+            <img src="images/ysdefault.jpg" class="img-rounded"/>
+        </div>
     </div>
 
     <br/>
 
-    <div class="row bg-primary" ng-show="showSection">
-        <div class="col-xs-18 col-md-12" ng-show="isValidKey">
+    <div class="row" ng-show="showSection">
+        <div class="col-xs-18 col-md-12 bg-primary" ng-show="isValidKey">
             <h4><p class="">云溯科技提醒： 您是第{{data.scanCounter}}次扫描！</p></h4>
         </div>
-        <div class="col-xs-18 col-md-12" ng-show="!isValidKey">
-            <h4><p class="">云溯科技提醒： 无效的云溯产品码！</p></h4>
-        </div>
+        <!--<div class="col-xs-18 col-md-12" ng-show="!isValidKey">-->
+            <!--<img src="images/images_44.png" class="img-rounded"/>-->
+        <!--</div>-->
     </div>
 
     <br/>
 
-    <div class="row" ng-show="isValidKey">
-        <div class="col-xs-18 col-md-12">
+    <div class="row" ng-show="showSection">
+        <div class="col-xs-18 col-md-12" ng-show="isValidKey">
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                     <li class="active" id="li_tab_a_1"><a id="tab_a_1" data-toggle="tab">基本信息</a></li>
@@ -286,6 +289,10 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="col-xs-18 col-md-12 bg-primary" ng-show="!isValidKey" align="center">
+            <h3><p class="">云溯科技提醒</p></h3>
+            <h3><p class="">无效的云溯产品码！</p></h3>
         </div>
     </div>
 </div>
