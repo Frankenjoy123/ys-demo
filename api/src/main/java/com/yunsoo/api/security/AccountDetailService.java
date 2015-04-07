@@ -25,7 +25,6 @@ public class AccountDetailService implements org.springframework.security.core.u
 //    @Autowired
 //    private UserRepository userRepo;
 
-
     private final AccountStatusUserDetailsChecker detailsChecker = new AccountStatusUserDetailsChecker();
 
     @Override

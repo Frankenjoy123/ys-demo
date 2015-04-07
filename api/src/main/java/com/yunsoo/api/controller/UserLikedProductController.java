@@ -6,10 +6,9 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,7 +19,7 @@ import java.util.List;
  * 40401    :   UserLikedProduct not found!
  */
 @RestController
-@RequestMapping("/userliked")
+@RequestMapping("/user/collection")
 public class UserLikedProductController {
 
     @Autowired
@@ -30,7 +29,7 @@ public class UserLikedProductController {
     @RequestMapping(value = "/userid/{userid}", method = RequestMethod.GET)
     public List<UserLikedProduct> getNewMessagesByUserId(@PathVariable(value = "userid") Long userid) {
         try {
-            List<UserLikedProduct> userLikedProductList = dataAPIClient.get("userliked/userid/{userid}", List.class, userid);
+            List<UserLikedProduct> userLikedProductList = dataAPIClient.get("/user/collection/userid/{userid}", List.class, userid);
             if (userLikedProductList == null || userLikedProductList.size() == 0) {
                 throw new NotFoundException(40401, "UserLikedProductList not found for userid = " + userid);
             }
@@ -38,5 +37,18 @@ public class UserLikedProductController {
         } catch (NotFoundException ex) {
             throw new NotFoundException(40401, "UserLikedProductList not found for useid = " + userid);
         }
+    }
+
+    @RequestMapping(value = "/like", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> createUser(@RequestBody UserLikedProduct userLikedProduct) throws Exception {
+        long id = dataAPIClient.post("/user/collection/like", userLikedProduct, Long.class);
+        return new ResponseEntity<Long>(id, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/unlike", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@RequestBody Long Id) throws Exception {
+        dataAPIClient.delete("user/collection/unlike", Id);
     }
 }

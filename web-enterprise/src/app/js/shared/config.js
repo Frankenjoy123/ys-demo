@@ -1,0 +1,3 @@
+window.YUNSOO_CONFIG || (window.YUNSOO_CONFIG = {
+    AUTH_COOKIE_NAME: 'YS_AUTH_TOKEN'
+});

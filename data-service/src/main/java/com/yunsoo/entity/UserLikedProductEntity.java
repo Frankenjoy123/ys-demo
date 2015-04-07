@@ -18,10 +18,10 @@ public class UserLikedProductEntity {
 
     @Id
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "user_id")
-    private long userId;
+    private Long userId;
 
     @Column(name = "base_product_id")
     private int baseProductId;
@@ -36,11 +36,11 @@ public class UserLikedProductEntity {
     @Column(name = "location")
     private String location;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

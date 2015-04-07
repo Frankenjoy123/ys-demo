@@ -21,7 +21,7 @@ import javax.xml.bind.DatatypeConverter;
 @Service
 public class TokenAuthenticationService {
 
-    private static final String AUTH_HEADER_NAME = "X-AUTH-TOKEN";
+    private static final String AUTH_HEADER_NAME = "YS_AUTH_TOKEN";
     private static final long TEN_DAYS = 1000 * 60 * 60 * 24 * 10;
 
     private final TokenHandler tokenHandler;

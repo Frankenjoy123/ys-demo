@@ -57,7 +57,7 @@
     }]);
 
     app.controller("rootCtrl", ["$scope", "$timeout", function ($scope, $timeout) {
-        if (!$.cookie("AdminLTEToken")) {
+        if (!$.cookie(window.YUNSOO_CONFIG.AUTH_COOKIE_NAME)) {
             //todo
             window.location.href = "login.html";
         }
@@ -70,7 +70,7 @@
         };
         $scope.logout = function () {
             console.log('[logout]');
-            $.removeCookie("AdminLTEToken", {path: '/'});
+            $.removeCookie(window.YUNSOO_CONFIG.AUTH_COOKIE_NAME, {path: '/'});
             window.location.href = "login.html";
         };
 
