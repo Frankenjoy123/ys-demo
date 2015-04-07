@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath('org.springframework.boot:spring-boot-gradle-plugin:1.2.2.RELEASE')
+        classpath('org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE')
     }
 }
 
@@ -17,7 +17,10 @@ repositories {
 dependencies {
     //compile project(':common')
     compile project(':data-service')
-    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile('org.springframework.boot:spring-boot-starter-web') {
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+    compile 'org.springframework.boot:spring-boot-starter-jetty'
     compile 'org.springframework.cloud:spring-cloud-aws-messaging:1.0.0.RELEASE'
     compile 'org.springframework.cloud:spring-cloud-aws-autoconfigure:1.0.0.RELEASE'
 
