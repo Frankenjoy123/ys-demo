@@ -28,9 +28,5 @@ public class YunsooConfigurationTest {
         System.out.println(commonConfig.isDebugEnabled());
     }
 
-    @Test
-    public void test_dataAPIBaseURL(){
-        System.out.println(yunsooYamlConfig.getDataapi_baseurl());
-    }
 
 }

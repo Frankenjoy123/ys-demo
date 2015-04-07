@@ -30,9 +30,4 @@ public class ProductDaoImpl implements ProductDao {
         dynamoDBMapper.batchSave(products);
     }
 
-//    @Override
-//    public void update(ProductModel product) {
-//        dynamoDBMapper.save(product);
-//    }
-
 }

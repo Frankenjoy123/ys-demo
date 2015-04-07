@@ -1,8 +1,8 @@
-package com.yunsoo.processor.message;
+package com.yunsoo.api.client.processor.message;
 
 /**
  * Created by:   Lijian
- * Created on:   2015/4/2
+ * Created on:   2015/4/7
  * Descriptions:
  */
 public class ProductKeyBatchMassage {

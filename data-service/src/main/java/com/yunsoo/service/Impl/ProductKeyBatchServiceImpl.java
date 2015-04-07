@@ -82,6 +82,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
     @Override
     public ProductKeys getProductKeysByAddress(String address) {
+        Assert.notNull(address, "address must not be null");
         ProductKeyBatchS3ObjectModel model = getProductKeyListFromS3(address);
         if (model == null) {
             return null;
@@ -97,11 +98,6 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
     @Override
     public ProductKeyBatch create(ProductKeyBatch batch) {
-        return create(batch, null);
-    }
-
-    @Override
-    public ProductKeyBatch create(ProductKeyBatch batch, Product productTemplate) {
         int quantity = batch.getQuantity();
         List<Integer> keyTypeIds = batch.getProductKeyTypeIds();
 
@@ -123,24 +119,16 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         newBatch.setProductKeysAddress(address);
         newBatch = updateProductKeyBatch(newBatch);
 
-        //generate ProductModel List
-        List<ProductModel> productModel = generateProductModelList(newBatch, productTemplate, keyList);
-
-        //save productModel
-        productDao.batchSave(productModel);
-
         return newBatch;
     }
 
     @Override
-    public ProductKeyBatch createAsync(ProductKeyBatch batch) {
-        return createAsync(batch, null);
-    }
+    public void batchSaveProductKey(ProductKeyBatch batch, List<List<String>> keyList, Product productTemplate) {
+        //generate ProductModel List
+        List<ProductModel> productModels = generateProductModelList(batch, keyList, productTemplate);
 
-    @Override
-    public ProductKeyBatch createAsync(ProductKeyBatch batch, Product productTemplate) {
-
-        return null;
+        //save productModel
+        productDao.batchSave(productModels);
     }
 
     //private methods
@@ -162,7 +150,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         return keyList;
     }
 
-    private List<ProductModel> generateProductModelList(ProductKeyBatch batch, Product productTemplate, List<List<String>> keyList) {
+    private List<ProductModel> generateProductModelList(ProductKeyBatch batch, List<List<String>> keyList, Product productTemplate) {
         int quantity = batch.getQuantity();
         List<Integer> keyTypeIds = batch.getProductKeyTypeIds();
 
@@ -236,7 +224,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         if (address == null) {
             return null;
         }
-        String[] tempArr = unformatAddress(address);
+        String[] tempArr = splitAddress(address);
         //ProductKeyBatchS3ObjectModel
         return s3ItemDao.getItem(
                 tempArr[0],
@@ -264,7 +252,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     }
 
     //return String[]{bucketName, key}
-    private String[] unformatAddress(String address) {
+    private String[] splitAddress(String address) {
         return address.split("/", 2);
     }
 }

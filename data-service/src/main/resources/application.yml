@@ -1,0 +1,40 @@
+cloud:
+  aws:
+    region:
+      auto: true
+      static: cn-north-1
+amazon:
+    dynamodb:
+        region: cn-north-1
+
+
+AmazonSettings:
+    s3_basebucket:  yunsudev
+    s3_userbaseurl:  photo/users
+    s3_productbaseurl: photo/coms/products
+    s3_product_default_image_url: photo/coms/products/ysdefault
+    s3_product_key_batch_path: product_key_batches
+    s3_message_image_url: photo/coms/messages
+    s3_org_image_url: photo/coms/icons
+    s3_org_default_image_url: photo/coms/icons/ysdefault
+
+dataServiceSetting:
+    message_created_status_id:  1
+    message_approved_status_id: 3
+    message_delete_status_id: 4
+    user_created_status_id: 2
+    user_delete_status_id: 5
+
+jdbc:
+    driver_class: com.mysql.jdbc.Driver
+    url: jdbc:mysql://yunsoo.czevfdgeevhl.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: admin201512
+    pool_initialsize: 1
+    pool_maxidle: 100
+
+hibernate:
+    dialect: org.hibernate.dialect.MySQL5Dialect
+    show_sql: true
+    hbm2ddl_auto: update
+    package_to_scan: com.yunsoo.dbmodel

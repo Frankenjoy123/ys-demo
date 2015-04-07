@@ -13,21 +13,17 @@ import java.util.List;
  */
 public interface ProductKeyBatchService {
 
-    public ProductKeyBatch getById(Long batchId);
+    ProductKeyBatch getById(Long batchId);
 
-    public List<ProductKeyBatch> getByOrganizationIdPaged(Integer organizationId, int pageIndex, int pageSize);
+    List<ProductKeyBatch> getByOrganizationIdPaged(Integer organizationId, int pageIndex, int pageSize);
 
-    public List<ProductKeyBatch> getByFilterPaged(Integer organizationId, Long productBaseId, int pageIndex, int pageSize);
+    List<ProductKeyBatch> getByFilterPaged(Integer organizationId, Long productBaseId, int pageIndex, int pageSize);
 
-    public ProductKeys getProductKeysByBatchId(Long batchId);
+    ProductKeys getProductKeysByBatchId(Long batchId);
 
-    public ProductKeys getProductKeysByAddress(String address);
+    ProductKeys getProductKeysByAddress(String address);
 
-    public ProductKeyBatch create(ProductKeyBatch batch);
+    ProductKeyBatch create(ProductKeyBatch batch);
 
-    public ProductKeyBatch create(ProductKeyBatch batch, Product product);
-
-    public ProductKeyBatch createAsync(ProductKeyBatch batch);
-
-    public ProductKeyBatch createAsync(ProductKeyBatch batch, Product product);
+    void batchSaveProductKey(ProductKeyBatch batch, List<List<String>> keyList, Product productTemplate);
 }

@@ -6,6 +6,7 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -28,8 +29,12 @@ public class AmazonDynamoDBConfig {
     @Resource
     private Environment environment;
 
+    @Value("${amazon.dynamodb.region}")
+    private String region;
+
     @Bean
     public AmazonDynamoDBClient amazonDynamoDBClient() throws AmazonClientException {
+        System.out.println("region:" + region);
         AmazonDynamoDBClient dynamoDB;
         String profileName = environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMODB_PROFILE);
         String regionName = environment.getProperty(PROPERTY_NAME_AMAZON_DYNAMODB_REGION);
