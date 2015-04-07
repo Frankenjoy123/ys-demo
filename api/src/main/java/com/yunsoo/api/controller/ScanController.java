@@ -77,7 +77,7 @@ public class ScanController {
         scanResult.setProduct(currentExistProduct);
 
         //3, retrieve scan records
-        ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}", ScanRecord[].class, scanRequestBody.getKey());
+        ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}", ScanRecord[].class, scanRequestBody.getKey(), Integer.MAX_VALUE);
         List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
         //to-do
         scanResult.setScanRecord(scanRecordList);
@@ -121,7 +121,7 @@ public class ScanController {
             if (currentExistProduct.getManufacturerId() == orgid) {
                 scanResult.setProduct(currentExistProduct);
                 //retrieve scan records
-                ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}", ScanRecord[].class, key);
+                ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}", ScanRecord[].class, key, Integer.MAX_VALUE);
                 List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
                 scanResult.setScanRecord(scanRecordList);
                 scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
