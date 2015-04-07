@@ -2,7 +2,7 @@
 package com.yunsoo.api.config;
 
 import com.yunsoo.api.client.DataAPIClient;
-import com.yunsoo.api.client.ProcessorClient;
+import com.yunsoo.api.client.processor.ProcessorClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

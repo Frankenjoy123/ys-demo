@@ -82,6 +82,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
     @Override
     public ProductKeys getProductKeysByAddress(String address) {
+        Assert.notNull(address, "address must not be null");
         ProductKeyBatchS3ObjectModel model = getProductKeyListFromS3(address);
         if (model == null) {
             return null;

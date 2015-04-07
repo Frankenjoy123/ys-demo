@@ -64,7 +64,7 @@ public class ProductKeyBatchController {
     public ResponseEntity<?> getKeysById(@PathVariable(value = "id") Long id) {
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/vnd+yunsoo.pks"))
-                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + ".csv\"")
+                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + ".pks\"")
                 .body(new InputStreamResource(new ByteArrayInputStream(productKeyDomain.getProductKeysByBatchId(id))));
     }
 
@@ -95,7 +95,6 @@ public class ProductKeyBatchController {
         Long accountId = 1L;
         DateTime createdDateTime = DateTime.now();
 
-        ProductKeyBatchRequestObject requestObject = new ProductKeyBatchRequestObject();
         ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
         if (productBaseId != null && productBaseId > 0) {
             //create corresponding product according to the productBaseId
@@ -106,12 +105,7 @@ public class ProductKeyBatchController {
             if (productKeyTypeIds == null) {
                 productKeyTypeIds = productBase.getProductKeyTypes().stream().map(ProductKeyType::getId).collect(Collectors.toList());
             }
-            int productStatusId = ProductStatus.ACTIVATED.getId();
-            ProductObject productObj = new ProductObject();
-            productObj.setProductBaseId(productBaseId);
-            productObj.setProductStatusId(productStatusId);
-            //productObj.setManufacturingDateTime(null);
-            requestObject.setProductTemplate(productObj);
+
         }
         batchObj.setQuantity(quantity);
         batchObj.setStatusId(statusId);
@@ -121,9 +115,8 @@ public class ProductKeyBatchController {
         batchObj.setCreatedAccountId(accountId);
         batchObj.setCreatedDateTime(createdDateTime);
         batchObj.setProductKeyTypeIds(productKeyTypeIds);
-        requestObject.setProductKeyBatch(batchObj);
 
-        return productKeyDomain.createProductKeyBatch(requestObject);
+        return productKeyDomain.createProductKeyBatch(batchObj);
     }
 
 }

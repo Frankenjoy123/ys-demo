@@ -1,10 +1,11 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.client.processor.ProcessorClient;
+import com.yunsoo.api.client.processor.message.ProductKeyBatchMassage;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
-import com.yunsoo.common.data.object.ProductKeyBatchRequestObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
@@ -29,6 +30,9 @@ public class ProductKeyDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+
+    @Autowired
+    private ProcessorClient processorClient;
 
     @Autowired
     private LookupDomain lookupDomain;
@@ -65,11 +69,16 @@ public class ProductKeyDomain {
                 lookupDomain.getAllProductKeyTypes(true));
     }
 
-    public ProductKeyBatch createProductKeyBatch(ProductKeyBatchRequestObject requestObject) {
+    public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {
         ProductKeyBatchObject newBatchObj = dataAPIClient.post(
                 "productkeybatch",
-                requestObject,
+                batchObj,
                 ProductKeyBatchObject.class);
+
+        // send sqs message to processor
+        ProductKeyBatchMassage sqsMessage = new ProductKeyBatchMassage();
+        sqsMessage.setBatchId(newBatchObj.getId().toString());
+        processorClient.post("sqs/productkeybatch", sqsMessage, String.class);
 
         return convertFromProductKeyBatchObject(newBatchObj, lookupDomain.getAllProductKeyTypes(true));
     }

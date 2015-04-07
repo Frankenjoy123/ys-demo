@@ -3,6 +3,7 @@ package com.yunsoo.processor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import java.util.Arrays;
@@ -12,6 +13,8 @@ import java.util.Arrays;
  * Created on:   2015/4/1
  * Descriptions:
  */
+
+@ComponentScan(basePackages = {"com.yunsoo"})
 @SpringBootApplication
 public class Application {
 

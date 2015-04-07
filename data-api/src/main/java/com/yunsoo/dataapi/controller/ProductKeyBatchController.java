@@ -70,10 +70,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ProductKeyBatchObject createAsync(@RequestBody ProductKeyBatchRequestObject request) {
-        ProductKeyBatchObject batchObj = request.getProductKeyBatch();
-        ProductObject productDto = request.getProductTemplate();
-
+    public ProductKeyBatchObject create(@RequestBody ProductKeyBatchObject batchObj) {
         ProductKeyBatch batch = new ProductKeyBatch();
         batch.setQuantity(batchObj.getQuantity());
         batch.setStatusId(batchObj.getStatusId());
@@ -83,17 +80,8 @@ public class ProductKeyBatchController {
         batch.setCreatedAccountId(batchObj.getCreatedAccountId());
         batch.setCreatedDateTime(batchObj.getCreatedDateTime());
         batch.setProductKeyTypeIds(batchObj.getProductKeyTypeIds());
-        Product product;
-        if (productDto != null) {
-            product = new Product();
-            product.setProductBaseId(productDto.getProductBaseId());
-            product.setProductStatusId(productDto.getProductStatusId());
-            product.setManufacturingDateTime(productDto.getManufacturingDateTime());
-        }
+
         ProductKeyBatch newBatch = productKeyBatchService.create(batch);
-
-        //send batch save product keys message
-
 
         return convertToProductKeyBatchObject(newBatch);
     }
