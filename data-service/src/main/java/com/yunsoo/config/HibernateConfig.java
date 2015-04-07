@@ -23,15 +23,10 @@ import java.util.Properties;
 @PropertySource("classpath:jdbc.properties")
 public class HibernateConfig {
 
-//    private static final String PROPERTY_NAME_DAL_CLASSES_PACKAGE = "com.yunsoo.dbmodel";
-//    private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "org.hibernate.dialect.MySQLDialect";
-//    private static final String PROPERTY_NAME_HIBERNATE_SHOWSQL = "true";
-//    @Resource
-//    private Environment environment;
-
+    @Autowired
+    private Environment environment;
     @Autowired
     DataSource dataSource;
-
     @Autowired
     HibernateSetting hibernateSetting;
 
@@ -43,8 +38,8 @@ public class HibernateConfig {
         lsfb.setPackagesToScan(hibernateSetting.getPackage_to_scan());
 //        System.out.println("PROPERTY_NAME_DAL_CLASSES_PACKAGE: " + hibernateSetting.getPackage_to_scan());
         Properties hibernateProperties = new Properties();
-        hibernateProperties.put("dialect", hibernateSetting.getDialect());
-        hibernateProperties.put("show_sql", hibernateSetting.getShow_sql());
+        hibernateProperties.put("hibernate.dialect", hibernateSetting.getDialect());
+        hibernateProperties.put("hibernate.show_sql", hibernateSetting.getShow_sql());
         hibernateProperties.put("hibernate.hbm2ddl.auto", hibernateSetting.getHbm2ddl_auto());
         lsfb.setHibernateProperties(hibernateProperties);
         lsfb.setDataSource(dataSource);

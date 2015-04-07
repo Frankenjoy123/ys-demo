@@ -14,7 +14,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "user_liked_product")
-public class UserLikedProduct {
+public class UserLikedProductEntity {
 
     @Id
     @Column(name = "id")

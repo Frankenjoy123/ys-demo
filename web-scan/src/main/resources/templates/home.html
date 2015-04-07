@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" ng-app="product">
+<html ng-app="product">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -45,38 +45,6 @@
             $("#tab_2").removeClass("active");
             $("#li_tab_a_2").removeClass("active");
         });
-
-        Date.prototype.toCommonCase = function () {
-            var xYear = this.getYear();
-            xYear = xYear + 1900;
-
-            var xMonth = this.getMonth() + 1;
-            if (!(xMonth > 9)) {
-                xMonth = "0" + xMonth;
-            }
-
-            var xDay = this.getDate();
-            if (!(xDay > 9)) {
-                xDay = "0" + xDay;
-            }
-
-            var xHours = this.getHours();
-            if (!(xHours > 9)) {
-                xHours = "0" + xHours;
-            }
-
-            var xMinutes = this.getMinutes();
-            if (!(xMinutes > 9)) {
-                xMinutes = "0" + xMinutes;
-            }
-
-            var xSeconds = this.getSeconds();
-            if (!(xSeconds > 9)) {
-                xSeconds = "0" + xSeconds;
-            }
-
-            return xYear + "-" + xMonth + "-" + xDay + " " + xHours + ":" + xMinutes + ":" + xSeconds;
-        }
     });
 
     (function () {
@@ -97,6 +65,8 @@
 
         app.controller("productCtrl", ["$scope", "productService", function ($scope, productService) {
 
+            $scope.showSection = 0;
+
             $scope.productKey = '<p th:text="${key}"/>';
             $scope.productKey = $scope.productKey.replace("<p>", "");
             $scope.productKey = $scope.productKey.replace("</p>", "");
@@ -108,6 +78,38 @@
                 latitude: 120.798,
                 longitude: 34.678
             };
+
+            Date.prototype.toCommonCase = function () {
+                var xYear = this.getYear();
+                xYear = xYear + 1900;
+
+                var xMonth = this.getMonth() + 1;
+                if (!(xMonth > 9)) {
+                    xMonth = "0" + xMonth;
+                }
+
+                var xDay = this.getDate();
+                if (!(xDay > 9)) {
+                    xDay = "0" + xDay;
+                }
+
+                var xHours = this.getHours();
+                if (!(xHours > 9)) {
+                    xHours = "0" + xHours;
+                }
+
+                var xMinutes = this.getMinutes();
+                if (!(xMinutes > 9)) {
+                    xMinutes = "0" + xMinutes;
+                }
+
+                var xSeconds = this.getSeconds();
+                if (!(xSeconds > 9)) {
+                    xSeconds = "0" + xSeconds;
+                }
+
+                return xYear + "-" + xMonth + "-" + xDay + " " + xHours + ":" + xMinutes + ":" + xSeconds;
+            }
 
             $scope.getDateString = function (value) {
                 var date = new Date(value);
@@ -122,9 +124,15 @@
 
                 productService.getInfo(postObject, function (data) {
 
-                    if (data == null)
-                        return;
+                    $scope.showSection = 1;
 
+                    if (data == null || data.product == null)
+                    {
+                        $scope.isValidKey = 0;
+                        return;
+                    }
+
+                    $scope.isValidKey = 1;
                     $scope.data = data;
 
                     if ($scope.data.product.details != null) {
@@ -171,16 +179,29 @@
 </script>
 <div ng-controller="productCtrl" class="container">
 
+    <br/>
+
     <div class="row">
-        <div class="col-xs-18 col-md-12">
-            <img id="imgProduct" src="" width="60%"/>
-            <img id="imgReal" src="" width="30%"/>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <img id="imgProduct" src="" width="30%" class="img-circle"/>
+            <img id="imgReal" src="" width="30%" class="img-circle"/>
         </div>
     </div>
 
-    <br></br>
+    <br/>
 
-    <div class="row">
+    <div class="row bg-primary" ng-show="showSection">
+        <div class="col-xs-18 col-md-12" ng-show="isValidKey">
+            <h4><p class="">云溯科技提醒： 您是第{{data.scanCounter}}次扫描！</p></h4>
+        </div>
+        <div class="col-xs-18 col-md-12" ng-show="!isValidKey">
+            <h4><p class="">云溯科技提醒： 无效的云溯产品码！</p></h4>
+        </div>
+    </div>
+
+    <br/>
+
+    <div class="row" ng-show="isValidKey">
         <div class="col-xs-18 col-md-12">
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
