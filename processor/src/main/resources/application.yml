@@ -13,6 +13,10 @@ amazon:
 
 yunsoo:
   debug: true
+  processor:
+    client:
+      dataapi:
+        baseurl: http://dataapi:8080/
 
 jdbc:
     driver_class: com.mysql.jdbc.Driver

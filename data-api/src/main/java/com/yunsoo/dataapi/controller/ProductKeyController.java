@@ -7,6 +7,8 @@ import com.yunsoo.service.contract.ProductKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/productkey")
 public class ProductKeyController {
@@ -32,6 +34,11 @@ public class ProductKeyController {
         productKeyObj.setCreatedDateTime(productKey.getCreatedDateTime());
         return productKeyObj;
     }
+
+//    public void batchSave(List<ProductKeyObject> ){
+//
+//    }
+
 
     @RequestMapping(value = "{key}/disabled", method = RequestMethod.PUT)
     public void disableKey(@PathVariable(value = "key") String key, @RequestBody Boolean disabled) {
