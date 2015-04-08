@@ -21,7 +21,7 @@ public class UserLikedProductController {
     private UserLikedProductRepository userLikedProductRepository;
 
     @RequestMapping(value = "/userid/{id}", method = RequestMethod.GET)
-    public List<UserLikedProduct> getNewMessagesByMessageId(@PathVariable(value = "id") Long id) {
+    public List<UserLikedProduct> getUserCollectionByUserId(@PathVariable(value = "id") Long id) {
         return UserLikedProduct.FromEntityList(userLikedProductRepository.findByUserId(id));
     }
 

@@ -21,7 +21,7 @@ public class LogisticsCheckActionModel {
     private String description;
 
     @Column(name = "org_id")
-    private Integer orgId;
+    private Long orgId;
 
     public int getId() {
         return Id;
@@ -47,11 +47,11 @@ public class LogisticsCheckActionModel {
         this.description = description;
     }
 
-    public Integer getOrgId() {
+    public Long getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(Integer orgId) {
+    public void setOrgId(Long orgId) {
         this.orgId = orgId;
     }
 

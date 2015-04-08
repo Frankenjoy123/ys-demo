@@ -19,8 +19,8 @@ public class ProductBaseModel {
     private Long id;
     @Column(name = "category_id")
     private Integer categoryId;
-    @Column(name = "manufacturer_id")
-    private Integer manufacturerId;
+    @Column(name = "org_id")
+    private Long orgId;
     @Column(name = "barcode")
     private String barcode;
     @Column(name = "name")
@@ -60,12 +60,12 @@ public class ProductBaseModel {
         this.categoryId = categoryId;
     }
 
-    public Integer getManufacturerId() {
-        return manufacturerId;
+    public Long getOrgId() {
+        return orgId;
     }
 
-    public void setManufacturerId(Integer manufacturerId) {
-        this.manufacturerId = manufacturerId;
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
     }
 
     public String getBarcode() {

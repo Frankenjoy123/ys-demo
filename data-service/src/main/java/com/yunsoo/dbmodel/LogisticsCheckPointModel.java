@@ -27,7 +27,7 @@ public class LogisticsCheckPointModel {
     private int locationId;
 
     @Column(name = "org_id")
-    private int orgId;
+    private Long orgId;
 
     public int getId() {
         return Id;
@@ -61,11 +61,11 @@ public class LogisticsCheckPointModel {
         this.locationId = locationId;
     }
 
-    public int getOrg_id() {
+    public Long getOrg_id() {
         return orgId;
     }
 
-    public void setOrg_id(int org_id) {
+    public void setOrg_id(Long org_id) {
         this.orgId = org_id;
     }
 

@@ -27,7 +27,7 @@ public class UserLikedProductController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserLikedProductController.class);
 
     @RequestMapping(value = "/userid/{userid}", method = RequestMethod.GET)
-    public List<UserLikedProduct> getNewMessagesByUserId(@PathVariable(value = "userid") Long userid) {
+    public List<UserLikedProduct> getUserCollectionById(@PathVariable(value = "userid") Long userid) {
         try {
             List<UserLikedProduct> userLikedProductList = dataAPIClient.get("/user/collection/userid/{userid}", List.class, userid);
             if (userLikedProductList == null || userLikedProductList.size() == 0) {

@@ -87,6 +87,10 @@ public class UserLikedProduct {
         return entity;
     }
 
+    /**
+     * @param entity
+     * @return
+     */
     public static UserLikedProduct FromEntity(UserLikedProductEntity entity) {
         if (entity == null) return null;
 

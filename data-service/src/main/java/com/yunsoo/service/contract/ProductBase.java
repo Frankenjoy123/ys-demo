@@ -21,7 +21,7 @@ public class ProductBase {
 
     private Long id;
     private Integer categoryId;
-    private Integer manufacturerId;
+    private Integer orgId;
     private String barcode;
     private String name;
     private String description;
@@ -53,12 +53,12 @@ public class ProductBase {
         this.categoryId = baseProductId;
     }
 
-    public void setManufacturerId(Integer manufacturerId) {
-        this.manufacturerId = manufacturerId;
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
     }
 
-    public Integer getManufacturerId() {
-        return manufacturerId;
+    public Integer getOrgId() {
+        return orgId;
     }
 
     public String getBarcode() {
@@ -146,7 +146,7 @@ public class ProductBase {
         ProductBase productBase = new ProductBase();
         productBase.setId(model.getId());
         productBase.setCategoryId(model.getCategoryId());
-        productBase.setManufacturerId(model.getManufacturerId());
+        productBase.setOrgId(model.getOrgId());
         productBase.setName(model.getName());
         productBase.setDescription(model.getDescription());
         productBase.setBarcode(model.getBarcode());
@@ -171,7 +171,7 @@ public class ProductBase {
         ProductBaseModel model = new ProductBaseModel();
         model.setId(productBase.getId());
         model.setCategoryId(productBase.getCategoryId());
-        model.setManufacturerId(productBase.getManufacturerId());
+        model.setOrgId(productBase.getOrgId());
         model.setName(productBase.getName());
         model.setDescription(productBase.getDescription());
         model.setBarcode(productBase.getBarcode());
