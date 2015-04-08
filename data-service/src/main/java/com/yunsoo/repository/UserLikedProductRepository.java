@@ -8,6 +8,5 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface UserLikedProductRepository extends CrudRepository<UserLikedProductEntity, Long> {
     Iterable<UserLikedProductEntity> findByActive(Boolean active);
-
     Iterable<UserLikedProductEntity> findByUserId(Long userId);
 }
