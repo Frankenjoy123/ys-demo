@@ -4,11 +4,19 @@ import com.yunsoo.dao.ProductDao;
 import com.yunsoo.dbmodel.ProductModel;
 import com.yunsoo.service.ProductKeyService;
 
+import com.yunsoo.service.contract.Product;
 import com.yunsoo.service.contract.ProductKey;
+import com.yunsoo.service.contract.ProductKeyBatch;
 import com.yunsoo.service.exception.ServiceException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by:   Lijian
@@ -42,5 +50,78 @@ public class ProductKeyServiceImpl implements ProductKeyService {
         }
         productModel.setProductKeyDisabled(disable);
         productDao.save(productModel);
+    }
+
+    @Override
+    public void batchSave(long productKeyBatchId,
+                          List<Integer> productKeyTypeIds,
+                          List<List<String>> productKeys,
+                          Product productTemplate) {
+        //generate ProductModel List
+        List<ProductModel> productModels
+                = generateProductModelList(productKeyBatchId, productKeyTypeIds, productKeys, productTemplate);
+
+        //save productModel
+        productDao.batchSave(productModels);
+
+    }
+
+    private List<ProductModel> generateProductModelList(Long productKeyBatchId,
+                                                        List<Integer> productKeyTypeIds,
+                                                        List<List<String>> productKeys,
+                                                        Product productTemplate) {
+        Assert.notNull(productKeyBatchId, "productKeyBatchId must not be null");
+        Assert.notEmpty(productKeyTypeIds, "productKeyTypeIds must not be empty or null");
+        Assert.notEmpty(productKeys, "productKeys invalid");
+
+        DateTime now = DateTime.now();
+        List<ProductModel> productModelList = new ArrayList<>(productKeys.size() * productKeyTypeIds.size());
+        if (productKeyTypeIds.size() == 1) {
+            productKeys.stream().forEach(keys -> {
+                if (keys != null && keys.size() > 0) {
+                    ProductModel productModel = generateProductModel(productTemplate);
+                    productModel.setProductKey(keys.get(0));
+                    productModel.setProductKeyTypeId(productKeyTypeIds.get(0));
+                    productModel.setProductKeyBatchId(productKeyBatchId);
+                    productModel.setCreatedDateTime(now);
+                    productModelList.add(productModel);
+                }
+            });
+        } else { //multi keys for each product
+            productKeys.stream().forEach(keys -> {
+                if (keys != null && keys.size() >= productKeyTypeIds.size()) {
+                    Set<String> keySet = new HashSet<>();
+                    String primaryKey = keys.get(0);
+                    for (int j = 0; j < productKeyTypeIds.size(); j++) {
+                        String key = keys.get(j);
+                        keySet.add(key);
+                        ProductModel productModel = generateProductModel(productTemplate);
+                        productModel.setProductKey(key);
+                        productModel.setProductKeyTypeId(productKeyTypeIds.get(j));
+                        productModel.setProductKeyBatchId(productKeyBatchId);
+                        productModel.setCreatedDateTime(now);
+                        if (j == 0) {
+                            productModel.setProductKeySet(keySet);
+                        } else {
+                            productModel.setPrimaryProductKey(primaryKey);
+                        }
+                        productModelList.add(productModel);
+                    }
+                }
+            });
+        }
+        return productModelList;
+    }
+
+    private ProductModel generateProductModel(Product productTemplate) {
+        ProductModel model = new ProductModel();
+        if (productTemplate != null) {
+            model.setProductBaseId(productTemplate.getProductBaseId());
+            model.setProductStatusId(productTemplate.getProductStatusId());
+            if (productTemplate.getManufacturingDateTime() != null) {
+                model.setManufacturingDateTime(productTemplate.getManufacturingDateTime());
+            }
+        }
+        return model;
     }
 }

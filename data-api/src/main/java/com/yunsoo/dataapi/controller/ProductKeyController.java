@@ -1,13 +1,15 @@
 package com.yunsoo.dataapi.controller;
 
+import com.yunsoo.common.data.object.ProductKeyBatchDetailedObject;
 import com.yunsoo.common.data.object.ProductKeyObject;
+import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.service.ProductKeyService;
+import com.yunsoo.service.contract.Product;
 import com.yunsoo.service.contract.ProductKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/productkey")
@@ -35,9 +37,20 @@ public class ProductKeyController {
         return productKeyObj;
     }
 
-//    public void batchSave(List<ProductKeyObject> ){
-//
-//    }
+
+
+    @RequestMapping(value = "batch", method = RequestMethod.POST)
+    public void batchSave(@RequestBody ProductKeyBatchDetailedObject batch) {
+        ProductObject productObject = batch.getProductTemplate();
+        Product productTemplate = null;
+        if (productObject != null) {
+            productTemplate = new Product();
+            productTemplate.setProductBaseId(productObject.getProductBaseId());
+            productTemplate.setProductStatusId(productObject.getProductStatusId());
+            productTemplate.setManufacturingDateTime(productObject.getManufacturingDateTime());
+        }
+        productKeyService.batchSave(batch.getId(), batch.getProductKeyTypeIds(), batch.getProductKeys(), productTemplate);
+    }
 
 
     @RequestMapping(value = "{key}/disabled", method = RequestMethod.PUT)

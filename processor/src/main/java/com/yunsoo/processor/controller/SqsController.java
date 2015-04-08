@@ -25,7 +25,7 @@ public class SqsController {
 
     private static final String HEADER_PAYLOAD_NAME = "PayloadName";
 
-    private static final String QUEUE_NAME = "dev-productkeybatch";
+    private static final String PRODUCTKEYBATCH_QUEUE_NAME = "dev-productkeybatch";
 
     @Autowired
     private QueueMessagingTemplate queueMessagingTemplate;
@@ -37,16 +37,19 @@ public class SqsController {
     public void sendToMessageQueue(@RequestBody ProductKeyBatchMassage message) {
         Map<String, Object> headers = new HashMap<>();
         headers.put(HEADER_PAYLOAD_NAME, "productkeybatch");
-        queueMessagingTemplate.convertAndSend(QUEUE_NAME, message, headers);
+        queueMessagingTemplate.convertAndSend(PRODUCTKEYBATCH_QUEUE_NAME, message, headers);
     }
 
 
-    @MessageMapping(QUEUE_NAME)
+    @MessageMapping(PRODUCTKEYBATCH_QUEUE_NAME)
     private void receiveMessage(ProductKeyBatchMassage message,
                                 @Header(value = HEADER_PAYLOAD_NAME, required = false) String payloadName) {
-        if (payloadName == null || !payloadName.equals("productkeybatch")) {
-            throw new RuntimeException("PayloadName invalid.");
+        switch (payloadName) {
+            case "productkeybatch":
+                productKeyBatchHandler.execute(message);
+                break;
+            default:
+                throw new RuntimeException("PayloadName invalid.");
         }
-        productKeyBatchHandler.execute(message);
     }
 }

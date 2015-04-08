@@ -24,6 +24,4 @@ public interface ProductKeyBatchService {
     ProductKeys getProductKeysByAddress(String address);
 
     ProductKeyBatch create(ProductKeyBatch batch);
-
-    void batchSaveProductKey(ProductKeyBatch batch, List<List<String>> keyList, Product productTemplate);
 }

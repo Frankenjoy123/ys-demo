@@ -16,7 +16,6 @@ repositories {
 
 dependencies {
     compile project(':common-web')
-    compile project(':data-service')
     compile('org.springframework.boot:spring-boot-starter-web') {
         exclude module: 'spring-boot-starter-tomcat'
     }
