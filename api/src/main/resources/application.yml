@@ -39,7 +39,7 @@ management:
     address: 127.0.0.1
 
 logging:
-    path: /var/logs
+    path: /var/log
     file: yunsoo-api.log
     level:
         org.springframework: 'INFO'
@@ -54,6 +54,6 @@ yunsoo:
     api:
         client:
             dataapi:
-                baseurl: http://dataapi:8080/
+                baseurl: http://api.test.yunsu.co:8080/
             processor:
-                baseurl: http://processor:4080/
+                baseurl: http://api.test.yunsu.co:4080/
