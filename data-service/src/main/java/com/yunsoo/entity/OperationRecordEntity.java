@@ -3,10 +3,7 @@ package com.yunsoo.entity;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by Zhe on 2015/4/8.
@@ -15,6 +12,7 @@ import javax.persistence.Table;
 @Table(name = "operation_record")
 public class OperationRecordEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
 

@@ -58,7 +58,6 @@ public class ProductBaseDaoImpl implements ProductBaseDao {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<ProductBaseModel> getByFilter(Map<String, Object> eqFilter) {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(ProductBaseModel.class);
         if (eqFilter != null && !eqFilter.isEmpty()) {
@@ -72,7 +71,6 @@ public class ProductBaseDaoImpl implements ProductBaseDao {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<ProductBaseModel> getAll() {
         return sessionFactory.getCurrentSession().createCriteria(ProductBaseModel.class).list();
     }

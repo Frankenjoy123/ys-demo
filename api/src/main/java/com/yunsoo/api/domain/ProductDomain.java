@@ -69,7 +69,7 @@ public class ProductDomain {
         product.setDescription(productBaseObject.getDescription());
         product.setDetails(productBaseObject.getDetails());
         product.setName(productBaseObject.getName());
-        product.setManufacturerId(productBaseObject.getManufacturerId());
+        product.setOrgId(productBaseObject.getOrgId());
 
         //fill with ProductCategory information.
         ProductCategory productCategory = getProductCategoryById(productBaseObject.getCategoryId());
@@ -117,7 +117,7 @@ public class ProductDomain {
         productBase.setBarcode(productBaseObject.getBarcode());
         productBase.setActive(productBaseObject.getActive());
         productBase.setDetails(productBaseObject.getDetails());
-        productBase.setManufacturerId(productBaseObject.getManufacturerId());
+        productBase.setOrgId(productBaseObject.getOrgId());
         productBase.setShelfLife(productBaseObject.getShelfLife());
         productBase.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
         productBase.setCreatedDateTime(productBaseObject.getCreatedDateTime());

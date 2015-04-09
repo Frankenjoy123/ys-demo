@@ -87,7 +87,7 @@ public class ScanController {
         scanResult.setLogisticses(getLogisticsInfo(scanRequestBody.getKey()));
 
         //5, get company information.
-        Organization organization = dataAPIClient.get("organization/id/{id}", Organization.class, scanResult.getProduct().getManufacturerId());
+        Organization organization = dataAPIClient.get("organization/id/{id}", Organization.class, scanResult.getProduct().getOrgId());
         scanResult.setManufacturer(organization);
 
         //6, set validation result by our validation strategy.
@@ -101,7 +101,7 @@ public class ScanController {
 
     //仅仅能够访问属于特定组织的Key
     @RequestMapping(value = "/web/{orgid}/{key}", method = RequestMethod.GET)
-    public ScanResultWeb getDetailForWebByKey(@PathVariable(value = "orgid") Integer orgid,
+    public ScanResultWeb getDetailForWebByKey(@PathVariable(value = "orgid") Long orgid,
                                               @PathVariable(value = "key") String key) {
 
         if (key == null || key.isEmpty()) {
@@ -118,7 +118,7 @@ public class ScanController {
             scanResult.setResultCode(0);
             scanResult.setMessage(String.format("该码 %s 不存在！", key));  //no such key in our Yunsoo Platform.
         } else {
-            if (currentExistProduct.getManufacturerId() == orgid) {
+            if (currentExistProduct.getOrgId() == orgid) {
                 scanResult.setProduct(currentExistProduct);
                 //retrieve scan records
                 ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}", ScanRecord[].class, key, Integer.MAX_VALUE);

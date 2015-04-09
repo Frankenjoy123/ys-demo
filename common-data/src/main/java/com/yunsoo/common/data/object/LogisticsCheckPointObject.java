@@ -8,7 +8,7 @@ public class LogisticsCheckPointObject {
     private String name;
     private String description;
     private int locationId;
-    private int orgId;
+    private Long orgId;
 
     public int getId() {
         return id;
@@ -42,11 +42,11 @@ public class LogisticsCheckPointObject {
         this.locationId = locationId;
     }
 
-    public int getOrgId() {
+    public Long getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(int orgId) {
+    public void setOrgId(Long orgId) {
         this.orgId = orgId;
     }
 }

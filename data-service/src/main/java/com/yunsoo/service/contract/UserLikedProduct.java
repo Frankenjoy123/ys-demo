@@ -19,7 +19,7 @@ public class UserLikedProduct {
 
     private Long id;
     private long userId;
-    private int baseProductId;
+    private long baseProductId;
     private Boolean active;
     private String createdDateTime;
     private String location;
@@ -40,11 +40,11 @@ public class UserLikedProduct {
         this.userId = userId;
     }
 
-    public int getBaseProductId() {
+    public long getBaseProductId() {
         return baseProductId;
     }
 
-    public void setBaseProductId(int baseProductId) {
+    public void setBaseProductId(long baseProductId) {
         this.baseProductId = baseProductId;
     }
 
@@ -75,14 +75,18 @@ public class UserLikedProduct {
     public static UserLikedProductEntity ToEntity(UserLikedProduct userLikedProduct) {
         if (userLikedProduct == null) return null;
 
-        UserLikedProductEntity entity = new UserLikedProductEntity();
-        BeanUtils.copyProperties(userLikedProduct, entity, new String[]{"createdDateTime", "id"});
-        if (userLikedProduct.getId() != null && userLikedProduct.getId() != 0) {
-            entity.setId(userLikedProduct.getId());
-        }
-        if (userLikedProduct.getCreatedDateTime() != null) {
-            entity.setCreatedDateTime(DateTime.parse(userLikedProduct.getCreatedDateTime()));
-        }
+        UserLikedProductEntity entity = new UserLikedProductEntity(userLikedProduct.getUserId(), userLikedProduct.getBaseProductId(),
+                userLikedProduct.getLocation(), userLikedProduct.getActive());
+
+//        BeanUtils.copyProperties(userLikedProduct, entity, new String[]{"createdDateTime", "id"});
+//        if (userLikedProduct.getId() != null && userLikedProduct.getId() != 0) {
+//            entity.setId(userLikedProduct.getId());
+//        }
+//        if (userLikedProduct.getCreatedDateTime() != null) {
+//            entity.setCreatedDateTime(DateTime.parse(userLikedProduct.getCreatedDateTime()));
+//        }else {
+//            entity.setCreatedDateTime(DateTime.now());
+//        }
 
         return entity;
     }

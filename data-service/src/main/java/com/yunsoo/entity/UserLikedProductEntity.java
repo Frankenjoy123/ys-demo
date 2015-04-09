@@ -3,10 +3,7 @@ package com.yunsoo.entity;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * 存储用户收藏的产品
@@ -17,6 +14,7 @@ import javax.persistence.Table;
 public class UserLikedProductEntity {
 
     @Id
+    @GeneratedValue
     @Column(name = "id")
     private Long id;
 
@@ -24,7 +22,7 @@ public class UserLikedProductEntity {
     private Long userId;
 
     @Column(name = "base_product_id")
-    private int baseProductId;
+    private long baseProductId;
 
     @Column(name = "active")
     private Boolean active;
@@ -52,11 +50,11 @@ public class UserLikedProductEntity {
         this.userId = userId;
     }
 
-    public int getBaseProductId() {
+    public long getBaseProductId() {
         return baseProductId;
     }
 
-    public void setBaseProductId(int baseProductId) {
+    public void setBaseProductId(long baseProductId) {
         this.baseProductId = baseProductId;
     }
 
@@ -82,5 +80,16 @@ public class UserLikedProductEntity {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    protected UserLikedProductEntity() {
+    }
+
+    public UserLikedProductEntity(long userId, long baseProductId, String location, Boolean active) {
+        this.userId = userId;
+        this.baseProductId = baseProductId;
+        this.location = location;
+        this.active = active;
+        this.createdDateTime = DateTime.now();
     }
 }

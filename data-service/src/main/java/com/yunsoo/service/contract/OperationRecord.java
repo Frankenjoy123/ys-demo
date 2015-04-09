@@ -85,6 +85,8 @@ public class OperationRecord {
         }
         if (operationRecord.getCreatedDateTime() != null) {
             entity.setCreatedDateTime(DateTime.parse(operationRecord.getCreatedDateTime()));
+        } else {
+            entity.setCreatedDateTime(DateTime.now());
         }
         return entity;
     }

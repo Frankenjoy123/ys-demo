@@ -18,7 +18,7 @@ public class ProductBase {
 
     private Long id;
     private ProductCategory category;
-    private Integer manufacturerId;
+    private Long orgId;
     private String barcode;
     private String name;
     private String description;
@@ -52,12 +52,12 @@ public class ProductBase {
         this.category = category;
     }
 
-    public void setManufacturerId(Integer manufacturerId) {
-        this.manufacturerId = manufacturerId;
+    public Long getOrgId() {
+        return orgId;
     }
 
-    public Integer getManufacturerId() {
-        return manufacturerId;
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
     }
 
     public String getBarcode() {
