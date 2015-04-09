@@ -82,7 +82,7 @@ public class UserLikedProductEntity {
         this.location = location;
     }
 
-    protected UserLikedProductEntity() {
+    public UserLikedProductEntity() {
     }
 
     public UserLikedProductEntity(long userId, long baseProductId, String location, Boolean active) {
