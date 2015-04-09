@@ -18,6 +18,8 @@ import javax.xml.bind.DatatypeConverter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.object.TAccount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class TokenHandler {
 
@@ -26,6 +28,7 @@ public final class TokenHandler {
     private static final String SEPARATOR_SPLITTER = "\\.";
 
     private final Mac hmac;
+    private static final Logger LOGGER = LoggerFactory.getLogger(TokenHandler.class);
 
     public TokenHandler(byte[] secretKey) {
         try {
@@ -50,9 +53,11 @@ public final class TokenHandler {
                 boolean validHash = Arrays.equals(createHmac(userBytes), hash);
                 if (validHash) {
                     final TAccount tAccount = fromJSON(userBytes);
+                    return tAccount;
                 }
             } catch (IllegalArgumentException e) {
                 //log tempering attempt here
+                LOGGER.error("parseUserFromToken Exception Message:  ", e.getMessage());
             }
         }
         return null;

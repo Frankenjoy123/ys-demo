@@ -9,7 +9,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
@@ -47,6 +46,7 @@ public class TokenAuthenticationService {
         if (token == null || token.equals("DENY")) {
             return null;
         }
+        TAccount currentAccount = tokenHandler.parseUserFromToken(token); //validate and parse from token
         TAccount tAccount = dataAPIClient.get("account/token/{token}", TAccount.class, token);
         if (tAccount == null) {
             return null;

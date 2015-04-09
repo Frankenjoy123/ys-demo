@@ -11,7 +11,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
@@ -21,9 +20,9 @@ import java.io.ByteArrayInputStream;
  * Created by:   Zhe
  * Created on:   2015/3/3
  * Descriptions: This controller manage end user.
- *
- *  ErrorCode
- *  40401    :   User not found!
+ * <p>
+ * ErrorCode
+ * 40401    :   User not found!
  */
 @RestController
 @RequestMapping("/user")
@@ -39,7 +38,8 @@ public class UserController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
 //    @PreAuthorize("hasRole('YUNSOO_ADMIN')")
-    public User getById(@PathVariable(value = "id") int id) throws NotFoundException {
+    public User getById(@PathVariable(value = "id") int id, @RequestHeader(value = "YS_AUTH_TOKEN") String YS_AUTH_TOKEN) throws NotFoundException {
+        System.out.println("YS_AUTH_TOKEN: " + YS_AUTH_TOKEN);
         User user = dataAPIClient.get("user/id/{id}", User.class, id);
         if (user == null) throw new NotFoundException(40401, "User not found id=" + id);
         return user;
@@ -58,7 +58,8 @@ public class UserController {
     @RequestMapping(value = "/token/{devicecode}", method = RequestMethod.GET)
 //    @PreAuthorize("hasAnyRole('COM_USER','YUNSOO_ADMIN')")
 //    @PreAuthorize("hasPermission(#contact, 'admin')")
-    public User getByDevicecode(@PathVariable(value = "devicecode") String deviceCode) throws NotFoundException {
+    public User getByDevicecode(@PathVariable(value = "devicecode") String deviceCode, @CookieValue("YS_AUTH_TOKEN") String cookie) throws NotFoundException {
+        System.out.println("YS_AUTH_TOKEN: " + cookie);
         User user = null;
         try {
             user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);

@@ -48,6 +48,7 @@ public class AccountDto {
 
     //convert User into UserDto
     public static AccountDto FromAccount(Account account) {
+        if (account == null) return null;
         AccountDto dto = new AccountDto();
         BeanUtils.copyProperties(account, dto, SpringBeanUtil.getNullPropertyNames(account));
         return dto;
