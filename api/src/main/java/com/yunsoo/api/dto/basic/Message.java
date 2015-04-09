@@ -1,5 +1,11 @@
 package com.yunsoo.api.dto.basic;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.joda.time.DateTime;
+
 /**
  * Created by Zhe on 2015/3/9.
  */
@@ -9,15 +15,23 @@ public class Message {
     private String body;
     private String digest;
     private long companyId;
-    private String createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime createdDateTime;
     private int createdBy; //associate to company's accountId
-    private String expiredDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime expiredDateTime;
     private String link;
     private int type;
     private int status;
-    private String lastUpatedDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime lastUpatedDateTime;
     private Integer lastUpdatedBy; //associate to company's accountId
-    private String postShowTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime postShowTime;
 
     public long getId() {
         return Id;
@@ -59,28 +73,12 @@ public class Message {
         this.companyId = companyId;
     }
 
-    public String getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(String createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
     public int getCreatedBy() {
         return createdBy;
     }
 
     public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
-    }
-
-    public String getExpiredDateTime() {
-        return expiredDateTime;
-    }
-
-    public void setExpiredDateTime(String expiredDateTime) {
-        this.expiredDateTime = expiredDateTime;
     }
 
     public String getLink() {
@@ -107,13 +105,6 @@ public class Message {
         this.status = status;
     }
 
-    public String getLastUpatedDateTime() {
-        return lastUpatedDateTime;
-    }
-
-    public void setLastUpatedDateTime(String lastUpatedDateTime) {
-        this.lastUpatedDateTime = lastUpatedDateTime;
-    }
 
     public Integer getLastUpdatedBy() {
         return lastUpdatedBy;
@@ -123,11 +114,36 @@ public class Message {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    public String getPostShowTime() {
+
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    public DateTime getExpiredDateTime() {
+        return expiredDateTime;
+    }
+
+    public void setExpiredDateTime(DateTime expiredDateTime) {
+        this.expiredDateTime = expiredDateTime;
+    }
+
+    public DateTime getLastUpatedDateTime() {
+        return lastUpatedDateTime;
+    }
+
+    public void setLastUpatedDateTime(DateTime lastUpatedDateTime) {
+        this.lastUpatedDateTime = lastUpatedDateTime;
+    }
+
+    public DateTime getPostShowTime() {
         return postShowTime;
     }
 
-    public void setPostShowTime(String postShowTime) {
+    public void setPostShowTime(DateTime postShowTime) {
         this.postShowTime = postShowTime;
     }
 }

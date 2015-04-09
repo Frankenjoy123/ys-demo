@@ -42,6 +42,7 @@ public class MessageDaoImpl implements MessageDao {
 //       Session session =  sessionFactory.openSession();
 //       long result = (long)sessionFactory.getCurrentSession().save(messageModelForPatch);
         messageModel.setStatus(dataServiceSetting.getMessage_created_status_id());//always as newly created for newly created newMessage.
+        messageModel.setCreatedDateTime(DateTime.now());
         sessionFactory.getCurrentSession().save(messageModel);
         return messageModel.getId();
     }

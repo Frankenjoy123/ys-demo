@@ -70,22 +70,23 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<ResultWrapper> createMessages(@RequestBody Message message) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Long> createMessages(@RequestBody Message message) {
         long id = messageService.save(message);
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), HttpStatus.CREATED);
+        return new ResponseEntity<Long>(id, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PATCH)
     public ResponseEntity updateMessages(@RequestBody Message message) {
-        message.setLastUpatedDateTime(DateTime.now().toString());
+        message.setLastUpatedDateTime(DateTime.now());
         messageService.patchUpdate(message);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<ResultWrapper> deleteMessages(@PathVariable(value = "id") Long id) {
-        boolean result = messageService.delete(id);
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMessages(@PathVariable(value = "id") Long id) {
+        messageService.delete(id);
     }
 
     @RequestMapping(value = "/image/{imagekey}", method = RequestMethod.GET)

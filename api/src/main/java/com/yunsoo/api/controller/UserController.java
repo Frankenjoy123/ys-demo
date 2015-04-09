@@ -48,7 +48,7 @@ public class UserController {
     @RequestMapping(value = "/cellular/{cellular}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#user, 'getUserById')")
 //    @PostFilter("hasPermission(filterObject, 'read') or hasPermission(filterObject, 'admin')")
-    public User getByCellular(@PathVariable(value = "cellular") int cellular) throws NotFoundException {
+    public User getByCellular(@PathVariable(value = "cellular") String cellular) throws NotFoundException {
         User user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
         if (user == null) throw new NotFoundException(40401, "User not found cellular=" + cellular);
         return user;
@@ -58,7 +58,7 @@ public class UserController {
     @RequestMapping(value = "/token/{devicecode}", method = RequestMethod.GET)
 //    @PreAuthorize("hasAnyRole('COM_USER','YUNSOO_ADMIN')")
 //    @PreAuthorize("hasPermission(#contact, 'admin')")
-    public User getByCellular(@PathVariable(value = "devicecode") String deviceCode) throws NotFoundException {
+    public User getByDevicecode(@PathVariable(value = "devicecode") String deviceCode) throws NotFoundException {
         User user = null;
         try {
             user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);

@@ -1,6 +1,10 @@
 package com.yunsoo.service.contract;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.dbmodel.MessageModel;
 import org.joda.time.DateTime;
 
@@ -18,15 +22,23 @@ public class Message {
     private String body;
     private String digest;
     private long companyId;
-    private String createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime createdDateTime;
     private int createdBy; //associate to company's accountId
-    private String expiredDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime expiredDateTime;
     private String link;
     private int type;
     private int status;
-    private String lastUpatedDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime lastUpatedDateTime;
     private Integer lastUpdatedBy; //associate to company's accountId
-    private String postShowTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime postShowTime;
 
     public long getId() {
         return Id;
@@ -68,11 +80,11 @@ public class Message {
         this.companyId = companyId;
     }
 
-    public String getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 
@@ -84,12 +96,20 @@ public class Message {
         this.createdBy = createdBy;
     }
 
-    public String getExpireDateTime() {
+    public DateTime getExpiredDateTime() {
         return expiredDateTime;
     }
 
-    public void setExpireDateTime(String expiredDateTime) {
+    public void setExpiredDateTime(DateTime expiredDateTime) {
         this.expiredDateTime = expiredDateTime;
+    }
+
+    public DateTime getLastUpatedDateTime() {
+        return lastUpatedDateTime;
+    }
+
+    public void setLastUpatedDateTime(DateTime lastUpatedDateTime) {
+        this.lastUpatedDateTime = lastUpatedDateTime;
     }
 
     public String getLink() {
@@ -116,14 +136,6 @@ public class Message {
         this.status = status;
     }
 
-    public String getLastUpatedDateTime() {
-        return lastUpatedDateTime;
-    }
-
-    public void setLastUpatedDateTime(String lastUpatedDateTime) {
-        this.lastUpatedDateTime = lastUpatedDateTime;
-    }
-
     public Integer getLastUpdatedBy() {
         return lastUpdatedBy;
     }
@@ -132,11 +144,12 @@ public class Message {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    public String getPostShowTime() {
+
+    public DateTime getPostShowTime() {
         return postShowTime;
     }
 
-    public void setPostShowTime(String postShowTime) {
+    public void setPostShowTime(DateTime postShowTime) {
         this.postShowTime = postShowTime;
     }
 
@@ -151,19 +164,19 @@ public class Message {
         message.setDigest(model.getDigest());
         message.setCreatedBy(model.getCreatedBy());
         message.setLink(model.getLink());
-        message.setCreatedDateTime(model.getCreatedDateTime().toString());
-        message.setExpireDateTime(model.getExpireDateTime().toString());
+        message.setCreatedDateTime(model.getCreatedDateTime());
+        message.setExpiredDateTime(model.getExpireDateTime());
         message.setCompanyId(model.getCompanyId());
         message.setType(model.getType());
         message.setStatus(model.getStatus());
         if (model.getLastUpdatedDateTime() != null) {
-            message.setLastUpatedDateTime(model.getLastUpdatedDateTime().toString());
+            message.setLastUpatedDateTime(model.getLastUpdatedDateTime());
         }
         if (model.getLastUpdatedBy() != null) {
             message.setLastUpdatedBy(model.getLastUpdatedBy());
         }
         if (model.getPostShowTime() != null) {
-            message.setPostShowTime(model.getPostShowTime().toString());
+            message.setPostShowTime(model.getPostShowTime());
         }
         return message;
     }
@@ -177,18 +190,18 @@ public class Message {
         model.setDigest(message.getDigest());
         model.setCreatedBy(message.getCreatedBy());
         model.setLink(message.getLink());
-        if (!message.getCreatedDateTime().isEmpty()) {
-            model.setCreatedDateTime(DateTime.parse(message.getCreatedDateTime())); //convert string to datetime
+        if (message.getCreatedDateTime() != null) {
+            model.setCreatedDateTime(message.getCreatedDateTime()); //convert string to datetime
         }
-        model.setExpireDateTime(DateTime.parse(message.getExpireDateTime()));
+        model.setExpireDateTime(message.getExpiredDateTime());
         model.setCompanyId(message.getCompanyId());
         model.setType(message.getType());
         model.setStatus(message.getStatus());
         if (message.getLastUpatedDateTime() != null) {
-            model.setLastUpdatedDateTime(DateTime.parse(message.getLastUpatedDateTime()));
+            model.setLastUpdatedDateTime(message.getLastUpatedDateTime());
         }
         if (message.getPostShowTime() != null) {
-            model.setPostShowTime(DateTime.parse(message.getPostShowTime()));
+            model.setPostShowTime(message.getPostShowTime());
         }
         model.setLastUpdatedBy(message.getLastUpdatedBy());
         return model;

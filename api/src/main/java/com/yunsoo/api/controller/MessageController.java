@@ -18,10 +18,9 @@ import java.util.List;
 
 /**
  * Created by Zhe on 2015/3/9.
- *
- *  ErrorCode
- *    40401    :   Message Not found!
- *
+ * <p>
+ * ErrorCode
+ * 40401    :   Message Not found!
  */
 
 @RestController
@@ -66,7 +65,7 @@ public class MessageController {
                                              @RequestParam(value = "companyid", required = true) Long companyId,
                                              @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
         try {
-        List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&companyid={1}&lastreadmessageid={2}", List.class, userId, companyId, lastReadMessageId);
+            List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&companyid={1}&lastreadmessageid={2}", List.class, userId, companyId, lastReadMessageId);
             if (messageList == null || messageList.size() == 0) {
                 throw new NotFoundException("Message not found!");
             }
@@ -92,7 +91,7 @@ public class MessageController {
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMessages(@PathVariable(value = "id") Long id) {
-        dataAPIClient.delete("message/delete", id);
+        dataAPIClient.delete("message/delete/{id}", id);
     }
 
     @RequestMapping(value = "/image/{imagekey}", method = RequestMethod.GET)
@@ -114,4 +113,5 @@ public class MessageController {
             throw new NotFoundException(40402, "找不到消息图片 imagekey = " + imagekey);
         }
     }
+
 }
