@@ -1,12 +1,8 @@
-cloud:
-  aws:
-    region:
-      auto: true
-      static: cn-north-1
-amazon:
-    dynamodb:
+yunsoo:
+    aws:
         region: cn-north-1
-
+        dynamodb:
+            endpoint:
 
 AmazonSettings:
     s3_basebucket:  yunsudev
