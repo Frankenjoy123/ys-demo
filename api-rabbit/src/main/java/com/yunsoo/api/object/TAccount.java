@@ -30,7 +30,9 @@ public class TAccount implements UserDetails {
 
     private Set<TAccountAuthority> authorities;
 
-    public TAccount() {}
+    public TAccount() {
+    }
+
     public TAccount(String identifier) {
 
     }
@@ -39,10 +41,12 @@ public class TAccount implements UserDetails {
     public Set<TAccountAuthority> getAuthorities() {
         return authorities;
     }
+
     @Override
     public String getPassword() {
         return password;
     }
+
     @Override
     public String getUsername() {
         return identifier;
@@ -53,23 +57,37 @@ public class TAccount implements UserDetails {
     public boolean isAccountNonExpired() {
         return !(status == TAccountStatusEnum.EXPIRED);
     }
+
     @Override
     public boolean isAccountNonLocked() {
         return !(status == TAccountStatusEnum.LOCKED);
     }
+
     @Override
     public boolean isCredentialsNonExpired() {
         return !(status == TAccountStatusEnum.TOKEN_EXPIRED);
     }
+
     @Override
     public boolean isEnabled() {
         return status == TAccountStatusEnum.ENABLED;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public TAccountStatusEnum getStatus() { return status; }
-    public void setStatus(int status) { this.status = TAccountStatusEnum.valueOf(status); }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public TAccountStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = TAccountStatusEnum.valueOf(status);
+    }
 //    public String getSsid() { return ssid; }
 //    public void setSsid(String ssid) { this.ssid = ssid; }
 //    public void setUsername(String identifier) { this.identifier = identifier; }

@@ -1,0 +1,53 @@
+server:
+    port: 6088
+
+multipart.maxFileSize: 20MB
+multipart.maxRequestSize: 20MB
+
+spring:
+    profiles.active: default
+---
+spring:
+    profiles: default
+management:
+    port: 6089
+    address: 127.0.0.1
+
+logging:
+#    file: c:/logs/yunsoo-api.log
+    level:
+        org.springframework: 'INFO'
+        org.hibernate: 'ERROR'
+
+yunsoo:
+    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
+    #token secret issued to client whoc can consume our Business API
+    token_secret: 9SyECk96oDsTmXfogIieDI0cD/8FpnojlYSUJT5U9I/FGVmBz5oskmjOR8cbXTvoPjX+Pq/T/b1PqpHX0lYm0oCBjXWICA==
+    debug: true
+    api:
+        client:
+            dataapi:
+                baseurl: http://dataapi:8080/
+---
+spring:
+    profiles: qa
+management:
+    port: 6089
+    address: 127.0.0.1
+
+logging:
+    path: /var/log
+    file: yunsoo-api-rabbit.log
+    level:
+        org.springframework: 'INFO'
+        org.hibernate: 'INFO'
+
+yunsoo:
+    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
+    #token secret issued to client whoc can consume our Business API
+    token_secret: 9SyECk96oDsTmXfogIieDI0cD/8FpnojlYSUJT5U9I/FGVmBz5oskmjOR8cbXTvoPjX+Pq/T/b1PqpHX0lYm0oCBjXWICA==
+    debug: true
+    api:
+        client:
+            dataapi:
+                baseurl: http://localhost:8080/

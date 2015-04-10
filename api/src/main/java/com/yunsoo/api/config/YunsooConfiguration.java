@@ -31,13 +31,13 @@ public class YunsooConfiguration {
 //    @Value("${yunsoo.productbase.picture.basepath}")
 //    public String productBasePicURL;
 
-    @Bean
-    public static PropertyPlaceholderConfigurer yunsooProperties() throws IOException {
-        PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
-        ppc.setLocations(new ClassPathResource[]{new ClassPathResource("yunsoo.properties")});
-        ppc.setIgnoreUnresolvablePlaceholders(true);
-        return ppc;
-    }
+//    @Bean
+//    public static PropertyPlaceholderConfigurer yunsooProperties() throws IOException {
+//        PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
+//        ppc.setLocations(new ClassPathResource[]{new ClassPathResource("yunsoo.properties")});
+//        ppc.setIgnoreUnresolvablePlaceholders(true);
+//        return ppc;
+//    }
 
     @Bean
     public CommonConfig commonConfig() {
