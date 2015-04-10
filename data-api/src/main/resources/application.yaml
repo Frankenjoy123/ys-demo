@@ -63,6 +63,8 @@ logging:
     level:
         org.springframework: 'INFO'
         org.hibernate: 'INFO'
+yunsoo:
+    debug: false
 
 AmazonSettings:
     s3_basebucket:  yunsudev
