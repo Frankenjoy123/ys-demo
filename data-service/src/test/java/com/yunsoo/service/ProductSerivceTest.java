@@ -1,7 +1,6 @@
 package com.yunsoo.service;
 
 import com.yunsoo.service.contract.Product;
-import com.yunsoo.util.SpringAppContextUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -20,18 +19,10 @@ public class ProductSerivceTest {
 
     @Before
     public void setUp() throws Exception {
-        ApplicationContext applicationContext = SpringAppContextUtil.getApplicationContext();
-        productService = (ProductService) applicationContext.getBean("productService");
     }
 
     @Test
     public void test_batchCreate() {
-        Product productTemplate = new Product();
-        productTemplate.setProductBaseId(1);
-        List<String> productKeyList = Arrays.asList("zgUQNF_HQV-rWLi1G6bLnx");
-
-        productService.batchCreate(productTemplate, productKeyList);
-
 
     }
 }
