@@ -8,7 +8,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 /**
  * Created by:   Lijian
@@ -33,8 +32,7 @@ public class AmazonDynamoDBConfig {
         } else if (region != null) {
             dynamoDB.setRegion(Region.getRegion(Regions.fromName(region)));
         }
-        System.out.println(region);
-        System.out.println(endpoint);
+
         return dynamoDB;
     }
 
