@@ -182,9 +182,9 @@
     <br/>
 
     <div class="row" ng-show="showSection">
-        <div class="col-xs-18 col-sm-12 col-md-12" ng-show="isValidKey">
-            <img id="imgProduct" src="" width="30%" class="img-circle"/>
-            <img id="imgReal" src="" width="30%" class="img-circle"/>
+        <div class="col-xs-18 col-sm-12 col-md-12" ng-show="isValidKey" align="center">
+            <img id="imgProduct" src="" width="40%" class="img-circle"/>
+            <img id="imgReal" src="" width="40%" class="img-circle"/>
         </div>
         <div class="col-xs-18 col-sm-12 col-md-12" ng-show="!isValidKey" align="center">
             <img src="images/ysdefault.jpg" class="img-rounded"/>
@@ -269,7 +269,7 @@
                             </ul>
                             <ul class="timeline" ng-show="logisticsShow">
                                 <li>
-                                    <i class="fa fa-envelope bg-red"></i>
+                                    <i class="fa fa-envelope bg-blue"></i>
 
                                     <div class="timeline-item">
                                         <h3 class="timeline-header">{{getDateString(latestLogistics.dateTime)}}
@@ -277,7 +277,7 @@
                                     </div>
                                 </li>
                                 <li ng-repeat="logistics in otherLogistics">
-                                    <i class="fa fa-envelope bg-blue"></i>
+                                    <i class="fa fa-envelope"></i>
 
                                     <div class="timeline-item">
                                         <h3 class="timeline-header">{{getDateString(logistics.dateTime)}}
