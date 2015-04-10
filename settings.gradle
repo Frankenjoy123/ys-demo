@@ -8,3 +8,5 @@ include 'processor'
 include 'api'
 include 'web-scan'
 include 'setup'
+include 'api-rabbit'
+
