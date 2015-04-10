@@ -1,7 +1,7 @@
 package com.yunsoo.dataapi.dto;
 
-import com.yunsoo.service.contract.Account;
-import com.yunsoo.util.SpringBeanUtil;
+import com.yunsoo.data.service.service.contract.Account;
+import com.yunsoo.data.service.util.SpringBeanUtil;
 import org.springframework.beans.BeanUtils;
 
 /**

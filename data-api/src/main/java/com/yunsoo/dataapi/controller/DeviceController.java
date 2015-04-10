@@ -2,9 +2,9 @@ package com.yunsoo.dataapi.controller;
 
 import com.yunsoo.dataapi.dto.ResultWrapper;
 import com.yunsoo.dataapi.factory.ResultFactory;
-import com.yunsoo.service.DeviceService;
-import com.yunsoo.service.ServiceOperationStatus;
-import com.yunsoo.service.contract.Device;
+import com.yunsoo.data.service.service.DeviceService;
+import com.yunsoo.data.service.service.ServiceOperationStatus;
+import com.yunsoo.data.service.service.contract.Device;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

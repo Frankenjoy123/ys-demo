@@ -3,9 +3,9 @@ package com.yunsoo.dataapi.controller;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.service.ProductKeyBatchService;
-import com.yunsoo.service.contract.ProductKeyBatch;
-import com.yunsoo.service.contract.ProductKeys;
+import com.yunsoo.data.service.service.ProductKeyBatchService;
+import com.yunsoo.data.service.service.contract.ProductKeyBatch;
+import com.yunsoo.data.service.service.contract.ProductKeys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

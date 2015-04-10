@@ -1,7 +1,7 @@
 package com.yunsoo.dataapi.controller;
 
-import com.yunsoo.service.ProductKeyBatchStatusService;
-import com.yunsoo.service.contract.ProductKeyBatchStatus;
+import com.yunsoo.data.service.service.ProductKeyBatchStatusService;
+import com.yunsoo.data.service.service.contract.ProductKeyBatchStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

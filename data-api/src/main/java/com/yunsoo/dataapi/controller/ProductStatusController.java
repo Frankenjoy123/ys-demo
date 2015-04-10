@@ -1,7 +1,7 @@
 package com.yunsoo.dataapi.controller;
 
-import com.yunsoo.service.ProductStatusService;
-import com.yunsoo.service.contract.ProductStatus;
+import com.yunsoo.data.service.service.ProductStatusService;
+import com.yunsoo.data.service.service.contract.ProductStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

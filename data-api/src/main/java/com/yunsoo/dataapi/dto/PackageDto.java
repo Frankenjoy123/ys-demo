@@ -1,8 +1,6 @@
 package com.yunsoo.dataapi.dto;
 
-import com.yunsoo.service.contract.PackageContract;
-import com.yunsoo.service.contract.Product;
-import org.joda.time.DateTime;
+import com.yunsoo.data.service.service.contract.PackageContract;
 
 import java.util.ArrayList;
 import java.util.List;

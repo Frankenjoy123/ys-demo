@@ -1,14 +1,12 @@
 package com.yunsoo.dataapi;
 
-import com.yunsoo.config.DBSetting;
+import com.yunsoo.data.service.config.DBSetting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-
-import java.util.Arrays;
 
 @ComponentScan(basePackages = {"com.yunsoo"})
 @EnableAutoConfiguration

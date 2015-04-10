@@ -4,9 +4,9 @@ import com.yunsoo.common.data.object.ProductKeyBatchDetailedObject;
 import com.yunsoo.common.data.object.ProductKeyObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.service.ProductKeyService;
-import com.yunsoo.service.contract.Product;
-import com.yunsoo.service.contract.ProductKey;
+import com.yunsoo.data.service.service.ProductKeyService;
+import com.yunsoo.data.service.service.contract.Product;
+import com.yunsoo.data.service.service.contract.ProductKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

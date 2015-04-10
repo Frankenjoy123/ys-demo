@@ -1,7 +1,7 @@
 package com.yunsoo.dataapi.controller;
 
-import com.yunsoo.service.ScanRecordService;
-import com.yunsoo.service.contract.ScanRecord;
+import com.yunsoo.data.service.service.ScanRecordService;
+import com.yunsoo.data.service.service.contract.ScanRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

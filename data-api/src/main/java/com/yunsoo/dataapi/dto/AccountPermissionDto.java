@@ -1,8 +1,7 @@
 package com.yunsoo.dataapi.dto;
 
-import com.yunsoo.dbmodel.AccountPermissionModel;
-import com.yunsoo.service.contract.AccountPermission;
-import com.yunsoo.util.SpringBeanUtil;
+import com.yunsoo.data.service.service.contract.AccountPermission;
+import com.yunsoo.data.service.util.SpringBeanUtil;
 import org.springframework.beans.BeanUtils;
 
 /**

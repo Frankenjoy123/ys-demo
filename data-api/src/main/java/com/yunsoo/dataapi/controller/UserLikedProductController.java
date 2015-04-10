@@ -1,14 +1,12 @@
 package com.yunsoo.dataapi.controller;
 
-import com.yunsoo.entity.UserLikedProductEntity;
-import com.yunsoo.repository.UserLikedProductRepository;
-import com.yunsoo.service.contract.UserLikedProduct;
+import com.yunsoo.data.service.entity.UserLikedProductEntity;
+import com.yunsoo.data.service.repository.UserLikedProductRepository;
+import com.yunsoo.data.service.service.contract.UserLikedProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

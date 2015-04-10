@@ -2,8 +2,8 @@ package com.yunsoo.dataapi.controller;
 
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.service.ProductService;
-import com.yunsoo.service.contract.Product;
+import com.yunsoo.data.service.service.ProductService;
+import com.yunsoo.data.service.service.contract.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -2,8 +2,8 @@ package com.yunsoo.dataapi.controller;
 
 import com.yunsoo.dataapi.controller.util.MD5Util;
 import com.yunsoo.dataapi.dto.AccountDto;
-import com.yunsoo.service.AccountService;
-import com.yunsoo.service.contract.Account;
+import com.yunsoo.data.service.service.AccountService;
+import com.yunsoo.data.service.service.contract.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

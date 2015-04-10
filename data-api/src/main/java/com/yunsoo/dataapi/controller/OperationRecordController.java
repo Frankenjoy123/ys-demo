@@ -1,8 +1,8 @@
 package com.yunsoo.dataapi.controller;
 
-import com.yunsoo.entity.OperationRecordEntity;
-import com.yunsoo.repository.OperationRecordRepository;
-import com.yunsoo.service.contract.OperationRecord;
+import com.yunsoo.data.service.entity.OperationRecordEntity;
+import com.yunsoo.data.service.repository.OperationRecordRepository;
+import com.yunsoo.data.service.service.contract.OperationRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
