@@ -1,7 +1,10 @@
 package com.yunsoo.api.rabbit.security;
 
 import com.yunsoo.api.rabbit.object.TAccount;
+import com.yunsoo.api.rabbit.object.TAccountStatusEnum;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.UnauthorizedException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -42,18 +45,29 @@ public class TokenAuthenticationService {
     public Authentication getAuthentication(HttpServletRequest request) {
         final String token = request.getHeader(AUTH_HEADER_NAME);
 
-        if (token == null || token.equals("DENY")) {
-            return null;
+        if (token == null) {
+            return null; //support anonymous visit
         }
-        TAccount currentAccount = tokenHandler.parseUserFromToken(token); //validate and parse from token
-        TAccount tAccount = dataAPIClient.get("account/token/{token}", TAccount.class, token);
+        TAccount tAccount = tokenHandler.parseUserFromToken(token); //validate and parse from token
+        //Invalid token
         if (tAccount == null) {
-            return null;
+            tAccount = new TAccount();
+            tAccount.setStatus(TAccountStatusEnum.UNDEFINED.value());
+//            throw new UnauthorizedException(40101, "Account token is invalid!");
+            // return null;  //403 forbidden
+        } else if (tAccount.getExpires() < DateTime.now().getMillis()) {
+            //expired - thrown exception!
+            tAccount = new TAccount();
+            tAccount.setStatus(TAccountStatusEnum.EXPIRED.value());
+//            throw new UnauthorizedException(40102, "Account token is expired");
         }
+
         return new AccountAuthentication(tAccount);
     }
 
+    //Mainly used by Auth/Login action.
     public String generateToken(TAccount account) {
+        account.setExpires(System.currentTimeMillis() + HALF_YEAR);
         return tokenHandler.createTokenForUser(account);
     }
 }

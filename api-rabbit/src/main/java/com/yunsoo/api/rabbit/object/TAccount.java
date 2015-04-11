@@ -12,16 +12,15 @@ import java.util.Set;
  */
 public class TAccount implements UserDetails {
     private Long id;
-    private Long orgId;
     private String username;
     private String password;
     private TAccountStatusEnum status;
-    private String ssid;
-    private String identifier;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String phone;
+    //    private String ssid;
+//    private String identifier;
+//    private String firstName;
+//    private String lastName;
+//    private String email;
+//    private String phone;
     private Long expires;
     private Set<TAccountAuthority> authorities;
 
@@ -47,10 +46,13 @@ public class TAccount implements UserDetails {
         return username;
     }
 
-    public void setUsername(String identifier) {
-        this.identifier = identifier;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
+    public boolean isDefined() {
+        return !(status == TAccountStatusEnum.UNDEFINED);
+    }
     @Override
     public boolean isAccountNonExpired() {
         return !(status == TAccountStatusEnum.EXPIRED);
@@ -87,68 +89,12 @@ public class TAccount implements UserDetails {
         this.status = TAccountStatusEnum.valueOf(status);
     }
 
-    public String getSsid() {
-        return ssid;
-    }
-
-    public void setSsid(String ssid) {
-        this.ssid = ssid;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public Long getExpires() {
         return expires;
     }
 
     public void setExpires(Long expired) {
         this.expires = expired;
-    }
-
-    public Long getOrgId() {
-        return orgId;
-    }
-
-    public void setOrgId(Long orgId) {
-        this.orgId = orgId;
-    }
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public Account ToDto(TAccount account) {

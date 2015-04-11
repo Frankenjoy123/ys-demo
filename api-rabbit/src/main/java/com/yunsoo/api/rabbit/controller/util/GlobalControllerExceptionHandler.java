@@ -5,6 +5,7 @@ import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.TraceInfo;
 import com.yunsoo.common.web.error.RestErrorResultCode;
 import com.yunsoo.common.web.exception.RestErrorResultException;
+import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,6 +66,17 @@ public class GlobalControllerExceptionHandler {
         }
         ErrorResult result = new ErrorResult(RestErrorResultCode.BAD_REQUEST, message);
         LOGGER.warn("[API: 400 " + message + "]", ex);
+        return appendTraceInfo(result, ex);
+    }
+
+    //401
+    @ExceptionHandler({
+            UnauthorizedException.class})
+    @ResponseBody
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResult handleUnauthorized(HttpServletRequest req, Exception ex) {
+        ErrorResult result = new ErrorResult(RestErrorResultCode.UNAUTHORIZED, "Unauthorized request.");
+        LOGGER.warn("[API: 401 UNAUTHORIZED]", ex);
         return appendTraceInfo(result, ex);
     }
 

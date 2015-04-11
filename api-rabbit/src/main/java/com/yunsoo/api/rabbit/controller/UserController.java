@@ -11,9 +11,13 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
+import java.security.Principal;
 
 
 /**
@@ -37,9 +41,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-//    @PreAuthorize("hasRole('YUNSOO_ADMIN')")
-    public User getById(@PathVariable(value = "id") int id, @RequestHeader(value = "YS_AUTH_TOKEN") String YS_AUTH_TOKEN) throws NotFoundException {
-        System.out.println("YS_AUTH_TOKEN: " + YS_AUTH_TOKEN);
+    @PreAuthorize("hasPermission(#user, 'user:read')")
+    public User getById(@PathVariable(value = "id") int id) throws NotFoundException {
         User user = dataAPIClient.get("user/id/{id}", User.class, id);
         if (user == null) throw new NotFoundException(40401, "User not found id=" + id);
         return user;
@@ -53,7 +56,6 @@ public class UserController {
         if (user == null) throw new NotFoundException(40401, "User not found cellular=" + cellular);
         return user;
     }
-
 
     @RequestMapping(value = "/token/{devicecode}", method = RequestMethod.GET)
 //    @PreAuthorize("hasAnyRole('COM_USER','YUNSOO_ADMIN')")

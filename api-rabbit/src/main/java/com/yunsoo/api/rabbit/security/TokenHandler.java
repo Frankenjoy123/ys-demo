@@ -7,6 +7,7 @@ package com.yunsoo.api.rabbit.security;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.rabbit.object.TAccount;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +57,7 @@ public final class TokenHandler {
                         LOGGER.error("ParseUserFromToken error! UserInfoArray is empty, and UserBytes is: " + userBytes.toString());
                     }
                     tAccount.setId(Long.parseLong(userInfoArray[0]));
+                    tAccount.setExpires(Long.parseLong(userInfoArray[1]));
                     return tAccount;
                 }
             } catch (IllegalArgumentException e) {
@@ -68,7 +70,7 @@ public final class TokenHandler {
 
     public String createTokenForUser(TAccount user) {
         //generate user information to hash
-        String userInfo = user.getId() + "," + user.getStatus();
+        String userInfo = user.getId() + "," + user.getExpires(); // format:  [userid,expires]
         byte[] userBytes = toJSON(userInfo);
         byte[] hash = createHmac(userBytes);
         final StringBuilder sb = new StringBuilder(170); //170

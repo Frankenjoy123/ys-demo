@@ -21,6 +21,8 @@ public class AuthController {
     @Value("${yunsoo.token_header_name}")
     private String AUTH_HEADER_NAME;
 
+//    private static final long HALF_YEAR = 1000 * 60 * 60 * 24 * 150; // 150 days
+
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
@@ -33,7 +35,6 @@ public class AuthController {
         //Auth account
         Boolean authResult = true;
         //to-do
-
         if (!authResult) {
             return new ResponseEntity<>("用户名和密码未通过验证！", HttpStatus.UNAUTHORIZED);
         }
@@ -42,8 +43,6 @@ public class AuthController {
         //tokenAuthenticationService.getAuthentication()
         TAccount currentAccount = new TAccount();
         currentAccount.setId(2L);
-        currentAccount.setUsername("admin");
-        currentAccount.setOrgId(123456789L);
         String token = tokenAuthenticationService.generateToken(currentAccount);
 
         //set token
