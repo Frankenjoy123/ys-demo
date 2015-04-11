@@ -18,8 +18,8 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackages = {"com.yunsoo.dataapi.config"})
-@PropertySource("classpath:jdbc.properties")
+//@ComponentScan(basePackages = {"com.yunsoo.data.service.dbmodel"})
+//@PropertySource("classpath:jdbc.properties")
 public class HibernateConfig {
 
     @Autowired
