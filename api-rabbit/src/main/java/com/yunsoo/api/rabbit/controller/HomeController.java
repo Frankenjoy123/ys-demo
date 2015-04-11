@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by Zhe on 2015/2/26.
  */
 @RestController
-@RequestMapping(value = "/")
+@RequestMapping(value = "/home")
 public class HomeController {
 
     @RequestMapping(value = "")
@@ -16,7 +16,7 @@ public class HomeController {
         return "Welcome to YUNSOO API-Rabbit!";
     }
 
-    @RequestMapping(value = "home/health")
+    @RequestMapping(value = "/health")
     public String health() {
         System.out.println("HomeController: Passing through heath check...");
         return "Hi, I am still working!";

@@ -15,16 +15,14 @@ public class TAccount implements UserDetails {
     private String username;
     private String password;
     private TAccountStatusEnum status;
-    //    private String ssid;
-//    private String identifier;
-//    private String firstName;
-//    private String lastName;
-//    private String email;
-//    private String phone;
     private Long expires;
     private Set<TAccountAuthority> authorities;
 
     public TAccount() {
+    }
+
+    public TAccount(TAccountStatusEnum status) {
+        this.setStatus(status.value());
     }
 
     @Override
@@ -53,6 +51,15 @@ public class TAccount implements UserDetails {
     public boolean isDefined() {
         return !(status == TAccountStatusEnum.UNDEFINED);
     }
+
+    public boolean isAnonymous() {
+        return !(status == TAccountStatusEnum.ANONYMOUS);
+    }
+
+    public boolean isCredentialsInvalid() {
+        return !(status == TAccountStatusEnum.INVALID_TOKEN);
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return !(status == TAccountStatusEnum.EXPIRED);

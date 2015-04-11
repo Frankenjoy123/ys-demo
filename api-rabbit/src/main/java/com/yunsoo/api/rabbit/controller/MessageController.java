@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * Created by Zhe on 2015/3/9.
- * <p>
+ * Description: Only Authorized user can consume it.
  * ErrorCode
  * 40401    :   Message Not found!
  */
@@ -74,24 +74,6 @@ public class MessageController {
             throw new NotFoundException(40401, "Message not found for userid = " + userId + ". companyId = " + companyId + ". lastReadMessageId = " + lastReadMessageId);
         }
 
-    }
-
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public long createMessages(@RequestBody Message message) {
-        long id = dataAPIClient.post("message/create", message, Long.class);
-        return id;
-    }
-
-    @RequestMapping(value = "/update", method = RequestMethod.PATCH)
-    public void updateMessages(@RequestBody Message message) {
-        dataAPIClient.patch("message/update", message);
-    }
-
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteMessages(@PathVariable(value = "id") Long id) {
-        dataAPIClient.delete("message/delete/{id}", id);
     }
 
     @RequestMapping(value = "/image/{imagekey}", method = RequestMethod.GET)

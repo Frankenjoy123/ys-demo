@@ -44,24 +44,18 @@ public class TokenAuthenticationService {
 
     public Authentication getAuthentication(HttpServletRequest request) {
         final String token = request.getHeader(AUTH_HEADER_NAME);
-
+        TAccount tAccount = null;
         if (token == null) {
-            return null; //support anonymous visit
+            tAccount = new TAccount(TAccountStatusEnum.ANONYMOUS); //support anonymous visit
+        } else {
+            tAccount = tokenHandler.parseUserFromToken(token); //validate and parse from token
+            //handle Invalid token cases.
+            if (tAccount == null) {
+                tAccount = new TAccount(TAccountStatusEnum.INVALID_TOKEN);
+            } else if (tAccount.getExpires() < DateTime.now().getMillis()) {
+                tAccount.setStatus(TAccountStatusEnum.EXPIRED.value());
+            }
         }
-        TAccount tAccount = tokenHandler.parseUserFromToken(token); //validate and parse from token
-        //Invalid token
-        if (tAccount == null) {
-            tAccount = new TAccount();
-            tAccount.setStatus(TAccountStatusEnum.UNDEFINED.value());
-//            throw new UnauthorizedException(40101, "Account token is invalid!");
-            // return null;  //403 forbidden
-        } else if (tAccount.getExpires() < DateTime.now().getMillis()) {
-            //expired - thrown exception!
-            tAccount = new TAccount();
-            tAccount.setStatus(TAccountStatusEnum.EXPIRED.value());
-//            throw new UnauthorizedException(40102, "Account token is expired");
-        }
-
         return new AccountAuthentication(tAccount);
     }
 

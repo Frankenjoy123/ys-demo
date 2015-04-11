@@ -15,6 +15,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import java.util.List;
 /**
  * Created by:   Zhe
  * Created on:   2015/2/27
- * Descriptions:
+ * Descriptions: Allow anonymous visit.
  * <p>
  * ErrorCode
  * 40001    :   查询码不能为空
@@ -99,6 +100,7 @@ public class ScanController {
     }
 
     @RequestMapping(value = "/history/user/{userId}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
     public List<ScanRecord> getScanRecordsByFilter(
             @PathVariable(value = "userId") Long userId,
             @PathVariable(value = "pageIndex") Integer pageIndex,
@@ -127,6 +129,7 @@ public class ScanController {
     }
 
     @RequestMapping(value = "/searchback/{isbackward}/user/{userId}/from/{Id}/paging/{pageIndex}/{pageSize}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
     public List<ScanRecord> getScanRecordsByFilter(
             @PathVariable(value = "Id") Long Id,
             @PathVariable(value = "userId") Long userId,

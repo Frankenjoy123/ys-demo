@@ -45,10 +45,12 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
 
                         //allow anonymous resource requests
                 .antMatchers("/auth/**").permitAll()
-                .antMatchers("/favicon.ico").permitAll()
-                .antMatchers("/resources/**").permitAll()
+                .antMatchers("/home/**").permitAll()
+//                .antMatchers("/favicon.ico").permitAll()
+//                .antMatchers("/resources/**").permitAll()
+                .antMatchers("/productbase/**").permitAll()
                 .antMatchers("/scan/**").permitAll()
-                //allow anonymous to All controller by default
+                .antMatchers("/organization/**").permitAll()
                 .anyRequest().authenticated().and()
                 //.antMatchers("/**").permitAll()
 

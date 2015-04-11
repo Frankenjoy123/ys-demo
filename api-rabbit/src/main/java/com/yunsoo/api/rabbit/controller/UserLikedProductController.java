@@ -8,13 +8,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
  * Created by Zhe on 2015/4/3.
- * <p>
+ * Descriptions: This controller manage end User Collections..
+ *               Only authorized user can consume it.
  * * ErrorCode
  * 40401    :   UserLikedProduct not found!
  */
@@ -27,6 +29,7 @@ public class UserLikedProductController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserLikedProductController.class);
 
     @RequestMapping(value = "/userid/{userid}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#usercollection, 'usercollection:read')")
     public List<UserLikedProduct> getUserCollectionById(@PathVariable(value = "userid") Long userid) {
         try {
             List<UserLikedProduct> userLikedProductList = dataAPIClient.get("/user/collection/userid/{userid}", List.class, userid);
@@ -41,6 +44,7 @@ public class UserLikedProductController {
 
     @RequestMapping(value = "/like", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission(#usercollection, 'usercollection:create')")
     public ResponseEntity<?> createUser(@RequestBody UserLikedProduct userLikedProduct) throws Exception {
         long id = dataAPIClient.post("/user/collection/like", userLikedProduct, Long.class);
         return new ResponseEntity<Long>(id, HttpStatus.OK);
@@ -48,6 +52,7 @@ public class UserLikedProductController {
 
     @RequestMapping(value = "/unlike", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasPermission(#usercollection, 'usercollection:delete')")
     public void deleteUser(@RequestBody Long Id) throws Exception {
         dataAPIClient.delete("user/collection/unlike", Id);
     }

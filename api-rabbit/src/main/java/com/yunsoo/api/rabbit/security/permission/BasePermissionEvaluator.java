@@ -2,7 +2,6 @@ package com.yunsoo.api.rabbit.security.permission;
 
 import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.common.web.exception.UnauthorizedException;
-import org.apache.jasper.security.SecurityUtil;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,25 +13,27 @@ import java.io.Serializable;
  */
 public class BasePermissionEvaluator implements PermissionEvaluator {
 
-
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         boolean hasPermission = false;
         if (authentication != null && permission instanceof String) {
 
+            TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            if (!account.isAnonymous()) {
+                throw new UnauthorizedException(40101, "Anonymous user is denied!");
+            } else if (!account.isCredentialsInvalid()) {
+                throw new UnauthorizedException(40102, "Account token is invalid!");
+            } else if (!account.isEnabled()) {
+                throw new UnauthorizedException(40103, "Account is disabled!");
+            } else if (!account.isAccountNonExpired()) {
+                throw new UnauthorizedException(40104, "Account is expired");
+            } else if (!account.isAccountNonLocked()) {
+                throw new UnauthorizedException(40105, "Account is locked!");
+            }
+            hasPermission = true; //mockup here, always true
             //implement the permission checking of your application here
             //you can just check if the input permission is within your permission list
-            TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
-            hasPermission = true; //mockup here, always true
 
-            if (!account.isAccountNonExpired()) {
-                throw new UnauthorizedException(40102, "Account token is expired");
-//                hasPermission = false;
-            }
-            if (!account.isDefined()) {
-                throw new UnauthorizedException(40101, "Account token is invalid!");
-//                hasPermission = false;
-            }
             //In my example, the user object contains a HashMap which stored the permission of the user.
             //The HashMap<String, PrivilegeResult> is populated during using login by filter. This will not be shown in this example
 
@@ -40,7 +41,6 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 //            HashMap<String, PrivilegeResult> pMap =user.getPrivilegeMap();
 //            PrivilegeResult privResult = pMap.get(permission);
 //            hasPermission =  privResult.isAllowAccess();
-
         } else {
             hasPermission = false;
         }

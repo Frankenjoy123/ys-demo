@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 
 /**
  * Created by Zhe on 2015/4/2.
+ * Allow anonymous call.
  */
 @RestController
 @RequestMapping(value = "/organization")

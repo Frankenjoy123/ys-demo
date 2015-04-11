@@ -24,6 +24,7 @@ import java.security.Principal;
  * Created by:   Zhe
  * Created on:   2015/3/3
  * Descriptions: This controller manage end user.
+ *               Only authorized user can consume it.
  * <p>
  * ErrorCode
  * 40401    :   User not found!
@@ -49,7 +50,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/cellular/{cellular}", method = RequestMethod.GET)
-//    @PreAuthorize("hasPermission(#user, 'getUserById')")
+    @PreAuthorize("hasPermission(#user, 'user:read')")
 //    @PostFilter("hasPermission(filterObject, 'read') or hasPermission(filterObject, 'admin')")
     public User getByCellular(@PathVariable(value = "cellular") String cellular) throws NotFoundException {
         User user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
@@ -59,7 +60,7 @@ public class UserController {
 
     @RequestMapping(value = "/token/{devicecode}", method = RequestMethod.GET)
 //    @PreAuthorize("hasAnyRole('COM_USER','YUNSOO_ADMIN')")
-//    @PreAuthorize("hasPermission(#contact, 'admin')")
+    @PreAuthorize("hasPermission(#user, 'user:read')")
     public User getByDevicecode(@PathVariable(value = "devicecode") String deviceCode, @CookieValue("YS_AUTH_TOKEN") String cookie) throws NotFoundException {
         System.out.println("YS_AUTH_TOKEN: " + cookie);
         User user = null;
@@ -90,18 +91,21 @@ public class UserController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission(#user, 'user:create')")
     public ResponseEntity<?> createUser(@RequestBody User user) throws Exception {
         long id = dataAPIClient.post("user/create", user, Long.class);
         return new ResponseEntity<Long>(id, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PATCH)
+    @PreAuthorize("hasPermission(#user, 'user:update')")
     public void updateUser(@RequestBody User user) throws Exception {
         dataAPIClient.patch("user/update", user);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasPermission(#user, 'user:delete')")
     public void deleteUser(@RequestBody Integer userId) throws Exception {
         dataAPIClient.delete("user/delete/{id}", userId);
     }

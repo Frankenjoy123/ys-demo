@@ -17,7 +17,7 @@ import java.io.ByteArrayInputStream;
 /**
  * Created by:   Lijian
  * Created on:   2015/3/20
- * Descriptions:
+ * Descriptions: Allow anonymous call!
  * <p>
  * * ErrorCode
  * 40401    :   产品找不到
