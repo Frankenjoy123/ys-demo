@@ -19,7 +19,7 @@ import java.util.List;
  * 40401    :   UserLikedProduct not found!
  */
 @RestController
-@RequestMapping("/user/collection")
+@RequestMapping("/backup/user/collection")
 public class UserLikedProductController {
 
     @Autowired

@@ -23,6 +23,7 @@ public class User {
     //    private byte[] thumbnailData;
 //    private HashMap<String, String> thumbnailDataProperties;
     private int ysCreadit;
+    private int level;
     private int statusId;
     private String createdDateTime;
 
@@ -72,6 +73,14 @@ public class User {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public int getYsCreadit() {

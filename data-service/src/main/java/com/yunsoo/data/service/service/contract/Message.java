@@ -193,7 +193,9 @@ public class Message {
         if (message.getCreatedDateTime() != null) {
             model.setCreatedDateTime(message.getCreatedDateTime()); //convert string to datetime
         }
-        model.setExpireDateTime(message.getExpiredDateTime());
+        if (message.getExpiredDateTime() != null) {
+            model.setExpireDateTime(message.getExpiredDateTime());
+        }
         model.setCompanyId(message.getCompanyId());
         model.setType(message.getType());
         model.setStatus(message.getStatus());

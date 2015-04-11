@@ -42,6 +42,8 @@ public class UserModel {
     private FileObject fileObject;
     @Column(name = "ys_creadit")
     private int ysCreadit;
+    @Column(name = "level")
+    private int level;
     @Column(name = "status_id")
     private int statusId;
     @Column(name = "created_datetime", nullable = true, updatable = false)
@@ -144,6 +146,14 @@ public class UserModel {
 
     public void setYsCreadit(int ysCreadit) {
         this.ysCreadit = ysCreadit;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     //    public Set<UserOrganizationModel> getUserOrganizationModelSet() {

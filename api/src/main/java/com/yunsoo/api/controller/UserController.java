@@ -25,7 +25,7 @@ import java.io.ByteArrayInputStream;
  * 40401    :   User not found!
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/backup/user")
 public class UserController {
 
     private RestClient dataAPIClient;

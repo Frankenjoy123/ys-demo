@@ -22,6 +22,7 @@ public class UserDto {
     private String thumbnailContentType;
     private Long thumbnailContentLength;
     private Integer ysCreadit;
+    private Integer level;
     private int statusId;
     private String createdDateTime;
 
@@ -119,6 +120,14 @@ public class UserDto {
 
     public void setYsCreadit(Integer ysCreadit) {
         this.ysCreadit = ysCreadit;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 
     public int getStatusId() {

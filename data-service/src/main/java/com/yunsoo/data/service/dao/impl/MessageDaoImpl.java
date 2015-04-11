@@ -43,6 +43,7 @@ public class MessageDaoImpl implements MessageDao {
 //       long result = (long)sessionFactory.getCurrentSession().save(messageModelForPatch);
         messageModel.setStatus(dataServiceSetting.getMessage_created_status_id());//always as newly created for newly created newMessage.
         messageModel.setCreatedDateTime(DateTime.now());
+        messageModel.setExpireDateTime(DateTime.now().plusDays(100)); //default 100 days to expire.
         sessionFactory.getCurrentSession().save(messageModel);
         return messageModel.getId();
     }
