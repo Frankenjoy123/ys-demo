@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.dto.basic.User;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,8 +59,8 @@ public class UserController {
     @RequestMapping(value = "/token/{devicecode}", method = RequestMethod.GET)
 //    @PreAuthorize("hasAnyRole('COM_USER','YUNSOO_ADMIN')")
 //    @PreAuthorize("hasPermission(#contact, 'admin')")
-    public User getByDevicecode(@PathVariable(value = "devicecode") String deviceCode, @CookieValue("YS_AUTH_TOKEN") String cookie) throws NotFoundException {
-        System.out.println("YS_AUTH_TOKEN: " + cookie);
+    public User getByDevicecode(@PathVariable(value = "devicecode") String deviceCode) throws NotFoundException {
+
         User user = null;
         try {
             user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);
@@ -73,6 +74,9 @@ public class UserController {
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") Long id,
             @PathVariable(value = "key") String key) {
+        if (id == null || id <= 0) throw new BadRequestException("ID不能小于0！");
+        if (key == null || key.isEmpty()) throw new BadRequestException("key不能为空！");
+
         FileObject fileObject = dataAPIClient.get("user/thumbnail/{id}/{key}", FileObject.class, id, key);
         if (fileObject.getLenth() > 0) {
             return ResponseEntity.ok()

@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.dto.basic.Message;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ public class MessageController {
 
     @RequestMapping(value = "/pushTo/{userid}", method = RequestMethod.GET)
     public List<Message> getNewMessagesByUserId(@PathVariable(value = "userid") Long userid) {
+        if (userid == null || userid <= 0) throw new BadRequestException("UserId不能小于0！");
         try {
             List<Message> messageList = dataAPIClient.get("message/pushto", List.class, userid);
             if (messageList == null || messageList.size() == 0) {
@@ -50,7 +52,8 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Message getById(@PathVariable(value = "id") int id) throws NotFoundException {
+    public Message getById(@PathVariable(value = "id") Integer id) throws NotFoundException {
+        if (id == null || id <= 0) throw new BadRequestException("Id不能小于0！");
         try {
             Message message = dataAPIClient.get("message/{id}", Message.class, id);
             if (message == null) throw new NotFoundException(40401, "Message not found for id = " + id);
@@ -64,6 +67,8 @@ public class MessageController {
     public List<Message> getUnreadMessagesBy(@RequestParam(value = "userid", required = true) Long userId,
                                              @RequestParam(value = "companyid", required = true) Long companyId,
                                              @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
+        if (userId == null || userId <= 0) throw new BadRequestException("UserId不能小于0！");
+        if (companyId == null || companyId <= 0) throw new BadRequestException("CompanyId不能小于0！");
         try {
             List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&companyid={1}&lastreadmessageid={2}", List.class, userId, companyId, lastReadMessageId);
             if (messageList == null || messageList.size() == 0) {
@@ -97,6 +102,7 @@ public class MessageController {
     @RequestMapping(value = "/image/{imagekey}", method = RequestMethod.GET)
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "imagekey") String imagekey) {
+        if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("imagekey不能为空！");
         try {
             FileObject fileObject = dataAPIClient.get("message/image/{imagekey}", FileObject.class, imagekey);
             if (fileObject.getLenth() > 0) {

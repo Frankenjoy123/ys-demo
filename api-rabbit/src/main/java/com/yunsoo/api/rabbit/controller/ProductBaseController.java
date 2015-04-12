@@ -49,6 +49,13 @@ public class ProductBaseController {
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") Long id,
             @PathVariable(value = "client") String client) {
+        if (id == null || id < 0) {
+            throw new BadRequestException("Id不应小于0！");
+        }
+        if (client == null || client.isEmpty()) {
+            throw new BadRequestException("Client不应为空！");
+        }
+
         try {
             FileObject fileObject = dataAPIClient.get("productbase/thumbnail/{id}/{client}", FileObject.class, id, client);
             if (fileObject.getLenth() > 0) {

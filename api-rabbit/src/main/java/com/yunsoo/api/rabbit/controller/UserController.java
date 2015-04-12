@@ -3,6 +3,7 @@ package com.yunsoo.api.rabbit.controller;
 import com.yunsoo.api.rabbit.dto.basic.User;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,10 @@ public class UserController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#user, 'user:read')")
-    public User getById(@PathVariable(value = "id") int id) throws NotFoundException {
+    public User getById(@PathVariable(value = "id") Integer id) throws NotFoundException {
+        if (id == null || id < 0) {
+            throw new BadRequestException("UserId不应小于0！");
+        }
         User user = dataAPIClient.get("user/id/{id}", User.class, id);
         if (user == null) throw new NotFoundException(40401, "User not found id=" + id);
         return user;
@@ -52,7 +56,10 @@ public class UserController {
     @RequestMapping(value = "/cellular/{cellular}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#user, 'user:read')")
 //    @PostFilter("hasPermission(filterObject, 'read') or hasPermission(filterObject, 'admin')")
-    public User getByCellular(@PathVariable(value = "cellular") String cellular) throws NotFoundException {
+    public User getByCellular(@PathVariable(value = "cellular") Long cellular) throws NotFoundException {
+        if (cellular == null || cellular <= 0L) {
+            throw new BadRequestException("cellular格式错误！");
+        }
         User user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
         if (user == null) throw new NotFoundException(40401, "User not found cellular=" + cellular);
         return user;
@@ -61,8 +68,7 @@ public class UserController {
     @RequestMapping(value = "/token/{devicecode}", method = RequestMethod.GET)
 //    @PreAuthorize("hasAnyRole('COM_USER','YUNSOO_ADMIN')")
     @PreAuthorize("hasPermission(#user, 'user:read')")
-    public User getByDevicecode(@PathVariable(value = "devicecode") String deviceCode, @CookieValue("YS_AUTH_TOKEN") String cookie) throws NotFoundException {
-        System.out.println("YS_AUTH_TOKEN: " + cookie);
+    public User getByDevicecode(@PathVariable(value = "devicecode") String deviceCode) throws NotFoundException {
         User user = null;
         try {
             user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);
@@ -76,6 +82,13 @@ public class UserController {
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") Long id,
             @PathVariable(value = "key") String key) {
+        if (id == null || id < 0) {
+            throw new BadRequestException("Id不应小于0！");
+        }
+        if (key == null || key.isEmpty()) {
+            throw new BadRequestException("Key不应为空！");
+        }
+
         FileObject fileObject = dataAPIClient.get("user/thumbnail/{id}/{key}", FileObject.class, id, key);
         if (fileObject.getLenth() > 0) {
             return ResponseEntity.ok()

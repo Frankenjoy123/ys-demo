@@ -2,6 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.dto.basic.OperationRecord;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,8 @@ public class OperationRecordController {
     @RequestMapping(value = "/type/{typeid}/account/{accountid}", method = RequestMethod.GET)
     public List<OperationRecord> filterOperationRecord(@PathVariable(value = "typeid") Integer typeid,
                                                        @PathVariable(value = "accountid") Long accountid) {
+        if (typeid == null || typeid <= 0) throw new BadRequestException("TypeID不能小于0！");
+        if (accountid == null || accountid <= 0) throw new BadRequestException("AccountID不能小于0！");
         try {
             List<OperationRecord> operationRecordList = dataAPIClient.get("/operation/record/type/{typeid}/account/{accountid}", List.class, typeid, accountid);
             if (operationRecordList == null || operationRecordList.size() == 0) {

@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,9 @@ public class UserLikedProductController {
     @RequestMapping(value = "/userid/{userid}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#usercollection, 'usercollection:read')")
     public List<UserLikedProduct> getUserCollectionById(@PathVariable(value = "userid") Long userid) {
+        if (userid == null || userid < 0) {
+            throw new BadRequestException("UserId不应小于0！");
+        }
         try {
             List<UserLikedProduct> userLikedProductList = dataAPIClient.get("/user/collection/userid/{userid}", List.class, userid);
             if (userLikedProductList == null || userLikedProductList.size() == 0) {
