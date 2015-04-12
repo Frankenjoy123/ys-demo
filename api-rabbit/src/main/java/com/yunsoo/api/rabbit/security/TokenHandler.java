@@ -7,6 +7,7 @@ package com.yunsoo.api.rabbit.security;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.rabbit.object.TAccount;
+import com.yunsoo.api.rabbit.object.TAccountStatusEnum;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,27 +54,34 @@ public final class TokenHandler {
                 if (validHash) {
                     final TAccount tAccount = new TAccount();
                     String[] userInfoArray = fromJSON(userBytes).split(",");
-                    if (userInfoArray == null || userInfoArray.length <= 0) {
+                    if (userInfoArray == null || userInfoArray.length != 3) {
                         LOGGER.error("ParseUserFromToken error! UserInfoArray is empty, and UserBytes is: " + userBytes.toString());
                     }
                     tAccount.setId(Long.parseLong(userInfoArray[0]));
-                    tAccount.setExpires(Long.parseLong(userInfoArray[1]));
+                    tAccount.setStatus(Integer.parseInt(userInfoArray[1]));
+                    tAccount.setExpires(Long.parseLong(userInfoArray[2]));
+                    //check if token is expired
+                    if (tAccount.getExpires() < DateTime.now().getMillis()) {
+                        tAccount.setStatus(TAccountStatusEnum.EXPIRED.value());
+                    }
                     return tAccount;
                 }
             } catch (IllegalArgumentException e) {
                 //log tempering attempt here
-                LOGGER.error("parseUserFromToken Exception Message:  ", e.getMessage());
+                LOGGER.error("parseUserFromToken IllegalArgumentException Message:  ", e.getMessage());
+            } catch (Exception ex) {
+                LOGGER.error("parseUserFromToken Exception Message:  ", ex.getMessage());
             }
         }
-        return null;
+        return new TAccount(TAccountStatusEnum.INVALID_TOKEN);
     }
 
     public String createTokenForUser(TAccount user) {
         //generate user information to hash
-        String userInfo = user.getId() + "," + user.getExpires(); // format:  [userid,expires]
+        String userInfo = user.getId() + "," + user.getStatus().value() + "," + user.getExpires(); // format:  [userid,status,expires]
         byte[] userBytes = toJSON(userInfo);
         byte[] hash = createHmac(userBytes);
-        final StringBuilder sb = new StringBuilder(170); //170
+        final StringBuilder sb = new StringBuilder(170);  //170
         sb.append(toBase64(userBytes));
         sb.append(SEPARATOR);
         sb.append(toBase64(hash));

@@ -44,18 +44,8 @@ public class TokenAuthenticationService {
 
     public Authentication getAuthentication(HttpServletRequest request) {
         final String token = request.getHeader(AUTH_HEADER_NAME);
-        TAccount tAccount = null;
-        if (token == null) {
-            tAccount = new TAccount(TAccountStatusEnum.ANONYMOUS); //support anonymous visit
-        } else {
-            tAccount = tokenHandler.parseUserFromToken(token); //validate and parse from token
-            //handle Invalid token cases.
-            if (tAccount == null) {
-                tAccount = new TAccount(TAccountStatusEnum.INVALID_TOKEN);
-            } else if (tAccount.getExpires() < DateTime.now().getMillis()) {
-                tAccount.setStatus(TAccountStatusEnum.EXPIRED.value());
-            }
-        }
+        //support anonymous visit(for token is empty), or validate and parse from token
+        TAccount tAccount = (token == null) ? tAccount = new TAccount(TAccountStatusEnum.ANONYMOUS) : tokenHandler.parseUserFromToken(token);
         return new AccountAuthentication(tAccount);
     }
 

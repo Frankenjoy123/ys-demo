@@ -43,6 +43,7 @@ public class AuthController {
         //tokenAuthenticationService.getAuthentication()
         TAccount currentAccount = new TAccount();
         currentAccount.setId(2L);
+        currentAccount.setStatus(2); //Status的编码与TAccountStatusEnum一致
         String token = tokenAuthenticationService.generateToken(currentAccount);
 
         //set token

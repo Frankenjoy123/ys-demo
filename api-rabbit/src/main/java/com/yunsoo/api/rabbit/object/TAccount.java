@@ -57,7 +57,7 @@ public class TAccount implements UserDetails {
     }
 
     public boolean isCredentialsInvalid() {
-        return !(status == TAccountStatusEnum.INVALID_TOKEN);
+        return status == TAccountStatusEnum.INVALID_TOKEN;
     }
 
     @Override

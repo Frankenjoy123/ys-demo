@@ -21,14 +21,14 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
             if (!account.isAnonymous()) {
                 throw new UnauthorizedException(40101, "Anonymous user is denied!");
-            } else if (!account.isCredentialsInvalid()) {
-                throw new UnauthorizedException(40102, "Account token is invalid!");
-            } else if (!account.isEnabled()) {
-                throw new UnauthorizedException(40103, "Account is disabled!");
             } else if (!account.isAccountNonExpired()) {
-                throw new UnauthorizedException(40104, "Account is expired");
+                throw new UnauthorizedException(40102, "Account is expired");
             } else if (!account.isAccountNonLocked()) {
-                throw new UnauthorizedException(40105, "Account is locked!");
+                throw new UnauthorizedException(40103, "Account is locked!");
+            } else if (account.isCredentialsInvalid()) {
+                throw new UnauthorizedException(40104, "Account token is invalid!");
+            } else if (!account.isEnabled()) {
+                throw new UnauthorizedException(40105, "Account is disabled!");
             }
             hasPermission = true; //mockup here, always true
             //implement the permission checking of your application here

@@ -1,13 +1,13 @@
 package com.yunsoo.api.rabbit.object;
 
 public enum TAccountStatusEnum {
-    UNDEFINED(0),
-    ENABLED(1),
-    LOCKED(2),
-    EXPIRED(3),
-    TOKEN_EXPIRED(4),
-    INVALID_TOKEN(5),
-    ANONYMOUS(6);
+    UNDEFINED(1),
+    ENABLED(2),
+    LOCKED(3),
+    EXPIRED(4),
+    TOKEN_EXPIRED(5),
+    INVALID_TOKEN(6),
+    ANONYMOUS(7);
 
     private int value = 0;
 
@@ -17,19 +17,19 @@ public enum TAccountStatusEnum {
 
     public static TAccountStatusEnum valueOf(int value) {
         switch (value) {
-            case 0:
-                return UNDEFINED;
             case 1:
-                return ENABLED;
+                return UNDEFINED;
             case 2:
-                return LOCKED;
+                return ENABLED;
             case 3:
-                return EXPIRED;
+                return LOCKED;
             case 4:
-                return TOKEN_EXPIRED;
+                return EXPIRED;
             case 5:
-                return INVALID_TOKEN;
+                return TOKEN_EXPIRED;
             case 6:
+                return INVALID_TOKEN;
+            case 7:
                 return ANONYMOUS;
             default:
                 return UNDEFINED;
