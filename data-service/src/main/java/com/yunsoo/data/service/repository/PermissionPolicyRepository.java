@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository;
  * Created on:   2015/4/12
  * Descriptions:
  */
-public interface PermissionPolicyRepository extends CrudRepository<PermissionPolicyEntity, String> {
+public interface PermissionPolicyRepository extends CrudRepository<PermissionPolicyEntity, Integer> {
 }
