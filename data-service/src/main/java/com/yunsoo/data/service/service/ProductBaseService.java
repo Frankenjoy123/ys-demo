@@ -24,7 +24,7 @@ public interface ProductBaseService {
 
     public void deactivate(long id);
 
-    public List<ProductBase> getByFilter(Integer manufacturerId, Integer categoryId, Boolean active);
+    public List<ProductBase> getByFilter(Long orgId, Integer categoryId, Boolean active);
 
     public List<ProductBase> getAll();
 }

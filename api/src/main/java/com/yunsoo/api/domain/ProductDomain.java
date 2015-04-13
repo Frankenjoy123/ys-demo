@@ -101,7 +101,7 @@ public class ProductDomain {
     }
 
     public List<ProductBase> getAllProductBaseByOrgId(int orgId) {
-        ProductBaseObject[] objects = dataAPIClient.get("productbase?manufacturerId={id}", ProductBaseObject[].class, orgId);
+        ProductBaseObject[] objects = dataAPIClient.get("productbase?orgId={id}", ProductBaseObject[].class, orgId);
         if (objects == null) {
             return null;
         }

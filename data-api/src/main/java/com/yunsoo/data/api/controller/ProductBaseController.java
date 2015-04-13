@@ -80,9 +80,9 @@ public class ProductBaseController {
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductBaseObject> getByFilter(
-            @RequestParam(value = "manufacturerId", required = false) Integer manufacturerId,
+            @RequestParam(value = "orgId", required = false) Long orgId,
             @RequestParam(value = "categoryId", required = false) Integer categoryId) {
-        return productBaseService.getByFilter(manufacturerId, categoryId, true).stream()
+        return productBaseService.getByFilter(orgId, categoryId, true).stream()
                 .map(p -> {
                     ProductBaseObject o = new ProductBaseObject();
                     BeanUtils.copyProperties(p, o);

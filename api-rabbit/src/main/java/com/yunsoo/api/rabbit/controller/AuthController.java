@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.dto.basic.Account;
+import com.yunsoo.api.rabbit.dto.basic.User;
 import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -29,7 +29,7 @@ public class UserLikedProductController {
     private RestClient dataAPIClient;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserLikedProductController.class);
 
-    @RequestMapping(value = "/userid/{userid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/who/{userid}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#usercollection, 'usercollection:read')")
     public List<UserLikedProduct> getUserCollectionById(@PathVariable(value = "userid") Long userid) {
         if (userid == null || userid < 0) {

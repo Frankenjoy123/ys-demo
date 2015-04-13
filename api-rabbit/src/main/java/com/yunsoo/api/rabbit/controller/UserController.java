@@ -65,7 +65,7 @@ public class UserController {
         return user;
     }
 
-    @RequestMapping(value = "/token/{devicecode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/device/{devicecode}", method = RequestMethod.GET)
 //    @PreAuthorize("hasAnyRole('COM_USER','YUNSOO_ADMIN')")
     @PreAuthorize("hasPermission(#user, 'user:read')")
     public User getByDevicecode(@PathVariable(value = "devicecode") String deviceCode) throws NotFoundException {
@@ -79,6 +79,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/thumbnail/{id}/{key}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#user, 'user:read')")
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") Long id,
             @PathVariable(value = "key") String key) {
@@ -102,21 +103,21 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    //Allow anonymous access
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#user, 'user:create')")
     public ResponseEntity<?> createUser(@RequestBody User user) throws Exception {
         long id = dataAPIClient.post("user/create", user, Long.class);
         return new ResponseEntity<Long>(id, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PATCH)
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#user, 'user:update')")
     public void updateUser(@RequestBody User user) throws Exception {
         dataAPIClient.patch("user/update", user);
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#user, 'user:delete')")
     public void deleteUser(@RequestBody Integer userId) throws Exception {

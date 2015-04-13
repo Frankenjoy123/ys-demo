@@ -50,7 +50,7 @@ public class ScanController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
 
     //能够访问所有的Key
-    @RequestMapping(value = "/mobile", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ScanResult getDetailByKey(@RequestBody ScanRequestBody scanRequestBody) {
 
         //0，validate input

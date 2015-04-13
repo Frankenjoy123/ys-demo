@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.security.permission;
 
 import com.yunsoo.api.rabbit.object.TAccount;
+import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -20,15 +21,15 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 
             TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
             if (!account.isAnonymous()) {
-                throw new UnauthorizedException(40101, "Anonymous user is denied!");
+                throw new ForbiddenException(40301, "Action-" + permission, "Anonymous user is denied!");
             } else if (!account.isAccountNonExpired()) {
-                throw new UnauthorizedException(40102, "Account is expired");
+                throw new UnauthorizedException(40101, "Account is expired");
             } else if (!account.isAccountNonLocked()) {
-                throw new UnauthorizedException(40103, "Account is locked!");
+                throw new UnauthorizedException(40102, "Account is locked!");
             } else if (account.isCredentialsInvalid()) {
-                throw new UnauthorizedException(40104, "Account token is invalid!");
+                throw new UnauthorizedException(40103, "Account token is invalid!");
             } else if (!account.isEnabled()) {
-                throw new UnauthorizedException(40105, "Account is disabled!");
+                throw new UnauthorizedException(40104, "Account is disabled!");
             }
             hasPermission = true; //mockup here, always true
             //implement the permission checking of your application here

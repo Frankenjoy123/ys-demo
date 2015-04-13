@@ -7,17 +7,19 @@ import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.config.AmazonSetting;
-import com.yunsoo.data.service.service.contract.Message;
+import com.yunsoo.data.service.config.DataServiceSetting;
 import com.yunsoo.data.service.service.MessageService;
-//import org.apache.http.HttpStatus;
+import com.yunsoo.data.service.service.contract.Message;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.List;
+
+//import org.apache.http.HttpStatus;
 
 /**
  * Created by Zhe on 2015/1/26.
@@ -28,8 +30,12 @@ public class MessageController {
 
     @Autowired
     private final MessageService messageService;
+
     @Autowired
     private AmazonSetting amazonSetting;
+
+    @Autowired
+    private DataServiceSetting dataServiceSetting;
 
     @Autowired
     MessageController(MessageService messageService) {
@@ -37,9 +43,10 @@ public class MessageController {
     }
 
     //Push unread messages to user.
-    @RequestMapping(value = "/pushto/{userid}", method = RequestMethod.GET)
-    public ResponseEntity<List<Message>> getNewMessagesByUserId(@PathVariable(value = "userid") Long id) {
-        List<Message> messageList = messageService.getMessagesByFilter(1, 3, null, true); //push approved message only
+    @RequestMapping(value = "/pushto/{userid}/type/{typeid}", method = RequestMethod.GET)
+    public ResponseEntity<List<Message>> getNewMessagesByUserId(@PathVariable(value = "userid") Long id,
+                                                                @PathVariable(value = "typeid") Integer typeid) {
+        List<Message> messageList = messageService.getMessagesByFilter(typeid, dataServiceSetting.getMessage_approved_status_id(), null, true); //push approved message only
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 
@@ -52,9 +59,9 @@ public class MessageController {
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity<List<Message>> getMessagesByFilter(@RequestParam(value = "type", required = false) Integer type,
-                                             @RequestParam(value = "status", required = false) Integer status,
-                                             @RequestParam(value = "companyid", required = false) Long companyId,
-                                             @RequestParam(value = "ignoreexpiredate", required = false, defaultValue = "true") boolean ignoreExpireDate) {
+                                                             @RequestParam(value = "status", required = false) Integer status,
+                                                             @RequestParam(value = "companyid", required = false) Long companyId,
+                                                             @RequestParam(value = "ignoreexpiredate", required = false, defaultValue = "true") boolean ignoreExpireDate) {
         List<Message> messageList = messageService.getMessagesByFilter(type, status, companyId, ignoreExpireDate);
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }

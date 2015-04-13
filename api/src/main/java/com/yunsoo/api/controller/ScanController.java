@@ -49,7 +49,7 @@ public class ScanController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
 
     //能够访问所有的Key
-    @RequestMapping(value = "/mobile", method = RequestMethod.POST)
+    @RequestMapping(value = "/backup/mobile", method = RequestMethod.POST)
     public ScanResult getDetailByKey(@RequestBody ScanRequestBody scanRequestBody) {
 
         //0，validate input
@@ -139,7 +139,7 @@ public class ScanController {
     }
 
 
-    @RequestMapping(value = "/history/user/{userId}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
+    @RequestMapping(value = "/backup/history/user/{userId}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
     public List<ScanRecord> getScanRecordsByFilter(
             @PathVariable(value = "userId") Long userId,
             @PathVariable(value = "pageIndex") Integer pageIndex,
@@ -167,7 +167,7 @@ public class ScanController {
         return scanRecordList;
     }
 
-    @RequestMapping(value = "/searchback/{isbackward}/user/{userId}/from/{Id}/paging/{pageIndex}/{pageSize}", method = RequestMethod.GET)
+    @RequestMapping(value = "/backup/searchback/{isbackward}/user/{userId}/from/{Id}/paging/{pageIndex}/{pageSize}", method = RequestMethod.GET)
     public List<ScanRecord> getScanRecordsByFilter(
             @PathVariable(value = "Id") Long Id,
             @PathVariable(value = "userId") Long userId,

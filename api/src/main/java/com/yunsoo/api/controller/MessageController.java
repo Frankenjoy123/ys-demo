@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
@@ -28,6 +27,7 @@ import java.util.List;
 @RequestMapping("/message")
 public class MessageController {
 
+    @Autowired
     private RestClient dataAPIClient;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
@@ -37,19 +37,21 @@ public class MessageController {
         this.dataAPIClient = dataAPIClient;
     }
 
-    @RequestMapping(value = "/pushTo/{userid}", method = RequestMethod.GET)
-    public List<Message> getNewMessagesByUserId(@PathVariable(value = "userid") Long userid) {
-        if (userid == null || userid <= 0) throw new BadRequestException("UserId不能小于0！");
-        try {
-            List<Message> messageList = dataAPIClient.get("message/pushto", List.class, userid);
-            if (messageList == null || messageList.size() == 0) {
-                throw new NotFoundException(40401, "Message not found for userid = " + userid);
-            }
-            return messageList;
-        } catch (NotFoundException ex) {
-            throw new NotFoundException(40401, "Message not found for userid = " + userid);
-        }
-    }
+//    @RequestMapping(value = "/pushTo/{userid}/type/{typeid}", method = RequestMethod.GET)
+//    public List<Message> getNewMessagesByUserId(@PathVariable(value = "userid") Long userid,
+//                                                @PathVariable(value = "typeid") Integer typeid) {
+//        if (userid == null || userid <= 0) throw new BadRequestException("UserId不能小于0！");
+//        if (typeid == null || typeid <= 0) throw new BadRequestException("TypeId不能小于0！");
+//        try {
+//            List<Message> messageList = dataAPIClient.get("message/pushto/{userid}/type/{typeid}", List.class, userid, typeid);
+//            if (messageList == null || messageList.size() == 0) {
+//                throw new NotFoundException(40401, "Message not found for userid = " + userid);
+//            }
+//            return messageList;
+//        } catch (NotFoundException ex) {
+//            throw new NotFoundException(40401, "Message not found for userid = " + userid);
+//        }
+//    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Message getById(@PathVariable(value = "id") Integer id) throws NotFoundException {
@@ -63,37 +65,37 @@ public class MessageController {
         }
     }
 
-    @RequestMapping(value = "/getunread", method = RequestMethod.GET)
-    public List<Message> getUnreadMessagesBy(@RequestParam(value = "userid", required = true) Long userId,
-                                             @RequestParam(value = "companyid", required = true) Long companyId,
-                                             @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
-        if (userId == null || userId <= 0) throw new BadRequestException("UserId不能小于0！");
-        if (companyId == null || companyId <= 0) throw new BadRequestException("CompanyId不能小于0！");
-        try {
-            List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&companyid={1}&lastreadmessageid={2}", List.class, userId, companyId, lastReadMessageId);
-            if (messageList == null || messageList.size() == 0) {
-                throw new NotFoundException("Message not found!");
-            }
-            return messageList;
-        } catch (NotFoundException ex) {
-            throw new NotFoundException(40401, "Message not found for userid = " + userId + ". companyId = " + companyId + ". lastReadMessageId = " + lastReadMessageId);
-        }
+//    @RequestMapping(value = "/getunread", method = RequestMethod.GET)
+//    public List<Message> getUnreadMessagesBy(@RequestParam(value = "userid", required = true) Long userId,
+//                                             @RequestParam(value = "companyid", required = true) Long companyId,
+//                                             @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
+//        if (userId == null || userId <= 0) throw new BadRequestException("UserId不能小于0！");
+//        if (companyId == null || companyId <= 0) throw new BadRequestException("CompanyId不能小于0！");
+//        try {
+//            List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&companyid={1}&lastreadmessageid={2}", List.class, userId, companyId, lastReadMessageId);
+//            if (messageList == null || messageList.size() == 0) {
+//                throw new NotFoundException("Message not found!");
+//            }
+//            return messageList;
+//        } catch (NotFoundException ex) {
+//            throw new NotFoundException(40401, "Message not found for userid = " + userId + ". companyId = " + companyId + ". lastReadMessageId = " + lastReadMessageId);
+//        }
+//
+//    }
 
-    }
-
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public long createMessages(@RequestBody Message message) {
         long id = dataAPIClient.post("message/create", message, Long.class);
         return id;
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PATCH)
+    @RequestMapping(value = "/", method = RequestMethod.PATCH)
     public void updateMessages(@RequestBody Message message) {
         dataAPIClient.patch("message/update", message);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMessages(@PathVariable(value = "id") Long id) {
         dataAPIClient.delete("message/delete/{id}", id);
