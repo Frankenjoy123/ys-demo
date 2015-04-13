@@ -3,6 +3,8 @@ server:
 
 cloud:
   aws:
+    stack:
+      auto: false
     region:
       auto: true
       static: cn-north-1
