@@ -79,6 +79,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/thumbnail/{id}/{key}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#user, 'user:read')")
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") Long id,
             @PathVariable(value = "key") String key) {
@@ -102,9 +103,9 @@ public class UserController {
         }
     }
 
+    //Allow anonymous access
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#user, 'user:create')")
     public ResponseEntity<?> createUser(@RequestBody User user) throws Exception {
         long id = dataAPIClient.post("user/create", user, Long.class);
         return new ResponseEntity<Long>(id, HttpStatus.OK);

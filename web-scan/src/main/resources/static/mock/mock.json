@@ -8,7 +8,7 @@
       "active": true,
       "id": 2
     },
-    "manufacturerId": 1,
+    "orgId": 123456789,
     "barcode": "87654321",
     "name": "王老吉",
     "description": "Des TBD",
@@ -21,7 +21,7 @@
     "productBaseId": 1
   },
   "manufacturer": {
-    "id": 1,
+    "id": 123456789,
     "name": "某凉茶有限公司",
     "description": "喝凉茶，不上火",
     "imageUrl": null,
