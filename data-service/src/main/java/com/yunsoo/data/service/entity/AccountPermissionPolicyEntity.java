@@ -7,12 +7,12 @@ import javax.persistence.*;
 
 /**
  * Created by:   Lijian
- * Created on:   2015/4/12
+ * Created on:   2015/4/13
  * Descriptions:
  */
 @Entity
-@Table(name = "account_permission")
-public class AccountPermissionEntity {
+@Table(name = "account_permission_policy")
+public class AccountPermissionPolicyEntity {
 
     @Id
     @GeneratedValue
@@ -25,11 +25,8 @@ public class AccountPermissionEntity {
     @Column(name = "org_id")
     private String orgId;
 
-    @Column(name = "resource_code")
-    private String resourceCode;
-
-    @Column(name = "action_code")
-    private String actionCode;
+    @Column(name = "policy_code")
+    private String policyCode;
 
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
