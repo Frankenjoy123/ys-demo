@@ -88,7 +88,7 @@ public class ProductBaseServiceImpl implements ProductBaseService {
     }
 
     @Override
-    public List<ProductBase> getByFilter(Integer orgId, Integer categoryId, Boolean active) {
+    public List<ProductBase> getByFilter(Long orgId, Integer categoryId, Boolean active) {
         Map<String, Object> eqFilter = new HashMap<>();
         if (orgId != null) {
             eqFilter.put("orgId", orgId);

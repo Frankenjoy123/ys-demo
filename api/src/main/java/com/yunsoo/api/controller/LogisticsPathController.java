@@ -39,7 +39,7 @@ public class LogisticsPathController {
         return logisticsDomain.getLogisticsPathsOrderByStartDate(key);
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody LogisticsPathObject logisticsPathObject) {
         dataAPIClient.post("logisticspath/create", logisticsPathObject, Long.class);
