@@ -78,7 +78,7 @@ public class LogisticsCheckActionServiceImpl implements LogisticsCheckActionServ
     }
 
     @Override
-    public List<LogisticsCheckAction> getLogisticsCheckActionsByOrg(int orgId)
+    public List<LogisticsCheckAction> getLogisticsCheckActionsByOrg(Long orgId)
     {
         return LogisticsCheckAction.FromModelList(logisticsCheckActionDao.getLogisticsCheckActionModelsByOrg(orgId));
     }

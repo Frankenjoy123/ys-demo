@@ -89,7 +89,7 @@ public class LogisticsCheckActionDaoImpl implements LogisticsCheckActionDao{
     }
 
     @Override
-    public List<LogisticsCheckActionModel> getLogisticsCheckActionModelsByOrg(int orgId)
+    public List<LogisticsCheckActionModel> getLogisticsCheckActionModelsByOrg(Long orgId)
     {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(LogisticsCheckActionModel.class);
         c.add(Restrictions.eq("orgId", orgId));

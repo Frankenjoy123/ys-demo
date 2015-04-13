@@ -22,5 +22,5 @@ public interface LogisticsCheckActionService {
 
     public List<LogisticsCheckAction> getLogisticsCheckActionsByFilter(int id, String name);
 
-    public List<LogisticsCheckAction> getLogisticsCheckActionsByOrg(int orgId);
+    public List<LogisticsCheckAction> getLogisticsCheckActionsByOrg(Long orgId);
 }

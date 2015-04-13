@@ -39,7 +39,7 @@ public class LogisticsCheckActionController {
     }
 
     @RequestMapping(value = "/org/{id}", method = RequestMethod.GET)
-    public ResponseEntity<List<LogisticsCheckAction>> getLogisticsCheckActionByOrg(@PathVariable(value = "id") int id) {
+    public ResponseEntity<List<LogisticsCheckAction>> getLogisticsCheckActionByOrg(@PathVariable(value = "id") Long id) {
         return new ResponseEntity<List<LogisticsCheckAction>>(actionService.getLogisticsCheckActionsByOrg(id), HttpStatus.OK);
     }
 

@@ -7,7 +7,7 @@ public class LogisticsCheckActionObject {
     private int id;
     private String name;
     private String description;
-    private Integer orgId;
+    private Long orgId;
 
     public int getId() {
         return id;
@@ -33,11 +33,11 @@ public class LogisticsCheckActionObject {
         this.description = description;
     }
 
-    public Integer getOrgId() {
+    public Long getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(Integer orgId) {
+    public void setOrgId(Long orgId) {
         this.orgId = orgId;
     }
 }
