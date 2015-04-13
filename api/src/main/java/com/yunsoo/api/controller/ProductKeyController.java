@@ -20,9 +20,8 @@ public class ProductKeyController {
     @Autowired
     private RestClient dataAPIClient;
 
-    @Autowired
-    private ProductKeyDomain productKeyDomain;
-
+//    @Autowired
+//    private ProductKeyDomain productKeyDomain;
 
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
     public ProductKey get(@PathVariable(value = "key") String key) {
@@ -51,6 +50,5 @@ public class ProductKeyController {
     public void enableKey(@PathVariable(value = "key") String key) {
         dataAPIClient.put("productkey/{key}/disabled", false, key);
     }
-
 
 }

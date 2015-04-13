@@ -39,7 +39,7 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductKeyBatch getById(@PathVariable(value = "id") String idStr) {
-        int organizationId = 1;
+        int organizationId = 123456789;
         long id;
         try {
             id = Long.parseLong(idStr);
@@ -68,7 +68,7 @@ public class ProductKeyBatchController {
     public List<ProductKeyBatch> getByFilter(@RequestParam(value = "productBaseId", required = false) Long productBaseId,
                                              @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
                                              @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        int organizationId = 1;
+        int organizationId = 123456789;
         return productKeyDomain.getAllProductKeyBatchesByOrgId(organizationId, productBaseId);
     }
 
@@ -86,7 +86,7 @@ public class ProductKeyBatchController {
             }
         }
         int statusId = 0;
-        int organizationId = 1;
+        int organizationId = 123456789;
         int clientId = 1;
         Long accountId = 1L;
         DateTime createdDateTime = DateTime.now();

@@ -37,11 +37,13 @@ public class MessageController {
         this.dataAPIClient = dataAPIClient;
     }
 
-    @RequestMapping(value = "/pushTo/{userid}", method = RequestMethod.GET)
-    public List<Message> getNewMessagesByUserId(@PathVariable(value = "userid") Long userid) {
+    @RequestMapping(value = "/pushTo/{userid}/type/{typeid}", method = RequestMethod.GET)
+    public List<Message> getNewMessagesByUserId(@PathVariable(value = "userid") Long userid,
+                                                @PathVariable(value = "typeid") Integer typeid) {
         if (userid == null || userid <= 0) throw new BadRequestException("UserId不能小于0！");
+        if (typeid == null || typeid <= 0) throw new BadRequestException("TypeId不能小于0！");
         try {
-            List<Message> messageList = dataAPIClient.get("message/pushto", List.class, userid);
+            List<Message> messageList = dataAPIClient.get("message/pushto/{userid}/type/{typeid}", List.class, userid, typeid);
             if (messageList == null || messageList.size() == 0) {
                 throw new NotFoundException(40401, "Message not found for userid = " + userid);
             }

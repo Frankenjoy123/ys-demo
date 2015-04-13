@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller.util;
 
+import com.yunsoo.api.config.YunsooYamlConfig;
 import com.yunsoo.common.config.CommonConfig;
 import com.yunsoo.common.error.DebugErrorResult;
 import com.yunsoo.common.error.ErrorResult;
@@ -34,7 +35,7 @@ public class GlobalControllerExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 
     @Autowired
-    private CommonConfig commonConfig;
+    private YunsooYamlConfig yunsooYamlConfig;
 
     //business
     @ExceptionHandler(RestErrorResultException.class)
@@ -104,7 +105,7 @@ public class GlobalControllerExceptionHandler {
     }
 
     private ErrorResult appendTraceInfo(ErrorResult result, Exception ex) {
-        if (commonConfig.isDebugEnabled()) {
+        if (Boolean.parseBoolean(yunsooYamlConfig.getDebug())) {
             result = new DebugErrorResult(result, new TraceInfo(ex));
         }
         return result;

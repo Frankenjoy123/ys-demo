@@ -80,7 +80,7 @@ public class ProductBaseController {
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductBaseObject> getByFilter(
-            @RequestParam(value = "orgId", required = false) Integer orgId,
+            @RequestParam(value = "orgId", required = false) Long orgId,
             @RequestParam(value = "categoryId", required = false) Integer categoryId) {
         return productBaseService.getByFilter(orgId, categoryId, true).stream()
                 .map(p -> {

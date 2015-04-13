@@ -49,7 +49,7 @@ public class ProductBaseController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductBase> getAllForCurrentOrg() {
-        int orgId = 1; //fetch from AuthContext
+        int orgId = 123456789; //fetch from AuthContext
         return productDomain.getAllProductBaseByOrgId(orgId);
     }
 
