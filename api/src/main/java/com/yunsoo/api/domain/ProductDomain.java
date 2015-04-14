@@ -90,7 +90,7 @@ public class ProductDomain {
     }
 
     //获取基本产品信息 - ProductBase
-    public ProductBase getProductBaseById(long productBaseId) {
+    public ProductBase getProductBaseById(String productBaseId) {
         ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         if (productBaseObject == null) {
             return null;
@@ -100,7 +100,7 @@ public class ProductDomain {
         return productBase;
     }
 
-    public List<ProductBase> getAllProductBaseByOrgId(int orgId) {
+    public List<ProductBase> getAllProductBaseByOrgId(String orgId) {
         ProductBaseObject[] objects = dataAPIClient.get("productbase?orgId={id}", ProductBaseObject[].class, orgId);
         if (objects == null) {
             return null;
@@ -125,7 +125,7 @@ public class ProductDomain {
 
         productBase.setCategory(getProductCategoryById(productBaseObject.getCategoryId()));
         if (productBaseObject.getProductKeyTypeIds() != null) {
-            productBase.setProductKeyTypes(LookupObject.fromIdList(productKeyTypes, productBaseObject.getProductKeyTypeIds()));
+            productBase.setProductKeyTypeIds(LookupObject.fromIdList(productKeyTypes, productBaseObject.getProductKeyTypeIds()));
         }
         return productBase;
     }

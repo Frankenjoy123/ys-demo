@@ -38,9 +38,9 @@ public class ProductBaseController {
     private ProductDomain productDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ProductBase get(@PathVariable(value = "id") Long id) {
-        if (id == null || id < 0) {
-            throw new BadRequestException("ProductBaseId不应小于0！");
+    public ProductBase get(@PathVariable(value = "id") String id) {
+        if (id == null || id.isEmpty()) {
+            throw new BadRequestException("ProductBaseId不应为空！");
         }
         ProductBase productBase = productDomain.getProductBaseById(id);
         if (productBase == null) {
@@ -51,23 +51,23 @@ public class ProductBaseController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductBase> getAllForCurrentOrg() {
-        int orgId = 123456789; //fetch from AuthContext
+        String orgId = "123456789"; //fetch from AuthContext
         return productDomain.getAllProductBaseByOrgId(orgId);
     }
 
     //create
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Long create(@RequestBody ProductBase productBase) {
+    public String create(@RequestBody ProductBase productBase) {
         ProductBaseObject p = new ProductBaseObject();
         BeanUtils.copyProperties(productBase, p);
-        long id = dataAPIClient.post("productbase/", p, Long.class);
+        String id = dataAPIClient.post("productbase/", p, String.class);
         return id;
     }
 
     //patch update
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public void update(@PathVariable(value = "id") Integer id, @RequestBody ProductBase productBase) throws Exception {
+    public void update(@PathVariable(value = "id") String id, @RequestBody ProductBase productBase) throws Exception {
         //patch update, we don't provide functions like update with set null properties.
         ProductBaseObject p = new ProductBaseObject();
         BeanUtils.copyProperties(productBase, p);
@@ -77,13 +77,13 @@ public class ProductBaseController {
     //delete
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(value = "id") Long id) {
+    public void delete(@PathVariable(value = "id") String id) {
         dataAPIClient.delete("productbase/{id}", id);
     }
 
     @RequestMapping(value = "/thumbnail/{id}/{client}", method = RequestMethod.GET)
     public ResponseEntity<?> getThumbnail(
-            @PathVariable(value = "id") Long id,
+            @PathVariable(value = "id") String id,
             @PathVariable(value = "client") String client) {
         try {
             FileObject fileObject = dataAPIClient.get("productbase/thumbnail/{id}/{client}", FileObject.class, id, client);

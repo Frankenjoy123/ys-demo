@@ -36,7 +36,7 @@ public class ProductBaseController {
     private AmazonSetting amazonSetting;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ProductBaseObject getById(@PathVariable(value = "id") Long id) {
+    public ProductBaseObject getById(@PathVariable(value = "id") String id) {
         ProductBase productBase = productBaseService.getById(id);
         if (productBase == null) {
             throw new NotFoundException("Product");
@@ -48,9 +48,9 @@ public class ProductBaseController {
 
     @RequestMapping(value = "/thumbnail/{id}/{client}", method = RequestMethod.GET)
     public ResponseEntity getThumbnail(
-            @PathVariable(value = "id") Long id,
+            @PathVariable(value = "id") String id,
             @PathVariable(value = "client") String client) {
-        if (id == null || id <= 0) throw new BadRequestException("ID不能小于0！");
+        if (id == null || id.isEmpty()) throw new BadRequestException("ID不能为空！");
         if (client == null || client.isEmpty()) throw new BadRequestException("client不能为空！");
         S3Object s3Object;
         try {
@@ -80,7 +80,7 @@ public class ProductBaseController {
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductBaseObject> getByFilter(
-            @RequestParam(value = "orgId", required = false) Long orgId,
+            @RequestParam(value = "orgId", required = false) String orgId,
             @RequestParam(value = "categoryId", required = false) Integer categoryId) {
         return productBaseService.getByFilter(orgId, categoryId, true).stream()
                 .map(p -> {
@@ -93,7 +93,7 @@ public class ProductBaseController {
     //create
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Long create(@RequestBody ProductBaseObject productBase) {
+    public String create(@RequestBody ProductBaseObject productBase) {
         ProductBase p = new ProductBase();
         BeanUtils.copyProperties(productBase, p);
         return productBaseService.save(p);
@@ -101,7 +101,7 @@ public class ProductBaseController {
 
     //patch update, we don't provide functions like update with set null properties.
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public void patchUpdate(@PathVariable(value = "id") Long id, @RequestBody ProductBaseObject productBase) {
+    public void patchUpdate(@PathVariable(value = "id") String id, @RequestBody ProductBaseObject productBase) {
         productBase.setId(id);
         ProductBase p = new ProductBase();
         BeanUtils.copyProperties(productBase, p);
@@ -111,7 +111,7 @@ public class ProductBaseController {
     //delete
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(value = "id") Long id) {
+    public void delete(@PathVariable(value = "id") String id) {
         productBaseService.deactivate(id);
     }
 

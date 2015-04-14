@@ -78,7 +78,7 @@ public class ProductDomain {
     }
 
     //获取基本产品信息 - ProductBase
-    public ProductBase getProductBaseById(long productBaseId) {
+    public ProductBase getProductBaseById(String productBaseId) {
         ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         if (productBaseObject == null) {
             return null;

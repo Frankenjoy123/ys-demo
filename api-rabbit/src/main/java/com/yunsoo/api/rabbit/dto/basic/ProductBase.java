@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class ProductBase {
 
-    private Long id;
+    private String id;
     private ProductCategory category;
     private Long orgId;
     private String barcode;
@@ -36,11 +36,11 @@ public class ProductBase {
 
     private String thumbnailURL;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -16,7 +16,7 @@ public class ProductBaseModel {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private Long id;
+    private String id;
     @Column(name = "category_id")
     private Integer categoryId;
     @Column(name = "org_id")
@@ -44,11 +44,11 @@ public class ProductBaseModel {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modifiedDateTime;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
