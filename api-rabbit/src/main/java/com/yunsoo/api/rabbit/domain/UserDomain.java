@@ -22,9 +22,9 @@ public class UserDomain {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDomain.class);
 
     //call dataAPI to get current User
-    public User ensureUser(Integer userId, String deviceCode) {
+    public User ensureUser(String userId, String deviceCode) {
         User user = null;
-        if (userId != null && userId > 0) {
+        if (userId != null) {
             try {
                 user = dataAPIClient.get("user/id/{id}", User.class, userId);
             } catch (NotFoundException ex) {
@@ -32,7 +32,7 @@ public class UserDomain {
             }
         } else {
             try {
-                user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);
+                user = dataAPIClient.get("user/device/{devicecode}", User.class, deviceCode);
             } catch (NotFoundException ex) {
                 LOGGER.info("Notfound user for deviceCode = {0}", deviceCode);
             }

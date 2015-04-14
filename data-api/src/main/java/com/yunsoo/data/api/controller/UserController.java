@@ -48,7 +48,7 @@ public class UserController {
         return new ResponseEntity<UserDto>(UserDto.FromUser(userService.get(cellular)), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/token/{devicecode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/device/{devicecode}", method = RequestMethod.GET)
     public ResponseEntity<User> getUserByDeviceCode(@PathVariable(value = "devicecode") String devicecode) {
         List<User> users = userService.getUsersByFilter(null, devicecode, "", null);
         if (users == null || users.size() <= 0)

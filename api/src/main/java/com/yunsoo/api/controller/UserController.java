@@ -39,7 +39,7 @@ public class UserController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
 //    @PreAuthorize("hasRole('YUNSOO_ADMIN')")
-    public User getById(@PathVariable(value = "id") int id, @RequestHeader(value = "YS_AUTH_TOKEN") String YS_AUTH_TOKEN) throws NotFoundException {
+    public User getById(@PathVariable(value = "id") String id, @RequestHeader(value = "YS_AUTH_TOKEN") String YS_AUTH_TOKEN) throws NotFoundException {
         System.out.println("YS_AUTH_TOKEN: " + YS_AUTH_TOKEN);
         User user = dataAPIClient.get("user/id/{id}", User.class, id);
         if (user == null) throw new NotFoundException(40401, "User not found id=" + id);
@@ -104,7 +104,7 @@ public class UserController {
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@RequestBody Integer userId) throws Exception {
+    public void deleteUser(@RequestBody String userId) throws Exception {
         dataAPIClient.delete("user/delete/{id}", userId);
     }
 }
