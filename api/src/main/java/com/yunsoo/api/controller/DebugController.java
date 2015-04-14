@@ -1,5 +1,7 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.security.annotation.Permission;
+import com.yunsoo.api.security.permission.Action;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.ErrorResultCode;
 import com.yunsoo.common.web.client.RestClient;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Descriptions: For developer debug use only.
  */
 @RestController
+@Permission(resource = "debug")
 @RequestMapping(value = "/debug")
 public class DebugController {
 
@@ -27,17 +30,20 @@ public class DebugController {
     @Autowired
     private RestClient processorClient;
 
+    @Permission(action = Action.READ)
     @RequestMapping(value = "ok")
     @ResponseStatus(HttpStatus.OK)
     public String ok() {
         return "200 OK";
     }
 
+    @Permission(action = Action.CREATE)
     @RequestMapping(value = "created")
     @ResponseStatus(HttpStatus.CREATED)
     public void created() {
     }
 
+    @Permission(action = Action.CREATE)
     @RequestMapping(value = "accepted")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void accepted() {

@@ -85,4 +85,22 @@ public class PermissionDomain {
 
         return permissionPolicies;
     }
+
+    public TPermission getFromControllerAction() {
+        TPermission permission = new TPermission();
+
+
+        return permission;
+    }
+
+    public boolean hasPermission(long accountId, TPermission permission) {
+        boolean result = false;
+        List<TPermission> permissions = getAccountPermissionsByAccountId(accountId);
+        if (permissions != null && permissions.size() > 0) {
+
+
+            result = true; //todo
+        }
+        return result;
+    }
 }
