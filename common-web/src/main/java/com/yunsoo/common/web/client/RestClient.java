@@ -1,7 +1,9 @@
 package com.yunsoo.common.web.client;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.Assert;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -68,6 +70,10 @@ public class RestClient {
         return restTemplate.getForObject(createURL(url), responseType, uriVariables);
     }
 
+    public <T> T get(String url, ParameterizedTypeReference<T> responseType, Object... uriVariables) {
+        ResponseEntity<T> result = restTemplate.exchange(createURL(url), HttpMethod.GET, null, responseType, uriVariables);
+        return result.getBody();
+    }
 
     //POST
     public <T> T post(String url, Object request, Class<T> responseType, Object... uriVariables) {

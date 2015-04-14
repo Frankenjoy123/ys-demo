@@ -6,6 +6,8 @@ import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
 import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.basic.ProductBase;
+import com.yunsoo.api.security.annotation.Permission;
+import com.yunsoo.api.security.permission.Action;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
  * Descriptions:
  */
 @RestController
+@Permission(resource = "productkey")
 @RequestMapping(value = "/productkeybatch")
 public class ProductKeyBatchController {
 
@@ -37,6 +40,7 @@ public class ProductKeyBatchController {
     @Autowired
     private ProductKeyDomain productKeyDomain;
 
+    @Permission(action = Action.READ)
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductKeyBatch getById(@PathVariable(value = "id") String idStr) {
         int organizationId = 123456789;
@@ -56,6 +60,7 @@ public class ProductKeyBatchController {
         return batch;
     }
 
+    @Permission(action = Action.READ)
     @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
     public ResponseEntity<?> getKeysById(@PathVariable(value = "id") Long id) {
         return ResponseEntity.ok()
@@ -64,6 +69,7 @@ public class ProductKeyBatchController {
                 .body(new InputStreamResource(new ByteArrayInputStream(productKeyDomain.getProductKeysByBatchId(id))));
     }
 
+    @Permission(action = Action.READ)
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyBatch> getByFilter(@RequestParam(value = "productBaseId", required = false) Long productBaseId,
                                              @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
@@ -72,6 +78,7 @@ public class ProductKeyBatchController {
         return productKeyDomain.getAllProductKeyBatchesByOrgId(organizationId, productBaseId);
     }
 
+    @Permission(action = Action.CREATE)
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ProductKeyBatch create(@Valid @RequestBody ProductKeyBatchRequest request) {
         int quantity = request.getQuantity();
