@@ -59,7 +59,7 @@
     app.controller("rootCtrl", ["$scope", "$timeout", function ($scope, $timeout) {
         if (!$.cookie(window.YUNSOO_CONFIG.AUTH_COOKIE_NAME)) {
             //todo
-            //window.location.href = "login.html";
+            window.location.href = "login.html";
         }
         $scope.user = {
             name: "Jane Doe",
