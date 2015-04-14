@@ -30,8 +30,10 @@ public class ProductBaseDaoImpl implements ProductBaseDao {
 
 
     @Override
-    public void save(ProductBaseModel productBaseModel) {
-        sessionFactory.getCurrentSession().save(productBaseModel);
+    public Long save(ProductBaseModel productBaseModel) {
+        Session currentSession = sessionFactory.getCurrentSession();
+        currentSession.save(productBaseModel);
+        return productBaseModel.getId();
     }
 
     @Override

@@ -12,7 +12,7 @@ public interface ProductBaseService {
 
     public S3Object getProductThumbnail(String bucketName, String key) throws IOException;
 
-    public void save(ProductBase productBase);
+    public Long save(ProductBase productBase);
 
     public void update(ProductBase productBase);
 

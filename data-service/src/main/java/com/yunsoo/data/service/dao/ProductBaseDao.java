@@ -9,7 +9,7 @@ public interface ProductBaseDao {
 
     public ProductBaseModel getById(long id);
 
-    public void save(ProductBaseModel productBaseModel);
+    public Long save(ProductBaseModel productBaseModel);
 
     public void update(ProductBaseModel productBaseModel);
 

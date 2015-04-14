@@ -12,6 +12,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
@@ -38,6 +39,7 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/pushTo/{userid}/type/{typeid}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#message, 'message:read')")
     public List<Message> getNewMessagesByUserId(@PathVariable(value = "userid") Long userid,
                                                 @PathVariable(value = "typeid") Integer typeid) {
         if (userid == null || userid <= 0) throw new BadRequestException("UserId不能小于0！");
@@ -54,6 +56,7 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#message, 'message:read')")
     public Message getById(@PathVariable(value = "id") Integer id) throws NotFoundException {
         if (id == null || id <= 0) throw new BadRequestException("Id不能小于0！");
         try {
@@ -66,6 +69,7 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/getunread", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#message, 'message:read')")
     public List<Message> getUnreadMessagesBy(@RequestParam(value = "userid", required = true) Long userId,
                                              @RequestParam(value = "companyid", required = true) Long companyId,
                                              @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {

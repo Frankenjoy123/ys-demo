@@ -17,6 +17,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 /**
@@ -53,11 +54,11 @@ public class ProductBaseServiceImpl implements ProductBaseService {
     }
 
     @Override
-    public void save(ProductBase productBase) {
+    public Long save(ProductBase productBase) {
         if (productBase.getCreatedDateTime() == null) {
             productBase.setCreatedDateTime(DateTime.now()); //always set createdDateTime.
         }
-        productBaseDao.save(ProductBase.toModel(productBase));
+        return productBaseDao.save(ProductBase.toModel(productBase));
     }
 
     @Override
@@ -72,19 +73,23 @@ public class ProductBaseServiceImpl implements ProductBaseService {
 
     @Override
     public void delete(ProductBase productBase) {
-        productBaseDao.delete(ProductBase.toModel(productBase));
+        //productBaseDao.delete(ProductBase.toModel(productBase));
+        throw new NotImplementedException();
     }
 
     @Override
     public void delete(long id) {
-        ProductBaseModel model = new ProductBaseModel();
-        model.setId(id);
-        productBaseDao.delete(model);
+//        ProductBaseModel model = new ProductBaseModel();
+//        model.setId(id);
+//        productBaseDao.delete(model);
+        throw new NotImplementedException();
     }
 
     @Override
     public void deactivate(long id) {
-
+        ProductBase productBase = this.getById(id);
+        productBase.setActive(false);
+        this.patchUpdate(productBase);
     }
 
     @Override

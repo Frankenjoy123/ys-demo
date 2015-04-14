@@ -4,6 +4,9 @@ import com.yunsoo.api.rabbit.dto.basic.Account;
 import com.yunsoo.api.rabbit.dto.basic.User;
 import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.common.web.client.RestClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -21,8 +24,10 @@ public class AuthController {
 
     @Value("${yunsoo.token_header_name}")
     private String AUTH_HEADER_NAME;
-
 //    private static final long HALF_YEAR = 1000 * 60 * 60 * 24 * 150; // 150 days
+@Autowired
+private RestClient dataAPIClient;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -51,6 +56,23 @@ public class AuthController {
         HttpHeaders headers = new HttpHeaders();
         headers.add(AUTH_HEADER_NAME, token);
         return new ResponseEntity<String>(token, headers, HttpStatus.OK);
+    }
+
+    //Allow anonymous access
+    @RequestMapping(value = "register", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> createUser(@RequestBody User user) throws Exception {
+        long id = dataAPIClient.post("user/create", user, Long.class);
+
+        TAccount currentAccount = new TAccount();
+        currentAccount.setId(id);
+        currentAccount.setStatus(2); //Status的编码与TAccountStatusEnum一致
+        String token = tokenAuthenticationService.generateToken(currentAccount);
+
+        //set token
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(AUTH_HEADER_NAME, token);
+        return new ResponseEntity<Long>(id, headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/updatepassword", method = RequestMethod.POST)

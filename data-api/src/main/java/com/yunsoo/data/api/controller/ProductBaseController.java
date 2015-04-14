@@ -93,10 +93,10 @@ public class ProductBaseController {
     //create
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody ProductBaseObject productBase) {
+    public Long create(@RequestBody ProductBaseObject productBase) {
         ProductBase p = new ProductBase();
         BeanUtils.copyProperties(productBase, p);
-        productBaseService.save(p);
+        return productBaseService.save(p);
     }
 
     //patch update, we don't provide functions like update with set null properties.

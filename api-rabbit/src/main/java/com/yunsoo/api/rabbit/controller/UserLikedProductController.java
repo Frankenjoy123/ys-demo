@@ -54,10 +54,10 @@ public class UserLikedProductController {
         return new ResponseEntity<Long>(id, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/unlike", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/unlike/{Id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#usercollection, 'usercollection:delete')")
-    public void deleteUser(@RequestBody Long Id) throws Exception {
+    public void deleteUser(@PathVariable(value = "Id") Long Id) throws Exception {
         dataAPIClient.delete("user/collection/unlike", Id);
     }
 }

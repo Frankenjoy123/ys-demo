@@ -3,9 +3,11 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.common.data.object.FileObject;
+import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -56,21 +58,27 @@ public class ProductBaseController {
     //create
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody ProductBase productBase) {
-
+    public Long create(@RequestBody ProductBase productBase) {
+        ProductBaseObject p = new ProductBaseObject();
+        BeanUtils.copyProperties(productBase, p);
+        long id = dataAPIClient.post("productbase/", p, Long.class);
+        return id;
     }
 
     //patch update
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void update(@PathVariable(value = "id") Integer id, @RequestBody ProductBase productBase) throws Exception {
         //patch update, we don't provide functions like update with set null properties.
+        ProductBaseObject p = new ProductBaseObject();
+        BeanUtils.copyProperties(productBase, p);
+        dataAPIClient.patch("productbase/", p);
     }
 
     //delete
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "id") Long id) {
-
+        dataAPIClient.delete("productbase/{id}", id);
     }
 
     @RequestMapping(value = "/thumbnail/{id}/{client}", method = RequestMethod.GET)
