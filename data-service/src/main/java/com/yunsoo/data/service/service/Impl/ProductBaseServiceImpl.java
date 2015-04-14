@@ -17,7 +17,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 /**
@@ -74,7 +73,7 @@ public class ProductBaseServiceImpl implements ProductBaseService {
     @Override
     public void delete(ProductBase productBase) {
         //productBaseDao.delete(ProductBase.toModel(productBase));
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("delete is not implemented!");
     }
 
     @Override
@@ -82,7 +81,7 @@ public class ProductBaseServiceImpl implements ProductBaseService {
 //        ProductBaseModel model = new ProductBaseModel();
 //        model.setId(id);
 //        productBaseDao.delete(model);
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("delete is not implemented!");
     }
 
     @Override

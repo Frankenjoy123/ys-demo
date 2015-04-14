@@ -11,22 +11,22 @@ import java.util.List;
  */
 public interface UserService {
 
-    public User get(Long id);
+    public User get(String id);
 
-    public User get(String cellular);
+    public User getByCellular(String cellular);
 
     public S3Object getUserThumbnail(String bucket, String key) throws IOException;
 
-    public long save(User user) throws Exception;
+    public String save(User user) throws Exception;
 
     public ServiceOperationStatus update(User user) throws Exception;
 
     public ServiceOperationStatus patchUpdate(User user) throws Exception;
 
-    public boolean delete(Long id);
+    public boolean delete(String id);
 
     public List<User> getAllUsers();
 
-    public List<User> getUsersByFilter(Long id, String deviceCode, String cellular, Integer status);
+    public List<User> getUsersByFilter(String id, String deviceCode, String cellular, Integer status);
 
 }

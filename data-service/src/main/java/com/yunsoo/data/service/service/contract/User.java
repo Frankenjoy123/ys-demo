@@ -131,7 +131,7 @@ public class User {
         UserModel model = new UserModel();
         BeanUtils.copyProperties(user, model, new String[]{"createdDateTime", "thumbnailData", "id"});
         if (user.getId() != null && !user.getId().isEmpty()) {
-            model.setId(Long.parseLong(user.getId()));
+            model.setId(user.getId());
         }
         if (user.getCreatedDateTime() != null) {
             model.setCreatedDateTime(DateTime.parse(user.getCreatedDateTime()));

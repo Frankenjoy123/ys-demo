@@ -43,12 +43,12 @@ public class UserServiceImpl implements UserService {
     private AmazonSetting amazonSetting;
 
     @Override
-    public User get(Long id) {
+    public User get(String id) {
         return User.FromModel(userDAO.get(id));
     }
 
     @Override
-    public User get(String cellular) {
+    public User getByCellular(String cellular) {
         return User.FromModel(userDAO.get(cellular));
     }
 
@@ -93,15 +93,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long save(User user) throws Exception {
+    public String save(User user) throws Exception {
         if (user == null || user.getDeviceCode().isEmpty()) {
-            return -1L;
+            return "-1";
         }
         DateTime userCreatedTime = DateTime.now();
         String thumbnailKey = "thumb-" + Long.toString(userCreatedTime.getMillis());
         user.setThumbnail(thumbnailKey);
         user.setStatusId(dataServiceSetting.getUser_created_status_id()); //set newly created status
-        long userId = userDAO.save(User.ToModel(user));
+        String userId = userDAO.save(User.ToModel(user));
 
         if (user.getFileObject() != null) {
             String thumbKey = saveUserThumbnail(userId, user.getFileObject(), thumbnailKey);
@@ -134,7 +134,7 @@ public class UserServiceImpl implements UserService {
             DateTime userCreatedTime = DateTime.now();
             String thumbnailKey = "thumb-" + Long.toString(userCreatedTime.getMillis());
             user.setThumbnail(thumbnailKey);
-            String thumbKey = saveUserThumbnail(Long.parseLong(user.getId()), user.getFileObject(), thumbnailKey);
+            String thumbKey = saveUserThumbnail(user.getId(), user.getFileObject(), thumbnailKey);
         }
         return userDAO.update(User.ToModel(user)) == DaoStatus.success ? ServiceOperationStatus.Success : ServiceOperationStatus.Fail;
     }
@@ -145,14 +145,14 @@ public class UserServiceImpl implements UserService {
             DateTime userCreatedTime = DateTime.now();
             String thumbnailKey = "thumb-" + Long.toString(userCreatedTime.getMillis());
             user.setThumbnail(thumbnailKey);
-            saveUserThumbnail(Long.parseLong(user.getId()), user.getFileObject(), thumbnailKey);
+            saveUserThumbnail(user.getId(), user.getFileObject(), thumbnailKey);
         }
         UserModel model = getPatchModel(user);
         return userDAO.patchUpdate(model) == DaoStatus.success ? ServiceOperationStatus.Success : ServiceOperationStatus.Fail;
     }
 
     @Override
-    public boolean delete(Long id) {
+    public boolean delete(String id) {
         DaoStatus daoStatus = userDAO.delete(id, dataServiceSetting.getMessage_delete_status_id());
         return daoStatus == DaoStatus.success ? true : false;
     }
@@ -165,12 +165,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public List<User> getUsersByFilter(Long id, String deviceCode, String cellular, Integer status) {
+    public List<User> getUsersByFilter(String id, String deviceCode, String cellular, Integer status) {
         return User.FromModelList(userDAO.getUsersByFilter(id, deviceCode, cellular, status));
     }
 
     //Save thumbnail into S3 bucket
-    private String saveUserThumbnail(long userId, FileObject fileObject, String thumbnailKey) throws IOException, Exception {
+    private String saveUserThumbnail(String userId, FileObject fileObject, String thumbnailKey) throws IOException, Exception {
         if (fileObject == null) throw new Exception("ThumbnailFile is null!");
         InputStream inputStream = new ByteArrayInputStream(fileObject.getThumbnailData());
         //to-do:
@@ -198,7 +198,7 @@ public class UserServiceImpl implements UserService {
         UserModel model = new UserModel();
         BeanUtils.copyProperties(user, model, SpringBeanUtil.getNullPropertyNames(user));
         if (user.getId() != null && !user.getId().isEmpty()) {
-            model.setId(Long.parseLong(user.getId()));
+            model.setId(user.getId());
         }
         return model;
     }

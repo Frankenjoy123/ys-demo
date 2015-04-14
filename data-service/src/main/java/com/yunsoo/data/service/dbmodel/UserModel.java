@@ -25,7 +25,7 @@ public class UserModel {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private long id;
+    private String id;
     @Basic(optional = false)
     @Column(name = "address")
     private String address;
@@ -58,21 +58,21 @@ public class UserModel {
     public UserModel() {
     }
 
-    public UserModel(Long id) {
+    public UserModel(String id) {
         this.id = id;
     }
 
-    public UserModel(Long id, String address, String name) {
+    public UserModel(String id, String address, String name) {
         this.id = id;
         this.address = address;
         this.name = name;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

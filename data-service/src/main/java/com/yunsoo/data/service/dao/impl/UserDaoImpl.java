@@ -30,7 +30,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     @Transactional
-    public UserModel get(Long id) {
+    public UserModel get(String id) {
         String hql = "from UserModel where id=" + id;
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
 
@@ -43,7 +43,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public UserModel get(String cellular) {
+    public UserModel getByCellular(String cellular) {
         String hql = "from UserModel where cellular=" + cellular + " and statusId in (2,3)";
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
 
@@ -56,7 +56,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public long save(UserModel userModel) {
+    public String save(UserModel userModel) {
         userModel.setCreatedDateTime(DateTime.now());
         sessionFactory.getCurrentSession().save(userModel);
         return userModel.getId();
@@ -92,12 +92,12 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public DaoStatus delete(Long Id, int deleteStatus) {
+    public DaoStatus delete(String Id, int deleteStatus) {
 //        sessionFactory.getCurrentSession().deletePermanantly(userModel);
         return updateStatus(Id, deleteStatus);
     }
 
-    public DaoStatus updateStatus(Long userId, int status) {
+    public DaoStatus updateStatus(String userId, int status) {
         UserModel userModel = this.get(userId);
         if (userModel == null) return DaoStatus.NotFound;
 
@@ -113,10 +113,10 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<UserModel> getUsersByFilter(Long id, String deviceCode, String cellular, Integer status) {
+    public List<UserModel> getUsersByFilter(String id, String deviceCode, String cellular, Integer status) {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(UserModel.class);
         if (id != null) {
-            c.add(Restrictions.eq("id", id.longValue()));
+            c.add(Restrictions.eq("id", id));
         }
         if (!deviceCode.isEmpty()) {
             c.add(Restrictions.eq("deviceCode", deviceCode));
