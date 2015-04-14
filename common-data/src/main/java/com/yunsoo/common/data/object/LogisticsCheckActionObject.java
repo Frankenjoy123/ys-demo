@@ -14,7 +14,7 @@ public class LogisticsCheckActionObject {
     }
 
     public void setId(int id) {
-        id = id;
+        this.id = id;
     }
 
     public String getName() {
