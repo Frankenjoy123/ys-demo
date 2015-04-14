@@ -6,10 +6,8 @@ import com.yunsoo.common.web.client.RestClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Arrays;
 
@@ -19,9 +17,7 @@ import java.util.Arrays;
  * Descriptions:
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ClientConfiguration.class})
-@EnableAutoConfiguration
-@WebAppConfiguration
+@SpringApplicationConfiguration(classes = {ClientConfiguration.class})
 public class ClientTest {
 
     @Autowired
@@ -29,6 +25,7 @@ public class ClientTest {
 
     @Autowired
     private RestClient processorClient;
+
 
     @Test
     public void testGetBaseURL() {

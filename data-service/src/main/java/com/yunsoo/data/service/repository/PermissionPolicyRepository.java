@@ -9,4 +9,5 @@ import org.springframework.data.repository.CrudRepository;
  * Descriptions:
  */
 public interface PermissionPolicyRepository extends CrudRepository<PermissionPolicyEntity, Integer> {
+    Iterable<PermissionPolicyEntity> findByCode(String code);
 }

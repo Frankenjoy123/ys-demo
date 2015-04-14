@@ -30,6 +30,6 @@ CREATE TABLE account_permission_policy
 CREATE INDEX account_id ON account_permission_policy (account_id);
 INSERT INTO account_permission_policy (account_id, org_id, policy_code, created_by)
 VALUES
-  (1, "*", '*:*', 1);
+  (1, '1', 'productkey:*', 1);
 
 

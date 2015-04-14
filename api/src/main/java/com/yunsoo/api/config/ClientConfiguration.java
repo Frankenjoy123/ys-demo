@@ -3,8 +3,10 @@ package com.yunsoo.api.config;
 import com.yunsoo.api.client.DataAPIClient;
 import com.yunsoo.api.client.processor.ProcessorClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  * Created by:   Lijian
@@ -12,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * Descriptions:
  */
 @Configuration
+@Import(PropertyPlaceholderAutoConfiguration.class)
 public class ClientConfiguration {
 
     @Value("${yunsoo.api.client.dataapi.baseurl}")

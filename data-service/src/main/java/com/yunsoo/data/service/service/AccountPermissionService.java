@@ -1,10 +1,11 @@
 package com.yunsoo.data.service.service;
 
-import com.yunsoo.data.service.service.contract.AccountPermission;
-
 /**
- * @author KB
+ * Created by:   Lijian
+ * Created on:   2015/4/13
+ * Descriptions:
  */
 public interface AccountPermissionService {
-    public AccountPermission getPermissions(long orgId, long accountId);
+
+
 }

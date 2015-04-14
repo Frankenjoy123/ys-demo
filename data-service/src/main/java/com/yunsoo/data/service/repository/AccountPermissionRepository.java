@@ -9,5 +9,7 @@ import org.springframework.data.repository.CrudRepository;
  * Descriptions:
  */
 public interface AccountPermissionRepository extends CrudRepository<AccountPermissionEntity, Long> {
+    Iterable<AccountPermissionEntity> findByAccountId(Long accountId);
+
 }
 

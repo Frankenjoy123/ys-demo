@@ -13,6 +13,6 @@ CREATE INDEX code ON permission_policy (code);
 INSERT INTO permission_policy (code, name, resource_code, action_code, description)
 VALUES
   ('*:*', '管理员', '*', '*', 'admin'),
-  ('productkey:*', '产品码完全控制', 'productkey', 'read', ''),
+  ('productkey:*', '产品码完全控制', 'productkey', '*', ''),
   ('product:read', '产品读取', 'product', 'read', '');
 
