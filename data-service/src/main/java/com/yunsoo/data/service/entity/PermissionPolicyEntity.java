@@ -1,5 +1,7 @@
 package com.yunsoo.data.service.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 /**
@@ -12,9 +14,10 @@ import javax.persistence.*;
 public class PermissionPolicyEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
-    private Integer id;
+    private String id;
 
     @Column(name = "code")
     private String code;
@@ -32,11 +35,11 @@ public class PermissionPolicyEntity {
     private String description;
 
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

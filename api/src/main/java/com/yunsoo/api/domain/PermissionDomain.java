@@ -30,7 +30,7 @@ public class PermissionDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    public List<TPermission> getAccountPermissionsByAccountId(long accountId) {
+    public List<TPermission> getAccountPermissionsByAccountId(String accountId) {
         List<TPermission> permissions = new ArrayList<>();
         try {
             AccountPermissionObject[] permissionObjects =
@@ -93,7 +93,7 @@ public class PermissionDomain {
         return permission;
     }
 
-    public boolean hasPermission(long accountId, TPermission permission) {
+    public boolean hasPermission(String accountId, TPermission permission) {
         boolean result = false;
         List<TPermission> permissions = getAccountPermissionsByAccountId(accountId);
         if (permissions != null && permissions.size() > 0) {

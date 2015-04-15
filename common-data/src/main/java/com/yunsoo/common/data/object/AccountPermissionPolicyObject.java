@@ -7,16 +7,16 @@ package com.yunsoo.common.data.object;
  */
 public class AccountPermissionPolicyObject {
 
-    private Long accountId;
+    private String accountId;
     private String orgId;
     private String policyCode;
 
 
-    public Long getAccountId() {
+    public String getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Long accountId) {
+    public void setAccountId(String accountId) {
         this.accountId = accountId;
     }
 

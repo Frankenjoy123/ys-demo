@@ -1,5 +1,6 @@
 package com.yunsoo.data.service.entity;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -15,12 +16,13 @@ import javax.persistence.*;
 public class AccountPermissionEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
-    private Long id;
+    private String id;
 
     @Column(name = "account_id")
-    private Long accountId;
+    private String accountId;
 
     @Column(name = "org_id")
     private String orgId;
@@ -35,23 +37,23 @@ public class AccountPermissionEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDatetime;
 
-    @Column(name = "created_by")
-    private Long createdBy;
+    @Column(name = "created_account_id")
+    private String createdAccountId;
 
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Long getAccountId() {
+    public String getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Long accountId) {
+    public void setAccountId(String accountId) {
         this.accountId = accountId;
     }
 
@@ -87,11 +89,11 @@ public class AccountPermissionEntity {
         this.createdDatetime = createdDatetime;
     }
 
-    public Long getCreatedBy() {
-        return createdBy;
+    public String getCreatedAccountId() {
+        return createdAccountId;
     }
 
-    public void setCreatedBy(Long createdBy) {
-        this.createdBy = createdBy;
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
     }
 }

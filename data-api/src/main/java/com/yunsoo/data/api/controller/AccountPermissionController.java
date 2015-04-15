@@ -30,10 +30,11 @@ public class AccountPermissionController {
     private AccountPermissionPolicyRepository accountPermissionPolicyRepository;
 
     @RequestMapping(value = "permission/{accountId}", method = RequestMethod.GET)
-    public List<AccountPermissionObject> getPermissionsByAccountId(@PathVariable(value = "accountId") long accountId) {
+    public List<AccountPermissionObject> getPermissionsByAccountId(@PathVariable(value = "accountId") String accountId) {
         return StreamSupport.stream(accountPermissionRepository.findByAccountId(accountId).spliterator(), false)
                 .map(pe -> {
                     AccountPermissionObject p = new AccountPermissionObject();
+                    p.setAccountId(pe.getAccountId());
                     p.setOrgId(pe.getOrgId());
                     p.setResourceCode(pe.getResourceCode());
                     p.setActionCode(pe.getActionCode());
@@ -42,12 +43,13 @@ public class AccountPermissionController {
     }
 
     @RequestMapping(value = "permissionpolicy/{accountId}", method = RequestMethod.GET)
-    public List<AccountPermissionPolicyObject> getPermissionPoliciesByAccountId(@PathVariable(value = "accountId") long accountId) {
+    public List<AccountPermissionPolicyObject> getPermissionPoliciesByAccountId(@PathVariable(value = "accountId") String accountId) {
         return StreamSupport.stream(accountPermissionPolicyRepository.findByAccountId(accountId).spliterator(), false)
-                .map(pe -> {
+                .map(ppe -> {
                     AccountPermissionPolicyObject pp = new AccountPermissionPolicyObject();
-                    pp.setOrgId(pe.getOrgId());
-                    pp.setPolicyCode(pe.getPolicyCode());
+                    pp.setAccountId(ppe.getAccountId());
+                    pp.setOrgId(ppe.getOrgId());
+                    pp.setPolicyCode(ppe.getPolicyCode());
                     return pp;
                 }).collect(Collectors.toList());
     }
