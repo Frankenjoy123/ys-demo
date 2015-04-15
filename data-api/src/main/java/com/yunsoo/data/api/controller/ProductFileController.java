@@ -1,6 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.ProductFileObject;
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.ProductFileEntity;
 import com.yunsoo.data.service.repository.ProductFileRepository;
 import org.joda.time.DateTime;
@@ -35,10 +36,18 @@ public class ProductFileController {
 
     @RequestMapping(value = "/createby/{createby}/status/{status}/filetype/{filetype}", method = RequestMethod.GET)
     public List<ProductFileObject> get(@PathVariable(value = "createby") Long createby,
-                                       @PathVariable(value = "status")   Integer status,
+                                       @PathVariable(value = "status") Integer status,
                                        @PathVariable(value = "filetype") Integer filetype) {
 
-        Iterable<ProductFileEntity> entityList = productFileRepository.findByCreateByAndStatusAndFileType(createby,status,filetype);
+        Iterable<ProductFileEntity> entityList = null;
+        if (status == 0)
+            entityList = productFileRepository.findByCreateByAndFileTypeOrderByCreateDateDesc(createby, filetype);
+        else
+            entityList = productFileRepository.findByCreateByAndStatusAndFileTypeOrderByCreateDateDesc(createby, status, filetype);
+
+        if (entityList == null) {
+            throw new NotFoundException("ProductFile");
+        }
 
         List<ProductFileObject> productFileObjects = new ArrayList<>();
         for (ProductFileEntity entity : entityList) {

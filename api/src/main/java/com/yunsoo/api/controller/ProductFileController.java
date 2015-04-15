@@ -33,7 +33,7 @@ public class ProductFileController {
                         status,
                         filetype);
 
-        if (objects == null || objects.length == 0)
+        if (objects == null)
             throw new NotFoundException("Product file not found");
 
         return Arrays.asList(objects);

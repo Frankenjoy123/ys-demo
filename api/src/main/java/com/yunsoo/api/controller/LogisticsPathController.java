@@ -1,12 +1,15 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.LogisticsDomain;
+import com.yunsoo.api.domain.ProductFileDomain;
 import com.yunsoo.api.dto.LogisticsPath;
 import com.yunsoo.common.data.object.LogisticsBatchPathObject;
 import com.yunsoo.common.data.object.LogisticsPathObject;
+import com.yunsoo.common.data.object.ProductFileObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotAcceptableException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
@@ -32,6 +35,9 @@ public class LogisticsPathController {
     private RestClient dataAPIClient;
 
     @Autowired
+    private ProductFileDomain productFileDomain;
+
+    @Autowired
     private LogisticsDomain logisticsDomain;
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
@@ -50,6 +56,12 @@ public class LogisticsPathController {
 
         Iterator<String> itr = request.getFileNames();
         MultipartFile file = request.getFile(itr.next());
+
+        ProductFileObject productFileObject = new ProductFileObject();
+        productFileObject.setFileName(file.getOriginalFilename());
+        productFileObject.setCreateDate(DateTime.now());
+        productFileObject.setCreateBy(1l);
+        productFileObject.setFileType(2);
 
         try {
             InputStreamReader in = new InputStreamReader(file.getInputStream());
@@ -82,10 +94,19 @@ public class LogisticsPathController {
 
             dataAPIClient.post("/logisticspath/batchcreate", logisticsBatchPathObject, Long.class);
 
+            productFileObject.setStatus(1);
+            productFileDomain.createProductFile(productFileObject);
+
             return true;
         } catch (InternalServerErrorException e) {
+            productFileObject.setStatus(2);
+            productFileDomain.createProductFile(productFileObject);
+
             throw new InternalServerErrorException(e.getMessage());
         } catch (Exception e) {
+            productFileObject.setStatus(2);
+            productFileDomain.createProductFile(productFileObject);
+
             throw new NotAcceptableException("数据解析失败，请检查文件。");
         }
     }
