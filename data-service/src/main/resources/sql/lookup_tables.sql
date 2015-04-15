@@ -1,5 +1,5 @@
 #product_status_lkp
-DROP TABLE product_status_lkp;
+DROP TABLE IF EXISTS product_status_lkp;
 CREATE TABLE product_status_lkp
 (
   id          INT PRIMARY KEY  NOT NULL,
@@ -16,7 +16,7 @@ INSERT INTO product_status_lkp (id, code, name, description, active) VALUES (2, 
 INSERT INTO product_status_lkp (id, code, name, description, active) VALUES (3, 'DELETED', '已删除', '已删除', TRUE);
 
 #product_key_type_lkp
-DROP TABLE product_key_type_lkp;
+DROP TABLE IF EXISTS product_key_type_lkp;
 CREATE TABLE product_key_type_lkp
 (
   id          INT PRIMARY KEY  NOT NULL,
@@ -33,7 +33,7 @@ VALUES (2, 'QRCODE_SECURE', '隐藏二维码', '隐藏二维码', TRUE);
 INSERT INTO product_key_type_lkp (id, code, name, description, active) VALUES (3, 'RFID', 'RFID标签', 'RFID标签', TRUE);
 
 #product_key_batch_status_lkp
-DROP TABLE product_key_batch_status_lkp;
+DROP TABLE IF EXISTS product_key_batch_status_lkp;
 CREATE TABLE product_key_batch_status_lkp
 (
   id          INT PRIMARY KEY  NOT NULL,
@@ -47,7 +47,7 @@ CREATE UNIQUE INDEX id_UNIQUE ON product_key_batch_status_lkp (id);
 INSERT INTO product_key_batch_status_lkp (id, code, name, description, active) VALUES (0, 'NEW', '新建', '新建', TRUE);
 
 #resource_lkp
-DROP TABLE permission_resource_lkp;
+DROP TABLE IF EXISTS permission_resource_lkp;
 CREATE TABLE permission_resource_lkp
 (
   code        VARCHAR(100) PRIMARY KEY NOT NULL,
@@ -62,7 +62,7 @@ VALUES
   ('productkey', '产品码', 'productkey');
 
 #action_lkp
-DROP TABLE permission_action_lkp;
+DROP TABLE IF EXISTS permission_action_lkp;
 CREATE TABLE permission_action_lkp
 (
   code        VARCHAR(100) PRIMARY KEY NOT NULL,

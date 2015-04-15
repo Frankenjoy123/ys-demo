@@ -2,13 +2,11 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.ErrorResultCode;
+import com.yunsoo.common.util.IdGenerator;
 import com.yunsoo.common.web.exception.RestErrorResultException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by:   Lijian
@@ -60,14 +58,8 @@ public class DebugController {
         throw new Exception("Error");
     }
 
-//    @Value("${yunsoo.debug}")
-//    private String debug;
-//
-//    @Value("${jdbc.url}")
-//    private String jdbcURL;
-//
-//    @RequestMapping(value = "properties")
-//    public List<String> getProperties() throws Exception {
-//        return Arrays.asList(debug, jdbcURL);
-//    }
+    @RequestMapping(value = "id", method = RequestMethod.GET)
+    public String getNewId(){
+        return IdGenerator.getNew();
+    }
 }
