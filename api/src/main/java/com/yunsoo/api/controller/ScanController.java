@@ -242,6 +242,6 @@ public class ScanController {
         } else {
             scanRecord.setLocation("未公开地址"); //用户选择不公开隐私地址信息
         }
-        return dataAPIClient.post("scan/save", scanRecord, Long.class);
+        return dataAPIClient.post("scan", scanRecord, Long.class);
     }
 }

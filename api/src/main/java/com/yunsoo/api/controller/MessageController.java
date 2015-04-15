@@ -86,19 +86,19 @@ public class MessageController {
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public long createMessages(@RequestBody Message message) {
-        long id = dataAPIClient.post("message/create", message, Long.class);
+        long id = dataAPIClient.post("message", message, Long.class);
         return id;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.PATCH)
     public void updateMessages(@RequestBody Message message) {
-        dataAPIClient.patch("message/update", message);
+        dataAPIClient.patch("message", message);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMessages(@PathVariable(value = "id") Long id) {
-        dataAPIClient.delete("message/delete/{id}", id);
+        dataAPIClient.delete("message/{id}", id);
     }
 
     @RequestMapping(value = "/image/{imagekey}", method = RequestMethod.GET)

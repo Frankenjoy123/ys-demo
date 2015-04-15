@@ -8,7 +8,7 @@ import java.util.List;
  * @author Zhe Zhang
  */
 public interface UserDao {
-    public UserModel get(String id);
+    public UserModel getById(String id);
 
     public UserModel getByCellular(String cellular);
 

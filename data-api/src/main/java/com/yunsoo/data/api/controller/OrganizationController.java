@@ -42,20 +42,20 @@ public class OrganizationController {
         return new ResponseEntity<Organization>(organizationService.get(name), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createOrganization(@RequestBody Organization org) {
         long id = organizationService.save(org);
         HttpStatus status = id > 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
         return new ResponseEntity<Long>(id, status);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     public ResponseEntity<?> updateOrganization(@RequestBody Organization org) {
         Boolean result = organizationService.update(org).equals(ServiceOperationStatus.Success) ? true : false;
         return new ResponseEntity<Boolean>(result, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteOrganization(@PathVariable(value = "id") int id) {
         Boolean result = organizationService.delete(id, 5); //deletePermanantly status is 5 in dev DB
         return new ResponseEntity<Boolean>(result, HttpStatus.NO_CONTENT);

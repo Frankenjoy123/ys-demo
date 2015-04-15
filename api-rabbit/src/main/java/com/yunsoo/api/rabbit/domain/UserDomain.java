@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.dto.basic.User;
+import com.yunsoo.common.util.UuidUtil;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
@@ -42,8 +43,8 @@ public class UserDomain {
                 newUser.setDeviceCode(deviceCode);
                 newUser.setName(Long.toString(DateTime.now().getMillis())); //default name is the time.
 
-                long id = dataAPIClient.post("user/create", newUser, Long.class); //save user
-                if (id >= 0) {
+                String id = dataAPIClient.post("user", newUser, String.class); //save user
+                if (UuidUtil.isValid(id)) {
                     newUser.setId(id);
                     return newUser;
                 } else {

@@ -14,7 +14,7 @@ public class PackageDto {
     private int productCount;
     private int packageCount;
     private List<PackageDto> subPackages;
-    private long operator; // Will join to User table to get the user info
+    private long operator; // Will join to User table to getById the user info
 
     public PackageDto() {
     }

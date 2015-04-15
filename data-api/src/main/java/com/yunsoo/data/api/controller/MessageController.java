@@ -74,21 +74,21 @@ public class MessageController {
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Long> createMessages(@RequestBody Message message) {
         long id = messageService.save(message);
         return new ResponseEntity<Long>(id, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PATCH)
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
     public ResponseEntity updateMessages(@RequestBody Message message) {
         message.setLastUpatedDateTime(DateTime.now());
         messageService.patchUpdate(message);
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMessages(@PathVariable(value = "id") Long id) {
         messageService.delete(id);

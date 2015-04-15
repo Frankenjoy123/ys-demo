@@ -23,7 +23,7 @@ public class PackageContract {
     private List<PackageContract> subPackages;
 
     private List<Product> products;
-    private long operator; // Will join to User table to get the user info 
+    private long operator; // Will join to User table to getById the user info
     private DateTime created_datetime;
 
     public PackageContract() {

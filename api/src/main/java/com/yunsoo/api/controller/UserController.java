@@ -90,21 +90,21 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> createUser(@RequestBody User user) throws Exception {
-        long id = dataAPIClient.post("user/create", user, Long.class);
+        long id = dataAPIClient.post("user", user, Long.class);
         return new ResponseEntity<Long>(id, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PATCH)
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
     public void updateUser(@RequestBody User user) throws Exception {
-        dataAPIClient.patch("user/update", user);
+        dataAPIClient.patch("user", user);
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@RequestBody String userId) throws Exception {
-        dataAPIClient.delete("user/delete/{id}", userId);
+        dataAPIClient.delete("user/{id}", userId);
     }
 }

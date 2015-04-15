@@ -120,7 +120,7 @@ public class LogisticsPathsDto {
             LogisticsCheckPath path = new LogisticsCheckPath();
             path.setProductKey(key);
 
-            //Use deviceId to get start check point
+            //Use deviceId to getById start check point
             path.setStartCheckPoint(pathsDto.getStartCheckPoint());
 
             //Record the start date as the server date

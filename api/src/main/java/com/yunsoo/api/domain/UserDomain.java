@@ -42,7 +42,7 @@ public class UserDomain {
                 newUser.setDeviceCode(deviceCode);
                 newUser.setName(Long.toString(DateTime.now().getMillis())); //default name is the time.
 
-                long id = dataAPIClient.post("user/create", newUser, Long.class); //save user
+                long id = dataAPIClient.post("user", newUser, Long.class); //save user
                 if (id >= 0) {
                     newUser.setId(id);
                     return newUser;

@@ -62,7 +62,7 @@ public class ScanRecordDaoImpl implements ScanRecordDao {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(ScanRecordModel.class);
         if (Id != null) {
             if (getOlder) {
-                c.add(Restrictions.lt("id", Id)); //get scan records that older than current ScanRecordId.
+                c.add(Restrictions.lt("id", Id)); //getById scan records that older than current ScanRecordId.
             } else {
                 c.add(Restrictions.gt("id", Id));  //newer scan records should be larger.
             }

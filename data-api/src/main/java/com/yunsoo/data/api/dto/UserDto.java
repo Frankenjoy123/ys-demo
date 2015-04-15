@@ -171,6 +171,7 @@ public class UserDto {
 
     //convert User into UserDto
     public static UserDto FromUser(User user) {
+        if (user == null) return null;
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(user, userDto, SpringBeanUtil.getNullPropertyNames(user));
         return userDto;

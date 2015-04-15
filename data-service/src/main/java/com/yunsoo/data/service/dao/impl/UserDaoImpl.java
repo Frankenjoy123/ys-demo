@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.yunsoo.data.service.util.SpringBeanUtil;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -30,25 +29,14 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     @Transactional
-    public UserModel get(String id) {
-        String hql = "from UserModel where id=" + id;
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
-
-//        @SuppressWarnings("unchecked")
-        List<UserModel> listUser = (List<UserModel>) query.list();
-        if (listUser != null && !listUser.isEmpty()) {
-            return listUser.get(0);
-        }
-        return null;
+    public UserModel getById(String id) {
+        return (UserModel) sessionFactory.getCurrentSession().get(
+                UserModel.class, id);
     }
 
     @Override
     public UserModel getByCellular(String cellular) {
-        String hql = "from UserModel where cellular=" + cellular + " and statusId in (2,3)";
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
-
-        @SuppressWarnings("unchecked")
-        List<UserModel> listUser = (List<UserModel>) query.list();
+        List<UserModel> listUser = this.getUsersByFilter(null, null, cellular, null);
         if (listUser != null && !listUser.isEmpty()) {
             return listUser.get(0);
         }
@@ -98,7 +86,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     public DaoStatus updateStatus(String userId, int status) {
-        UserModel userModel = this.get(userId);
+        UserModel userModel = this.getById(userId);
         if (userModel == null) return DaoStatus.NotFound;
 
         userModel.setStatusId(status); //find in config file for deleted status
@@ -115,13 +103,13 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<UserModel> getUsersByFilter(String id, String deviceCode, String cellular, Integer status) {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(UserModel.class);
-        if (id != null) {
+        if (id != null && !id.isEmpty()) {
             c.add(Restrictions.eq("id", id));
         }
-        if (!deviceCode.isEmpty()) {
+        if (deviceCode != null && !deviceCode.isEmpty()) {
             c.add(Restrictions.eq("deviceCode", deviceCode));
         }
-        if (!cellular.isEmpty()) {
+        if (cellular != null && !cellular.isEmpty()) {
             c.add(Restrictions.eq("cellular", cellular));
         }
         if (status != null) {

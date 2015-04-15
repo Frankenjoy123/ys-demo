@@ -37,21 +37,22 @@ import java.security.Principal;
 @RequestMapping("/user")
 public class UserController {
 
+    @Autowired
     private RestClient dataAPIClient;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
-    @Autowired
-    UserController(RestClient dataAPIClient) {
-        this.dataAPIClient = dataAPIClient;
-    }
+//    @Autowired
+//    UserController(RestClient dataAPIClient) {
+//        this.dataAPIClient = dataAPIClient;
+//    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#user, 'user:read')")
-    public User getById(@PathVariable(value = "id") Integer id) throws NotFoundException {
-        if (id == null || id < 0) {
-            throw new BadRequestException("UserId不应小于0！");
+    public User getById(@PathVariable(value = "id") String id) throws NotFoundException {
+        if (id == null || id.isEmpty()) {
+            throw new BadRequestException("UserId不应为空！");
         }
         User user = dataAPIClient.get("user/id/{id}", User.class, id);
         if (user == null) throw new NotFoundException(40401, "User not found id=" + id);
@@ -61,9 +62,9 @@ public class UserController {
     @RequestMapping(value = "/cellular/{cellular}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#user, 'user:read')")
 //    @PostFilter("hasPermission(filterObject, 'read') or hasPermission(filterObject, 'admin')")
-    public User getByCellular(@PathVariable(value = "cellular") Long cellular) throws NotFoundException {
-        if (cellular == null || cellular <= 0L) {
-            throw new BadRequestException("cellular格式错误！");
+    public User getByCellular(@PathVariable(value = "cellular") String cellular) throws NotFoundException {
+        if (cellular == null || cellular.isEmpty()) {
+            throw new BadRequestException("cellular不能为空！");
         }
         User user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
         if (user == null) throw new NotFoundException(40401, "User not found cellular=" + cellular);
@@ -86,10 +87,10 @@ public class UserController {
     @RequestMapping(value = "/thumbnail/{id}/{key}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#user, 'user:read')")
     public ResponseEntity<?> getThumbnail(
-            @PathVariable(value = "id") Long id,
+            @PathVariable(value = "id") String id,
             @PathVariable(value = "key") String key) {
-        if (id == null || id < 0) {
-            throw new BadRequestException("Id不应小于0！");
+        if (id == null || id.isEmpty()) {
+            throw new BadRequestException("Id不应为空！");
         }
         if (key == null || key.isEmpty()) {
             throw new BadRequestException("Key不应为空！");
@@ -112,13 +113,13 @@ public class UserController {
     @RequestMapping(value = "", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#user, 'user:update')")
     public void updateUser(@RequestBody User user) throws Exception {
-        dataAPIClient.patch("user/update", user);
+        dataAPIClient.patch("user", user);
     }
 
-    @RequestMapping(value = "{userId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#user, 'user:delete')")
     public void deleteUser(@PathVariable(value = "userId") Long userId) throws Exception {
-        dataAPIClient.delete("user/delete/{id}", userId);
+        dataAPIClient.delete("user/{id}", userId);
     }
 }

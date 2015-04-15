@@ -105,7 +105,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         //generate productKeys
         List<List<String>> keyList = generateProductKeys(batch);
 
-        //save batch to get the id
+        //save batch to getById the id
         batch.setId(0L); //set to 0 for creating new item
         if (batch.getCreatedDateTime() == null) batch.setCreatedDateTime(DateTime.now());
         ProductKeyBatch newBatch = saveProductKeyBatch(batch);

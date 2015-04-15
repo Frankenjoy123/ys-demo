@@ -65,7 +65,7 @@ private RestClient dataAPIClient;
         //Reset user's default creadit and level
         user.setYsCreadit(0);
         user.setLevel(1);
-        String id = dataAPIClient.post("user/create", user, String.class);
+        String id = dataAPIClient.post("user", user, String.class);
 
         TAccount currentAccount = new TAccount();
         currentAccount.setId(id);

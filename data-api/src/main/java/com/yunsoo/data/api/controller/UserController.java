@@ -37,7 +37,7 @@ public class UserController {
 
     @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
     public ResponseEntity<UserDto> getUserById(@PathVariable(value = "id") String id) {
-        User user = userService.get(id);
+        User user = userService.getById(id);
         if (user == null) throw new NotFoundException("User not found for id = " + id);
         UserDto userDto = UserDto.FromUser(user);
         return new ResponseEntity<UserDto>(userDto, HttpStatus.OK);
@@ -45,7 +45,9 @@ public class UserController {
 
     @RequestMapping(value = "/cellular/{cellular}", method = RequestMethod.GET)
     public ResponseEntity<UserDto> getUserByCellular(@PathVariable(value = "cellular") String cellular) {
-        return new ResponseEntity<UserDto>(UserDto.FromUser(userService.get(cellular)), HttpStatus.OK);
+        User user = userService.getByCellular(cellular);
+        if (user == null) throw new NotFoundException("User not found for cellular = " + cellular);
+        return new ResponseEntity<UserDto>(UserDto.FromUser(user), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/device/{devicecode}", method = RequestMethod.GET)
@@ -86,7 +88,7 @@ public class UserController {
     }
 
     //Return -1L if Fail, or the userId if Success.
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> createUser(@RequestBody UserDto userDto) throws Exception {
         User user = UserDto.ToUser(userDto);
         String id = userService.save(user);
@@ -94,7 +96,7 @@ public class UserController {
         return new ResponseEntity<String>(id, status);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PATCH)
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
     public ResponseEntity<?> updateUser(@RequestBody UserDto userDto) throws Exception {
         //patch update, we don't provide functions like update with set null properties.
         User user = UserDto.ToUser(userDto);
@@ -102,7 +104,7 @@ public class UserController {
         return new ResponseEntity<Boolean>(result, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable(value = "id") String id) {
         Boolean result = userService.delete(id); //deletePermanantly status is 5 in dev DB
         return new ResponseEntity<Boolean>(result, HttpStatus.NO_CONTENT);

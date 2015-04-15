@@ -5,7 +5,7 @@ package com.yunsoo.api.rabbit.dto.basic;
  */
 public class User {
 
-    private Long id;
+    private String id;
     private String address;
     private String name;
     private String cellular;
@@ -21,11 +21,11 @@ public class User {
     private int statusId;
     private String createdDateTime;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

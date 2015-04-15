@@ -131,10 +131,10 @@ public class LogisticsCheckPathDto {
         LogisticsCheckPath path = new LogisticsCheckPath();
         path.setId(pathDto.getId());
 
-        //Need to get key list from key package
+        //Need to getById key list from key package
         path.setProductKey(pathDto.getProductKey());
 
-        //Use deviceId to get start check point
+        //Use deviceId to getById start check point
         path.setStartCheckPoint(pathDto.getStartCheckPoint());
 
         //Record the start date as the server date

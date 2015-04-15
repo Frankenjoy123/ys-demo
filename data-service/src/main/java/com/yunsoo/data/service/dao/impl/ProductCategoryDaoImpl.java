@@ -28,7 +28,7 @@ public class ProductCategoryDaoImpl implements ProductCategoryDao {
     }
 
     @Override
-    //get product-sub-categories by parent category.
+    //getById product-sub-categories by parent category.
     public List<ProductCategoryModel> getProductCategoriesByParentId(int parentId) {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(ProductCategoryModel.class)
                 .add(Restrictions.eq("parentId", parentId))

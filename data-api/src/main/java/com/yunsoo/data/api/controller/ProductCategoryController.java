@@ -39,7 +39,7 @@ public class ProductCategoryController {
 //        return this.productCategoryService.getById(productCategoryId);
 //    }
 
-    @RequestMapping(value = "/list/rootlevel", method = RequestMethod.GET)
+    @RequestMapping(value = "/rootlevel", method = RequestMethod.GET)
     public List<ProductCategory> getRootProductCategories() {
         return productCategoryService.getRootProductCategories();
     }

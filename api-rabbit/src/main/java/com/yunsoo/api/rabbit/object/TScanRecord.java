@@ -12,7 +12,7 @@ public class TScanRecord {
     private long baseProductId;
     private int clientId;
     private String deviceId;
-    private Long userId;
+    private String userId;
     private String detail;
     private String createdDateTime;
     private Double latitude;
@@ -51,12 +51,12 @@ public class TScanRecord {
         this.deviceId = deviceId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public String getUserId() {
+        return userId;
     }
 
     public String getDetail() {

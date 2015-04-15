@@ -24,7 +24,7 @@ public class Application {
 
 //        HashSet<String> set = new HashSet<>();
 //        for(int i=0; i< 1000000; i++) {
-//            String util = UuidUtil.get().toString();
+//            String util = UuidUtil.getById().toString();
 //            if(set.contains(util)){
 //                System.out.println("Wrong!");
 //            }else {

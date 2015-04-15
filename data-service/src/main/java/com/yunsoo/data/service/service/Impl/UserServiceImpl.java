@@ -43,13 +43,13 @@ public class UserServiceImpl implements UserService {
     private AmazonSetting amazonSetting;
 
     @Override
-    public User get(String id) {
-        return User.FromModel(userDAO.get(id));
+    public User getById(String id) {
+        return User.FromModel(userDAO.getById(id));
     }
 
     @Override
     public User getByCellular(String cellular) {
-        return User.FromModel(userDAO.get(cellular));
+        return User.FromModel(userDAO.getByCellular(cellular));
     }
 
     //to-be refactored
@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
 //            String thumbKey = saveUserThumbnail(userId, user.getThumbnailFile());
 //            //to-do: Async the below update.
 //            // patch update thumbnail url
-//            UserModel currentUser = userDAO.get(userId);
+//            UserModel currentUser = userDAO.getById(userId);
 //            if (currentUser == null) {
 //                return -2;
 //            }

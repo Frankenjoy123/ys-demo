@@ -7,7 +7,7 @@ import com.yunsoo.data.service.dbmodel.ProductCategoryModel;
 public interface ProductCategoryDao {
     public ProductCategoryModel getById(int id);
 
-    public List<ProductCategoryModel> getProductCategoriesByParentId(int parentId); //get product-sub-categories by parent category id
+    public List<ProductCategoryModel> getProductCategoriesByParentId(int parentId); //getById product-sub-categories by parent category id
 
     public List<ProductCategoryModel> getRootProductCategories();
 

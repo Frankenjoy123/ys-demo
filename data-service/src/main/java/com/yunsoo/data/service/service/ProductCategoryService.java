@@ -16,7 +16,7 @@ public interface ProductCategoryService {
 
 	public List<ProductCategory> getAllProductCategories();
 
-	public List<ProductCategory> getProductCategoriesByParentId(int parentId); //get product-sub-categories by parent category id
+	public List<ProductCategory> getProductCategoriesByParentId(int parentId); //getById product-sub-categories by parent category id
 
 	public List<ProductCategory> getRootProductCategories();
 

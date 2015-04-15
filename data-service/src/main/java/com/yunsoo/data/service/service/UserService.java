@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface UserService {
 
-    public User get(String id);
+    public User getById(String id);
 
     public User getByCellular(String cellular);
 
