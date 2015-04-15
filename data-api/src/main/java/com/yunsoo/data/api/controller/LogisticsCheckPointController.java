@@ -34,20 +34,20 @@ public class LogisticsCheckPointController {
         return new ResponseEntity<LogisticsCheckPoint>(pointService.get(name), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<ResultWrapper> createLogisticsCheckPoint(@RequestBody LogisticsCheckPoint point) {
         int id = pointService.save(point);
         HttpStatus status = id > 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     public ResponseEntity<ResultWrapper> updateLogisticsCheckPoint(@RequestBody LogisticsCheckPoint point) {
         Boolean result = pointService.update(point).equals(ServiceOperationStatus.Success) ? true : false;
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<ResultWrapper> deleteLogisticsCheckPoint(@PathVariable(value = "id") int id) {
         Boolean result = pointService.delete(id, 5); //deletePermanantly status is 5 in dev DB
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);

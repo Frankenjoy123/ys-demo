@@ -41,7 +41,7 @@ public class LogisticsCheckPathController {
         return new ResponseEntity<List<LogisticsCheckPathDto>>(pathDtoList, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public long createLogisticsCheckPath(@RequestBody LogisticsCheckPathDto pathDto) {
 
         List<String> allKeys = packageService.loadAllKeys(pathDto.getProductKey());
@@ -81,13 +81,13 @@ public class LogisticsCheckPathController {
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     public ResponseEntity<ResultWrapper> updateLogisticsCheckPath(@RequestBody LogisticsCheckPathDto pathDto) {
         Boolean result = pathService.update(LogisticsCheckPathDto.ToLogisticsCheckPath(pathDto)).equals(ServiceOperationStatus.Success) ? true : false;
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<ResultWrapper> deleteLogisticsCheckPath(@PathVariable(value = "id") Long id) {
         Boolean result = pathService.delete(id, 5); //deletePermanantly status is 5 in dev DB
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);

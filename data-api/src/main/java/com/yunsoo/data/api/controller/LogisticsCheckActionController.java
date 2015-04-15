@@ -43,20 +43,20 @@ public class LogisticsCheckActionController {
         return new ResponseEntity<List<LogisticsCheckAction>>(actionService.getLogisticsCheckActionsByOrg(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<ResultWrapper> createLogisticsCheckAction(@RequestBody LogisticsCheckAction action) {
         int id = actionService.save(action);
         HttpStatus status = id > 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     public ResponseEntity<ResultWrapper> updateLogisticsCheckAction(@RequestBody LogisticsCheckAction action) {
         Boolean result = actionService.update(action).equals(ServiceOperationStatus.Success) ? true : false;
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<ResultWrapper> deleteLogisticsCheckAction(@PathVariable(value = "id") int id) {
         Boolean result = actionService.delete(id, 5); //deletePermanantly status is 5 in dev DB
         return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
