@@ -2,6 +2,7 @@ package com.yunsoo.data.service.dbmodel;
 
 import com.yunsoo.common.data.object.FileObject;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -23,9 +24,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 //    @NamedQuery(name = "Employee.findByName", query = "SELECT e FROM Employee e WHERE e.name = :name")})
 public class UserModel {
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
-    private long id;
+    private String id;
     @Basic(optional = false)
     @Column(name = "address")
     private String address;
@@ -58,21 +60,21 @@ public class UserModel {
     public UserModel() {
     }
 
-    public UserModel(Long id) {
+    public UserModel(String id) {
         this.id = id;
     }
 
-    public UserModel(Long id, String address, String name) {
+    public UserModel(String id, String address, String name) {
         this.id = id;
         this.address = address;
         this.name = name;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

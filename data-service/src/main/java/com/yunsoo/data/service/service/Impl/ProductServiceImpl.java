@@ -35,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
         if (productModel == null || productModel.getProductBaseId() == null) {
             return null;
         }
-        long productBaseId = productModel.getProductBaseId();
+        long productBaseId = productModel.getProductBaseId(); //productBaseId must not null
         int productStatusId = productModel.getProductStatusId() == null ? 0 : productModel.getProductStatusId();
 
         Product product = new Product();

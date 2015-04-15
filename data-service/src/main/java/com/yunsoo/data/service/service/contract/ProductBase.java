@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 public class ProductBase {
 
-    private Long id;
+    private String id;
     private Integer categoryId;
     private Long orgId;
     private String barcode;
@@ -28,7 +28,7 @@ public class ProductBase {
     private String details;
     private Integer shelfLife;
     private String shelfLifeInterval;
-    private List<Integer> productKeyTypeIds;
+    private List<String> productKeyTypeCodes;
     private Boolean active;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -37,11 +37,11 @@ public class ProductBase {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime modifiedDateTime;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -109,12 +109,12 @@ public class ProductBase {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
-    public List<Integer> getProductKeyTypeIds() {
-        return productKeyTypeIds;
+    public List<String> getProductKeyTypeCodes() {
+        return productKeyTypeCodes;
     }
 
-    public void setProductKeyTypeIds(List<Integer> productKeyTypeIds) {
-        this.productKeyTypeIds = productKeyTypeIds;
+    public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
+        this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
     public Boolean getActive() {
@@ -153,11 +153,11 @@ public class ProductBase {
         productBase.setDetails(model.getDetails());
         productBase.setShelfLife(model.getShelfLife());
         productBase.setShelfLifeInterval(model.getShelfLifeInterval());
-        String ids = model.getProductKeyTypeIds();
+        String ids = model.getProductKeyTypeCodes();
         if (!StringUtils.isEmpty(ids)) {
-            productBase.setProductKeyTypeIds(
+            productBase.setProductKeyTypeCodes(
                     Arrays.stream(StringUtils.delimitedListToStringArray(ids, ","))
-                            .map(Integer::parseInt)
+//                            .map(Integer::parseInt)
                             .collect(Collectors.toList()));
         }
         productBase.setActive(model.getActive());
@@ -178,9 +178,9 @@ public class ProductBase {
         model.setDetails(productBase.getDetails());
         model.setShelfLife(productBase.getShelfLife());
         model.setShelfLifeInterval(productBase.getShelfLifeInterval());
-        List<Integer> ids = productBase.getProductKeyTypeIds();
+        List<String> ids = productBase.getProductKeyTypeCodes();
         if (ids != null) {
-            model.setProductKeyTypeIds(StringUtils.collectionToDelimitedString(ids, ","));
+            model.setProductKeyTypeCodes(StringUtils.collectionToDelimitedString(ids, ","));
         }
         model.setActive(productBase.getActive());
         model.setCreatedDateTime(productBase.getCreatedDateTime());

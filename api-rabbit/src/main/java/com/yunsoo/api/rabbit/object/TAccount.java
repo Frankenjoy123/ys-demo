@@ -11,7 +11,7 @@ import java.util.Set;
  * Created by Zhe on 2015/3/5.
  */
 public class TAccount implements UserDetails {
-    private Long id;
+    private String id;
     private String username;
     private String password;
     private TAccountStatusEnum status;
@@ -80,11 +80,11 @@ public class TAccount implements UserDetails {
         return status == TAccountStatusEnum.ENABLED;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

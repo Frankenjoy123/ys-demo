@@ -34,9 +34,9 @@ public class ProductBaseController {
     private ProductDomain productDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ProductBase get(@PathVariable(value = "id") Long id) {
-        if (id == null || id < 0) {
-            throw new BadRequestException("ProductBaseId不应小于0！");
+    public ProductBase get(@PathVariable(value = "id") String id) {
+        if (id == null || id.isEmpty()) {
+            throw new BadRequestException("ProductBaseId不应为空！");
         }
         ProductBase productBase = productDomain.getProductBaseById(id);
         if (productBase == null) {
@@ -47,10 +47,10 @@ public class ProductBaseController {
 
     @RequestMapping(value = "/thumbnail/{id}/{client}", method = RequestMethod.GET)
     public ResponseEntity<?> getThumbnail(
-            @PathVariable(value = "id") Long id,
+            @PathVariable(value = "id") String id,
             @PathVariable(value = "client") String client) {
-        if (id == null || id < 0) {
-            throw new BadRequestException("Id不应小于0！");
+        if (id == null || id.isEmpty()) {
+            throw new BadRequestException("Id不应为空！");
         }
         if (client == null || client.isEmpty()) {
             throw new BadRequestException("Client不应为空！");

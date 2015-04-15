@@ -31,7 +31,7 @@ public class ProductBaseServiceImpl implements ProductBaseService {
     private S3ItemDao s3ItemDao;
 
     @Override
-    public ProductBase getById(long id) {
+    public ProductBase getById(String id) {
         return ProductBase.fromModel(productBaseDao.getById(id));
     }
 
@@ -53,11 +53,11 @@ public class ProductBaseServiceImpl implements ProductBaseService {
     }
 
     @Override
-    public void save(ProductBase productBase) {
+    public String save(ProductBase productBase) {
         if (productBase.getCreatedDateTime() == null) {
             productBase.setCreatedDateTime(DateTime.now()); //always set createdDateTime.
         }
-        productBaseDao.save(ProductBase.toModel(productBase));
+        return productBaseDao.save(ProductBase.toModel(productBase));
     }
 
     @Override
@@ -72,23 +72,27 @@ public class ProductBaseServiceImpl implements ProductBaseService {
 
     @Override
     public void delete(ProductBase productBase) {
-        productBaseDao.delete(ProductBase.toModel(productBase));
+        //productBaseDao.delete(ProductBase.toModel(productBase));
+        throw new UnsupportedOperationException("delete is not implemented!");
     }
 
     @Override
-    public void delete(long id) {
-        ProductBaseModel model = new ProductBaseModel();
-        model.setId(id);
-        productBaseDao.delete(model);
+    public void delete(String id) {
+//        ProductBaseModel model = new ProductBaseModel();
+//        model.setId(id);
+//        productBaseDao.delete(model);
+        throw new UnsupportedOperationException("delete is not implemented!");
     }
 
     @Override
-    public void deactivate(long id) {
-
+    public void deactivate(String id) {
+        ProductBase productBase = this.getById(id);
+        productBase.setActive(false);
+        this.patchUpdate(productBase);
     }
 
     @Override
-    public List<ProductBase> getByFilter(Long orgId, Integer categoryId, Boolean active) {
+    public List<ProductBase> getByFilter(String orgId, Integer categoryId, Boolean active) {
         Map<String, Object> eqFilter = new HashMap<>();
         if (orgId != null) {
             eqFilter.put("orgId", orgId);

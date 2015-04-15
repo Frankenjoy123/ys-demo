@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ProductBaseObject {
 
-    private Long id;
+    private String id;
     private Integer categoryId;
     private Long orgId;
     private String barcode;
@@ -24,7 +24,7 @@ public class ProductBaseObject {
     private String details;
     private Integer shelfLife;
     private String shelfLifeInterval;
-    private List<Integer> productKeyTypeIds;
+    private List<String> productKeyTypeCodes;
     private Boolean active;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -33,11 +33,11 @@ public class ProductBaseObject {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime modifiedDateTime;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -105,12 +105,12 @@ public class ProductBaseObject {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
-    public List<Integer> getProductKeyTypeIds() {
-        return productKeyTypeIds;
+    public List<String> getProductKeyTypeCodes() {
+        return productKeyTypeCodes;
     }
 
-    public void setProductKeyTypeIds(List<Integer> productKeyTypeIds) {
-        this.productKeyTypeIds = productKeyTypeIds;
+    public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
+        this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
     public Boolean getActive() {

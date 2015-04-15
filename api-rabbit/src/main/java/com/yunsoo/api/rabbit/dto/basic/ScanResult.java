@@ -14,7 +14,7 @@ public class ScanResult {
     private Product product;
     private Organization manufacturer;
     private List<ScanRecord> scanRecordList;
-    private List<Logistics> logisticses;
+    private List<Logistics> logisticsList;
     private ValidationResult validationResult;
     private int scanCounter;
     private Long userId;
@@ -51,12 +51,12 @@ public class ScanResult {
         this.scanRecordList = ScanRecordList;
     }
 
-    public List<Logistics> getLogisticses() {
-        return logisticses;
+    public List<Logistics> getLogisticsList() {
+        return logisticsList;
     }
 
-    public void setLogisticses(List<Logistics> logisticses) {
-        this.logisticses = logisticses;
+    public void setLogisticsList(List<Logistics> logisticsList) {
+        this.logisticsList = logisticsList;
     }
 
     public ValidationResult getValidationResult() {

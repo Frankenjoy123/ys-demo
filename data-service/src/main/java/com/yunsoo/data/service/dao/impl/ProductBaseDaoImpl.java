@@ -24,14 +24,16 @@ public class ProductBaseDaoImpl implements ProductBaseDao {
     private SessionFactory sessionFactory;
 
     @Override
-    public ProductBaseModel getById(long id) {
+    public ProductBaseModel getById(String id) {
         return (ProductBaseModel) sessionFactory.getCurrentSession().get(ProductBaseModel.class, id);
     }
 
 
     @Override
-    public void save(ProductBaseModel productBaseModel) {
-        sessionFactory.getCurrentSession().save(productBaseModel);
+    public String save(ProductBaseModel productBaseModel) {
+        Session currentSession = sessionFactory.getCurrentSession();
+        currentSession.save(productBaseModel);
+        return productBaseModel.getId();
     }
 
     @Override

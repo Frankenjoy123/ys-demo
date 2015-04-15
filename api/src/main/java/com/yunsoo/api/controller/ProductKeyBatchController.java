@@ -101,12 +101,12 @@ public class ProductKeyBatchController {
         ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
         if (productBaseId != null && productBaseId > 0) {
             //create corresponding product according to the productBaseId
-            ProductBase productBase = productDomain.getProductBaseById(productBaseId);
+            ProductBase productBase = productDomain.getProductBaseById(productBaseId.toString()); //for Loye to update
             if (productBase == null) {
                 throw new BadRequestException("product base id invalid");
             }
             if (productKeyTypeIds == null) {
-                productKeyTypeIds = productBase.getProductKeyTypes().stream().map(ProductKeyType::getId).collect(Collectors.toList());
+                productKeyTypeIds = productBase.getProductKeyTypeIds().stream().map(ProductKeyType::getId).collect(Collectors.toList());
             }
 
         }

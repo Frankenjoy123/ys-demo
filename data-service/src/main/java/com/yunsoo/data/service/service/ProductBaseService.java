@@ -8,11 +8,11 @@ import com.yunsoo.data.service.service.contract.ProductBase;
 
 public interface ProductBaseService {
 
-    public ProductBase getById(long id);
+    public ProductBase getById(String id);
 
     public S3Object getProductThumbnail(String bucketName, String key) throws IOException;
 
-    public void save(ProductBase productBase);
+    public String save(ProductBase productBase);
 
     public void update(ProductBase productBase);
 
@@ -20,11 +20,11 @@ public interface ProductBaseService {
 
     public void delete(ProductBase productBase);
 
-    public void delete(long id);
+    public void delete(String id);
 
-    public void deactivate(long id);
+    public void deactivate(String id);
 
-    public List<ProductBase> getByFilter(Long orgId, Integer categoryId, Boolean active);
+    public List<ProductBase> getByFilter(String orgId, Integer categoryId, Boolean active);
 
     public List<ProductBase> getAll();
 }

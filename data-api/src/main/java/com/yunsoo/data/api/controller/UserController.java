@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
-    public ResponseEntity<UserDto> getUserById(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<UserDto> getUserById(@PathVariable(value = "id") String id) {
         User user = userService.get(id);
         if (user == null) throw new NotFoundException("User not found for id = " + id);
         UserDto userDto = UserDto.FromUser(user);
@@ -48,7 +48,7 @@ public class UserController {
         return new ResponseEntity<UserDto>(UserDto.FromUser(userService.get(cellular)), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/token/{devicecode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/device/{devicecode}", method = RequestMethod.GET)
     public ResponseEntity<User> getUserByDeviceCode(@PathVariable(value = "devicecode") String devicecode) {
         List<User> users = userService.getUsersByFilter(null, devicecode, "", null);
         if (users == null || users.size() <= 0)
@@ -89,9 +89,9 @@ public class UserController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity<?> createUser(@RequestBody UserDto userDto) throws Exception {
         User user = UserDto.ToUser(userDto);
-        long id = userService.save(user);
-        HttpStatus status = id > 0L ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
-        return new ResponseEntity<Long>(id, status);
+        String id = userService.save(user);
+        HttpStatus status = (id.length() > 20) ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
+        return new ResponseEntity<String>(id, status);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PATCH)
@@ -103,7 +103,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteUser(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable(value = "id") String id) {
         Boolean result = userService.delete(id); //deletePermanantly status is 5 in dev DB
         return new ResponseEntity<Boolean>(result, HttpStatus.NO_CONTENT);
     }

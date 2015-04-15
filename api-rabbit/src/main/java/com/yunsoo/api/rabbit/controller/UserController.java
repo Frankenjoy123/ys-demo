@@ -1,6 +1,8 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.dto.basic.User;
+import com.yunsoo.api.rabbit.object.TAccount;
+import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -9,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +39,8 @@ public class UserController {
 
     private RestClient dataAPIClient;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
 
     @Autowired
     UserController(RestClient dataAPIClient) {
@@ -103,13 +108,6 @@ public class UserController {
         }
     }
 
-    //Allow anonymous access
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> createUser(@RequestBody User user) throws Exception {
-        long id = dataAPIClient.post("user/create", user, Long.class);
-        return new ResponseEntity<Long>(id, HttpStatus.OK);
-    }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#user, 'user:update')")
@@ -117,10 +115,10 @@ public class UserController {
         dataAPIClient.patch("user/update", user);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{userId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#user, 'user:delete')")
-    public void deleteUser(@RequestBody Integer userId) throws Exception {
+    public void deleteUser(@PathVariable(value = "userId") Long userId) throws Exception {
         dataAPIClient.delete("user/delete/{id}", userId);
     }
 }

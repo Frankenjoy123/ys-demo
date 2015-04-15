@@ -7,9 +7,9 @@ import com.yunsoo.data.service.dbmodel.ProductBaseModel;
 
 public interface ProductBaseDao {
 
-    public ProductBaseModel getById(long id);
+    public ProductBaseModel getById(String id);
 
-    public void save(ProductBaseModel productBaseModel);
+    public String save(ProductBaseModel productBaseModel);
 
     public void update(ProductBaseModel productBaseModel);
 

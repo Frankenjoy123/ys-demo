@@ -51,7 +51,7 @@ public class MessageController {
     }
 
     //Get Message by Id
-    @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Message> getNewMessagesByMessageId(@PathVariable(value = "id") Integer id) {
         Message message = messageService.get(id);
         return new ResponseEntity(message, HttpStatus.OK);
