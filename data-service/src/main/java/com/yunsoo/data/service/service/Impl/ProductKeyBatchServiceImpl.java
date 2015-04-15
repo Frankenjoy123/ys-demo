@@ -8,7 +8,7 @@ import com.yunsoo.data.service.dbmodel.ProductKeyBatchModel;
 import com.yunsoo.data.service.service.ProductKeyBatchService;
 import com.yunsoo.data.service.service.contract.ProductKeyBatch;
 import com.yunsoo.data.service.service.contract.ProductKeys;
-import com.yunsoo.data.service.util.KeyGenerator;
+import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.data.service.dbmodel.ProductKeyBatchS3ObjectModel;
 import org.joda.time.DateTime;
@@ -132,7 +132,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         for (int i = 0, len = keyTypeIds.size(); i < quantity; i++) {
             List<String> tempKeys = new ArrayList<>(len);
             for (int j = 0; j < len; j++) {
-                tempKeys.add(KeyGenerator.newKey());
+                tempKeys.add(KeyGenerator.get());
             }
             keyList.add(tempKeys);
         }
