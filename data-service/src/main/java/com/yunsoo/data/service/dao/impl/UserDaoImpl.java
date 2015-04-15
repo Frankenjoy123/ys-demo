@@ -56,6 +56,9 @@ public class UserDaoImpl implements UserDao {
         try {
             Session currentSession = sessionFactory.getCurrentSession();
             UserModel modelInDB = (UserModel) currentSession.get(UserModel.class, userModelForPatch.getId());
+            if (modelInDB == null) {
+                return DaoStatus.NotFound;
+            }
             //Set properties that needs to update in DB, ignore others are null.
             BeanUtils.copyProperties(userModelForPatch, modelInDB, SpringBeanUtil.getNullPropertyNames(userModelForPatch));
             currentSession.update(modelInDB);

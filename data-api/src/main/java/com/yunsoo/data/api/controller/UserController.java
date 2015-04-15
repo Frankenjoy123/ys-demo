@@ -97,11 +97,16 @@ public class UserController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
-    public ResponseEntity<?> updateUser(@RequestBody UserDto userDto) throws Exception {
+    public void updateUser(@RequestBody UserDto userDto) throws Exception {
         //patch update, we don't provide functions like update with set null properties.
         User user = UserDto.ToUser(userDto);
-        Boolean result = userService.patchUpdate(user).equals(ServiceOperationStatus.Success) ? true : false;
-        return new ResponseEntity<Boolean>(result, HttpStatus.OK);
+        ServiceOperationStatus result = userService.patchUpdate(user);
+
+        if (result == ServiceOperationStatus.ObjectNotFound) {
+            throw new NotFoundException("未找到相关用户记录！");
+        } else if (result == ServiceOperationStatus.Fail) {
+            throw new InternalServerErrorException("更新用户失败！");
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

@@ -15,6 +15,7 @@ import com.yunsoo.data.service.service.UserService;
 import com.yunsoo.data.service.service.contract.User;
 import com.yunsoo.data.service.util.SpringBeanUtil;
 import com.yunsoo.common.data.object.FileObject;
+import com.yunsoo.data.service.util.StatusConverter;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,7 +149,9 @@ public class UserServiceImpl implements UserService {
             saveUserThumbnail(user.getId(), user.getFileObject(), thumbnailKey);
         }
         UserModel model = getPatchModel(user);
-        return userDAO.patchUpdate(model) == DaoStatus.success ? ServiceOperationStatus.Success : ServiceOperationStatus.Fail;
+        DaoStatus result = userDAO.patchUpdate(model);
+        return StatusConverter.convertFrom(result);
+        //return userDAO.patchUpdate(model) == DaoStatus.success ? ServiceOperationStatus.Success : ServiceOperationStatus.Fail;
     }
 
     @Override
