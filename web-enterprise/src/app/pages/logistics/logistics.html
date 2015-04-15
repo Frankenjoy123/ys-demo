@@ -20,6 +20,10 @@
                   <input type="file" nv-file-select="" uploader="uploader" ng-disabled="disabled"/>
 
                 </span>
+            <button type="button" class="btn btn-success btn-s" ng-click="uploader.uploadAll()"
+                    ng-disabled="!uploader.getNotUploadedItems().length" disabled="disabled">
+                <i class="glyphicon glyphicon-upload"></i> <span>全部同步</span>
+            </button>
         </div>
 
         <table class="table" ng-show="uploader.queue.length">
@@ -92,7 +96,9 @@
                                     ng-repeat="da in dataTable.filteredData = (dataTable.data | filter:dataTable.filter) | orderBy:dataTable.sortColumn:dataTable.sortDescending | startFrom:dataTable.currentPageStart() | limitTo:dataTable.pageSize">
                             <tr>
                                 <td>{{da.fileName}}</td>
-                                <td>{{da.status == 1 ? '成功' : '失败'}}</td>
+                                <td><span ng-show="da.status == 1"><span class="label label-success">成功</span></span>
+                                    <span ng-hide="da.status == 1"><span class="label label-danger">失败</span></span>
+                                </td>
                                 <td>{{getDateString(da.createDate)}}</td>
                             </tr>
                             </tbody>

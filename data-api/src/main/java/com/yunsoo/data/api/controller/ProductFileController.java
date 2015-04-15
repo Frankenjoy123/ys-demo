@@ -41,9 +41,9 @@ public class ProductFileController {
 
         Iterable<ProductFileEntity> entityList = null;
         if (status == 0)
-            entityList = productFileRepository.findByCreateByAndFileTypeOrderByCreateDateDesc(createby, filetype);
+            entityList = productFileRepository.findTop50ByCreateByAndFileTypeOrderByCreateDateDesc(createby, filetype);
         else
-            entityList = productFileRepository.findByCreateByAndStatusAndFileTypeOrderByCreateDateDesc(createby, status, filetype);
+            entityList = productFileRepository.findTop50ByCreateByAndStatusAndFileTypeOrderByCreateDateDesc(createby, status, filetype);
 
         if (entityList == null) {
             throw new NotFoundException("ProductFile");

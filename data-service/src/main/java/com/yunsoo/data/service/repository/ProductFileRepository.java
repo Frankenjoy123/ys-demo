@@ -14,9 +14,9 @@ public interface ProductFileRepository extends PagingAndSortingRepository<Produc
 
     Iterable<ProductFileEntity> findByCreateByAndFileType(Long createBy, Integer fileType);
 
-    Iterable<ProductFileEntity> findByCreateByAndFileTypeOrderByCreateDateDesc(Long createBy, Integer fileType);
+    Iterable<ProductFileEntity> findTop50ByCreateByAndFileTypeOrderByCreateDateDesc(Long createBy, Integer fileType);
 
     Iterable<ProductFileEntity> findByCreateByAndStatusAndFileType(Long createBy, Integer status, Integer fileType);
 
-    Iterable<ProductFileEntity> findByCreateByAndStatusAndFileTypeOrderByCreateDateDesc(Long createBy, Integer status, Integer fileType);
+    Iterable<ProductFileEntity> findTop50ByCreateByAndStatusAndFileTypeOrderByCreateDateDesc(Long createBy, Integer status, Integer fileType);
 }
