@@ -5,22 +5,14 @@ import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.basic.Product;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.api.dto.basic.ProductCategory;
-import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -124,8 +116,8 @@ public class ProductDomain {
         productBase.setModifiedDateTime(productBaseObject.getModifiedDateTime());
 
         productBase.setCategory(getProductCategoryById(productBaseObject.getCategoryId()));
-        if (productBaseObject.getProductKeyTypeIds() != null) {
-            productBase.setProductKeyTypeIds(LookupObject.fromIdList(productKeyTypes, productBaseObject.getProductKeyTypeIds()));
+        if (productBaseObject.getProductKeyTypeCodes() != null) {
+            productBase.setProductKeyTypeCodes(productBaseObject.getProductKeyTypeCodes());
         }
         return productBase;
     }

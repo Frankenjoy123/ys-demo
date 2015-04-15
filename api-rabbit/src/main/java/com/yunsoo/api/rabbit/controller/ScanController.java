@@ -85,7 +85,7 @@ public class ScanController {
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
         //4, retrieve logistics information
-        scanResult.setLogisticses(getLogisticsInfo(scanRequestBody.getKey()));
+        scanResult.setLogisticsList(getLogisticsInfo(scanRequestBody.getKey()));
 
         //5, get company information.
         Organization organization = dataAPIClient.get("organization/id/{id}", Organization.class, scanResult.getProduct().getOrgId());

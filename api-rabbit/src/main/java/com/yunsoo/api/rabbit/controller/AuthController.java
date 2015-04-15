@@ -48,7 +48,7 @@ private RestClient dataAPIClient;
 
         //tokenAuthenticationService.getAuthentication()
         TAccount currentAccount = new TAccount();
-        currentAccount.setId(2L);
+        currentAccount.setId("552ddb49e6b1e79c80c950b7");
         currentAccount.setStatus(2); //Status的编码与TAccountStatusEnum一致
         String token = tokenAuthenticationService.generateToken(currentAccount);
 
@@ -62,7 +62,10 @@ private RestClient dataAPIClient;
     @RequestMapping(value = "register", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> createUser(@RequestBody User user) throws Exception {
-        long id = dataAPIClient.post("user/create", user, Long.class);
+        //Reset user's default creadit and level
+        user.setYsCreadit(0);
+        user.setLevel(1);
+        String id = dataAPIClient.post("user/create", user, String.class);
 
         TAccount currentAccount = new TAccount();
         currentAccount.setId(id);
@@ -72,7 +75,7 @@ private RestClient dataAPIClient;
         //set token
         HttpHeaders headers = new HttpHeaders();
         headers.add(AUTH_HEADER_NAME, token);
-        return new ResponseEntity<Long>(id, headers, HttpStatus.CREATED);
+        return new ResponseEntity<String>(id, headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/updatepassword", method = RequestMethod.POST)

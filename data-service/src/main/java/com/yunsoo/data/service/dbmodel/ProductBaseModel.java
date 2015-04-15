@@ -1,5 +1,6 @@
 package com.yunsoo.data.service.dbmodel;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -14,7 +15,8 @@ import javax.persistence.Table;
 public class ProductBaseModel {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
     private String id;
     @Column(name = "category_id")
@@ -34,7 +36,7 @@ public class ProductBaseModel {
     @Column(name = "shelf_life_interval")
     private String shelfLifeInterval;
     @Column(name = "product_key_type_ids")
-    private String productKeyTypeIds;
+    private String productKeyTypeCodes;
     @Column(name = "active")
     private Boolean active;
     @Column(name = "created_datetime")
@@ -116,12 +118,12 @@ public class ProductBaseModel {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
-    public String getProductKeyTypeIds() {
-        return productKeyTypeIds;
+    public String getProductKeyTypeCodes() {
+        return productKeyTypeCodes;
     }
 
-    public void setProductKeyTypeIds(String productKeyTypeIds) {
-        this.productKeyTypeIds = productKeyTypeIds;
+    public void setProductKeyTypeCodes(String productKeyTypeCodes) {
+        this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
     public Boolean getActive() {

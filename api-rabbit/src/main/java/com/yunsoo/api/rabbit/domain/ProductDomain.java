@@ -112,8 +112,8 @@ public class ProductDomain {
         productBase.setModifiedDateTime(productBaseObject.getModifiedDateTime());
 
         productBase.setCategory(getProductCategoryById(productBaseObject.getCategoryId()));
-        if (productBaseObject.getProductKeyTypeIds() != null) {
-            productBase.setProductKeyTypes(LookupObject.fromIdList(productKeyTypes, productBaseObject.getProductKeyTypeIds()));
+        if (productBaseObject.getProductKeyTypeCodes() != null) {
+            productBase.setProductKeyTypeCodes(productBaseObject.getProductKeyTypeCodes());
         }
         return productBase;
     }
