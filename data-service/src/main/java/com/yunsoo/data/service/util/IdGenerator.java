@@ -1,6 +1,5 @@
 package com.yunsoo.data.service.util;
 
-import com.yunsoo.common.util.UuidUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.IdentifierGenerator;
@@ -16,6 +15,6 @@ public class IdGenerator implements IdentifierGenerator {
 
     @Override
     public Serializable generate(SessionImplementor session, Object object) throws HibernateException {
-        return UuidUtil.get().toString();
+        return com.yunsoo.common.util.IdGenerator.getNew();
     }
 }

@@ -132,7 +132,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         for (int i = 0, len = keyTypeIds.size(); i < quantity; i++) {
             List<String> tempKeys = new ArrayList<>(len);
             for (int j = 0; j < len; j++) {
-                tempKeys.add(KeyGenerator.get());
+                tempKeys.add(KeyGenerator.getNew());
             }
             keyList.add(tempKeys);
         }
