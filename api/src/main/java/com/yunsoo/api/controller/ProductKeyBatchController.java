@@ -106,7 +106,7 @@ public class ProductKeyBatchController {
                 throw new BadRequestException("product base id invalid");
             }
             if (productKeyTypeIds == null) {
-                productKeyTypeIds = productBase.getProductKeyTypeIds().stream().map(ProductKeyType::getId).collect(Collectors.toList());
+                //productKeyTypeIds = productBase.getProductKeyTypeIds().stream().map(ProductKeyType::getId).collect(Collectors.toList());
             }
 
         }
