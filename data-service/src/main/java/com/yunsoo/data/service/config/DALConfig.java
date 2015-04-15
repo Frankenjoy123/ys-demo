@@ -9,16 +9,14 @@ package com.yunsoo.data.service.config;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbcp2.BasicDataSourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 
 import java.util.Properties;
 
 // Needed by Spring to add this class to the ApplicationContext's configuration
 @Configuration
+@Import(DBSetting.class)
 //@ComponentScan(basePackages = {"com.yunsoo.data.service.config"})
 // Property file in which are written the MySQL connection properties
 //@PropertySource("classpath:jdbc.properties")
