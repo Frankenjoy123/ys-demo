@@ -20,9 +20,6 @@ public class OrgOrderEntity {
     @Column(name = "org_id")
     private String orgId;
 
-    @Column(name = "order_id")
-    private String orderId;
-
     @Column(name = "batch_id")
     private String batchId;
 
@@ -32,6 +29,12 @@ public class OrgOrderEntity {
     @Column(name = "remain")
     private long remain;
 
+    @Column(name = "active")
+    private Boolean active;
+
+    @Column(name = "detail")
+    private String detail;
+
     @Column(name = "created_by")
     private String createdBy;
 
@@ -39,8 +42,6 @@ public class OrgOrderEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
-    @Column(name = "active")
-    private Boolean active;
 
     public long getId() {
         return id;
@@ -56,14 +57,6 @@ public class OrgOrderEntity {
 
     public void setOrgId(String orgId) {
         this.orgId = orgId;
-    }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
     }
 
     public String getBatchId() {
@@ -112,5 +105,13 @@ public class OrgOrderEntity {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
 }

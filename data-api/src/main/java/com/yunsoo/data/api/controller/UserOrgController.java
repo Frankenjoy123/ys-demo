@@ -1,5 +1,6 @@
 package com.yunsoo.data.api.controller;
 
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.data.service.entity.UserOrgEntity;
 import com.yunsoo.data.service.repository.UserOrgRepository;
 import com.yunsoo.data.service.service.contract.UserOrganization;
@@ -21,7 +22,7 @@ import java.util.List;
  * Created by Zhe on 2015/4/15.
  */
 @RestController
-@EnableSpringDataWebSupport
+//@EnableSpringDataWebSupport
 @RequestMapping("/user/following/")
 public class UserOrgController {
 
@@ -33,8 +34,23 @@ public class UserOrgController {
     public List<UserOrganization> getFollowingOrgsByUserId(@PathVariable(value = "id") String id,
                                                            @PathParam(value = "index") Integer index,
                                                            @PathParam(value = "size") Integer size) {
-//        userOrgRepository.findAll(new PageRequest(1, 20));
+        if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
+        if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
+        if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
+
         List<UserOrganization> userOrganizationList = UserOrganization.FromEntityList(userOrgRepository.findByUserId(id, new PageRequest(index, size)));
+        return userOrganizationList;
+    }
+
+    @RequestMapping(value = "/org/{id}", method = RequestMethod.GET)
+    public List<UserOrganization> getFollowerByOrgId(@PathVariable(value = "id") String id,
+                                                     @PathParam(value = "index") Integer index,
+                                                     @PathParam(value = "size") Integer size) {
+        if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
+        if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
+        if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
+
+        List<UserOrganization> userOrganizationList = UserOrganization.FromEntityList(userOrgRepository.findByOrganizationId(id, new PageRequest(index, size)));
         return userOrganizationList;
     }
 

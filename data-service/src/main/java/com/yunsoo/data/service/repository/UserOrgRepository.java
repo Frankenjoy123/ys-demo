@@ -16,5 +16,6 @@ public interface UserOrgRepository extends PagingAndSortingRepository<UserOrgEnt
 
     Iterable<UserOrgEntity> findByOrganizationId(String organizationId);
 
-    Iterable<UserOrgEntity> findTop10ByUserId(String userId);
+    Page<UserOrgEntity> findByOrganizationId(String organizationId, Pageable pageable);
+
 }
