@@ -66,7 +66,7 @@ public abstract class AbstractLookup {
         }
         try {
             E entity = entityType.newInstance();
-            entity.setId(lookup.getId());
+            //entity.setId(lookup.getId());
             entity.setCode(lookup.getCode());
             entity.setName(lookup.getName());
             entity.setDescription(lookup.getDescription());
@@ -92,7 +92,7 @@ public abstract class AbstractLookup {
         }
         try {
             T lookup = lookupType.newInstance();
-            lookup.setId(entity.getId());
+            //lookup.setId(entity.getId());
             lookup.setCode(entity.getCode());
             lookup.setName(entity.getName());
             lookup.setDescription(entity.getDescription());
