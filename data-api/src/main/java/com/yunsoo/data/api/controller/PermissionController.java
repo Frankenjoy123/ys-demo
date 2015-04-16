@@ -4,10 +4,10 @@ import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.PermissionObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.data.api.wrap.LookupServiceWrap;
 import com.yunsoo.data.service.entity.PermissionPolicyEntity;
-import com.yunsoo.data.service.entity.PermissionResourceEntity;
 import com.yunsoo.data.service.repository.PermissionPolicyRepository;
-import com.yunsoo.data.service.repository.PermissionResourceRepository;
+import com.yunsoo.data.service.service.LookupType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Created by:   Lijian
@@ -28,10 +26,11 @@ import java.util.stream.StreamSupport;
 public class PermissionController {
 
     @Autowired
-    private PermissionResourceRepository permissionResourceRepository;
+    private PermissionPolicyRepository permissionPolicyRepository;
 
     @Autowired
-    private PermissionPolicyRepository permissionPolicyRepository;
+    private LookupServiceWrap lookupServiceWrap;
+
 
     @RequestMapping(value = "/policy", method = RequestMethod.GET)
     public List<PermissionPolicyObject> getAllPolicies() {
@@ -75,19 +74,18 @@ public class PermissionController {
             pp.getPermissions().add(p);
         }
         if (pp == null) {
-            throw new NotFoundException("permission policy not found by [code: " + code + "]");
+            throw new NotFoundException("PermissionPolicy not found by [code: " + code + "]");
         }
         return pp;
     }
 
     @RequestMapping(value = "/resource", method = RequestMethod.GET)
-    public List<PermissionResourceEntity> getAllResource(@RequestParam(value = "active", required = false) Boolean active) {
-        return StreamSupport.stream(permissionResourceRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
+    public List<LookupObject> getAllResource(@RequestParam(value = "active", required = false) Boolean active) {
+        return lookupServiceWrap.getAll(LookupType.PermissionResource, active);
     }
 
     @RequestMapping(value = "/action", method = RequestMethod.GET)
     public List<LookupObject> getAllAction(@RequestParam(value = "active", required = false) Boolean active) {
-        return null;
+        return lookupServiceWrap.getAll(LookupType.PermissionAction, active);
     }
 }

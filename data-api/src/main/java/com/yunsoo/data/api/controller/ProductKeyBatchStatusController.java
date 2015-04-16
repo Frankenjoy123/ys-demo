@@ -1,12 +1,11 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.data.service.service.ProductKeyBatchStatusService;
-import com.yunsoo.data.service.service.contract.ProductKeyBatchStatus;
+import com.yunsoo.common.data.object.LookupObject;
+import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.data.api.wrap.LookupServiceWrap;
+import com.yunsoo.data.service.service.LookupType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,11 +19,20 @@ import java.util.List;
 public class ProductKeyBatchStatusController {
 
     @Autowired
-    private ProductKeyBatchStatusService productKeyBatchStatusService;
+    private LookupServiceWrap lookupServiceWrap;
+
+    @RequestMapping(value = "/{code}", method = RequestMethod.GET)
+    public LookupObject getByCode(@PathVariable(value = "code") String code) {
+        LookupObject object = lookupServiceWrap.getByCode(LookupType.ProductKeyBatchStatus, code);
+        if (object == null) {
+            throw new NotFoundException("ProductKeyBatchStatus not found");
+        }
+        return object;
+    }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductKeyBatchStatus> getAll(@RequestParam(value = "active", required = false) Boolean active) {
-        return productKeyBatchStatusService.getAll(active);
+    public List<LookupObject> getAll(@RequestParam(value = "active", required = false) Boolean active) {
+        return lookupServiceWrap.getAll(LookupType.ProductKeyBatchStatus, active);
     }
 
 }
