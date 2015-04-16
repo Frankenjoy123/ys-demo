@@ -25,7 +25,7 @@ public class ScanController {
     }
 
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
-    public ResponseEntity<ScanRecord> getNewMessagesByMessageId(@PathVariable(value = "id") Integer id) {
+    public ResponseEntity<ScanRecord> getNewMessagesByMessageId(@PathVariable(value = "id") Long id) {
         return new ResponseEntity(scanRecordService.get(id), HttpStatus.OK);
     }
 
