@@ -12,7 +12,7 @@
 <!-- Main content -->
 <section class="content" ng-controller="productKeyManageCtrl">
     <script type="text/javascript">
-        $(function () {
+        $(document).ready(function(){
             $('#accountTable').dataTable({
                 "bPaginate": false,
                 "bLengthChange": false,
@@ -21,6 +21,8 @@
                 "bAutoWidth": false,
                 "bInfo": false
             });
+
+            $('#editHead').attr('class', '');
         });
     </script>
     <div class="box-group" ng-controller="accountManageCtrl">
@@ -42,7 +44,7 @@
                     <div class="col-xs-12">
                         <table id="accountTable" class="table table-hover dataTable">
                             <thead>
-                            <tr role="row">
+                            <tr role="row" onclick="document.getElementById('editHead').setAttribute('class', '')">
                                 <th>ID</th>
                                 <th ng-click='sort("employeeID")'>工号
                                 </th>
@@ -58,7 +60,7 @@
                                 </th>
                                 <th ng-click='sort("SSID")'>身份证号
                                 </th>
-                                <th width="5%"></th>
+                                <th width="5%" id="editHead"></th>
                             </tr>
                             </thead>
                             <tbody ng-repeat="account in data.filteredAccounts">
