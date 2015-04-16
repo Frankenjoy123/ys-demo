@@ -95,7 +95,7 @@
                             </thead>
 
                             <tbody
-                                    ng-repeat="da in dataTable.filteredData = (dataTable.data | filter:dataTable.filter) | orderBy:dataTable.sortColumn:dataTable.sortDescending | startFrom:dataTable.currentPageStart() | limitTo:dataTable.pageSize">
+                                    ng-repeat="da in dataTable.filteredData = (dataTable.data | filter:dataTable.filter) | startFrom:dataTable.currentPageStart() | limitTo:dataTable.pageSize">
                             <tr>
                                 <td>{{da.fileName}}</td>
                                 <td>

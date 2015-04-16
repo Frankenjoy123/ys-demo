@@ -1,6 +1,14 @@
 (function () {
     var app = angular.module("logisticsManage", ["interceptor", "angularFileUpload"]);
 
+    app.filter('startFrom', function () {
+        return function (input, start) {
+            if (!input || !input.length) { return; }
+
+            return input.slice(start - 1);
+        };
+    });
+
     app.factory("logisticsManageService", ["$http", function ($http) {
         return {
             uploadLogisticsFile: function (file, fnSuccess, fnError) {
