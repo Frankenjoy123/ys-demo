@@ -19,10 +19,10 @@ public class UserLikedProductEntity {
     private Long id;
 
     @Column(name = "user_id")
-    private Long userId;
+    private String userId;
 
     @Column(name = "base_product_id")
-    private long baseProductId;
+    private String baseProductId;
 
     @Column(name = "active")
     private Boolean active;
@@ -42,19 +42,19 @@ public class UserLikedProductEntity {
         this.id = id;
     }
 
-    public long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public long getBaseProductId() {
+    public String getBaseProductId() {
         return baseProductId;
     }
 
-    public void setBaseProductId(long baseProductId) {
+    public void setBaseProductId(String baseProductId) {
         this.baseProductId = baseProductId;
     }
 
@@ -85,7 +85,7 @@ public class UserLikedProductEntity {
     public UserLikedProductEntity() {
     }
 
-    public UserLikedProductEntity(long userId, long baseProductId, String location, Boolean active) {
+    public UserLikedProductEntity(String userId, String baseProductId, String location, Boolean active) {
         this.userId = userId;
         this.baseProductId = baseProductId;
         this.location = location;

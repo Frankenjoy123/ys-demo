@@ -13,8 +13,8 @@ import java.util.List;
 public class UserLikedProduct {
 
     private Long id;
-    private long userId;
-    private long baseProductId;
+    private String userId;
+    private String baseProductId;
     private Boolean active;
     private String createdDateTime;
     private String location;
@@ -27,19 +27,19 @@ public class UserLikedProduct {
         this.id = id;
     }
 
-    public long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public long getBaseProductId() {
+    public String getBaseProductId() {
         return baseProductId;
     }
 
-    public void setBaseProductId(long baseProductId) {
+    public void setBaseProductId(String baseProductId) {
         this.baseProductId = baseProductId;
     }
 
