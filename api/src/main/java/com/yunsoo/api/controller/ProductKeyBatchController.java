@@ -4,7 +4,6 @@ import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
-import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.api.security.annotation.Permission;
 import com.yunsoo.api.security.permission.Action;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -84,14 +82,7 @@ public class ProductKeyBatchController {
         int quantity = request.getQuantity();
         Long productBaseId = request.getProductBaseId();
         List<String> productKeyTypeCodes = request.getProductKeyTypeCodes();
-        List<Integer> productKeyTypeIds = null;
-        if (productKeyTypeCodes != null && !productKeyTypeCodes.isEmpty()) {
-            try {
-                productKeyTypeIds = productKeyDomain.changeProductKeyTypeCodeToId(productKeyTypeCodes);
-            } catch (IllegalArgumentException ex) {
-                throw new BadRequestException("productKeyTypeCodes invalid");
-            }
-        }
+
         int statusId = 0;
         int organizationId = 123456789;
         int clientId = 1;
@@ -105,8 +96,8 @@ public class ProductKeyBatchController {
             if (productBase == null) {
                 throw new BadRequestException("product base id invalid");
             }
-            if (productKeyTypeIds == null) {
-                //productKeyTypeIds = productBase.getProductKeyTypeIds().stream().map(ProductKeyType::getId).collect(Collectors.toList());
+            if (productKeyTypeCodes == null) {
+                productKeyTypeCodes = productBase.getProductKeyTypeCodes();
             }
 
         }
@@ -117,7 +108,7 @@ public class ProductKeyBatchController {
         batchObj.setCreatedClientId(clientId);
         batchObj.setCreatedAccountId(accountId);
         batchObj.setCreatedDateTime(createdDateTime);
-        batchObj.setProductKeyTypeIds(productKeyTypeIds);
+        batchObj.setProductKeyTypeCodes(productKeyTypeCodes);
 
         return productKeyDomain.createProductKeyBatch(batchObj);
     }

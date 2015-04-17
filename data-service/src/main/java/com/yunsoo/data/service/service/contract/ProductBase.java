@@ -29,6 +29,7 @@ public class ProductBase {
     private Integer shelfLife;
     private String shelfLifeInterval;
     private List<String> productKeyTypeCodes;
+    private Integer ChildProductCount;
     private Boolean active;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -117,6 +118,14 @@ public class ProductBase {
         this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
+    public Integer getChildProductCount() {
+        return ChildProductCount;
+    }
+
+    public void setChildProductCount(Integer childProductCount) {
+        ChildProductCount = childProductCount;
+    }
+
     public Boolean getActive() {
         return active;
     }
@@ -160,6 +169,7 @@ public class ProductBase {
 //                            .map(Integer::parseInt)
                             .collect(Collectors.toList()));
         }
+        productBase.setChildProductCount(model.getChildProductCount());
         productBase.setActive(model.getActive());
         productBase.setCreatedDateTime(model.getCreatedDateTime());
         productBase.setModifiedDateTime(model.getModifiedDateTime());
@@ -182,6 +192,7 @@ public class ProductBase {
         if (ids != null) {
             model.setProductKeyTypeCodes(StringUtils.collectionToDelimitedString(ids, ","));
         }
+        model.setChildProductCount(productBase.getChildProductCount());
         model.setActive(productBase.getActive());
         model.setCreatedDateTime(productBase.getCreatedDateTime());
         model.setModifiedDateTime(productBase.getModifiedDateTime());
