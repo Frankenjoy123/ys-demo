@@ -19,8 +19,9 @@ public class ProductKeysObject {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
-    private List<Integer> productKeyTypeIds;
+    private List<String> productKeyTypeCodes;
     private List<List<String>> productKeys;
+
 
     public Long getBatchId() {
         return batchId;
@@ -46,12 +47,12 @@ public class ProductKeysObject {
         this.createdDateTime = createdDateTime;
     }
 
-    public List<Integer> getProductKeyTypeIds() {
-        return productKeyTypeIds;
+    public List<String> getProductKeyTypeCodes() {
+        return productKeyTypeCodes;
     }
 
-    public void setProductKeyTypeIds(List<Integer> productKeyTypeIds) {
-        this.productKeyTypeIds = productKeyTypeIds;
+    public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
+        this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
     public List<List<String>> getProductKeys() {

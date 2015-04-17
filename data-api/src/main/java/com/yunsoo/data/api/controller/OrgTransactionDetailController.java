@@ -1,6 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.OrgTransactionDetailEntity;
 import com.yunsoo.data.service.repository.OrgTransactionDetailRepository;
 import com.yunsoo.data.service.service.contract.OrgTransactionDetail;
@@ -48,6 +49,13 @@ public class OrgTransactionDetailController {
     @ResponseStatus(HttpStatus.CREATED)
     public void batchCreate(@RequestBody Iterable<OrgTransactionDetail> orgTransactionDetails) {
         Iterable<OrgTransactionDetailEntity> orgTransactionDetailEntities = orgTransactionDetailRepository.save(OrgTransactionDetail.ToEntityList(orgTransactionDetails));
-//        return newEntity.getId();
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public void patchUpdate(@RequestBody OrgTransactionDetail orgTransactionDetail) {
+        if (!orgTransactionDetailRepository.exists(orgTransactionDetail.getId())) {
+            throw new NotFoundException("找不到Transaction Detail！ id=" + orgTransactionDetail.getId());
+        }
+        OrgTransactionDetailEntity entity = orgTransactionDetailRepository.save(OrgTransactionDetail.ToEntity(orgTransactionDetail));
     }
 }

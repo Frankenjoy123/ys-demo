@@ -1,6 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.OrgOrderEntity;
 import com.yunsoo.data.service.repository.OrgOrderRepository;
 import com.yunsoo.data.service.service.contract.OrgOrder;
@@ -50,6 +51,16 @@ public class OrgOrderController {
     public void batchCreate(@RequestBody Iterable<OrgOrder> orgOrders) {
         Iterable<OrgOrderEntity> orgOrderEntities = orgOrderRepository.save(OrgOrder.ToEntityList(orgOrders));
 //        return newEntity.getId();
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    @ResponseStatus(HttpStatus.OK)
+    public long patchUpdate(@RequestBody OrgOrder orgOrder) {
+        if (!orgOrderRepository.exists(orgOrder.getId())) {
+            throw new NotFoundException("找不到OrgOrder！ id=" + orgOrder.getId());
+        }
+        OrgOrderEntity newEntity = orgOrderRepository.save(OrgOrder.ToEntity(orgOrder));
+        return newEntity.getId();
     }
 
 }
