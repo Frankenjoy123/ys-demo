@@ -27,8 +27,8 @@ public class AccountEntity {
     @Column(name = "identifier")
     private String identifier;
 
-    @Column(name = "status")
-    private String status;
+    @Column(name = "status_code")
+    private String statusCode;
 
     @Column(name = "first_name")
     private String firstName;
@@ -87,12 +87,12 @@ public class AccountEntity {
         this.identifier = identifier;
     }
 
-    public String getStatus() {
-        return status;
+    public String getStatusCode() {
+        return statusCode;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
     public String getFirstName() {

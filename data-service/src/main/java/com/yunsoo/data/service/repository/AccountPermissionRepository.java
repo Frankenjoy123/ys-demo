@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
  * Created on:   2015/4/12
  * Descriptions:
  */
-public interface AccountPermissionRepository extends CrudRepository<AccountPermissionEntity, Long> {
+public interface AccountPermissionRepository extends CrudRepository<AccountPermissionEntity, String> {
     Iterable<AccountPermissionEntity> findByAccountId(String accountId);
 
 }

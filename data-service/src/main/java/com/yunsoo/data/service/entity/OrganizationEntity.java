@@ -27,8 +27,8 @@ public class OrganizationEntity {
     @Column(name = "type_code")
     private String typeCode;
 
-    @Column(name = "status")
-    private String status;
+    @Column(name = "status_code")
+    private String statusCode;
 
     @Column(name = "description")
     private String description;
@@ -70,12 +70,12 @@ public class OrganizationEntity {
         this.typeCode = typeCode;
     }
 
-    public String getStatus() {
-        return status;
+    public String getStatusCode() {
+        return statusCode;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
     public String getDescription() {
