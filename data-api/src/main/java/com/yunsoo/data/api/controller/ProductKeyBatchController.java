@@ -76,7 +76,7 @@ public class ProductKeyBatchController {
         batch.setCreatedClientId(batchObj.getCreatedClientId());
         batch.setCreatedAccountId(batchObj.getCreatedAccountId());
         batch.setCreatedDateTime(batchObj.getCreatedDateTime());
-        batch.setProductKeyTypeIds(batchObj.getProductKeyTypeIds());
+        batch.setProductKeyTypeCodes(batchObj.getProductKeyTypeCodes());
 
         ProductKeyBatch newBatch = productKeyBatchService.create(batch);
 
@@ -94,7 +94,7 @@ public class ProductKeyBatchController {
         batchObj.setCreatedClientId(batch.getCreatedClientId());
         batchObj.setCreatedAccountId(batch.getCreatedAccountId());
         batchObj.setCreatedDateTime(batch.getCreatedDateTime());
-        batchObj.setProductKeyTypeIds(batch.getProductKeyTypeIds());
+        batchObj.setProductKeyTypeCodes(batch.getProductKeyTypeCodes());
         batchObj.setProductKeysAddress(batch.getProductKeysAddress());
         return batchObj;
     }

@@ -23,7 +23,7 @@ public class ProductKeyBatch {
     private Integer createdClientId;
     private Long createdAccountId;
     private DateTime createdDateTime;
-    private List<Integer> productKeyTypeIds;
+    private List<String> productKeyTypeCodes;
     private String productKeysAddress;
 
 
@@ -94,12 +94,12 @@ public class ProductKeyBatch {
         this.createdDateTime = createdDateTime;
     }
 
-    public List<Integer> getProductKeyTypeIds() {
-        return productKeyTypeIds;
+    public List<String> getProductKeyTypeCodes() {
+        return productKeyTypeCodes;
     }
 
-    public void setProductKeyTypeIds(List<Integer> productKeyTypeIds) {
-        this.productKeyTypeIds = productKeyTypeIds;
+    public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
+        this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
 
@@ -123,11 +123,9 @@ public class ProductKeyBatch {
         batch.setCreatedClientId(model.getCreatedClientId());
         batch.setCreatedAccountId(model.getCreatedAccountId());
         batch.setCreatedDateTime(model.getCreatedDateTime());
-        String ids = model.getProductKeyTypeIds();
-        if (ids != null) {
-            batch.setProductKeyTypeIds(Arrays.stream(StringUtils.delimitedListToStringArray(ids, ","))
-                    .map(Integer::parseInt)
-                    .collect(Collectors.toList()));
+        String codes = model.getProductKeyTypeCodes();
+        if (codes != null) {
+            batch.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
         }
         batch.setProductKeysAddress(model.getProductKeysAddress());
 
@@ -144,9 +142,9 @@ public class ProductKeyBatch {
         model.setCreatedClientId(batch.getCreatedClientId());
         model.setCreatedAccountId(batch.getCreatedAccountId());
         model.setCreatedDateTime(batch.getCreatedDateTime());
-        List<Integer> ids = batch.getProductKeyTypeIds();
-        if (ids != null) {
-            model.setProductKeyTypeIds(StringUtils.collectionToDelimitedString(ids, ","));
+        List<String> codes = batch.getProductKeyTypeCodes();
+        if (codes != null) {
+            model.setProductKeyTypeCodes(StringUtils.collectionToDelimitedString(codes, ","));
         }
         model.setProductKeysAddress(batch.getProductKeysAddress());
 

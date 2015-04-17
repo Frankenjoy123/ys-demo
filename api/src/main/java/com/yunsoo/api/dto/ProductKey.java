@@ -14,7 +14,7 @@ import java.util.Set;
 public class ProductKey {
 
     private String productKey;
-    private int productKeyTypeId;
+    private String productKeyTypeCode;
     private boolean productKeyDisabled;
     private boolean primary;
     private Long productKeyBatchId;
@@ -31,12 +31,12 @@ public class ProductKey {
         this.productKey = productKey;
     }
 
-    public int getProductKeyTypeId() {
-        return productKeyTypeId;
+    public String getProductKeyTypeCode() {
+        return productKeyTypeCode;
     }
 
-    public void setProductKeyTypeId(int productKeyTypeId) {
-        this.productKeyTypeId = productKeyTypeId;
+    public void setProductKeyTypeCode(String productKeyTypeCode) {
+        this.productKeyTypeCode = productKeyTypeCode;
     }
 
     public boolean isProductKeyDisabled() {

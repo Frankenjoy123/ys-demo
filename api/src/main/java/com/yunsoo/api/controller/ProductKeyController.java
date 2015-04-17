@@ -1,6 +1,5 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKey;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
@@ -31,7 +30,7 @@ public class ProductKeyController {
         }
         ProductKey productKey = new ProductKey();
         productKey.setProductKey(productKeyObj.getProductKey());
-        productKey.setProductKeyTypeId(productKeyObj.getProductKeyTypeId());
+        productKey.setProductKeyTypeCode(productKeyObj.getProductKeyTypeCode());
         productKey.setProductKeyDisabled(productKeyObj.isProductKeyDisabled());
         productKey.setPrimary(productKeyObj.isPrimary());
         productKey.setProductKeyBatchId(productKeyObj.getProductKeyBatchId());

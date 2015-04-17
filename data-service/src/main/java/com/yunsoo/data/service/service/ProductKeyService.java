@@ -12,7 +12,7 @@ public interface ProductKeyService {
     void setDisabled(String key, Boolean disable);
 
     void batchSave(long productKeyBatchId,
-                   List<Integer> productKeyTypeIds,
+                   List<String> productKeyTypeCodes,
                    List<List<String>> productKeys,
                    Product productTemplate);
 

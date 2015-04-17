@@ -33,7 +33,7 @@ public class ProductModel {
 
     private String productKey;
 
-    private int productKeyTypeId;
+    private String productKeyTypeCode;
     private Boolean productKeyDisabled;
     private Long productKeyBatchId;
     private String primaryProductKey; //if primaryProductKey is null, then it's a primary item.
@@ -62,12 +62,12 @@ public class ProductModel {
     }
 
     @DynamoDBAttribute(attributeName = "key_type_id") //product_key_type_id
-    public int getProductKeyTypeId() {
-        return productKeyTypeId;
+    public String getProductKeyTypeCode() {
+        return productKeyTypeCode;
     }
 
-    public void setProductKeyTypeId(int productKeyTypeId) {
-        this.productKeyTypeId = productKeyTypeId;
+    public void setProductKeyTypeCode(String productKeyTypeCode) {
+        this.productKeyTypeCode = productKeyTypeCode;
     }
 
     @DynamoDBAttribute(attributeName = "key_disabled") //product_key_disabled

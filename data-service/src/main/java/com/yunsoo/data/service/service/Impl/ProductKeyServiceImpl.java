@@ -53,12 +53,12 @@ public class ProductKeyServiceImpl implements ProductKeyService {
 
     @Override
     public void batchSave(long productKeyBatchId,
-                          List<Integer> productKeyTypeIds,
+                          List<String> productKeyTypeCodes,
                           List<List<String>> productKeys,
                           Product productTemplate) {
         //generate ProductModel List
         List<ProductModel> productModels
-                = generateProductModelList(productKeyBatchId, productKeyTypeIds, productKeys, productTemplate);
+                = generateProductModelList(productKeyBatchId, productKeyTypeCodes, productKeys, productTemplate);
 
         //save productModel
         productDao.batchSave(productModels);
@@ -66,21 +66,21 @@ public class ProductKeyServiceImpl implements ProductKeyService {
     }
 
     private List<ProductModel> generateProductModelList(Long productKeyBatchId,
-                                                        List<Integer> productKeyTypeIds,
+                                                        List<String> productKeyTypeCodes,
                                                         List<List<String>> productKeys,
                                                         Product productTemplate) {
         Assert.notNull(productKeyBatchId, "productKeyBatchId must not be null");
-        Assert.notEmpty(productKeyTypeIds, "productKeyTypeIds must not be empty or null");
+        Assert.notEmpty(productKeyTypeCodes, "productKeyTypeIds must not be empty or null");
         Assert.notEmpty(productKeys, "productKeys invalid");
 
         DateTime now = DateTime.now();
-        List<ProductModel> productModelList = new ArrayList<>(productKeys.size() * productKeyTypeIds.size());
-        if (productKeyTypeIds.size() == 1) {
+        List<ProductModel> productModelList = new ArrayList<>(productKeys.size() * productKeyTypeCodes.size());
+        if (productKeyTypeCodes.size() == 1) {
             productKeys.stream().forEach(keys -> {
                 if (keys != null && keys.size() > 0) {
                     ProductModel productModel = generateProductModel(productTemplate);
                     productModel.setProductKey(keys.get(0));
-                    productModel.setProductKeyTypeId(productKeyTypeIds.get(0));
+                    productModel.setProductKeyTypeCode(productKeyTypeCodes.get(0));
                     productModel.setProductKeyBatchId(productKeyBatchId);
                     productModel.setCreatedDateTime(now);
                     productModelList.add(productModel);
@@ -88,15 +88,15 @@ public class ProductKeyServiceImpl implements ProductKeyService {
             });
         } else { //multi keys for each product
             productKeys.stream().forEach(keys -> {
-                if (keys != null && keys.size() >= productKeyTypeIds.size()) {
+                if (keys != null && keys.size() >= productKeyTypeCodes.size()) {
                     Set<String> keySet = new HashSet<>();
                     String primaryKey = keys.get(0);
-                    for (int j = 0; j < productKeyTypeIds.size(); j++) {
+                    for (int j = 0; j < productKeyTypeCodes.size(); j++) {
                         String key = keys.get(j);
                         keySet.add(key);
                         ProductModel productModel = generateProductModel(productTemplate);
                         productModel.setProductKey(key);
-                        productModel.setProductKeyTypeId(productKeyTypeIds.get(j));
+                        productModel.setProductKeyTypeCode(productKeyTypeCodes.get(j));
                         productModel.setProductKeyBatchId(productKeyBatchId);
                         productModel.setCreatedDateTime(now);
                         if (j == 0) {

@@ -13,7 +13,7 @@ import java.util.Set;
 public class ProductKey {
 
     private String productKey;
-    private int productKeyTypeId;
+    private String productKeyTypeCode;
     private boolean productKeyDisabled;
     private boolean primary;
     private Long productKeyBatchId;
@@ -29,12 +29,12 @@ public class ProductKey {
         this.productKey = productKey;
     }
 
-    public int getProductKeyTypeId() {
-        return productKeyTypeId;
+    public String getProductKeyTypeCode() {
+        return productKeyTypeCode;
     }
 
-    public void setProductKeyTypeId(int productKeyTypeId) {
-        this.productKeyTypeId = productKeyTypeId;
+    public void setProductKeyTypeCode(String productKeyTypeCode) {
+        this.productKeyTypeCode = productKeyTypeCode;
     }
 
     public boolean isProductKeyDisabled() {
@@ -88,7 +88,7 @@ public class ProductKey {
     public static ProductKey fromModel(ProductModel productModel) {
         ProductKey productKey = new ProductKey();
         productKey.setProductKey(productModel.getProductKey());
-        productKey.setProductKeyTypeId(productModel.getProductKeyTypeId());
+        productKey.setProductKeyTypeCode(productModel.getProductKeyTypeCode());
         Boolean isDisabled = productModel.getProductKeyDisabled();
         productKey.setProductKeyDisabled(isDisabled != null && isDisabled);
         productKey.setPrimary(productModel.isPrimary());
@@ -102,7 +102,7 @@ public class ProductKey {
     public static ProductModel toModel(ProductKey productKey) {
         ProductModel productModel = new ProductModel();
         productModel.setProductKey(productKey.getProductKey());
-        productModel.setProductKeyTypeId(productKey.getProductKeyTypeId());
+        productModel.setProductKeyTypeCode(productKey.getProductKeyTypeCode());
         if (productKey.isProductKeyDisabled()) {
             productModel.setProductKeyDisabled(true);
         }

@@ -27,7 +27,7 @@ public class ProductKeyController {
             throw new NotFoundException("ProductKey");
         }
         productKeyObj.setProductKey(productKey.getProductKey());
-        productKeyObj.setProductKeyTypeId(productKey.getProductKeyTypeId());
+        productKeyObj.setProductKeyTypeCode(productKey.getProductKeyTypeCode());
         productKeyObj.setProductKeyDisabled(productKey.isProductKeyDisabled());
         productKeyObj.setPrimary(productKey.isPrimary());
         productKeyObj.setProductKeyBatchId(productKey.getProductKeyBatchId());
@@ -49,7 +49,7 @@ public class ProductKeyController {
             productTemplate.setProductStatusId(productObject.getProductStatusId());
             productTemplate.setManufacturingDateTime(productObject.getManufacturingDateTime());
         }
-        productKeyService.batchSave(batch.getId(), batch.getProductKeyTypeIds(), batch.getProductKeys(), productTemplate);
+        productKeyService.batchSave(batch.getId(), batch.getProductKeyTypeCodes(), batch.getProductKeys(), productTemplate);
     }
 
 

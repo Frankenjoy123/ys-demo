@@ -42,7 +42,7 @@ public class ProductKeyBatchModel {
     private DateTime createdDateTime;
 
     @Column(name = "product_key_type_ids")
-    private String productKeyTypeIds;
+    private String productKeyTypeCodes;
 
     @Column(name = "product_keys_address")
     private String productKeysAddress;
@@ -111,12 +111,12 @@ public class ProductKeyBatchModel {
         this.createdDateTime = createdDateTime;
     }
 
-    public String getProductKeyTypeIds() {
-        return productKeyTypeIds;
+    public String getProductKeyTypeCodes() {
+        return productKeyTypeCodes;
     }
 
-    public void setProductKeyTypeIds(String productKeyTypeIds) {
-        this.productKeyTypeIds = productKeyTypeIds;
+    public void setProductKeyTypeCodes(String productKeyTypeCodes) {
+        this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
     public String getProductKeysAddress() {

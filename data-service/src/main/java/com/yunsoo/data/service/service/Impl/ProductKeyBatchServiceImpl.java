@@ -89,7 +89,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         productKeys.setBatchId(model.getId());
         productKeys.setQuantity(model.getQuantity());
         productKeys.setCreatedDateTime(DateTimeUtils.parse(model.getCreatedDateTime()));
-        productKeys.setProductKeyTypeIds(model.getProductKeyTypeIds());
+        productKeys.setProductKeyTypeCodes(model.getProductKeyTypeCodes());
         productKeys.setProductKeys(model.getProductKeys());
         return productKeys;
     }
@@ -97,10 +97,10 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     @Override
     public ProductKeyBatch create(ProductKeyBatch batch) {
         int quantity = batch.getQuantity();
-        List<Integer> keyTypeIds = batch.getProductKeyTypeIds();
+        List<String> keyTypeCodes = batch.getProductKeyTypeCodes();
 
         Assert.isTrue(quantity > 0, "quantity must be greater than 0");
-        Assert.isTrue(keyTypeIds.size() > 0, "productKeyTypeIds must not be empty");
+        Assert.isTrue(keyTypeCodes.size() > 0, "productKeyTypeIds must not be empty");
 
         //generate productKeys
         List<List<String>> keyList = generateProductKeys(batch);
@@ -125,11 +125,11 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
     private List<List<String>> generateProductKeys(ProductKeyBatch batch) {
         int quantity = batch.getQuantity();
-        List<Integer> keyTypeIds = batch.getProductKeyTypeIds();
+        List<String> keyTypeCodes = batch.getProductKeyTypeCodes();
 
         List<List<String>> keyList = new ArrayList<>(quantity);
 
-        for (int i = 0, len = keyTypeIds.size(); i < quantity; i++) {
+        for (int i = 0, len = keyTypeCodes.size(); i < quantity; i++) {
             List<String> tempKeys = new ArrayList<>(len);
             for (int j = 0; j < len; j++) {
                 tempKeys.add(KeyGenerator.getNew());
@@ -145,7 +145,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         model.setId(batch.getId());
         model.setQuantity(batch.getQuantity());
         model.setCreatedDateTime(DateTimeUtils.toString(batch.getCreatedDateTime()));
-        model.setProductKeyTypeIds(batch.getProductKeyTypeIds());
+        model.setProductKeyTypeCodes(batch.getProductKeyTypeCodes());
         model.setProductKeys(keyList);
         String bucketName = amazonSetting.getS3_basebucket(); // YunsooConfig.getBaseBucket();
         String id = Long.toString(batch.getId()) + "_" + UUID.randomUUID().toString();
