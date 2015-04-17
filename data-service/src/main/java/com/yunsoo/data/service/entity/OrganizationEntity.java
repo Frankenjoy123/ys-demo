@@ -1,6 +1,8 @@
 package com.yunsoo.data.service.entity;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 
@@ -17,16 +19,16 @@ public class OrganizationEntity {
     @GeneratedValue(generator = "idGenerator")
     @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
-    private Long id;
+    private String id;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "type")
-    private int type;
+    @Column(name = "type_code")
+    private String typeCode;
 
     @Column(name = "status")
-    private int status;
+    private String status;
 
     @Column(name = "description")
     private String description;
@@ -37,12 +39,18 @@ public class OrganizationEntity {
     @Column(name = "details")
     private String details;
 
+    @Column(name = "created_account_id")
+    private String createdAccountId;
 
-    public Long getId() {
+    @Column(name = "created_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdDateTime;
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -54,19 +62,19 @@ public class OrganizationEntity {
         this.name = name;
     }
 
-    public int getType() {
-        return type;
+    public String getTypeCode() {
+        return typeCode;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -92,5 +100,21 @@ public class OrganizationEntity {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public String getCreatedAccountId() {
+        return createdAccountId;
+    }
+
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
+    }
+
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 }

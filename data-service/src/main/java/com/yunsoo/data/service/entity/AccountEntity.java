@@ -19,15 +19,16 @@ public class AccountEntity {
     @GeneratedValue(generator = "idGenerator")
     @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
-    private Long id;
+    private String id;
 
-    @Column(name = "status")
-    private String status;
-
-    //private String SSID;
+    @Column(name = "org_id")
+    private String orgId;
 
     @Column(name = "identifier")
     private String identifier;
+
+    @Column(name = "status")
+    private String status;
 
     @Column(name = "first_name")
     private String firstName;
@@ -62,20 +63,20 @@ public class AccountEntity {
     private DateTime modifiedDatetime;
 
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public String getStatus() {
-        return status;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 
     public String getIdentifier() {
@@ -84,6 +85,14 @@ public class AccountEntity {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getFirstName() {
