@@ -7,9 +7,11 @@ import com.yunsoo.data.service.repository.ProductFileRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,16 +36,17 @@ public class ProductFileController {
         return newEntity.getId();
     }
 
-    @RequestMapping(value = "/createby/{createby}/status/{status}/filetype/{filetype}", method = RequestMethod.GET)
-    public List<ProductFileObject> get(@PathVariable(value = "createby") Long createby,
-                                       @PathVariable(value = "status") Integer status,
-                                       @PathVariable(value = "filetype") Integer filetype) {
+    @RequestMapping(value = "/createby/{createby}/status/{status}/filetype/{filetype}/page/{page}", method = RequestMethod.GET)
+      public List<ProductFileObject> get(@PathVariable(value = "createby") Long createby,
+                                         @PathVariable(value = "status") Integer status,
+                                         @PathVariable(value = "filetype") Integer filetype,
+                                         @PathVariable(value = "page") Integer page) {
 
         Iterable<ProductFileEntity> entityList = null;
         if (status == 0)
-            entityList = productFileRepository.findTop50ByCreateByAndFileTypeOrderByCreateDateDesc(createby, filetype);
+            entityList = productFileRepository.findByCreateByAndFileTypeOrderByCreateDateDesc(createby, filetype, new PageRequest(page, 10));
         else
-            entityList = productFileRepository.findTop50ByCreateByAndStatusAndFileTypeOrderByCreateDateDesc(createby, status, filetype);
+            entityList = productFileRepository.findByCreateByAndStatusAndFileTypeOrderByCreateDateDesc(createby, status, filetype, new PageRequest(page, 10));
 
         if (entityList == null) {
             throw new NotFoundException("ProductFile");
@@ -57,5 +60,20 @@ public class ProductFileController {
         }
 
         return productFileObjects;
+    }
+
+    @RequestMapping(value = "/countby/createby/{createby}/status/{status}/filetype/{filetype}", method = RequestMethod.GET)
+    public Long getCount(@PathVariable(value = "createby") Long createby,
+                                       @PathVariable(value = "status") Integer status,
+                                       @PathVariable(value = "filetype") Integer filetype) {
+
+        Long count = 0l;
+
+        if (status == 0)
+            count = productFileRepository.countByCreateByAndFileType(createby, filetype);
+        else
+            count = productFileRepository.countByCreateByAndStatusAndFileType(createby, status, filetype);
+
+        return count;
     }
 }

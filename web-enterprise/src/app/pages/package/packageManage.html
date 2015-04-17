@@ -89,15 +89,17 @@
                             <thead>
                             <tr role="row">
                                 <th>文件名称</th>
+                                <th>产品类型</th>
                                 <th>上传状态</th>
                                 <th>上传时间</th>
                             </tr>
                             </thead>
 
                             <tbody
-                                    ng-repeat="da in dataTable.filteredData = (dataTable.data | filter:dataTable.filter) | startFrom:dataTable.currentPageStart() | limitTo:dataTable.pageSize">
+                                    ng-repeat="da in dataTable.filteredData = (dataTable.data | filter:dataTable.filter)">
                             <tr>
                                 <td>{{da.fileName}}</td>
+                                <td>识别中...</td>
                                 <td>
                                     <span ng-show="da.status == 1"><span class="label label-success">成功</span></span>
                                     <span ng-hide="da.status == 1"><span class="label label-danger">失败</span></span>
@@ -107,20 +109,20 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-xs-6">
-                        <p>显示 {{dataTable.currentPageStart()}} 到
-                            {{dataTable.currentPageEnd()}} 条记录</p>
-                    </div>
-                    <div class="col-xs-6">
+                    <div class="col-xs-12">
                         <div class="dataTables_paginate paging_bootstrap">
                             <ul class="pagination">
                                 <li class="prev" ng-class="{ disabled: dataTable.onFirstPage()}"><a
+                                        ng-click="dataTable.goToFirstPage()">首页</a></li>
+                                <li class="prev" ng-class="{ disabled: dataTable.onFirstPage()}"><a
                                         ng-click="dataTable.previous()">上一页</a></li>
                                 <li ng-repeat-start="page in dataTable.pages()" ng-repeat-end
-                                    ng-class="{active: dataTable.currentPage === page - 1}"><a
-                                        ng-click="dataTable.goToPage(page)">{{page}}</a></li>
+                                    ng-class="{active: dataTable.currentPage() === page}"><a
+                                        ng-click="dataTable.goToPage(page)">{{page + 1}}</a></li>
                                 <li class="next" ng-class="{ disabled: dataTable.onLastPage()}"><a
                                         ng-click="dataTable.next()">下一页</a></li>
+                                <li class="next" ng-class="{ disabled: dataTable.onLastPage()}"><a
+                                        ng-click="dataTable.gotoLastPage()">末页</a></li>
                             </ul>
                         </div>
                     </div>

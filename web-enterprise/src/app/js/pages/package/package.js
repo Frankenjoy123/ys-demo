@@ -1,14 +1,6 @@
 (function () {
     var app = angular.module("package", ["interceptor", "angularFileUpload"]);
 
-    app.filter('startFrom', function () {
-        return function (input, start) {
-            if (!input || !input.length) { return; }
-
-            return input.slice(start - 1);
-        };
-    });
-
     app.factory("packageService", ["$http", function ($http) {
         return {
             getInfo: function (packageKey, fnSuccess, fnError) {
@@ -26,8 +18,17 @@
                 });
                 return this;
             },
-            getPackageHistoryInfo: function (fnSuccess, fnError) {
-                $http.get("/api/productfile/createby/1/status/0/filetype/1")
+            getPackageHistoryInfoCount: function (fnSuccess, fnError) {
+                $http.get("/api/productfile/countby/createby/1/status/0/filetype/1")
+                    .success(function (data) {
+                        fnSuccess(data);
+                    }).error(function (data, state) {
+                        fnSuccess();
+                    });
+                return this;
+            },
+            getPackageHistoryInfo: function (pageIndex, fnSuccess, fnError) {
+                $http.get("/api/productfile/createby/1/status/0/filetype/1/page/" + pageIndex)
                     .success(function (data) {
                         fnSuccess(data);
                     }).error(function (data, state) {
@@ -88,122 +89,120 @@
 
             $scope.addAlertMsg(response.message, "info", true);
 
-            packageService.getPackageHistoryInfo(function(data){
-                $scope.data = data;
-                $scope.dataTable = new PackageHistoryFile($scope.data);
-
-                $scope.isShowHisSec = $scope.data.length > 0 ? 1 : 0;
-            });
+            getPackageHistoryInfo(0);
         };
         uploader.onCompleteAll = function () {
             // console.info('onCompleteAll');
 
-            packageService.getPackageHistoryInfo(function(data){
+            getPackageHistoryInfo(0);
+        };
+
+        var PackageHistoryFile = function (data) {
+
+            var adt = {
+                data: data,
+                filteredData: {},
+                pageSize: 10,
+                pages: pages,
+                isShowHisSec: isShowHisSec,
+                goToFirstPage: goToFirstPage,
+                gotoLastPage: gotoLastPage,
+                goToPage: goToPage,
+                currentPage: currentPage,
+                next: next,
+                previous: previous,
+                onFirstPage: onFirstPage,
+                onLastPage: onLastPage
+            };
+            return adt;
+
+            function isShowHisSec() {
+                return data.length > 0 ? 1 : 0;
+            }
+
+            function goToFirstPage() {
+                if (!this.onFirstPage()) {
+                    $scope.currentPage = 0;
+                    getPackageHistoryInfo($scope.currentPage);
+                }
+            }
+
+            function gotoLastPage() {
+                if (!this.onLastPage()) {
+                    $scope.currentPage = Math.ceil($scope.totalCounts / this.pageSize) - 1;
+                    getPackageHistoryInfo($scope.currentPage);
+                }
+            }
+
+            function goToPage(page) {
+                $scope.currentPage = page;
+                getPackageHistoryInfo($scope.currentPage);
+            }
+
+            function currentPage() {
+                return $scope.currentPage;
+            }
+
+            function pages() {
+                var p = [];
+                for (var i = Math.max(0, $scope.currentPage - 4); i <= $scope.currentPage; i++) {
+                    p.push(i);
+                }
+                return p;
+            }
+
+            function next() {
+                if (!this.onLastPage()) {
+                    $scope.currentPage += 1;
+                    getPackageHistoryInfo($scope.currentPage);
+                }
+            }
+
+            function previous() {
+                if (!this.onFirstPage()) {
+                    $scope.currentPage -= 1;
+                    getPackageHistoryInfo($scope.currentPage);
+                }
+
+            }
+
+            function onFirstPage() {
+                return $scope.currentPage === 0;
+            }
+
+            function onLastPage() {
+                return data.length < this.pageSize;
+            }
+        };
+
+        $scope.currentPage = 0;
+        $scope.totalCounts = 0;
+        $scope.itemIndex = 0;
+
+        $scope.getItemIndex = function() {
+            $scope.itemIndex += 1;
+            return $scope.itemIndex;
+        }
+
+        packageService.getPackageHistoryInfoCount(function (data) {
+            $scope.totalCounts = data;
+        });
+
+        var getPackageHistoryInfo = function (currentPage) {
+            packageService.getPackageHistoryInfo(currentPage, function (data) {
                 $scope.data = data;
                 $scope.dataTable = new PackageHistoryFile($scope.data);
 
                 $scope.isShowHisSec = $scope.data.length > 0 ? 1 : 0;
+                $scope.itemIndex = 0;
             });
         };
 
-        packageService.getPackageHistoryInfo(function(data){
-            $scope.data = data;
-            $scope.dataTable = new PackageHistoryFile($scope.data);
-
-            $scope.isShowHisSec = $scope.data.length > 0 ? 1 : 0;
-        });
+        getPackageHistoryInfo(0);
 
         $scope.getDateString = function (value) {
             var date = new Date(value);
             return new DateTime(date).toString('yyyy-MM-dd HH:mm:ss');
         };
-
-        console.info('uploader', uploader);
     }]);
-
-    var PackageHistoryFile = function (data) {
-
-        var adt = {
-            data: data,
-            filteredData: {},
-            filter: '',
-            currentPage: 0,
-            pageSize: 10,
-            sortColumn: '',
-            sortDescending: true,
-            numberOfPages: numberOfPages,
-            isShowHisSec : isShowHisSec,
-            currentPageStart: currentPageStart,
-            currentPageEnd: currentPageEnd,
-            pages: pages,
-            goToPage: goToPage,
-            next: next,
-            previous: previous,
-            onFirstPage: onFirstPage,
-            onLastPage: onLastPage,
-            sort: sort,
-            resetPaging: resetPaging
-        };
-        return adt;
-
-        function numberOfPages() {
-            return Math.min(Math.ceil(this.filteredData.length / this.pageSize), 10);
-        }
-
-        function isShowHisSec() {
-            return this.filteredData.length > 0 ? 1 : 0;
-        }
-
-        function currentPageStart() {
-            return this.currentPage * this.pageSize + 1;
-        }
-
-        function currentPageEnd() {
-            return Math.min((this.currentPage + 1) * this.pageSize, this.filteredData.length);
-        }
-
-        function pages() {
-            var p = [];
-            for (var i = 1; i <= this.numberOfPages(); i++) {
-                p.push(i);
-            }
-            return p;
-        }
-
-        function goToPage(page) {
-            this.currentPage = page - 1;
-        }
-
-        function next() {
-            if (!this.onLastPage())
-                this.currentPage += 1;
-        }
-
-        function previous() {
-            if (!this.onFirstPage())
-                this.currentPage -= 1;
-        }
-
-        function onFirstPage() {
-            return this.currentPage === 0;
-        }
-
-        function onLastPage() {
-            return this.currentPage === this.numberOfPages() - 1;
-        }
-
-        function sort(column) {
-            this.resetPaging();
-            if (this.sortColumn === column) {
-                this.sortDescending = !this.sortDescending;
-            } else {
-                this.sortColumn = column;
-                this.sortDescending = false;
-            }
-        }
-
-        function resetPaging() {
-            this.currentPage = 0;
-        }
-    };
 })();

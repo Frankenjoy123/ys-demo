@@ -21,21 +21,38 @@ public class ProductFileController {
     @Autowired
     private RestClient dataAPIClient;
 
-    @RequestMapping(value = "/createby/{createby}/status/{status}/filetype/{filetype}", method = RequestMethod.GET)
+    @RequestMapping(value = "/createby/{createby}/status/{status}/filetype/{filetype}/page/{page}", method = RequestMethod.GET)
     public List<ProductFileObject> get(@PathVariable(value = "createby") Long createby,
                                        @PathVariable(value = "status") Integer status,
-                                       @PathVariable(value = "filetype") Integer filetype) {
+                                       @PathVariable(value = "filetype") Integer filetype,
+                                       @PathVariable(value = "page") Integer page) {
 
         ProductFileObject[] objects =
-                dataAPIClient.get("productfile/createby/{createby}/status/{status}/filetype/{filetype}",
+                dataAPIClient.get("productfile/createby/{createby}/status/{status}/filetype/{filetype}/page/{page}",
                         ProductFileObject[].class,
                         createby,
                         status,
-                        filetype);
+                        filetype,
+                        page);
 
         if (objects == null)
             throw new NotFoundException("Product file not found");
 
         return Arrays.asList(objects);
+    }
+
+    @RequestMapping(value = "/countby/createby/{createby}/status/{status}/filetype/{filetype}", method = RequestMethod.GET)
+    public Long getCount(@PathVariable(value = "createby") Long createby,
+                         @PathVariable(value = "status") Integer status,
+                         @PathVariable(value = "filetype") Integer filetype) {
+
+        Long count = 0l;
+        count = dataAPIClient.get("productfile/countby/createby/{createby}/status/{status}/filetype/{filetype}",
+                Long.class,
+                createby,
+                status,
+                filetype);
+
+        return count;
     }
 }

@@ -2,6 +2,8 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.OperationRecordEntity;
 import com.yunsoo.data.service.entity.ProductFileEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -10,13 +12,11 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  */
 public interface ProductFileRepository extends PagingAndSortingRepository<ProductFileEntity, Long> {
 
-    Iterable<ProductFileEntity> findByFileType(Integer fileType);
+    Long countByCreateByAndFileType(Long createBy, Integer fileType);
 
-    Iterable<ProductFileEntity> findByCreateByAndFileType(Long createBy, Integer fileType);
+    Long countByCreateByAndStatusAndFileType(Long createBy, Integer status, Integer fileType);
 
-    Iterable<ProductFileEntity> findTop50ByCreateByAndFileTypeOrderByCreateDateDesc(Long createBy, Integer fileType);
+    Page<ProductFileEntity> findByCreateByAndFileTypeOrderByCreateDateDesc(Long createBy, Integer fileType, Pageable pageable);
 
-    Iterable<ProductFileEntity> findByCreateByAndStatusAndFileType(Long createBy, Integer status, Integer fileType);
-
-    Iterable<ProductFileEntity> findTop50ByCreateByAndStatusAndFileTypeOrderByCreateDateDesc(Long createBy, Integer status, Integer fileType);
+    Page<ProductFileEntity> findByCreateByAndStatusAndFileTypeOrderByCreateDateDesc(Long createBy, Integer status, Integer fileType, Pageable pageable);
 }
