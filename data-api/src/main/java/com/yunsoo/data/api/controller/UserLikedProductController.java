@@ -19,8 +19,13 @@ public class UserLikedProductController {
     private UserLikedProductRepository userLikedProductRepository;
 
     @RequestMapping(value = "/userid/{id}", method = RequestMethod.GET)
-    public List<UserLikedProduct> getUserCollectionByUserId(@PathVariable(value = "id") Long id) {
+    public List<UserLikedProduct> getUserCollectionByUserId(@PathVariable(value = "id") String id) {
         return UserLikedProduct.FromEntityList(userLikedProductRepository.findByUserId(id));
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public List<UserLikedProduct> getUserCollectionByUserId(@PathVariable(value = "id") Long id) {
+        return UserLikedProduct.FromEntityList(userLikedProductRepository.findById(id));
     }
 
     @RequestMapping(value = "/like", method = RequestMethod.POST)

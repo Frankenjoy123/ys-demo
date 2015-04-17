@@ -100,7 +100,7 @@ public class ScanController {
     }
 
     @RequestMapping(value = "/history/user/{userId}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
+//    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
     public List<ScanRecord> getScanRecordsByFilter(
             @PathVariable(value = "userId") Long userId,
             @PathVariable(value = "pageIndex") Integer pageIndex,

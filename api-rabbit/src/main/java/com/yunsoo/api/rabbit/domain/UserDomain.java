@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.dto.basic.User;
-import com.yunsoo.common.util.UuidUtil;
+import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
@@ -20,6 +20,8 @@ public class UserDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDomain.class);
 
     //call dataAPI to get current User
@@ -42,16 +44,23 @@ public class UserDomain {
                 User newUser = new User();
                 newUser.setDeviceCode(deviceCode);
                 newUser.setName(Long.toString(DateTime.now().getMillis())); //default name is the time.
-
                 String id = dataAPIClient.post("user", newUser, String.class); //save user
-                if (UuidUtil.isValid(id)) {
-                    newUser.setId(id);
-                    return newUser;
-                } else {
-                    return null;
-                }
+                newUser.setId(id);
+                return newUser;
             }
         }
         return user;
     }
+
+    public Boolean validateToken(String token) {
+        if (token == null || token.isEmpty()) return false;
+        return tokenAuthenticationService.checkIdentity(token, null, false);
+    }
+
+    public Boolean validateToken(String token, String userId) {
+        if (token == null || token.isEmpty()) return false;
+        if (userId == null || userId.isEmpty()) return false;
+        return tokenAuthenticationService.checkIdentity(token, userId, true);
+    }
+
 }

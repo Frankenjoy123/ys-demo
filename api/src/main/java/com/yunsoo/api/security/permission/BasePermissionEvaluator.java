@@ -1,6 +1,8 @@
 package com.yunsoo.api.security.permission;
 
+import com.yunsoo.common.web.client.RestClient;
 import org.apache.jasper.security.SecurityUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 
@@ -11,6 +13,8 @@ import java.io.Serializable;
  */
 public class BasePermissionEvaluator implements PermissionEvaluator {
 
+    @Autowired
+    private RestClient dataAPIClient;
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {

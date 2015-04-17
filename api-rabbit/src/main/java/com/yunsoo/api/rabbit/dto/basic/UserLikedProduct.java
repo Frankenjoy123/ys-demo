@@ -6,7 +6,7 @@ package com.yunsoo.api.rabbit.dto.basic;
 public class UserLikedProduct {
 
     private Integer id;
-    private long userId;
+    private String userId;
     private int baseProductId;
     private Boolean active;
     private String createdDateTime;
@@ -20,11 +20,11 @@ public class UserLikedProduct {
         this.id = id;
     }
 
-    public long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

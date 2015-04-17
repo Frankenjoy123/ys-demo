@@ -47,10 +47,10 @@ public class TokenAuthenticationService {
             return null;
         }
         TAccount currentAccount = tokenHandler.parseUserFromToken(token); //validate and parse from token
-        TAccount tAccount = dataAPIClient.get("account/token/{token}", TAccount.class, token);
-        if (tAccount == null) {
+        //TAccount tAccount = dataAPIClient.get("account/token/{token}", TAccount.class, token);
+        if (currentAccount == null) {
             return null;
         }
-        return new AccountAuthentication(tAccount);
+        return new AccountAuthentication(currentAccount);
     }
 }

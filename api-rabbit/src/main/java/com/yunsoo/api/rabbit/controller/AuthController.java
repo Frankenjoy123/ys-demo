@@ -24,9 +24,9 @@ public class AuthController {
 
     @Value("${yunsoo.token_header_name}")
     private String AUTH_HEADER_NAME;
-//    private static final long HALF_YEAR = 1000 * 60 * 60 * 24 * 150; // 150 days
-@Autowired
-private RestClient dataAPIClient;
+    //    private static final long HALF_YEAR = 1000 * 60 * 60 * 24 * 150; // 150 days
+    @Autowired
+    private RestClient dataAPIClient;
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
