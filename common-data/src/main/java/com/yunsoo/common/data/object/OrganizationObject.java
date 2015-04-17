@@ -1,21 +1,35 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.joda.time.DateTime;
+
 /**
- * Created by Jerry on 3/17/2015.
+ * Created by:   Jerry
+ * Created on:   3/17/2015
+ * Descriptions:
  */
 public class OrganizationObject {
-    private long id;
+    private String id;
     private String name;
+    private String typeCode;
+    private String statusCode;
     private String description;
-    private String imageUrl;
-    private String detail;
-    private int type;
+    private String imageUri;
+    private String details;
+    private String createdAccountId;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime createdDateTime;
 
-    public long getId() {
+
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -27,6 +41,22 @@ public class OrganizationObject {
         this.name = name;
     }
 
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -35,28 +65,35 @@ public class OrganizationObject {
         this.description = description;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImageUri() {
+        return imageUri;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
     }
 
-    public String getDetail() {
-        return detail;
+    public String getDetails() {
+        return details;
     }
 
-    public void setDetail(String detail) {
-        this.detail = detail;
+    public void setDetails(String details) {
+        this.details = details;
     }
 
-    public int getType() {
-        return type;
+    public String getCreatedAccountId() {
+        return createdAccountId;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
     }
 
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
 }

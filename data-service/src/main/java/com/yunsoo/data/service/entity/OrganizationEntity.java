@@ -33,7 +33,7 @@ public class OrganizationEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "imageUri")
+    @Column(name = "image_uri")
     private String imageUri;
 
     @Column(name = "details")

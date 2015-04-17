@@ -45,11 +45,6 @@ jdbc:
     pool_initialsize: 1
     pool_maxidle: 100
 
-hibernate:
-    dialect: org.hibernate.dialect.MySQL5Dialect
-    show_sql: false
-    hbm2ddl_auto: update
-    package_to_scan: com.yunsoo.data.service.dbmodel
 ---
 spring:
     profiles: qa
@@ -92,9 +87,3 @@ jdbc:
     password: admin201512
     pool_initialsize: 1
     pool_maxidle: 100
-
-hibernate:
-    dialect: org.hibernate.dialect.MySQL5Dialect
-    show_sql: false
-    hbm2ddl_auto: update
-    package_to_scan: com.yunsoo.data.service.dbmodel
