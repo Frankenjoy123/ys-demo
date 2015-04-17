@@ -40,11 +40,6 @@ public class ProductKeyDomain {
     private final byte[] CR_LF = new byte[]{13, 10};
 
 
-    public List<Integer> changeProductKeyTypeCodeToId(List<String> productKeyTypeCodeList) {
-        return LookupObject.changeCodeToId(lookupDomain.getAllProductKeyTypes(true), productKeyTypeCodeList);
-    }
-
-
     //ProductKeyBatch
 
     public List<ProductKeyBatch> getAllProductKeyBatchesByOrgId(Integer organizationId, Long productBaseId) {
@@ -90,7 +85,7 @@ public class ProductKeyDomain {
             return null;
         }
         try {
-            List<String> productKeyTypeCodes = LookupObject.changeIdToCode(lookupDomain.getAllProductKeyTypes(null), object.getProductKeyTypeIds());
+            List<String> productKeyTypeCodes = lookupDomain.getAllProductKeyTypes(null).stream().map(LookupObject::getCode).collect(Collectors.toList());
             outputStream.write(
                     StringUtils.collectionToDelimitedString(productKeyTypeCodes, ",")
                             .getBytes(Charset.forName("UTF-8")));
@@ -120,7 +115,7 @@ public class ProductKeyDomain {
         batch.setCreatedClientId(object.getCreatedClientId());
         batch.setCreatedAccountId(object.getCreatedAccountId());
         batch.setCreatedDateTime(object.getCreatedDateTime());
-        batch.setProductKeyTypes(LookupObject.fromIdList(productKeyTypes, object.getProductKeyTypeIds()));
+        batch.setProductKeyTypes(LookupObject.fromCodeList(productKeyTypes, object.getProductKeyTypeCodes()));
 
         return batch;
     }

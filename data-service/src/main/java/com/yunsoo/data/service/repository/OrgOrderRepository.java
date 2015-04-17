@@ -10,11 +10,9 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  */
 public interface OrgOrderRepository extends PagingAndSortingRepository<OrgOrderEntity, Long> {
 
-    Iterable<OrgOrderEntity> findByActive(Boolean active);
+    Page<OrgOrderEntity> findByActive(Boolean active, Pageable pageable);
 
-    Iterable<OrgOrderEntity> findByOrgId(Long orgId);
+    Page<OrgOrderEntity> findByOrgId(String orgId, Pageable pageable);
 
-    Iterable<OrgOrderEntity> findByOrgIdAndActive(Long orgId, Boolean active);
-
-    Page<OrgOrderEntity> findByOrgIdAndActive(Long orgId, Boolean active, Pageable pageable);
+    Page<OrgOrderEntity> findByOrgIdAndActive(String orgId, Boolean active, Pageable pageable);
 }

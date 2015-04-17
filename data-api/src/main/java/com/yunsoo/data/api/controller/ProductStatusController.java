@@ -1,7 +1,9 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.data.service.service.ProductStatusService;
-import com.yunsoo.data.service.service.contract.ProductStatus;
+import com.yunsoo.common.data.object.LookupObject;
+import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.data.api.wrap.LookupServiceWrap;
+import com.yunsoo.data.service.service.LookupType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,34 +19,20 @@ import java.util.List;
 public class ProductStatusController {
 
     @Autowired
-    private ProductStatusService productStatusService;
+    private LookupServiceWrap lookupServiceWrap;
 
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ProductStatus getById(@PathVariable(value = "id") Integer id) {
-        return productStatusService.getById(id);
+    @RequestMapping(value = "/{code}", method = RequestMethod.GET)
+    public LookupObject getByCode(@PathVariable(value = "code") String code) {
+        LookupObject object = lookupServiceWrap.getByCode(LookupType.ProductStatus, code);
+        if (object == null) {
+            throw new NotFoundException("ProductStatus not found");
+        }
+        return object;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductStatus> getAll(@RequestParam(value = "active", required = false) Boolean active) {
-        return productStatusService.getAll(active);
+    public List<LookupObject> getAll(@RequestParam(value = "active", required = false) Boolean active) {
+        return lookupServiceWrap.getAll(LookupType.ProductStatus, active);
     }
-
-//    @RequestMapping(value = "/create", method = RequestMethod.POST)
-//    public ResponseEntity<ResultWrapper> create(@RequestBody ProductStatus productStatus) {
-//        int id = productStatusService.save(productStatus);
-//        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), HttpStatus.CREATED);
-//    }
-//
-//    @RequestMapping(value = "/update", method = RequestMethod.PUT)
-//    public ResponseEntity update(@RequestBody ProductStatus productStatus) {
-//        HttpStatus httpStatus = productStatusService.update(productStatus) ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR;
-//        return new ResponseEntity(httpStatus);
-//    }
-//
-//    @RequestMapping(value = "/deletePermanantly/{id}", method = RequestMethod.DELETE)
-//    public ResponseEntity<ResultWrapper> deletePermanantly(@PathVariable(value = "id") int id) {
-//        boolean result = productStatusService.deletePermanantly(id);
-//        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
-//    }
 }

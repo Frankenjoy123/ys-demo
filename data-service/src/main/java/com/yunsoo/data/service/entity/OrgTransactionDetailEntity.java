@@ -32,6 +32,9 @@ public class OrgTransactionDetailEntity {
     @Column(name = "mount")
     private long mount;
 
+    @Column(name = "desc")
+    private String desc;
+
     @Column(name = "status")
     private int status;
 
@@ -85,6 +88,14 @@ public class OrgTransactionDetailEntity {
 
     public void setMount(long mount) {
         this.mount = mount;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
     public int getStatus() {

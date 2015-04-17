@@ -1,6 +1,8 @@
 package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.OrgTransactionDetailEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
@@ -8,13 +10,13 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  */
 public interface OrgTransactionDetailRepository extends PagingAndSortingRepository<OrgTransactionDetailEntity, Long> {
 
-    Iterable<OrgTransactionDetailEntity> findByAccountId(Long accountId);
+    Page<OrgTransactionDetailEntity> findByAccountId(String accountId, Pageable pageable);
 
-    Iterable<OrgTransactionDetailEntity> findByOrgId(Long orgId);
+    Page<OrgTransactionDetailEntity> findByOrgId(String orgId, Pageable pageable);
 
-    Iterable<OrgTransactionDetailEntity> findByBatchId(Long batchId);
+    Page<OrgTransactionDetailEntity> findByBatchId(String batchId, Pageable pageable);
 
-    Iterable<OrgTransactionDetailEntity> findByOrderId(Long orderId);
+    Page<OrgTransactionDetailEntity> findByOrderId(String orderId, Pageable pageable);
 
-    Iterable<OrgTransactionDetailEntity> findByOrgIdAndOrderId(Long orgId, Long orderId);
+    Page<OrgTransactionDetailEntity> findByOrgIdAndOrderId(String orgId, Long orderId, Pageable pageable);
 }

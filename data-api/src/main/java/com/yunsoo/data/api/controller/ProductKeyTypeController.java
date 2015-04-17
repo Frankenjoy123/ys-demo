@@ -2,13 +2,12 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.data.service.service.ProductKeyTypeService;
-import com.yunsoo.data.service.service.contract.ProductKeyType;
+import com.yunsoo.data.api.wrap.LookupServiceWrap;
+import com.yunsoo.data.service.service.LookupType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -20,35 +19,20 @@ import java.util.stream.Collectors;
 public class ProductKeyTypeController {
 
     @Autowired
-    private ProductKeyTypeService productKeyTypeService;
+    private LookupServiceWrap lookupServiceWrap;
 
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public LookupObject getById(@PathVariable(value = "id") Integer id) {
-        ProductKeyType productKeyType = productKeyTypeService.getById(id);
-        if (productKeyType == null) {
-            throw new NotFoundException("ProductKeyType");
+    @RequestMapping(value = "/{code}", method = RequestMethod.GET)
+    public LookupObject getByCode(@PathVariable(value = "code") String code) {
+        LookupObject object = lookupServiceWrap.getByCode(LookupType.ProductKeyType, code);
+        if (object == null) {
+            throw new NotFoundException("ProductKeyType not found");
         }
-        LookupObject object = new LookupObject();
-        object.setId(productKeyType.getId());
-        object.setCode(productKeyType.getCode());
-        object.setName(productKeyType.getName());
-        object.setDescription(productKeyType.getDescription());
-        object.setActive(productKeyType.isActive());
         return object;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<LookupObject> getAll(@RequestParam(value = "active", required = false) Boolean active) {
-        List<ProductKeyType> productKeyTypes = productKeyTypeService.getAll(active);
-        return productKeyTypes.stream().map(p -> {
-            LookupObject object = new LookupObject();
-            object.setId(p.getId());
-            object.setCode(p.getCode());
-            object.setName(p.getName());
-            object.setDescription(p.getDescription());
-            object.setActive(p.isActive());
-            return object;
-        }).collect(Collectors.toList());
+        return lookupServiceWrap.getAll(LookupType.ProductKeyType, active);
     }
 }

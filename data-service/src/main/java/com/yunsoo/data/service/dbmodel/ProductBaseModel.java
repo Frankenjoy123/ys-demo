@@ -37,6 +37,8 @@ public class ProductBaseModel {
     private String shelfLifeInterval;
     @Column(name = "product_key_type_ids")
     private String productKeyTypeCodes;
+    @Column(name = "child_pt_count")
+    private Integer ChildProductCount;
     @Column(name = "active")
     private Boolean active;
     @Column(name = "created_datetime")
@@ -124,6 +126,14 @@ public class ProductBaseModel {
 
     public void setProductKeyTypeCodes(String productKeyTypeCodes) {
         this.productKeyTypeCodes = productKeyTypeCodes;
+    }
+
+    public Integer getChildProductCount() {
+        return ChildProductCount;
+    }
+
+    public void setChildProductCount(Integer childProductCount) {
+        ChildProductCount = childProductCount;
     }
 
     public Boolean getActive() {

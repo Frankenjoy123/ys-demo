@@ -13,9 +13,6 @@ import javax.persistence.MappedSuperclass;
 public abstract class AbstractLookupEntity {
 
     @Id
-    @Column(name = "id")
-    private Integer id;
-
     @Column(name = "code")
     private String code;
 
@@ -28,13 +25,6 @@ public abstract class AbstractLookupEntity {
     @Column(name = "active")
     private boolean active;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getCode() {
         return code;

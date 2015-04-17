@@ -8,15 +8,14 @@ import com.yunsoo.common.data.object.LookupObject;
  * Descriptions:
  */
 public class ProductStatus extends LookupObject {
-    public static final ProductStatus NEW = newInstance(0, "NEW");
-    public static final ProductStatus ACTIVATED = newInstance(1, "ACTIVATED");
-    public static final ProductStatus RECALLED = newInstance(2, "RECALLED");
-    public static final ProductStatus DELETED = newInstance(3, "DELETED");
+    public static final ProductStatus NEW = newInstance("NEW");
+    public static final ProductStatus ACTIVATED = newInstance("ACTIVATED");
+    public static final ProductStatus RECALLED = newInstance("RECALLED");
+    public static final ProductStatus DELETED = newInstance("DELETED");
 
 
-    private static ProductStatus newInstance(int id, String code) {
+    private static ProductStatus newInstance(String code) {
         ProductStatus productStatus = new ProductStatus();
-        productStatus.setId(id);
         productStatus.setCode(code);
         return productStatus;
     }

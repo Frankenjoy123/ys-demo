@@ -1,8 +1,8 @@
 package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.AbstractLookupEntity;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.Repository;
 
 /**
  * Created by:   Lijian
@@ -10,6 +10,14 @@ import org.springframework.data.repository.NoRepositoryBean;
  * Descriptions:
  */
 @NoRepositoryBean
-public interface LookupRepository<E extends AbstractLookupEntity> extends CrudRepository<E, Integer> {
+public interface LookupRepository<E extends AbstractLookupEntity> extends Repository<E, String> {
+
+    E findOne(String code);
+
+    Iterable<E> findAll();
+
     Iterable<E> findByActive(Boolean active);
+
+    E save(E entity);
+
 }
