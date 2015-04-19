@@ -57,7 +57,7 @@ public class TokenAuthenticationService {
     }
 
     //By pass the filter way, for each controller to check permission on their needs.
-    public Boolean checkIdentity(String token, String userId, Boolean checkEqual) {
+    public Boolean checkOrgResource(String token, String orgId, Boolean checkEqual) {
         if (token == null || token.isEmpty()) {
             return false;
         }
@@ -75,6 +75,6 @@ public class TokenAuthenticationService {
             throw new UnauthorizedException(40105, "Account is disabled!");
         }
 
-        return checkEqual ? tAccount.getId().equals(userId) : true;
+        return checkEqual ? tAccount.getOrgId().equals(orgId) : true;
     }
 }

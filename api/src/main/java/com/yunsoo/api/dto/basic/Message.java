@@ -14,7 +14,7 @@ public class Message {
     private String title;
     private String body;
     private String digest;
-    private long companyId;
+    private String orgId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
@@ -65,12 +65,12 @@ public class Message {
         this.digest = digest;
     }
 
-    public long getCompanyId() {
-        return companyId;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setCompanyId(long companyId) {
-        this.companyId = companyId;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 
     public int getCreatedBy() {

@@ -1,9 +1,7 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.biz.ValidateProduct;
 import com.yunsoo.api.domain.LogisticsDomain;
 import com.yunsoo.api.domain.ProductDomain;
-import com.yunsoo.api.domain.UserDomain;
 import com.yunsoo.api.dto.LogisticsPath;
 import com.yunsoo.api.dto.basic.*;
 import com.yunsoo.api.object.TScanRecord;
@@ -42,66 +40,14 @@ public class ScanController {
     @Autowired
     private LogisticsDomain logisticsDomain;
     @Autowired
-    private UserDomain userDomain;
-    @Autowired
     private ProductDomain productDomain;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
 
-    //能够访问所有的Key
-    @RequestMapping(value = "/backup/mobile", method = RequestMethod.POST)
-    public ScanResult getDetailByKey(@RequestBody ScanRequestBody scanRequestBody) {
-
-        //0，validate input
-        scanRequestBody.validateForScan();
-
-        //1, get user
-        User currentUser = userDomain.ensureUser(scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
-        if (currentUser == null) {
-//            LOGGER.error("User not found by userId ={0}, deviceCode = {1}", scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
-            throw new NotFoundException(40401, "User not found by userId = " + scanRequestBody.getUserId() + " deviceCode = " + scanRequestBody.getDeviceCode());
-        }
-
-        ScanResult scanResult = new ScanResult();
-        scanResult.setUserId(currentUser.getId());
-        scanResult.setKey(scanRequestBody.getKey());
-
-        //2, set product information
-        Product currentExistProduct = productDomain.getProductByKey(scanRequestBody.getKey());
-        if (currentExistProduct == null) {
-            //Not found by the product Key
-            LOGGER.warn("Key = {0} 不存在！", scanRequestBody.getKey());
-            scanResult.setValidationResult(ValidationResult.Fake);  //no such key in our Yunsoo Platform.
-            return scanResult;
-        }
-        scanResult.setProduct(currentExistProduct);
-
-        //3, retrieve scan records
-        ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}", ScanRecord[].class, scanRequestBody.getKey(), Integer.MAX_VALUE);
-        List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
-        //to-do
-        scanResult.setScanRecord(scanRecordList);
-        scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
-
-        //4, retrieve logistics information
-        scanResult.setLogisticses(getLogisticsInfo(scanRequestBody.getKey()));
-
-        //5, get company information.
-        Organization organization = dataAPIClient.get("organization/id/{id}", Organization.class, scanResult.getProduct().getOrgId());
-        scanResult.setManufacturer(organization);
-
-        //6, set validation result by our validation strategy.
-        scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), currentUser, scanRecordList));
-
-        //7, save scan Record
-        long scanSave = SaveScanRecord(currentUser, currentExistProduct, scanRequestBody);
-        return scanResult;
-    }
-
 
     //仅仅能够访问属于特定组织的Key
     @RequestMapping(value = "/web/{orgid}/{key}", method = RequestMethod.GET)
-    public ScanResultWeb getDetailForWebByKey(@PathVariable(value = "orgid") Long orgid,
+    public ScanResultWeb getDetailForWebByKey(@PathVariable(value = "orgid") String orgid,
                                               @PathVariable(value = "key") String key) {
 
         if (key == null || key.isEmpty()) {
@@ -227,21 +173,4 @@ public class ScanController {
         return logisticsList;
     }
 
-    private long SaveScanRecord(User currentUser, Product currentProduct, ScanRequestBody scanRequestBody) {
-        TScanRecord scanRecord = new TScanRecord();
-        scanRecord.setUserId(currentUser.getId());
-        scanRecord.setDeviceId(currentUser.getDeviceCode());
-        scanRecord.setClientId(123456); //to-do
-        scanRecord.setProductKey(currentProduct.getProductKey());
-        scanRecord.setBaseProductId(currentProduct.getProductBaseId());
-        scanRecord.setDetail("某用户通过手机扫描验证真伪。");
-        scanRecord.setLongitude(scanRequestBody.getLongitude());
-        scanRecord.setLatitude(scanRequestBody.getLatitude());
-        if (scanRequestBody.getLocation() != null || !scanRequestBody.getLocation().isEmpty()) {
-            scanRecord.setLocation(scanRequestBody.getLocation());
-        } else {
-            scanRecord.setLocation("未公开地址"); //用户选择不公开隐私地址信息
-        }
-        return dataAPIClient.post("scan", scanRecord, Long.class);
-    }
 }

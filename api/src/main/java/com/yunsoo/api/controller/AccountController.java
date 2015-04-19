@@ -27,11 +27,12 @@ public class AccountController {
 
     @RequestMapping(value = "/current", method = RequestMethod.GET)
     public TAccount getCurrent() {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof AccountAuthentication) {
-            return ((AccountAuthentication) authentication).getDetails();
-        }
-        return new TAccount(authentication.getName()); //anonymous user support
+//        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication instanceof AccountAuthentication) {
+//            return ((AccountAuthentication) authentication).getDetails();
+//        }
+//        return new TAccount(authentication.getName()); //anonymous user support
+        return null;
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)

@@ -35,16 +35,13 @@ public class UserController {
 
     @Autowired
     private RestClient dataAPIClient;
-    //    @Autowired
-//    private UserDomain userDomain;
-    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
+//    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#id, 'User', 'user:read')")
-    public User getById(@RequestHeader(AUTH_HEADER_NAME) String token,
-                        @PathVariable(value = "id") String id) throws NotFoundException {
+    public User getById(@PathVariable(value = "id") String id) throws NotFoundException {
         if (id == null || id.isEmpty()) {
             throw new BadRequestException("UserId不应为空！");
         }
@@ -55,7 +52,7 @@ public class UserController {
 
     @RequestMapping(value = "/cellular/{cellular}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#token, 'authenticated')")
-    public User getByCellular(@RequestHeader(AUTH_HEADER_NAME) String token,
+    public User getByCellular(
                               @PathVariable(value = "cellular") String cellular) throws NotFoundException {
         if (cellular == null || cellular.isEmpty()) {
             throw new BadRequestException("cellular不能为空！");
@@ -67,7 +64,7 @@ public class UserController {
 
     @RequestMapping(value = "/device/{devicecode}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#token, 'authenticated')")
-    public User getByDevicecode(@RequestHeader(AUTH_HEADER_NAME) String token,
+    public User getByDevicecode(
                                 @PathVariable(value = "devicecode") String deviceCode) throws NotFoundException {
         if (deviceCode == null || deviceCode.isEmpty()) {
             throw new BadRequestException("deviceCode不能为空！");
@@ -109,7 +106,7 @@ public class UserController {
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#user, 'authenticated')")
-    public void updateUser(@RequestHeader(AUTH_HEADER_NAME) String token,
+    public void updateUser(
                            @RequestBody User user) throws Exception {
         dataAPIClient.patch("user", user);
     }
@@ -117,7 +114,7 @@ public class UserController {
     @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#user, 'authenticated')")
-    public void deleteUser(@RequestHeader(AUTH_HEADER_NAME) String token,
+    public void deleteUser(
                            @PathVariable(value = "userId") String userId) throws Exception {
         dataAPIClient.delete("user/{id}", userId);
     }

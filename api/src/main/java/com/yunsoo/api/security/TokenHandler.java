@@ -54,12 +54,13 @@ public final class TokenHandler {
                 if (validHash) {
                     final TAccount tAccount = new TAccount();
                     String[] userInfoArray = fromJSON(userBytes).split(",");
-                    if (userInfoArray == null || userInfoArray.length != 3) {
+                    if (userInfoArray == null || userInfoArray.length != 4) {
                         LOGGER.error("ParseUserFromToken error! UserInfoArray is empty, and UserBytes is: " + userBytes.toString());
                     }
                     tAccount.setId(userInfoArray[0]);
                     tAccount.setStatus(Integer.parseInt(userInfoArray[1]));
-                    tAccount.setExpires(Long.parseLong(userInfoArray[2]));
+                    tAccount.setOrgId(userInfoArray[2]);
+                    tAccount.setExpires(Long.parseLong(userInfoArray[3]));
                     //check if token is expired
                     if (tAccount.getExpires() < DateTime.now().getMillis()) {
                         tAccount.setStatus(TAccountStatusEnum.EXPIRED.value());
@@ -78,7 +79,7 @@ public final class TokenHandler {
 
     public String createTokenForUser(TAccount user) {
         //generate user information to hash
-        String userInfo = user.getId() + "," + user.getStatus().value() + "," + user.getExpires(); // format:  [userid,status,expires]
+        String userInfo = user.getId() + "," + user.getStatus().value() + "," + user.getOrgId() + "," + user.getExpires(); // format:  [accountid,status,orgId, expires]
         byte[] userBytes = toJSON(userInfo);
         byte[] hash = createHmac(userBytes);
         final StringBuilder sb = new StringBuilder(170);  //170

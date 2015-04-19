@@ -1,10 +1,12 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.dto.basic.Message;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -30,6 +33,10 @@ public class MessageController {
     @Autowired
     private RestClient dataAPIClient;
 
+    @Autowired
+    private AccountDomain accountDomain;
+
+    private final String AUTH_HEADER_NAME = "YS_WOLF_AUTH_TOKEN";
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
 
     @Autowired
@@ -37,67 +44,45 @@ public class MessageController {
         this.dataAPIClient = dataAPIClient;
     }
 
-//    @RequestMapping(value = "/pushTo/{userid}/type/{typeid}", method = RequestMethod.GET)
-//    public List<Message> getNewMessagesByUserId(@PathVariable(value = "userid") Long userid,
-//                                                @PathVariable(value = "typeid") Integer typeid) {
-//        if (userid == null || userid <= 0) throw new BadRequestException("UserId不能小于0！");
-//        if (typeid == null || typeid <= 0) throw new BadRequestException("TypeId不能小于0！");
-//        try {
-//            List<Message> messageList = dataAPIClient.get("message/pushto/{userid}/type/{typeid}", List.class, userid, typeid);
-//            if (messageList == null || messageList.size() == 0) {
-//                throw new NotFoundException(40401, "Message not found for userid = " + userid);
-//            }
-//            return messageList;
-//        } catch (NotFoundException ex) {
-//            throw new NotFoundException(40401, "Message not found for userid = " + userid);
-//        }
-//    }
-
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#id, 'AccountInToken', 'message:read')")
     public Message getById(@PathVariable(value = "id") Integer id) throws NotFoundException {
         if (id == null || id <= 0) throw new BadRequestException("Id不能小于0！");
         try {
             Message message = dataAPIClient.get("message/{id}", Message.class, id);
             if (message == null) throw new NotFoundException(40401, "Message not found for id = " + id);
+
             return message;
         } catch (NotFoundException ex) {
             throw new NotFoundException(40401, "Message not found for id = " + id);
         }
     }
 
-//    @RequestMapping(value = "/getunread", method = RequestMethod.GET)
-//    public List<Message> getUnreadMessagesBy(@RequestParam(value = "userid", required = true) Long userId,
-//                                             @RequestParam(value = "companyid", required = true) Long companyId,
-//                                             @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
-//        if (userId == null || userId <= 0) throw new BadRequestException("UserId不能小于0！");
-//        if (companyId == null || companyId <= 0) throw new BadRequestException("CompanyId不能小于0！");
-//        try {
-//            List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&companyid={1}&lastreadmessageid={2}", List.class, userId, companyId, lastReadMessageId);
-//            if (messageList == null || messageList.size() == 0) {
-//                throw new NotFoundException("Message not found!");
-//            }
-//            return messageList;
-//        } catch (NotFoundException ex) {
-//            throw new NotFoundException(40401, "Message not found for userid = " + userId + ". companyId = " + companyId + ". lastReadMessageId = " + lastReadMessageId);
-//        }
-//
-//    }
-
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission(#message, 'message:create')")
     public long createMessages(@RequestBody Message message) {
+        if (message == null) throw new BadRequestException("Message不能为空！");
         long id = dataAPIClient.post("message", message, Long.class);
         return id;
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.PATCH)
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    @PreAuthorize("hasPermission(#message, 'message:update')")
     public void updateMessages(@RequestBody Message message) {
+        if (message == null) throw new BadRequestException("Message不能为空！");
         dataAPIClient.patch("message", message);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteMessages(@PathVariable(value = "id") Long id) {
+    @PreAuthorize("hasPermission(#message, 'message:delete')")
+    public void deleteMessages(@RequestHeader(AUTH_HEADER_NAME) String token, @PathVariable(value = "id") Long id) {
+        if (id == null || id <= 0) throw new BadRequestException("Id不能小于0！");
+        Message message = dataAPIClient.get("/user/collection/{id}", Message.class, id);
+        if (!accountDomain.validateToken(token, message.getOrgId())) {
+            throw new UnauthorizedException("不能删除其他机构的信息！");
+        }
         dataAPIClient.delete("message/{id}", id);
     }
 

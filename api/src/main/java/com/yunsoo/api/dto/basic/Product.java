@@ -13,7 +13,7 @@ public class Product {
     private String productKey;
     private ProductCategory productCategory;
     private long ProductBaseId;
-    private long orgId;
+    private String orgId;
     private String barcode;
     private String name;
     private String description;
@@ -49,11 +49,11 @@ public class Product {
         ProductBaseId = productBaseId;
     }
 
-    public long getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(long orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 

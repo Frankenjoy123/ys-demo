@@ -1,7 +1,8 @@
 package com.yunsoo.api.security.permission;
 
+import com.yunsoo.api.dto.basic.Message;
+import com.yunsoo.api.dto.basic.User;
 import com.yunsoo.api.object.TAccount;
-import com.yunsoo.common.data.object.AccountPermissionObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
@@ -11,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by Zhe on 2015/3/6.
@@ -38,7 +38,14 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             } else if (!account.isEnabled()) {
                 throw new UnauthorizedException(40104, "Account is disabled!");
             }
-            hasPermission = true; //mockup here, always true
+
+            if (targetDomainObject instanceof User) {
+                hasPermission = ((User) targetDomainObject).getId().equals(account.getId());
+            } else if (targetDomainObject instanceof Message) {
+                hasPermission = ((Message) targetDomainObject).getOrgId().equals(account.getOrgId());
+            } else {
+                hasPermission = true;
+            }
             //implement the permission checking of your application here
             //you can just check if the input permission is within your permission list
 
@@ -50,8 +57,6 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 //            HashMap<String, PrivilegeResult> pMap =user.getPrivilegeMap();
 //            PrivilegeResult privResult = pMap.get(permission);
 //            hasPermission =  privResult.isAllowAccess();
-        } else {
-            hasPermission = false;
         }
         return hasPermission;
     }
@@ -74,20 +79,18 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             } else if (!account.isEnabled()) {
                 throw new UnauthorizedException(40104, "Account is disabled!");
             }
-            hasPermission = true; //mockup here, always true
-            //implement the permission checking of your application here
-            //you can just check if the input permission is within your permission list
 
-            //In my example, the user object contains a HashMap which stored the permission of the user.
-            //The HashMap<String, PrivilegeResult> is populated during using login by filter. This will not be shown in this example
+            //check if user's permission for target id
+            if (targetType.compareToIgnoreCase("User") == 0) {
+                hasPermission = account.getId().equals(targetId) ? true : false;
+            } else if (targetType.compareToIgnoreCase("UserLikedProduct") == 0) {
+                hasPermission = account.getId().equals(targetId) ? true : false;
+            } else if (targetType.compareToIgnoreCase("AccountInToken") == 0) {
+                hasPermission = account.getId().equals(targetId) ? true : false;
+            } else {
+                hasPermission = false;
+            }
 
-//            AccountPermissionObject[] permissionObjectList =  dataAPIClient.get("accountpermission/permission/{accountId}", AccountPermissionObject[].class, account.getId());
-//            User user = SecurityUtil.getUserCredential();
-//            HashMap<String, PrivilegeResult> pMap =user.getPrivilegeMap();
-//            PrivilegeResult privResult = pMap.get(permission);
-//            hasPermission =  privResult.isAllowAccess();
-        } else {
-            hasPermission = false;
         }
         return hasPermission;
     }
