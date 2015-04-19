@@ -44,14 +44,15 @@ public class MessageController {
 
     @RequestMapping(value = "/pushTo/{userid}/type/{typeid}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#message, 'message:read')")
+    @PreAuthorize("hasPermission(#userid, 'UserInToken', 'message:read')")
     public List<Message> getNewMessagesByUserId(@RequestHeader(AUTH_HEADER_NAME) String token,
                                                 @PathVariable(value = "userid") String userid,
                                                 @PathVariable(value = "typeid") Integer typeid) {
         if (userid == null || userid.isEmpty()) throw new BadRequestException("UserId不能小于0！");
         if (typeid == null || typeid <= 0) throw new BadRequestException("TypeId不能小于0！");
-        if (!userDomain.validateToken(token, userid)) {
-            throw new UnauthorizedException("不能读取其他用户的收藏信息！");
-        }
+//        if (!userDomain.validateToken(token, userid)) {
+//            throw new UnauthorizedException("不能读取其他用户的收藏信息！");
+//        }
         try {
             List<Message> messageList = dataAPIClient.get("message/pushto/{userid}/type/{typeid}", List.class, userid, typeid);
             if (messageList == null || messageList.size() == 0) {
@@ -77,16 +78,17 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/getunread", method = RequestMethod.GET)
-//    @PreAuthorize("hasPermission(#message, 'message:read')")
+    @PreAuthorize("hasPermission(#userId, 'UserInToken', 'message:read')")
     public List<Message> getUnreadMessagesBy(@RequestHeader(AUTH_HEADER_NAME) String token,
                                              @RequestParam(value = "userid", required = true) String userId,
                                              @RequestParam(value = "companyid", required = true) Long companyId,
                                              @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
         if (userId == null || userId.isEmpty()) throw new BadRequestException("UserId不能小于0！");
         if (companyId == null || companyId <= 0) throw new BadRequestException("CompanyId不能小于0！");
-        if (!userDomain.validateToken(token, userId)) {
-            throw new UnauthorizedException("不能读取其他用户的收藏信息！");
-        }
+//        if (lastReadMessageId == null || lastReadMessageId < 0) throw new BadRequestException("lastReadMessageId不能小于0！");
+//        if (!userDomain.validateToken(token, userId)) {
+//            throw new UnauthorizedException("不能读取其他用户的收藏信息！");
+//        }
         try {
             List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&companyid={1}&lastreadmessageid={2}", List.class, userId, companyId, lastReadMessageId);
             if (messageList == null || messageList.size() == 0) {

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -34,13 +35,11 @@ public class UserLikedProductController {
 
     @RequestMapping(value = "/who/{userid}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#usercollection, 'usercollection:read')")
+    @PreAuthorize("hasPermission(#userid, 'UserLikedProduct', 'usercollection:read')")
     public List<UserLikedProduct> getUserCollectionById(@RequestHeader(AUTH_HEADER_NAME) String token,
                                                         @PathVariable(value = "userid") String userid) {
         if (userid == null || userid.isEmpty()) {
             throw new BadRequestException("UserId不应为空！");
-        }
-        if (!userDomain.validateToken(token, userid)) {
-            throw new UnauthorizedException("不能读取其他用户的收藏信息！");
         }
         try {
             List<UserLikedProduct> userLikedProductList = dataAPIClient.get("/user/collection/userid/{userid}", List.class, userid);
@@ -56,19 +55,20 @@ public class UserLikedProductController {
     @RequestMapping(value = "/like", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
 //    @PreAuthorize("hasPermission(#usercollection, 'usercollection:create')")
-    public ResponseEntity<?> createUser(@RequestHeader(AUTH_HEADER_NAME) String token,
+    @PreAuthorize("hasPermission(#userLikedProduct, 'authenticated')")
+    public ResponseEntity<?> createUserLikedProduct(@RequestHeader(AUTH_HEADER_NAME) String token,
                                         @RequestBody UserLikedProduct userLikedProduct) throws Exception {
-        if (!userDomain.validateToken(token, userLikedProduct.getUserId())) {
-            throw new UnauthorizedException("不能修改其他用户的收藏信息！");
-        }
+//        if (!userDomain.validateToken(token, userLikedProduct.getUserId())) {
+//            throw new UnauthorizedException("不能修改其他用户的收藏信息！");
+//        }
         long id = dataAPIClient.post("/user/collection/like", userLikedProduct, Long.class);
         return new ResponseEntity<Long>(id, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/unlike/{Id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-//    @PreAuthorize("hasPermission(#usercollection, 'usercollection:delete')")
-    public void deleteUser(@RequestHeader(AUTH_HEADER_NAME) String token,
+//    @PreAuthorize("hasPermission(#userLikedProduct, 'authenticated')")
+    public void deleteUserLikedProduct(@RequestHeader(AUTH_HEADER_NAME) String token,
                            @PathVariable(value = "Id") Long Id) throws Exception {
         if (Id == null || Id < 0) {
             throw new BadRequestException("Id不应小于0！");

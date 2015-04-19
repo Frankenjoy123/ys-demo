@@ -4,22 +4,22 @@ package com.yunsoo.api.security;
  * Created by Zhe on 2015/3/5.
  */
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yunsoo.api.object.TAccount;
+import com.yunsoo.api.object.TAccountStatusEnum;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.Date;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yunsoo.api.object.TAccount;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class TokenHandler {
 
@@ -52,38 +52,53 @@ public final class TokenHandler {
                 // no client will be able to tamper with the content and provide a hash that is the same as the one the server will produce
                 boolean validHash = Arrays.equals(createHmac(userBytes), hash);
                 if (validHash) {
-                    final TAccount tAccount = fromJSON(userBytes);
+                    final TAccount tAccount = new TAccount();
+                    String[] userInfoArray = fromJSON(userBytes).split(",");
+                    if (userInfoArray == null || userInfoArray.length != 3) {
+                        LOGGER.error("ParseUserFromToken error! UserInfoArray is empty, and UserBytes is: " + userBytes.toString());
+                    }
+                    tAccount.setId(userInfoArray[0]);
+                    tAccount.setStatus(Integer.parseInt(userInfoArray[1]));
+                    tAccount.setExpires(Long.parseLong(userInfoArray[2]));
+                    //check if token is expired
+                    if (tAccount.getExpires() < DateTime.now().getMillis()) {
+                        tAccount.setStatus(TAccountStatusEnum.EXPIRED.value());
+                    }
                     return tAccount;
                 }
             } catch (IllegalArgumentException e) {
                 //log tempering attempt here
-                LOGGER.error("parseUserFromToken Exception Message:  ", e.getMessage());
+                LOGGER.error("parseUserFromToken IllegalArgumentException Message:  ", e.getMessage());
+            } catch (Exception ex) {
+                LOGGER.error("parseUserFromToken Exception Message:  ", ex.getMessage());
             }
         }
-        return null;
+        return new TAccount(TAccountStatusEnum.INVALID_TOKEN);
     }
 
     public String createTokenForUser(TAccount user) {
-        byte[] userBytes = toJSON(user);
+        //generate user information to hash
+        String userInfo = user.getId() + "," + user.getStatus().value() + "," + user.getExpires(); // format:  [userid,status,expires]
+        byte[] userBytes = toJSON(userInfo);
         byte[] hash = createHmac(userBytes);
-        final StringBuilder sb = new StringBuilder(170); //170
+        final StringBuilder sb = new StringBuilder(170);  //170
         sb.append(toBase64(userBytes));
         sb.append(SEPARATOR);
         sb.append(toBase64(hash));
         return sb.toString();
     }
 
-    private TAccount fromJSON(final byte[] userBytes) {
+    private String fromJSON(final byte[] userBytes) {
         try {
-            return new ObjectMapper().readValue(new ByteArrayInputStream(userBytes), TAccount.class);
+            return new ObjectMapper().readValue(new ByteArrayInputStream(userBytes), String.class);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private byte[] toJSON(TAccount user) {
+    private byte[] toJSON(String userInfo) {
         try {
-            return new ObjectMapper().writeValueAsBytes(user);
+            return new ObjectMapper().writeValueAsBytes(userInfo);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException(e);
         }
@@ -101,24 +116,4 @@ public final class TokenHandler {
     private synchronized byte[] createHmac(byte[] content) {
         return hmac.doFinal(content);
     }
-/*
-    public static void main(String[] args) {
-		Date start = new Date();
-		byte[] secret = new byte[70];
-		new java.security.SecureRandom().nextBytes(secret);
-
-		TokenHandler tokenHandler = new TokenHandler(secret);
-		for (int i = 0; i < 1000; i++) {
-			final User user = new User(java.util.UUID.randomUUID().toString().substring(0, 8), new Date(
-					new Date().getTime() + 10000));
-			user.grantRole(UserRole.ADMIN);
-			final String token = tokenHandler.createTokenForUser(user);
-			final User parsedUser = tokenHandler.parseUserFromToken(token);
-			if (parsedUser == null || parsedUser.getUsername() == null) {
-				System.out.println("error");
-			}
-		}
-		System.out.println(System.currentTimeMillis() - start.getTime());
-	}
-*/
 }

@@ -1,5 +1,8 @@
 package com.yunsoo.api.rabbit.security.permission;
 
+import com.yunsoo.api.rabbit.dto.basic.Message;
+import com.yunsoo.api.rabbit.dto.basic.User;
+import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
 import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.common.data.object.AccountPermissionObject;
 import com.yunsoo.common.web.client.RestClient;
@@ -38,7 +41,15 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             } else if (!account.isEnabled()) {
                 throw new UnauthorizedException(40104, "Account is disabled!");
             }
-            hasPermission = true; //mockup here, always true
+
+            if (targetDomainObject instanceof User) {
+                hasPermission = ((User) targetDomainObject).getId().equals(account.getId());
+            } else if (targetDomainObject instanceof UserLikedProduct) {
+                hasPermission = ((UserLikedProduct) targetDomainObject).getUserId().equals(account.getId());
+            } else {
+                hasPermission = true;
+            }
+            //mockup here, always true
             //implement the permission checking of your application here
             //you can just check if the input permission is within your permission list
 
@@ -50,8 +61,6 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 //            HashMap<String, PrivilegeResult> pMap =user.getPrivilegeMap();
 //            PrivilegeResult privResult = pMap.get(permission);
 //            hasPermission =  privResult.isAllowAccess();
-        } else {
-            hasPermission = false;
         }
         return hasPermission;
     }
@@ -59,6 +68,34 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(Authentication authentication,
                                  Serializable targetId, String targetType, Object permission) {
-        throw new RuntimeException("Id and Class permissions are not supperted by this application");
+        boolean hasPermission = false;
+        if (authentication != null && permission instanceof String) {
+
+            TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            if (!account.isAnonymous()) {
+                throw new ForbiddenException(40301, "Action-" + permission, "Anonymous user is denied!");
+            } else if (!account.isAccountNonExpired()) {
+                throw new UnauthorizedException(40101, "Account is expired");
+            } else if (!account.isAccountNonLocked()) {
+                throw new UnauthorizedException(40102, "Account is locked!");
+            } else if (account.isCredentialsInvalid()) {
+                throw new UnauthorizedException(40103, "Account token is invalid!");
+            } else if (!account.isEnabled()) {
+                throw new UnauthorizedException(40104, "Account is disabled!");
+            }
+
+            //check if user's permission for target id
+            if (targetType.compareToIgnoreCase("User") == 0) {
+                hasPermission = account.getId().equals(targetId) ? true : false;
+            } else if (targetType.compareToIgnoreCase("UserLikedProduct") == 0) {
+                hasPermission = account.getId().equals(targetId) ? true : false;
+            } else if (targetType.compareToIgnoreCase("UserInToken") == 0) {
+                hasPermission = account.getId().equals(targetId) ? true : false;
+            } else {
+                hasPermission = false;
+            }
+
+        }
+        return hasPermission;
     }
 }

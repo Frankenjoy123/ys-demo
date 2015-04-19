@@ -1,7 +1,6 @@
 package com.yunsoo.api.security;
 
 import com.yunsoo.api.security.filter.StatelessAuthenticationFilter;
-import com.yunsoo.api.security.filter.StatelessLoginFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,40 +37,36 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .exceptionHandling().and()
+        http.exceptionHandling().and()
                 .anonymous().and()
                 .servletApi().and()
                 .headers().cacheControl().and()
                 .authorizeRequests()
 
                         //allow anonymous resource requests
-                .antMatchers("/").permitAll()
-                .antMatchers("/favicon.ico").permitAll()
-                .antMatchers("/resources/**").permitAll()
-
-                //allow anonymous to All controller by default
-                .antMatchers("/**").permitAll()
+                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/home/**").permitAll()
+//                .antMatchers("/favicon.ico").permitAll()
+//                .antMatchers("/resources/**").permitAll()
+                .antMatchers("/productbase/**").permitAll()
+//                .antMatchers("/scan/**").permitAll()
+//                .antMatchers("/organization/**").permitAll()
+                .anyRequest().authenticated().and()
+                //.antMatchers("/**").permitAll()
 
                 //allow anonymous POSTs to login
-                .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/account/**").permitAll()
+                // .antMatchers(HttpMethod.POST, "/auth/**").permitAll().and()
 
                 //allow anonymous GETs to API
                 // .antMatchers(HttpMethod.GET, "/api/**").permitAll()
 
-                //defined Admin only API area
-                .antMatchers("/admin/**").hasRole("YUNSOO_ADMIN")
-                .antMatchers("/productbase/**").hasRole("YUNSOO_ADMIN")
-                //.antMatchers("/user").permitAll()
-
                 //all other request need to be authenticated
-                .anyRequest().hasRole("COM_USER").and()
+//               .anyRequest().hasRole("COM_USER").and()
 
                 // custom JSON based authentication by POST of {"username":"<name>","password":"<password>"} which sets the token header upon authentication
-                .addFilterBefore(new StatelessLoginFilter("/api/login", tokenAuthenticationService, accountDetailService, authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+                //.addFilterBefore(new StatelessLoginFilter("/auth/login", tokenAuthenticationService, accountDetailService, authenticationManager()), UsernamePasswordAuthenticationFilter.class)
 
-                        // custom Token based authentication based on the header previously given to the client
+                // custom Token based authentication based on the header previously given to the client
                 .addFilterBefore(new StatelessAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
     }
 

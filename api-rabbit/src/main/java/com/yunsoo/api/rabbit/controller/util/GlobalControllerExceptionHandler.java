@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -77,6 +78,17 @@ public class GlobalControllerExceptionHandler {
     public ErrorResult handleUnauthorized(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.UNAUTHORIZED, "Unauthorized request.");
         LOGGER.warn("[API: 401 UNAUTHORIZED]", ex);
+        return appendTraceInfo(result, ex);
+    }
+
+
+    @ExceptionHandler({
+            AccessDeniedException.class})
+    @ResponseBody
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResult handleAccessDenied(HttpServletRequest req, Exception ex) {
+        ErrorResult result = new ErrorResult(RestErrorResultCode.UNAUTHORIZED, "Access denied.");
+        LOGGER.warn("[API: 403 Access denied]", ex);
         return appendTraceInfo(result, ex);
     }
 
