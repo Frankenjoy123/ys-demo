@@ -10,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 /**
@@ -26,8 +25,8 @@ public class OrgTransactionDetailController {
     @RequestMapping(value = "/org/{id}/orderId/{orderId}", method = RequestMethod.GET)
     public List<OrgTransactionDetail> getTransactionDetails(@PathVariable(value = "id") String id,
                                                             @PathVariable(value = "orderId") Long orderId,
-                                                            @PathParam(value = "index") Integer index,
-                                                            @PathParam(value = "size") Integer size) {
+                                                            @RequestParam(value = "index") Integer index,
+                                                            @RequestParam(value = "size") Integer size) {
 
         if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
         if (orderId == null || orderId < 0) throw new BadRequestException("orderId必须为不小于0的值！");

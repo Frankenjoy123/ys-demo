@@ -1,4 +1,4 @@
-package com.yunsoo.data.service.repository;
+package com.yunsoo.data.service.repository.basic;
 
 import com.yunsoo.data.service.entity.AbstractLookupEntity;
 import org.springframework.data.repository.NoRepositoryBean;

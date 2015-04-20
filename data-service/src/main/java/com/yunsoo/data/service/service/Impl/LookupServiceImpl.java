@@ -1,7 +1,7 @@
 package com.yunsoo.data.service.service.Impl;
 
 import com.yunsoo.data.service.entity.AbstractLookupEntity;
-import com.yunsoo.data.service.repository.LookupRepository;
+import com.yunsoo.data.service.repository.basic.LookupRepository;
 import com.yunsoo.data.service.service.LookupService;
 import com.yunsoo.data.service.service.LookupType;
 import com.yunsoo.data.service.service.contract.LookupItem;

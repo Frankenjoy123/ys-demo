@@ -2,6 +2,7 @@ package com.yunsoo.data.service.service;
 
 import com.yunsoo.data.service.entity.*;
 import com.yunsoo.data.service.repository.*;
+import com.yunsoo.data.service.repository.basic.LookupRepository;
 
 /**
  * Created by:   Lijian
