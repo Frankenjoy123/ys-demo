@@ -59,3 +59,15 @@ VALUES
 
 
 #account_token
+DROP TABLE IF EXISTS account_token;
+CREATE TABLE account_token
+(
+  id                               VARCHAR(20) PRIMARY KEY NOT NULL,
+  account_id                       VARCHAR(20)             NOT NULL,
+  app_id                           VARCHAR(20)             NOT NULL,
+  device_id                        VARCHAR(255)            NULL,
+  permanent_token                  VARCHAR(100)            NOT NULL,
+  permanent_token_datetime         DATETIME                NOT NULL,
+  permanent_token_expires_datetime DATETIME                NULL
+);
+CREATE UNIQUE INDEX permanent_token ON account_token (permanent_token);

@@ -1,56 +1,106 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.data.api.dto.ResultWrapper;
-import com.yunsoo.data.api.factory.ResultFactory;
-import com.yunsoo.data.service.service.AccountTokenService;
-import com.yunsoo.data.service.service.ServiceOperationStatus;
-import com.yunsoo.data.service.service.contract.AccountToken;
+import com.yunsoo.common.data.object.AccountTokenObject;
+import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.data.service.entity.AccountTokenEntity;
+import com.yunsoo.data.service.repository.AccountTokenRepository;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
- * Created by Jerry on 3/15/2015.
+ * Created by  : Jerry
+ * Created on  : 2015/3/15
+ * Descriptions:
+ * Modified by : Lijian
+ * Modified on : 2015/4/20
  */
 @RestController
 @RequestMapping("/accountToken")
 public class AccountTokenController {
 
     @Autowired
-    private final AccountTokenService accountTokenService;
+    private AccountTokenRepository accountTokenRepository;
 
-    @Autowired
-    AccountTokenController(AccountTokenService accountTokenService) {
-        this.accountTokenService = accountTokenService;
+
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public AccountTokenObject getById(@PathVariable(value = "id") String id) {
+        AccountTokenEntity entity = accountTokenRepository.findOne(id);
+        if (entity == null) {
+            throw new NotFoundException("AccountToken not found by [id: " + id + "]");
+        }
+        return fromAccountTokenEntity(entity);
     }
 
-    @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
-    public ResponseEntity<AccountToken> getAccountTokenById(@PathVariable(value = "id") int id) {
-        return new ResponseEntity<AccountToken>(accountTokenService.get(id), HttpStatus.OK);
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public AccountTokenObject getByPermanentToken(@RequestParam(value = "permanentToken") String permanentToken) {
+        List<AccountTokenEntity> entities = accountTokenRepository.findByPermanentToken(permanentToken);
+        if (entities.isEmpty()) {
+            throw new NotFoundException("AccountToken not found by [permanentToken: " + permanentToken + "]");
+        }
+        return fromAccountTokenEntity(entities.get(0));
     }
 
-    @RequestMapping(value = "/identifier/{identifier}", method = RequestMethod.GET)
-    public ResponseEntity<AccountToken> getAccountTokenByIdentifier(@PathVariable(value = "identifier")String identifier) {
-        return new ResponseEntity<AccountToken>(accountTokenService.getByIdentifier(identifier), HttpStatus.OK);
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public AccountTokenObject create(@RequestBody AccountTokenObject accountToken) {
+        if (StringUtils.isEmpty(accountToken.getAccountId())
+                || StringUtils.isEmpty(accountToken.getAppId())
+                || StringUtils.isEmpty(accountToken.getPermanentToken())) {
+            throw new BadRequestException("accountId, appId or permanentToken must not be null or empty");
+        }
+        if (accountToken.getPermanentTokenDateTime() == null) {
+            accountToken.setPermanentTokenDateTime(DateTime.now());
+        }
+        accountToken.setId(null); //make sure it's create
+        AccountTokenEntity entity = toAccountTokenEntity(accountToken);
+        AccountTokenEntity newEntity = accountTokenRepository.save(entity);
+        return fromAccountTokenEntity(newEntity);
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<ResultWrapper> createAccountToken(@RequestBody AccountToken accountToken) {
-        long id = accountTokenService.save(accountToken);
-        HttpStatus status = id > 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public void patchUpdate(@PathVariable(value = "id") String id, @RequestBody AccountTokenObject accountToken) {
+        AccountTokenEntity entity = accountTokenRepository.findOne(id);
+        if (entity == null) {
+            throw new NotFoundException("AccountToken not found by [id: " + id + "]");
+        }
+        if (accountToken.getPermanentTokenExpiresDateTime() != null) {
+            entity.setPermanentTokenExpiresDateTime(accountToken.getPermanentTokenExpiresDateTime());
+        }
+        accountTokenRepository.save(entity);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResponseEntity<ResultWrapper> updateAccountToken(@RequestBody AccountToken accountToken) {
-        Boolean result = accountTokenService.update(accountToken).equals(ServiceOperationStatus.Success) ? true : false;
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.OK);
+
+    private AccountTokenObject fromAccountTokenEntity(AccountTokenEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        AccountTokenObject object = new AccountTokenObject();
+        object.setId(entity.getId());
+        object.setAccountId(entity.getAccountId());
+        object.setAppId(entity.getAppId());
+        object.setDeviceId(entity.getDeviceId());
+        object.setPermanentToken(entity.getPermanentToken());
+        object.setPermanentTokenDateTime(entity.getPermanentTokenDateTime());
+        object.setPermanentTokenExpiresDateTime(entity.getPermanentTokenExpiresDateTime());
+        return object;
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<ResultWrapper> deleteAccountToken(@PathVariable(value = "id") int id) {
-        Boolean result = accountTokenService.delete(id, 5); //deletePermanantly status is 5 in dev DB
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
+    private AccountTokenEntity toAccountTokenEntity(AccountTokenObject object) {
+        if (object == null) {
+            return null;
+        }
+        AccountTokenEntity entity = new AccountTokenEntity();
+        entity.setId(object.getId());
+        entity.setAccountId(object.getAccountId());
+        entity.setAppId(object.getAppId());
+        entity.setDeviceId(object.getDeviceId());
+        entity.setPermanentToken(object.getPermanentToken());
+        entity.setPermanentTokenDateTime(object.getPermanentTokenDateTime());
+        entity.setPermanentTokenExpiresDateTime(object.getPermanentTokenExpiresDateTime());
+        return entity;
     }
 }

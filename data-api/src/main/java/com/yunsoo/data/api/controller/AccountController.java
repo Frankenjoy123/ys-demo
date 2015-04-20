@@ -34,7 +34,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public AccountObject getByIdentifierAndOrgId(@PathParam("orgId") String orgId, @PathParam("identifier") String identifier) {
+    public AccountObject getByIdentifierAndOrgId(@RequestParam("orgId") String orgId, @RequestParam("identifier") String identifier) {
         List<AccountEntity> entities = accountRepository.findByOrgIdAndIdentifier(orgId, identifier);
         if (entities.size() == 0) {
             throw new NotFoundException("Account not found by [orgId: " + orgId + ", identifier: " + identifier + "]");
