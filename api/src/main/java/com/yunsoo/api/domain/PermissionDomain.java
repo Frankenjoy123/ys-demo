@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Created by:   Lijian
@@ -86,21 +87,40 @@ public class PermissionDomain {
         return permissionPolicies;
     }
 
-    public TPermission getFromControllerAction() {
-        TPermission permission = new TPermission();
-
-
-        return permission;
-    }
-
     public boolean hasPermission(String accountId, TPermission permission) {
-        boolean result = false;
         List<TPermission> permissions = getAccountPermissionsByAccountId(accountId);
         if (permissions != null && permissions.size() > 0) {
+            String orgId = permission.getOrgId();
+            String resourceCode = permission.getResourceCode();
+            String actionCode = permission.getActionCode();
+            if (resourceCode == null || actionCode == null) {
+                return true; //anonymous
+            }
+            for (TPermission p : permissions) {
+                boolean isOrgIdMatched = orgId == null || wildcardMatch(p.getOrgId(), orgId);
+                if (!isOrgIdMatched) {
+                    continue; //try next permission;
+                }
+                boolean isResourceMatched = wildcardMatch(p.getResourceCode(), resourceCode);
+                boolean isActionMatched = wildcardMatch(p.getActionCode(), actionCode);
+                if (!isResourceMatched || !isActionMatched) {
+                    continue; //try next permission;
+                }
 
+                return true; //matched
+            }
 
-            result = true; //todo
         }
-        return result;
+        return false;
     }
+
+    /**
+     * @param expression String with wildcard *, example: *, product*
+     * @param target     String must not be null
+     * @return if is match
+     */
+    private boolean wildcardMatch(String expression, String target) {
+        return expression != null && Pattern.compile(expression.replace("*", "\\w*")).matcher(target).matches();
+    }
+
 }
