@@ -9,7 +9,7 @@ CREATE TABLE product_key_batch
   product_base_id        VARCHAR(20),
   product_keys_uri       VARCHAR(255),
   org_id                 VARCHAR(20),
-  created_client_id      VARCHAR(20)             NOT NULL,
+  created_app_id         VARCHAR(20)             NOT NULL,
   created_account_id     VARCHAR(20)             NOT NULL,
   created_datetime       DATETIME                NOT NULL
 );

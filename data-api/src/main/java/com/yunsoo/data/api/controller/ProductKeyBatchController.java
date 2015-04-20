@@ -66,7 +66,7 @@ public class ProductKeyBatchController {
         batch.setStatusCode(batchObj.getStatusCode());
         batch.setOrgId(batchObj.getOrgId());
         batch.setProductBaseId(batchObj.getProductBaseId());
-        batch.setCreatedClientId(batchObj.getCreatedClientId());
+        batch.setCreatedAppId(batchObj.getCreatedAppId());
         batch.setCreatedAccountId(batchObj.getCreatedAccountId());
         batch.setCreatedDateTime(batchObj.getCreatedDateTime());
         batch.setProductKeyTypeCodes(batchObj.getProductKeyTypeCodes());
@@ -84,7 +84,7 @@ public class ProductKeyBatchController {
         batchObj.setStatusCode(batch.getStatusCode());
         batchObj.setOrgId(batch.getOrgId());
         batchObj.setProductBaseId(batch.getProductBaseId());
-        batchObj.setCreatedClientId(batch.getCreatedClientId());
+        batchObj.setCreatedAppId(batch.getCreatedAppId());
         batchObj.setCreatedAccountId(batch.getCreatedAccountId());
         batchObj.setCreatedDateTime(batch.getCreatedDateTime());
         batchObj.setProductKeyTypeCodes(batch.getProductKeyTypeCodes());

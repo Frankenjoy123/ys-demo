@@ -72,7 +72,7 @@ public class ProductKeyBatchController {
 
         String statusCode = "new";
         String orgId = "2k0r1l55i2rs5544wz5";
-        String clientId = "1";
+        String appId = "1";
         String accountId = "2k0rahgcybh0l5uxtep";
         DateTime createdDateTime = DateTime.now();
 
@@ -97,7 +97,7 @@ public class ProductKeyBatchController {
         batchObj.setProductBaseId(productBaseId);
         batchObj.setProductKeyTypeCodes(productKeyTypeCodes);
         batchObj.setOrgId(orgId);
-        batchObj.setCreatedClientId(clientId);
+        batchObj.setCreatedAppId(appId);
         batchObj.setCreatedAccountId(accountId);
         batchObj.setCreatedDateTime(createdDateTime);
 

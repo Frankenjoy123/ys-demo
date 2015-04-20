@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class TScanRecord {
     private String productKey;
     private String baseProductId;
-    private String clientId;
+    private String appId;
     private String deviceId;
     private String userId;
     private String detail;
@@ -35,12 +35,12 @@ public class TScanRecord {
         this.baseProductId = baseProductId;
     }
 
-    public String getClientId() {
-        return clientId;
+    public String getAppId() {
+        return appId;
     }
 
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
+    public void setAppId(String appId) {
+        this.appId = appId;
     }
 
     public String getDeviceId() {

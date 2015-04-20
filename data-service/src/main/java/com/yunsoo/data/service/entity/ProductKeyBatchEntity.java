@@ -39,8 +39,8 @@ public class ProductKeyBatchEntity {
     @Column(name = "org_id")
     private String orgId;
 
-    @Column(name = "created_client_id")
-    private String createdClientId;
+    @Column(name = "created_app_id")
+    private String createdAppId;
 
     @Column(name = "created_account_id")
     private String createdAccountId;
@@ -106,12 +106,12 @@ public class ProductKeyBatchEntity {
         this.orgId = orgId;
     }
 
-    public String getCreatedClientId() {
-        return createdClientId;
+    public String getCreatedAppId() {
+        return createdAppId;
     }
 
-    public void setCreatedClientId(String createdClientId) {
-        this.createdClientId = createdClientId;
+    public void setCreatedAppId(String createdAppId) {
+        this.createdAppId = createdAppId;
     }
 
     public String getCreatedAccountId() {

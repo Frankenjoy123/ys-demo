@@ -24,8 +24,8 @@ public class ScanRecordModel {
     @Column(name = "base_product_id")
     private int baseProductId;
 
-    @Column(name = "client_id")
-    private int clientId;
+    @Column(name = "app_id")
+    private int appId;
 
     @Column(name = "device_id")
     private String deviceId;
@@ -71,12 +71,12 @@ public class ScanRecordModel {
         this.baseProductId = baseProductId;
     }
 
-    public int getClientId() {
-        return clientId;
+    public int getAppId() {
+        return appId;
     }
 
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
+    public void setAppId(int appId) {
+        this.appId = appId;
     }
 
     public String getDeviceId() {

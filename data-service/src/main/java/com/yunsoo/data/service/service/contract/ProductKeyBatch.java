@@ -16,7 +16,7 @@ public class ProductKeyBatch {
     private String statusCode;
     private String orgId;
     private String productBaseId;
-    private String createdClientId;
+    private String createdAppId;
     private String createdAccountId;
     private DateTime createdDateTime;
     private List<String> productKeyTypeCodes;
@@ -63,12 +63,12 @@ public class ProductKeyBatch {
         this.productBaseId = productBaseId;
     }
 
-    public String getCreatedClientId() {
-        return createdClientId;
+    public String getCreatedAppId() {
+        return createdAppId;
     }
 
-    public void setCreatedClientId(String createdClientId) {
-        this.createdClientId = createdClientId;
+    public void setCreatedAppId(String createdAppId) {
+        this.createdAppId = createdAppId;
     }
 
     public String getCreatedAccountId() {

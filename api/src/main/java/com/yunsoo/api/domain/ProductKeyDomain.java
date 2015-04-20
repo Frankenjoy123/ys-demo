@@ -16,7 +16,6 @@ import org.springframework.util.StringUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -123,7 +122,7 @@ public class ProductKeyDomain {
         batch.setProductKeyTypes(LookupObject.fromCodeList(productKeyTypes, object.getProductKeyTypeCodes()));
         batch.setProductBaseId(object.getProductBaseId());
         batch.setOrgId(object.getOrgId());
-        batch.setCreatedClientId(object.getCreatedClientId());
+        batch.setCreatedAppId(object.getCreatedAppId());
         batch.setCreatedAccountId(object.getCreatedAccountId());
         batch.setCreatedDateTime(object.getCreatedDateTime());
         return batch;

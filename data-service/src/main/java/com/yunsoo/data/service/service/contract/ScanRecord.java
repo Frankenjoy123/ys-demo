@@ -13,7 +13,7 @@ public class ScanRecord {
     private long id;
     private String productKey;
     private int baseProductId;
-    private int clientId;
+    private int appId;
     private String deviceId;
     private long userId;
     private String detail;
@@ -45,12 +45,12 @@ public class ScanRecord {
         this.baseProductId = baseProductId;
     }
 
-    public int getClientId() {
-        return clientId;
+    public int getAppId() {
+        return appId;
     }
 
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
+    public void setAppId(int appId) {
+        this.appId = appId;
     }
 
     public String getDeviceId() {
@@ -107,7 +107,7 @@ public class ScanRecord {
         ScanRecord scanRecord = new ScanRecord();
         scanRecord.setId(scanRecordModel.getId());
         scanRecord.setBaseProductId(scanRecordModel.getBaseProductId());
-        scanRecord.setClientId(scanRecordModel.getClientId());
+        scanRecord.setAppId(scanRecordModel.getAppId());
         scanRecord.setDeviceId(scanRecordModel.getDeviceId());
         scanRecord.setUserId(scanRecordModel.getUserId());
         scanRecord.setProductKey(scanRecordModel.getProductKey());
@@ -124,7 +124,7 @@ public class ScanRecord {
         ScanRecordModel scanRecordModel = new ScanRecordModel();
         scanRecordModel.setId(scanRecord.getId());
         scanRecordModel.setBaseProductId(scanRecord.getBaseProductId());
-        scanRecordModel.setClientId(scanRecord.getClientId());
+        scanRecordModel.setAppId(scanRecord.getAppId());
         scanRecordModel.setDeviceId(scanRecord.getDeviceId());
         scanRecordModel.setUserId(scanRecord.getUserId());
         scanRecordModel.setProductKey(scanRecord.getProductKey());

@@ -4,8 +4,6 @@ import com.yunsoo.api.domain.LogisticsDomain;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.dto.LogisticsPath;
 import com.yunsoo.api.dto.basic.*;
-import com.yunsoo.api.object.TScanRecord;
-import com.yunsoo.api.object.ValidationResult;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;

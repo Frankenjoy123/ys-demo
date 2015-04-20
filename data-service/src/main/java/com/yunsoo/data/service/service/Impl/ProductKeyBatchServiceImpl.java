@@ -181,7 +181,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         batch.setStatusCode(entity.getStatusCode());
         batch.setOrgId(entity.getOrgId());
         batch.setProductBaseId(entity.getProductBaseId());
-        batch.setCreatedClientId(entity.getCreatedClientId());
+        batch.setCreatedAppId(entity.getCreatedAppId());
         batch.setCreatedAccountId(entity.getCreatedAccountId());
         batch.setCreatedDateTime(entity.getCreatedDateTime());
         String codes = entity.getProductKeyTypeCodes();
@@ -202,7 +202,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         entity.setStatusCode(batch.getStatusCode());
         entity.setOrgId(batch.getOrgId());
         entity.setProductBaseId(batch.getProductBaseId());
-        entity.setCreatedClientId(batch.getCreatedClientId());
+        entity.setCreatedAppId(batch.getCreatedAppId());
         entity.setCreatedAccountId(batch.getCreatedAccountId());
         entity.setCreatedDateTime(batch.getCreatedDateTime());
         List<String> codes = batch.getProductKeyTypeCodes();

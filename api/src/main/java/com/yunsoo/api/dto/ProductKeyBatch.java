@@ -21,7 +21,7 @@ public class ProductKeyBatch {
     private List<ProductKeyType> productKeyTypes;
     private String productBaseId;
     private String orgId;
-    private String createdClientId;
+    private String createdAppId;
     private String createdAccountId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -84,12 +84,12 @@ public class ProductKeyBatch {
         this.orgId = orgId;
     }
 
-    public String getCreatedClientId() {
-        return createdClientId;
+    public String getCreatedAppId() {
+        return createdAppId;
     }
 
-    public void setCreatedClientId(String createdClientId) {
-        this.createdClientId = createdClientId;
+    public void setCreatedAppId(String createdAppId) {
+        this.createdAppId = createdAppId;
     }
 
     public String getCreatedAccountId() {

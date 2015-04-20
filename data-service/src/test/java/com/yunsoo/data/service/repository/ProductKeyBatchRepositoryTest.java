@@ -30,11 +30,10 @@ public class ProductKeyBatchRepositoryTest {
         e.setProductBaseId("1");
         e.setOrgId("1");
         e.setCreatedAccountId("1");
-        e.setCreatedClientId("1");
+        e.setCreatedAppId("1");
         e.setCreatedDateTime(DateTime.now());
         productKeyBatchRepository.save(e);
         System.out.println(e.getId());
         System.out.println(productKeyBatchRepository.findOne(e.getId()).getId());
-        productKeyBatchRepository.delete(e.getId());
     }
 }
