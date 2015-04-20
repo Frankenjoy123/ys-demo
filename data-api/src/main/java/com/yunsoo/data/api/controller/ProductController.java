@@ -31,34 +31,25 @@ public class ProductController {
         if (product == null) {
             throw new NotFoundException("Product");
         }
-        return convertToProductObject(product);
+        return toProductObject(product);
     }
 
-//    @RequestMapping(value = "/batchcreate/{productbaseid}", method = RequestMethod.POST)
-//    public int create(@PathVariable(value = "productbaseid") long productBaseId, @RequestBody List<String> productKeyList) {
-//        if (productBaseId > 0 || productKeyList == null || productKeyList.isEmpty()) {
-//            throw new BadRequestException();
-//        }
-//        //productService.batchCreate(productBaseId, productKeyList);
-//
-//        return productKeyList.size();
-//    }
 
     @RequestMapping(value = "/{key}", method = RequestMethod.PATCH)
     public void patchUpdate(@PathVariable(value = "key") String key, @RequestBody ProductObject productObject) {
         Product product = new Product();
         product.setProductKey(key);
-        product.setProductStatusId(productObject.getProductStatusId());
+        product.setProductStatusCode(productObject.getProductStatusCode());
         product.setManufacturingDateTime(productObject.getManufacturingDateTime());
         productService.patchUpdate(product);
     }
 
 
-    private ProductObject convertToProductObject(Product product) {
+    private ProductObject toProductObject(Product product) {
         ProductObject object = new ProductObject();
         object.setProductKey(product.getProductKey());
         object.setProductBaseId(product.getProductBaseId());
-        object.setProductStatusId(product.getProductStatusId());
+        object.setProductStatusCode(product.getProductStatusCode());
         object.setManufacturingDateTime((product.getManufacturingDateTime()));
         object.setCreatedDateTime(product.getCreatedDateTime());
         return object;

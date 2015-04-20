@@ -12,18 +12,18 @@ import java.util.List;
  * Descriptions:
  */
 public class ProductKeys {
-    private Long batchId;
+    private String batchId;
     private Integer quantity;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     private DateTime createdDateTime;
     private List<String> productKeyTypeCodes;
     private List<List<String>> productKeys;
 
-    public Long getBatchId() {
+    public String getBatchId() {
         return batchId;
     }
 
-    public void setBatchId(Long batchId) {
+    public void setBatchId(String batchId) {
         this.batchId = batchId;
     }
 

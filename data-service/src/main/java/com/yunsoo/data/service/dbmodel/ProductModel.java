@@ -12,20 +12,17 @@ import java.util.Set;
  * Created by:   Lijian
  * Created on:   2015/1/29
  * Descriptions:
- * <p>
  * "product": {
  * "product_key": "(String(22))",
- * <p>
- * "product_key_type_id": "product_key_type.id",
- * "product_key_disabled": "(boolean)",
- * "product_key_batch_id": "product_key_batch.id",
+ * "product_key_type_code": "product_key_type.code",
+ * "product_key_disabled": "(Boolean)",
+ * "product_key_batch_id": "product_key_batch.id(String)",
  * "primary_product_key": "product.product_key(String(22))",
  * "product_key_set": ["product.product_key(String(22))"],
- * "created_datetime": "(long)",
- * <p>
- * "product_base_id": "product_base.id(int)",
- * "product_status_id": "product_status.id(int)",
- * "manufacturing_datetime": "(long)"
+ * "created_datetime": "(Long)",
+ * "product_base_id": "product_base.id(String)",
+ * "product_status_code": "product_status.code(String)",
+ * "manufacturing_datetime": "(Long)"
  * }
  */
 @DynamoDBTable(tableName = "product")
@@ -35,15 +32,14 @@ public class ProductModel {
 
     private String productKeyTypeCode;
     private Boolean productKeyDisabled;
-    private Long productKeyBatchId;
+    private String productKeyBatchId;
     private String primaryProductKey; //if primaryProductKey is null, then it's a primary item.
     private Set<String> productKeySet; //only exists when primaryProductKey is null
-
     private Long createdDateTimeValue;
 
     //only a primary item can contain below product info
-    private Long productBaseId;
-    private Integer productStatusId;
+    private String productBaseId;
+    private String productStatusCode;
     private Long manufacturingDateTimeValue;
 
 
@@ -61,7 +57,7 @@ public class ProductModel {
         return primaryProductKey == null || primaryProductKey.equals(productKey);
     }
 
-    @DynamoDBAttribute(attributeName = "key_type_id") //product_key_type_id
+    @DynamoDBAttribute(attributeName = "key_type_code") //product_key_type_code
     public String getProductKeyTypeCode() {
         return productKeyTypeCode;
     }
@@ -80,11 +76,11 @@ public class ProductModel {
     }
 
     @DynamoDBAttribute(attributeName = "key_batch_id") //product_key_batch_id
-    public Long getProductKeyBatchId() {
+    public String getProductKeyBatchId() {
         return productKeyBatchId;
     }
 
-    public void setProductKeyBatchId(Long productKeyBatchId) {
+    public void setProductKeyBatchId(String productKeyBatchId) {
         this.productKeyBatchId = productKeyBatchId;
     }
 
@@ -128,22 +124,22 @@ public class ProductModel {
 
 
     @DynamoDBAttribute(attributeName = "base_id") //product_base_id
-    public Long getProductBaseId() {
+    public String getProductBaseId() {
         return productBaseId;
     }
 
-    public void setProductBaseId(Long productBaseId) {
+    public void setProductBaseId(String productBaseId) {
         this.productBaseId = productBaseId;
     }
 
 
     @DynamoDBAttribute(attributeName = "status_id") //product_status_id
-    public Integer getProductStatusId() {
-        return productStatusId;
+    public String getProductStatusCode() {
+        return productStatusCode;
     }
 
-    public void setProductStatusId(Integer productStatusId) {
-        this.productStatusId = productStatusId;
+    public void setProductStatusCode(String productStatusCode) {
+        this.productStatusCode = productStatusCode;
     }
 
 

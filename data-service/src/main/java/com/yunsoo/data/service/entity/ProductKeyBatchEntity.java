@@ -33,8 +33,8 @@ public class ProductKeyBatchEntity {
     @Column(name = "product_base_id")
     private String productBaseId;
 
-    @Column(name = "product_keys_address")
-    private String productKeysAddress;
+    @Column(name = "product_keys_uri")
+    private String productKeysUri;
 
     @Column(name = "org_id")
     private String orgId;
@@ -90,12 +90,12 @@ public class ProductKeyBatchEntity {
         this.productBaseId = productBaseId;
     }
 
-    public String getProductKeysAddress() {
-        return productKeysAddress;
+    public String getProductKeysUri() {
+        return productKeysUri;
     }
 
-    public void setProductKeysAddress(String productKeysAddress) {
-        this.productKeysAddress = productKeysAddress;
+    public void setProductKeysUri(String productKeysUri) {
+        this.productKeysUri = productKeysUri;
     }
 
     public String getOrgId() {

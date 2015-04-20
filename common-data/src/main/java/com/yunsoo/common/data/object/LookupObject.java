@@ -67,14 +67,14 @@ public class LookupObject {
                 && this.getCode().equals(((LookupObject) obj).getCode()));
     }
 
-    public static <T extends LookupObject> List<T> fromCodeList(List<T> lookup, List<String> list) {
+    public static <T extends LookupObject> List<T> fromCodeList(List<T> lookup, List<String> codeList) {
         if (lookup == null) {
             throw new IllegalArgumentException("lookup is null");
         }
-        if (list == null) {
+        if (codeList == null) {
             throw new IllegalArgumentException("list is null");
         }
-        return list.stream().map(code -> {
+        return codeList.stream().map(code -> {
             if (code != null) {
                 for (T i : lookup) {
                     if (code.equals(i.getCode())) {
@@ -84,5 +84,12 @@ public class LookupObject {
             }
             throw new IllegalArgumentException("invalid code: " + code);
         }).collect(Collectors.toList());
+    }
+
+    public static <T extends LookupObject> List<String> toCodeList(List<T> lookup) {
+        if (lookup == null) {
+            throw new IllegalArgumentException("lookup is null");
+        }
+        return lookup.stream().map(LookupObject::getCode).collect(Collectors.toList());
     }
 }

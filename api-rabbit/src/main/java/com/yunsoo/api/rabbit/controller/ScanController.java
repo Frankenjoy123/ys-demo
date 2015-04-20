@@ -193,7 +193,7 @@ public class ScanController {
         TScanRecord scanRecord = new TScanRecord();
         scanRecord.setUserId(currentUser.getId());
         scanRecord.setDeviceId(currentUser.getDeviceCode());
-        scanRecord.setClientId(123456); //to-do
+        scanRecord.setClientId("123456"); //to-do
         scanRecord.setProductKey(currentProduct.getProductKey());
         scanRecord.setBaseProductId(currentProduct.getProductBaseId());
         scanRecord.setDetail("某用户通过手机扫描验证真伪。");

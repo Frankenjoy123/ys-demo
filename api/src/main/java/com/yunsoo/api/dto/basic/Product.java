@@ -6,13 +6,15 @@ import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
- * Created by Zhe on 2015/2/27.
+ * Created by  : Zhe
+ * Created on  : 2015/2/27
+ * Descriptions:
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
     private String productKey;
     private ProductCategory productCategory;
-    private long ProductBaseId;
+    private String ProductBaseId;
     private String orgId;
     private String barcode;
     private String name;
@@ -21,7 +23,7 @@ public class Product {
     private int shelfLife;
     private String shelfLifeInterval;
     private String createdDateTime;
-    private int statusId;
+    private String statusCode;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     private DateTime manufacturingDateTime;
 
@@ -41,11 +43,11 @@ public class Product {
         this.productCategory = productCategory;
     }
 
-    public long getProductBaseId() {
+    public String getProductBaseId() {
         return ProductBaseId;
     }
 
-    public void setProductBaseId(long productBaseId) {
+    public void setProductBaseId(String productBaseId) {
         ProductBaseId = productBaseId;
     }
 
@@ -113,12 +115,12 @@ public class Product {
         this.createdDateTime = createdDateTime;
     }
 
-    public int getStatusId() {
-        return statusId;
+    public String getStatusCode() {
+        return statusCode;
     }
 
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
     public DateTime getManufacturingDateTime() {

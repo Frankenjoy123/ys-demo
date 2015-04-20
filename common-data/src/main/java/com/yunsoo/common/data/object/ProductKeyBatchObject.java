@@ -15,28 +15,27 @@ import java.util.List;
  */
 public class ProductKeyBatchObject {
 
-    private Long id;
+    private String id;
     private Integer quantity;
-    private Integer statusId;
-    private Integer organizationId;
-    private Long productBaseId;
-    private Integer createdClientId;
-    private Long createdAccountId;
+    private String statusCode;
+    private List<String> productKeyTypeCodes;
+    private String productBaseId;
+    private String productKeysUri;
+    private String orgId;
+    private String createdClientId;
+    private String createdAccountId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
-    private List<String> productKeyTypeCodes;
-    private String productKeysAddress;
 
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
-
 
     public Integer getQuantity() {
         return quantity;
@@ -46,57 +45,13 @@ public class ProductKeyBatchObject {
         this.quantity = quantity;
     }
 
-
-    public Integer getStatusId() {
-        return statusId;
+    public String getStatusCode() {
+        return statusCode;
     }
 
-    public void setStatusId(Integer statusId) {
-        this.statusId = statusId;
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
-
-    public Integer getOrganizationId() {
-        return organizationId;
-    }
-
-    public void setOrganizationId(Integer organizationId) {
-        this.organizationId = organizationId;
-    }
-
-    public Long getProductBaseId() {
-        return productBaseId;
-    }
-
-    public void setProductBaseId(Long productBaseId) {
-        this.productBaseId = productBaseId;
-    }
-
-    public Integer getCreatedClientId() {
-        return createdClientId;
-    }
-
-    public void setCreatedClientId(Integer createdClientId) {
-        this.createdClientId = createdClientId;
-    }
-
-
-    public Long getCreatedAccountId() {
-        return createdAccountId;
-    }
-
-    public void setCreatedAccountId(Long createdAccountId) {
-        this.createdAccountId = createdAccountId;
-    }
-
-
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
 
     public List<String> getProductKeyTypeCodes() {
         return productKeyTypeCodes;
@@ -106,13 +61,51 @@ public class ProductKeyBatchObject {
         this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
-
-    public String getProductKeysAddress() {
-        return productKeysAddress;
+    public String getProductBaseId() {
+        return productBaseId;
     }
 
-    public void setProductKeysAddress(String productKeysAddress) {
-        this.productKeysAddress = productKeysAddress;
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
+    public String getProductKeysUri() {
+        return productKeysUri;
+    }
+
+    public void setProductKeysUri(String productKeysUri) {
+        this.productKeysUri = productKeysUri;
+    }
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
+    public String getCreatedClientId() {
+        return createdClientId;
+    }
+
+    public void setCreatedClientId(String createdClientId) {
+        this.createdClientId = createdClientId;
+    }
+
+    public String getCreatedAccountId() {
+        return createdAccountId;
+    }
+
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
+    }
+
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
 }

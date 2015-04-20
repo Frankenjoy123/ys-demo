@@ -25,25 +25,24 @@ public class ProductKeyBatchHandler {
     public void execute(ProductKeyBatchMassage message) {
         String batchId = message.getBatchId();
         System.out.println("Processing productkeybatch: " + batchId);
-        Long batchIdL = Long.parseLong(batchId);
 
         ProductKeyBatchObject batch = dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, batchId);
         ProductKeysObject productKeysObject = dataAPIClient.get("productkeybatch/{id}/keys", ProductKeysObject.class, batchId);
 
         int quantity = productKeysObject.getQuantity();
-        List<Integer> productKeyTypeIds = productKeysObject.getProductKeyTypeIds();
+        List<String> productKeyTypeCodes = productKeysObject.getProductKeyTypeCodes();
         List<List<String>> productKeys = productKeysObject.getProductKeys();
         ProductKeyBatchDetailedObject request = new ProductKeyBatchDetailedObject();
-        request.setId(batchIdL);
-        request.setProductKeyTypeIds(productKeyTypeIds);
+        request.setId(batchId);
+        request.setProductKeyTypeCodes(productKeyTypeCodes);
         for (int i = 0; i < quantity; i += 1000) {
             request.setProductKeys(productKeys.subList(i, quantity < i + 1000 ? quantity : i + 1000));
         }
         if (batch.getProductBaseId() != null) {
             ProductObject product = new ProductObject();
             product.setProductBaseId(batch.getProductBaseId());
-            Integer productStatusId = 1; //default activated
-            product.setProductStatusId(productStatusId);
+            String productStatusCode = "activated"; //default activated
+            product.setProductStatusCode(productStatusCode);
             request.setProductTemplate(product);
         }
 

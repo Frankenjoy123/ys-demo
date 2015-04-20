@@ -1,10 +1,9 @@
 package com.yunsoo.data.service.service.Impl;
 
 import com.yunsoo.data.service.config.AmazonSetting;
-import com.yunsoo.data.service.dao.ProductDao;
-import com.yunsoo.data.service.dao.ProductKeyBatchDao;
 import com.yunsoo.data.service.dao.S3ItemDao;
-import com.yunsoo.data.service.dbmodel.ProductKeyBatchModel;
+import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
+import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
 import com.yunsoo.data.service.service.ProductKeyBatchService;
 import com.yunsoo.data.service.service.contract.ProductKeyBatch;
 import com.yunsoo.data.service.service.contract.ProductKeys;
@@ -13,11 +12,15 @@ import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.data.service.dbmodel.ProductKeyBatchS3ObjectModel;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by:   Lijian
@@ -28,10 +31,7 @@ import java.util.stream.Collectors;
 public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
     @Autowired
-    private ProductKeyBatchDao productkeyBatchDao;
-
-    @Autowired
-    private ProductDao productDao;
+    private ProductKeyBatchRepository productKeyBatchRepository;
 
     @Autowired
     private S3ItemDao s3ItemDao;
@@ -41,47 +41,42 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
 
     @Override
-    public ProductKeyBatch getById(Long id) {
-        ProductKeyBatchModel model = productkeyBatchDao.getById(id);
-        return model == null ? null : ProductKeyBatch.fromModel(model);
+    public ProductKeyBatch getById(String id) {
+        ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(id);
+        return fromProductKeyBatchEntity(entity);
     }
 
     @Override
-    public List<ProductKeyBatch> getByOrganizationIdPaged(Integer organizationId, int pageIndex, int pageSize) {
-        Map<String, Object> eqFilter = new HashMap<>();
-        if (organizationId != null) {
-            eqFilter.put("organizationId", organizationId);
-        }
-        return productkeyBatchDao.getByFilterPaged(eqFilter, pageIndex, pageSize).stream()
-                .map(ProductKeyBatch::fromModel)
+    public List<ProductKeyBatch> getByOrganizationIdPaged(String orgId, int pageIndex, int pageSize) {
+        Page<ProductKeyBatchEntity> entityPage =
+                productKeyBatchRepository.findByOrgIdOrderByCreatedDateTimeDesc(orgId, new PageRequest(pageIndex, pageSize));
+        return StreamSupport.stream(entityPage.spliterator(), false)
+                .map(this::fromProductKeyBatchEntity)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ProductKeyBatch> getByFilterPaged(Integer organizationId, Long productBaseId, int pageIndex, int pageSize) {
-        Map<String, Object> eqFilter = new HashMap<>();
-        if (organizationId != null) {
-            eqFilter.put("organizationId", organizationId);
-        }
-        eqFilter.put("productBaseId", productBaseId); //productBaseId can be null
-        return productkeyBatchDao.getByFilterPaged(eqFilter, pageIndex, pageSize).stream()
-                .map(ProductKeyBatch::fromModel)
+    public List<ProductKeyBatch> getByFilterPaged(String orgId, String productBaseId, int pageIndex, int pageSize) {
+        Page<ProductKeyBatchEntity> entityPage =
+                productKeyBatchRepository.findByOrgIdAndProductBaseIdOrderByCreatedDateTimeDesc(orgId, productBaseId, new PageRequest(pageIndex, pageSize));
+        return StreamSupport.stream(entityPage.spliterator(), false)
+                .map(this::fromProductKeyBatchEntity)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public ProductKeys getProductKeysByBatchId(Long batchId) {
+    public ProductKeys getProductKeysByBatchId(String batchId) {
         ProductKeyBatch keyBatch = this.getById(batchId);
         if (keyBatch == null) {
             return null;
         }
-        return getProductKeysByAddress(keyBatch.getProductKeysAddress());
+        return getProductKeysByUri(keyBatch.getProductKeysUri());
     }
 
     @Override
-    public ProductKeys getProductKeysByAddress(String address) {
-        Assert.notNull(address, "address must not be null");
-        ProductKeyBatchS3ObjectModel model = getProductKeyListFromS3(address);
+    public ProductKeys getProductKeysByUri(String uri) {
+        Assert.notNull(uri, "uri must not be null");
+        ProductKeyBatchS3ObjectModel model = getProductKeyListFromS3(uri);
         if (model == null) {
             return null;
         }
@@ -89,7 +84,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         productKeys.setBatchId(model.getId());
         productKeys.setQuantity(model.getQuantity());
         productKeys.setCreatedDateTime(DateTimeUtils.parse(model.getCreatedDateTime()));
-        productKeys.setProductKeyTypeCodes(model.getProductKeyTypeCodes());
+        productKeys.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(model.getProductKeyTypeCodes(), ",")));
         productKeys.setProductKeys(model.getProductKeys());
         return productKeys;
     }
@@ -105,19 +100,26 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         //generate productKeys
         List<List<String>> keyList = generateProductKeys(batch);
 
-        //save batch to getById the id
-        batch.setId(0L); //set to 0 for creating new item
-        if (batch.getCreatedDateTime() == null) batch.setCreatedDateTime(DateTime.now());
-        ProductKeyBatch newBatch = saveProductKeyBatch(batch);
+        //save batch
+        batch.setId(null); //set to null for creating new item
+        if (batch.getCreatedDateTime() == null) {
+            batch.setCreatedDateTime(DateTime.now());
+        }
+        ProductKeyBatchEntity newEntity = productKeyBatchRepository.save(toProductKeyBatchEntity(batch));
 
-        //save keyList to S3
-        String address = saveProductKeyListToS3(newBatch, keyList);
+        //save product keys to S3
+        String uri = saveProductKeyListToS3(
+                newEntity.getId(),
+                newEntity.getQuantity(),
+                newEntity.getCreatedDateTime(),
+                newEntity.getProductKeyTypeCodes(),
+                keyList);
 
-        //update batch with address
-        newBatch.setProductKeysAddress(address);
-        newBatch = updateProductKeyBatch(newBatch);
+        //update batch with uri
+        newEntity.setProductKeysUri(uri);
+        newEntity = productKeyBatchRepository.save(newEntity);
 
-        return newBatch;
+        return fromProductKeyBatchEntity(newEntity);
     }
 
 
@@ -140,18 +142,21 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         return keyList;
     }
 
-    private String saveProductKeyListToS3(ProductKeyBatch batch, List<List<String>> keyList) {
+    private String saveProductKeyListToS3(String batchId,
+                                          Integer quantity,
+                                          DateTime createdDateTime,
+                                          String productKeyTypeCodes,
+                                          List<List<String>> keyList) {
         ProductKeyBatchS3ObjectModel model = new ProductKeyBatchS3ObjectModel();
-        model.setId(batch.getId());
-        model.setQuantity(batch.getQuantity());
-        model.setCreatedDateTime(DateTimeUtils.toString(batch.getCreatedDateTime()));
-        model.setProductKeyTypeCodes(batch.getProductKeyTypeCodes());
+        model.setId(batchId);
+        model.setQuantity(quantity);
+        model.setCreatedDateTime(DateTimeUtils.toString(createdDateTime));
+        model.setProductKeyTypeCodes(productKeyTypeCodes);
         model.setProductKeys(keyList);
-        String bucketName = amazonSetting.getS3_basebucket(); // YunsooConfig.getBaseBucket();
-        String id = Long.toString(batch.getId()) + "_" + UUID.randomUUID().toString();
-        String key = String.join("/", amazonSetting.getS3_product_key_batch_path(), id);
+        String bucketName = amazonSetting.getS3_basebucket();
+        String key = String.join("/", amazonSetting.getS3_product_key_batch_path(), batchId);
         s3ItemDao.putItem(bucketName, key, model);
-        return String.join("/", bucketName, key); //address
+        return String.join("/", bucketName, key); //uri
     }
 
     private ProductKeyBatchS3ObjectModel getProductKeyListFromS3(String address) {
@@ -166,19 +171,46 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
                 ProductKeyBatchS3ObjectModel.class);
     }
 
-    private ProductKeyBatch saveProductKeyBatch(ProductKeyBatch keyBatch) {
-        if (keyBatch.getCreatedDateTime() == null) {
-            keyBatch.setCreatedDateTime(DateTime.now());
+    private ProductKeyBatch fromProductKeyBatchEntity(ProductKeyBatchEntity entity) {
+        if (entity == null) {
+            return null;
         }
-        ProductKeyBatchModel model = ProductKeyBatch.toModel(keyBatch);
-        productkeyBatchDao.save(model);
-        return ProductKeyBatch.fromModel(model);
+        ProductKeyBatch batch = new ProductKeyBatch();
+        batch.setId(entity.getId());
+        batch.setQuantity(entity.getQuantity());
+        batch.setStatusCode(entity.getStatusCode());
+        batch.setOrgId(entity.getOrgId());
+        batch.setProductBaseId(entity.getProductBaseId());
+        batch.setCreatedClientId(entity.getCreatedClientId());
+        batch.setCreatedAccountId(entity.getCreatedAccountId());
+        batch.setCreatedDateTime(entity.getCreatedDateTime());
+        String codes = entity.getProductKeyTypeCodes();
+        if (codes != null) {
+            batch.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
+        }
+        batch.setProductKeysUri(entity.getProductKeysUri());
+        return batch;
     }
 
-    private ProductKeyBatch updateProductKeyBatch(ProductKeyBatch keyBatch) {
-        ProductKeyBatchModel model = ProductKeyBatch.toModel(keyBatch);
-        productkeyBatchDao.update(model);
-        return ProductKeyBatch.fromModel(model);
+    public static ProductKeyBatchEntity toProductKeyBatchEntity(ProductKeyBatch batch) {
+        if (batch == null) {
+            return null;
+        }
+        ProductKeyBatchEntity entity = new ProductKeyBatchEntity();
+        entity.setId(batch.getId());
+        entity.setQuantity(batch.getQuantity());
+        entity.setStatusCode(batch.getStatusCode());
+        entity.setOrgId(batch.getOrgId());
+        entity.setProductBaseId(batch.getProductBaseId());
+        entity.setCreatedClientId(batch.getCreatedClientId());
+        entity.setCreatedAccountId(batch.getCreatedAccountId());
+        entity.setCreatedDateTime(batch.getCreatedDateTime());
+        List<String> codes = batch.getProductKeyTypeCodes();
+        if (codes != null) {
+            entity.setProductKeyTypeCodes(StringUtils.collectionToDelimitedString(codes, ","));
+        }
+        entity.setProductKeysUri(batch.getProductKeysUri());
+        return entity;
     }
 
 }

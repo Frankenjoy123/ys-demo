@@ -12,15 +12,15 @@ import java.util.List;
  */
 public interface ProductKeyBatchService {
 
-    ProductKeyBatch getById(Long batchId);
+    ProductKeyBatch getById(String batchId);
 
-    List<ProductKeyBatch> getByOrganizationIdPaged(Integer organizationId, int pageIndex, int pageSize);
+    List<ProductKeyBatch> getByOrganizationIdPaged(String orgId, int pageIndex, int pageSize);
 
-    List<ProductKeyBatch> getByFilterPaged(Integer organizationId, Long productBaseId, int pageIndex, int pageSize);
+    List<ProductKeyBatch> getByFilterPaged(String orgId, String productBaseId, int pageIndex, int pageSize);
 
-    ProductKeys getProductKeysByBatchId(Long batchId);
+    ProductKeys getProductKeysByBatchId(String batchId);
 
-    ProductKeys getProductKeysByAddress(String address);
+    ProductKeys getProductKeysByUri(String uri);
 
     ProductKeyBatch create(ProductKeyBatch batch);
 }

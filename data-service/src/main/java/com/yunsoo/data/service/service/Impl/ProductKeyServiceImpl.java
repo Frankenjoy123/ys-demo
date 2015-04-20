@@ -52,7 +52,7 @@ public class ProductKeyServiceImpl implements ProductKeyService {
     }
 
     @Override
-    public void batchSave(long productKeyBatchId,
+    public void batchSave(String productKeyBatchId,
                           List<String> productKeyTypeCodes,
                           List<List<String>> productKeys,
                           Product productTemplate) {
@@ -65,13 +65,13 @@ public class ProductKeyServiceImpl implements ProductKeyService {
 
     }
 
-    private List<ProductModel> generateProductModelList(Long productKeyBatchId,
+    private List<ProductModel> generateProductModelList(String productKeyBatchId,
                                                         List<String> productKeyTypeCodes,
                                                         List<List<String>> productKeys,
                                                         Product productTemplate) {
         Assert.notNull(productKeyBatchId, "productKeyBatchId must not be null");
         Assert.notEmpty(productKeyTypeCodes, "productKeyTypeIds must not be empty or null");
-        Assert.notEmpty(productKeys, "productKeys invalid");
+        Assert.notEmpty(productKeys, "productKeys must not be empty or null");
 
         DateTime now = DateTime.now();
         List<ProductModel> productModelList = new ArrayList<>(productKeys.size() * productKeyTypeCodes.size());
@@ -116,7 +116,7 @@ public class ProductKeyServiceImpl implements ProductKeyService {
         ProductModel model = new ProductModel();
         if (productTemplate != null) {
             model.setProductBaseId(productTemplate.getProductBaseId());
-            model.setProductStatusId(productTemplate.getProductStatusId());
+            model.setProductStatusCode(productTemplate.getProductStatusCode());
             if (productTemplate.getManufacturingDateTime() != null) {
                 model.setManufacturingDateTime(productTemplate.getManufacturingDateTime());
             }

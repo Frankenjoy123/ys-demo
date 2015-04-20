@@ -1,12 +1,8 @@
 package com.yunsoo.data.service.service.contract;
 
-import com.yunsoo.data.service.dbmodel.ProductKeyBatchModel;
 import org.joda.time.DateTime;
-import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -15,26 +11,25 @@ import java.util.stream.Collectors;
  */
 public class ProductKeyBatch {
 
-    private Long id;
+    private String id;
     private Integer quantity;
-    private Integer statusId;
-    private Integer organizationId;
-    private Long productBaseId;
-    private Integer createdClientId;
-    private Long createdAccountId;
+    private String statusCode;
+    private String orgId;
+    private String productBaseId;
+    private String createdClientId;
+    private String createdAccountId;
     private DateTime createdDateTime;
     private List<String> productKeyTypeCodes;
-    private String productKeysAddress;
+    private String productKeysUri;
 
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
-
 
     public Integer getQuantity() {
         return quantity;
@@ -44,47 +39,45 @@ public class ProductKeyBatch {
         this.quantity = quantity;
     }
 
-
-    public Integer getStatusId() {
-        return statusId;
+    public String getStatusCode() {
+        return statusCode;
     }
 
-    public void setStatusId(Integer statusId) {
-        this.statusId = statusId;
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
-    public Integer getOrganizationId() {
-        return organizationId;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setOrganizationId(Integer organizationId) {
-        this.organizationId = organizationId;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 
-    public Long getProductBaseId() {
+    public String getProductBaseId() {
         return productBaseId;
     }
 
-    public void setProductBaseId(Long productBaseId) {
+    public void setProductBaseId(String productBaseId) {
         this.productBaseId = productBaseId;
     }
 
-    public Integer getCreatedClientId() {
+    public String getCreatedClientId() {
         return createdClientId;
     }
 
-    public void setCreatedClientId(Integer createdClientId) {
+    public void setCreatedClientId(String createdClientId) {
         this.createdClientId = createdClientId;
     }
 
-    public Long getCreatedAccountId() {
+    public String getCreatedAccountId() {
         return createdAccountId;
     }
 
-    public void setCreatedAccountId(Long createdAccountId) {
+    public void setCreatedAccountId(String createdAccountId) {
         this.createdAccountId = createdAccountId;
     }
-
 
     public DateTime getCreatedDateTime() {
         return createdDateTime;
@@ -102,53 +95,11 @@ public class ProductKeyBatch {
         this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
-
-    public String getProductKeysAddress() {
-        return productKeysAddress;
+    public String getProductKeysUri() {
+        return productKeysUri;
     }
 
-    public void setProductKeysAddress(String productKeysAddress) {
-        this.productKeysAddress = productKeysAddress;
+    public void setProductKeysUri(String productKeysUri) {
+        this.productKeysUri = productKeysUri;
     }
-
-
-    //util methods
-    public static ProductKeyBatch fromModel(ProductKeyBatchModel model) {
-        ProductKeyBatch batch = new ProductKeyBatch();
-        batch.setId(model.getId());
-        batch.setQuantity(model.getQuantity());
-        batch.setStatusId(model.getStatusId());
-        batch.setOrganizationId(model.getOrganizationId());
-        batch.setProductBaseId(model.getProductBaseId());
-        batch.setCreatedClientId(model.getCreatedClientId());
-        batch.setCreatedAccountId(model.getCreatedAccountId());
-        batch.setCreatedDateTime(model.getCreatedDateTime());
-        String codes = model.getProductKeyTypeCodes();
-        if (codes != null) {
-            batch.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
-        }
-        batch.setProductKeysAddress(model.getProductKeysAddress());
-
-        return batch;
-    }
-
-    public static ProductKeyBatchModel toModel(ProductKeyBatch batch) {
-        ProductKeyBatchModel model = new ProductKeyBatchModel();
-        model.setId(batch.getId());
-        model.setQuantity(batch.getQuantity());
-        model.setStatusId(batch.getStatusId());
-        model.setOrganizationId(batch.getOrganizationId());
-        model.setProductBaseId(batch.getProductBaseId());
-        model.setCreatedClientId(batch.getCreatedClientId());
-        model.setCreatedAccountId(batch.getCreatedAccountId());
-        model.setCreatedDateTime(batch.getCreatedDateTime());
-        List<String> codes = batch.getProductKeyTypeCodes();
-        if (codes != null) {
-            model.setProductKeyTypeCodes(StringUtils.collectionToDelimitedString(codes, ","));
-        }
-        model.setProductKeysAddress(batch.getProductKeysAddress());
-
-        return model;
-    }
-
 }

@@ -5,7 +5,6 @@ import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.basic.Product;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.api.dto.basic.ProductCategory;
-import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
@@ -45,16 +44,14 @@ public class ProductDomain {
         } catch (NotFoundException ex) {
             //log ...该产品码对应的产品不存在！
             return null;
-        } catch (Exception ex) {
-            return null;
         }
 
-        product.setStatusId(productObject.getProductStatusId());
+        product.setStatusCode(productObject.getProductStatusCode());
         product.setManufacturingDateTime(productObject.getManufacturingDateTime());
         product.setCreatedDateTime(productObject.getCreatedDateTime().toString());
 
         //fill with ProductBase information.
-        long productBaseId = productObject.getProductBaseId();
+        String productBaseId = productObject.getProductBaseId();
         ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         product.setProductBaseId(productBaseId);
         product.setBarcode(productBaseObject.getBarcode());
@@ -87,7 +84,7 @@ public class ProductDomain {
         if (productBaseObject == null) {
             return null;
         }
-        ProductBase productBase = convertFromProductBaseObject(productBaseObject, lookupDomain.getAllProductKeyTypes(null));
+        ProductBase productBase = fromProductBaseObject(productBaseObject, lookupDomain.getAllProductKeyTypes(null));
 //        productBase.setThumbnailURL(yunsooYamlConfig.getDataapi_productbase_picture_basepath() + "id" + productBase.getId() + ".jpg");
         return productBase;
     }
@@ -98,10 +95,10 @@ public class ProductDomain {
             return null;
         }
         List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes(null);
-        return Arrays.stream(objects).map(p -> convertFromProductBaseObject(p, productKeyTypes)).collect((Collectors.toList()));
+        return Arrays.stream(objects).map(p -> fromProductBaseObject(p, productKeyTypes)).collect((Collectors.toList()));
     }
 
-    public ProductBase convertFromProductBaseObject(ProductBaseObject productBaseObject, List<ProductKeyType> productKeyTypes) {
+    public ProductBase fromProductBaseObject(ProductBaseObject productBaseObject, List<ProductKeyType> productKeyTypes) {
         ProductBase productBase = new ProductBase();
         productBase.setId(productBaseObject.getId());
         productBase.setName(productBaseObject.getName());

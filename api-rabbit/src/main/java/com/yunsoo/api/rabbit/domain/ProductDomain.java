@@ -4,7 +4,6 @@ import com.yunsoo.api.rabbit.dto.ProductKeyType;
 import com.yunsoo.api.rabbit.dto.basic.Product;
 import com.yunsoo.api.rabbit.dto.basic.ProductBase;
 import com.yunsoo.api.rabbit.dto.basic.ProductCategory;
-import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
@@ -41,16 +40,14 @@ public class ProductDomain {
         } catch (NotFoundException ex) {
             //log ...该产品码对应的产品不存在！
             return null;
-        } catch (Exception ex) {
-            return null;
         }
 
-        product.setStatusId(productObject.getProductStatusId());
+        product.setStatusCode(productObject.getProductStatusCode());
         product.setManufacturingDateTime(productObject.getManufacturingDateTime());
         product.setCreatedDateTime(productObject.getCreatedDateTime().toString());
 
         //fill with ProductBase information.
-        long productBaseId = productObject.getProductBaseId();
+        String productBaseId = productObject.getProductBaseId();
         ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         product.setProductBaseId(productBaseId);
         product.setBarcode(productBaseObject.getBarcode());

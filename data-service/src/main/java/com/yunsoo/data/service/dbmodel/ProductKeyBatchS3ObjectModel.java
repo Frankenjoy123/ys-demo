@@ -9,18 +9,18 @@ import java.util.List;
  */
 public class ProductKeyBatchS3ObjectModel {
 
-    private Long id;
+    private String id;
     private Integer quantity;
     private String createdDateTime;
-    private List<String> productKeyTypeCodes;
+    private String productKeyTypeCodes;
     private List<List<String>> productKeys;
 
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -41,11 +41,11 @@ public class ProductKeyBatchS3ObjectModel {
         this.createdDateTime = createdDateTime;
     }
 
-    public List<String> getProductKeyTypeCodes() {
+    public String getProductKeyTypeCodes() {
         return productKeyTypeCodes;
     }
 
-    public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
+    public void setProductKeyTypeCodes(String productKeyTypeCodes) {
         this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
