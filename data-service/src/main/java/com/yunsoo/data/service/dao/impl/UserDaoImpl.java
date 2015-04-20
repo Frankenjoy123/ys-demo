@@ -14,6 +14,7 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,12 +26,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserDaoImpl implements UserDao {
 
     @Autowired
+    @Qualifier(value = "sessionfactory.primary")
     private SessionFactory sessionFactory;
+
+    @Autowired
+    @Qualifier(value = "sessionfactory.read1")
+    private SessionFactory readSessionFactory;
 
     @Override
     @Transactional
     public UserModel getById(String id) {
-        return (UserModel) sessionFactory.getCurrentSession().get(
+        return (UserModel) readSessionFactory.getCurrentSession().get(
                 UserModel.class, id);
     }
 
@@ -100,12 +106,12 @@ public class UserDaoImpl implements UserDao {
     @SuppressWarnings("unchecked")
     @Override
     public List<UserModel> getAllUsers() {
-        return sessionFactory.getCurrentSession().createCriteria(UserModel.class).list();
+        return readSessionFactory.getCurrentSession().createCriteria(UserModel.class).list();
     }
 
     @Override
     public List<UserModel> getUsersByFilter(String id, String deviceCode, String cellular, Integer status) {
-        Criteria c = sessionFactory.getCurrentSession().createCriteria(UserModel.class);
+        Criteria c = readSessionFactory.getCurrentSession().createCriteria(UserModel.class);
         if (id != null && !id.isEmpty()) {
             c.add(Restrictions.eq("id", id));
         }
