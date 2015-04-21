@@ -73,7 +73,7 @@ public class ProductKeyDomain {
         // send sqs message to processor
         ProductKeyBatchMassage sqsMessage = new ProductKeyBatchMassage();
         sqsMessage.setBatchId(newBatchObj.getId());
-        processorClient.post("sqs/productkeybatch", sqsMessage, String.class);
+        processorClient.post("sqs/productkeybatch", sqsMessage);
 
         return fromProductKeyBatchObject(newBatchObj, lookupDomain.getAllProductKeyTypes(true));
     }
