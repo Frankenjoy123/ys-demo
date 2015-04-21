@@ -1,5 +1,6 @@
 package com.yunsoo.api.rabbit.controller;
 
+import com.yunsoo.api.rabbit.dto.UserResult;
 import com.yunsoo.api.rabbit.dto.basic.Account;
 import com.yunsoo.api.rabbit.dto.basic.User;
 import com.yunsoo.api.rabbit.object.TAccount;
@@ -69,7 +70,8 @@ public class AuthController {
         //set token
         HttpHeaders headers = new HttpHeaders();
         headers.add(AUTH_HEADER_NAME, token);
-        return new ResponseEntity<String>(token, headers, HttpStatus.OK);
+        UserResult userResult = new UserResult(token, currentUser.getId()); //generate result
+        return new ResponseEntity<UserResult>(userResult, headers, HttpStatus.OK);
     }
 
     //Allow anonymous access
@@ -79,7 +81,7 @@ public class AuthController {
         //Reset user's default creadit and level
         user.setYsCreadit(0);
         user.setLevel(1);
-        String id = dataAPIClient.post("user", user, String.class);
+        String id = dataAPIClient.post("user", user, String.class); //persistent user
 
         TAccount currentAccount = new TAccount();
         currentAccount.setId(id);
@@ -89,7 +91,8 @@ public class AuthController {
         //set token
         HttpHeaders headers = new HttpHeaders();
         headers.add(AUTH_HEADER_NAME, token);
-        return new ResponseEntity<String>(id, headers, HttpStatus.CREATED);
+        UserResult userResult = new UserResult(token, id); //generate result
+        return new ResponseEntity<UserResult>(userResult, headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/updatepassword", method = RequestMethod.POST)
