@@ -22,8 +22,8 @@ public class MessageModel {
     private String body;
     @Column(name = "digest")
     private String digest;
-    @Column(name = "companyId")
-    private long companyId;
+    @Column(name = "orgId")
+    private String orgId;
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
@@ -83,12 +83,12 @@ public class MessageModel {
         this.digest = digest;
     }
 
-    public long getCompanyId() {
-        return companyId;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setCompanyId(long companyId) {
-        this.companyId = companyId;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 
     public DateTime getCreatedDateTime() {
