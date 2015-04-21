@@ -55,6 +55,6 @@ public class LookupDomain {
     }
 
     private String formatActive(Boolean active) {
-        return active ? "?active=true" : "";
+        return active != null && active ? "?active=true" : "";
     }
 }

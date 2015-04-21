@@ -1,42 +1,40 @@
-package com.yunsoo.data.service.config;
+package com.yunsoo.data.service.config.DataRead1;
 
-/**
- * Created by:   Zhe
- * Created on:   2015/1/24
- * Descriptions:
- */
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbcp2.BasicDataSourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+
 import java.util.Properties;
 
+/**
+ * Created by Zhe on 2015/4/20.
+ */
+
+// Needed by Spring to add this class to the ApplicationContext's configuration
 @Configuration
-@Import(DBSetting.class)
 //@ComponentScan(basePackages = {"com.yunsoo.data.service.config"})
 // Property file in which are written the MySQL connection properties
 //@PropertySource("classpath:jdbc.properties")
-public class DALConfig {
+public class DALRead1Config {
 
     @Autowired
-    @Qualifier(value = "dbsetting.master")
-    private DBSetting dbSetting;
+    private DBRead1Setting dbRead1Setting;
 
-    @Bean(name = "datasource.primary")
-    @Primary
-    @ConfigurationProperties(prefix = "datasource.primary")
+    // The bean which defines the BasicDataSource (DBCP)
+    @Bean(name = "datasource.read1")
+    @ConfigurationProperties(prefix = "datasource.read1")
     public BasicDataSource dataSource() throws Exception {
         Properties props = new Properties();
-        props.put("driverClassName", dbSetting.getDriver_class());
-        props.put("url", dbSetting.getUrl());
-        props.put("username", dbSetting.getUsername());
-        props.put("password", dbSetting.getPassword());
-        props.put("initialSize", dbSetting.getPool_initialsize());
-        props.put("maxIdle", dbSetting.getPool_maxidle());
+        props.put("driverClassName", dbRead1Setting.getDriver_class());
+        props.put("url", dbRead1Setting.getUrl());
+        props.put("username", dbRead1Setting.getUsername());
+        props.put("password", dbRead1Setting.getPassword());
+        props.put("initialSize", dbRead1Setting.getPool_initialsize());
+        props.put("maxIdle", dbRead1Setting.getPool_maxidle());
         BasicDataSource bds = BasicDataSourceFactory.createDataSource(props);
         return bds;
     }

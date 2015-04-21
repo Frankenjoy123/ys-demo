@@ -22,7 +22,7 @@ public class ProductBaseModel {
     @Column(name = "category_id")
     private Integer categoryId;
     @Column(name = "org_id")
-    private Long orgId;
+    private String orgId;
     @Column(name = "barcode")
     private String barcode;
     @Column(name = "name")
@@ -64,11 +64,11 @@ public class ProductBaseModel {
         this.categoryId = categoryId;
     }
 
-    public Long getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(Long orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 

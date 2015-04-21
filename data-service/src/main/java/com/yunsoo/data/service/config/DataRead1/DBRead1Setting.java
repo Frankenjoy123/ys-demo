@@ -1,16 +1,18 @@
-package com.yunsoo.data.service.config;
+package com.yunsoo.data.service.config.DataRead1;
 
+import com.yunsoo.data.service.config.DBSetting;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Created by Zhe on 2015/3/22.
+ * Created by Zhe on 2015/4/20.
  */
-@Configuration(value = "dbsetting.master")
+@Configuration(value = "dbsetting.read1")
 @EnableConfigurationProperties
-@ConfigurationProperties(prefix = "jdbc.master")
-public class DBSetting {
+@ConfigurationProperties(prefix = "jdbc.read1")
+public class DBRead1Setting {
+
     private String driver_class;
     private String url;
     private String username;

@@ -1,13 +1,11 @@
-package com.yunsoo.data.service.config;
+package com.yunsoo.data.service.config.DataRead1;
 
-/**
- * Created by:   Zhe
- * Created on:   2015/1/24
- * Descriptions:
- */
+import com.yunsoo.data.service.config.HibernateSetting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
@@ -15,22 +13,23 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+/**
+ * Created by Zhe on 2015/4/20.
+ */
+
 @Configuration
-@Import(DBSetting.class)
-//@ComponentScan(basePackages = {"com.yunsoo.data.service.dbmodel"})
-//@PropertySource("classpath:jdbc.properties")
-public class HibernateConfig {
+//@Import(DBRead1Setting.class)
+public class HibernateRead1Config {
 
     @Autowired
-    @Qualifier(value = "datasource.primary")
+    @Qualifier(value = "datasource.read1")
     DataSource dataSource;
     @Autowired
     HibernateSetting hibernateSetting;
 
     // Bean which defines the FactoryBean for the SessionBean
-    @Bean(name = "sessionfactory.primary")
-    @Primary
-//    @Qualifier(value = "sessionfactory.primary")
+    @Bean(name = "sessionfactory.read1")
+//    @Qualifier(value = "sessionfactory.read1")
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean lsfb = new LocalSessionFactoryBean();
 
@@ -45,9 +44,9 @@ public class HibernateConfig {
         return lsfb;
     }
 
-    @Bean
-    public HibernateTransactionManager transactionManager() {
-        HibernateTransactionManager htm = new HibernateTransactionManager(sessionFactory().getObject());
-        return htm;
-    }
+//    @Bean
+//    public HibernateTransactionManager transactionManager() {
+//        HibernateTransactionManager htm = new HibernateTransactionManager(sessionFactory().getObject());
+//        return htm;
+//    }
 }

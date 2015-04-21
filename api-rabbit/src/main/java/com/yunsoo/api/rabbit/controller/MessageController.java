@@ -32,8 +32,8 @@ import java.util.List;
 public class MessageController {
 
     private RestClient dataAPIClient;
-    @Autowired
-    private UserDomain userDomain;
+    //    @Autowired
+//    private UserDomain userDomain;
     private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
 
@@ -81,22 +81,22 @@ public class MessageController {
     @PreAuthorize("hasPermission(#userId, 'UserInToken', 'message:read')")
     public List<Message> getUnreadMessagesBy(@RequestHeader(AUTH_HEADER_NAME) String token,
                                              @RequestParam(value = "userid", required = true) String userId,
-                                             @RequestParam(value = "companyid", required = true) Long companyId,
+                                             @RequestParam(value = "companyid", required = true) String orgId,
                                              @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
-        if (userId == null || userId.isEmpty()) throw new BadRequestException("UserId不能小于0！");
-        if (companyId == null || companyId <= 0) throw new BadRequestException("CompanyId不能小于0！");
+        if (userId == null || userId.isEmpty()) throw new BadRequestException("UserId不能为空！");
+        if (orgId == null || orgId.isEmpty()) throw new BadRequestException("OrgId不能为空！");
 //        if (lastReadMessageId == null || lastReadMessageId < 0) throw new BadRequestException("lastReadMessageId不能小于0！");
 //        if (!userDomain.validateToken(token, userId)) {
 //            throw new UnauthorizedException("不能读取其他用户的收藏信息！");
 //        }
         try {
-            List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&companyid={1}&lastreadmessageid={2}", List.class, userId, companyId, lastReadMessageId);
+            List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&companyid={1}&lastreadmessageid={2}", List.class, userId, orgId, lastReadMessageId);
             if (messageList == null || messageList.size() == 0) {
                 throw new NotFoundException("Message not found!");
             }
             return messageList;
         } catch (NotFoundException ex) {
-            throw new NotFoundException(40401, "Message not found for userid = " + userId + ". companyId = " + companyId + ". lastReadMessageId = " + lastReadMessageId);
+            throw new NotFoundException(40401, "Message not found for userid = " + userId + ". companyId = " + orgId + ". lastReadMessageId = " + lastReadMessageId);
         }
 
     }
