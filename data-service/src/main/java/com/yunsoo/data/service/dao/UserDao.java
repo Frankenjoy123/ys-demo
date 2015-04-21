@@ -18,9 +18,9 @@ public interface UserDao {
 
     public DaoStatus update(UserModel userModel);
 
-    public DaoStatus delete(String id, int deleteStatus);
+    public DaoStatus delete(String id, String deleteStatus);
 
     public List<UserModel> getAllUsers();
 
-    public List<UserModel> getUsersByFilter(String id, String deviceCode, String cellular, Integer status);
+    public List<UserModel> getUsersByFilter(String id, String deviceCode, String cellular, String status);
 }

@@ -44,18 +44,18 @@ public class UserController {
     }
 
     @RequestMapping(value = "/cellular/{cellular}", method = RequestMethod.GET)
-    public ResponseEntity<UserDto> getUserByCellular(@PathVariable(value = "cellular") String cellular) {
+    public UserDto getUserByCellular(@PathVariable(value = "cellular") String cellular) {
         User user = userService.getByCellular(cellular);
         if (user == null) throw new NotFoundException("User not found for cellular = " + cellular);
-        return new ResponseEntity<UserDto>(UserDto.FromUser(user), HttpStatus.OK);
+        return UserDto.FromUser(user);
     }
 
     @RequestMapping(value = "/device/{devicecode}", method = RequestMethod.GET)
-    public ResponseEntity<User> getUserByDeviceCode(@PathVariable(value = "devicecode") String devicecode) {
+    public User getUserByDeviceCode(@PathVariable(value = "devicecode") String devicecode) {
         List<User> users = userService.getUsersByFilter(null, devicecode, "", null);
         if (users == null || users.size() <= 0)
             throw new NotFoundException("Users not found token=" + devicecode);
-        return new ResponseEntity<User>(users.get(0), HttpStatus.OK);
+        return users.get(0);
     }
 
     @RequestMapping(value = "/thumbnail/{id}/{key}", method = RequestMethod.GET)
@@ -72,7 +72,7 @@ public class UserController {
             FileObject fileObject = new FileObject();
             fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
             fileObject.setThumbnailData(IOUtils.toByteArray(s3Object.getObjectContent()));
-            fileObject.setLenth(s3Object.getObjectMetadata().getContentLength());
+            fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
             return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
 
         } catch (IOException ex) {
@@ -89,11 +89,12 @@ public class UserController {
 
     //Return -1L if Fail, or the userId if Success.
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> createUser(@RequestBody UserDto userDto) throws Exception {
+    public String createUser(@RequestBody UserDto userDto) throws Exception {
         User user = UserDto.ToUser(userDto);
         String id = userService.save(user);
-        HttpStatus status = (id.length() > 20) ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
-        return new ResponseEntity<String>(id, status);
+        return id;
+//        HttpStatus status = (id.length() > 20) ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
+//        return new ResponseEntity<String>(id, status);
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)

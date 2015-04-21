@@ -58,9 +58,9 @@ public class ProductBaseController {
 
         try {
             FileObject fileObject = dataAPIClient.get("productbase/thumbnail/{id}/{client}", FileObject.class, id, client);
-            if (fileObject.getLenth() > 0) {
+            if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
-                        .contentLength(fileObject.getLenth())
+                        .contentLength(fileObject.getLength())
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
                         .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
             } else {

@@ -9,7 +9,7 @@ public class FileObject {
     private String name;
     private String suffix;
     private String contentType;
-    private Long lenth;
+    private Long length;
 
     public byte[] getThumbnailData() {
         return thumbnailData;
@@ -43,11 +43,11 @@ public class FileObject {
         this.contentType = contentType;
     }
 
-    public Long getLenth() {
-        return lenth;
+    public Long getLength() {
+        return length;
     }
 
-    public void setLenth(Long lenth) {
-        this.lenth = lenth;
+    public void setLength(Long length) {
+        this.length = length;
     }
 }

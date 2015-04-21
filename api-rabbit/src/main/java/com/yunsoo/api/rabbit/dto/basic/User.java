@@ -18,7 +18,7 @@ public class User {
     private Long thumbnailContentLength;
     private Integer ysCreadit;
     private Integer level;
-    private int statusId;
+    private String status;
     private String createdDateTime;
 
     public String getId() {
@@ -125,12 +125,12 @@ public class User {
         this.level = level;
     }
 
-    public int getStatusId() {
-        return statusId;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getCreatedDateTime() {

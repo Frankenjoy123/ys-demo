@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayInputStream;
-import java.util.List;
 
 /**
  * Created by Zhe on 2015/3/9.
@@ -92,9 +91,9 @@ public class MessageController {
         if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("imagekey不能为空！");
         try {
             FileObject fileObject = dataAPIClient.get("message/image/{imagekey}", FileObject.class, imagekey);
-            if (fileObject.getLenth() > 0) {
+            if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
-                        .contentLength(fileObject.getLenth())
+                        .contentLength(fileObject.getLength())
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
                         .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
             } else {

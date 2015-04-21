@@ -58,7 +58,7 @@ public final class TokenHandler {
                         LOGGER.error("ParseUserFromToken error! UserInfoArray is empty, and UserBytes is: " + userBytes.toString());
                     }
                     tAccount.setId(userInfoArray[0]);
-                    tAccount.setStatus(Integer.parseInt(userInfoArray[1]));
+                    tAccount.setStatus(userInfoArray[1]);
                     tAccount.setExpires(Long.parseLong(userInfoArray[2]));
                     //check if token is expired
                     if (tAccount.getExpires() < DateTime.now().getMillis()) {

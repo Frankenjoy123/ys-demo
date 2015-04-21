@@ -92,7 +92,7 @@ public class TAccount implements UserDetails {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = TAccountStatusEnum.valueOf(status);
     }
 

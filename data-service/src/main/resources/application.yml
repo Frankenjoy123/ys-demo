@@ -19,7 +19,7 @@ dataServiceSetting:
     message_approved_status_id: 3
     message_delete_status_id: 4
     user_created_status_id: 2
-    user_delete_status_id: 5
+    user_delete_status_id: 3
     org_verified_status_id: 1
 
 jdbc:

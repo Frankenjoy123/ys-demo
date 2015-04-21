@@ -89,16 +89,16 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public DaoStatus delete(String Id, int deleteStatus) {
+    public DaoStatus delete(String Id, String deleteStatus) {
 //        sessionFactory.getCurrentSession().deletePermanantly(userModel);
         return updateStatus(Id, deleteStatus);
     }
 
-    public DaoStatus updateStatus(String userId, int status) {
+    public DaoStatus updateStatus(String userId, String status) {
         UserModel userModel = this.getById(userId);
         if (userModel == null) return DaoStatus.NotFound;
 
-        userModel.setStatusId(status); //find in config file for deleted status
+        userModel.setStatus(status); //find in config file for deleted status
         this.update(userModel);
         return DaoStatus.success;
     }
@@ -110,7 +110,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<UserModel> getUsersByFilter(String id, String deviceCode, String cellular, Integer status) {
+    public List<UserModel> getUsersByFilter(String id, String deviceCode, String cellular, String status) {
         Criteria c = readSessionFactory.getCurrentSession().createCriteria(UserModel.class);
         if (id != null && !id.isEmpty()) {
             c.add(Restrictions.eq("id", id));
@@ -121,8 +121,8 @@ public class UserDaoImpl implements UserDao {
         if (cellular != null && !cellular.isEmpty()) {
             c.add(Restrictions.eq("cellular", cellular));
         }
-        if (status != null) {
-            c.add(Restrictions.eq("statusId", status.intValue()));
+        if (status != null && !status.isEmpty()) {
+            c.add(Restrictions.eq("statusId", status));
         }
         return c.list();
     }

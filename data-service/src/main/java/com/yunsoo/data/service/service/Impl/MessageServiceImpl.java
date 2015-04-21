@@ -37,7 +37,7 @@ public class MessageServiceImpl implements MessageService {
     //create New Message.
     @Override
     public long save(Message newMessage) {
-        // newMessage.setStatusId(YunsooConfig.getMessageCreatedStatus());
+        // newMessage.setStatus(YunsooConfig.getMessageCreatedStatus());
         return messageDao.save(Message.ToModel(newMessage));
     }
 

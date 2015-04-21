@@ -23,7 +23,7 @@ public class UserDto {
     private Long thumbnailContentLength;
     private Integer ysCreadit;
     private Integer level;
-    private int statusId;
+    private String status;
     private String createdDateTime;
 
     public String getId() {
@@ -130,12 +130,12 @@ public class UserDto {
         this.level = level;
     }
 
-    public int getStatusId() {
-        return statusId;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getCreatedDateTime() {
@@ -162,8 +162,12 @@ public class UserDto {
             if (userDto.getThumbnailContentType() != null) {
                 fileObject.setContentType(userDto.getThumbnailContentType());
             }
-            fileObject.setLenth(userDto.getThumbnailContentLength());
 
+            if (userDto.getThumbnailContentLength() != null) {
+                fileObject.setLength(userDto.getThumbnailContentLength());
+            } else {
+                fileObject.setLength((long) (fileObject.getThumbnailData().length));  //calculate length
+            }
             user.setFileObject(fileObject); //set user's ThumbnailFile
         }
         return user;

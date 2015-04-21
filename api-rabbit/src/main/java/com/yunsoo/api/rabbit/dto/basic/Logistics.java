@@ -8,18 +8,18 @@ import org.joda.time.DateTime;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Logistics {
-    private Long OrgId;
+    private String OrgId;
     private String OrgName;
     //    private String OrgVerified; //removed
     private String message;
     private String location;
     private String dateTime;
 
-    public Long getOrgId() {
+    public String getOrgId() {
         return OrgId;
     }
 
-    public void setOrgId(Long orgId) {
+    public void setOrgId(String orgId) {
         OrgId = orgId;
     }
 

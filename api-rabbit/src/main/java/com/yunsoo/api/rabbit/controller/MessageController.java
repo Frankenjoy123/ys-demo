@@ -1,17 +1,14 @@
 package com.yunsoo.api.rabbit.controller;
 
-import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.dto.basic.Message;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -107,9 +104,9 @@ public class MessageController {
         if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("imagekey不能为空！");
         try {
             FileObject fileObject = dataAPIClient.get("message/image/{imagekey}", FileObject.class, imagekey);
-            if (fileObject.getLenth() > 0) {
+            if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
-                        .contentLength(fileObject.getLenth())
+                        .contentLength(fileObject.getLength())
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
                         .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
             } else {

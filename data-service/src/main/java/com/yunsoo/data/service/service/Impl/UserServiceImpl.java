@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService {
         DateTime userCreatedTime = DateTime.now();
         String thumbnailKey = "thumb-" + Long.toString(userCreatedTime.getMillis());
         user.setThumbnail(thumbnailKey);
-        user.setStatusId(dataServiceSetting.getUser_created_status_id()); //set newly created status
+        user.setStatus("ENABLED"); //set newly created status
         String userId = userDAO.save(User.ToModel(user));
 
         if (user.getFileObject() != null) {
@@ -156,7 +156,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean delete(String id) {
-        DaoStatus daoStatus = userDAO.delete(id, dataServiceSetting.getMessage_delete_status_id());
+        DaoStatus daoStatus = userDAO.delete(id, "DELETED");
         return daoStatus == DaoStatus.success ? true : false;
     }
 
@@ -168,7 +168,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public List<User> getUsersByFilter(String id, String deviceCode, String cellular, Integer status) {
+    public List<User> getUsersByFilter(String id, String deviceCode, String cellular, String status) {
         return User.FromModelList(userDAO.getUsersByFilter(id, deviceCode, cellular, status));
     }
 
@@ -188,7 +188,9 @@ public class UserServiceImpl implements UserService {
             objectMetadata.setContentType("image/gif");
         }
 
-        objectMetadata.setContentLength(fileObject.getLenth()); //set content-length
+        if (fileObject.getLength() != null) {
+            objectMetadata.setContentLength(fileObject.getLength()); //set content-length
+        }
         String fullKey = amazonSetting.getS3_userbaseurl() + "/" + userId + "/" + thumbnailKey;
         s3ItemDao.putItem(amazonSetting.getS3_basebucket(), fullKey, inputStream, objectMetadata, CannedAccessControlList.BucketOwnerFullControl);
         //to-do: move the old thumb into history folder.
