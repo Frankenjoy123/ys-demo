@@ -21,7 +21,7 @@ public class Message {
     private String title;
     private String body;
     private String digest;
-    private long companyId;
+    private String orgId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
@@ -72,12 +72,12 @@ public class Message {
         this.digest = digest;
     }
 
-    public long getCompanyId() {
-        return companyId;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setCompanyId(long companyId) {
-        this.companyId = companyId;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 
     public DateTime getCreatedDateTime() {
@@ -166,7 +166,7 @@ public class Message {
         message.setLink(model.getLink());
         message.setCreatedDateTime(model.getCreatedDateTime());
         message.setExpiredDateTime(model.getExpireDateTime());
-        message.setCompanyId(model.getCompanyId());
+        message.setOrgId(model.getOrgId());
         message.setType(model.getType());
         message.setStatus(model.getStatus());
         if (model.getLastUpdatedDateTime() != null) {
@@ -196,7 +196,7 @@ public class Message {
         if (message.getExpiredDateTime() != null) {
             model.setExpireDateTime(message.getExpiredDateTime());
         }
-        model.setCompanyId(message.getCompanyId());
+        model.setOrgId(message.getOrgId());
         model.setType(message.getType());
         model.setStatus(message.getStatus());
         if (message.getLastUpatedDateTime() != null) {
