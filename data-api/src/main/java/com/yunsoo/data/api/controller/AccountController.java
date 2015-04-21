@@ -8,7 +8,6 @@ import com.yunsoo.data.service.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 /**
@@ -34,7 +33,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public AccountObject getByIdentifierAndOrgId(@RequestParam("orgId") String orgId, @RequestParam("identifier") String identifier) {
+    public AccountObject getByOrgIdAndIdentifier(@RequestParam("orgId") String orgId, @RequestParam("identifier") String identifier) {
         List<AccountEntity> entities = accountRepository.findByOrgIdAndIdentifier(orgId, identifier);
         if (entities.size() == 0) {
             throw new NotFoundException("Account not found by [orgId: " + orgId + ", identifier: " + identifier + "]");
