@@ -13,14 +13,14 @@ public class ProductFileObject {
 
     private Long id;
     private String fileName;
-    private Long createBy;
+    private String createBy;
     private Integer status;
     private Integer fileType;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createDate;
     private String filePath;
-    private Long orgId;
+    private String orgId;
 
     public Long getId() {
         return id;
@@ -38,11 +38,11 @@ public class ProductFileObject {
         this.fileName = fileName;
     }
 
-    public Long getCreateBy() {
+    public String getCreateBy() {
         return createBy;
     }
 
-    public void setCreateBy(Long createBy) {
+    public void setCreateBy(String createBy) {
         this.createBy = createBy;
     }
 
@@ -78,11 +78,11 @@ public class ProductFileObject {
         this.filePath = filePath;
     }
 
-    public Long getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(Long orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 }

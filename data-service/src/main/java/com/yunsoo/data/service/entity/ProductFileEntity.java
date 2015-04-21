@@ -21,7 +21,7 @@ public class ProductFileEntity {
     private String fileName;
 
     @Column(name = "create_by")
-    private Long createBy;
+    private String createBy;
 
     @Column(name = "status")
     private Integer status;
@@ -37,7 +37,7 @@ public class ProductFileEntity {
     private String filePath;
 
     @Column(name = "org_id")
-    private Long orgId;
+    private String orgId;
 
     public Long getId() {
         return id;
@@ -55,11 +55,11 @@ public class ProductFileEntity {
         this.fileName = fileName;
     }
 
-    public Long getCreateBy() {
+    public String getCreateBy() {
         return createBy;
     }
 
-    public void setCreateBy(Long createBy) {
+    public void setCreateBy(String createBy) {
         this.createBy = createBy;
     }
 
@@ -95,11 +95,11 @@ public class ProductFileEntity {
         this.filePath = filePath;
     }
 
-    public Long getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(Long orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 }

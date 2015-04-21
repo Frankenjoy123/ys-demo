@@ -1,13 +1,32 @@
-package com.yunsoo.common.data.object;
+package com.yunsoo.data.service.entity;
+
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 
 /**
- * Created by Jerry on 3/16/2015.
+ * Created by Jerry on 4/21/2015.
  */
-public class LogisticsCheckPointObject {
+@Entity
+@Table(name = "logistics_check_point")
+public class LogisticsCheckPointEntity {
+
+    @Id
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
+    @Column(name = "id")
     private String id;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "location_id")
     private int locationId;
+
+    @Column(name = "org_id")
     private String orgId;
 
     public String getId() {

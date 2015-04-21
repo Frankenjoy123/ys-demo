@@ -12,11 +12,11 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  */
 public interface ProductFileRepository extends PagingAndSortingRepository<ProductFileEntity, Long> {
 
-    Long countByCreateByAndFileType(Long createBy, Integer fileType);
+    Long countByCreateByAndFileType(String createBy, Integer fileType);
 
-    Long countByCreateByAndStatusAndFileType(Long createBy, Integer status, Integer fileType);
+    Long countByCreateByAndStatusAndFileType(String createBy, Integer status, Integer fileType);
 
-    Page<ProductFileEntity> findByCreateByAndFileTypeOrderByCreateDateDesc(Long createBy, Integer fileType, Pageable pageable);
+    Page<ProductFileEntity> findByCreateByAndFileTypeOrderByCreateDateDesc(String createBy, Integer fileType, Pageable pageable);
 
-    Page<ProductFileEntity> findByCreateByAndStatusAndFileTypeOrderByCreateDateDesc(Long createBy, Integer status, Integer fileType, Pageable pageable);
+    Page<ProductFileEntity> findByCreateByAndStatusAndFileTypeOrderByCreateDateDesc(String createBy, Integer status, Integer fileType, Pageable pageable);
 }

@@ -10,11 +10,11 @@ import org.joda.time.DateTime;
 public class LogisticsPathModel {
     private String productKey;
     private Integer action_id;
-    private Integer startCheckPoint;
+    private String startCheckPoint;
     private Long startDate;
-    private Integer endCheckPoint;
+    private String endCheckPoint;
     private Long endDate;
-    private Long operator;
+    private String operator;
     private String desc;
 
     @DynamoDBHashKey(attributeName = "key")
@@ -45,20 +45,20 @@ public class LogisticsPathModel {
     }
 
     @DynamoDBAttribute(attributeName = "start_point")
-    public Integer getStartCheckPoint() {
+    public String getStartCheckPoint() {
         return startCheckPoint;
     }
 
-    public void setStartCheckPoint(Integer startCheckPoint) {
+    public void setStartCheckPoint(String startCheckPoint) {
         this.startCheckPoint = startCheckPoint;
     }
 
     @DynamoDBAttribute(attributeName = "end_point")
-    public Integer getEndCheckPoint() {
+    public String getEndCheckPoint() {
         return endCheckPoint;
     }
 
-    public void setEndCheckPoint(Integer endCheckPoint) {
+    public void setEndCheckPoint(String endCheckPoint) {
         this.endCheckPoint = endCheckPoint;
     }
 
@@ -94,11 +94,11 @@ public class LogisticsPathModel {
     }
 
     @DynamoDBAttribute(attributeName = "operator")
-    public Long getOperator() {
+    public String getOperator() {
         return operator;
     }
 
-    public void setOperator(Long operator) {
+    public void setOperator(String operator) {
         this.operator = operator;
     }
 

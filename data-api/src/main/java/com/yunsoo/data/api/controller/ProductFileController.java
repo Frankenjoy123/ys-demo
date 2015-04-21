@@ -37,7 +37,7 @@ public class ProductFileController {
     }
 
     @RequestMapping(value = "/createby/{createby}/status/{status}/filetype/{filetype}/page/{page}", method = RequestMethod.GET)
-      public List<ProductFileObject> get(@PathVariable(value = "createby") Long createby,
+      public List<ProductFileObject> get(@PathVariable(value = "createby") String createby,
                                          @PathVariable(value = "status") Integer status,
                                          @PathVariable(value = "filetype") Integer filetype,
                                          @PathVariable(value = "page") Integer page) {
@@ -63,7 +63,7 @@ public class ProductFileController {
     }
 
     @RequestMapping(value = "/countby/createby/{createby}/status/{status}/filetype/{filetype}", method = RequestMethod.GET)
-    public Long getCount(@PathVariable(value = "createby") Long createby,
+    public Long getCount(@PathVariable(value = "createby") String createby,
                                        @PathVariable(value = "status") Integer status,
                                        @PathVariable(value = "filetype") Integer filetype) {
 

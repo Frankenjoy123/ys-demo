@@ -13,12 +13,12 @@ public class LogisticsPath {
 
     private String productKey;
     private Integer action_id;
-    private Integer startCheckPoint;
-    private Integer endCheckPoint;
+    private String startCheckPoint;
+    private String endCheckPoint;
     private DateTime startDate;
     private String desc;
     private DateTime endDate;
-    private Long operator;
+    private String operator;
     private String deviceId;
 
     public String getProductKey() {
@@ -37,19 +37,19 @@ public class LogisticsPath {
         this.action_id = action_id;
     }
 
-    public Integer getStartCheckPoint() {
+    public String getStartCheckPoint() {
         return startCheckPoint;
     }
 
-    public void setStartCheckPoint(Integer startCheckPoint) {
+    public void setStartCheckPoint(String startCheckPoint) {
         this.startCheckPoint = startCheckPoint;
     }
 
-    public Integer getEndCheckPoint() {
+    public String getEndCheckPoint() {
         return endCheckPoint;
     }
 
-    public void setEndCheckPoint(Integer endCheckPoint) {
+    public void setEndCheckPoint(String endCheckPoint) {
         this.endCheckPoint = endCheckPoint;
     }
 
@@ -69,11 +69,11 @@ public class LogisticsPath {
         this.endDate = endDate;
     }
 
-    public Long getOperator() {
+    public String getOperator() {
         return operator;
     }
 
-    public void setOperator(Long operator) {
+    public void setOperator(String operator) {
         this.operator = operator;
     }
 

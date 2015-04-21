@@ -29,7 +29,7 @@ public class LogisticsPath {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime endDate;
-    private Long operator;
+    private String operator;
 
     public void setActionObject(LogisticsCheckActionObject actionObject) {
         this.actionObject = actionObject;
@@ -87,11 +87,11 @@ public class LogisticsPath {
         this.endDate = endDate;
     }
 
-    public Long getOperator() {
+    public String getOperator() {
         return operator;
     }
 
-    public void setOperator(Long operator) {
+    public void setOperator(String operator) {
         this.operator = operator;
     }
 

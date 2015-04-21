@@ -60,7 +60,7 @@ public class LogisticsPathController {
         ProductFileObject productFileObject = new ProductFileObject();
         productFileObject.setFileName(file.getOriginalFilename());
         productFileObject.setCreateDate(DateTime.now());
-        productFileObject.setCreateBy(1l);
+        productFileObject.setCreateBy("1");
         productFileObject.setFileType(2);
 
         try {
@@ -90,7 +90,7 @@ public class LogisticsPathController {
 
             //从上传的文件中获取以下信息
             logisticsBatchPathObject.setAction_id(1);
-            logisticsBatchPathObject.setStartCheckPoint(1);
+            logisticsBatchPathObject.setStartCheckPoint("1");
 
             dataAPIClient.post("/logisticspath/batchcreate", logisticsBatchPathObject, Long.class);
 

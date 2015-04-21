@@ -85,7 +85,7 @@ public class PackageController {
         ProductFileObject productFileObject = new ProductFileObject();
         productFileObject.setFileName(file.getOriginalFilename());
         productFileObject.setCreateDate(DateTime.now());
-        productFileObject.setCreateBy(1l);
+        productFileObject.setCreateBy("1");
         productFileObject.setFileType(1);
 
         try {

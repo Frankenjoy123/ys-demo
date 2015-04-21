@@ -14,8 +14,8 @@ import java.util.List;
 public class LogisticsBatchPathObject {
     private List<String> productKeys;
     private Integer action_id;
-    private Integer startCheckPoint;
-    private Integer endCheckPoint;
+    private String startCheckPoint;
+    private String endCheckPoint;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime startDate;
@@ -23,7 +23,7 @@ public class LogisticsBatchPathObject {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime endDate;
-    private Long operator;
+    private String operator;
     private String deviceId;
 
     public List<String> getProductKey() {
@@ -42,19 +42,19 @@ public class LogisticsBatchPathObject {
         this.action_id = action_id;
     }
 
-    public Integer getStartCheckPoint() {
+    public String getStartCheckPoint() {
         return startCheckPoint;
     }
 
-    public void setStartCheckPoint(Integer startCheckPoint) {
+    public void setStartCheckPoint(String startCheckPoint) {
         this.startCheckPoint = startCheckPoint;
     }
 
-    public Integer getEndCheckPoint() {
+    public String getEndCheckPoint() {
         return endCheckPoint;
     }
 
-    public void setEndCheckPoint(Integer endCheckPoint) {
+    public void setEndCheckPoint(String endCheckPoint) {
         this.endCheckPoint = endCheckPoint;
     }
 
@@ -74,11 +74,11 @@ public class LogisticsBatchPathObject {
         this.endDate = endDate;
     }
 
-    public Long getOperator() {
+    public String getOperator() {
         return operator;
     }
 
-    public void setOperator(Long operator) {
+    public void setOperator(String operator) {
         this.operator = operator;
     }
 
