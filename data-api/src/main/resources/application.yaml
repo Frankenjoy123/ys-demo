@@ -47,7 +47,7 @@ jdbc:
         pool_maxidle: 100
     read1:
         driver_class: com.mysql.jdbc.Driver
-        url: jdbc:mysql://yunsootestdb-r1.czevfdgeevhl.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+        url: jdbc:mysql://yunsoo.czevfdgeevhl.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
         username: root
         password: admin201512
         pool_initialsize: 1
