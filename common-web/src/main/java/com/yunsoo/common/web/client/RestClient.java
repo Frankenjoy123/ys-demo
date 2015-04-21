@@ -80,6 +80,10 @@ public class RestClient {
         return restTemplate.postForObject(createURL(url), request, responseType, uriVariables);
     }
 
+    public void post(String url, Object request, Object... uriVariables) {
+        restTemplate.postForObject(createURL(url), request, String.class, uriVariables);
+    }
+
     //PUT
     public void put(String url, Object request, Object... uriVariables) {
         restTemplate.put(createURL(url), request, uriVariables);

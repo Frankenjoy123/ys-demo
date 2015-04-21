@@ -142,3 +142,17 @@ CREATE TABLE message_type_lkp
   active      BIT DEFAULT b'1'         NOT NULL
 );
 
+
+#product_file_type_lkp
+DROP TABLE IF EXISTS product_file_type_lkp;
+CREATE TABLE product_file_type_lkp
+(
+  code        VARCHAR(100) PRIMARY KEY NOT NULL,
+  name        VARCHAR(100)             NOT NULL,
+  description VARCHAR(255),
+  active      BIT DEFAULT b'1'         NOT NULL
+);
+INSERT INTO product_file_type_lkp (code, name, description, active)
+VALUES
+  ('package', '包装', '包装', TRUE),
+  ('logistics', '物流', '物流', TRUE);
