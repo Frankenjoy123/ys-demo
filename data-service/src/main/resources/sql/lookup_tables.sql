@@ -79,3 +79,66 @@ VALUES
   ('delete', '删除', 'delete', TRUE),
   ('*', '完全控制', 'full control', TRUE);
 
+
+#org_status_lkp
+DROP TABLE IF EXISTS org_status_lkp;
+CREATE TABLE org_status_lkp
+(
+  code        VARCHAR(100) PRIMARY KEY NOT NULL,
+  name        VARCHAR(100)             NOT NULL,
+  description VARCHAR(255),
+  active      BIT DEFAULT b'1'         NOT NULL
+);
+INSERT INTO org_status_lkp (code, name, description, active)
+VALUES
+  ('created', '已创建', '已经创建', TRUE),
+  ('verified', '已认证', '通过平台认证', TRUE),
+  ('blocked', '被阻止', '被加入黑名单', TRUE),
+  ('deleted', '已删除', '被删除了', TRUE);
+
+
+#account_status_lkp
+DROP TABLE IF EXISTS account_status_lkp;
+CREATE TABLE account_status_lkp
+(
+  code        VARCHAR(100) PRIMARY KEY NOT NULL,
+  name        VARCHAR(100)             NOT NULL,
+  description VARCHAR(255),
+  active      BIT DEFAULT b'1'         NOT NULL
+);
+INSERT INTO account_status_lkp (code, name, description, active)
+VALUES
+  ('available', '正常', '正常', TRUE);
+
+#user_status_lkp
+DROP TABLE IF EXISTS user_status_lkp;
+CREATE TABLE user_status_lkp
+(
+  code        VARCHAR(100) PRIMARY KEY NOT NULL,
+  name        VARCHAR(100)             NOT NULL,
+  description VARCHAR(255),
+  active      BIT DEFAULT b'1'         NOT NULL
+);
+
+
+#message_status_lkp
+DROP TABLE IF EXISTS message_status_lkp;
+CREATE TABLE message_status_lkp
+(
+  code        VARCHAR(100) PRIMARY KEY NOT NULL,
+  name        VARCHAR(100)             NOT NULL,
+  description VARCHAR(255),
+  active      BIT DEFAULT b'1'         NOT NULL
+);
+
+
+#message_type_lkp
+DROP TABLE IF EXISTS message_type_lkp;
+CREATE TABLE message_type_lkp
+(
+  code        VARCHAR(100) PRIMARY KEY NOT NULL,
+  name        VARCHAR(100)             NOT NULL,
+  description VARCHAR(255),
+  active      BIT DEFAULT b'1'         NOT NULL
+);
+
