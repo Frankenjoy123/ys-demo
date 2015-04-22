@@ -12,7 +12,7 @@ CREATE TABLE permission_policy
 CREATE INDEX code ON permission_policy (code);
 INSERT INTO permission_policy (id, code, name, resource_code, action_code, description)
 VALUES
-  ('2k0dl02lvrpj4ejiiyr', '*:*', '¹ÜÀíÔ±', '*', '*', 'admin'),
-  ('2k0dl5l5in6173bub9g', 'productkey:*', '²úÆ·ÂëÍêÈ«¿ØÖÆ', 'productkey', '*', ''),
-  ('2k0dl73nm3kg1h6wubp', 'product:read', '²úÆ·¶ÁÈ¡', 'product', 'read', '');
+  ('2k0dl02lvrpj4ejiiyr', '*:*', 'ç®¡ç†å‘˜', '*', '*', 'admin'),
+  ('2k0dl5l5in6173bub9g', 'productkey:*', 'äº§å“ç ç®¡ç†', 'productkey', '*', ''),
+  ('2k0dl73nm3kg1h6wubp', 'product:read', 'äº§å“æŸ¥çœ‹', 'product', 'read', '');
 
