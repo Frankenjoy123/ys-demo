@@ -42,14 +42,6 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 throw new UnauthorizedException(40104, "Account is disabled!");
             }
 
-//            if (targetDomainObject instanceof User) {
-//                hasPermission = ((User) targetDomainObject).getId().equals(account.getId());
-//            } else if (targetDomainObject instanceof Message) {
-//                hasPermission = ((Message) targetDomainObject).getOrgId().equals(account.getOrgId());
-//            } else {
-//                hasPermission = true;
-//            }
-
             List<TPermission> permissionList = permissionDomain.getAccountPermissionsByAccountId(account.getId());
 
             TPermission currentPermission = new TPermission();
@@ -90,15 +82,24 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             }
 
             //check if user's permission for target id
-            if (targetType.compareToIgnoreCase("User") == 0) {
-                hasPermission = account.getId().equals(targetId) ? true : false;
-            } else if (targetType.compareToIgnoreCase("UserLikedProduct") == 0) {
-                hasPermission = account.getId().equals(targetId) ? true : false;
-            } else if (targetType.compareToIgnoreCase("AccountInToken") == 0) {
-                hasPermission = account.getId().equals(targetId) ? true : false;
-            } else {
-                hasPermission = false;
-            }
+//            if (targetType.compareToIgnoreCase("User") == 0) {
+//                hasPermission = account.getId().equals(targetId) ? true : false;
+//            } else if (targetType.compareToIgnoreCase("UserLikedProduct") == 0) {
+//                hasPermission = account.getId().equals(targetId) ? true : false;
+//            } else if (targetType.compareToIgnoreCase("AccountInToken") == 0) {
+//                hasPermission = account.getId().equals(targetId) ? true : false;
+//            } else {
+//                hasPermission = false;
+//            }
+
+            List<TPermission> permissionList = permissionDomain.getAccountPermissionsByAccountId(account.getId());
+
+            String[] pArray = ((String) permission).toLowerCase().split(":");
+            TPermission currentPermission = new TPermission();
+            currentPermission.setOrgId(account.getOrgId());
+            currentPermission.setResourceCode(pArray[0]);
+            currentPermission.setActionCode(pArray[1]);
+            hasPermission = permissionDomain.hasPermission(account.getId(), currentPermission);
 
         }
         return hasPermission;

@@ -107,7 +107,7 @@ public class ScanController {
             @PathVariable(value = "pageSize") Integer pageSize) {
 
         //验证输入参数
-        if (userId == null || !userId.isEmpty()) {
+        if (userId == null || userId.isEmpty()) {
             throw new BadRequestException(40001, "用户ID不应为空！");
         }
         if (pageIndex == null) {
@@ -138,7 +138,7 @@ public class ScanController {
             @PathVariable(value = "pageSize") Integer pageSize) {
 
         //验证输入参数
-        if (userId == null || !userId.isEmpty()) {
+        if (userId == null || userId.isEmpty()) {
             throw new BadRequestException(40001, "用户ID不应为空！");
         }
         if (Id == null || Id <= 0) {
