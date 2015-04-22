@@ -18,6 +18,7 @@ public class ProductBase {
 
     private String id;
     private ProductCategory category;
+    private Integer categoryId;
     private String orgId;
     private String barcode;
     private String name;
@@ -51,6 +52,14 @@ public class ProductBase {
 
     public void setCategory(ProductCategory category) {
         this.category = category;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getOrgId() {
