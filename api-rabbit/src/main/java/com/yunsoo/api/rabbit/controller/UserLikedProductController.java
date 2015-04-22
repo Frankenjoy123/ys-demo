@@ -76,6 +76,6 @@ public class UserLikedProductController {
         if (!userDomain.validateToken(token, product.getUserId())) {
             throw new UnauthorizedException("不能删除其他用户的收藏信息！");
         }
-        dataAPIClient.delete("user/collection/unlike", Id);
+        dataAPIClient.delete("/user/collection/unlike/{id}", Id);
     }
 }

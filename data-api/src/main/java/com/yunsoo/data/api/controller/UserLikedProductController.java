@@ -1,5 +1,6 @@
 package com.yunsoo.data.api.controller;
 
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.UserLikedProductEntity;
 import com.yunsoo.data.service.repository.UserLikedProductRepository;
 import com.yunsoo.data.service.service.contract.UserLikedProduct;
@@ -11,7 +12,10 @@ import java.util.List;
 
 /**
  * Created by Zhe on 2015/4/3.
+ *  *  * * ErrorCode
+ * 40401    :   UserLikedProduct not found!
  */
+
 @RestController
 @RequestMapping("/user/collection")
 public class UserLikedProductController {
@@ -24,8 +28,12 @@ public class UserLikedProductController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public List<UserLikedProduct> getUserCollectionByUserId(@PathVariable(value = "id") Long id) {
-        return UserLikedProduct.FromEntityList(userLikedProductRepository.findById(id));
+    public UserLikedProduct getUserCollectionByUserId(@PathVariable(value = "id") Long id) {
+        List<UserLikedProduct> userLikedProductList = UserLikedProduct.FromEntityList(userLikedProductRepository.findById(id));
+        if (userLikedProductList.isEmpty()) {
+            throw new NotFoundException(40401, "找不到UserLikedProduct记录. ID = " + id);
+        }
+        return userLikedProductList.get(0);
     }
 
     @RequestMapping(value = "/like", method = RequestMethod.POST)
@@ -35,9 +43,9 @@ public class UserLikedProductController {
         return newEntity.getId();
     }
 
-    @RequestMapping(value = "/unlike", method = RequestMethod.POST)
+    @RequestMapping(value = "/unlike/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void userUnlikeProduct(@RequestBody Long Id) {
+    public void userUnlikeProduct(@PathVariable(value = "id") Long Id) {
         userLikedProductRepository.delete(Id);
     }
 }

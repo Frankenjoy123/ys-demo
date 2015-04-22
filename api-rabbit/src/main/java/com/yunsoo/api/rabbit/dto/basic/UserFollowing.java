@@ -3,12 +3,12 @@ package com.yunsoo.api.rabbit.dto.basic;
 /**
  * Created by Zhe on 2015/4/21.
  */
-public class UserOrganization {
+public class UserFollowing {
     private long id;
     private String userId;
     private String organizationId;
     private long lastReadMessageId;
-    private long isFollowing;
+    private Boolean isFollowing;
     private String createdDateTime;
     private String lastUpdatedDateTime;
 
@@ -44,11 +44,11 @@ public class UserOrganization {
         this.lastReadMessageId = lastReadMessageId;
     }
 
-    public long getIsFollowing() {
+    public Boolean getIsFollowing() {
         return isFollowing;
     }
 
-    public void setIsFollowing(long isFollowing) {
+    public void setIsFollowing(Boolean isFollowing) {
         this.isFollowing = isFollowing;
     }
 

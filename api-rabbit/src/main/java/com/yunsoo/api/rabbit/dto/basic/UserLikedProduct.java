@@ -7,7 +7,7 @@ public class UserLikedProduct {
 
     private Integer id;
     private String userId;
-    private int baseProductId;
+    private String baseProductId;
     private Boolean active;
     private String createdDateTime;
     private String location;
@@ -28,11 +28,11 @@ public class UserLikedProduct {
         this.userId = userId;
     }
 
-    public int getBaseProductId() {
+    public String getBaseProductId() {
         return baseProductId;
     }
 
-    public void setBaseProductId(int baseProductId) {
+    public void setBaseProductId(String baseProductId) {
         this.baseProductId = baseProductId;
     }
 

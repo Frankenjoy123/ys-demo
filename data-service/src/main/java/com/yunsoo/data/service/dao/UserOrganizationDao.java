@@ -1,6 +1,6 @@
 package com.yunsoo.data.service.dao;
 
-import com.yunsoo.data.service.dbmodel.UserOrganizationModel;
+import com.yunsoo.data.service.dbmodel.UserFollowingModel;
 
 import java.util.List;
 
@@ -9,12 +9,12 @@ import java.util.List;
  */
 public interface UserOrganizationDao {
 
-    public UserOrganizationModel get(String userId, String orgId);
+    public UserFollowingModel get(String userId, String orgId);
 
-    public List<UserOrganizationModel> getUserOrgModelByFilter(String userId, String organizationId, Boolean isFollowing);
+    public List<UserFollowingModel> getUserOrgModelByFilter(String userId, String organizationId, Boolean isFollowing);
 
-    public Long save(UserOrganizationModel model);
+    public Long save(UserFollowingModel model);
 
-    public DaoStatus patchUpdate(UserOrganizationModel model);
+    public DaoStatus patchUpdate(UserFollowingModel model);
 
 }

@@ -10,9 +10,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Created by Zhe on 2015/2/5.
  */
 @Entity
-@Table(name = "user_organization")
+@Table(name = "user_following")
 @XmlRootElement
-public class UserOrganizationModel {
+public class UserFollowingModel {
     @Id
     @GeneratedValue
     @Column(name = "id")

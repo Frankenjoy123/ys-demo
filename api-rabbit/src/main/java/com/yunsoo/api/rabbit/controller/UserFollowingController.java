@@ -1,12 +1,13 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.UserDomain;
-import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
-import com.yunsoo.api.rabbit.dto.basic.UserOrganization;
+import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
+import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class UserFollowingController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserLikedProductController.class);
 
     @RequestMapping(value = "/who/{id}", method = RequestMethod.GET)
-    public List<UserOrganization> getFollowingOrgsByUserId(@PathVariable(value = "id") String id,
+    public List<UserFollowing> getFollowingOrgsByUserId(@PathVariable(value = "id") String id,
                                                            @RequestParam(value = "index") Integer index,
                                                            @RequestParam(value = "size") Integer size) {
         if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
@@ -37,35 +38,35 @@ public class UserFollowingController {
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
 
         try {
-            List<UserOrganization> userOrganizationList = dataAPIClient.get("/user/following/who/{id}", List.class, id);
-            if (userOrganizationList == null || userOrganizationList.size() == 0) {
-                throw new NotFoundException(40401, "UserOrganization not found for userid = " + id);
+            List<UserFollowing> userFollowingList = dataAPIClient.get("/user/following/who/{0}?index={1}&size={2}", List.class, id, index, size);
+            if (userFollowingList == null || userFollowingList.size() == 0) {
+                throw new NotFoundException(40401, "User following list not found for userid = " + id);
             }
-            return userOrganizationList;
+            return userFollowingList;
         } catch (NotFoundException ex) {
-            throw new NotFoundException(40401, "UserOrganization not found for useid = " + id);
+            throw new NotFoundException(40401, "User following list not found for useid = " + id);
         }
 
     }
 
     @RequestMapping(value = "/link", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public long userFollowingOrgs(@RequestBody UserOrganization userLikedProduct) {
-        long id = dataAPIClient.post("/user/following/link", userLikedProduct, Long.class);
+    public long userFollowingOrgs(@RequestBody UserFollowing userFollowing) {
+        long id = dataAPIClient.post("/user/following/link", userFollowing, Long.class);
         return id;
     }
 
-    @RequestMapping(value = "/unlink", method = RequestMethod.POST)
+    @RequestMapping(value = "/unlink/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void userUnfollowOrg(@RequestHeader(AUTH_HEADER_NAME) String token, @PathVariable(value = "Id") Long Id) {
+    public void userUnfollowOrg(@RequestHeader(AUTH_HEADER_NAME) String token, @PathVariable(value = "id") Long Id) {
 
         if (Id == null || Id < 0) {
             throw new BadRequestException("Id不应小于0！");
         }
-        UserOrganization userOrganization = dataAPIClient.get("/user/following/{id}", UserOrganization.class, Id);
-        if (!userDomain.validateToken(token, userOrganization.getUserId())) {
+        UserFollowing userFollowing = dataAPIClient.get("/user/following/{id}", UserFollowing.class, Id);
+        if (!userDomain.validateToken(token, userFollowing.getUserId())) {
             throw new UnauthorizedException("不能删除其他用户的收藏信息！");
         }
-        dataAPIClient.delete("user/following/unlink", Id);
+        dataAPIClient.delete("user/following/unlink/{0}", Id);
     }
 }

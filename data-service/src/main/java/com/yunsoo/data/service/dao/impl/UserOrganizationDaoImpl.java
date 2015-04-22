@@ -2,7 +2,7 @@ package com.yunsoo.data.service.dao.impl;
 
 import com.yunsoo.data.service.dao.UserOrganizationDao;
 import com.yunsoo.data.service.dao.DaoStatus;
-import com.yunsoo.data.service.dbmodel.UserOrganizationModel;
+import com.yunsoo.data.service.dbmodel.UserFollowingModel;
 import com.yunsoo.data.service.util.SpringBeanUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -23,14 +23,14 @@ public class UserOrganizationDaoImpl implements UserOrganizationDao {
     private SessionFactory sessionFactory;
 
     @Override
-    public UserOrganizationModel get(String userId, String orgId) {
-        List<UserOrganizationModel> model = this.getUserOrgModelByFilter(userId, orgId, false);
+    public UserFollowingModel get(String userId, String orgId) {
+        List<UserFollowingModel> model = this.getUserOrgModelByFilter(userId, orgId, false);
         return model.get(0);
     }
 
     @Override
-    public List<UserOrganizationModel> getUserOrgModelByFilter(String userId, String organizationId, Boolean isFollowing) {
-        Criteria c = sessionFactory.getCurrentSession().createCriteria(UserOrganizationModel.class);
+    public List<UserFollowingModel> getUserOrgModelByFilter(String userId, String organizationId, Boolean isFollowing) {
+        Criteria c = sessionFactory.getCurrentSession().createCriteria(UserFollowingModel.class);
         if (userId != null && !userId.isEmpty()) {
             c.add(Restrictions.eq("userId", userId));
         }
@@ -44,17 +44,17 @@ public class UserOrganizationDaoImpl implements UserOrganizationDao {
     }
 
     @Override
-    public Long save(UserOrganizationModel model) {
+    public Long save(UserFollowingModel model) {
         model.setCreatedDateTime(DateTime.now());
         sessionFactory.getCurrentSession().save(model);
         return model.getId();
     }
 
     @Override
-    public DaoStatus patchUpdate(UserOrganizationModel messageModelForPatch) {
+    public DaoStatus patchUpdate(UserFollowingModel messageModelForPatch) {
         try {
             Session currentSession = sessionFactory.getCurrentSession();
-            UserOrganizationModel modelInDB = (UserOrganizationModel) currentSession.get(UserOrganizationModel.class, messageModelForPatch.getId());
+            UserFollowingModel modelInDB = (UserFollowingModel) currentSession.get(UserFollowingModel.class, messageModelForPatch.getId());
             //Set properties that needs to update in DB, ignore others are null.
             BeanUtils.copyProperties(messageModelForPatch, modelInDB, SpringBeanUtil.getNullPropertyNames(messageModelForPatch));
             currentSession.update(modelInDB);

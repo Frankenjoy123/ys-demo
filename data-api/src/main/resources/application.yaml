@@ -5,7 +5,7 @@ multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
 spring:
-    profiles.active: qa
+    profiles.active: default
 ---
 spring:
     profiles: default

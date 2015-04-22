@@ -9,8 +9,8 @@ import javax.persistence.*;
  * Created by Zhe on 2015/4/15.
  */
 @Entity
-@Table(name = "user_organization")
-public class UserOrgEntity {
+@Table(name = "user_following")
+public class UserFollowingEntity {
 
     @Id
     @GeneratedValue
@@ -27,7 +27,7 @@ public class UserOrgEntity {
     private long lastReadMessageId;
 
     @Column(name = "is_following")
-    private long isFollowing;
+    private Boolean isFollowing;
 
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -70,11 +70,11 @@ public class UserOrgEntity {
         this.lastReadMessageId = lastReadMessageId;
     }
 
-    public long getIsFollowing() {
+    public Boolean getIsFollowing() {
         return isFollowing;
     }
 
-    public void setIsFollowing(long isFollowing) {
+    public void setIsFollowing(Boolean isFollowing) {
         this.isFollowing = isFollowing;
     }
 
