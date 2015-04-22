@@ -7,6 +7,7 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,17 +21,22 @@ import java.util.List;
 public class LogisticsCheckActionDaoImpl implements LogisticsCheckActionDao{
 
     @Autowired
+    @Qualifier(value = "sessionfactory.primary")
     private SessionFactory sessionFactory;
+
+    @Autowired
+    @Qualifier(value = "sessionfactory.read1")
+    private SessionFactory readSessionFactory;
 
     @Override
     public LogisticsCheckActionModel get(int id) {
-        return (LogisticsCheckActionModel) sessionFactory.getCurrentSession().get(
+        return (LogisticsCheckActionModel) readSessionFactory.getCurrentSession().get(
                 LogisticsCheckActionModel.class, id);
     }
 
     @Override
     public LogisticsCheckActionModel get(String name) {
-        Criteria c = sessionFactory.getCurrentSession().createCriteria(LogisticsCheckActionModel.class);
+        Criteria c = readSessionFactory.getCurrentSession().createCriteria(LogisticsCheckActionModel.class);
         c.add(Restrictions.eq("name", name));
         List<LogisticsCheckActionModel> listActions = (List<LogisticsCheckActionModel>) c.list();
         if (listActions != null && !listActions.isEmpty()) {
@@ -73,12 +79,12 @@ public class LogisticsCheckActionDaoImpl implements LogisticsCheckActionDao{
     @SuppressWarnings("unchecked")
     @Override
     public List<LogisticsCheckActionModel> getAllLogisticsCheckActionModels() {
-        return sessionFactory.getCurrentSession().createCriteria(LogisticsCheckActionModel.class).list();
+        return readSessionFactory.getCurrentSession().createCriteria(LogisticsCheckActionModel.class).list();
     }
 
     @Override
     public List<LogisticsCheckActionModel> getLogisticsCheckActionModelsByFilter(int id, String name){
-        Criteria c = sessionFactory.getCurrentSession().createCriteria(LogisticsCheckActionModel.class);
+        Criteria c = readSessionFactory.getCurrentSession().createCriteria(LogisticsCheckActionModel.class);
         if (id >= 0) {
             c.add(Restrictions.eq("id", id));
         }
@@ -91,7 +97,7 @@ public class LogisticsCheckActionDaoImpl implements LogisticsCheckActionDao{
     @Override
     public List<LogisticsCheckActionModel> getLogisticsCheckActionModelsByOrg(Long orgId)
     {
-        Criteria c = sessionFactory.getCurrentSession().createCriteria(LogisticsCheckActionModel.class);
+        Criteria c = readSessionFactory.getCurrentSession().createCriteria(LogisticsCheckActionModel.class);
         c.add(Restrictions.eq("orgId", orgId));
 
         return c.list();

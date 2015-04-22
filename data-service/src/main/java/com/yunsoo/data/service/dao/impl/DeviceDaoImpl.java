@@ -5,6 +5,7 @@ import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dao.DeviceDao;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +17,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class DeviceDaoImpl implements DeviceDao {
 
     @Autowired
+    @Qualifier(value = "sessionfactory.primary")
     private SessionFactory sessionFactory;
+
+    @Autowired
+    @Qualifier(value = "sessionfactory.read1")
+    private SessionFactory readSessionFactory;
 
     @Override
     public DeviceModel get(long id) {
-        return (DeviceModel) sessionFactory.getCurrentSession().get(
+        return (DeviceModel) readSessionFactory.getCurrentSession().get(
                 DeviceModel.class, id);
     }
 

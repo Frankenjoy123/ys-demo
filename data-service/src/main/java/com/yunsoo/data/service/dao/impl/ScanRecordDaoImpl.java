@@ -8,6 +8,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +22,16 @@ import java.util.List;
 public class ScanRecordDaoImpl implements ScanRecordDao {
 
     @Autowired
+    @Qualifier(value = "sessionfactory.primary")
     private SessionFactory sessionFactory;
+
+    @Autowired
+    @Qualifier(value = "sessionfactory.read1")
+    private SessionFactory readSessionFactory;
 
     @Override
     public ScanRecordModel get(long id) {
-        return (ScanRecordModel) sessionFactory.getCurrentSession().get(
+        return (ScanRecordModel) readSessionFactory.getCurrentSession().get(
                 ScanRecordModel.class, id);
     }
 
@@ -38,7 +44,7 @@ public class ScanRecordDaoImpl implements ScanRecordDao {
 
     @Override
     public List<ScanRecordModel> getScanRecordsByFilter(String productKey, Integer baseProductId, String userId, DateTime createdDateTime, int pageIndex, int pageSize) {
-        Criteria c = sessionFactory.getCurrentSession().createCriteria(ScanRecordModel.class);
+        Criteria c = readSessionFactory.getCurrentSession().createCriteria(ScanRecordModel.class);
         if (productKey != null && !productKey.isEmpty()) {
             c.add(Restrictions.eq("productKey", productKey));
         }
@@ -59,7 +65,7 @@ public class ScanRecordDaoImpl implements ScanRecordDao {
 
     @Override
     public List<ScanRecordModel> filterScanRecords(Long Id, String userId, Boolean getOlder, int pageIndex, int pageSize) {
-        Criteria c = sessionFactory.getCurrentSession().createCriteria(ScanRecordModel.class);
+        Criteria c = readSessionFactory.getCurrentSession().createCriteria(ScanRecordModel.class);
         if (Id != null) {
             if (getOlder) {
                 c.add(Restrictions.lt("id", Id)); //getById scan records that older than current ScanRecordId.

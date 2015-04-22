@@ -12,6 +12,7 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +26,19 @@ import java.util.List;
 public class MessageDaoImpl implements MessageDao {
 
     @Autowired
+    @Qualifier(value = "sessionfactory.primary")
     private SessionFactory sessionFactory;
+
+    @Autowired
+    @Qualifier(value = "sessionfactory.read1")
+    private SessionFactory readSessionFactory;
 
     private final String message_deleted = "deleted";
     private final String message_approved = "approved";
 
     @Override
     public MessageModel get(long id) {
-        return (MessageModel) sessionFactory.getCurrentSession().get(
+        return (MessageModel) readSessionFactory.getCurrentSession().get(
                 MessageModel.class, id);
     }
 
@@ -100,7 +106,7 @@ public class MessageDaoImpl implements MessageDao {
 
     @Override
     public List<MessageModel> getMessagesByStatus(String status) {
-        Criteria c = sessionFactory.getCurrentSession().createCriteria(MessageModel.class)
+        Criteria c = readSessionFactory.getCurrentSession().createCriteria(MessageModel.class)
                 .add(Restrictions.eq("status", status))
                 .addOrder(Order.asc("id"));
         return c.list();
@@ -108,7 +114,7 @@ public class MessageDaoImpl implements MessageDao {
 
     @Override
     public List<MessageModel> getMessagesByType(int typeId) {
-        Criteria c = sessionFactory.getCurrentSession().createCriteria(MessageModel.class)
+        Criteria c = readSessionFactory.getCurrentSession().createCriteria(MessageModel.class)
                 .add(Restrictions.eq("type", typeId))
                 .addOrder(Order.asc("id"));
         return c.list();
@@ -116,7 +122,7 @@ public class MessageDaoImpl implements MessageDao {
 
     @Override
     public List<MessageModel> getMessagesByFilter(Integer type, String status, String orgId, Boolean ignoreExpireDate, int pageIndex, int pageSize) {
-        Criteria c = sessionFactory.getCurrentSession().createCriteria(MessageModel.class);
+        Criteria c = readSessionFactory.getCurrentSession().createCriteria(MessageModel.class);
         if (type != null) {
             c.add(Restrictions.eq("type", type.intValue()));
         }
@@ -137,7 +143,7 @@ public class MessageDaoImpl implements MessageDao {
 
     @Override
     public List<MessageModel> getUnreadMessages(String orgId, Long lastReadMessageId) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = readSessionFactory.getCurrentSession();
 
         Criteria c = sessionFactory.getCurrentSession().createCriteria(MessageModel.class);
         if (lastReadMessageId != null) {

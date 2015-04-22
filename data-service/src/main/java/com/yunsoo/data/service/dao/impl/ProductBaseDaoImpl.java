@@ -12,6 +12,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -21,11 +22,16 @@ import org.springframework.util.StringUtils;
 public class ProductBaseDaoImpl implements ProductBaseDao {
 
     @Autowired
+    @Qualifier(value = "sessionfactory.primary")
     private SessionFactory sessionFactory;
+
+    @Autowired
+    @Qualifier(value = "sessionfactory.read1")
+    private SessionFactory readSessionFactory;
 
     @Override
     public ProductBaseModel getById(String id) {
-        return (ProductBaseModel) sessionFactory.getCurrentSession().get(ProductBaseModel.class, id);
+        return (ProductBaseModel) readSessionFactory.getCurrentSession().get(ProductBaseModel.class, id);
     }
 
 
@@ -61,7 +67,7 @@ public class ProductBaseDaoImpl implements ProductBaseDao {
 
     @Override
     public List<ProductBaseModel> getByFilter(Map<String, Object> eqFilter) {
-        Criteria c = sessionFactory.getCurrentSession().createCriteria(ProductBaseModel.class);
+        Criteria c = readSessionFactory.getCurrentSession().createCriteria(ProductBaseModel.class);
         if (eqFilter != null && !eqFilter.isEmpty()) {
             eqFilter.forEach((k, v) -> {
                 if (!StringUtils.isEmpty(k)) {
@@ -74,7 +80,7 @@ public class ProductBaseDaoImpl implements ProductBaseDao {
 
     @Override
     public List<ProductBaseModel> getAll() {
-        return sessionFactory.getCurrentSession().createCriteria(ProductBaseModel.class).list();
+        return readSessionFactory.getCurrentSession().createCriteria(ProductBaseModel.class).list();
     }
 
 }
