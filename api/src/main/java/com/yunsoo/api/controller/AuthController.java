@@ -4,6 +4,7 @@ import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.AccountTokenDomain;
 import com.yunsoo.api.dto.AccountLoginRequest;
 import com.yunsoo.api.dto.AccountLoginResult;
+import com.yunsoo.api.dto.basic.Account;
 import com.yunsoo.api.dto.basic.Token;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
@@ -84,5 +85,13 @@ public class AuthController {
         String accessToken = "0723f205f20a8ed6e06c9c51aad640807ec0cde691e459951ca4f7eb804ae6b2";
 
         return new Token(accessToken, expires);
+    }
+
+    public Account getCurrentAccount() {
+        //        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication instanceof AccountAuthentication) {
+//            return ((AccountAuthentication) authentication).getDetails();
+//        }
+        return null;
     }
 }

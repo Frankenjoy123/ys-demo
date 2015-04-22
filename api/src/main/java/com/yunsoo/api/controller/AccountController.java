@@ -7,6 +7,7 @@ import com.yunsoo.api.object.TAccountToken;
 import com.yunsoo.api.security.AccountAuthentication;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +30,15 @@ public class AccountController {
     @Autowired
     private AccountDomain accountDomain;
 
-    @RequestMapping(value = "/current", method = RequestMethod.GET)
-    public TAccount getCurrent() {
-//        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication instanceof AccountAuthentication) {
-//            return ((AccountAuthentication) authentication).getDetails();
-//        }
-//        return new TAccount(authentication.getName()); //anonymous user support
-        return null;
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Account getCurrent(@PathVariable("id") String id) {
+        AccountObject accountObject;
+        try {
+            accountObject = accountDomain.getById(id);
+        } catch (NotFoundException ex) {
+            throw new NotFoundException("Account not found by [id: " + id + "]");
+        }
+        return fromAccountObject(accountObject);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
