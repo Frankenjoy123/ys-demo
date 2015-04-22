@@ -10,7 +10,7 @@ CREATE TABLE account
   last_name           VARCHAR(100)                       NOT NULL,
   email               VARCHAR(255)                       NOT NULL,
   phone               VARCHAR(100)                       NOT NULL,
-  password            VARCHAR(100)                       NOT NULL,
+  password            VARCHAR(64)                        NOT NULL,
   hash_salt           VARCHAR(100)                       NOT NULL,
   created_account_id  VARCHAR(20)                        NOT NULL,
   created_datetime    DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -19,8 +19,8 @@ CREATE TABLE account
 );
 CREATE UNIQUE INDEX org_id_identifier ON account (org_id, identifier);
 INSERT INTO account (id, org_id, identifier, status_code, first_name, last_name, email, phone, password, hash_salt, created_account_id)
-VALUES ('2k0rahgcybh0l5uxtep', '2k0r1l55i2rs5544wz5', 'admin', 'available', '–Ú‘≥', '≥Ã', 'it@yunsu.co', '1234567890',
-        'AF7E21CF2CD07F61D563EE1FFFCA650D', 'hacksalt', '2k0rahgcybh0l5uxtep');
+VALUES ('2k0rahgcybh0l5uxtep', '2k0r1l55i2rs5544wz5', 'admin', 'available', 'Â∫èÁåø', 'Á®ã', 'it@yunsu.co', '1234567890',
+        '9c35409589f9c52269cf6d7b4cfdd44c792da4f9', '5L0t6ltM', '2k0rahgcybh0l5uxtep');
 
 
 #account_permission
@@ -62,12 +62,13 @@ VALUES
 DROP TABLE IF EXISTS account_token;
 CREATE TABLE account_token
 (
-  id                               VARCHAR(20) PRIMARY KEY NOT NULL,
-  account_id                       VARCHAR(20)             NOT NULL,
-  app_id                           VARCHAR(20)             NOT NULL,
-  device_id                        VARCHAR(255)            NULL,
-  permanent_token                  VARCHAR(100)            NOT NULL,
-  permanent_token_datetime         DATETIME                NOT NULL,
-  permanent_token_expires_datetime DATETIME                NULL
+  id                               VARCHAR(20) PRIMARY KEY                     NOT NULL,
+  account_id                       VARCHAR(20)                                 NOT NULL,
+  app_id                           VARCHAR(20)                                 NOT NULL,
+  device_id                        VARCHAR(255)                                NULL,
+  permanent_token                  VARCHAR(100)                                NOT NULL,
+  permanent_token_expires_datetime DATETIME                                    NOT NULL,
+  created_account_id               VARCHAR(20)                                 NOT NULL,
+  created_datetime                 DATETIME DEFAULT CURRENT_TIMESTAMP          NOT NULL
 );
 CREATE UNIQUE INDEX permanent_token ON account_token (permanent_token);

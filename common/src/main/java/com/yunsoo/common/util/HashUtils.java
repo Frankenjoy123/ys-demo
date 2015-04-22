@@ -1,5 +1,6 @@
 package com.yunsoo.common.util;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -8,16 +9,31 @@ import java.security.NoSuchAlgorithmException;
  * Created on  : 2015/4/21
  * Descriptions:
  */
-public class HashUtil {
+public class HashUtils {
 
-    public static String hash(String src) {
+    public static String md5(String src) {
+        return hash(src, "MD5");
+    }
+
+    public static String sha1(String src) {
+        return hash(src, "SHA-1");
+    }
+
+    public static String sha256(String src) {
+        return hash(src, "SHA-256");
+    }
+
+    public static String hash(String src, String algorithm) {
         MessageDigest mdInstance;
+        String encoding = "UTF-8";
         try {
-            mdInstance = MessageDigest.getInstance("SHA1");
+            mdInstance = MessageDigest.getInstance(algorithm);
+            mdInstance.update(src.getBytes(encoding));
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Hash algorithm not found", e);
+            throw new RuntimeException("hash algorithm not found: " + algorithm);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("unsupported encoding: " + encoding);
         }
-        mdInstance.update(src.getBytes());
         byte[] resultBytes = mdInstance.digest();
         return toHexString(resultBytes);
     }

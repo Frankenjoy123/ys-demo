@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 
 /**
- * Created by Zhe on 2015/3/5.
+ * Created by  : Zhe
+ * Created on  : 2015/3/5
+ * Descriptions:
  */
 
 @Service
@@ -24,7 +26,7 @@ public class TokenAuthenticationService {
 
     @Value("${yunsoo.token_header_name}")
     private String AUTH_HEADER_NAME;
-    private static final long HALF_YEAR = 1000000 * 60 * 60 * 24 * 150; // 150 days
+    private static final long HALF_YEAR = 1000000L * 60 * 60 * 24 * 150; // 150 days
 
     private final TokenHandler tokenHandler;
 

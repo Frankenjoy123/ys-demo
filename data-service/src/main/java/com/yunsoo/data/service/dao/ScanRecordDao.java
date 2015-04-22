@@ -13,7 +13,7 @@ public interface ScanRecordDao {
 
     public long save(ScanRecordModel scanRecordModel);
 
-    public List<ScanRecordModel> getScanRecordsByFilter(String productKey, Integer baseProductId, Long userId, DateTime createdDateTime, int pageIndex, int pageSize);
+    public List<ScanRecordModel> getScanRecordsByFilter(String productKey, Integer baseProductId, String userId, DateTime createdDateTime, int pageIndex, int pageSize);
 
-    public List<ScanRecordModel> filterScanRecords(Long Id, Long userId, Boolean getOlder, int pageIndex, int pageSize);
+    public List<ScanRecordModel> filterScanRecords(Long Id, String userId, Boolean getOlder, int pageIndex, int pageSize);
 }

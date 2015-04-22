@@ -10,6 +10,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  */
 public interface UserOrgRepository extends PagingAndSortingRepository<UserOrgEntity, Long> {
 
+    Iterable<UserOrgEntity> findById(String Id);
+
     Iterable<UserOrgEntity> findByUserId(String userId);
 
     Page<UserOrgEntity> findByUserId(String userId, Pageable pageable);

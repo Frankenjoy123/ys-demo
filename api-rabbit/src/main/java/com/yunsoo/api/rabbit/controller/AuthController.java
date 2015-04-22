@@ -1,8 +1,10 @@
 package com.yunsoo.api.rabbit.controller;
 
+import com.yunsoo.api.rabbit.dto.UserResult;
 import com.yunsoo.api.rabbit.dto.basic.Account;
 import com.yunsoo.api.rabbit.dto.basic.User;
 import com.yunsoo.api.rabbit.object.TAccount;
+import com.yunsoo.api.rabbit.object.TAccountStatusEnum;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.web.client.RestClient;
 import org.slf4j.Logger;
@@ -33,29 +35,43 @@ public class AuthController {
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<?> authUser(@RequestBody Account account) {
-        if (account == null) {
-            return new ResponseEntity<>("invalid user id", HttpStatus.UNPROCESSABLE_ENTITY);
+    public ResponseEntity<?> authUser(@RequestBody User user) {
+        if (user == null) {
+            return new ResponseEntity<>("用户不能为空！", HttpStatus.FORBIDDEN);
         }
 
         //Auth account
         Boolean authResult = true;
-        //to-do
+        User currentUser = null;
+        //几种验证方法： 1， 先验证手机号存在， 2，验证devicecode存在， 3， 用户名/密码验证（未做）
+        if (user.getDeviceCode() != null && !user.getDeviceCode().isEmpty()) {
+            currentUser = dataAPIClient.get("user/device/{devicecode}", User.class, user.getDeviceCode());
+            if (currentUser == null) {
+                return new ResponseEntity<>("用户名不存在！", HttpStatus.FORBIDDEN);
+            }
+        } else if (user.getCellular() != null && !user.getCellular().isEmpty()) {
+            currentUser = dataAPIClient.get("user/cellular/{cellular}", User.class, user.getCellular());
+            if (currentUser == null) {
+                return new ResponseEntity<>("用户名不存在！", HttpStatus.FORBIDDEN);
+            }
+        } else {
+            authResult = false;
+        }
+
         if (!authResult) {
             return new ResponseEntity<>("用户名和密码未通过验证！", HttpStatus.UNAUTHORIZED);
         }
-        // SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
 
-        //tokenAuthenticationService.getAuthentication()
         TAccount currentAccount = new TAccount();
-        currentAccount.setId("552ddb49e6b1e79c80c950b7");
-        currentAccount.setStatus(2); //Status的编码与TAccountStatusEnum一致
+        currentAccount.setId(currentUser.getId());
+        currentAccount.setStatus(currentUser.getStatus()); //Status的编码与TAccountStatusEnum一致
         String token = tokenAuthenticationService.generateToken(currentAccount);
 
         //set token
         HttpHeaders headers = new HttpHeaders();
         headers.add(AUTH_HEADER_NAME, token);
-        return new ResponseEntity<String>(token, headers, HttpStatus.OK);
+        UserResult userResult = new UserResult(token, currentUser.getId()); //generate result
+        return new ResponseEntity<UserResult>(userResult, headers, HttpStatus.OK);
     }
 
     //Allow anonymous access
@@ -65,17 +81,18 @@ public class AuthController {
         //Reset user's default creadit and level
         user.setYsCreadit(0);
         user.setLevel(1);
-        String id = dataAPIClient.post("user", user, String.class);
+        String id = dataAPIClient.post("user", user, String.class); //persistent user
 
         TAccount currentAccount = new TAccount();
         currentAccount.setId(id);
-        currentAccount.setStatus(2); //Status的编码与TAccountStatusEnum一致
+        currentAccount.setStatus(TAccountStatusEnum.ENABLED.value()); //Status的编码与TAccountStatusEnum一致
         String token = tokenAuthenticationService.generateToken(currentAccount);
 
         //set token
         HttpHeaders headers = new HttpHeaders();
         headers.add(AUTH_HEADER_NAME, token);
-        return new ResponseEntity<String>(id, headers, HttpStatus.CREATED);
+        UserResult userResult = new UserResult(token, id); //generate result
+        return new ResponseEntity<UserResult>(userResult, headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/updatepassword", method = RequestMethod.POST)

@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
@@ -37,6 +38,8 @@ public class MessageController {
     private AccountDomain accountDomain;
 
     private final String AUTH_HEADER_NAME = "YS_WOLF_AUTH_TOKEN";
+    private final String message_created_status = "created";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
 
     @Autowired
@@ -58,11 +61,32 @@ public class MessageController {
         }
     }
 
+    @RequestMapping(value = "/orgid", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'message:read')")
+    public List<Message> getMessages(@RequestHeader(AUTH_HEADER_NAME) String token,
+                                     @RequestParam(value = "orgid", required = true) String orgId,
+                                     @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
+                                     @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        if (orgId == null || orgId.isEmpty()) throw new BadRequestException("OrgId不能为空！");
+
+        try {
+            List<Message> messageList = dataAPIClient.get("message/get?orgid={0}&pageIndex={1}&pageSize={2}", List.class, orgId, pageIndex, pageSize);
+            if (messageList == null || messageList.size() == 0) {
+                throw new NotFoundException("Message not found!  OrgId = " + orgId);
+            }
+            return messageList;
+        } catch (NotFoundException ex) {
+            throw new NotFoundException(40401, "Message not found for userid = " + ". orgId = " + orgId);
+        }
+    }
+
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#message, 'message:create')")
     public long createMessages(@RequestBody Message message) {
         if (message == null) throw new BadRequestException("Message不能为空！");
+        message.setStatus(message_created_status); //set as created
         long id = dataAPIClient.post("message", message, Long.class);
         return id;
     }
@@ -92,9 +116,9 @@ public class MessageController {
         if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("imagekey不能为空！");
         try {
             FileObject fileObject = dataAPIClient.get("message/image/{imagekey}", FileObject.class, imagekey);
-            if (fileObject.getLenth() > 0) {
+            if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
-                        .contentLength(fileObject.getLenth())
+                        .contentLength(fileObject.getLength())
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
                         .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
             } else {

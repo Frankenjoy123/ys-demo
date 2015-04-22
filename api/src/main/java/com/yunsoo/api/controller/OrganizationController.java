@@ -33,9 +33,9 @@ public class OrganizationController {
         if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("imagekey不能为空！");
         try {
             FileObject fileObject = dataAPIClient.get("organization/thumbnail/{id}/{imagekey}", FileObject.class, id, imagekey);
-            if (fileObject.getLenth() > 0) {
+            if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
-                        .contentLength(fileObject.getLenth())
+                        .contentLength(fileObject.getLength())
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
                         .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
             } else {

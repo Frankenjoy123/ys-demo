@@ -1,6 +1,5 @@
 package com.yunsoo.data.service.dao.impl;
 
-import com.yunsoo.data.service.config.DataServiceSetting;
 import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dao.MessageDao;
 import com.yunsoo.data.service.dbmodel.MessageModel;
@@ -28,8 +27,8 @@ public class MessageDaoImpl implements MessageDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Autowired
-    private DataServiceSetting dataServiceSetting;
+    private final String message_deleted = "deleted";
+    private final String message_approved = "approved";
 
     @Override
     public MessageModel get(long id) {
@@ -41,7 +40,7 @@ public class MessageDaoImpl implements MessageDao {
     public long save(MessageModel messageModel) {
 //       Session session =  sessionFactory.openSession();
 //       long result = (long)sessionFactory.getCurrentSession().save(messageModelForPatch);
-        messageModel.setStatus(dataServiceSetting.getMessage_created_status_id());//always as newly created for newly created newMessage.
+//        messageModel.setStatus(dataServiceSetting.getMessage_created_status_id());//always as newly created for newly created newMessage.
         messageModel.setCreatedDateTime(DateTime.now());
         messageModel.setExpireDateTime(DateTime.now().plusDays(100)); //default 100 days to expire.
         sessionFactory.getCurrentSession().save(messageModel);
@@ -84,13 +83,13 @@ public class MessageDaoImpl implements MessageDao {
     @Override
     public DaoStatus delete(Long id) {
         //find in config file for deleted status
-        return updateStatus(id, dataServiceSetting.getMessage_delete_status_id());
+        return updateStatus(id, message_deleted);
 //        MyObject myObject = (MyObject) sessionFactory.getCurrentSession().load(MyObject.class,id);
 //        sessionFactory.getCurrentSession().deletePermanantly(myObject);
     }
 
     //Update status by message Id.
-    public DaoStatus updateStatus(Long messageId, int status) {
+    public DaoStatus updateStatus(Long messageId, String status) {
         MessageModel messageModel = this.get(messageId);
         if (messageModel == null) return DaoStatus.NotFound;
 
@@ -100,9 +99,9 @@ public class MessageDaoImpl implements MessageDao {
     }
 
     @Override
-    public List<MessageModel> getMessagesByStatus(int statusId) {
+    public List<MessageModel> getMessagesByStatus(String status) {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(MessageModel.class)
-                .add(Restrictions.eq("status", statusId))
+                .add(Restrictions.eq("status", status))
                 .addOrder(Order.asc("id"));
         return c.list();
     }
@@ -116,35 +115,38 @@ public class MessageDaoImpl implements MessageDao {
     }
 
     @Override
-    public List<MessageModel> getMessagesByFilter(Integer type, Integer status, Long companyId, Boolean ignoreExpireDate) {
+    public List<MessageModel> getMessagesByFilter(Integer type, String status, String orgId, Boolean ignoreExpireDate, int pageIndex, int pageSize) {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(MessageModel.class);
         if (type != null) {
             c.add(Restrictions.eq("type", type.intValue()));
         }
         if (status != null) {
-            c.add(Restrictions.eq("status", status.intValue()));
+            c.add(Restrictions.eq("status", status));
         }
-        if (companyId != null) {
-            c.add(Restrictions.eq("companyId", companyId.longValue()));
+        if (orgId != null) {
+            c.add(Restrictions.eq("orgId", orgId));
         }
         if (!ignoreExpireDate) {
             c.add(Restrictions.gt("expiredDateTime", DateTime.now()));
         }
+        c.addOrder(Order.desc("createdDateTime"));
+        c.setFirstResult(pageIndex * pageSize);
+        c.setMaxResults(pageSize);
         return c.list();
     }
 
     @Override
-    public List<MessageModel> getUnreadMessages(Long companyId, Long lastReadMessageId) {
+    public List<MessageModel> getUnreadMessages(String orgId, Long lastReadMessageId) {
         Session session = sessionFactory.getCurrentSession();
 
         Criteria c = sessionFactory.getCurrentSession().createCriteria(MessageModel.class);
         if (lastReadMessageId != null) {
             c.add(Restrictions.gt("id", lastReadMessageId.longValue()));
         }
-        if (companyId != null) {
-            c.add(Restrictions.eq("companyId", companyId.longValue()));
+        if (orgId != null) {
+            c.add(Restrictions.eq("orgId", orgId));
         }
-        c.add(Restrictions.eq("status", dataServiceSetting.getMessage_approved_status_id()));
+        c.add(Restrictions.eq("status", message_approved));
         c.add(Restrictions.gt("expiredDateTime", DateTime.now()));
 
         return c.list();

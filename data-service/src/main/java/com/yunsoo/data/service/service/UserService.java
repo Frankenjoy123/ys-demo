@@ -27,6 +27,6 @@ public interface UserService {
 
     public List<User> getAllUsers();
 
-    public List<User> getUsersByFilter(String id, String deviceCode, String cellular, Integer status);
+    public List<User> getUsersByFilter(String id, String deviceCode, String cellular, String status);
 
 }

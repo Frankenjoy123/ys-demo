@@ -48,7 +48,7 @@ public class AccountController {
 
     private TAccountToken _generateToken(TAccount account) {
         String identifier = account.getUsername();
-        TAccountToken token = dataAPIClient.get("/accountToken/identifier/{identifier}", TAccountToken.class, identifier);
+          TAccountToken token = dataAPIClient.get("/accountToken/identifier/{identifier}", TAccountToken.class, identifier);
         if (token != null) {
             dataAPIClient.put("/accountToken/update", token);
             return dataAPIClient.get("/accountToken/identifier/{identifier}", TAccountToken.class, identifier);

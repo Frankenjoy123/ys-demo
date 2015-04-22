@@ -15,7 +15,7 @@ CREATE TABLE organization
 );
 INSERT INTO organization (id, name, type_code, status_code, description, image_uri, details, created_account_id)
 VALUES
-  ('2k0r1l55i2rs5544wz5', 'ÔÆËİ¿Æ¼¼', 'tech', 'available', '¹Ø×¢»¥ÁªÍø+µÄÁ¦Á¿!', NULL, 'ÏêÏ¸ÃèÊöĞÅÏ¢', '2k0rahgcybh0l5uxtep'),
-  ('2k0r2yvydbxbvibvgfm', 'Ä³Á¹²èÓĞÏŞ¹«Ë¾', 'manufacturer', 'available', 'ºÈÁ¹²è£¬²»ÉÏ»ğ', NULL, '', '2k0rahgcybh0l5uxtep'),
-  ('2k0r306o609oljxd1wz', 'Ä³É½ÈªË®¹«Ë¾', 'manufacturer', 'available', '´ó×ÔÈ»µÄ°áÔË¹¤', NULL, '', '2k0rahgcybh0l5uxtep');
+  ('2k0r1l55i2rs5544wz5', 'äº‘æº¯ç§‘æŠ€', 'tech', 'available', 'å…³æ³¨äº’è”ç½‘+çš„åŠ›é‡!', NULL, 'è¯¦ç»†æè¿°ä¿¡æ¯', '2k0rahgcybh0l5uxtep'),
+  ('2k0r2yvydbxbvibvgfm', 'æŸå‡‰èŒ¶æœ‰é™å…¬å¸', 'manufacturer', 'available', 'å–å‡‰èŒ¶ï¼Œä¸ä¸Šç«', NULL, '', '2k0rahgcybh0l5uxtep'),
+  ('2k0r306o609oljxd1wz', 'æŸå±±æ³‰æ°´å…¬å¸', 'manufacturer', 'available', 'å¤§è‡ªç„¶çš„æ¬è¿å·¥', NULL, '', '2k0rahgcybh0l5uxtep');
 

@@ -1,6 +1,5 @@
 package com.yunsoo.data.service.dao.impl;
 
-import com.yunsoo.data.service.config.DataServiceSetting;
 import com.yunsoo.data.service.dao.UserOrganizationDao;
 import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dbmodel.UserOrganizationModel;
@@ -23,23 +22,20 @@ public class UserOrganizationDaoImpl implements UserOrganizationDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Autowired
-    private DataServiceSetting dataServiceSetting;
-
     @Override
-    public UserOrganizationModel get(long userId, long companyId) {
-        List<UserOrganizationModel> model = this.getUserOrgModelByFilter(userId, companyId, false);
+    public UserOrganizationModel get(String userId, String orgId) {
+        List<UserOrganizationModel> model = this.getUserOrgModelByFilter(userId, orgId, false);
         return model.get(0);
     }
 
     @Override
-    public List<UserOrganizationModel> getUserOrgModelByFilter(Long userId, Long organizationId, Boolean isFollowing) {
+    public List<UserOrganizationModel> getUserOrgModelByFilter(String userId, String organizationId, Boolean isFollowing) {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(UserOrganizationModel.class);
-        if (userId != null) {
-            c.add(Restrictions.eq("userId", userId.longValue()));
+        if (userId != null && !userId.isEmpty()) {
+            c.add(Restrictions.eq("userId", userId));
         }
-        if (organizationId != null) {
-            c.add(Restrictions.eq("organizationId", organizationId.longValue()));
+        if (organizationId != null && !organizationId.isEmpty()) {
+            c.add(Restrictions.eq("organizationId", organizationId));
         }
         if (!isFollowing) {
             c.add(Restrictions.gt("isFollowing", isFollowing));

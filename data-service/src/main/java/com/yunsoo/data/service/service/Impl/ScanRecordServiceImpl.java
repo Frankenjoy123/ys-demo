@@ -32,7 +32,7 @@ public class ScanRecordServiceImpl implements ScanRecordService {
     }
 
     @Override
-    public List<ScanRecord> getScanRecordsByFilter(String productKey, Integer baseProductId, Long userId, String createdDateTime, int pageIndex, int pageSize) {
+    public List<ScanRecord> getScanRecordsByFilter(String productKey, Integer baseProductId, String userId, String createdDateTime, int pageIndex, int pageSize) {
         DateTime theCreatedDateTime = null;
         if (createdDateTime.isEmpty()) {
             theCreatedDateTime = null;
@@ -43,7 +43,7 @@ public class ScanRecordServiceImpl implements ScanRecordService {
     }
 
     @Override
-    public List<ScanRecord> filterScanRecords(Long Id, Long userId, Boolean getOlder, int pageIndex, int pageSize) {
+    public List<ScanRecord> filterScanRecords(Long Id, String userId, Boolean getOlder, int pageIndex, int pageSize) {
         return ScanRecord.FromModelList(scanRecordDao.filterScanRecords(Id, userId, getOlder, pageIndex, pageSize));
     }
 }

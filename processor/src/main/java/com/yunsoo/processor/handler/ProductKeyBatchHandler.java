@@ -46,6 +46,6 @@ public class ProductKeyBatchHandler {
             request.setProductTemplate(product);
         }
 
-        dataAPIClient.post("productkey/batch", request, String.class);
+        dataAPIClient.post("productkey/batch", request);
     }
 }

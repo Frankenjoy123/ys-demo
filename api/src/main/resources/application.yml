@@ -4,6 +4,13 @@ server:
 multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
+yunsoo:
+    api:
+        permanent_token:
+            expires_minutes: 4320 #three days
+        access_token:
+            expires_minutes: 10
+
 spring:
     profiles.active: default
 ---

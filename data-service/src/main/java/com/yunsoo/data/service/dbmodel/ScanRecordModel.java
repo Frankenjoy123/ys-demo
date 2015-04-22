@@ -22,16 +22,16 @@ public class ScanRecordModel {
     private String productKey;
 
     @Column(name = "base_product_id")
-    private int baseProductId;
+    private String baseProductId;
 
     @Column(name = "app_id")
-    private int appId;
+    private String appId;
 
     @Column(name = "device_id")
     private String deviceId;
 
     @Column(name = "user_id")
-    private long userId;
+    private String userId;
 
     @Column(name = "detail")
     private String detail;
@@ -63,19 +63,19 @@ public class ScanRecordModel {
         this.productKey = productKey;
     }
 
-    public int getBaseProductId() {
+    public String getBaseProductId() {
         return baseProductId;
     }
 
-    public void setBaseProductId(int baseProductId) {
+    public void setBaseProductId(String baseProductId) {
         this.baseProductId = baseProductId;
     }
 
-    public int getAppId() {
+    public String getAppId() {
         return appId;
     }
 
-    public void setAppId(int appId) {
+    public void setAppId(String appId) {
         this.appId = appId;
     }
 
@@ -87,11 +87,11 @@ public class ScanRecordModel {
         this.deviceId = deviceId;
     }
 
-    public long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

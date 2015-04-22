@@ -37,7 +37,7 @@ public class ScanRecordDaoImpl implements ScanRecordDao {
     }
 
     @Override
-    public List<ScanRecordModel> getScanRecordsByFilter(String productKey, Integer baseProductId, Long userId, DateTime createdDateTime, int pageIndex, int pageSize) {
+    public List<ScanRecordModel> getScanRecordsByFilter(String productKey, Integer baseProductId, String userId, DateTime createdDateTime, int pageIndex, int pageSize) {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(ScanRecordModel.class);
         if (productKey != null && !productKey.isEmpty()) {
             c.add(Restrictions.eq("productKey", productKey));
@@ -46,7 +46,7 @@ public class ScanRecordDaoImpl implements ScanRecordDao {
             c.add(Restrictions.eq("baseProductId", baseProductId.intValue()));
         }
         if (userId != null) {
-            c.add(Restrictions.eq("userId", userId.longValue()));
+            c.add(Restrictions.eq("userId", userId));
         }
         if (createdDateTime != null) {
             c.add(Restrictions.eq("createdDateTime", createdDateTime));
@@ -58,7 +58,7 @@ public class ScanRecordDaoImpl implements ScanRecordDao {
     }
 
     @Override
-    public List<ScanRecordModel> filterScanRecords(Long Id, Long userId, Boolean getOlder, int pageIndex, int pageSize) {
+    public List<ScanRecordModel> filterScanRecords(Long Id, String userId, Boolean getOlder, int pageIndex, int pageSize) {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(ScanRecordModel.class);
         if (Id != null) {
             if (getOlder) {
@@ -68,7 +68,7 @@ public class ScanRecordDaoImpl implements ScanRecordDao {
             }
         }
         if (userId != null) {
-            c.add(Restrictions.eq("userId", userId.longValue()));
+            c.add(Restrictions.eq("userId", userId));
         }
         c.addOrder(Order.desc("createdDateTime"));
         c.setFirstResult(pageIndex * pageSize);

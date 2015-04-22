@@ -46,8 +46,8 @@ public class UserModel {
     private int ysCreadit;
     @Column(name = "level")
     private int level;
-    @Column(name = "status_id")
-    private int statusId;
+    @Column(name = "status")
+    private String status;
     @Column(name = "created_datetime", nullable = true, updatable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
@@ -118,12 +118,12 @@ public class UserModel {
         this.thumbnail = thumbnail;
     }
 
-    public int getStatusId() {
-        return statusId;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStatusId(int status) {
-        this.statusId = status;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public DateTime getCreatedDateTime() {

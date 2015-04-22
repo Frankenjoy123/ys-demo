@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
@@ -36,8 +37,7 @@ public class UserLikedProductController {
     @RequestMapping(value = "/who/{userid}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#usercollection, 'usercollection:read')")
     @PreAuthorize("hasPermission(#userid, 'UserLikedProduct', 'usercollection:read')")
-    public List<UserLikedProduct> getUserCollectionById(@RequestHeader(AUTH_HEADER_NAME) String token,
-                                                        @PathVariable(value = "userid") String userid) {
+    public List<UserLikedProduct> getUserCollectionById(@PathVariable(value = "userid") String userid) {
         if (userid == null || userid.isEmpty()) {
             throw new BadRequestException("UserId不应为空！");
         }
@@ -56,8 +56,7 @@ public class UserLikedProductController {
     @ResponseStatus(HttpStatus.CREATED)
 //    @PreAuthorize("hasPermission(#usercollection, 'usercollection:create')")
     @PreAuthorize("hasPermission(#userLikedProduct, 'authenticated')")
-    public ResponseEntity<?> createUserLikedProduct(@RequestHeader(AUTH_HEADER_NAME) String token,
-                                        @RequestBody UserLikedProduct userLikedProduct) throws Exception {
+    public ResponseEntity<?> createUserLikedProduct(@RequestBody UserLikedProduct userLikedProduct) throws Exception {
 //        if (!userDomain.validateToken(token, userLikedProduct.getUserId())) {
 //            throw new UnauthorizedException("不能修改其他用户的收藏信息！");
 //        }
@@ -69,7 +68,7 @@ public class UserLikedProductController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
 //    @PreAuthorize("hasPermission(#userLikedProduct, 'authenticated')")
     public void deleteUserLikedProduct(@RequestHeader(AUTH_HEADER_NAME) String token,
-                           @PathVariable(value = "Id") Long Id) throws Exception {
+                                       @PathVariable(value = "Id") Long Id) throws Exception {
         if (Id == null || Id < 0) {
             throw new BadRequestException("Id不应小于0！");
         }

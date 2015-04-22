@@ -1,6 +1,7 @@
 package com.yunsoo.data.service.entity;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
@@ -32,11 +33,16 @@ public class AccountTokenEntity {
     @Column(name = "permanent_token")
     private String permanentToken;
 
-    @Column(name = "permanent_token_datetime")
-    private DateTime permanentTokenDateTime;
-
     @Column(name = "permanent_token_expires_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime permanentTokenExpiresDateTime;
+
+    @Column(name = "created_account_id")
+    private String createdAccountId;
+
+    @Column(name = "created_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdDatetime;
 
 
     public String getId() {
@@ -79,14 +85,6 @@ public class AccountTokenEntity {
         this.permanentToken = permanentToken;
     }
 
-    public DateTime getPermanentTokenDateTime() {
-        return permanentTokenDateTime;
-    }
-
-    public void setPermanentTokenDateTime(DateTime permanentTokenDateTime) {
-        this.permanentTokenDateTime = permanentTokenDateTime;
-    }
-
     public DateTime getPermanentTokenExpiresDateTime() {
         return permanentTokenExpiresDateTime;
     }
@@ -95,4 +93,19 @@ public class AccountTokenEntity {
         this.permanentTokenExpiresDateTime = permanentTokenExpiresDateTime;
     }
 
+    public String getCreatedAccountId() {
+        return createdAccountId;
+    }
+
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
+    }
+
+    public DateTime getCreatedDatetime() {
+        return createdDatetime;
+    }
+
+    public void setCreatedDatetime(DateTime createdDatetime) {
+        this.createdDatetime = createdDatetime;
+    }
 }

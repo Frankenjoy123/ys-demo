@@ -62,7 +62,7 @@
     }]);
 
     app.controller("rootCtrl", ["$scope", "$timeout", function ($scope, $timeout) {
-        if (!$.cookie(window.YUNSOO_CONFIG.AUTH_COOKIE_NAME)) {
+        if (!$.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME)) {
             //todo
             //window.location.href = "login.html";
         }
@@ -75,7 +75,7 @@
         };
         $scope.logout = function () {
             console.log('[logout]');
-            $.removeCookie(window.YUNSOO_CONFIG.AUTH_COOKIE_NAME, {path: '/'});
+            $.removeCookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME, {path: '/'});
             window.location.href = "login.html";
         };
 

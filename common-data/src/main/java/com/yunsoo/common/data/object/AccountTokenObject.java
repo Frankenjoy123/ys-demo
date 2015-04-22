@@ -20,10 +20,11 @@ public class AccountTokenObject {
     private String permanentToken;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    private DateTime permanentTokenDateTime;
+    private DateTime permanentTokenExpiresDateTime;
+    private String createdAccountId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    private DateTime permanentTokenExpiresDateTime;
+    private DateTime createdDateTime;
 
 
     public String getId() {
@@ -66,19 +67,27 @@ public class AccountTokenObject {
         this.permanentToken = permanentToken;
     }
 
-    public DateTime getPermanentTokenDateTime() {
-        return permanentTokenDateTime;
-    }
-
-    public void setPermanentTokenDateTime(DateTime permanentTokenDateTime) {
-        this.permanentTokenDateTime = permanentTokenDateTime;
-    }
-
     public DateTime getPermanentTokenExpiresDateTime() {
         return permanentTokenExpiresDateTime;
     }
 
     public void setPermanentTokenExpiresDateTime(DateTime permanentTokenExpiresDateTime) {
         this.permanentTokenExpiresDateTime = permanentTokenExpiresDateTime;
+    }
+
+    public String getCreatedAccountId() {
+        return createdAccountId;
+    }
+
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
+    }
+
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 }

@@ -32,7 +32,7 @@ public class ScanController {
     @RequestMapping(value = "/filterby", method = RequestMethod.GET)
     public List<ScanRecord> getScanRecordsByFilter(@RequestParam(value = "productKey", required = false) String productKey,
                                                    @RequestParam(value = "baseProductId", required = false) Integer baseProductId,
-                                                   @RequestParam(value = "userId", required = false) Long userId,
+                                                   @RequestParam(value = "userId", required = false) String userId,
                                                    @RequestParam(value = "createdDateTime", required = false, defaultValue = "") String createdDateTime,
                                                    @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                                    @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
@@ -43,7 +43,7 @@ public class ScanController {
 
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
     public List<ScanRecord> filterScanRecords(@RequestParam(value = "Id", required = false) Long Id,
-                                              @RequestParam(value = "userId", required = false) Long userId,
+                                              @RequestParam(value = "userId", required = false) String userId,
                                               @RequestParam(value = "backward", required = false) Boolean backward,
                                               @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
