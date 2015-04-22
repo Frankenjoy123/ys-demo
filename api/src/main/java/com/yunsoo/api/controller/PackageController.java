@@ -1,7 +1,9 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.domain.ProductFileDomain;
 import com.yunsoo.api.dto.basic.Package;
 import com.yunsoo.common.data.object.PackageBoundObject;
+import com.yunsoo.common.data.object.ProductFileObject;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
@@ -38,6 +40,8 @@ public class PackageController {
         this.dataAPIClient = dataAPIClient;
     }
 
+    @Autowired
+    private ProductFileDomain productFileDomain;
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
     public com.yunsoo.api.dto.basic.Package getDetailByKey(@PathVariable(value = "key") String key) {
@@ -72,15 +76,20 @@ public class PackageController {
         return true;
     }
 
-
     @RequestMapping(value = "/file", method = RequestMethod.POST)
     public Boolean UploadFile(MultipartHttpServletRequest request, HttpServletResponse response) {
-
 
         Iterator<String> itr = request.getFileNames();
         MultipartFile file = request.getFile(itr.next());
 
+        ProductFileObject productFileObject = new ProductFileObject();
+        productFileObject.setFileName(file.getOriginalFilename());
+        productFileObject.setCreateDate(DateTime.now());
+        productFileObject.setCreateBy("1");
+        productFileObject.setFileType(1);
+
         try {
+
             InputStreamReader in = new InputStreamReader(file.getInputStream());
             BufferedReader reader = new BufferedReader(in);
             // StringBuilder content = new StringBuilder();
@@ -98,10 +107,20 @@ public class PackageController {
             if (!batchResult) {
                 throw new NotAcceptableException("数据中有重复的码，请检查。");
             }
+
+            productFileObject.setStatus(1);
+            productFileDomain.createProductFile(productFileObject);
+
             return batchResult;
         } catch (NotAcceptableException ex) {
+            productFileObject.setStatus(2);
+            productFileDomain.createProductFile(productFileObject);
+
             throw ex;
         } catch (Exception e) {
+            productFileObject.setStatus(2);
+            productFileDomain.createProductFile(productFileObject);
+
             throw new InternalServerErrorException("未知错误，请确保没有重复打包的情况");
         }
     }

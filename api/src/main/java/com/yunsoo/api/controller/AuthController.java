@@ -1,27 +1,97 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.object.TAccount;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.yunsoo.api.domain.AccountDomain;
+import com.yunsoo.api.domain.AccountTokenDomain;
+import com.yunsoo.api.dto.AccountLoginRequest;
+import com.yunsoo.api.dto.AccountLoginResult;
+import com.yunsoo.api.dto.basic.Account;
+import com.yunsoo.api.dto.basic.Token;
+import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.common.data.object.AccountObject;
+import com.yunsoo.common.data.object.AccountTokenObject;
+import com.yunsoo.common.util.HashUtils;
+import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.UnauthorizedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Created by Zhe on 2015/3/5.
- * //Wait for Kaibing to implements it.
+ * Created by  : Zhe
+ * Created on  : 2015/3/5
+ * Descriptions:
  */
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
+    @Autowired
+    private AccountDomain accountDomain;
+
+    @Autowired
+    private AccountTokenDomain accountTokenDomain;
+
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
+
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<String> grantRole(@RequestBody TAccount account) {
-        if (account == null) {
-            return new ResponseEntity<String>("invalid user id", HttpStatus.UNPROCESSABLE_ENTITY);
+    public AccountLoginResult login(
+            @RequestHeader("X-YS-AppId") String appId,
+            @RequestHeader(value = "X-YS-DeviceId", required = false) String deviceId,
+            @RequestBody AccountLoginRequest account) {
+        if (account.getAccountId() == null && (account.getOrgId() == null || account.getIdentifier() == null)) {
+            throw new BadRequestException("Account is not valid");
+        }
+        AccountObject accountObject = account.getAccountId() != null
+                ? accountDomain.getById(account.getAccountId())
+                : accountDomain.getByOrgIdAndIdentifier(account.getOrgId(), account.getIdentifier());
+        if (accountObject == null) {
+            throw new UnauthorizedException("Account is not valid");
+        }
+        String accountId = accountObject.getId();
+        String orgId = accountObject.getOrgId();
+        String identifier = accountObject.getIdentifier();
+        String rawPassword = account.getPassword();
+        String password = accountObject.getPassword();
+        String hashSalt = accountObject.getHashSalt();
+
+        if (!HashUtils.sha1(rawPassword + hashSalt).equals(password)) {
+            throw new UnauthorizedException("Account is not valid");
+        }
+        //login successfully
+        LOGGER.info("Account login with password [id: {}, orgId: {}, identifier: {}]", accountId, orgId, identifier);
+
+        AccountTokenObject accountTokenObject = accountTokenDomain.create(accountId, appId, deviceId);
+
+        AccountLoginResult result = new AccountLoginResult();
+        result.setPermanentToken(new Token(accountTokenObject.getPermanentToken(), accountTokenObject.getPermanentTokenExpiresDateTime()));
+        result.setAccessToken(tokenAuthenticationService.generateAccessToken(accountId));
+        return result;
+    }
+
+    @RequestMapping(value = "/accessToken/refresh", method = RequestMethod.GET)
+    public Token refreshToken(@RequestParam("permanent_token") String permanentToken) {
+        AccountTokenObject accountTokenObject = accountTokenDomain.getByPermanentToken(permanentToken);
+        if (accountTokenObject == null || accountTokenObject.getPermanentTokenExpiresDateTime().isBeforeNow()) {
+            throw new UnauthorizedException("permanent_token invalid");
         }
 
-        //to-do
+        Token accessToken = tokenAuthenticationService.generateAccessToken(accountTokenObject.getAccountId());
 
-        //Fake token.
-        return new ResponseEntity<String>("abjksad8230.LK76-7J32-KLS34-7fDLK-09SDF", HttpStatus.OK);
+        LOGGER.info("AccessToken refreshed for Account [id: {}]", accountTokenObject.getAccountId());
+
+        return accessToken;
+    }
+
+    public Account getCurrentAccount() {
+        //        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication instanceof AccountAuthentication) {
+//            return ((AccountAuthentication) authentication).getDetails();
+//        }
+        return null;
     }
 }

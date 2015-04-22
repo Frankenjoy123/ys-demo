@@ -35,7 +35,7 @@
                         $scope.addAlertMsg("登陆失败，请再次尝试", "danger");
                         return;
                     }
-                    $.cookie('AdminLTEToken', data.accessToken, {expires: 7, path: '/'});
+                    $.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME, data.accessToken, {expires: 7, path: '/'});
                     window.location.href = "index.html";
                 },function(){
                     $scope.addAlertMsg("登陆失败，请再次尝试", "danger");

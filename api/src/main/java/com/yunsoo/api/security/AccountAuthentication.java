@@ -7,7 +7,9 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 /**
- * Created by Zhe on 2015/3/5.
+ * Created by  : Zhe
+ * Created on  : 2015/3/5
+ * Descriptions:
  */
 public class AccountAuthentication implements Authentication {
 

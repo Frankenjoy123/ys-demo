@@ -14,8 +14,8 @@ import org.joda.time.DateTime;
 public class ProductObject {
 
     private String productKey;
-    private Long productBaseId;
-    private Integer productStatusId;
+    private String productBaseId;
+    private String productStatusCode;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime manufacturingDateTime;
@@ -31,20 +31,20 @@ public class ProductObject {
         this.productKey = productKey;
     }
 
-    public Long getProductBaseId() {
+    public String getProductBaseId() {
         return productBaseId;
     }
 
-    public void setProductBaseId(Long productBaseId) {
+    public void setProductBaseId(String productBaseId) {
         this.productBaseId = productBaseId;
     }
 
-    public Integer getProductStatusId() {
-        return productStatusId;
+    public String getProductStatusCode() {
+        return productStatusCode;
     }
 
-    public void setProductStatusId(Integer productStatusId) {
-        this.productStatusId = productStatusId;
+    public void setProductStatusCode(String productStatusCode) {
+        this.productStatusCode = productStatusCode;
     }
 
     public DateTime getManufacturingDateTime() {

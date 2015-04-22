@@ -98,6 +98,19 @@
                 $scope.paging.index = Math.floor($scope.data.accounts.length / $scope.paging.size);
                 $scope.setFilteredData();
             }
+            $scope.pages = function () {
+                var p = [];
+                for (var i = 1; i <= Math.floor($scope.data.accounts.length / $scope.paging.size + 1); i++) {
+                    p.push(i);
+                }
+                return p;
+            }
+            $scope.currentPageStart = function() {
+                return $scope.paging.index * $scope.paging.size + 1;
+            }
+            $scope.currentPageEnd = function() {
+                return Math.min(($scope.paging.index + 1) * $scope.paging.size, $scope.data.accounts.length);
+            }
             $scope.gotoPage = function (index) {
                 $scope.paging.index = index;
                 $scope.setFilteredData();

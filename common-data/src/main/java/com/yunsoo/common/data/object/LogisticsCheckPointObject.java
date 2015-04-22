@@ -4,17 +4,17 @@ package com.yunsoo.common.data.object;
  * Created by Jerry on 3/16/2015.
  */
 public class LogisticsCheckPointObject {
-    private int id;
+    private String id;
     private String name;
     private String description;
     private int locationId;
-    private int orgId;
+    private String orgId;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -42,11 +42,11 @@ public class LogisticsCheckPointObject {
         this.locationId = locationId;
     }
 
-    public int getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(int orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 }

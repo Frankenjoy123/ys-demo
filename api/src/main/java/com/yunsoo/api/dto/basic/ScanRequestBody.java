@@ -8,7 +8,7 @@ import com.yunsoo.common.web.exception.BadRequestException;
 public class ScanRequestBody {
 
     private String Key;
-    private Integer userId;
+    private String userId;
     private String deviceCode;
     private Double latitude;
     private Double longitude;
@@ -22,11 +22,11 @@ public class ScanRequestBody {
         Key = key;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

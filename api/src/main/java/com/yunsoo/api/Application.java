@@ -1,16 +1,16 @@
 package com.yunsoo.api;
 
-import com.yunsoo.api.config.YunsooYamlConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.Filter;
 
+@ComponentScan(basePackages = "com.yunsoo")
 @SpringBootApplication
 //@Import(StatelessAuthenticationSecurityConfig.class)
 public class Application {
@@ -34,5 +34,4 @@ public class Application {
         characterEncodingFilter.setForceEncoding(true);
         return characterEncodingFilter;
     }
-
 }

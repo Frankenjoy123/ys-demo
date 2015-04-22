@@ -37,10 +37,5 @@ public class ProductController {
         productDomain.activeProduct(key);
     }
 
-//    @RequestMapping(value = "batch/create", method = RequestMethod.POST)
-//    public void batchCreateProductForKeyBatch(@Valid @RequestBody ProductBatchRequest request) {
-//        //create Product for exists product keys.
-//    }
-
 }
 

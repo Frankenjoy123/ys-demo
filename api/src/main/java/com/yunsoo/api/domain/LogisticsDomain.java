@@ -53,7 +53,7 @@ public class LogisticsDomain {
                 logisticsPath.setStartCheckPointObject(startPointObject);
 
                 if(startPointObject != null) {
-                    OrganizationObject startPointOrgObject = dataAPIClient.get("organization/id/{id}", OrganizationObject.class, startPointObject.getOrgId());
+                    OrganizationObject startPointOrgObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, startPointObject.getOrgId());
                     logisticsPath.setStartCheckPointOrgObject(startPointOrgObject);
                 }
                 else{

@@ -24,7 +24,7 @@ public class LogisticsActionController {
     private RestClient dataAPIClient;
 
     @RequestMapping(value = "/org/{id}", method = RequestMethod.GET)
-    public List<LogisticsCheckActionObject> get(@PathVariable(value = "id") int id) {
+    public List<LogisticsCheckActionObject> get(@PathVariable(value = "id") Long id) {
 
         LogisticsCheckActionObject[] logisticsCheckActionObjects = dataAPIClient.get("logisticscheckaction/org/{id}", LogisticsCheckActionObject[].class, id);
         if(logisticsCheckActionObjects == null || logisticsCheckActionObjects.length == 0)

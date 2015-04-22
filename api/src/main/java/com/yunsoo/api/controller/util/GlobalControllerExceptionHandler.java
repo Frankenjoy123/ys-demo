@@ -1,11 +1,13 @@
 package com.yunsoo.api.controller.util;
 
+import com.yunsoo.api.config.YunsooYamlConfig;
 import com.yunsoo.common.config.CommonConfig;
 import com.yunsoo.common.error.DebugErrorResult;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.TraceInfo;
 import com.yunsoo.common.web.error.RestErrorResultCode;
 import com.yunsoo.common.web.exception.RestErrorResultException;
+import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ public class GlobalControllerExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 
     @Autowired
-    private CommonConfig commonConfig;
+    private YunsooYamlConfig yunsooYamlConfig;
 
     //business
     @ExceptionHandler(RestErrorResultException.class)
@@ -41,7 +43,7 @@ public class GlobalControllerExceptionHandler {
     public ResponseEntity<ErrorResult> handleRestError(HttpServletRequest req, RestErrorResultException ex) {
         ErrorResult result = ex.getErrorResult();
         HttpStatus status = ex.getHttpStatus();
-        LOGGER.info("[API: " + status + " " + result.toString() + "]");
+        LOGGER.info("[API: " + status + " " + result.toString() + "] " + ex.getMessage());
         return new ResponseEntity<>(appendTraceInfo(result, ex), status);
     }
 
@@ -69,6 +71,16 @@ public class GlobalControllerExceptionHandler {
         return appendTraceInfo(result, ex);
     }
 
+    //401
+    @ExceptionHandler({UnauthorizedException.class})
+    @ResponseBody
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResult handleUnauthorized(HttpServletRequest req, Exception ex) {
+        ErrorResult result = new ErrorResult(RestErrorResultCode.UNAUTHORIZED, "Unauthorized request.");
+        LOGGER.info("[API: 401 UNAUTHORIZED] " + ex.getMessage());
+        return appendTraceInfo(result, ex);
+    }
+
     //404
     @ExceptionHandler({
             NoHandlerFoundException.class,
@@ -92,7 +104,7 @@ public class GlobalControllerExceptionHandler {
     }
 
     private ErrorResult appendTraceInfo(ErrorResult result, Exception ex) {
-        if (commonConfig.isDebugEnabled()) {
+        if (Boolean.parseBoolean(yunsooYamlConfig.getDebug())) {
             result = new DebugErrorResult(result, new TraceInfo(ex));
         }
         return result;

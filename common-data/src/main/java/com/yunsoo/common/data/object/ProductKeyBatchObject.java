@@ -15,28 +15,27 @@ import java.util.List;
  */
 public class ProductKeyBatchObject {
 
-    private Long id;
+    private String id;
     private Integer quantity;
-    private Integer statusId;
-    private Integer organizationId;
-    private Long productBaseId;
-    private Integer createdClientId;
-    private Long createdAccountId;
+    private String statusCode;
+    private List<String> productKeyTypeCodes;
+    private String productBaseId;
+    private String productKeysUri;
+    private String orgId;
+    private String createdAppId;
+    private String createdAccountId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
-    private List<Integer> productKeyTypeIds;
-    private String productKeysAddress;
 
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
-
 
     public Integer getQuantity() {
         return quantity;
@@ -46,48 +45,61 @@ public class ProductKeyBatchObject {
         this.quantity = quantity;
     }
 
-
-    public Integer getStatusId() {
-        return statusId;
+    public String getStatusCode() {
+        return statusCode;
     }
 
-    public void setStatusId(Integer statusId) {
-        this.statusId = statusId;
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
-    public Integer getOrganizationId() {
-        return organizationId;
+    public List<String> getProductKeyTypeCodes() {
+        return productKeyTypeCodes;
     }
 
-    public void setOrganizationId(Integer organizationId) {
-        this.organizationId = organizationId;
+    public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
+        this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
-    public Long getProductBaseId() {
+    public String getProductBaseId() {
         return productBaseId;
     }
 
-    public void setProductBaseId(Long productBaseId) {
+    public void setProductBaseId(String productBaseId) {
         this.productBaseId = productBaseId;
     }
 
-    public Integer getCreatedClientId() {
-        return createdClientId;
+    public String getProductKeysUri() {
+        return productKeysUri;
     }
 
-    public void setCreatedClientId(Integer createdClientId) {
-        this.createdClientId = createdClientId;
+    public void setProductKeysUri(String productKeysUri) {
+        this.productKeysUri = productKeysUri;
     }
 
+    public String getOrgId() {
+        return orgId;
+    }
 
-    public Long getCreatedAccountId() {
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
+    public String getCreatedAppId() {
+        return createdAppId;
+    }
+
+    public void setCreatedAppId(String createdAppId) {
+        this.createdAppId = createdAppId;
+    }
+
+    public String getCreatedAccountId() {
         return createdAccountId;
     }
 
-    public void setCreatedAccountId(Long createdAccountId) {
+    public void setCreatedAccountId(String createdAccountId) {
         this.createdAccountId = createdAccountId;
     }
-
 
     public DateTime getCreatedDateTime() {
         return createdDateTime;
@@ -96,23 +108,4 @@ public class ProductKeyBatchObject {
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
-
-
-    public List<Integer> getProductKeyTypeIds() {
-        return productKeyTypeIds;
-    }
-
-    public void setProductKeyTypeIds(List<Integer> productKeyTypeIds) {
-        this.productKeyTypeIds = productKeyTypeIds;
-    }
-
-
-    public String getProductKeysAddress() {
-        return productKeysAddress;
-    }
-
-    public void setProductKeysAddress(String productKeysAddress) {
-        this.productKeysAddress = productKeysAddress;
-    }
-
 }

@@ -8,13 +8,13 @@ public class MessageObject {
     private String title;
     private String body;
     private String digest;
-    private long companyId;
+    private String orgId;
     private String createdDateTime;
-    private int createdBy; //associate to company's accountId
+    private String createdBy; //associate to company's accountId
     private String expiredDateTime;
     private String link;
-    private int type;
-    private int status;
+    private String type;
+    private String status;
     private String lastUpatedDateTime;
     private Integer lastUpdatedBy; //associate to company's accountId
     private String postShowTime;
@@ -51,12 +51,12 @@ public class MessageObject {
         this.digest = digest;
     }
 
-    public long getCompanyId() {
-        return companyId;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setCompanyId(long companyId) {
-        this.companyId = companyId;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 
     public String getCreatedDateTime() {
@@ -67,11 +67,11 @@ public class MessageObject {
         this.createdDateTime = createdDateTime;
     }
 
-    public int getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(int createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -91,19 +91,19 @@ public class MessageObject {
         this.link = link;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

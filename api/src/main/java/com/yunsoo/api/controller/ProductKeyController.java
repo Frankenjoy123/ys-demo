@@ -1,6 +1,5 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKey;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
@@ -20,26 +19,14 @@ public class ProductKeyController {
     @Autowired
     private RestClient dataAPIClient;
 
-    @Autowired
-    private ProductKeyDomain productKeyDomain;
-
 
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
     public ProductKey get(@PathVariable(value = "key") String key) {
-        ProductKeyObject productKeyObj = dataAPIClient.get("productkey/{key}", ProductKeyObject.class, key);
-        if (productKeyObj == null) {
+        ProductKeyObject productKeyObject = dataAPIClient.get("productkey/{key}", ProductKeyObject.class, key);
+        if (productKeyObject == null) {
             throw new NotFoundException("product key");
         }
-        ProductKey productKey = new ProductKey();
-        productKey.setProductKey(productKeyObj.getProductKey());
-        productKey.setProductKeyTypeId(productKeyObj.getProductKeyTypeId());
-        productKey.setProductKeyDisabled(productKeyObj.isProductKeyDisabled());
-        productKey.setPrimary(productKeyObj.isPrimary());
-        productKey.setProductKeyBatchId(productKeyObj.getProductKeyBatchId());
-        productKey.setPrimaryProductKey(productKeyObj.getPrimaryProductKey());
-        productKey.setProductKeySet(productKeyObj.getProductKeySet());
-        productKey.setCreatedDateTime(productKeyObj.getCreatedDateTime());
-        return productKey;
+        return fromProductKeyObject(productKeyObject);
     }
 
     @RequestMapping(value = "{key}/disable", method = RequestMethod.PUT)
@@ -52,5 +39,17 @@ public class ProductKeyController {
         dataAPIClient.put("productkey/{key}/disabled", false, key);
     }
 
+    private ProductKey fromProductKeyObject(ProductKeyObject object) {
+        ProductKey productKey = new ProductKey();
+        productKey.setProductKey(object.getProductKey());
+        productKey.setProductKeyTypeCode(object.getProductKeyTypeCode());
+        productKey.setProductKeyDisabled(object.isProductKeyDisabled());
+        productKey.setPrimary(object.isPrimary());
+        productKey.setProductKeyBatchId(object.getProductKeyBatchId());
+        productKey.setPrimaryProductKey(object.getPrimaryProductKey());
+        productKey.setProductKeySet(object.getProductKeySet());
+        productKey.setCreatedDateTime(object.getCreatedDateTime());
+        return productKey;
+    }
 
 }

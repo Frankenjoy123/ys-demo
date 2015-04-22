@@ -3,9 +3,32 @@ server:
 
 cloud:
   aws:
+    stack:
+      auto: false
     region:
       auto: true
       static: cn-north-1
 
+spring:
+    profiles.active: default
+---
+spring:
+   profiles: default
+
 yunsoo:
   debug: true
+  processor:
+    client:
+      dataapi:
+        baseurl: http://dataapi:8080/
+
+---
+spring:
+   profiles: qa
+
+yunsoo:
+  debug: true
+  processor:
+    client:
+      dataapi:
+        baseurl: http://localhost:8080/

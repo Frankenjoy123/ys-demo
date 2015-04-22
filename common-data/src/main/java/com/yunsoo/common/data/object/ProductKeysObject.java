@@ -14,19 +14,20 @@ import java.util.List;
  * Descriptions:
  */
 public class ProductKeysObject {
-    private Long batchId;
+    private String batchId;
     private Integer quantity;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
-    private List<Integer> productKeyTypeIds;
+    private List<String> productKeyTypeCodes;
     private List<List<String>> productKeys;
 
-    public Long getBatchId() {
+
+    public String getBatchId() {
         return batchId;
     }
 
-    public void setBatchId(Long batchId) {
+    public void setBatchId(String batchId) {
         this.batchId = batchId;
     }
 
@@ -46,12 +47,12 @@ public class ProductKeysObject {
         this.createdDateTime = createdDateTime;
     }
 
-    public List<Integer> getProductKeyTypeIds() {
-        return productKeyTypeIds;
+    public List<String> getProductKeyTypeCodes() {
+        return productKeyTypeCodes;
     }
 
-    public void setProductKeyTypeIds(List<Integer> productKeyTypeIds) {
-        this.productKeyTypeIds = productKeyTypeIds;
+    public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
+        this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
     public List<List<String>> getProductKeys() {

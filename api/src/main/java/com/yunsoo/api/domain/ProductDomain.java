@@ -5,22 +5,13 @@ import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.basic.Product;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.api.dto.basic.ProductCategory;
-import com.yunsoo.common.data.object.FileObject;
-import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,23 +44,21 @@ public class ProductDomain {
         } catch (NotFoundException ex) {
             //log ...该产品码对应的产品不存在！
             return null;
-        } catch (Exception ex) {
-            return null;
         }
 
-        product.setStatusId(productObject.getProductStatusId());
+        product.setStatusCode(productObject.getProductStatusCode());
         product.setManufacturingDateTime(productObject.getManufacturingDateTime());
         product.setCreatedDateTime(productObject.getCreatedDateTime().toString());
 
         //fill with ProductBase information.
-        long productBaseId = productObject.getProductBaseId();
+        String productBaseId = productObject.getProductBaseId();
         ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         product.setProductBaseId(productBaseId);
         product.setBarcode(productBaseObject.getBarcode());
         product.setDescription(productBaseObject.getDescription());
         product.setDetails(productBaseObject.getDetails());
         product.setName(productBaseObject.getName());
-        product.setManufacturerId(productBaseObject.getManufacturerId());
+        product.setOrgId(productBaseObject.getOrgId());
 
         //fill with ProductCategory information.
         ProductCategory productCategory = getProductCategoryById(productBaseObject.getCategoryId());
@@ -90,26 +79,26 @@ public class ProductDomain {
     }
 
     //获取基本产品信息 - ProductBase
-    public ProductBase getProductBaseById(long productBaseId) {
+    public ProductBase getProductBaseById(String productBaseId) {
         ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         if (productBaseObject == null) {
             return null;
         }
-        ProductBase productBase = convertFromProductBaseObject(productBaseObject, lookupDomain.getAllProductKeyTypes(null));
-        productBase.setThumbnailURL(yunsooYamlConfig.getDataapi_productbase_picture_basepath() + "id" + productBase.getId() + ".jpg");
+        ProductBase productBase = fromProductBaseObject(productBaseObject, lookupDomain.getAllProductKeyTypes(null));
+//        productBase.setThumbnailURL(yunsooYamlConfig.getDataapi_productbase_picture_basepath() + "id" + productBase.getId() + ".jpg");
         return productBase;
     }
 
-    public List<ProductBase> getAllProductBaseByOrgId(int orgId) {
-        ProductBaseObject[] objects = dataAPIClient.get("productbase?manufacturerId={id}", ProductBaseObject[].class, orgId);
+    public List<ProductBase> getAllProductBaseByOrgId(String orgId) {
+        ProductBaseObject[] objects = dataAPIClient.get("productbase?orgId={id}", ProductBaseObject[].class, orgId);
         if (objects == null) {
             return null;
         }
         List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes(null);
-        return Arrays.stream(objects).map(p -> convertFromProductBaseObject(p, productKeyTypes)).collect((Collectors.toList()));
+        return Arrays.stream(objects).map(p -> fromProductBaseObject(p, productKeyTypes)).collect((Collectors.toList()));
     }
 
-    public ProductBase convertFromProductBaseObject(ProductBaseObject productBaseObject, List<ProductKeyType> productKeyTypes) {
+    public ProductBase fromProductBaseObject(ProductBaseObject productBaseObject, List<ProductKeyType> productKeyTypes) {
         ProductBase productBase = new ProductBase();
         productBase.setId(productBaseObject.getId());
         productBase.setName(productBaseObject.getName());
@@ -117,15 +106,15 @@ public class ProductDomain {
         productBase.setBarcode(productBaseObject.getBarcode());
         productBase.setActive(productBaseObject.getActive());
         productBase.setDetails(productBaseObject.getDetails());
-        productBase.setManufacturerId(productBaseObject.getManufacturerId());
+        productBase.setOrgId(productBaseObject.getOrgId());
         productBase.setShelfLife(productBaseObject.getShelfLife());
         productBase.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
         productBase.setCreatedDateTime(productBaseObject.getCreatedDateTime());
         productBase.setModifiedDateTime(productBaseObject.getModifiedDateTime());
 
         productBase.setCategory(getProductCategoryById(productBaseObject.getCategoryId()));
-        if (productBaseObject.getProductKeyTypeIds() != null) {
-            productBase.setProductKeyTypes(LookupObject.fromIdList(productKeyTypes, productBaseObject.getProductKeyTypeIds()));
+        if (productBaseObject.getProductKeyTypeCodes() != null) {
+            productBase.setProductKeyTypeCodes(productBaseObject.getProductKeyTypeCodes());
         }
         return productBase;
     }

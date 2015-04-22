@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
 public class AmazonSqsConfiguration {
 
     @Bean
-    public QueueMessagingTemplate queueMessagingTemplate(AmazonSQS amazonSqs, ResourceIdResolver resourceIdResolver) {
-        return new QueueMessagingTemplate(amazonSqs, resourceIdResolver);
+    public QueueMessagingTemplate queueMessagingTemplate(AmazonSQS amazonSqs) {
+        return new QueueMessagingTemplate(amazonSqs);
     }
 
 }

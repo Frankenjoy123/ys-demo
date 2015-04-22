@@ -1,9 +1,13 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.security.annotation.Permission;
+import com.yunsoo.api.security.permission.Action;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.ErrorResultCode;
+import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.RestErrorResultException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,20 +20,30 @@ import org.springframework.web.bind.annotation.RestController;
  * Descriptions: For developer debug use only.
  */
 @RestController
+@Permission(resource = "debug")
 @RequestMapping(value = "/debug")
 public class DebugController {
 
+    @Autowired
+    private RestClient dataAPIClient;
+
+    @Autowired
+    private RestClient processorClient;
+
+    @Permission(action = Action.READ)
     @RequestMapping(value = "ok")
     @ResponseStatus(HttpStatus.OK)
     public String ok() {
         return "200 OK";
     }
 
+    @Permission(action = Action.CREATE)
     @RequestMapping(value = "created")
     @ResponseStatus(HttpStatus.CREATED)
     public void created() {
     }
 
+    @Permission(action = Action.CREATE)
     @RequestMapping(value = "accepted")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void accepted() {
@@ -63,5 +77,11 @@ public class DebugController {
     @RequestMapping(value = "echo/{value}")
     public String echo(@PathVariable(value = "value") String value) {
         return value;
+    }
+
+    @RequestMapping(value = "client")
+    public String client() {
+        return "DataApiClient: " + dataAPIClient.getBaseURL() + "\r\n"
+                + "ProcessorClient: " + processorClient.getBaseURL();
     }
 }

@@ -1,5 +1,11 @@
 package com.yunsoo.api.dto.basic;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.joda.time.DateTime;
+
 /**
  * Created by Zhe on 2015/3/9.
  */
@@ -8,16 +14,24 @@ public class Message {
     private String title;
     private String body;
     private String digest;
-    private long companyId;
-    private String createdDateTime;
-    private int createdBy; //associate to company's accountId
-    private String expiredDateTime;
+    private String orgId;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime createdDateTime;
+    private String createdBy; //associate to company's accountId
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime expiredDateTime;
     private String link;
-    private int type;
-    private int status;
-    private String lastUpatedDateTime;
+    private String type;
+    private String status;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime lastUpatedDateTime;
     private Integer lastUpdatedBy; //associate to company's accountId
-    private String postShowTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime postShowTime;
 
     public long getId() {
         return Id;
@@ -51,36 +65,20 @@ public class Message {
         this.digest = digest;
     }
 
-    public long getCompanyId() {
-        return companyId;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setCompanyId(long companyId) {
-        this.companyId = companyId;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 
-    public String getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(String createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
-    public int getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(int createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
-    }
-
-    public String getExpiredDateTime() {
-        return expiredDateTime;
-    }
-
-    public void setExpiredDateTime(String expiredDateTime) {
-        this.expiredDateTime = expiredDateTime;
     }
 
     public String getLink() {
@@ -91,29 +89,22 @@ public class Message {
         this.link = link;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public String getLastUpatedDateTime() {
-        return lastUpatedDateTime;
-    }
-
-    public void setLastUpatedDateTime(String lastUpatedDateTime) {
-        this.lastUpatedDateTime = lastUpatedDateTime;
-    }
 
     public Integer getLastUpdatedBy() {
         return lastUpdatedBy;
@@ -123,11 +114,36 @@ public class Message {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    public String getPostShowTime() {
+
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    public DateTime getExpiredDateTime() {
+        return expiredDateTime;
+    }
+
+    public void setExpiredDateTime(DateTime expiredDateTime) {
+        this.expiredDateTime = expiredDateTime;
+    }
+
+    public DateTime getLastUpatedDateTime() {
+        return lastUpatedDateTime;
+    }
+
+    public void setLastUpatedDateTime(DateTime lastUpatedDateTime) {
+        this.lastUpatedDateTime = lastUpatedDateTime;
+    }
+
+    public DateTime getPostShowTime() {
         return postShowTime;
     }
 
-    public void setPostShowTime(String postShowTime) {
+    public void setPostShowTime(DateTime postShowTime) {
         this.postShowTime = postShowTime;
     }
 }

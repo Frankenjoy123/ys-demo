@@ -12,7 +12,8 @@
         "logisticsManage",
         "package",
         "packageSearch",
-        "ngAnimate"
+        "ngAnimate",
+        "config"
     ]);
 
     app.config(["$routeProvider", function ($routeProvider) {
@@ -51,15 +52,19 @@
             .when('/search', {
                 templateUrl: "pages/search/search.html"
             })
+            .when('/config', {
+                templateUrl: "pages/config/config.html",
+                controller: "configCtrl"
+            })
             .otherwise({
                 redirectTo: "/"
             });
     }]);
 
     app.controller("rootCtrl", ["$scope", "$timeout", function ($scope, $timeout) {
-        if (!$.cookie("AdminLTEToken")) {
+        if (!$.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME)) {
             //todo
-            window.location.href = "login.html";
+            //window.location.href = "login.html";
         }
         $scope.user = {
             name: "Jane Doe",
@@ -70,7 +75,7 @@
         };
         $scope.logout = function () {
             console.log('[logout]');
-            $.removeCookie("AdminLTEToken", {path: '/'});
+            $.removeCookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME, {path: '/'});
             window.location.href = "login.html";
         };
 

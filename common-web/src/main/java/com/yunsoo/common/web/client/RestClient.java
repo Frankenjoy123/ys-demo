@@ -1,7 +1,9 @@
 package com.yunsoo.common.web.client;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.Assert;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -13,6 +15,8 @@ import org.springframework.web.client.RestTemplate;
  * Descriptions:
  */
 public class RestClient {
+    private static final int CONNECT_TIMEOUT = 3 * 1000;
+    private static final int READ_TIMEOUT = 3 * 60 * 1000;
 
     private RestTemplate restTemplate;
     private String baseURL;
@@ -28,8 +32,9 @@ public class RestClient {
     public RestClient(String baseURL, ResponseErrorHandler responseErrorHandler) {
         //added this request factory for PATCH method support
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setReadTimeout(3 * 60 * 1000);
-        requestFactory.setConnectTimeout(5 * 1000);
+        requestFactory.setConnectTimeout(CONNECT_TIMEOUT);
+        requestFactory.setReadTimeout(READ_TIMEOUT);
+
         this.restTemplate = new RestTemplate(requestFactory);
 
         this.baseURL = baseURL;
@@ -65,10 +70,18 @@ public class RestClient {
         return restTemplate.getForObject(createURL(url), responseType, uriVariables);
     }
 
+    public <T> T get(String url, ParameterizedTypeReference<T> responseType, Object... uriVariables) {
+        ResponseEntity<T> result = restTemplate.exchange(createURL(url), HttpMethod.GET, null, responseType, uriVariables);
+        return result.getBody();
+    }
 
     //POST
     public <T> T post(String url, Object request, Class<T> responseType, Object... uriVariables) {
         return restTemplate.postForObject(createURL(url), request, responseType, uriVariables);
+    }
+
+    public void post(String url, Object request, Object... uriVariables) {
+        restTemplate.postForObject(createURL(url), request, String.class, uriVariables);
     }
 
     //PUT

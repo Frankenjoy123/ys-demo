@@ -14,10 +14,10 @@ public class ScanRecord implements Comparator<ScanRecord> {
 
     private Long Id;
     private String productKey;
-    private long baseProductId;
-    private int clientId;
+    private String baseProductId;
+    private String appId;
     private String deviceId;
-    private Long userId;
+    private String userId;
     private String detail;
     private String createdDateTime;
     private String location;
@@ -39,20 +39,20 @@ public class ScanRecord implements Comparator<ScanRecord> {
         this.productKey = productKey;
     }
 
-    public long getBaseProductId() {
+    public String getBaseProductId() {
         return baseProductId;
     }
 
-    public void setBaseProductId(long baseProductId) {
+    public void setBaseProductId(String baseProductId) {
         this.baseProductId = baseProductId;
     }
 
-    public int getClientId() {
-        return clientId;
+    public String getAppId() {
+        return appId;
     }
 
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
+    public void setAppId(String appId) {
+        this.appId = appId;
     }
 
     public String getDeviceId() {
@@ -63,11 +63,11 @@ public class ScanRecord implements Comparator<ScanRecord> {
         this.deviceId = deviceId;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

@@ -1,0 +1,84 @@
+package com.yunsoo.data.service.dao.impl;
+
+import com.yunsoo.data.service.dao.ScanRecordDao;
+import com.yunsoo.data.service.dbmodel.ScanRecordModel;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+/**
+ * Created by Zhe on 2015/2/4.
+ */
+@Repository("scanRecordDao")
+@Transactional
+public class ScanRecordDaoImpl implements ScanRecordDao {
+
+    @Autowired
+    @Qualifier(value = "sessionfactory.primary")
+    private SessionFactory sessionFactory;
+
+    @Autowired
+    @Qualifier(value = "sessionfactory.read1")
+    private SessionFactory readSessionFactory;
+
+    @Override
+    public ScanRecordModel get(long id) {
+        return (ScanRecordModel) readSessionFactory.getCurrentSession().get(
+                ScanRecordModel.class, id);
+    }
+
+    @Override
+    public long save(ScanRecordModel scanRecordModel) {
+        scanRecordModel.setCreatedDateTime(DateTime.now());
+        sessionFactory.getCurrentSession().save(scanRecordModel);
+        return scanRecordModel.getId();
+    }
+
+    @Override
+    public List<ScanRecordModel> getScanRecordsByFilter(String productKey, Integer baseProductId, String userId, DateTime createdDateTime, int pageIndex, int pageSize) {
+        Criteria c = readSessionFactory.getCurrentSession().createCriteria(ScanRecordModel.class);
+        if (productKey != null && !productKey.isEmpty()) {
+            c.add(Restrictions.eq("productKey", productKey));
+        }
+        if (baseProductId != null) {
+            c.add(Restrictions.eq("baseProductId", baseProductId.intValue()));
+        }
+        if (userId != null) {
+            c.add(Restrictions.eq("userId", userId));
+        }
+        if (createdDateTime != null) {
+            c.add(Restrictions.eq("createdDateTime", createdDateTime));
+        }
+        c.addOrder(Order.desc("createdDateTime"));
+        c.setFirstResult(pageIndex * pageSize);
+        c.setMaxResults(pageSize);
+        return c.list();
+    }
+
+    @Override
+    public List<ScanRecordModel> filterScanRecords(Long Id, String userId, Boolean getOlder, int pageIndex, int pageSize) {
+        Criteria c = readSessionFactory.getCurrentSession().createCriteria(ScanRecordModel.class);
+        if (Id != null) {
+            if (getOlder) {
+                c.add(Restrictions.lt("id", Id)); //getById scan records that older than current ScanRecordId.
+            } else {
+                c.add(Restrictions.gt("id", Id));  //newer scan records should be larger.
+            }
+        }
+        if (userId != null) {
+            c.add(Restrictions.eq("userId", userId));
+        }
+        c.addOrder(Order.desc("createdDateTime"));
+        c.setFirstResult(pageIndex * pageSize);
+        c.setMaxResults(pageSize);
+        return c.list();
+    }
+}

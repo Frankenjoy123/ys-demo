@@ -19,10 +19,12 @@ public class RestResponseErrorHandler implements ResponseErrorHandler {
 
     private ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler();
 
+    @Override
     public boolean hasError(ClientHttpResponse response) throws IOException {
         return errorHandler.hasError(response);
     }
 
+    @Override
     public void handleError(ClientHttpResponse response) throws RestErrorResultException {
         ObjectMapper mapper = new ObjectMapper();
         ErrorResult result;
