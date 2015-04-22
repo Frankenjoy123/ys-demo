@@ -31,7 +31,7 @@ public class AccountController {
     private AccountDomain accountDomain;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Account getCurrent(@PathVariable("id") String id) {
+    public Account getById(@PathVariable("id") String id) {
         AccountObject accountObject;
         try {
             accountObject = accountDomain.getById(id);
