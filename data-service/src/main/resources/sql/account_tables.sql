@@ -62,12 +62,13 @@ VALUES
 DROP TABLE IF EXISTS account_token;
 CREATE TABLE account_token
 (
-  id                               VARCHAR(20) PRIMARY KEY NOT NULL,
-  account_id                       VARCHAR(20)             NOT NULL,
-  app_id                           VARCHAR(20)             NOT NULL,
-  device_id                        VARCHAR(255)            NULL,
-  permanent_token                  VARCHAR(100)            NOT NULL,
-  permanent_token_datetime         DATETIME                NOT NULL,
-  permanent_token_expires_datetime DATETIME                NULL
+  id                               VARCHAR(20) PRIMARY KEY                     NOT NULL,
+  account_id                       VARCHAR(20)                                 NOT NULL,
+  app_id                           VARCHAR(20)                                 NOT NULL,
+  device_id                        VARCHAR(255)                                NULL,
+  permanent_token                  VARCHAR(100)                                NOT NULL,
+  permanent_token_expires_datetime DATETIME                                    NOT NULL,
+  created_account_id               VARCHAR(20)                                 NOT NULL,
+  created_datetime                 DATETIME DEFAULT CURRENT_TIMESTAMP          NOT NULL
 );
 CREATE UNIQUE INDEX permanent_token ON account_token (permanent_token);

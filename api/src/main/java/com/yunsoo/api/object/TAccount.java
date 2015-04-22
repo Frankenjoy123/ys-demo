@@ -1,7 +1,5 @@
 package com.yunsoo.api.object;
 
-import com.yunsoo.api.dto.basic.Account;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Set;
@@ -113,15 +111,4 @@ public class TAccount implements UserDetails {
         this.expires = expired;
     }
 
-    public Account ToDto(TAccount account) {
-        Account dto = new Account();
-        BeanUtils.copyProperties(account, dto);
-        return dto;
-    }
-
-    public TAccount FromDto(Account accountDto) {
-        TAccount account = new TAccount();
-        BeanUtils.copyProperties(accountDto, account);
-        return account;
-    }
 }

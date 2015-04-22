@@ -1,6 +1,8 @@
 package com.yunsoo.api.security;
 
+import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.object.TAccount;
+import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.web.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
@@ -16,12 +18,8 @@ import java.util.*;
 @Service
 public class AccountDetailService implements org.springframework.security.core.userdetails.UserDetailsService {
 
-    private RestClient dataAPIClient;
-
     @Autowired
-    AccountDetailService(RestClient dataAPIClient) {
-        this.dataAPIClient = dataAPIClient;
-    }
+    private AccountDomain accountDomain;
 //    @Autowired
 //    private UserRepository userRepo;
 
@@ -29,11 +27,15 @@ public class AccountDetailService implements org.springframework.security.core.u
 
     @Override
     public final TAccount loadUserByUsername(String username) throws UsernameNotFoundException {
-        TAccount account = dataAPIClient.get("account/username/{username}", TAccount.class, username);
-
-        if (account == null) {
+        String[] splitUsername = username.split(":");
+        AccountObject accountObject = accountDomain.getByOrgIdAndIdentifier(splitUsername[0], splitUsername[1]);
+        if (accountObject == null) {
             throw new UsernameNotFoundException("user not found");
         }
+        TAccount account = new TAccount();
+        account.setId(accountObject.getId());
+        account.setOrgId(accountObject.getOrgId());
+
         detailsChecker.check(account);
         return account;
     }

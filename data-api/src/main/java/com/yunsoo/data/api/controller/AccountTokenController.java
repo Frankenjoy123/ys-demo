@@ -52,8 +52,8 @@ public class AccountTokenController {
                 || StringUtils.isEmpty(accountToken.getPermanentToken())) {
             throw new BadRequestException("accountId, appId or permanentToken must not be null or empty");
         }
-        if (accountToken.getPermanentTokenDateTime() == null) {
-            accountToken.setPermanentTokenDateTime(DateTime.now());
+        if (accountToken.getCreatedDateTime() == null) {
+            accountToken.setCreatedDateTime(DateTime.now());
         }
         accountToken.setId(null); //make sure it's create
         AccountTokenEntity entity = toAccountTokenEntity(accountToken);
@@ -84,8 +84,9 @@ public class AccountTokenController {
         object.setAppId(entity.getAppId());
         object.setDeviceId(entity.getDeviceId());
         object.setPermanentToken(entity.getPermanentToken());
-        object.setPermanentTokenDateTime(entity.getPermanentTokenDateTime());
         object.setPermanentTokenExpiresDateTime(entity.getPermanentTokenExpiresDateTime());
+        object.setCreatedAccountId(entity.getCreatedAccountId());
+        object.setCreatedDateTime(entity.getCreatedDatetime());
         return object;
     }
 
@@ -99,8 +100,9 @@ public class AccountTokenController {
         entity.setAppId(object.getAppId());
         entity.setDeviceId(object.getDeviceId());
         entity.setPermanentToken(object.getPermanentToken());
-        entity.setPermanentTokenDateTime(object.getPermanentTokenDateTime());
         entity.setPermanentTokenExpiresDateTime(object.getPermanentTokenExpiresDateTime());
+        entity.setCreatedAccountId(object.getAccountId());
+        entity.setCreatedDatetime(object.getCreatedDateTime());
         return entity;
     }
 }

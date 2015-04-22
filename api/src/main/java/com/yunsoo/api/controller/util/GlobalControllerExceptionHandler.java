@@ -43,7 +43,7 @@ public class GlobalControllerExceptionHandler {
     public ResponseEntity<ErrorResult> handleRestError(HttpServletRequest req, RestErrorResultException ex) {
         ErrorResult result = ex.getErrorResult();
         HttpStatus status = ex.getHttpStatus();
-        LOGGER.info("[API: " + status + " " + result.toString() + "]");
+        LOGGER.info("[API: " + status + " " + result.toString() + "] " + ex.getMessage());
         return new ResponseEntity<>(appendTraceInfo(result, ex), status);
     }
 
@@ -72,13 +72,12 @@ public class GlobalControllerExceptionHandler {
     }
 
     //401
-    @ExceptionHandler({
-            UnauthorizedException.class})
+    @ExceptionHandler({UnauthorizedException.class})
     @ResponseBody
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResult handleUnauthorized(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.UNAUTHORIZED, "Unauthorized request.");
-        LOGGER.warn("[API: 401 UNAUTHORIZED]", ex);
+        LOGGER.info("[API: 401 UNAUTHORIZED] " + ex.getMessage());
         return appendTraceInfo(result, ex);
     }
 
