@@ -1,10 +1,6 @@
 package com.yunsoo.api.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
@@ -17,17 +13,26 @@ public class Token {
     @JsonProperty("token")
     String token;
 
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("expires")
-    DateTime expires;
+    /**
+     * seconds
+     */
+    @JsonProperty("expires_in")
+    Long expiresIn;
+
 
     public Token() {
     }
 
-    public Token(String token, DateTime expires) {
+    public Token(String token, Long expiresIn) {
         this.token = token;
-        this.expires = expires;
+        this.expiresIn = expiresIn;
+    }
+
+    public Token(String token, DateTime expiresOn) {
+        this.token = token;
+        if (expiresOn != null) {
+            this.expiresIn = (expiresOn.getMillis() / DateTime.now().getMillis()) / 1000;
+        }
     }
 
     public String getToken() {
@@ -38,11 +43,11 @@ public class Token {
         this.token = token;
     }
 
-    public DateTime getExpires() {
-        return expires;
+    public Long getExpiresIn() {
+        return expiresIn;
     }
 
-    public void setExpires(DateTime expires) {
-        this.expires = expires;
+    public void setExpiresIn(Long expiresIn) {
+        this.expiresIn = expiresIn;
     }
 }

@@ -34,9 +34,7 @@ public final class TokenHandler {
         try {
             hmac = Mac.getInstance(HMAC_ALGO);
             hmac.init(new SecretKeySpec(secretKey, HMAC_ALGO));
-        } catch (InvalidKeyException e) {
-            throw new IllegalStateException("failed to initialize HMAC: " + e.getMessage(), e);
-        } catch (NoSuchAlgorithmException e) {
+        } catch (InvalidKeyException | NoSuchAlgorithmException e) {
             throw new IllegalStateException("failed to initialize HMAC: " + e.getMessage(), e);
         }
     }
