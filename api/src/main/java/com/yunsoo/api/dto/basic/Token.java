@@ -1,5 +1,6 @@
 package com.yunsoo.api.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
@@ -13,14 +14,15 @@ import org.joda.time.DateTime;
  */
 public class Token {
 
+    @JsonProperty("token")
     String token;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("expires")
     DateTime expires;
 
     public Token() {
-
     }
 
     public Token(String token, DateTime expires) {

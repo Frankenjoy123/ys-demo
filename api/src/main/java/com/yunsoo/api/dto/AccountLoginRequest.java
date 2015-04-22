@@ -1,5 +1,7 @@
 package com.yunsoo.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by  : Lijian
  * Created on  : 2015/4/21
@@ -7,11 +9,16 @@ package com.yunsoo.api.dto;
  */
 public class AccountLoginRequest {
 
+    @JsonProperty("account_id")
     private String accountId;
 
+    @JsonProperty("org_id")
     private String orgId;
+
+    @JsonProperty("identifier")
     private String identifier;
 
+    @JsonProperty("password")
     private String password;
 
 

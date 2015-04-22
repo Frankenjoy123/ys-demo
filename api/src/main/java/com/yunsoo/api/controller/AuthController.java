@@ -75,10 +75,10 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/accessToken/refresh", method = RequestMethod.GET)
-    public Token refreshToken(@RequestParam("permanentToken") String permanentToken) {
+    public Token refreshToken(@RequestParam("permanent_token") String permanentToken) {
         AccountTokenObject accountTokenObject = accountTokenDomain.getByPermanentToken(permanentToken);
         if (accountTokenObject == null || accountTokenObject.getPermanentTokenExpiresDateTime().isBeforeNow()) {
-            throw new UnauthorizedException("permanentToken invalid");
+            throw new UnauthorizedException("permanent_token invalid");
         }
 
         //todo: generate access token
