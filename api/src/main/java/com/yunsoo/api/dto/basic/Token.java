@@ -31,7 +31,10 @@ public class Token {
     public Token(String token, DateTime expiresOn) {
         this.token = token;
         if (expiresOn != null) {
-            this.expiresIn = (expiresOn.getMillis() / DateTime.now().getMillis()) / 1000;
+            this.expiresIn = (expiresOn.getMillis() - DateTime.now().getMillis()) / 1000;
+            if (this.expiresIn < 0) {
+                this.expiresIn = 0L;
+            }
         }
     }
 

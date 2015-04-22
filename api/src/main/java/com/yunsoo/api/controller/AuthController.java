@@ -12,7 +12,6 @@ import com.yunsoo.common.data.object.AccountTokenObject;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +52,9 @@ public class AuthController {
         if (accountObject == null) {
             throw new UnauthorizedException("Account is not valid");
         }
+        String accountId = accountObject.getId();
+        String orgId = accountObject.getOrgId();
+        String identifier = accountObject.getIdentifier();
         String rawPassword = account.getPassword();
         String password = accountObject.getPassword();
         String hashSalt = accountObject.getHashSalt();
@@ -60,14 +62,14 @@ public class AuthController {
         if (!HashUtils.sha1(rawPassword + hashSalt).equals(password)) {
             throw new UnauthorizedException("Account is not valid");
         }
-
         //login successfully
+        LOGGER.info("Account login with password [id: {}, orgId: {}, identifier: {}]", accountId, orgId, identifier);
 
-        AccountTokenObject accountTokenObject = accountTokenDomain.createPermanentToken(accountObject.getId(), appId, deviceId);
+        AccountTokenObject accountTokenObject = accountTokenDomain.create(accountId, appId, deviceId);
 
         AccountLoginResult result = new AccountLoginResult();
         result.setPermanentToken(new Token(accountTokenObject.getPermanentToken(), accountTokenObject.getPermanentTokenExpiresDateTime()));
-        result.setAccessToken(new Token("0723f205f20a8ed6e06c9c51aad640807ec0cde691e459951ca4f7eb804ae6b2", DateTime.now().plusMinutes(10)));
+        result.setAccessToken(tokenAuthenticationService.generateAccessToken(accountId));
         return result;
     }
 
@@ -78,13 +80,11 @@ public class AuthController {
             throw new UnauthorizedException("permanent_token invalid");
         }
 
-        //todo: generate access token
-        String accountId = accountTokenObject.getAccountId();
-        DateTime now = DateTime.now();
-        DateTime expires = now.plusMinutes(10);
-        String accessToken = "0723f205f20a8ed6e06c9c51aad640807ec0cde691e459951ca4f7eb804ae6b2";
+        Token accessToken = tokenAuthenticationService.generateAccessToken(accountTokenObject.getAccountId());
 
-        return new Token(accessToken, expires);
+        LOGGER.info("AccessToken refreshed for Account [id: {}]", accountTokenObject.getAccountId());
+
+        return accessToken;
     }
 
     public Account getCurrentAccount() {

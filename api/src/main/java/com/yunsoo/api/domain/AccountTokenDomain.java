@@ -26,7 +26,7 @@ public class AccountTokenDomain {
     private RestClient dataAPIClient;
 
     public AccountTokenObject getByPermanentToken(String permanentToken) {
-        return dataAPIClient.get("accountToken?permanentToken={0}", AccountTokenObject.class, permanentToken);
+        return dataAPIClient.get("accountToken?permanent_token={0}", AccountTokenObject.class, permanentToken);
     }
 
     /**
@@ -35,7 +35,7 @@ public class AccountTokenDomain {
      * @param deviceId  nullable
      * @return permanent token object
      */
-    public AccountTokenObject createPermanentToken(String accountId, String appId, String deviceId) {
+    public AccountTokenObject create(String accountId, String appId, String deviceId) {
         DateTime now = DateTime.now();
         DateTime expires = now.plusMinutes(permanent_token_expires_minutes);
         String permanentToken = HashUtils.sha1(UUID.randomUUID().toString()); //random sha1

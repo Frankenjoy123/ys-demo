@@ -75,16 +75,17 @@ public final class TokenHandler {
         return new TAccount(TAccountStatusEnum.INVALID_TOKEN);
     }
 
-    public String createTokenForUser(TAccount user) {
+    public String createAccessToken(String accountId, DateTime expires) {
         //generate user information to hash
-        String userInfo = user.getId() + "," + user.getStatus().value() + "," + user.getOrgId() + "," + user.getExpires(); // format:  [accountid,status,orgId, expires]
-        byte[] userBytes = toJSON(userInfo);
-        byte[] hash = createHmac(userBytes);
-        final StringBuilder sb = new StringBuilder(170);  //170
-        sb.append(toBase64(userBytes));
-        sb.append(SEPARATOR);
-        sb.append(toBase64(hash));
-        return sb.toString();
+        //String userInfo = user.getId() + "," + user.getStatus().value() + "," + user.getOrgId() + "," + user.getExpires(); // format:  [accountid,status,orgId, expires]
+//        byte[] userBytes = toJSON(userInfo);
+//        byte[] hash = createHmac(userBytes);
+//        final StringBuilder sb = new StringBuilder(170);  //170
+//        sb.append(toBase64(userBytes));
+//        sb.append(SEPARATOR);
+//        sb.append(toBase64(hash));
+//        return sb.toString();
+        return "0723f205f20a8ed6e06c9c51aad640807ec0cde691e459951ca4f7eb804ae6b2"; //todo
     }
 
     private String fromJSON(final byte[] userBytes) {

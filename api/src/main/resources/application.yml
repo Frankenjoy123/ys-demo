@@ -9,6 +9,7 @@ yunsoo:
         permanent_token:
             expires_minutes: 4320 #three days
         access_token:
+            header_name: X-YS-AccessToken
             expires_minutes: 10
 
 spring:
@@ -31,7 +32,7 @@ yunsoo:
 
     #token secret issued to client whoc can consume our Business API
     token_secret: 9SyECk96oDsKiLfogIieDI0cD/8FpnojlYSUJT5U9I/FGVmBz5oskmjOR8cbXTvoPjX+Pq/T/b1PqpHX0lYm0oCBjXWICA==
-    token_header_name: YS_WOLF_AUTH_TOKEN
+
     debug: true
     api:
         client:

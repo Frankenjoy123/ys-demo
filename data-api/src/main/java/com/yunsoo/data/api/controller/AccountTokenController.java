@@ -37,7 +37,7 @@ public class AccountTokenController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public AccountTokenObject getByPermanentToken(@RequestParam(value = "permanentToken") String permanentToken) {
+    public AccountTokenObject getByPermanentToken(@RequestParam(value = "permanent_token") String permanentToken) {
         List<AccountTokenEntity> entities = accountTokenRepository.findByPermanentToken(permanentToken);
         if (entities.isEmpty()) {
             throw new NotFoundException("AccountToken not found by [permanentToken: " + permanentToken + "]");
