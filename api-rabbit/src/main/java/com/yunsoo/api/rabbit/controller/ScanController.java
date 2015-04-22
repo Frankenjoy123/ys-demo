@@ -193,13 +193,21 @@ public class ScanController {
         TScanRecord scanRecord = new TScanRecord();
         scanRecord.setUserId(currentUser.getId());
         scanRecord.setDeviceId(currentUser.getDeviceCode());
-        scanRecord.setAppId("123456"); //to-do
+        if (scanRequestBody.getAppId() != null && !scanRequestBody.getAppId().isEmpty()) {
+            scanRecord.setAppId(scanRequestBody.getAppId()); //记录扫描客户端
+        } else {
+            scanRecord.setAppId("未知的AppId");
+        }
         scanRecord.setProductKey(currentProduct.getProductKey());
         scanRecord.setBaseProductId(currentProduct.getProductBaseId());
-        scanRecord.setDetail("某用户通过手机扫描验证真伪。");
+        if (scanRequestBody.getDetail() != null && !scanRequestBody.getDetail().isEmpty()) {
+            scanRecord.setDetail(scanRequestBody.getDetail()); //接受扫描的相关详情
+        } else {
+            scanRecord.setDetail("用户扫描验证真伪。");
+        }
         scanRecord.setLongitude(scanRequestBody.getLongitude());
         scanRecord.setLatitude(scanRequestBody.getLatitude());
-        if (scanRequestBody.getLocation() != null || !scanRequestBody.getLocation().isEmpty()) {
+        if (scanRequestBody.getLocation() != null && !scanRequestBody.getLocation().isEmpty()) {
             scanRecord.setLocation(scanRequestBody.getLocation());
         } else {
             scanRecord.setLocation("未公开地址"); //用户选择不公开隐私地址信息

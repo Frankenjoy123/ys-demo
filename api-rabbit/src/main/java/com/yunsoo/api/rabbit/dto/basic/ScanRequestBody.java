@@ -10,9 +10,11 @@ public class ScanRequestBody {
     private String Key;
     private String userId;
     private String deviceCode;
+    private String appId;
     private Double latitude;
     private Double longitude;
     private String location;
+    private String detail;
 
     public String getKey() {
         return Key;
@@ -38,6 +40,14 @@ public class ScanRequestBody {
         this.deviceCode = deviceCode;
     }
 
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
     public Double getLatitude() {
         return latitude;
     }
@@ -60,6 +70,14 @@ public class ScanRequestBody {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
 
     public Boolean validateForScan() {
