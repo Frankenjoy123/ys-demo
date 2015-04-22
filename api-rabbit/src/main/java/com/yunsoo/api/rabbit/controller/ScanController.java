@@ -102,13 +102,13 @@ public class ScanController {
     @RequestMapping(value = "/history/user/{userId}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
     public List<ScanRecord> getScanRecordsByFilter(
-            @PathVariable(value = "userId") Long userId,
+            @PathVariable(value = "userId") String userId,
             @PathVariable(value = "pageIndex") Integer pageIndex,
             @PathVariable(value = "pageSize") Integer pageSize) {
 
         //验证输入参数
-        if (userId == null || userId <= 0) {
-            throw new BadRequestException(40001, "用户ID不应小于0！");
+        if (userId == null || !userId.isEmpty()) {
+            throw new BadRequestException(40001, "用户ID不应为空！");
         }
         if (pageIndex == null) {
             pageIndex = 0;
@@ -132,14 +132,14 @@ public class ScanController {
     @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
     public List<ScanRecord> getScanRecordsByFilter(
             @PathVariable(value = "Id") Long Id,
-            @PathVariable(value = "userId") Long userId,
+            @PathVariable(value = "userId") String userId,
             @PathVariable(value = "isbackward") Boolean isbackward,
             @PathVariable(value = "pageIndex") Integer pageIndex,
             @PathVariable(value = "pageSize") Integer pageSize) {
 
         //验证输入参数
-        if (userId == null || userId <= 0) {
-            throw new BadRequestException(40001, "用户ID不应小于0！");
+        if (userId == null || !userId.isEmpty()) {
+            throw new BadRequestException(40001, "用户ID不应为空！");
         }
         if (Id == null || Id <= 0) {
             Id = 0L; //default value

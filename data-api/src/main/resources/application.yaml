@@ -5,7 +5,7 @@ multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
 spring:
-    profiles.active: default
+    profiles.active: qa
 ---
 spring:
     profiles: default
@@ -29,13 +29,6 @@ AmazonSettings:
     s3_message_image_url: photo/coms/messages
     s3_org_image_url: photo/coms/icons
     s3_org_default_image_url: photo/coms/icons/ysdefault
-
-dataServiceSetting:
-    message_created_status_id:  1
-    message_approved_status_id: 3
-    message_delete_status_id: 4
-    user_created_status_id: 2
-    user_delete_status_id: 5
 
 jdbc:
     master:
@@ -78,15 +71,6 @@ AmazonSettings:
     s3_message_image_url: photo/coms/messages
     s3_org_image_url: photo/coms/icons
     s3_org_default_image_url: photo/coms/icons/ysdefault
-
-
-dataServiceSetting:
-    message_created_status_id:  1
-    message_approved_status_id: 3
-    message_delete_status_id: 4
-    user_created_status_id: 2
-    user_delete_status_id: 3
-    org_verified_status_id: 1
 
 jdbc:
     master:

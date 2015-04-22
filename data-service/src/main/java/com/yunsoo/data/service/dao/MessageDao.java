@@ -17,17 +17,17 @@ public interface MessageDao {
 
     public DaoStatus update(MessageModel messageModel);
 
-    public DaoStatus updateStatus(Long messageId, int status);
+    public DaoStatus updateStatus(Long messageId, String status);
 
     public void delete(MessageModel messageModel);
 
     public DaoStatus delete(Long id);
 
-    public List<MessageModel> getMessagesByStatus(int statusId);
+    public List<MessageModel> getMessagesByStatus(String status);
 
     public List<MessageModel> getMessagesByType(int typeId);
 
-    public List<MessageModel> getMessagesByFilter(Integer type, Integer status, Long companyId, Boolean ignoreExpireDate);
+    public List<MessageModel> getMessagesByFilter(Integer type, String status, String orgId, Boolean ignoreExpireDate, int pageIndex, int pageSize);
 
-    public List<MessageModel> getUnreadMessages(Long companyId, Long lastReadMessageId);
+    public List<MessageModel> getUnreadMessages(String orgId, Long lastReadMessageId);
 }

@@ -14,17 +14,17 @@ public class Message {
     private String title;
     private String body;
     private String digest;
-    private long companyId;
+    private String orgId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
-    private int createdBy; //associate to company's accountId
+    private String createdBy; //associate to company's accountId
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime expiredDateTime;
     private String link;
-    private int type;
-    private int status;
+    private String type;
+    private String status;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime lastUpatedDateTime;
@@ -65,19 +65,19 @@ public class Message {
         this.digest = digest;
     }
 
-    public long getCompanyId() {
-        return companyId;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setCompanyId(long companyId) {
-        this.companyId = companyId;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 
-    public int getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(int createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -89,19 +89,19 @@ public class Message {
         this.link = link;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

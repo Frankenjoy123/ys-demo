@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.data.service.config.AmazonSetting;
-import com.yunsoo.data.service.config.DataServiceSetting;
 import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.dao.UserDao;
@@ -37,9 +36,6 @@ public class UserServiceImpl implements UserService {
     private UserDao userDAO;
     @Autowired
     private S3ItemDao s3ItemDao;
-
-    @Autowired
-    private DataServiceSetting dataServiceSetting;
     @Autowired
     private AmazonSetting amazonSetting;
 

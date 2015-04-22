@@ -45,7 +45,7 @@ public class AuthController {
         User currentUser = null;
         //几种验证方法： 1， 先验证手机号存在， 2，验证devicecode存在， 3， 用户名/密码验证（未做）
         if (user.getDeviceCode() != null && !user.getDeviceCode().isEmpty()) {
-            currentUser = dataAPIClient.get("user/token/{devicecode}", User.class, user.getDeviceCode());
+            currentUser = dataAPIClient.get("user/device/{devicecode}", User.class, user.getDeviceCode());
             if (currentUser == null) {
                 return new ResponseEntity<>("用户名不存在！", HttpStatus.FORBIDDEN);
             }

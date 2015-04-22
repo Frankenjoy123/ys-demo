@@ -28,16 +28,16 @@ public class MessageModel {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
     @Column(name = "created_by")
-    private int createdBy; //associate to company's accountId
+    private String createdBy; //associate to company's accountId
     @Column(name = "expired_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime expiredDateTime;
     @Column(name = "link")
     private String link;
     @Column(name = "type")
-    private int type; //e.g. WelcomeMessage, PromotionMessage, System...
+    private String type; //e.g. WelcomeMessage, PromotionMessage, System...
     @Column(name = "status")
-    private int status;
+    private String status;
     @Column(name = "last_updated_datetime", nullable = true)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedDateTime;
@@ -99,11 +99,11 @@ public class MessageModel {
         this.createdDateTime = createdDateTime;
     }
 
-    public int getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(int createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -123,19 +123,19 @@ public class MessageModel {
         this.link = link;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

@@ -78,7 +78,7 @@ public class MessageController {
     @PreAuthorize("hasPermission(#userId, 'UserInToken', 'message:read')")
     public List<Message> getUnreadMessagesBy(@RequestHeader(AUTH_HEADER_NAME) String token,
                                              @RequestParam(value = "userid", required = true) String userId,
-                                             @RequestParam(value = "companyid", required = true) String orgId,
+                                             @RequestParam(value = "orgid", required = true) String orgId,
                                              @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
         if (userId == null || userId.isEmpty()) throw new BadRequestException("UserId不能为空！");
         if (orgId == null || orgId.isEmpty()) throw new BadRequestException("OrgId不能为空！");
@@ -87,13 +87,13 @@ public class MessageController {
 //            throw new UnauthorizedException("不能读取其他用户的收藏信息！");
 //        }
         try {
-            List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&companyid={1}&lastreadmessageid={2}", List.class, userId, orgId, lastReadMessageId);
+            List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&orgid={1}&lastreadmessageid={2}", List.class, userId, orgId, lastReadMessageId);
             if (messageList == null || messageList.size() == 0) {
                 throw new NotFoundException("Message not found!");
             }
             return messageList;
         } catch (NotFoundException ex) {
-            throw new NotFoundException(40401, "Message not found for userid = " + userId + ". companyId = " + orgId + ". lastReadMessageId = " + lastReadMessageId);
+            throw new NotFoundException(40401, "Message not found for userid = " + userId + ". orgId = " + orgId + ". lastReadMessageId = " + lastReadMessageId);
         }
 
     }

@@ -19,7 +19,7 @@ public class UserOrganizationModel {
     private long id;
 
     @Column(name = "user_id")
-    private long userId;
+    private String userId;
 
     @Column(name = "organization_id")
     private long organizationId;
@@ -46,11 +46,11 @@ public class UserOrganizationModel {
         return id;
     }
 
-    public long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

@@ -56,7 +56,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public ServiceOperationStatus updateStatus(Long messageId, int status) {
+    public ServiceOperationStatus updateStatus(Long messageId, String status) {
         DaoStatus daoStatus = messageDao.updateStatus(messageId, status);
         if (daoStatus == DaoStatus.success) {
             return ServiceOperationStatus.Success;
@@ -85,8 +85,8 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional
-    public List<Message> getMessagesByStatus(int statusId) {
-        return Message.FromModelList(messageDao.getMessagesByStatus(statusId));
+    public List<Message> getMessagesByStatus(String status) {
+        return Message.FromModelList(messageDao.getMessagesByStatus(status));
     }
 
     @Override
@@ -96,14 +96,14 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional
-    public List<Message> getMessagesByFilter(Integer type, Integer status, Long companyId, Boolean ignoreExpireDate) {
-        return Message.FromModelList(messageDao.getMessagesByFilter(type, status, companyId, ignoreExpireDate));
+    public List<Message> getMessagesByFilter(Integer type, String status, String orgId, Boolean ignoreExpireDate, int pageIndex, int pageSize) {
+        return Message.FromModelList(messageDao.getMessagesByFilter(type, status, orgId, ignoreExpireDate, pageIndex, pageSize));
     }
 
     @Override
-    public List<Message> getUnreadMessages(Long userId, Long companyId, Long lastReadMessageId) {
+    public List<Message> getUnreadMessages(String userId, String orgId, Long lastReadMessageId) {
         //to do: log user read someone's message
-        return Message.FromModelList(messageDao.getUnreadMessages(companyId, lastReadMessageId));
+        return Message.FromModelList(messageDao.getUnreadMessages(orgId, lastReadMessageId));
     }
 
     //Convert Dto to Model,just copy properties which is not null.

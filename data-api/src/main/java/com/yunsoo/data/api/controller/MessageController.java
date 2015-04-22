@@ -7,7 +7,6 @@ import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.config.AmazonSetting;
-import com.yunsoo.data.service.config.DataServiceSetting;
 import com.yunsoo.data.service.service.MessageService;
 import com.yunsoo.data.service.service.contract.Message;
 import org.joda.time.DateTime;
@@ -34,8 +33,7 @@ public class MessageController {
     @Autowired
     private AmazonSetting amazonSetting;
 
-    @Autowired
-    private DataServiceSetting dataServiceSetting;
+    private final String message_approved = "approved";
 
     @Autowired
     MessageController(MessageService messageService) {
@@ -45,8 +43,10 @@ public class MessageController {
     //Push unread messages to user.
     @RequestMapping(value = "/pushto/{userid}/type/{typeid}", method = RequestMethod.GET)
     public ResponseEntity<List<Message>> getNewMessagesByUserId(@PathVariable(value = "userid") Long id,
-                                                                @PathVariable(value = "typeid") Integer typeid) {
-        List<Message> messageList = messageService.getMessagesByFilter(typeid, dataServiceSetting.getMessage_approved_status_id(), null, true); //push approved message only
+                                                                @PathVariable(value = "typeid") Integer typeid,
+                                                                @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
+                                                                @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        List<Message> messageList = messageService.getMessagesByFilter(typeid, message_approved, null, true, pageIndex, pageSize); //push approved message only
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 
@@ -59,18 +59,20 @@ public class MessageController {
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity<List<Message>> getMessagesByFilter(@RequestParam(value = "type", required = false) Integer type,
-                                                             @RequestParam(value = "status", required = false) Integer status,
-                                                             @RequestParam(value = "companyid", required = false) Long companyId,
-                                                             @RequestParam(value = "ignoreexpiredate", required = false, defaultValue = "true") boolean ignoreExpireDate) {
-        List<Message> messageList = messageService.getMessagesByFilter(type, status, companyId, ignoreExpireDate);
+                                                             @RequestParam(value = "status", required = false) String status,
+                                                             @RequestParam(value = "orgid", required = false) String orgId,
+                                                             @RequestParam(value = "ignoreexpiredate", required = false, defaultValue = "true") boolean ignoreExpireDate,
+                                                             @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
+                                                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        List<Message> messageList = messageService.getMessagesByFilter(type, status, orgId, ignoreExpireDate, pageIndex, pageSize);
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/getUnread", method = RequestMethod.GET)
-    public ResponseEntity<List<Message>> getUnreadMessagesBy(@RequestParam(value = "userid", required = true) Long userId,
-                                                             @RequestParam(value = "companyid", required = true) Long companyId,
+    public ResponseEntity<List<Message>> getUnreadMessagesBy(@RequestParam(value = "userid", required = true) String userId,
+                                                             @RequestParam(value = "orgid", required = true) String orgId,
                                                              @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
-        List<Message> messageList = messageService.getUnreadMessages(userId, companyId, lastReadMessageId);
+        List<Message> messageList = messageService.getUnreadMessages(userId, orgId, lastReadMessageId);
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 

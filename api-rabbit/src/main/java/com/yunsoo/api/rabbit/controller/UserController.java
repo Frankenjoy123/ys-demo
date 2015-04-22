@@ -61,14 +61,13 @@ public class UserController {
 
     @RequestMapping(value = "/device/{devicecode}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#token, 'authenticated')")
-    public User getByDevicecode(
-            @PathVariable(value = "devicecode") String deviceCode) throws NotFoundException {
+    public User getByDevicecode(@PathVariable(value = "devicecode") String deviceCode) throws NotFoundException {
         if (deviceCode == null || deviceCode.isEmpty()) {
             throw new BadRequestException("deviceCode不能为空！");
         }
         User user = null;
         try {
-            user = dataAPIClient.get("user/token/{devicecode}", User.class, deviceCode);
+            user = dataAPIClient.get("user/device/{devicecode}", User.class, deviceCode);
             return user;
         } catch (NotFoundException ex) {
             throw new NotFoundException(40401, "User not found by device code=" + deviceCode);

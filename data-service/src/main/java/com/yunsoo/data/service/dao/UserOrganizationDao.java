@@ -9,9 +9,9 @@ import java.util.List;
  */
 public interface UserOrganizationDao {
 
-    public UserOrganizationModel get(long userId, long companyId);
+    public UserOrganizationModel get(String userId, String orgId);
 
-    public List<UserOrganizationModel> getUserOrgModelByFilter(Long userId, Long organizationId, Boolean isFollowing);
+    public List<UserOrganizationModel> getUserOrgModelByFilter(String userId, String organizationId, Boolean isFollowing);
 
     public Long save(UserOrganizationModel model);
 

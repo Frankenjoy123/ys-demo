@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 public class ScanRecord {
     private long id;
     private String productKey;
-    private int baseProductId;
-    private int appId;
+    private String baseProductId;
+    private String appId;
     private String deviceId;
-    private long userId;
+    private String userId;
     private String detail;
     private String createdDateTime;
     private Double latitude;
@@ -37,19 +37,19 @@ public class ScanRecord {
         this.productKey = productKey;
     }
 
-    public int getBaseProductId() {
+    public String getBaseProductId() {
         return baseProductId;
     }
 
-    public void setBaseProductId(int baseProductId) {
+    public void setBaseProductId(String baseProductId) {
         this.baseProductId = baseProductId;
     }
 
-    public int getAppId() {
+    public String getAppId() {
         return appId;
     }
 
-    public void setAppId(int appId) {
+    public void setAppId(String appId) {
         this.appId = appId;
     }
 
@@ -61,11 +61,11 @@ public class ScanRecord {
         this.deviceId = deviceId;
     }
 
-    public long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
