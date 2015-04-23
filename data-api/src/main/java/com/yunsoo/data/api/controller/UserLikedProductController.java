@@ -31,7 +31,6 @@ public class UserLikedProductController {
     public UserLikedProduct getUserLikedProduct(@PathVariable(value = "id") String id, @PathVariable(value = "pid") String pid) {
         List<UserLikedProduct> result = UserLikedProduct.FromEntityList(userLikedProductRepository.findByUserIdAndBaseProductId(id, pid));
         if (result.isEmpty()) {
-            //throw new NotFoundException(40401,"找不到UserLikedProduct记录. ID = " + id + " productid = " + pid);
             return null;
         }
         return result.get(0);

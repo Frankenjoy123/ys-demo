@@ -66,8 +66,8 @@ public class ProductBaseController {
     }
 
     //patch update
-    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public void update(@PathVariable(value = "id") String id, @RequestBody ProductBase productBase) throws Exception {
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public void update(@RequestBody ProductBase productBase) throws Exception {
         //patch update, we don't provide functions like update with set null properties.
         ProductBaseObject p = new ProductBaseObject();
         BeanUtils.copyProperties(productBase, p);
