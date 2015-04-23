@@ -95,7 +95,7 @@ public class AuthController {
         return new ResponseEntity<UserResult>(userResult, headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/updatepassword", method = RequestMethod.POST)
+    //@RequestMapping(value = "/updatepassword", method = RequestMethod.POST)
     public ResponseEntity<?> updatePassword(@RequestBody Account account) {
         return new ResponseEntity<String>(HttpStatus.OK);
     }
