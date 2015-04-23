@@ -11,8 +11,8 @@
 
     app.factory("msgService", ["$http", function($http){
         return {
-            getInfo: function(fnSuccess, fnError){
-                $http.get("mock/msg.json")
+            getInfo: function(org_id, pageIndex, fnSuccess, fnError){
+                $http.get("/api/message/orgid?orgid=" + org_id + "&&pageIndex=" + pageIndex)
                     .success(function(data){
                         fnSuccess(data);
                     });
@@ -21,115 +21,120 @@
     }]);
 
     app.controller("msgCtrl", ["$scope", "msgService", function($scope, msgService){
-        msgService.getInfo(function(data){
-            $scope.data = data;
-            $scope.dataTable = new AngularDataTable($scope.data);
-        });
 
         $scope.getDateString = function (value) {
             var date = new Date(value);
             return new DateTime(date).toString('yyyy-MM-dd HH:mm:ss');
         };
 
-        $scope.editRow = function (message) {
-            message.mode = 1;
-            message.tmptitle = message.title;
-            message.tmpbody = message.body;
+        var AngularDataTable = function (data) {
+
+            var adt = {
+                data: data,
+                filteredData: {},
+                pageSize: 10,
+                pages: pages,
+                sortColumn: '',
+                sortDescending: true,
+                isShowHisSec: isShowHisSec,
+                goToFirstPage: goToFirstPage,
+                gotoLastPage: gotoLastPage,
+                goToPage: goToPage,
+                currentPage: currentPage,
+                next: next,
+                previous: previous,
+                onFirstPage: onFirstPage,
+                onLastPage: onLastPage,
+                sort: sort,
+                resetPaging: resetPaging
+            };
+            return adt;
+
+            function isShowHisSec() {
+                return data.length > 0 ? 1 : 0;
+            }
+
+            function goToFirstPage() {
+                if (!this.onFirstPage()) {
+                    $scope.currentPage = 0;
+                    getMessageInfo($scope.currentPage);
+                }
+            }
+
+            function gotoLastPage() {
+                if (!this.onLastPage()) {
+                    $scope.currentPage = Math.ceil($scope.totalCounts / this.pageSize) - 1;
+                    getMessageInfo($scope.currentPage);
+                }
+            }
+
+            function goToPage(page) {
+                $scope.currentPage = page;
+                getMessageInfo($scope.currentPage);
+            }
+
+            function currentPage() {
+                return $scope.currentPage;
+            }
+
+            function pages() {
+                var p = [];
+                for (var i = Math.max(0, $scope.currentPage - 4); i <= $scope.currentPage; i++) {
+                    p.push(i);
+                }
+                return p;
+            }
+
+            function next() {
+                if (!this.onLastPage()) {
+                    $scope.currentPage += 1;
+                    getMessageInfo($scope.currentPage);
+                }
+            }
+
+            function previous() {
+                if (!this.onFirstPage()) {
+                    $scope.currentPage -= 1;
+                    getMessageInfo($scope.currentPage);
+                }
+
+            }
+
+            function onFirstPage() {
+                return $scope.currentPage === 0;
+            }
+
+            function onLastPage() {
+                return data.length < this.pageSize;
+            }
+
+            function sort(column) {
+                this.resetPaging();
+                if (this.sortColumn === column) {
+                    this.sortDescending = !this.sortDescending;
+                } else {
+                    this.sortColumn = column;
+                    this.sortDescending = false;
+                }
+            }
+
+            function resetPaging() {
+                this.currentPage = 0;
+            }
         };
 
-        $scope.cancelRow = function (message) {
-            message.mode = 0;
-            message.title = message.tmptitle;
-            message.body = message.tmpbody;
+        $scope.currentPage = 0;
+        $scope.totalCounts = 0;
+        $scope.itemIndex = 0;
+
+        var getMessageInfo = function (currentPage) {
+            msgService.getInfo("2k0r2yvydbxbvibvgfm",currentPage,function(data){
+                $scope.data = data;
+                $scope.dataTable = new AngularDataTable($scope.data);
+            });
         };
 
-        $scope.saveRow = function (message) {
-            message.mode = 0;
-        };
+        getMessageInfo(0);
 
-        $scope.deleteRow = function (message) {
-            message.mode = 0;
-        };
     }]);
-
-    var AngularDataTable = function (data) {
-
-        var adt = {
-            data: data,
-            filteredData: {},
-            filter: '',
-            currentPage: 0,
-            pageSize: 10,
-            sortColumn: '',
-            sortDescending: true,
-            numberOfPages: numberOfPages,
-            currentPageStart: currentPageStart,
-            currentPageEnd: currentPageEnd,
-            pages: pages,
-            goToPage: goToPage,
-            next: next,
-            previous: previous,
-            onFirstPage: onFirstPage,
-            onLastPage: onLastPage,
-            sort: sort,
-            resetPaging: resetPaging
-        };
-        return adt;
-
-        function numberOfPages() {
-            return Math.ceil(this.filteredData.length / this.pageSize);
-        }
-
-        function currentPageStart() {
-            return this.currentPage * this.pageSize + 1;
-        }
-
-        function currentPageEnd() {
-            return Math.min((this.currentPage + 1) * this.pageSize, this.filteredData.length);
-        }
-
-        function pages() {
-            var p = [];
-            for (var i = 1; i <= this.numberOfPages(); i++) {
-                p.push(i);
-            }
-            return p;
-        }
-
-        function goToPage(page) {
-            this.currentPage = page - 1;
-        }
-
-        function next() {
-            if (!this.onLastPage())
-                this.currentPage += 1;
-        }
-
-        function previous() {
-            if (!this.onFirstPage())
-                this.currentPage -= 1;
-        }
-
-        function onFirstPage() {
-            return this.currentPage === 0;
-        }
-
-        function onLastPage() {
-            return this.currentPage === this.numberOfPages() - 1;
-        }
-
-        function sort(column) {
-            this.resetPaging();
-            if (this.sortColumn === column) {
-                this.sortDescending = !this.sortDescending;
-            } else {
-                this.sortColumn = column;
-                this.sortDescending = false;
-            }
-        }
-
-        function resetPaging() {
-            this.currentPage = 0;
-        }
-    };
 })();

@@ -63,7 +63,7 @@ public class MessageController {
 
     @RequestMapping(value = "/orgid", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#orgId, 'message:read')")
-    public List<Message> getMessages(@RequestHeader(AUTH_HEADER_NAME) String token,
+    public List<Message> getMessages(//@RequestHeader(AUTH_HEADER_NAME) String token,
                                      @RequestParam(value = "orgid", required = true) String orgId,
                                      @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
