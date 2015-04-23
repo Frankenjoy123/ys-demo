@@ -40,13 +40,10 @@ public class AccountController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<Account> getByFilter(@RequestParam("org_id") String orgId) {
-        return accountDomain.getByOrgId(orgId).stream().map(this::fromAccountObject).collect(Collectors.toList());
-    }
-
-    @RequestMapping(value = "current/organization/account", method = RequestMethod.GET)
-    public List<Account> getAllCurrentOrgAccounts() {
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+    public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId) {
+        if (orgId == null) {
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
         return accountDomain.getByOrgId(orgId).stream().map(this::fromAccountObject).collect(Collectors.toList());
     }
 
