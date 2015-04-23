@@ -12,55 +12,34 @@
 <!-- Main content -->
 <section class="content" ng-controller="productKeyManageCtrl">
     <script type="text/javascript">
-        $(document).ready(function(){
+        $(document).ready(function () {
             $('#accountTable').dataTable({
                 "bPaginate": false,
                 "bLengthChange": false,
                 "bFilter": false,
                 "bSort": true,
                 "bAutoWidth": false,
-                "bInfo": false
+                "bInfo": false,
+                "aoColumnDefs": [{"bSortable": false, "aTargets": [0, 1, 2]}]
             });
-
-            $('#editHead').attr('class', '');
         });
     </script>
     <div class="box-group" ng-controller="accountManageCtrl">
         <div class="panel box box-primary">
             <div class="box-body table-responsive">
                 <div class="dataTables_wrapper form-inline" role="grid">
-                    <!--<div class="row col-xs-12">-->
-                        <!--<div class="col-xs-6">-->
-                            <!--<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">每页记录数<span-->
-                                    <!--class="fa fa-caret-down"></span></button>-->
-                            <!--<ul class="dropdown-menu">-->
-                                <!--<li ng-click="setPaging(10)"><a>10</a></li>-->
-                                <!--<li ng-click="setPaging(25)"><a>25</a></li>-->
-                                <!--<li ng-click="setPaging(50)"><a>50</a></li>-->
-                                <!--<li ng-click="setPaging(100)"><a>100</a></li>-->
-                            <!--</ul>-->
-                        <!--</div>-->
-                    <!--</div>-->
                     <div class="col-xs-12">
                         <table id="accountTable" class="table table-hover dataTable">
                             <thead>
-                            <tr role="row" onclick="document.getElementById('editHead').setAttribute('class', '')">
-                                <th>ID</th>
-                                <th ng-click='sort("employeeID")'>工号
-                                </th>
-                                <th ng-click='sort("name")'>姓名
-                                </th>
-                                <th ng-click='sort("status")'>状态
-                                </th>
-                                <th ng-click='sort("role")'>职位
-                                </th>
-                                <th ng-click='sort("phone")'>电话
-                                </th>
-                                <th ng-click='sort("email")'>邮箱
-                                </th>
-                                <th ng-click='sort("SSID")'>身份证号
-                                </th>
-                                <th width="5%" id="editHead"></th>
+                            <tr role="row">
+                                <th>编号</th>
+                                <th>账号ID</th>
+                                <th>账号名</th>
+                                <th ng-click='sort("identifier")'>账号标识</th>
+                                <th ng-click='sort("status_code")'>状态</th>
+                                <th ng-click='sort("email")'>邮箱</th>
+                                <th ng-click='sort("phone")'>电话</th>
+                                <th ng-click='sort("created_datetime")'>创建时间</th>
                             </tr>
                             </thead>
                             <tbody ng-repeat="account in data.filteredAccounts">
@@ -69,40 +48,23 @@
                                     <span>{{$index + 1 + paging.index * paging.size}}</span>
                                 </td>
                                 <td>
-                                    <span ng-hide='account.mode'>{{account.employeeID}}</span>
-                                    <input ng-show='account.mode' ng-model='account.employeeID'/>
+                                    <span>{{account.id}}</span>
                                 </td>
                                 <td>
-                                    <span ng-hide='account.mode'>{{account.name}}</span>
-                                    <input ng-show='account.mode' ng-model='account.name'/>
-                                </td>
-                                <td>{{account.status ? "启用中" : "已停用"}}</td>
-                                <td>{{getRole(account.role)}}</td>
-                                <td>
-                                    <span ng-hide='account.mode'>{{account.phone}}</span>
-                                    <input ng-show='account.mode' ng-model='account.phone'/>
+                                    <span>{{account.last_name + account.first_name}}</span>
                                 </td>
                                 <td>
-                                    <span ng-hide='account.mode'>{{account.email}}</span>
-                                    <input ng-show='account.mode' ng-model='account.email'/>
+                                    <span>{{account.identifier}}</span>
+                                </td>
+                                <td>{{account.status_code == "available" ? "正常" : "停用"}}</td>
+                                <td>
+                                    <span>{{account.email}}</span>
                                 </td>
                                 <td>
-                                    <span ng-hide='account.mode'>{{account.SSID}}</span>
-                                    <input ng-show='account.mode' ng-model='account.SSID'/>
+                                    <span>{{account.phone}}</span>
                                 </td>
                                 <td>
-                                    <button ng-show='!account.mode' class="btn btn-primary btn-sm"
-                                            ng-click='editRow(account)'>
-                                        <i class="fa fa-edit"></i> 编辑
-                                    </button>
-                                    <button ng-show='account.mode' class="btn btn-default btn-sm"
-                                            ng-click='cancelRow(account)'>
-                                        <i class="fa fa-undo"></i> 放弃
-                                    </button>
-                                    <button ng-show='account.mode' class="btn btn-primary btn-sm"
-                                            ng-click='saveRow(account)'>
-                                        <i class="fa fa-save"></i> 保存
-                                    </button>
+                                    <span>{{getDateString(account.created_datetime)}}</span>
                                 </td>
                             </tr>
                             </tbody>
