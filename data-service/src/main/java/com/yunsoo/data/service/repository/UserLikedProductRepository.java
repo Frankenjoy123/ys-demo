@@ -11,5 +11,7 @@ public interface UserLikedProductRepository extends CrudRepository<UserLikedProd
 
     Iterable<UserLikedProductEntity> findByUserId(String userId);
 
+    Iterable<UserLikedProductEntity> findByUserIdAndBaseProductId(String userId, String baseProductId);
+
     Iterable<UserLikedProductEntity> findById(Long id);
 }
