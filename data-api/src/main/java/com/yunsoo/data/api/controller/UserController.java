@@ -60,7 +60,7 @@ public class UserController {
 
     @RequestMapping(value = "/thumbnail/{id}/{key}", method = RequestMethod.GET)
     public ResponseEntity getThumbnail(
-            @PathVariable(value = "id") Long id,
+            @PathVariable(value = "id") String id,
             @PathVariable(value = "key") String key) {
 
         if (key == null || key.isEmpty()) throw new BadRequestException("Key不能为空！");

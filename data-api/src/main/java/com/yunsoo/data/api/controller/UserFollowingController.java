@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * Created by Zhe on 2015/4/15.
- *  * * ErrorCode
+ * * * ErrorCode
  * 40401    :   UserOrganization not found!
  */
 @RestController
@@ -38,8 +38,8 @@ public class UserFollowingController {
 
     @RequestMapping(value = "/who/{id}", method = RequestMethod.GET)
     public List<UserFollowing> getFollowingOrgsByUserId(@PathVariable(value = "id") String id,
-                                                           @RequestParam(value = "index") Integer index,
-                                                           @RequestParam(value = "size") Integer size) {
+                                                        @RequestParam(value = "index") Integer index,
+                                                        @RequestParam(value = "size") Integer size) {
         if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
         if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
@@ -53,8 +53,8 @@ public class UserFollowingController {
 
     @RequestMapping(value = "/org/{id}", method = RequestMethod.GET)
     public List<UserFollowing> getFollowerByOrgId(@PathVariable(value = "id") String id,
-                                                     @RequestParam(value = "index") Integer index,
-                                                     @RequestParam(value = "size") Integer size) {
+                                                  @RequestParam(value = "index") Integer index,
+                                                  @RequestParam(value = "size") Integer size) {
         if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
         if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
@@ -66,9 +66,22 @@ public class UserFollowingController {
         return userFollowingList;
     }
 
+    @RequestMapping(value = "/who/{id}/org/{orgid}", method = RequestMethod.GET)
+    public UserFollowing getFollowingRecord(@PathVariable(value = "id") String id,
+                                            @PathVariable(value = "orgid") String orgId) {
+        if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
+        if (orgId == null || orgId.isEmpty()) throw new BadRequestException("orgId不能为空！");
+
+        List<UserFollowing> userFollowingList = UserFollowing.FromEntityList(userFollowingRepository.findByUserIdAndOrganizationId(id, orgId));
+        if (userFollowingList == null || userFollowingList.size() < 1) {
+            return null;
+        }
+        return userFollowingList.get(0);
+    }
+
     @RequestMapping(value = "/link", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public long userLikeProduct(@RequestBody UserFollowing userFollowing) {
+    public long userFollow(@RequestBody UserFollowing userFollowing) {
         userFollowing.setCreatedDateTime(DateTime.now());  //set created datetime
         userFollowing.setLastUpdatedDateTime(DateTime.now());
         UserFollowingEntity newEntity = userFollowingRepository.save(UserFollowing.ToEntity(userFollowing));
@@ -77,7 +90,7 @@ public class UserFollowingController {
 
     @RequestMapping(value = "/unlink/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void userUnlikeProduct(@PathVariable(value = "id") Long Id) {
+    public void userUnfollow(@PathVariable(value = "id") Long Id) {
         userFollowingRepository.delete(Id);
     }
 }

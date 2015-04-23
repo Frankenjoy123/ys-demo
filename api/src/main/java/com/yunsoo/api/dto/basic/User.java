@@ -17,7 +17,7 @@ public class User {
     private String thumbnailContentType;
     private Long thumbnailContentLength;
     private int ysCreadit;
-    private int statusId;
+    private String status;
     private String createdDateTime;
 
     public Long getId() {
@@ -116,12 +116,12 @@ public class User {
         this.ysCreadit = ysCreadit;
     }
 
-    public int getStatusId() {
-        return statusId;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getCreatedDateTime() {

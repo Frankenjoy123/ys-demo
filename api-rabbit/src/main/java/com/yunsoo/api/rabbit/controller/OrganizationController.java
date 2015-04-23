@@ -28,9 +28,9 @@ public class OrganizationController {
 
     @RequestMapping(value = "/{id}/thumbnail/{imageKey}", method = RequestMethod.GET)
     public ResponseEntity<?> getThumbnail(
-            @PathVariable(value = "id") Long id,
+            @PathVariable(value = "id") String id,
             @PathVariable(value = "imageKey") String imageKey) {
-        if (id == null || id <= 0) throw new BadRequestException("ID不能小于0！");
+        if (id == null || id.isEmpty()) throw new BadRequestException("ID不能小于0！");
         if (imageKey == null || imageKey.isEmpty()) throw new BadRequestException("imageKey 不能为空！");
         try {
             FileObject fileObject = dataAPIClient.get("organization/{id}/thumbnail/{imageKey}", FileObject.class, id, imageKey);

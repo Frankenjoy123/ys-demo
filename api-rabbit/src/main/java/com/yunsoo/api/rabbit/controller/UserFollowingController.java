@@ -46,20 +46,23 @@ public class UserFollowingController {
         } catch (NotFoundException ex) {
             throw new NotFoundException(40401, "User following list not found for useid = " + id);
         }
-
     }
 
     @RequestMapping(value = "/link", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public long userFollowingOrgs(@RequestBody UserFollowing userFollowing) {
-        long id = dataAPIClient.post("/user/following/link", userFollowing, Long.class);
-        return id;
+        UserFollowing existingUserFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class, userFollowing.getUserId(), userFollowing.getOrganizationId());
+        if (existingUserFollowing != null) {
+            return existingUserFollowing.getId();
+        } else {
+            long id = dataAPIClient.post("/user/following/link", userFollowing, Long.class);
+            return id;
+        }
     }
 
     @RequestMapping(value = "/unlink/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void userUnfollowOrg(@RequestHeader(AUTH_HEADER_NAME) String token, @PathVariable(value = "id") Long Id) {
-
         if (Id == null || Id < 0) {
             throw new BadRequestException("Id不应小于0！");
         }

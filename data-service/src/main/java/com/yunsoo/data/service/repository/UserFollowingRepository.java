@@ -14,6 +14,8 @@ public interface UserFollowingRepository extends PagingAndSortingRepository<User
 
     Iterable<UserFollowingEntity> findByUserId(String userId);
 
+    Iterable<UserFollowingEntity> findByUserIdAndOrganizationId(String userId, String organizationId);
+
     Page<UserFollowingEntity> findByUserId(String userId, Pageable pageable);
 
     Iterable<UserFollowingEntity> findByOrganizationId(String organizationId);

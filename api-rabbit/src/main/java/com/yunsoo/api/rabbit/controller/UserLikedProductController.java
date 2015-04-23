@@ -60,8 +60,14 @@ public class UserLikedProductController {
         if (userLikedProduct == null) {
             throw new BadRequestException("UserLikedProduct 不能为空！");
         }
-        long id = dataAPIClient.post("/user/collection/like", userLikedProduct, Long.class);
-        return new ResponseEntity<Long>(id, HttpStatus.OK);
+
+        UserLikedProduct exsitingUserLikedProduct = dataAPIClient.get("/user/collection/userid/{userid}/product/{pid}", UserLikedProduct.class, userLikedProduct.getUserId(), userLikedProduct.getBaseProductId());
+        if (exsitingUserLikedProduct != null) {
+            return new ResponseEntity<Long>(exsitingUserLikedProduct.getId(), HttpStatus.OK);
+        } else {
+            long id = dataAPIClient.post("/user/collection/like", userLikedProduct, Long.class);
+            return new ResponseEntity<Long>(id, HttpStatus.OK);
+        }
     }
 
     @RequestMapping(value = "/unlike/{Id}", method = RequestMethod.DELETE)
