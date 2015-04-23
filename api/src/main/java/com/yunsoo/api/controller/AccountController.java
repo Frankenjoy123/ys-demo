@@ -44,6 +44,13 @@ public class AccountController {
         return accountDomain.getByOrgId(orgId).stream().map(this::fromAccountObject).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "current/organization/account", method = RequestMethod.GET)
+    public List<Account> getAllCurrentOrgAccounts() {
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        return accountDomain.getByOrgId(orgId).stream().map(this::fromAccountObject).collect(Collectors.toList());
+    }
+
+
     private Account fromAccountObject(AccountObject accountObject) {
         if (accountObject == null) {
             return null;
