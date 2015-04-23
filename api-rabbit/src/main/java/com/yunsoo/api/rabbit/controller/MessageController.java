@@ -29,8 +29,6 @@ import java.util.List;
 public class MessageController {
 
     private RestClient dataAPIClient;
-    //    @Autowired
-//    private UserDomain userDomain;
     private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
 
@@ -39,7 +37,7 @@ public class MessageController {
         this.dataAPIClient = dataAPIClient;
     }
 
-    @RequestMapping(value = "/pushTo/{userid}/type/{typeid}", method = RequestMethod.GET)
+    //    @RequestMapping(value = "/pushTo/{userid}/type/{typeid}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#message, 'message:read')")
     @PreAuthorize("hasPermission(#userid, 'UserInToken', 'message:read')")
     public List<Message> getNewMessagesByUserId(@RequestHeader(AUTH_HEADER_NAME) String token,

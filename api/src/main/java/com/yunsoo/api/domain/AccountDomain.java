@@ -36,7 +36,7 @@ public class AccountDomain {
 
     public AccountObject getByOrgIdAndIdentifier(String orgId, String identifier) {
         AccountObject[] accountObjects = dataAPIClient.get("account?org_id={0}&identifier={1}", AccountObject[].class, orgId, identifier);
-        if (accountObjects == null || accountObjects.length < 0) {
+        if (accountObjects == null || accountObjects.length <= 0) {
             return null;
         } else if (accountObjects.length > 1) {
             throw new InternalServerErrorException("duplicated account found by [org_id: " + orgId + ", identifier: " + identifier + "]");
