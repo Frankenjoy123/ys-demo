@@ -15,10 +15,10 @@ public class OrgTransactionDetailEntity {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "order_id")
-    private long orderId;
+    private Long orderId;
 
     @Column(name = "org_id")
     private String orgId;
@@ -30,7 +30,7 @@ public class OrgTransactionDetailEntity {
     private String accountId;
 
     @Column(name = "mount")
-    private long mount;
+    private Long mount;
 
     @Column(name = "desc")
     private String desc;
@@ -42,19 +42,19 @@ public class OrgTransactionDetailEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public long getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(long orderId) {
+    public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 
@@ -82,11 +82,11 @@ public class OrgTransactionDetailEntity {
         this.accountId = accountId;
     }
 
-    public long getMount() {
+    public Long getMount() {
         return mount;
     }
 
-    public void setMount(long mount) {
+    public void setMount(Long mount) {
         this.mount = mount;
     }
 

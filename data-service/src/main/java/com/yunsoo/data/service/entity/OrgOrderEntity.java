@@ -15,7 +15,7 @@ public class OrgOrderEntity {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "org_id")
     private String orgId;
@@ -24,10 +24,10 @@ public class OrgOrderEntity {
     private String batchId;
 
     @Column(name = "total")
-    private long total;
+    private Long total;
 
     @Column(name = "remain")
-    private long remain;
+    private Long remain;
 
     @Column(name = "active")
     private Boolean active;
@@ -43,11 +43,11 @@ public class OrgOrderEntity {
     private DateTime createdDateTime;
 
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -67,19 +67,19 @@ public class OrgOrderEntity {
         this.batchId = batchId;
     }
 
-    public long getTotal() {
+    public Long getTotal() {
         return total;
     }
 
-    public void setTotal(long total) {
+    public void setTotal(Long total) {
         this.total = total;
     }
 
-    public long getRemain() {
+    public Long getRemain() {
         return remain;
     }
 
-    public void setRemain(long remain) {
+    public void setRemain(Long remain) {
         this.remain = remain;
     }
 
