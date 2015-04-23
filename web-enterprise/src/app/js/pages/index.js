@@ -61,23 +61,23 @@
             });
     }]);
 
-    app.controller("rootCtrl", ["$scope", "$timeout", function ($scope, $timeout) {
+    app.controller("rootCtrl", ["$scope", "$timeout", "$http", function ($scope, $timeout, $http) {
         if (!$.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME)) {
             //todo
             window.location.href = "login.html";
         }
-        $scope.user = {
-            name: "Jane Doe",
-            pic: "img/avatar3.png",
-            status: "online",
-            title: "支持工程师",
-            since: "2015-03-01"
-        };
+
         $scope.logout = function () {
             console.log('[logout]');
             $.removeCookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME, {path: '/'});
             window.location.href = "login.html";
         };
+
+        $http.get("/api/account/current")
+            .success(function (data) {
+                $scope.account = data;
+            }).error(function (data, state) {
+            });
 
         $scope.alertMsgs = [];
         function getMsgIndex(msgs, msg, level) {
@@ -106,5 +106,7 @@
                 })(index), 3 * 1000);
             }
         }
+
+        $scope.currentContext = {};
     }]);
 })();

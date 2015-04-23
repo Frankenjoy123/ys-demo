@@ -128,7 +128,7 @@
         $scope.itemIndex = 0;
 
         var getMessageInfo = function (currentPage) {
-            msgService.getInfo("2k0r2yvydbxbvibvgfm",currentPage,function(data){
+            msgService.getInfo($scope.account.org_id,currentPage,function(data){
                 $scope.data = data;
                 $scope.dataTable = new AngularDataTable($scope.data);
             });

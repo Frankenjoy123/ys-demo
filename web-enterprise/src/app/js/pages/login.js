@@ -36,14 +36,17 @@
                     $scope.addAlertMsg("密码不能为空", "danger");
                     return;
                 }
-                loginService.login($scope.org_id, $scope.username, $scope.password, function(data){
+                loginService.login($scope.org_id, $scope.username, $scope.password, function (data) {
                     if (!data || !data.access_token || !data.access_token.token) {
                         $scope.addAlertMsg("登陆失败，请再次尝试", "danger");
                         return;
                     }
-                    $.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME, data.access_token.token, {expires: data.access_token.expires_in / (60 * 60 * 24), path: '/'});
+                    $.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME, data.access_token.token, {
+                        expires: data.access_token.expires_in / (60 * 60 * 24),
+                        path: '/'
+                    });
                     window.location.href = "index.html";
-                },function(){
+                }, function () {
                     $scope.addAlertMsg("登陆失败，请再次尝试", "danger");
                 });
             };
