@@ -95,7 +95,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         List<String> keyTypeCodes = batch.getProductKeyTypeCodes();
 
         Assert.isTrue(quantity > 0, "quantity must be greater than 0");
-        Assert.isTrue(keyTypeCodes.size() > 0, "productKeyTypeIds must not be empty");
+        Assert.isTrue(keyTypeCodes.size() > 0, "productKeyTypeCodes must not be empty");
 
         //generate productKeys
         List<List<String>> keyList = generateProductKeys(batch);
