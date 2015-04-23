@@ -100,9 +100,9 @@ public class ProductBaseController {
     }
 
     //patch update, we don't provide functions like update with set null properties.
-    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public void patchUpdate(@PathVariable(value = "id") String id, @RequestBody ProductBaseObject productBase) {
-        productBase.setId(id);
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public void patchUpdate(@RequestBody ProductBaseObject productBase) {
+        //productBase.setId(id);
         ProductBase p = new ProductBase();
         BeanUtils.copyProperties(productBase, p);
         productBaseService.patchUpdate(p);

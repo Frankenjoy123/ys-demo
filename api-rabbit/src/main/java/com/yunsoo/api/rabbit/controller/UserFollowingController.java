@@ -2,12 +2,10 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
-import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +29,8 @@ public class UserFollowingController {
 
     @RequestMapping(value = "/who/{id}", method = RequestMethod.GET)
     public List<UserFollowing> getFollowingOrgsByUserId(@PathVariable(value = "id") String id,
-                                                           @RequestParam(value = "index") Integer index,
-                                                           @RequestParam(value = "size") Integer size) {
+                                                        @RequestParam(value = "index") Integer index,
+                                                        @RequestParam(value = "size") Integer size) {
         if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
         if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
@@ -60,16 +58,20 @@ public class UserFollowingController {
         }
     }
 
-    @RequestMapping(value = "/unlink/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/unlink", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void userUnfollowOrg(@RequestHeader(AUTH_HEADER_NAME) String token, @PathVariable(value = "id") Long Id) {
-        if (Id == null || Id < 0) {
-            throw new BadRequestException("Id不应小于0！");
+    public void userUnfollowOrg(@RequestHeader(AUTH_HEADER_NAME) String token, @RequestBody UserFollowing userFollowing) {
+        if (userFollowing == null) throw new BadRequestException("userFollowing 不能为空！");
+
+        UserFollowing existingUserFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class,
+                userFollowing.getUserId(), userFollowing.getOrganizationId());
+        if (existingUserFollowing == null) {
+            throw new NotFoundException(40401, "找不到用户follow记录！");
         }
-        UserFollowing userFollowing = dataAPIClient.get("/user/following/{id}", UserFollowing.class, Id);
+//        UserFollowing userFollowing = dataAPIClient.get("/user/following/{id}", UserFollowing.class, Id);
         if (!userDomain.validateToken(token, userFollowing.getUserId())) {
             throw new UnauthorizedException("不能删除其他用户的收藏信息！");
         }
-        dataAPIClient.delete("user/following/unlink/{0}", Id);
+        dataAPIClient.delete("user/following/unlink/{0}", existingUserFollowing.getId());
     }
 }
