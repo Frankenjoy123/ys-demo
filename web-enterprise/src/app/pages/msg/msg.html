@@ -21,8 +21,6 @@
                 "bAutoWidth": false,
                 "bInfo": false
             });
-
-            $('#editHead').attr('class', '');
         });
     </script>
     <div class="box-group">
@@ -44,7 +42,7 @@
                     <div class="col-xs-12">
                         <table id="msgTable" class="table table-hover dataTable">
                             <thead>
-                            <tr role="row" onclick="document.getElementById('editHead').setAttribute('class', '')">
+                            <tr role="row">
                                 <th ng-click="dataTable.sort('id')">ID&nbsp;</th>
                                 <th ng-click="dataTable.sort('title')">信息名称
                                 </th>

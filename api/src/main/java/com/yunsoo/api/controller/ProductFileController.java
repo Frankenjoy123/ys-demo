@@ -21,19 +21,21 @@ public class ProductFileController {
     @Autowired
     private RestClient dataAPIClient;
 
-    @RequestMapping(value = "/createby/{createby}/status/{status}/filetype/{filetype}/page/{page}", method = RequestMethod.GET)
-    public List<ProductFileObject> get(@PathVariable(value = "createby") String createby,
-                                       @PathVariable(value = "status") Integer status,
-                                       @PathVariable(value = "filetype") Integer filetype,
-                                       @PathVariable(value = "page") Integer page) {
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<ProductFileObject> get(@RequestParam(value = "createby", required = true) String createby,
+                                       @RequestParam(value = "status", required = false, defaultValue = "0") Integer status,
+                                       @RequestParam(value = "filetype", required = false, defaultValue = "0") Integer filetype,
+                                       @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
+                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
         ProductFileObject[] objects =
-                dataAPIClient.get("productfile/createby/{createby}/status/{status}/filetype/{filetype}/page/{page}",
+                dataAPIClient.get("productfile?createby={createby}&&status={status}&&filetype={filetype}&&pageIndex={pageIndex}&&pageSize={pageSize}",
                         ProductFileObject[].class,
                         createby,
                         status,
                         filetype,
-                        page);
+                        pageIndex,
+                        pageSize);
 
         if (objects == null)
             throw new NotFoundException("Product file not found");
@@ -41,13 +43,13 @@ public class ProductFileController {
         return Arrays.asList(objects);
     }
 
-    @RequestMapping(value = "/countby/createby/{createby}/status/{status}/filetype/{filetype}", method = RequestMethod.GET)
-    public Long getCount(@PathVariable(value = "createby") String createby,
-                         @PathVariable(value = "status") Integer status,
-                         @PathVariable(value = "filetype") Integer filetype) {
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public Long getCount(@RequestParam(value = "createby", required = true) String createby,
+                         @RequestParam(value = "status", required = false, defaultValue = "0") Integer status,
+                         @RequestParam(value = "filetype", required = false, defaultValue = "0") Integer filetype) {
 
         Long count = 0l;
-        count = dataAPIClient.get("productfile/countby/createby/{createby}/status/{status}/filetype/{filetype}",
+        count = dataAPIClient.get("productfile/count?createby={createby}&&status={status}&&filetype={filetype}",
                 Long.class,
                 createby,
                 status,

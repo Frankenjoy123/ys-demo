@@ -18,7 +18,7 @@
                 return this;
             },
             getLogisticsHistoryInfoCount: function (fnSuccess, fnError) {
-                $http.get("/api/productfile/countby/createby/1/status/0/filetype/2")
+                $http.get("/api/productfile/count?createby=1&&status=0&&filetype=2")
                     .success(function (data) {
                         fnSuccess(data);
                     }).error(function (data, state) {
@@ -27,7 +27,7 @@
                 return this;
             },
             getLogisticsHistoryInfo: function (pageIndex, fnSuccess, fnError) {
-                $http.get("/api/productfile/createby/1/status/0/filetype/2/page/" + pageIndex)
+                $http.get("/api/productfile?createby=1&&status=0&&filetype=2&&pageIndex=" + pageIndex)
                     .success(function (data) {
                         fnSuccess(data);
                     }).error(function (data, state) {
