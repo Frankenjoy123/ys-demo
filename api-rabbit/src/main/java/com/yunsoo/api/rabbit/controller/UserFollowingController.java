@@ -53,7 +53,7 @@ public class UserFollowingController {
         if (existingUserFollowing != null) {
             return existingUserFollowing.getId();
         } else {
-            long id = dataAPIClient.post("/user/following/link", userFollowing, Long.class);
+            Long id = dataAPIClient.post("/user/following/link", userFollowing, long.class);
             return id;
         }
     }
