@@ -8,6 +8,7 @@ import com.yunsoo.api.rabbit.dto.LogisticsPath;
 import com.yunsoo.api.rabbit.dto.basic.*;
 import com.yunsoo.api.rabbit.object.TScanRecord;
 import com.yunsoo.api.rabbit.object.ValidationResult;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -88,8 +89,8 @@ public class ScanController {
         scanResult.setLogisticsList(getLogisticsInfo(scanRequestBody.getKey()));
 
         //5, get company information.
-        Organization organization = dataAPIClient.get("organization/id/{id}", Organization.class, scanResult.getProduct().getOrgId());
-        scanResult.setManufacturer(organization);
+        OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, scanResult.getProduct().getOrgId());
+        scanResult.setManufacturer(fromOrganizationObject(organizationObject));
 
         //6, set validation result by our validation strategy.
         scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), currentUser, scanRecordList));
@@ -213,5 +214,19 @@ public class ScanController {
             scanRecord.setLocation("未公开地址"); //用户选择不公开隐私地址信息
         }
         return dataAPIClient.post("scan", scanRecord, Long.class);
+    }
+
+    private Organization fromOrganizationObject(OrganizationObject object) {
+        Organization entity = new Organization();
+        entity.setId(object.getId());
+        entity.setName(object.getName());
+        entity.setStatusCode(object.getStatusCode());
+        entity.setDescription(object.getDescription());
+        entity.setTypeCode(object.getTypeCode());
+        entity.setImageUri(object.getImageUri());
+        entity.setDetails(object.getDetails());
+        entity.setCreatedAccountId(object.getCreatedAccountId());
+        entity.setCreatedDateTime(object.getCreatedDateTime());
+        return entity;
     }
 }

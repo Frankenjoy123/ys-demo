@@ -26,14 +26,14 @@ public class OrganizationController {
     @Autowired
     private RestClient dataAPIClient;
 
-    @RequestMapping(value = "/thumbnail/{id}/{imagekey}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/thumbnail/{imageKey}", method = RequestMethod.GET)
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") Long id,
-            @PathVariable(value = "imagekey") String imagekey) {
+            @PathVariable(value = "imageKey") String imageKey) {
         if (id == null || id <= 0) throw new BadRequestException("ID不能小于0！");
-        if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("imagekey不能为空！");
+        if (imageKey == null || imageKey.isEmpty()) throw new BadRequestException("imageKey 不能为空！");
         try {
-            FileObject fileObject = dataAPIClient.get("organization/thumbnail/{id}/{imagekey}", FileObject.class, id, imagekey);
+            FileObject fileObject = dataAPIClient.get("organization/{id}/thumbnail/{imageKey}", FileObject.class, id, imageKey);
             if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())
@@ -45,7 +45,7 @@ public class OrganizationController {
                         .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
             }
         } catch (NotFoundException ex) {
-            throw new NotFoundException(40402, "找不到组织图片 id = " + id + "  client = " + imagekey);
+            throw new NotFoundException(40402, "找不到组织图片 id = " + id + "  client = " + imageKey);
         }
     }
 }
