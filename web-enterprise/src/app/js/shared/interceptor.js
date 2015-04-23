@@ -78,6 +78,7 @@
                         config.url = absolute(config.url);
                         config.cache = false;
                         config.headers['X-Requested-With'] = 'XMLHttpRequest';
+                        config.headers[YUNSOO_CONFIG.HEADER_APP_ID] = YUNSOO_CONFIG.APP_ID;
                         var accessToken = $.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME);
                         accessToken && (config.headers[YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
 

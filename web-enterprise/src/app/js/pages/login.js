@@ -3,9 +3,10 @@
 
     app.factory("loginService", ["$http", function ($http) {
         return {
-            login: function (username, password, fnSuccess, fnError) {
-                $http.post("/api/account/login", {
-                    username: username,
+            login: function (org_id, username, password, fnSuccess, fnError) {
+                $http.post("/api/auth/login", {
+                    org_id: org_id,
+                    identifier: username,
                     password: password
                 }).success(function (data) {
                     fnSuccess(data);
@@ -20,8 +21,13 @@
         function ($scope, $timeout, loginService) {
             $scope.username = "";
             $scope.password = "";
+            $scope.org_id = "";
             $scope.alertMsgs = [];
             $scope.login = function () {
+                if (!$scope.org_id) {
+                    $scope.addAlertMsg("组织ID不能为空", "danger");
+                    return;
+                }
                 if (!$scope.username) {
                     $scope.addAlertMsg("用户名不能为空", "danger");
                     return;
@@ -30,12 +36,12 @@
                     $scope.addAlertMsg("密码不能为空", "danger");
                     return;
                 }
-                loginService.login($scope.username, $scope.password, function(data){
-                    if (!data || !data.accessToken) {
+                loginService.login($scope.org_id, $scope.username, $scope.password, function(data){
+                    if (!data || !data.access_token || !data.access_token.token) {
                         $scope.addAlertMsg("登陆失败，请再次尝试", "danger");
                         return;
                     }
-                    $.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME, data.accessToken, {expires: 7, path: '/'});
+                    $.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME, data.access_token.token, {expires: data.access_token.expires_in / (60 * 60 * 24), path: '/'});
                     window.location.href = "index.html";
                 },function(){
                     $scope.addAlertMsg("登陆失败，请再次尝试", "danger");
