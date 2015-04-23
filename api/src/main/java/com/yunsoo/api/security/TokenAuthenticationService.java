@@ -3,18 +3,16 @@ package com.yunsoo.api.security;
 import com.yunsoo.api.dto.basic.Token;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TAccountStatusEnum;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.DatatypeConverter;
 
 /**
  * Created by  : Zhe
@@ -33,21 +31,25 @@ public class TokenAuthenticationService {
     @Autowired
     public TokenAuthenticationService(@Value("${yunsoo.token_secret}") String secret) {
         //load secret Key from properties file.
-        tokenHandler = new TokenHandler(DatatypeConverter.parseBase64Binary(secret));
+        tokenHandler = new TokenHandler();
     }
 
 
-    public Authentication getAuthentication(HttpServletRequest request) {
+    public AccountAuthentication getAuthentication(HttpServletRequest request) {
         final String token = request.getHeader(ACCESS_TOKEN_HEADER_NAME);
         //support anonymous visit(for token is empty), or validate and parse from token
-        TAccount tAccount = (token == null) ? tAccount = new TAccount(TAccountStatusEnum.ANONYMOUS) : tokenHandler.parseUserFromToken(token);
+        TAccount tAccount = (token == null) ? new TAccount(TAccountStatusEnum.ANONYMOUS) : tokenHandler.parseAccessToken(token);
         return new AccountAuthentication(tAccount);
     }
 
+    public AccountAuthentication getAuthentication() {
+        return (AccountAuthentication) SecurityContextHolder.getContext().getAuthentication();
+    }
+
     //Mainly used by AuthController
-    public Token generateAccessToken(String accountId) {
-        DateTime expires = DateTime.now().plusMinutes(10);
-        return new Token(tokenHandler.createAccessToken(accountId, expires), expires);
+    public Token generateAccessToken(String accountId, String orgId) {
+        DateTime expires = DateTime.now().plusMinutes(60);
+        return new Token(tokenHandler.createAccessToken(accountId, orgId, expires), expires);
     }
 
     //By pass the filter way, for each controller to check permission on their needs.
@@ -56,7 +58,7 @@ public class TokenAuthenticationService {
             return false;
         }
 
-        TAccount tAccount = tokenHandler.parseUserFromToken(token);
+        TAccount tAccount = tokenHandler.parseAccessToken(token);
         if (!tAccount.isAnonymous()) {
             throw new ForbiddenException(40101, "Action placeholder", "Anonymous user is denied!");
         } else if (!tAccount.isAccountNonExpired()) {

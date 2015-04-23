@@ -2,18 +2,10 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.dto.basic.Account;
-import com.yunsoo.api.object.TAccount;
-import com.yunsoo.api.object.TAccountToken;
-import com.yunsoo.api.security.AccountAuthentication;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,9 +22,15 @@ public class AccountController {
     @Autowired
     private AccountDomain accountDomain;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Account getById(@PathVariable("id") String id) {
         AccountObject accountObject;
+        if ("current".equals(id)) {
+            id = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        }
         try {
             accountObject = accountDomain.getById(id);
         } catch (NotFoundException ex) {

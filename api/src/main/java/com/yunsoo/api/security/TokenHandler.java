@@ -1,119 +1,130 @@
 package com.yunsoo.api.security;
 
-/**
- * Created by Zhe on 2015/3/5.
- */
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TAccountStatusEnum;
+import com.yunsoo.common.util.HashUtils;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+
+/**
+ * Created by  : Zhe
+ * Created on  : 2015/3/5
+ * Descriptions:
+ */
 public final class TokenHandler {
 
-    private static final String HMAC_ALGO = "HmacSHA256";
-    private static final String SEPARATOR = ".";
-    private static final String SEPARATOR_SPLITTER = "\\.";
+    private static final String SPLITTER = ",";
+    private static final String SALT = "LEmrmtPfWc1txs9uC9A7PevSVSbBbQL0";
 
-    private final Mac hmac;
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenHandler.class);
 
-    public TokenHandler(byte[] secretKey) {
+    public TAccount parseAccessToken(String token) {
+        String src = decodeToken(token);
+        if (src == null) {
+            //token invalid
+            LOGGER.error("Token invalid [token: {}]", token);
+            return new TAccount(TAccountStatusEnum.INVALID_TOKEN);
+        }
+        final String[] parts = src.split(SPLITTER);
+        if (parts.length != 3) {
+            LOGGER.error("Token invalid [token: {}]", token);
+            return new TAccount(TAccountStatusEnum.INVALID_TOKEN);
+        }
+        String accountId = parts[0];
+        String orgId = parts[1];
+        DateTime expires = new DateTime(Long.parseLong(parts[2]));
+
+        if (expires.isBeforeNow()) {
+            LOGGER.error("Token expired [token: {}, expires: {}]", token, expires.toString());
+            return new TAccount(TAccountStatusEnum.TOKEN_EXPIRED);
+        }
+        TAccount account = new TAccount(TAccountStatusEnum.ENABLED);
+        account.setId(accountId);
+        account.setOrgId(orgId);
+        return account;
+    }
+
+    public String createAccessToken(String accountId, String orgId, DateTime expires) {
+        return encodeToken(accountId + SPLITTER + orgId + SPLITTER + expires.getMillis());
+    }
+
+    private String encodeToken(String src) {
+        byte[] srcBytes = src.getBytes(StandardCharsets.UTF_8);
+        byte[] saltBytes = SALT.getBytes(StandardCharsets.UTF_8);
+
+        byte[] hash = HashUtils.sha256(concat(srcBytes, saltBytes)); //hash
+
+        return encode(concat(new byte[]{(byte) hash.length}, hash, srcBytes));
+    }
+
+    private String decodeToken(String token) {
         try {
-            hmac = Mac.getInstance(HMAC_ALGO);
-            hmac.init(new SecretKeySpec(secretKey, HMAC_ALGO));
-        } catch (InvalidKeyException | NoSuchAlgorithmException e) {
-            throw new IllegalStateException("failed to initialize HMAC: " + e.getMessage(), e);
+            if (token == null || token.isEmpty()) {
+                return null;
+            }
+            byte[] bytes = decode(token);
+            if (bytes == null || bytes.length == 0) {
+                return null;
+            }
+            byte hashLength = bytes[0];
+            if (bytes.length <= hashLength + 1) {
+                return null;
+            }
+            byte[] hash = Arrays.copyOfRange(bytes, 1, hashLength + 1);
+            byte[] srcBytes = Arrays.copyOfRange(bytes, hashLength + 1, bytes.length);
+            byte[] saltBytes = SALT.getBytes(StandardCharsets.UTF_8);
+            byte[] checkHash = HashUtils.sha256(concat(srcBytes, saltBytes));
+            if (!compare(hash, checkHash)) {
+                return null;
+            }
+            return StringUtils.newStringUtf8(srcBytes);
+        } catch (RuntimeException ex) {
+            return null;
         }
     }
 
-    public TAccount parseUserFromToken(String token) {
-        final String[] parts = token.split(SEPARATOR_SPLITTER);
-        if (parts.length == 2 && parts[0].length() > 0 && parts[1].length() > 0) {
-            try {
-                final byte[] userBytes = fromBase64(parts[0]);
-                final byte[] hash = fromBase64(parts[1]);
 
-                //Since the createHmac method uses an undisclosed secret key internally to compute the hash,
-                // no client will be able to tamper with the content and provide a hash that is the same as the one the server will produce
-                boolean validHash = Arrays.equals(createHmac(userBytes), hash);
-                if (validHash) {
-                    final TAccount tAccount = new TAccount();
-                    String[] userInfoArray = fromJSON(userBytes).split(",");
-                    if (userInfoArray == null || userInfoArray.length != 4) {
-                        LOGGER.error("ParseUserFromToken error! UserInfoArray is empty, and UserBytes is: " + userBytes.toString());
-                    }
-                    tAccount.setId(userInfoArray[0]);
-                    tAccount.setStatus(Integer.parseInt(userInfoArray[1]));
-                    tAccount.setOrgId(userInfoArray[2]);
-                    tAccount.setExpires(Long.parseLong(userInfoArray[3]));
-                    //check if token is expired
-                    if (tAccount.getExpires() < DateTime.now().getMillis()) {
-                        tAccount.setStatus(TAccountStatusEnum.EXPIRED.value());
-                    }
-                    return tAccount;
-                }
-            } catch (IllegalArgumentException e) {
-                //log tempering attempt here
-                LOGGER.error("parseUserFromToken IllegalArgumentException Message:  ", e.getMessage());
-            } catch (Exception ex) {
-                LOGGER.error("parseUserFromToken Exception Message:  ", ex.getMessage());
+    private String encode(byte[] content) {
+        return Base64.encodeBase64String(content);
+    }
+
+    private byte[] decode(String content) {
+        return Base64.decodeBase64(content);
+    }
+
+    private byte[] concat(byte[] first, byte[]... others) {
+        int length = first.length;
+
+        for (byte[] other : others) {
+            length += other.length;
+        }
+        byte[] result = new byte[length];
+        System.arraycopy(first, 0, result, 0, first.length);
+        int offset = first.length;
+        for (byte[] other : others) {
+            System.arraycopy(other, 0, result, offset, other.length);
+            offset += other.length;
+        }
+        return result;
+    }
+
+    private boolean compare(byte[] bytes1, byte[] bytes2) {
+        if (bytes1 == null || bytes2 == null || bytes1.length != bytes2.length) {
+            return false;
+        }
+        for (int i = 0; i < bytes1.length; i++) {
+            if (bytes1[i] != bytes2[i]) {
+                return false;
             }
         }
-        return new TAccount(TAccountStatusEnum.INVALID_TOKEN);
+        return true;
     }
 
-    public String createAccessToken(String accountId, DateTime expires) {
-        //generate user information to hash
-        //String userInfo = user.getId() + "," + user.getStatus().value() + "," + user.getOrgId() + "," + user.getExpires(); // format:  [accountid,status,orgId, expires]
-//        byte[] userBytes = toJSON(userInfo);
-//        byte[] hash = createHmac(userBytes);
-//        final StringBuilder sb = new StringBuilder(170);  //170
-//        sb.append(toBase64(userBytes));
-//        sb.append(SEPARATOR);
-//        sb.append(toBase64(hash));
-//        return sb.toString();
-        return "0723f205f20a8ed6e06c9c51aad640807ec0cde691e459951ca4f7eb804ae6b2"; //todo
-    }
-
-    private String fromJSON(final byte[] userBytes) {
-        try {
-            return new ObjectMapper().readValue(new ByteArrayInputStream(userBytes), String.class);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private byte[] toJSON(String userInfo) {
-        try {
-            return new ObjectMapper().writeValueAsBytes(userInfo);
-        } catch (JsonProcessingException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private String toBase64(byte[] content) {
-        return DatatypeConverter.printBase64Binary(content);
-    }
-
-    private byte[] fromBase64(String content) {
-        return DatatypeConverter.parseBase64Binary(content);
-    }
-
-    // synchronized to guard internal hmac object
-    private synchronized byte[] createHmac(byte[] content) {
-        return hmac.doFinal(content);
-    }
 }

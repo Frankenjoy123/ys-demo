@@ -1,6 +1,6 @@
 package com.yunsoo.common.util;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -11,31 +11,58 @@ import java.security.NoSuchAlgorithmException;
  */
 public class HashUtils {
 
-    public static String md5(String src) {
+    public static byte[] md5(byte[] src) {
         return hash(src, "MD5");
     }
 
-    public static String sha1(String src) {
+    public static byte[] sha1(byte[] src) {
         return hash(src, "SHA-1");
     }
 
-    public static String sha256(String src) {
+    public static byte[] sha256(byte[] src) {
         return hash(src, "SHA-256");
     }
 
-    public static String hash(String src, String algorithm) {
+
+    public static byte[] md5(String src) {
+        return hash(src, "MD5");
+    }
+
+    public static byte[] sha1(String src) {
+        return hash(src, "SHA-1");
+    }
+
+    public static byte[] sha256(String src) {
+        return hash(src, "SHA-256");
+    }
+
+
+    public static String md5HexString(String src) {
+        return toHexString(md5(src));
+    }
+
+    public static String sha1HexString(String src) {
+        return toHexString(sha1(src));
+    }
+
+    public static String sha256HexString(String src) {
+        return toHexString(sha256(src));
+    }
+
+
+    public static byte[] hash(String src, String algorithm) {
+        return hash(src.getBytes(StandardCharsets.UTF_8), algorithm);
+    }
+
+    public static byte[] hash(byte[] src, String algorithm) {
         MessageDigest mdInstance;
-        String encoding = "UTF-8";
         try {
             mdInstance = MessageDigest.getInstance(algorithm);
-            mdInstance.update(src.getBytes(encoding));
+            mdInstance.update(src);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("hash algorithm not found: " + algorithm);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("unsupported encoding: " + encoding);
         }
-        byte[] resultBytes = mdInstance.digest();
-        return toHexString(resultBytes);
+        return mdInstance.digest();
     }
 
     private static String toHexString(byte[] bytes) {

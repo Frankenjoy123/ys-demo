@@ -4,7 +4,6 @@ import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.AccountTokenDomain;
 import com.yunsoo.api.dto.AccountLoginRequest;
 import com.yunsoo.api.dto.AccountLoginResult;
-import com.yunsoo.api.dto.basic.Account;
 import com.yunsoo.api.dto.basic.Token;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
@@ -59,7 +58,7 @@ public class AuthController {
         String password = accountObject.getPassword();
         String hashSalt = accountObject.getHashSalt();
 
-        if (!HashUtils.sha1(rawPassword + hashSalt).equals(password)) {
+        if (!HashUtils.sha1HexString(rawPassword + hashSalt).equals(password)) {
             throw new UnauthorizedException("Account is not valid");
         }
         //login successfully
@@ -69,7 +68,7 @@ public class AuthController {
 
         AccountLoginResult result = new AccountLoginResult();
         result.setPermanentToken(new Token(accountTokenObject.getPermanentToken(), accountTokenObject.getPermanentTokenExpiresDateTime()));
-        result.setAccessToken(tokenAuthenticationService.generateAccessToken(accountId));
+        result.setAccessToken(tokenAuthenticationService.generateAccessToken(accountId, orgId));
         return result;
     }
 
@@ -79,19 +78,16 @@ public class AuthController {
         if (accountTokenObject == null || accountTokenObject.getPermanentTokenExpiresDateTime().isBeforeNow()) {
             throw new UnauthorizedException("permanent_token invalid");
         }
+        String accountId = accountTokenObject.getAccountId();
+        AccountObject accountObject = accountDomain.getById(accountId);
+        String orgId = accountObject.getOrgId();
 
-        Token accessToken = tokenAuthenticationService.generateAccessToken(accountTokenObject.getAccountId());
+        Token accessToken = tokenAuthenticationService.generateAccessToken(accountId, orgId);
 
         LOGGER.info("AccessToken refreshed for Account [id: {}]", accountTokenObject.getAccountId());
 
         return accessToken;
     }
 
-    public Account getCurrentAccount() {
-        //        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication instanceof AccountAuthentication) {
-//            return ((AccountAuthentication) authentication).getDetails();
-//        }
-        return null;
-    }
+
 }

@@ -14,9 +14,12 @@ public class HashUtilsTest {
         String salt = RandomUtils.generateString(8);
         String src = "admin" + salt;
         System.out.println(salt);
-        System.out.println(HashUtils.md5(src));
-        System.out.println(HashUtils.sha1(src));
-        System.out.println(HashUtils.sha256(src));
+        System.out.println(HashUtils.md5HexString(src));
+        System.out.println(HashUtils.sha1HexString(src));
+        System.out.println(HashUtils.sha256HexString(src));
+        System.out.println(HashUtils.sha1(src).length);
+        System.out.println(HashUtils.sha256(src).length);
 
     }
+
 }
