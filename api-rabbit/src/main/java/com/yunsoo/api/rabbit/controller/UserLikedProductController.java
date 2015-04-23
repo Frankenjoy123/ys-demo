@@ -57,9 +57,9 @@ public class UserLikedProductController {
 //    @PreAuthorize("hasPermission(#usercollection, 'usercollection:create')")
     @PreAuthorize("hasPermission(#userLikedProduct, 'authenticated')")
     public ResponseEntity<?> createUserLikedProduct(@RequestBody UserLikedProduct userLikedProduct) throws Exception {
-//        if (!userDomain.validateToken(token, userLikedProduct.getUserId())) {
-//            throw new UnauthorizedException("不能修改其他用户的收藏信息！");
-//        }
+        if (userLikedProduct == null) {
+            throw new BadRequestException("UserLikedProduct 不能为空！");
+        }
         long id = dataAPIClient.post("/user/collection/like", userLikedProduct, Long.class);
         return new ResponseEntity<Long>(id, HttpStatus.OK);
     }
