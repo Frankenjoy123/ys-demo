@@ -15,7 +15,7 @@ public class UserFollowingEntity {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "user_id")
     private String userId;
@@ -24,7 +24,7 @@ public class UserFollowingEntity {
     private String organizationId;
 
     @Column(name = "last_read_message_id")
-    private long lastReadMessageId;
+    private Long lastReadMessageId;
 
     @Column(name = "is_following")
     private Boolean isFollowing;
@@ -37,11 +37,11 @@ public class UserFollowingEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedDateTime;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -62,11 +62,11 @@ public class UserFollowingEntity {
         this.organizationId = organizationId;
     }
 
-    public long getLastReadMessageId() {
+    public Long getLastReadMessageId() {
         return lastReadMessageId;
     }
 
-    public void setLastReadMessageId(long lastReadMessageId) {
+    public void setLastReadMessageId(Long lastReadMessageId) {
         this.lastReadMessageId = lastReadMessageId;
     }
 
