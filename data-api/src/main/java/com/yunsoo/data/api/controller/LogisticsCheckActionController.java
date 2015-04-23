@@ -44,10 +44,8 @@ public class LogisticsCheckActionController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<ResultWrapper> createLogisticsCheckAction(@RequestBody LogisticsCheckAction action) {
-        int id = actionService.save(action);
-        HttpStatus status = id > 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
+    public void createLogisticsCheckAction(@RequestBody LogisticsCheckAction action) {
+        actionService.save(action);
     }
 
     @RequestMapping(value = "", method = RequestMethod.PUT)
