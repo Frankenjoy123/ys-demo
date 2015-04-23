@@ -56,7 +56,8 @@
                                 <td>
                                     <span>{{account.identifier}}</span>
                                 </td>
-                                <td>{{account.status_code == "available" ? "正常" : "停用"}}</td>
+                                <td>
+                                    <span ng-show="account.status_code == 'available'"><span class="label label-success">正常</span></span>
                                 <td>
                                     <span>{{account.email}}</span>
                                 </td>
