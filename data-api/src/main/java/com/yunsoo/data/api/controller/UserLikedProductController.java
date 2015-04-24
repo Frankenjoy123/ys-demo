@@ -51,7 +51,7 @@ public class UserLikedProductController {
     public long userLikeProduct(@RequestBody UserLikedProduct userLikedProduct) {
         userLikedProduct.setCreatedDateTime(DateTime.now());
         userLikedProduct.setLastUpdatedDateTime(DateTime.now());
-        UserLikedProductEntity newEntity = userLikedProductRepository.save(UserLikedProduct.ToEntity(userLikedProduct));
+        UserLikedProductEntity newEntity = userLikedProductRepository.saveAndFlush(UserLikedProduct.ToEntity(userLikedProduct));
         return newEntity.getId();
     }
 
