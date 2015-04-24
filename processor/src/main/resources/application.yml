@@ -31,6 +31,8 @@ spring:
 yunsoo:
     debug: true
     processor:
+        productkeybatch:
+            queuename: test-productkeybatch
         client:
             dataapi:
                 baseurl: http://localhost:8080/

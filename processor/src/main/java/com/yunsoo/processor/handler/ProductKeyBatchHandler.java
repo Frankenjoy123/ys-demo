@@ -23,7 +23,7 @@ public class ProductKeyBatchHandler {
     private RestClient dataAPIClient;
 
     public void execute(ProductKeyBatchMassage message) {
-        String batchId = message.getBatchId();
+        String batchId = message.getProductKeyBatchId();
         System.out.println("Processing productkeybatch: " + batchId);
 
         ProductKeyBatchObject batch = dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, batchId);
