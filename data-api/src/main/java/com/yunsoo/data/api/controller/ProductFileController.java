@@ -32,7 +32,7 @@ public class ProductFileController {
         ProductFileEntity entity = new ProductFileEntity();
         BeanUtils.copyProperties(productFileObject, entity);
 
-        ProductFileEntity newEntity = productFileRepository.save(entity);
+        ProductFileEntity newEntity = productFileRepository.saveAndFlush(entity);
         return newEntity.getId();
     }
 
