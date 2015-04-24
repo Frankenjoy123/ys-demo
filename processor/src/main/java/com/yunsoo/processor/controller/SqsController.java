@@ -3,6 +3,7 @@ package com.yunsoo.processor.controller;
 import com.yunsoo.processor.message.ProductKeyBatchMassage;
 import com.yunsoo.processor.handler.ProductKeyBatchHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -25,7 +26,10 @@ public class SqsController {
 
     private static final String HEADER_PAYLOAD_NAME = "PayloadName";
 
-    private static final String PRODUCTKEYBATCH_QUEUE_NAME = "productkeybatch";
+    @Value("${yunsoo.processor.productkeybatch.queuename}")
+    private String productkeybatchQueueName;
+
+    private static final String PRODUCTKEYBATCH_QUEUE_NAME = "dev-productkeybatch";
 
     @Autowired
     private QueueMessagingTemplate queueMessagingTemplate;
@@ -37,7 +41,7 @@ public class SqsController {
     public void sendToMessageQueue(@RequestBody ProductKeyBatchMassage message) {
         Map<String, Object> headers = new HashMap<>();
         headers.put(HEADER_PAYLOAD_NAME, "productkeybatch");
-        queueMessagingTemplate.convertAndSend(PRODUCTKEYBATCH_QUEUE_NAME, message, headers);
+        queueMessagingTemplate.convertAndSend(productkeybatchQueueName, message, headers);
     }
 
 
