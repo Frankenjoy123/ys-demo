@@ -1,9 +1,9 @@
-package com.yunsoo.processor;
+package com.yunsoo.processor.util;
 
 /**
  * Created by  : Lijian
  * Created on  : 2015/4/24
  * Descriptions:
  */
-public enum Payload {
+public class QueueNameResolver {
 }

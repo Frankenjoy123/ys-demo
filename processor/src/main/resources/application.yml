@@ -1,5 +1,8 @@
 server:
     port: 4080
+management:
+    port: 4081
+    address: 127.0.0.1
 
 cloud:
     aws:
@@ -15,11 +18,11 @@ spring:
 spring:
     profiles: default
 
+
 yunsoo:
     debug: true
+    environment: dev
     processor:
-        productkeybatch:
-            queuename: dev-productkeybatch
         client:
             dataapi:
                 baseurl: http://dataapi:8080/
@@ -30,9 +33,8 @@ spring:
 
 yunsoo:
     debug: true
+    environment: test
     processor:
-        productkeybatch:
-            queuename: test-productkeybatch
         client:
             dataapi:
                 baseurl: http://localhost:8080/

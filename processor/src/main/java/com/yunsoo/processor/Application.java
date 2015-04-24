@@ -1,11 +1,15 @@
 package com.yunsoo.processor;
 
+import com.yunsoo.processor.controller.SqsController;
+import com.yunsoo.processor.message.ProductKeyBatchMassage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
@@ -19,6 +23,22 @@ import java.util.Arrays;
 public class Application {
 
     public static void main(String[] args) {
+
+        try {
+            Method method = SqsController.class.getDeclaredMethod("receiveMessage", ProductKeyBatchMassage.class, String.class);
+            System.out.println(method.getName());
+            MessageMapping mapping = method.getAnnotation(MessageMapping.class);
+            String[] queueNames = mapping.value();
+            for (int i = 0; i < queueNames.length; i++) {
+                queueNames[i] = "dev-" + queueNames[i];
+            }
+            System.out.println(Arrays.asList(queueNames));
+
+
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
 
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
 

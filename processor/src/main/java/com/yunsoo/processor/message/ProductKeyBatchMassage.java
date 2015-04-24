@@ -20,4 +20,8 @@ public class ProductKeyBatchMassage {
         this.productKeyBatchId = productKeyBatchId;
     }
 
+    @Override
+    public String toString() {
+        return "[ productKeyBatchId: " + productKeyBatchId + " ]";
+    }
 }
