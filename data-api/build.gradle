@@ -28,6 +28,7 @@ apply plugin: 'spring-boot'
 //}
 
 dependencies {
+    compile project(":common")
     compile project(":common-web")
     compile project(":common-data")
     compile project(':data-service')

@@ -43,7 +43,7 @@ public class OperationRecordController {
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> createRecord(@RequestBody OperationRecord operationRecord) throws Exception {
-        long id = dataAPIClient.post("/operation/record/insert", operationRecord, Long.class);
+        long id = dataAPIClient.post("/operation/record/insert", operationRecord, long.class);
         return new ResponseEntity<Long>(id, HttpStatus.OK);
     }
 }

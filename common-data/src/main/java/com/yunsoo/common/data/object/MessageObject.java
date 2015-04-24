@@ -4,7 +4,7 @@ package com.yunsoo.common.data.object;
  * Created by Zhe on 2015/3/9.
  */
 public class MessageObject {
-    private long Id;
+    private Long Id;
     private String title;
     private String body;
     private String digest;
@@ -19,11 +19,11 @@ public class MessageObject {
     private Integer lastUpdatedBy; //associate to company's accountId
     private String postShowTime;
 
-    public long getId() {
+    public Long getId() {
         return Id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         Id = id;
     }
 

@@ -65,7 +65,7 @@ public class UserLikedProductController {
         if (exsitingUserLikedProduct != null) {
             return new ResponseEntity<Long>(exsitingUserLikedProduct.getId(), HttpStatus.OK);
         } else {
-            long id = dataAPIClient.post("/user/collection/like", userLikedProduct, Long.class);
+            long id = dataAPIClient.post("/user/collection/like", userLikedProduct, long.class);
             return new ResponseEntity<Long>(id, HttpStatus.OK);
         }
     }

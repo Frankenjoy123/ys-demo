@@ -87,7 +87,7 @@ public class MessageController {
     public long createMessages(@RequestBody Message message) {
         if (message == null) throw new BadRequestException("Message不能为空！");
         message.setStatus(message_created_status); //set as created
-        long id = dataAPIClient.post("message", message, Long.class);
+        long id = dataAPIClient.post("message", message, long.class);
         return id;
     }
 
