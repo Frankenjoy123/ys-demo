@@ -51,7 +51,7 @@ public class ScanController {
         return scanRecordList;
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public long createScanRecord(@RequestBody ScanRecord scanRecord) {
         long id = scanRecordService.save(scanRecord);
