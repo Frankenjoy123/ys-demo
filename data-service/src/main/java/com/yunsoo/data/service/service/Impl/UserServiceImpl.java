@@ -9,9 +9,12 @@ import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.dao.UserDao;
 import com.yunsoo.data.service.dbmodel.UserModel;
+import com.yunsoo.data.service.entity.UserFollowingEntity;
+import com.yunsoo.data.service.repository.UserFollowingRepository;
 import com.yunsoo.data.service.service.ServiceOperationStatus;
 import com.yunsoo.data.service.service.UserService;
 import com.yunsoo.data.service.service.contract.User;
+import com.yunsoo.data.service.service.contract.UserFollowing;
 import com.yunsoo.data.service.util.SpringBeanUtil;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.data.service.util.StatusConverter;
@@ -38,6 +41,8 @@ public class UserServiceImpl implements UserService {
     private S3ItemDao s3ItemDao;
     @Autowired
     private AmazonSetting amazonSetting;
+    @Autowired
+    private UserFollowingRepository userFollowingRepository;
 
     @Override
     public User getById(String id) {
@@ -202,5 +207,12 @@ public class UserServiceImpl implements UserService {
             model.setId(user.getId());
         }
         return model;
+    }
+
+    @Transactional
+    @Override
+    public long createUserFollowing(UserFollowing userFollowing) {
+        UserFollowingEntity newEntity = userFollowingRepository.save(UserFollowing.ToEntity(userFollowing));
+        return newEntity.getId();
     }
 }

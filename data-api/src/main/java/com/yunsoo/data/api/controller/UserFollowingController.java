@@ -4,6 +4,8 @@ import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.UserFollowingEntity;
 import com.yunsoo.data.service.repository.UserFollowingRepository;
+import com.yunsoo.data.service.service.Impl.UserServiceImpl;
+import com.yunsoo.data.service.service.UserService;
 import com.yunsoo.data.service.service.contract.UserFollowing;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ public class UserFollowingController {
 
     @Autowired
     private UserFollowingRepository userFollowingRepository;
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public UserFollowing getFollowingOrgsByUserId(@PathVariable(value = "id") Long id) {
@@ -85,8 +89,9 @@ public class UserFollowingController {
     public long userFollow(@RequestBody UserFollowing userFollowing) {
         userFollowing.setCreatedDateTime(DateTime.now());  //set created datetime
         userFollowing.setLastUpdatedDateTime(DateTime.now());
-        UserFollowingEntity newEntity = userFollowingRepository.save(UserFollowing.ToEntity(userFollowing));
-        return newEntity.getId();
+        return userService.createUserFollowing(userFollowing);
+        //UserFollowingEntity newEntity = userFollowingRepository.save(UserFollowing.ToEntity(userFollowing));
+//        return newEntity.getId();
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)

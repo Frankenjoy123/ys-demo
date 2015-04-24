@@ -2,6 +2,7 @@ package com.yunsoo.data.service.service;
 
 import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.data.service.service.contract.User;
+import com.yunsoo.data.service.service.contract.UserFollowing;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,5 +29,7 @@ public interface UserService {
     public List<User> getAllUsers();
 
     public List<User> getUsersByFilter(String id, String deviceCode, String cellular, String status);
+
+    public long createUserFollowing(UserFollowing userFollowing);
 
 }

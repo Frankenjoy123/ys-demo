@@ -1,6 +1,7 @@
 package com.yunsoo.data.service.dao;
 
 import com.yunsoo.data.service.dbmodel.UserModel;
+import com.yunsoo.data.service.service.contract.UserFollowing;
 
 import java.util.List;
 
@@ -23,4 +24,5 @@ public interface UserDao {
     public List<UserModel> getAllUsers();
 
     public List<UserModel> getUsersByFilter(String id, String deviceCode, String cellular, String status);
+
 }
