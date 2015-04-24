@@ -57,7 +57,8 @@
                 controller: "configCtrl"
             })
             .otherwise({
-                redirectTo: "/"
+                templateUrl: "pages/product/product-key-manage.html",
+                controller: "productKeyManageCtrl"
             });
     }]);
 
