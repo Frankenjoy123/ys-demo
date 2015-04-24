@@ -88,9 +88,9 @@ public class UserFollowing {
         if (userFollowing == null) return null;
 
         UserFollowingEntity entity = new UserFollowingEntity();
-        BeanUtils.copyProperties(userFollowing, entity, new String[]{"createdDateTime", "id"});
-//        if (userLikedProduct.getId() != null && userLikedProduct.getId() != 0) {
-//            entity.setId(userLikedProduct.getId());
+        BeanUtils.copyProperties(userFollowing, entity, new String[]{"createdDateTime"});
+//        if (userFollowing.getId() != null && userFollowing.getId() != 0) {
+//            entity.setId(userFollowing.getId());
 //        }
         if (userFollowing.getCreatedDateTime() != null) {
             entity.setCreatedDateTime(userFollowing.getCreatedDateTime());

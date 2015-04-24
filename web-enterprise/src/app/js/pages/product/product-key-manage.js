@@ -76,7 +76,7 @@
                 console.log('[productBaseId changed]:', productBaseId);
                 var selectedProductBase;
                 $.each(this.productBases, function (i, item) {
-                    if (item && item.id === +productBaseId) {
+                    if (item && item.id === productBaseId) {
                         selectedProductBase = item;
                         console.log('[selectedProductBase]:', selectedProductBase);
                     }

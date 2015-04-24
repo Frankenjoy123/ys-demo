@@ -21,30 +21,30 @@
             <div class="box-body">
                 <div class="row">
                     <div class="form-group col-xs-4">
-                        <label>产品：</label>
-                        <select name="productType"
-                                class="form-control inline"
-                                ng-model="creationPanel.model.productBaseId"
-                                ng-change="creationPanel.productBaseIdChanged(creationPanel.model.productBaseId)">
-                            <option value="0">请选择</option>
-                            <option ng-repeat="pb in creationPanel.productBases" value="{{pb.id}}">
-                                {{pb.name}}
-                            </option>
-                        </select>
-
+                        <label>产品：
+                            <select name="productType"
+                                    class="form-control inline"
+                                    ng-model="creationPanel.model.productBaseId"
+                                    ng-change="creationPanel.productBaseIdChanged(creationPanel.model.productBaseId)">
+                                <option value="0">请选择</option>
+                                <option ng-repeat="pb in creationPanel.productBases" value="{{pb.id}}">
+                                    {{pb.name}}
+                                </option>
+                            </select>
+                        </label>
                     </div>
                     <div class="form-group col-xs-4">
-                        <label>数量：</label>
-                        <!--<input type="text" name="quantity" ng-model="creationModel.quantity" class="form-control inline"-->
-                        <!--placeholder=""/>-->
-                        <select name="quantity" ng-model="creationPanel.model.quantity" class="form-control inline">
-                            <option value="0">请选择</option>
-                            <option value="1">1万</option>
-                            <option value="2">2万</option>
-                            <option value="5">5万</option>
-                            <option value="10">10万</option>
-                            <option value="50">50万</option>
-                        </select>
+                        <label>数量：
+                            <!--<input type="text" name="quantity" ng-model="creationModel.quantity" class="form-control inline"-->
+                            <!--placeholder=""/>-->
+                            <select name="quantity" ng-model="creationPanel.model.quantity" class="form-control inline">
+                                <option value="0">请选择</option>
+                                <option value="1">1万</option>
+                                <option value="2">2万</option>
+                                <option value="5">5万</option>
+                                <option value="10">10万</option>
+                                <option value="50">50万</option>
+                            </select></label>
                     </div>
                 </div>
                 <div class="row" ng-show="creationPanel.selectedProductBase">

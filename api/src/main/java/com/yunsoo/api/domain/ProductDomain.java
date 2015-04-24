@@ -5,6 +5,7 @@ import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.basic.Product;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.api.dto.basic.ProductCategory;
+import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
@@ -84,7 +85,7 @@ public class ProductDomain {
         if (productBaseObject == null) {
             return null;
         }
-        ProductBase productBase = fromProductBaseObject(productBaseObject, lookupDomain.getAllProductKeyTypes(null));
+        ProductBase productBase = fromProductBaseObject(productBaseObject, lookupDomain.getAllProductKeyTypes());
 //        productBase.setThumbnailURL(yunsooYamlConfig.getDataapi_productbase_picture_basepath() + "id" + productBase.getId() + ".jpg");
         return productBase;
     }
@@ -94,7 +95,7 @@ public class ProductDomain {
         if (objects == null) {
             return null;
         }
-        List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes(null);
+        List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes();
         return Arrays.stream(objects).map(p -> fromProductBaseObject(p, productKeyTypes)).collect((Collectors.toList()));
     }
 
@@ -115,6 +116,7 @@ public class ProductDomain {
         productBase.setCategory(getProductCategoryById(productBaseObject.getCategoryId()));
         if (productBaseObject.getProductKeyTypeCodes() != null) {
             productBase.setProductKeyTypeCodes(productBaseObject.getProductKeyTypeCodes());
+            productBase.setProductKeyTypes(LookupObject.fromCodeList(productKeyTypes, productBaseObject.getProductKeyTypeCodes()));
         }
         return productBase;
     }

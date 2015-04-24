@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.UserDomain;
+import com.yunsoo.api.rabbit.domain.UserLikedProductDomain;
 import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -10,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +31,8 @@ public class UserLikedProductController {
     private RestClient dataAPIClient;
     @Autowired
     private UserDomain userDomain;
+    @Autowired
+    private UserLikedProductDomain userLikedProductDomain;
     private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
     private static final Logger LOGGER = LoggerFactory.getLogger(UserLikedProductController.class);
 
@@ -52,36 +54,42 @@ public class UserLikedProductController {
         }
     }
 
-    @RequestMapping(value = "/like", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
 //    @PreAuthorize("hasPermission(#usercollection, 'usercollection:create')")
     @PreAuthorize("hasPermission(#userLikedProduct, 'authenticated')")
-    public ResponseEntity<?> createUserLikedProduct(@RequestBody UserLikedProduct userLikedProduct) throws Exception {
+    public long createUserLikedProduct(@RequestBody UserLikedProduct userLikedProduct) throws Exception {
         if (userLikedProduct == null) {
             throw new BadRequestException("UserLikedProduct 不能为空！");
         }
-
-        UserLikedProduct exsitingUserLikedProduct = dataAPIClient.get("/user/collection/userid/{userid}/product/{pid}", UserLikedProduct.class, userLikedProduct.getUserId(), userLikedProduct.getBaseProductId());
-        if (exsitingUserLikedProduct != null) {
-            return new ResponseEntity<Long>(exsitingUserLikedProduct.getId(), HttpStatus.OK);
-        } else {
-            long id = dataAPIClient.post("/user/collection/like", userLikedProduct, long.class);
-            return new ResponseEntity<Long>(id, HttpStatus.OK);
-        }
+        return userLikedProductDomain.ensureUserLikedProduct(userLikedProduct);
+//
+//        UserLikedProduct exsitingUserLikedProduct = dataAPIClient.get("/user/collection/userid/{userid}/product/{pid}", UserLikedProduct.class, userLikedProduct.getUserId(), userLikedProduct.getBaseProductId());
+//        if (exsitingUserLikedProduct != null) {
+//            return new ResponseEntity<Long>(exsitingUserLikedProduct.getId(), HttpStatus.OK);
+//        } else {
+//            long id = dataAPIClient.post("/user/collection", userLikedProduct, long.class);
+//            return new ResponseEntity<Long>(id, HttpStatus.OK);
+//        }
     }
 
-    @RequestMapping(value = "/unlike/{Id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
 //    @PreAuthorize("hasPermission(#userLikedProduct, 'authenticated')")
     public void deleteUserLikedProduct(@RequestHeader(AUTH_HEADER_NAME) String token,
-                                       @PathVariable(value = "Id") Long Id) throws Exception {
-        if (Id == null || Id < 0) {
-            throw new BadRequestException("Id不应小于0！");
+                                       @RequestBody UserLikedProduct userLikedProduct) throws Exception {
+        if (userLikedProduct == null) {
+            throw new BadRequestException("userLikedProduct不能为空！");
         }
-        UserLikedProduct product = dataAPIClient.get("/user/collection/{id}", UserLikedProduct.class, Id);
-        if (!userDomain.validateToken(token, product.getUserId())) {
+        UserLikedProduct productToDelete = dataAPIClient.get("/user/collection/userid/{id}/product/{pid}", UserLikedProduct.class,
+                userLikedProduct.getUserId(), userLikedProduct.getBaseProductId());
+        if (productToDelete == null) {
+            throw new NotFoundException(40401, "UserLikedProduct not found!");
+        }
+        if (!userDomain.validateToken(token, productToDelete.getUserId())) {
             throw new UnauthorizedException("不能删除其他用户的收藏信息！");
         }
-        dataAPIClient.delete("/user/collection/unlike/{id}", Id);
+        productToDelete.setActive(false); //just mark as inactive
+        dataAPIClient.patch("/user/collection/", productToDelete);
     }
 }

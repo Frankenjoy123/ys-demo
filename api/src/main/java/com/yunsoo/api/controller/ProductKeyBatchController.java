@@ -5,6 +5,7 @@ import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
 import com.yunsoo.api.dto.basic.ProductBase;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
@@ -35,9 +36,12 @@ public class ProductKeyBatchController {
     @Autowired
     private ProductKeyDomain productKeyDomain;
 
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductKeyBatch getById(@PathVariable(value = "id") String id) {
-        String orgId = "2k0r1l55i2rs5544wz5";
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
         if (batch == null) {
             throw new NotFoundException("product batch");
@@ -60,7 +64,7 @@ public class ProductKeyBatchController {
     public List<ProductKeyBatch> getByFilter(@RequestParam(value = "productBaseId", required = false) String productBaseId,
                                              @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
                                              @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        String orgId = "2k0r1l55i2rs5544wz5";
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         return productKeyDomain.getAllProductKeyBatchesByOrgId(orgId, productBaseId);
     }
 
@@ -71,9 +75,9 @@ public class ProductKeyBatchController {
         List<String> productKeyTypeCodes = request.getProductKeyTypeCodes();
 
         String statusCode = "new";
-        String orgId = "2k0r1l55i2rs5544wz5";
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         String appId = "1";
-        String accountId = "2k0rahgcybh0l5uxtep";
+        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         DateTime createdDateTime = DateTime.now();
 
         ProductKeyBatchObject batchObj = new ProductKeyBatchObject();

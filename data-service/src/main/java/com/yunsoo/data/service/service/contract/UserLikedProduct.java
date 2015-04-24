@@ -1,6 +1,11 @@
 package com.yunsoo.data.service.service.contract;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.data.service.entity.UserLikedProductEntity;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
@@ -16,8 +21,13 @@ public class UserLikedProduct {
     private String userId;
     private String baseProductId;
     private Boolean active;
-    private String createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime createdDateTime;
     private String location;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime lastUpdatedDateTime;
 
     public Long getId() {
         return id;
@@ -51,11 +61,11 @@ public class UserLikedProduct {
         this.active = active;
     }
 
-    public String getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 
@@ -67,21 +77,29 @@ public class UserLikedProduct {
         this.location = location;
     }
 
+    public DateTime getLastUpdatedDateTime() {
+        return lastUpdatedDateTime;
+    }
+
+    public void setLastUpdatedDateTime(DateTime lastUpdatedDateTime) {
+        this.lastUpdatedDateTime = lastUpdatedDateTime;
+    }
+
     public static UserLikedProductEntity ToEntity(UserLikedProduct userLikedProduct) {
         if (userLikedProduct == null) return null;
 
-        UserLikedProductEntity entity = new UserLikedProductEntity(userLikedProduct.getUserId(), userLikedProduct.getBaseProductId(),
-                userLikedProduct.getLocation(), userLikedProduct.getActive());
-
-//        BeanUtils.copyProperties(userLikedProduct, entity, new String[]{"createdDateTime", "id"});
-//        if (userLikedProduct.getId() != null && userLikedProduct.getId() != 0) {
-//            entity.setId(userLikedProduct.getId());
-//        }
-//        if (userLikedProduct.getCreatedDateTime() != null) {
-//            entity.setCreatedDateTime(DateTime.parse(userLikedProduct.getCreatedDateTime()));
-//        }else {
-//            entity.setCreatedDateTime(DateTime.now());
-//        }
+//        UserLikedProductEntity entity = new UserLikedProductEntity(userLikedProduct.getUserId(), userLikedProduct.getBaseProductId(),
+//                userLikedProduct.getLocation(), userLikedProduct.getActive());
+        UserLikedProductEntity entity = new UserLikedProductEntity();
+        BeanUtils.copyProperties(userLikedProduct, entity, new String[]{"createdDateTime", "id"});
+        if (userLikedProduct.getId() != null && userLikedProduct.getId() != 0) {
+            entity.setId(userLikedProduct.getId());
+        }
+        if (userLikedProduct.getCreatedDateTime() != null) {
+            entity.setCreatedDateTime(userLikedProduct.getCreatedDateTime());
+        } else {
+            entity.setCreatedDateTime(DateTime.now());
+        }
 
         return entity;
     }
@@ -96,7 +114,7 @@ public class UserLikedProduct {
         UserLikedProduct userLikedProduct = new UserLikedProduct();
         BeanUtils.copyProperties(entity, userLikedProduct, new String[]{"createdDateTime"});
         if (entity.getCreatedDateTime() != null) {
-            userLikedProduct.setCreatedDateTime(entity.getCreatedDateTime().toString());
+            userLikedProduct.setCreatedDateTime(entity.getCreatedDateTime());
         }
         return userLikedProduct;
     }

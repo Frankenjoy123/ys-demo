@@ -11,6 +11,7 @@ public class UserLikedProduct {
     private Boolean active;
     private String createdDateTime;
     private String location;
+    private String lastUpdatedDateTime;
 
     public Long getId() {
         return id;
@@ -60,4 +61,11 @@ public class UserLikedProduct {
         this.location = location;
     }
 
+    public String getLastUpdatedDateTime() {
+        return lastUpdatedDateTime;
+    }
+
+    public void setLastUpdatedDateTime(String lastUpdatedDateTime) {
+        this.lastUpdatedDateTime = lastUpdatedDateTime;
+    }
 }

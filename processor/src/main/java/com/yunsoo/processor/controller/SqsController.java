@@ -25,7 +25,7 @@ public class SqsController {
 
     private static final String HEADER_PAYLOAD_NAME = "PayloadName";
 
-    private static final String PRODUCTKEYBATCH_QUEUE_NAME = "dev-productkeybatch";
+    private static final String PRODUCTKEYBATCH_QUEUE_NAME = "productkeybatch";
 
     @Autowired
     private QueueMessagingTemplate queueMessagingTemplate;

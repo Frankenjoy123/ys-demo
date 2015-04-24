@@ -66,6 +66,7 @@ public class UserFollowingController {
         return userFollowingList;
     }
 
+    //Check whether the user - org link exists or not.
     @RequestMapping(value = "/who/{id}/org/{orgid}", method = RequestMethod.GET)
     public UserFollowing getFollowingRecord(@PathVariable(value = "id") String id,
                                             @PathVariable(value = "orgid") String orgId) {
@@ -79,7 +80,7 @@ public class UserFollowingController {
         return userFollowingList.get(0);
     }
 
-    @RequestMapping(value = "/link", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public long userFollow(@RequestBody UserFollowing userFollowing) {
         userFollowing.setCreatedDateTime(DateTime.now());  //set created datetime
@@ -88,9 +89,16 @@ public class UserFollowingController {
         return newEntity.getId();
     }
 
-    @RequestMapping(value = "/unlink/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void userUnfollow(@PathVariable(value = "id") Long Id) {
-        userFollowingRepository.delete(Id);
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public void updateUserFollow(@RequestBody UserFollowing userFollowing) {
+        userFollowing.setLastUpdatedDateTime(DateTime.now());
+        userFollowingRepository.save(UserFollowing.ToEntity(userFollowing));
+
     }
+
+//    @RequestMapping(value = "/delete", method = RequestMethod.PATCH)
+//    public void userUnfollow(@RequestBody UserFollowing userFollowing) {
+//        userFollowing.setIsFollowing(false);
+//        userFollowingRepository.save(UserFollowing.ToEntity(userFollowing)); //just mark isFollowing as False.
+//    }
 }

@@ -1,34 +1,36 @@
 server:
-  port: 4080
+    port: 4080
 
 cloud:
-  aws:
-    stack:
-      auto: false
-    region:
-      auto: true
-      static: cn-north-1
+    aws:
+        stack:
+            auto: false
+        region:
+            auto: true
+            static: cn-north-1
 
 spring:
     profiles.active: default
 ---
 spring:
-   profiles: default
+    profiles: default
 
 yunsoo:
-  debug: true
-  processor:
-    client:
-      dataapi:
-        baseurl: http://dataapi:8080/
+    debug: true
+    processor:
+        productkeybatch:
+            queuename: dev-productkeybatch
+        client:
+            dataapi:
+                baseurl: http://dataapi:8080/
 
 ---
 spring:
-   profiles: qa
+    profiles: qa
 
 yunsoo:
-  debug: true
-  processor:
-    client:
-      dataapi:
-        baseurl: http://localhost:8080/
+    debug: true
+    processor:
+        client:
+            dataapi:
+                baseurl: http://localhost:8080/

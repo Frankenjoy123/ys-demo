@@ -16,7 +16,7 @@
         }
 
         // We set the root url to <base> tag in <head>.
-        var root = $('head').first().children('base').attr('href')
+        var root = $('head').first().children('base').attr('href');
 
         if (!root) {
             return url;
