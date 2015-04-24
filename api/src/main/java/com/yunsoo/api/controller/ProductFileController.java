@@ -26,13 +26,13 @@ public class ProductFileController {
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductFileObject> get(@RequestParam(value = "createby", required = false, defaultValue = "0") String createby,
+    public List<ProductFileObject> get(@RequestParam(value = "createby", required = false) String createby,
                                        @RequestParam(value = "status", required = false, defaultValue = "0") Integer status,
                                        @RequestParam(value = "filetype", required = false, defaultValue = "0") Integer filetype,
                                        @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
-        if (createby == "0")
+        if (createby == null)
             createby = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
         ProductFileObject[] objects =
@@ -51,11 +51,11 @@ public class ProductFileController {
     }
 
     @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public Long getCount(@RequestParam(value = "createby", required = false, defaultValue = "0") String createby,
+    public Long getCount(@RequestParam(value = "createby", required = false) String createby,
                          @RequestParam(value = "status", required = false, defaultValue = "0") Integer status,
                          @RequestParam(value = "filetype", required = false, defaultValue = "0") Integer filetype) {
 
-        if (createby == "0")
+        if (createby == null)
             createby = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
         Long count = 0l;

@@ -44,6 +44,10 @@
             /*headers:{"Content-Type":"multipart/form-data; charset=utf-8"}*/
         });
 
+        //set AccessToken http header
+        var accessToken = $.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME);
+        accessToken && (uploader.headers[YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
+
         uploader.filters.push({
             name: 'customFilter',
             fn: function (item /*{File|FileLikeObject}*/, options) {
