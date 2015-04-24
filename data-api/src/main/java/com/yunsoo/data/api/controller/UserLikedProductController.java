@@ -4,6 +4,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.UserLikedProductEntity;
 import com.yunsoo.data.service.repository.UserLikedProductRepository;
 import com.yunsoo.data.service.service.contract.UserLikedProduct;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -45,16 +46,24 @@ public class UserLikedProductController {
         return userLikedProductList.get(0);
     }
 
-    @RequestMapping(value = "/like", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public long userLikeProduct(@RequestBody UserLikedProduct userLikedProduct) {
+        userLikedProduct.setCreatedDateTime(DateTime.now());
+        userLikedProduct.setLastUpdatedDateTime(DateTime.now());
         UserLikedProductEntity newEntity = userLikedProductRepository.save(UserLikedProduct.ToEntity(userLikedProduct));
         return newEntity.getId();
     }
 
-    @RequestMapping(value = "/unlike/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void userUnlikeProduct(@PathVariable(value = "id") Long Id) {
-        userLikedProductRepository.delete(Id);
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public void updateUserLikeProduct(@RequestBody UserLikedProduct userLikedProduct) {
+        userLikedProduct.setLastUpdatedDateTime(DateTime.now());
+        userLikedProductRepository.save(UserLikedProduct.ToEntity(userLikedProduct));
     }
+
+//    @RequestMapping(value = "/unlike/{id}", method = RequestMethod.DELETE)
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    public void userUnlikeProduct(@PathVariable(value = "id") Long Id) {
+//        userLikedProductRepository.delete(Id);
+//    }
 }

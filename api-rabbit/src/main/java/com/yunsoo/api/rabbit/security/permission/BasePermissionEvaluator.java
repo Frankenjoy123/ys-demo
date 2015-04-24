@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.security.permission;
 
 import com.yunsoo.api.rabbit.dto.basic.Message;
 import com.yunsoo.api.rabbit.dto.basic.User;
+import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
 import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
 import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.common.data.object.AccountPermissionObject;
@@ -46,6 +47,8 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 hasPermission = ((User) targetDomainObject).getId().equals(account.getId());
             } else if (targetDomainObject instanceof UserLikedProduct) {
                 hasPermission = ((UserLikedProduct) targetDomainObject).getUserId().equals(account.getId());
+            } else if (targetDomainObject instanceof UserFollowing) {
+                hasPermission = ((UserFollowing) targetDomainObject).getUserId().equals(account.getId());
             } else {
                 hasPermission = true;
             }
@@ -88,6 +91,8 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             if (targetType.compareToIgnoreCase("User") == 0) {
                 hasPermission = account.getId().equals(targetId) ? true : false;
             } else if (targetType.compareToIgnoreCase("UserLikedProduct") == 0) {
+                hasPermission = account.getId().equals(targetId) ? true : false;
+            } else if (targetType.compareToIgnoreCase("UserFollowing") == 0) {
                 hasPermission = account.getId().equals(targetId) ? true : false;
             } else if (targetType.compareToIgnoreCase("UserInToken") == 0) {
                 hasPermission = account.getId().equals(targetId) ? true : false;

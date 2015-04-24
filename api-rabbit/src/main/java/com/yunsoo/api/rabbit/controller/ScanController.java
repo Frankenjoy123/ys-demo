@@ -4,6 +4,7 @@ import com.yunsoo.api.rabbit.biz.ValidateProduct;
 import com.yunsoo.api.rabbit.domain.LogisticsDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.domain.UserDomain;
+import com.yunsoo.api.rabbit.domain.UserFollowDomain;
 import com.yunsoo.api.rabbit.dto.LogisticsPath;
 import com.yunsoo.api.rabbit.dto.basic.*;
 import com.yunsoo.api.rabbit.object.TScanRecord;
@@ -45,6 +46,8 @@ public class ScanController {
     private LogisticsDomain logisticsDomain;
     @Autowired
     private UserDomain userDomain;
+    @Autowired
+    private UserFollowDomain userFollowDomain;
     @Autowired
     private ProductDomain productDomain;
 
@@ -92,10 +95,16 @@ public class ScanController {
         OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, scanResult.getProduct().getOrgId());
         scanResult.setManufacturer(fromOrganizationObject(organizationObject));
 
-        //6, set validation result by our validation strategy.
+        //6，ensure user following the company
+        UserFollowing userFollowing = new UserFollowing();
+        userFollowing.setUserId(currentUser.getId());
+        userFollowing.setOrganizationId(organizationObject.getId());
+        userFollowDomain.ensureFollow(userFollowing);
+
+        //7, set validation result by our validation strategy.
         scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), currentUser, scanRecordList));
 
-        //7, save scan Record
+        //8, save scan Record
         long scanSave = SaveScanRecord(currentUser, currentExistProduct, scanRequestBody);
         return scanResult;
     }
