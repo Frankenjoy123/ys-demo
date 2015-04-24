@@ -30,6 +30,4 @@ public interface UserService {
 
     public List<User> getUsersByFilter(String id, String deviceCode, String cellular, String status);
 
-    public long createUserFollowing(UserFollowing userFollowing);
-
 }

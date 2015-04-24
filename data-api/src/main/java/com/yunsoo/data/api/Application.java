@@ -9,7 +9,6 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 @ComponentScan(basePackages = "com.yunsoo")
 @SpringBootApplication
-@EnableJpaRepositories
 public class Application {
 
     public static void main(String[] args) {

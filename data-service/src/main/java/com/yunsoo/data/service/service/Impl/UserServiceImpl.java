@@ -41,8 +41,6 @@ public class UserServiceImpl implements UserService {
     private S3ItemDao s3ItemDao;
     @Autowired
     private AmazonSetting amazonSetting;
-    @Autowired
-    private UserFollowingRepository userFollowingRepository;
 
     @Override
     public User getById(String id) {
@@ -209,10 +207,10 @@ public class UserServiceImpl implements UserService {
         return model;
     }
 
-    @Transactional
-    @Override
-    public long createUserFollowing(UserFollowing userFollowing) {
-        UserFollowingEntity newEntity = userFollowingRepository.save(UserFollowing.ToEntity(userFollowing));
-        return newEntity.getId();
-    }
+//    @Transactional
+//    @Override
+//    public long createUserFollowing(UserFollowing userFollowing) {
+//        UserFollowingEntity newEntity = userFollowingRepository.save(UserFollowing.ToEntity(userFollowing));
+//        return newEntity.getId();
+//    }
 }
