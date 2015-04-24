@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.LogisticsDomain;
 import com.yunsoo.api.domain.ProductFileDomain;
 import com.yunsoo.api.dto.LogisticsPath;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.LogisticsBatchPathObject;
 import com.yunsoo.common.data.object.LogisticsPathObject;
 import com.yunsoo.common.data.object.ProductFileObject;
@@ -40,6 +41,9 @@ public class LogisticsPathController {
     @Autowired
     private LogisticsDomain logisticsDomain;
 
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
     public List<LogisticsPath> get(@PathVariable(value = "key") String key) {
         return logisticsDomain.getLogisticsPathsOrderByStartDate(key);
@@ -48,6 +52,10 @@ public class LogisticsPathController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody LogisticsPathObject logisticsPathObject) {
+
+        String createdBy = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        logisticsPathObject.setOperator(createdBy);
+
         dataAPIClient.post("logisticspath/create", logisticsPathObject, Long.class);
     }
 
@@ -57,10 +65,12 @@ public class LogisticsPathController {
         Iterator<String> itr = request.getFileNames();
         MultipartFile file = request.getFile(itr.next());
 
+        String createdBy = tokenAuthenticationService.getAuthentication().getDetails().getId();
+
         ProductFileObject productFileObject = new ProductFileObject();
         productFileObject.setFileName(file.getOriginalFilename());
         productFileObject.setCreateDate(DateTime.now());
-        productFileObject.setCreateBy("1");
+        productFileObject.setCreateBy(createdBy);
         productFileObject.setFileType(2);
 
         try {

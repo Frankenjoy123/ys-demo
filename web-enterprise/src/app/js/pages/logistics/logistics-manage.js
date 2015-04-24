@@ -18,7 +18,7 @@
                 return this;
             },
             getLogisticsHistoryInfoCount: function (fnSuccess, fnError) {
-                $http.get("/api/productfile/count?createby=1&&status=0&&filetype=2")
+                $http.get("/api/productfile/count?status=0&&filetype=2")
                     .success(function (data) {
                         fnSuccess(data);
                     }).error(function (data, state) {
@@ -27,7 +27,7 @@
                 return this;
             },
             getLogisticsHistoryInfo: function (pageIndex, fnSuccess, fnError) {
-                $http.get("/api/productfile?createby=1&&status=0&&filetype=2&&pageIndex=" + pageIndex)
+                $http.get("/api/productfile?status=0&&filetype=2&&pageIndex=" + pageIndex)
                     .success(function (data) {
                         fnSuccess(data);
                     }).error(function (data, state) {
@@ -86,8 +86,6 @@
         uploader.onCompleteItem = function (fileItem, response, status, headers) {
             // console.info('onCompleteItem', fileItem, response, status, headers);
             console.info('onCompleteItem', response, status);
-
-            $scope.addAlertMsg(response.message, "info", true);
 
             getLogisticsHistoryInfo(0);
         };

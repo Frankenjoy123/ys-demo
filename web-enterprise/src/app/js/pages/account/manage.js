@@ -4,7 +4,7 @@
     app.factory("accountManageService", ["$http", function ($http) {
         return {
             getAccounts: function (org_id, fnSuccess, fnError) {
-                $http.get("/api/account?org_id=" + org_id)
+                $http.get("/api/account")
                     .success(function (data) {
                         fnSuccess(data);
                     }).error(function (data, state) {
