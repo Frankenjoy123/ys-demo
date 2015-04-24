@@ -105,7 +105,11 @@
                     };
                 })(index), 3 * 1000);
             }
-        }
+        };
+
+        $scope.formatDateString = function (value) {
+            return new DateTime(new Date(value)).toString('yyyy-MM-dd HH:mm:ss');
+        };
 
         $scope.currentContext = {};
     }]);

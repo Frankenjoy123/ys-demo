@@ -2,6 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.dto.basic.ProductBase;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.RestClient;
@@ -37,6 +38,9 @@ public class ProductBaseController {
     @Autowired
     private ProductDomain productDomain;
 
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductBase get(@PathVariable(value = "id") String id) {
         if (id == null || id.isEmpty()) {
@@ -51,7 +55,7 @@ public class ProductBaseController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductBase> getAllForCurrentOrg() {
-        String orgId = "123456789"; //fetch from AuthContext
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId(); //fetch from AuthContext
         return productDomain.getAllProductBaseByOrgId(orgId);
     }
 

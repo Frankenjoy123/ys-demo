@@ -27,6 +27,7 @@ public class ProductBase {
     private Integer shelfLife;
     private String shelfLifeInterval;
     private List<String> productKeyTypeCodes;
+    private List<ProductKeyType> productKeyTypes;
     private Integer ChildProductCount;
     private Boolean active;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
@@ -124,6 +125,14 @@ public class ProductBase {
 
     public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
         this.productKeyTypeCodes = productKeyTypeCodes;
+    }
+
+    public List<ProductKeyType> getProductKeyTypes() {
+        return productKeyTypes;
+    }
+
+    public void setProductKeyTypes(List<ProductKeyType> productKeyTypes) {
+        this.productKeyTypes = productKeyTypes;
     }
 
     public Integer getChildProductCount() {
