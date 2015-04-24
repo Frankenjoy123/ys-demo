@@ -1,5 +1,7 @@
 package com.yunsoo.api.client.processor.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/4/7
@@ -7,14 +9,15 @@ package com.yunsoo.api.client.processor.message;
  */
 public class ProductKeyBatchMassage {
 
-    private String batchId;
+    @JsonProperty("product_key_batch_id")
+    private String productKeyBatchId;
 
-    public String getBatchId() {
-        return batchId;
+    public String getProductKeyBatchId() {
+        return productKeyBatchId;
     }
 
-    public void setBatchId(String batchId) {
-        this.batchId = batchId;
+    public void setProductKeyBatchId(String productKeyBatchId) {
+        this.productKeyBatchId = productKeyBatchId;
     }
 
 }
