@@ -133,7 +133,7 @@ public class ProductModel {
     }
 
 
-    @DynamoDBAttribute(attributeName = "status_id") //product_status_id
+    @DynamoDBAttribute(attributeName = "status_code") //product_status_code
     public String getProductStatusCode() {
         return productStatusCode;
     }

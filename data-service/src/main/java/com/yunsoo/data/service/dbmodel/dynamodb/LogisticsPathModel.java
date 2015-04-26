@@ -26,7 +26,7 @@ public class LogisticsPathModel {
         this.productKey = productKey;
     }
 
-    @DynamoDBRangeKey(attributeName = "start_date_dt")
+    @DynamoDBRangeKey(attributeName = "start_dt")
     public Long getStartDateValue() {
         return startDate;
     }
@@ -84,7 +84,7 @@ public class LogisticsPathModel {
         }
     }
 
-    @DynamoDBAttribute(attributeName = "end_date_dt")
+    @DynamoDBAttribute(attributeName = "end_dt")
     public Long getEndDateValue() {
         return endDate;
     }

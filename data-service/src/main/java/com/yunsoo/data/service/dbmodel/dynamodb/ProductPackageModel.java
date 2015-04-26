@@ -80,7 +80,7 @@ public class ProductPackageModel {
         this.createdDateTimeValue = createdDateTime.getMillis();
     }
 
-    @DynamoDBAttribute(attributeName = "c_dt") //created_datetime
+    @DynamoDBAttribute(attributeName = "created_dt") //created_datetime
     public long getCreatedDateTimeValue() {
         return createdDateTimeValue;
     }
@@ -106,7 +106,10 @@ public class ProductPackageModel {
 
     @Override
     public boolean equals(Object obj) {
-        ProductPackageModel rightModel = (ProductPackageModel)obj;
+        if (obj == null || !(obj instanceof ProductPackageModel)) {
+            return false;
+        }
+        ProductPackageModel rightModel = (ProductPackageModel) obj;
         return this.getProductKey().equals(rightModel.getProductKey());
     }
 
