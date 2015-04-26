@@ -20,7 +20,6 @@ public class Organization {
     private String typeCode;
     private String statusCode;
     private String description;
-    private String imageUri;
     private String details;
     private String createdAccountId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
@@ -68,13 +67,13 @@ public class Organization {
         this.description = description;
     }
 
-    public String getImageUri() {
-        return imageUri;
-    }
-
-    public void setImageUri(String imageUri) {
-        this.imageUri = imageUri;
-    }
+//    public String getImageUri() {
+//        return imageUri;
+//    }
+//
+//    public void setImageUri(String imageUri) {
+//        this.imageUri = imageUri;
+//    }
 
     public String getDetails() {
         return details;

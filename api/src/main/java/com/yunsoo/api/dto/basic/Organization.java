@@ -31,8 +31,8 @@ public class Organization {
     @JsonProperty("description")
     private String description;
 
-    @JsonProperty("image_uri")
-    private String imageUri;
+//    @JsonProperty("image_uri")
+//    private String imageUri;
 
     @JsonProperty("details")
     private String details;
@@ -84,14 +84,6 @@ public class Organization {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getImageUri() {
-        return imageUri;
-    }
-
-    public void setImageUri(String imageUri) {
-        this.imageUri = imageUri;
     }
 
     public String getDetails() {

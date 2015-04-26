@@ -71,7 +71,6 @@ public class OrganizationController {
         object.setStatusCode(organization.getStatusCode());
         object.setDescription(organization.getDescription());
         object.setTypeCode(organization.getTypeCode());
-        object.setImageUri(organization.getImageUri());
         object.setDetails(organization.getDetails());
         object.setCreatedAccountId(organization.getCreatedAccountId());
         object.setCreatedDateTime(organization.getCreatedDateTime());
@@ -85,7 +84,6 @@ public class OrganizationController {
         entity.setStatusCode(object.getStatusCode());
         entity.setDescription(object.getDescription());
         entity.setTypeCode(object.getTypeCode());
-        entity.setImageUri(object.getImageUri());
         entity.setDetails(object.getDetails());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());

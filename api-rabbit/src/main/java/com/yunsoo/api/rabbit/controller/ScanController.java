@@ -232,7 +232,6 @@ public class ScanController {
         entity.setStatusCode(object.getStatusCode());
         entity.setDescription(object.getDescription());
         entity.setTypeCode(object.getTypeCode());
-        entity.setImageUri(object.getImageUri());
         entity.setDetails(object.getDetails());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
