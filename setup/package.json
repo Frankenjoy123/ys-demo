@@ -1,9 +1,0 @@
-{
-  "name": "dataService",
-  "version": "0.0.1",
-  "description": "init scripts",
-  "dependencies": {
-    "aws-sdk": "2.x",
-    "commander": "2.6.0"
-  }
-}
