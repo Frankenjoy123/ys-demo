@@ -31,8 +31,8 @@ public class ProductDomain {
     @Autowired
     private LookupDomain lookupDomain;
 
-    @Autowired
-    public YunsooYamlConfig yunsooYamlConfig;
+//    @Autowired
+//    public YunsooYamlConfig yunsooYamlConfig;
 
     //Retrieve Product key, ProductBase entry and Product-Category entry from Backend.
     public Product getProductByKey(String key) {

@@ -61,7 +61,7 @@ public class ScanController {
         scanRequestBody.validateForScan();
 
         //1, get user
-        User currentUser = userDomain.ensureUser(scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
+        User currentUser = userDomain.ensureUser(scanRequestBody.getUserId(), scanRequestBody.getDeviceCode(), null);
         if (currentUser == null) {
 //            LOGGER.error("User not found by userId ={0}, deviceCode = {1}", scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
             throw new NotFoundException(40401, "User not found by userId = " + scanRequestBody.getUserId() + " deviceCode = " + scanRequestBody.getDeviceCode());

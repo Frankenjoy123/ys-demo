@@ -28,7 +28,7 @@ logging:
         org.hibernate: 'ERROR'
 
 yunsoo:
-    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
+#    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
 
     #token secret issued to client whoc can consume our Business API
     token_secret: 9SyECk96oDsKiLfogIieDI0cD/8FpnojlYSUJT5U9I/FGVmBz5oskmjOR8cbXTvoPjX+Pq/T/b1PqpHX0lYm0oCBjXWICA==
