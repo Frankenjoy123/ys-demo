@@ -58,7 +58,7 @@ params.push({
             KeyType: 'HASH'
         },
         {
-            AttributeName: 'start_date_dt',
+            AttributeName: 'start_dt',
             KeyType: "RANGE"
         }
     ],
@@ -68,7 +68,7 @@ params.push({
             AttributeType: 'S' // (S | N | B) for string, number, binary
         },
         {
-            AttributeName: 'start_date_dt',
+            AttributeName: 'start_dt',
             AttributeType: 'N'
         }
     ],
