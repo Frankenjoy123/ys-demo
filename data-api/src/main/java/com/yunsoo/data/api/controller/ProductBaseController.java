@@ -46,7 +46,7 @@ public class ProductBaseController {
         return productBaseObject;
     }
 
-    @RequestMapping(value = "/thumbnail/{id}/{client}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{client}", method = RequestMethod.GET)
     public ResponseEntity getThumbnail(
             @PathVariable(value = "id") String id,
             @PathVariable(value = "client") String client) {

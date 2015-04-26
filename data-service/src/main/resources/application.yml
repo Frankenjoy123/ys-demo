@@ -33,6 +33,6 @@ jdbc:
 
 hibernate:
     dialect: org.hibernate.dialect.MySQL5Dialect
-    show_sql: true
+    show_sql: false
     hbm2ddl_auto: none
     package_to_scan: com.yunsoo.data.service.dbmodel

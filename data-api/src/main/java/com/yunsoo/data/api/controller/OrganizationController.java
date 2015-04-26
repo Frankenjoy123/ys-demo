@@ -53,7 +53,7 @@ public class OrganizationController {
     }
 
 
-    @RequestMapping(value = "/{id}/thumbnail/{imageKey}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{imageKey}", method = RequestMethod.GET)
     public FileObject getThumbnail(
             @PathVariable(value = "id") String id,
             @PathVariable(value = "imageKey") String imageKey) {

@@ -26,14 +26,14 @@ public class OrganizationController {
     @Autowired
     private RestClient dataAPIClient;
 
-    @RequestMapping(value = "/{id}/thumbnail/{imageKey}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{imageKey}", method = RequestMethod.GET)
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") String id,
             @PathVariable(value = "imageKey") String imageKey) {
         if (id == null || id.isEmpty()) throw new BadRequestException("ID不能小于0！");
         if (imageKey == null || imageKey.isEmpty()) throw new BadRequestException("imageKey 不能为空！");
         try {
-            FileObject fileObject = dataAPIClient.get("organization/{id}/thumbnail/{imageKey}", FileObject.class, id, imageKey);
+            FileObject fileObject = dataAPIClient.get("organization/{id}/{imageKey}", FileObject.class, id, imageKey);
             if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())

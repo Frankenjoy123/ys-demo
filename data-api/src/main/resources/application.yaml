@@ -4,6 +4,11 @@ server:
 multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
+hibernate:
+    dialect: org.hibernate.dialect.MySQL5Dialect
+    show_sql: true
+    hbm2ddl_auto: none
+
 spring:
     profiles.active: default
 ---

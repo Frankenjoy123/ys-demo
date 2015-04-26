@@ -43,12 +43,12 @@ public class OrganizationController {
         return fromOrganizationObject(newObject);
     }
 
-    @RequestMapping(value = "/{id}/thumbnail/{imageKey}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{imageKey}", method = RequestMethod.GET)
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") String id,
             @PathVariable(value = "imageKey") String imageKey) {
         try {
-            FileObject fileObject = dataAPIClient.get("organization/{id}/thumbnail/{imageKey}", FileObject.class, id, imageKey);
+            FileObject fileObject = dataAPIClient.get("organization/{id}/{imageKey}", FileObject.class, id, imageKey);
             if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())

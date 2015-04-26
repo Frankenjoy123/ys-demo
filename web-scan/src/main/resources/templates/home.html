@@ -162,7 +162,7 @@
                         $scope.logisticsShow = 1;
                     }
 
-                    $("#imgProduct").attr("src", "/api/productbase/thumbnail/" + $scope.data.product.productBaseId + "/thumb-mobile");
+                    $("#imgProduct").attr("src", "/api/productbase/" + $scope.data.product.productBaseId + "/thumb-mobile");
                     if ($scope.data.validationResult.toLowerCase() == "uncertain") {
                         $("#imgReal").attr("src", "images/jinggao_53.png");
                     }

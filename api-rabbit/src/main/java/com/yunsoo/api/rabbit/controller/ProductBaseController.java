@@ -45,7 +45,7 @@ public class ProductBaseController {
         return productBase;
     }
 
-    @RequestMapping(value = "/thumbnail/{id}/{client}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{client}", method = RequestMethod.GET)
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") String id,
             @PathVariable(value = "client") String client) {
@@ -57,7 +57,7 @@ public class ProductBaseController {
         }
 
         try {
-            FileObject fileObject = dataAPIClient.get("productbase/thumbnail/{id}/{client}", FileObject.class, id, client);
+            FileObject fileObject = dataAPIClient.get("productbase/{id}/{client}", FileObject.class, id, client);
             if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())

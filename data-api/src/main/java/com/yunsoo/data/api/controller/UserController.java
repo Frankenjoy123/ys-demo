@@ -58,7 +58,7 @@ public class UserController {
         return users.get(0);
     }
 
-    @RequestMapping(value = "/thumbnail/{id}/{key}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{key}", method = RequestMethod.GET)
     public ResponseEntity getThumbnail(
             @PathVariable(value = "id") String id,
             @PathVariable(value = "key") String key) {
