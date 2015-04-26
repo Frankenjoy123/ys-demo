@@ -152,6 +152,7 @@ public class MessageDaoImpl implements MessageDao {
         if (orgId != null) {
             c.add(Restrictions.eq("orgId", orgId));
         }
+        c.addOrder(Order.desc("createdDateTime"));
         c.add(Restrictions.eq("status", message_approved));
         c.add(Restrictions.gt("expiredDateTime", DateTime.now()));
 
