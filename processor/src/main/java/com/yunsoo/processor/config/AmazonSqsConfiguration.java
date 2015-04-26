@@ -2,6 +2,7 @@ package com.yunsoo.processor.config;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.aws.context.config.xml.GlobalBeanDefinitionUtils;
 import org.springframework.cloud.aws.core.env.ResourceIdResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
@@ -19,13 +20,14 @@ public class AmazonSqsConfiguration {
     private String environment;
 
     @Bean
-    public QueueMessagingTemplate queueMessagingTemplate(AmazonSQS amazonSqs) {
-        return new QueueMessagingTemplate(amazonSqs, this::resolve);
+    public QueueMessagingTemplate queueMessagingTemplate(AmazonSQS amazonSqs, ResourceIdResolver resourceIdResolver) {
+        return new QueueMessagingTemplate(amazonSqs, resourceIdResolver);
     }
 
-
-    private String resolve(String logicalResourceId) {
-        return environment + "-" + logicalResourceId;
+    @Bean
+    public ResourceIdResolver resourceIdResolver() {
+        return new EnvironmentPrefixResourceIdResolver(environment);
     }
+
 
 }

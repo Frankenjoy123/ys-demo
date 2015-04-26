@@ -7,6 +7,10 @@ package com.yunsoo.processor.common;
  */
 public final class PayloadName {
 
+    private PayloadName() {
+        // Avoid instantiation
+    }
+
     public static final String PRODUCT_KEY_BATCH = "productkeybatch";
 
 }

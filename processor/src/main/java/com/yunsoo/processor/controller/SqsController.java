@@ -7,6 +7,7 @@ import com.yunsoo.processor.handler.ProductKeyBatchHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.aws.core.env.ResourceIdResolver;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -36,23 +37,29 @@ public class SqsController {
     @Autowired
     private ProductKeyBatchHandler productKeyBatchHandler;
 
+    @Autowired
+    ResourceIdResolver resourceIdResolver;
+
 
     @RequestMapping(value = "/productkeybatch", method = RequestMethod.POST)
     public void sendToMessageQueue(@RequestBody ProductKeyBatchMassage message) {
+
         Map<String, Object> headers = new HashMap<>();
         headers.put(HEADER_PAYLOAD_NAME, PayloadName.PRODUCT_KEY_BATCH);
         queueMessagingTemplate.convertAndSend(LogicalQueueName.PRODUCT_KEY_BATCH, message, headers);
 
-        LOGGER.info("new payload [{}] pushed to queue [{}] {}",
+        LOGGER.info("new payload [name: {}, message: {}] pushed to queue [{}]",
                 PayloadName.PRODUCT_KEY_BATCH,
-                LogicalQueueName.PRODUCT_KEY_BATCH,
-                message);
+                message.toString(),
+                resourceIdResolver.resolveToPhysicalResourceId(LogicalQueueName.PRODUCT_KEY_BATCH));
     }
 
 
-    @MessageMapping("test-productkeybatch")
-    private void receiveMessage(ProductKeyBatchMassage message,
-                                @Header(value = HEADER_PAYLOAD_NAME, required = false) String payloadName) {
+    @MessageMapping(LogicalQueueName.PRODUCT_KEY_BATCH)
+    private void receiveProductKeyBatchMassage(
+            ProductKeyBatchMassage message,
+            @Header(value = HEADER_PAYLOAD_NAME, required = false) String payloadName) {
+
         switch (payloadName) {
             case PayloadName.PRODUCT_KEY_BATCH:
                 productKeyBatchHandler.execute(message);

@@ -1,8 +1,5 @@
 server:
     port: 4080
-management:
-    port: 4081
-    address: 127.0.0.1
 
 cloud:
     aws:
@@ -20,8 +17,8 @@ spring:
 
 
 yunsoo:
-    debug: true
     environment: dev
+    debug: true
     processor:
         client:
             dataapi:
@@ -32,8 +29,8 @@ spring:
     profiles: qa
 
 yunsoo:
-    debug: true
     environment: test
+    debug: true
     processor:
         client:
             dataapi:

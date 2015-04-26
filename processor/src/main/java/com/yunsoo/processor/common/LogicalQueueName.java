@@ -7,6 +7,10 @@ package com.yunsoo.processor.common;
  */
 public final class LogicalQueueName {
 
+    private LogicalQueueName() {
+        // Avoid instantiation
+    }
+
     public static final String PRODUCT_KEY_BATCH = "productkeybatch";
 
 }

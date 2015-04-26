@@ -24,22 +24,6 @@ public class Application {
 
     public static void main(String[] args) {
 
-        try {
-            Method method = SqsController.class.getDeclaredMethod("receiveMessage", ProductKeyBatchMassage.class, String.class);
-            System.out.println(method.getName());
-            MessageMapping mapping = method.getAnnotation(MessageMapping.class);
-            String[] queueNames = mapping.value();
-            for (int i = 0; i < queueNames.length; i++) {
-                queueNames[i] = "dev-" + queueNames[i];
-            }
-            System.out.println(Arrays.asList(queueNames));
-
-
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-
-
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
 
         //set throw exception if no handler mapping

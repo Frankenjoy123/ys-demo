@@ -22,6 +22,6 @@ public class ProductKeyBatchMassage {
 
     @Override
     public String toString() {
-        return "[ productKeyBatchId: " + productKeyBatchId + " ]";
+        return "{productKeyBatchId: " + productKeyBatchId + "}";
     }
 }
