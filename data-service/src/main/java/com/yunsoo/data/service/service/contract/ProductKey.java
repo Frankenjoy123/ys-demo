@@ -1,6 +1,6 @@
 package com.yunsoo.data.service.service.contract;
 
-import com.yunsoo.data.service.dbmodel.ProductModel;
+import com.yunsoo.data.service.dbmodel.dynamodb.ProductModel;
 import org.joda.time.DateTime;
 
 import java.util.Set;

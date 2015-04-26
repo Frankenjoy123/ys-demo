@@ -4,7 +4,7 @@ import com.yunsoo.data.service.dao.ProductDao;
 import com.yunsoo.data.service.service.contract.Product;
 import com.yunsoo.data.service.service.contract.ProductKey;
 import com.yunsoo.data.service.service.exception.ServiceException;
-import com.yunsoo.data.service.dbmodel.ProductModel;
+import com.yunsoo.data.service.dbmodel.dynamodb.ProductModel;
 import com.yunsoo.data.service.service.ProductKeyService;
 
 import org.joda.time.DateTime;

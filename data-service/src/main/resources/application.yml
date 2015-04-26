@@ -1,4 +1,5 @@
 yunsoo:
+    environment: dev
     aws:
         region: cn-north-1
         dynamodb:

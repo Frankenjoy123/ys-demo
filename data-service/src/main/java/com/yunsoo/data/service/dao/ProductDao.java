@@ -1,6 +1,6 @@
 package com.yunsoo.data.service.dao;
 
-import com.yunsoo.data.service.dbmodel.ProductModel;
+import com.yunsoo.data.service.dbmodel.dynamodb.ProductModel;
 
 import java.util.List;
 

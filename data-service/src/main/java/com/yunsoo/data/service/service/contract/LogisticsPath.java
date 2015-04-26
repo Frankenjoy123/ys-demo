@@ -1,6 +1,6 @@
 package com.yunsoo.data.service.service.contract;
 
-import com.yunsoo.data.service.dbmodel.LogisticsPathModel;
+import com.yunsoo.data.service.dbmodel.dynamodb.LogisticsPathModel;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
