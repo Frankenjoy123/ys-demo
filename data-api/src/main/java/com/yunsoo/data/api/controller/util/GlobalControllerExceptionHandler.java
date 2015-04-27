@@ -9,6 +9,7 @@ import com.yunsoo.common.web.exception.RestErrorResultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
@@ -32,8 +33,8 @@ public class GlobalControllerExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 
-    @Autowired
-    private CommonConfig commonConfig;
+    @Value("${yunsoo.debug}")
+    private Boolean debug;
 
     //business
     @ExceptionHandler(RestErrorResultException.class)
@@ -92,7 +93,7 @@ public class GlobalControllerExceptionHandler {
     }
 
     private ErrorResult appendTraceInfo(ErrorResult result, Exception ex) {
-        if (commonConfig.isDebugEnabled()) {
+        if (debug != null && debug) {
             result = new DebugErrorResult(result, new TraceInfo(ex));
         }
         return result;

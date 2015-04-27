@@ -3,14 +3,12 @@ package com.yunsoo.api.security;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.common.data.object.AccountObject;
-import com.yunsoo.common.web.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Arrays;
 
 /**
  * Created by Zhe on 2015/3/5.
@@ -20,8 +18,7 @@ public class AccountDetailService implements org.springframework.security.core.u
 
     @Autowired
     private AccountDomain accountDomain;
-//    @Autowired
-//    private UserRepository userRepo;
+
 
     private final AccountStatusUserDetailsChecker detailsChecker = new AccountStatusUserDetailsChecker();
 

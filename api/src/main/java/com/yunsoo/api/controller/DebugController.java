@@ -1,18 +1,24 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.security.annotation.Permission;
-import com.yunsoo.api.security.permission.Action;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.ErrorResultCode;
+import com.yunsoo.common.util.DateTimeUtils;
+import com.yunsoo.common.util.IdGenerator;
+import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.RestErrorResultException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.exception.RestErrorResultException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by:   Lijian
@@ -24,35 +30,54 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/debug")
 public class DebugController {
 
-    @Autowired
+    @Value("${yunsoo.debug}")
+    private Boolean debug;
+
+    @Autowired(required = false)
     private RestClient dataAPIClient;
 
-    @Autowired
+    @Autowired(required = false)
     private RestClient processorClient;
 
-    @Permission(action = Action.READ)
-    @RequestMapping(value = "ok")
-    @ResponseStatus(HttpStatus.OK)
-    public String ok() {
-        return "200 OK";
+
+    @RequestMapping(value = "")
+    public Map<String, Object> info() {
+        Map<String, Object> result = new HashMap<>();
+
+        //common info
+        result.put("debug", debug);
+
+        //clients info
+        Map<String, Object> clients = new HashMap<>();
+        clients.put("dataAPIClient", dataAPIClient.getBaseURL());
+        clients.put("processorClient", processorClient.getBaseURL());
+
+        result.put("clients", clients);
+
+        return result;
     }
 
-    @Permission(action = Action.CREATE)
-    @RequestMapping(value = "created")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void created() {
+
+    //id
+    @RequestMapping(value = "tools/id")
+    public Map<String, String> newId() {
+        String id = IdGenerator.getNew();
+        DateTime generatedDateTime = new DateTime(IdGenerator.getGeneratedDateFromId(id));
+        Map<String, String> result = new HashMap<>();
+        result.put("id", id);
+        result.put("generatedDateTime", DateTimeUtils.toString(generatedDateTime));
+        return result;
     }
 
-    @Permission(action = Action.CREATE)
-    @RequestMapping(value = "accepted")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void accepted() {
+    @RequestMapping(value = "tools/id/{id}")
+    public Map<String, String> newId(@PathVariable String id) {
+        DateTime generatedDateTime = new DateTime(IdGenerator.getGeneratedDateFromId(id));
+        Map<String, String> result = new HashMap<>();
+        result.put("id", id);
+        result.put("generatedDateTime", DateTimeUtils.toString(generatedDateTime));
+        return result;
     }
 
-    @RequestMapping(value = "nocontent")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void noContent() {
-    }
 
     @RequestMapping(value = "error/{code}")
     public void throwError(@PathVariable(value = "code") int code) throws RestErrorResultException {
@@ -69,19 +94,4 @@ public class DebugController {
         throw new NotFoundException("Error");
     }
 
-    @RequestMapping(value = "error")
-    public void throwError() throws Exception {
-        throw new Exception("Error");
-    }
-
-    @RequestMapping(value = "echo/{value}")
-    public String echo(@PathVariable(value = "value") String value) {
-        return value;
-    }
-
-    @RequestMapping(value = "client")
-    public String client() {
-        return "DataApiClient: " + dataAPIClient.getBaseURL() + "\r\n"
-                + "ProcessorClient: " + processorClient.getBaseURL();
-    }
 }

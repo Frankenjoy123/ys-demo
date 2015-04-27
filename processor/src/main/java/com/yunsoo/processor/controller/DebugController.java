@@ -21,6 +21,9 @@ import java.util.Map;
 @RequestMapping(value = "/debug")
 public class DebugController {
 
+    @Value("${yunsoo.debug}")
+    private Boolean debug;
+
     @Value("${yunsoo.environment}")
     private String environment;
 
@@ -38,6 +41,7 @@ public class DebugController {
         Map<String, Object> result = new HashMap<>();
 
         //common info
+        result.put("debug", debug);
         result.put("environment", environment);
         if (regionProvider != null) {
             result.put("region", regionProvider.getRegion());
