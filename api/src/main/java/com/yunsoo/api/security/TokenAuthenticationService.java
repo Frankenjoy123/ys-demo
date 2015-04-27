@@ -28,8 +28,7 @@ public class TokenAuthenticationService {
 
     private final TokenHandler tokenHandler;
 
-    @Autowired
-    public TokenAuthenticationService(@Value("${yunsoo.token_secret}") String secret) {
+    public TokenAuthenticationService() {
         //load secret Key from properties file.
         tokenHandler = new TokenHandler();
     }
