@@ -1,6 +1,5 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.config.YunsooYamlConfig;
 import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.basic.Product;
 import com.yunsoo.api.dto.basic.ProductBase;
@@ -31,8 +30,6 @@ public class ProductDomain {
     @Autowired
     private LookupDomain lookupDomain;
 
-//    @Autowired
-//    public YunsooYamlConfig yunsooYamlConfig;
 
     //Retrieve Product key, ProductBase entry and Product-Category entry from Backend.
     public Product getProductByKey(String key) {

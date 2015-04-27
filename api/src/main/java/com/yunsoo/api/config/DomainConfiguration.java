@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
  * Descriptions:
  */
 @Configuration
-@Import({ClientConfiguration.class, YunsooYamlConfig.class})
+@Import({ClientConfiguration.class})
 @ComponentScan(basePackages = "com.yunsoo.api.domain")
 public class DomainConfiguration {
 }

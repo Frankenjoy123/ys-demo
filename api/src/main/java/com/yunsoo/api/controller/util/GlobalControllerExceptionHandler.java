@@ -1,7 +1,5 @@
 package com.yunsoo.api.controller.util;
 
-import com.yunsoo.api.config.YunsooYamlConfig;
-import com.yunsoo.common.config.CommonConfig;
 import com.yunsoo.common.error.DebugErrorResult;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.TraceInfo;
@@ -10,7 +8,7 @@ import com.yunsoo.common.web.exception.RestErrorResultException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
@@ -18,7 +16,10 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,8 +35,8 @@ public class GlobalControllerExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 
-    @Autowired
-    private YunsooYamlConfig yunsooYamlConfig;
+    @Value("${yunsoo.debug}")
+    private Boolean debug;
 
     //business
     @ExceptionHandler(RestErrorResultException.class)
@@ -104,7 +105,7 @@ public class GlobalControllerExceptionHandler {
     }
 
     private ErrorResult appendTraceInfo(ErrorResult result, Exception ex) {
-        if (Boolean.parseBoolean(yunsooYamlConfig.getDebug())) {
+        if (debug != null && debug) {
             result = new DebugErrorResult(result, new TraceInfo(ex));
         }
         return result;
