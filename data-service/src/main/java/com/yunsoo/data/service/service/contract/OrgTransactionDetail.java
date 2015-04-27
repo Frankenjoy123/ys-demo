@@ -15,6 +15,7 @@ public class OrgTransactionDetail {
 
     private Long id;
     private String orgId;
+    private String productBaseId;
     private String batchId;
     private String accountId;
     private long mount;
@@ -35,6 +36,14 @@ public class OrgTransactionDetail {
 
     public void setOrgId(String orgId) {
         this.orgId = orgId;
+    }
+
+    public String getProductBaseId() {
+        return productBaseId;
+    }
+
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
     public String getBatchId() {

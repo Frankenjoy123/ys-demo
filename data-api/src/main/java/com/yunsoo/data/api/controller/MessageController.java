@@ -96,14 +96,13 @@ public class MessageController {
         messageService.delete(id);
     }
 
-    @RequestMapping(value = "/image/{imagekey}", method = RequestMethod.GET)
-    public ResponseEntity getThumbnail(
-            @PathVariable(value = "imagekey") String imagekey) {
+    @RequestMapping(value = "/{id}/{imagekey}", method = RequestMethod.GET)
+    public ResponseEntity getThumbnail(@PathVariable(value = "id") String id, @PathVariable(value = "imagekey") String imagekey) {
 
         if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("ImageKey不能为空！");
         S3Object s3Object;
         try {
-            s3Object = messageService.getMessageImage(amazonSetting.getS3_basebucket(), amazonSetting.getS3_message_image_url() + "/" + imagekey);
+            s3Object = messageService.getMessageImage(amazonSetting.getS3_basebucket(), amazonSetting.getS3_message_image_url() + "/" + id + "/" + imagekey);
             if (s3Object == null) throw new NotFoundException("找不到图片!");
 
             FileObject fileObject = new FileObject();

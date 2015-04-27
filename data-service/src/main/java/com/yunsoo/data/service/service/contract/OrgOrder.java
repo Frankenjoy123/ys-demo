@@ -13,8 +13,9 @@ import java.util.List;
 public class OrgOrder {
 
     private Long id;
-    private Long orderId;
+    //    private Long orderId;
     private String orgId;
+    private String productBaseId;
     private String batchId;
     private long total;
     private long remain;
@@ -29,20 +30,20 @@ public class OrgOrder {
         this.id = id;
     }
 
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
     public String getOrgId() {
         return orgId;
     }
 
     public void setOrgId(String orgId) {
         this.orgId = orgId;
+    }
+
+    public String getProductBaseId() {
+        return productBaseId;
+    }
+
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
     public String getBatchId() {
