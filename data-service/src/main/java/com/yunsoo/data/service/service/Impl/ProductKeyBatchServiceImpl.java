@@ -47,7 +47,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     }
 
     @Override
-    public List<ProductKeyBatch> getByOrganizationIdPaged(String orgId, int pageIndex, int pageSize) {
+    public List<ProductKeyBatch> getByFilterPaged(String orgId, int pageIndex, int pageSize) {
         Page<ProductKeyBatchEntity> entityPage =
                 productKeyBatchRepository.findByOrgIdOrderByCreatedDateTimeDesc(orgId, new PageRequest(pageIndex, pageSize));
         return StreamSupport.stream(entityPage.spliterator(), false)

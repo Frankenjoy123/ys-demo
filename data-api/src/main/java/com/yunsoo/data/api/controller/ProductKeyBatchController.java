@@ -45,7 +45,7 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyBatchObject> getByFilter(@RequestParam(value = "orgId") String orgId,
-                                                   @RequestParam(value = "productBaseId") String productBaseId,
+                                                   @RequestParam(value = "productBaseId", required = false) String productBaseId,
                                                    @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
                                                    @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         if (pageIndex == null || pageIndex < 0) {
@@ -54,9 +54,16 @@ public class ProductKeyBatchController {
         if (pageSize == null || pageSize > 1000) {
             pageSize = 1000;
         }
-        return productKeyBatchService.getByFilterPaged(orgId, productBaseId, pageIndex, pageSize).stream()
-                .map(this::toProductKeyBatchObject)
-                .collect(Collectors.toList());
+        if (productBaseId == null) {
+            return productKeyBatchService.getByFilterPaged(orgId, pageIndex, pageSize).stream()
+                    .map(this::toProductKeyBatchObject)
+                    .collect(Collectors.toList());
+        } else {
+            String pId = productBaseId.toLowerCase().equals("null") ? null : productBaseId;
+            return productKeyBatchService.getByFilterPaged(orgId, pId, pageIndex, pageSize).stream()
+                    .map(this::toProductKeyBatchObject)
+                    .collect(Collectors.toList());
+        }
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

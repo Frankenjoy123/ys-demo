@@ -27,8 +27,6 @@ public class AccountDomain {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountDomain.class);
-
 
     public AccountObject getById(String accountId) {
         return dataAPIClient.get("account/{id}", AccountObject.class, accountId);
@@ -39,7 +37,7 @@ public class AccountDomain {
         if (accountObjects == null || accountObjects.length <= 0) {
             return null;
         } else if (accountObjects.length > 1) {
-            throw new InternalServerErrorException("duplicated account found by [org_id: " + orgId + ", identifier: " + identifier + "]");
+            throw new InternalServerErrorException("duplicated account found by [orgId: " + orgId + ", identifier: " + identifier + "]");
         }
         return accountObjects[0];
     }
