@@ -1,5 +1,7 @@
 server:
     port: 4080
+management:
+    port: 4081
 
 cloud:
     aws:
