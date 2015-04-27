@@ -20,7 +20,7 @@ public interface ProductKeyBatchService {
 
     ProductKeys getProductKeysByBatchId(String batchId);
 
-    ProductKeys getProductKeysByUri(String uri);
-
     ProductKeyBatch create(ProductKeyBatch batch);
+
+    void patchUpdate(ProductKeyBatch batch);
 }

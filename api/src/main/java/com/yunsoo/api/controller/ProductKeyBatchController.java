@@ -4,6 +4,7 @@ import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
+import com.yunsoo.api.dto.ProductKeyBatchStatus;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
@@ -74,7 +75,6 @@ public class ProductKeyBatchController {
         String productBaseId = request.getProductBaseId();
         List<String> productKeyTypeCodes = request.getProductKeyTypeCodes();
 
-        String statusCode = "new";
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         String appId = "1";
         String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
@@ -97,7 +97,6 @@ public class ProductKeyBatchController {
         }
 
         batchObj.setQuantity(quantity);
-        batchObj.setStatusCode(statusCode);
         batchObj.setProductBaseId(productBaseId);
         batchObj.setProductKeyTypeCodes(productKeyTypeCodes);
         batchObj.setOrgId(orgId);

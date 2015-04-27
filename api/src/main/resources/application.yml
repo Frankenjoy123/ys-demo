@@ -1,5 +1,7 @@
 server:
     port: 6080
+management:
+    port: 6081
 
 multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
@@ -17,9 +19,7 @@ spring:
 ---
 spring:
     profiles: default
-management:
-    port: 6081
-    address: 127.0.0.1
+
 
 logging:
 #    file: c:/logs/yunsoo-api.log
@@ -37,6 +37,7 @@ yunsoo:
                 baseurl: http://dataapi:8080/
             processor:
                 baseurl: http://processor:4080/
+        product_key_base_url: http://t.m.yunsu.co/
 ---
 spring:
     profiles: qa
@@ -61,3 +62,4 @@ yunsoo:
                 baseurl: http://localhost:8080/
             processor:
                 baseurl: http://localhost:4080/
+        product_key_base_url: http://t.m.yunsu.co/

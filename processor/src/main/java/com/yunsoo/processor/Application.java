@@ -1,15 +1,11 @@
 package com.yunsoo.processor;
 
-import com.yunsoo.processor.controller.SqsController;
-import com.yunsoo.processor.message.ProductKeyBatchMassage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**

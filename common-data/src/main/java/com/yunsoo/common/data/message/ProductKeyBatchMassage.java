@@ -1,4 +1,4 @@
-package com.yunsoo.processor.message;
+package com.yunsoo.common.data.message;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -12,6 +12,9 @@ public class ProductKeyBatchMassage {
     @JsonProperty("product_key_batch_id")
     private String productKeyBatchId;
 
+    @JsonProperty("product_status_code")
+    private String productStatusCode;
+
     public String getProductKeyBatchId() {
         return productKeyBatchId;
     }
@@ -20,8 +23,16 @@ public class ProductKeyBatchMassage {
         this.productKeyBatchId = productKeyBatchId;
     }
 
+    public String getProductStatusCode() {
+        return productStatusCode;
+    }
+
+    public void setProductStatusCode(String productStatusCode) {
+        this.productStatusCode = productStatusCode;
+    }
+
     @Override
     public String toString() {
-        return "{productKeyBatchId: " + productKeyBatchId + "}";
+        return "{productKeyBatchId: " + productKeyBatchId + ", productStatusCode: " + productStatusCode + "}";
     }
 }

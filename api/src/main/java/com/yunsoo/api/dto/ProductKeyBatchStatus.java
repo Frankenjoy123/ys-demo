@@ -8,4 +8,8 @@ import com.yunsoo.common.data.object.LookupObject;
  * Descriptions:
  */
 public class ProductKeyBatchStatus extends LookupObject {
+    public static final String NEW = "new";
+    public static final String CREATING = "creating";
+    public static final String AVAILABLE = "available";
+    public static final String DELETED = "deleted";
 }
