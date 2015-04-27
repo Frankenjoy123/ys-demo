@@ -61,7 +61,7 @@ public class MessageController {
         }
     }
 
-    @RequestMapping(value = "/orgid", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#orgId, 'message:read')")
     public List<Message> getMessages(//@RequestHeader(AUTH_HEADER_NAME) String token,
                                      @RequestParam(value = "orgid", required = true) String orgId,

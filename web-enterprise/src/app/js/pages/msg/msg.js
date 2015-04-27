@@ -12,7 +12,7 @@
     app.factory("msgService", ["$http", function($http){
         return {
             getInfo: function(org_id, pageIndex, fnSuccess, fnError){
-                $http.get("/api/message/orgid?orgid=" + org_id + "&&pageIndex=" + pageIndex)
+                $http.get("/api/message?orgid=" + org_id + "&&pageIndex=" + pageIndex)
                     .success(function(data){
                         fnSuccess(data);
                     });
