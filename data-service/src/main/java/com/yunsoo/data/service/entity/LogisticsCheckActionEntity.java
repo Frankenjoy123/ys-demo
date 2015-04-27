@@ -1,18 +1,18 @@
-package com.yunsoo.data.service.dbmodel;
+package com.yunsoo.data.service.entity;
 
 import javax.persistence.*;
 
 /**
- * Created by Chen Jerry on 3/3/2015.
+ * Created by Jerry on 4/27/2015.
  */
 @Entity
 @Table(name="logistics_check_action")
-public class LogisticsCheckActionModel {
+public class LogisticsCheckActionEntity {
 
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private int Id;
+    private Integer id;
 
     @Column(name = "name")
     private String name;
@@ -21,14 +21,14 @@ public class LogisticsCheckActionModel {
     private String description;
 
     @Column(name = "org_id")
-    private Long orgId;
+    private String orgId;
 
-    public int getId() {
-        return Id;
+    public Integer getId() {
+        return id;
     }
 
-    public void setId(int id) {
-        Id = id;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -47,12 +47,11 @@ public class LogisticsCheckActionModel {
         this.description = description;
     }
 
-    public Long getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(Long orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
-
 }

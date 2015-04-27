@@ -23,28 +23,50 @@ public class LogisticsActionController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody LogisticsCheckActionObject logisticsCheckActionObject) {
-        dataAPIClient.post("logisticscheckaction", logisticsCheckActionObject, Long.class);
+    public LogisticsCheckActionObject create(@RequestBody LogisticsCheckActionObject logisticsCheckActionObject) {
+
+        LogisticsCheckActionObject newObject = dataAPIClient.post("logisticscheckaction", logisticsCheckActionObject, LogisticsCheckActionObject.class);
+        return newObject;
     }
 
-    @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
-    public LogisticsCheckActionObject get(@PathVariable(value = "id") int id) {
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public LogisticsCheckActionObject get(@PathVariable(value = "id") Integer id) {
 
-        LogisticsCheckActionObject logisticsCheckActionObject = dataAPIClient.get("logisticscheckaction/id/{id}", LogisticsCheckActionObject.class, id);
+        LogisticsCheckActionObject logisticsCheckActionObject = dataAPIClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, id);
         if(logisticsCheckActionObject == null)
             throw new NotFoundException("Logistics action not found id=" + id);
 
         return logisticsCheckActionObject;
     }
 
-    @RequestMapping(value = "/org/{id}", method = RequestMethod.GET)
-    public List<LogisticsCheckActionObject> get(@PathVariable(value = "id") Long id) {
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<LogisticsCheckActionObject> get(@RequestParam(value = "orgId", required = true) String orgId,
+                                                @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
+                                                @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
-        LogisticsCheckActionObject[] logisticsCheckActionObjects = dataAPIClient.get("logisticscheckaction/org/{id}", LogisticsCheckActionObject[].class, id);
-        if(logisticsCheckActionObjects == null || logisticsCheckActionObjects.length == 0)
-            throw new NotFoundException("Logistics action not found orgId=" + id);
+        LogisticsCheckActionObject[] objects =
+                dataAPIClient.get("logisticscheckaction?orgId={orgId}&&pageIndex={pageIndex}&&pageSize={pageSize}",
+                        LogisticsCheckActionObject[].class,
+                        orgId,
+                        pageIndex,
+                        pageSize);
 
-        List<LogisticsCheckActionObject> logisticsCheckActionObjectList = Arrays.asList(logisticsCheckActionObjects);
-        return logisticsCheckActionObjectList;
+        if (objects == null)
+            throw new NotFoundException("LogisticsCheckActionObject not found");
+
+        return Arrays.asList(objects);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public void patch(@RequestBody LogisticsCheckActionObject logisticsCheckActionObject) {
+
+        dataAPIClient.patch("logisticscheckaction", logisticsCheckActionObject);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable(value = "id") Integer id) {
+
+        dataAPIClient.delete("logisticscheckaction/{id}", id);
     }
 }

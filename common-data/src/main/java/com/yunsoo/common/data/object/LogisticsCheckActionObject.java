@@ -4,16 +4,16 @@ package com.yunsoo.common.data.object;
  * Created by Jerry on 3/16/2015.
  */
 public class LogisticsCheckActionObject {
-    private int id;
+    private Integer id;
     private String name;
     private String description;
-    private Long orgId;
+    private String orgId;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -33,11 +33,11 @@ public class LogisticsCheckActionObject {
         this.description = description;
     }
 
-    public Long getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(Long orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 }

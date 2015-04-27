@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by Jerry on 3/24/2015.
  */
@@ -19,17 +22,50 @@ public class LogisticsPointController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody LogisticsCheckPointObject logisticsCheckPointObject) {
-        dataAPIClient.post("logisticscheckpoint", logisticsCheckPointObject, Long.class);
+    public LogisticsCheckPointObject create(@RequestBody LogisticsCheckPointObject logisticsCheckPointObject) {
+
+        LogisticsCheckPointObject newObject = dataAPIClient.post("logisticscheckpoint", logisticsCheckPointObject, LogisticsCheckPointObject.class);
+        return newObject;
     }
 
-    @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public LogisticsCheckPointObject get(@PathVariable(value = "id") String id) {
 
-        LogisticsCheckPointObject logisticsCheckPointObject = dataAPIClient.get("logisticscheckpoint/id/{id}", LogisticsCheckPointObject.class, id);
+        LogisticsCheckPointObject logisticsCheckPointObject = dataAPIClient.get("logisticscheckpoint/{id}", LogisticsCheckPointObject.class, id);
         if(logisticsCheckPointObject == null)
             throw new NotFoundException("Logistics point not found id=" + id);
 
         return logisticsCheckPointObject;
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<LogisticsCheckPointObject> get(@RequestParam(value = "orgId", required = true) String orgId,
+                                                @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
+                                                @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+
+        LogisticsCheckPointObject[] objects =
+                dataAPIClient.get("logisticscheckpoint?orgId={orgId}&&pageIndex={pageIndex}&&pageSize={pageSize}",
+                        LogisticsCheckPointObject[].class,
+                        orgId,
+                        pageIndex,
+                        pageSize);
+
+        if (objects == null)
+            throw new NotFoundException("LogisticsCheckPointObject not found");
+
+        return Arrays.asList(objects);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public void patch(@RequestBody LogisticsCheckPointObject logisticsCheckPointObject) {
+
+        dataAPIClient.patch("logisticscheckpoint", logisticsCheckPointObject);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable(value = "id") String id) {
+
+        dataAPIClient.delete("logisticscheckpoint/{id}", id);
     }
 }
