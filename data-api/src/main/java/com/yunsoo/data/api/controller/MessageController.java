@@ -57,7 +57,7 @@ public class MessageController {
         return new ResponseEntity(message, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<List<Message>> getMessagesByFilter(@RequestParam(value = "type", required = false) Integer type,
                                                              @RequestParam(value = "status", required = false) String status,
                                                              @RequestParam(value = "orgid", required = false) String orgId,

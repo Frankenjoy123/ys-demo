@@ -12,6 +12,8 @@ public interface UserLikedProductRepository extends JpaRepository<UserLikedProdu
 
     Iterable<UserLikedProductEntity> findByUserId(String userId);
 
+    Iterable<UserLikedProductEntity> findByUserIdAndActive(String userId, Boolean active);
+
     Iterable<UserLikedProductEntity> findByUserIdAndBaseProductId(String userId, String baseProductId);
 
     Iterable<UserLikedProductEntity> findById(Long id);

@@ -42,10 +42,14 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 throw new UnauthorizedException(40104, "Account is disabled!");
             }
 
-            List<TPermission> permissionList = permissionDomain.getAccountPermissionsByAccountId(account.getId());
-
-            TPermission currentPermission = new TPermission();
-            currentPermission.setOrgId(account.getOrgId());
+//            List<TPermission> permissionList = permissionDomain.getAccountPermissionsByAccountId(account.getId());
+            TPermission currentPermission = this.getPermission((String) permission);
+            if (targetDomainObject instanceof Message) {
+                currentPermission.setOrgId(((Message) targetDomainObject).getOrgId());
+            }
+//            else {
+//                currentPermission.setOrgId(targetDomainObject.toString()); //suppose targetDomainObject is orgId
+//            }
             hasPermission = permissionDomain.hasPermission(account.getId(), currentPermission);
             //implement the permission checking of your application here
             //you can just check if the input permission is within your permission list
@@ -81,27 +85,32 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 throw new UnauthorizedException(40104, "Account is disabled!");
             }
 
-            //check if user's permission for target id
-//            if (targetType.compareToIgnoreCase("User") == 0) {
-//                hasPermission = account.getId().equals(targetId) ? true : false;
-//            } else if (targetType.compareToIgnoreCase("UserLikedProduct") == 0) {
+            TPermission currentPermission = this.getPermission((String) permission);
+            //check if user trying to take action on it's own orgId's resource
+            if (targetType.compareToIgnoreCase("filterByOrg") == 0) {
+//                hasPermission = account.getOrgId().equals(targetId) ? true : false;
+                currentPermission.setOrgId(targetId.toString());
+            }
+//            else if (targetType.compareToIgnoreCase("UserLikedProduct") == 0) {
 //                hasPermission = account.getId().equals(targetId) ? true : false;
 //            } else if (targetType.compareToIgnoreCase("AccountInToken") == 0) {
 //                hasPermission = account.getId().equals(targetId) ? true : false;
 //            } else {
 //                hasPermission = false;
 //            }
-
-            List<TPermission> permissionList = permissionDomain.getAccountPermissionsByAccountId(account.getId());
-
-            String[] pArray = ((String) permission).toLowerCase().split(":");
-            TPermission currentPermission = new TPermission();
-            currentPermission.setOrgId(account.getOrgId());
-            currentPermission.setResourceCode(pArray[0]);
-            currentPermission.setActionCode(pArray[1]);
+            else {
+                currentPermission.setOrgId(account.getOrgId());
+            }
             hasPermission = permissionDomain.hasPermission(account.getId(), currentPermission);
-
         }
         return hasPermission;
+    }
+
+    private TPermission getPermission(String permission) {
+        String[] pArray = ((String) permission).toLowerCase().split(":");
+        TPermission currentPermission = new TPermission();
+        currentPermission.setResourceCode(pArray[0]);
+        currentPermission.setActionCode(pArray[1]);
+        return currentPermission;
     }
 }

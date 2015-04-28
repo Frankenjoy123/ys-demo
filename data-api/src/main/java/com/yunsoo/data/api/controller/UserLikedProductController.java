@@ -25,7 +25,7 @@ public class UserLikedProductController {
 
     @RequestMapping(value = "/userid/{id}", method = RequestMethod.GET)
     public List<UserLikedProduct> getUserCollectionByUserId(@PathVariable(value = "id") String id) {
-        return UserLikedProduct.FromEntityList(userLikedProductRepository.findByUserId(id));
+        return UserLikedProduct.FromEntityList(userLikedProductRepository.findByUserIdAndActive(id, true)); //add active filter
     }
 
     @RequestMapping(value = "/userid/{id}/product/{pid}", method = RequestMethod.GET)

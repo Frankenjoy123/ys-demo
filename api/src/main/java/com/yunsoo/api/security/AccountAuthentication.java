@@ -25,6 +25,10 @@ public class AccountAuthentication implements Authentication {
         return tAccount.getUsername();
     }
 
+    public String getOrgId() {
+        return tAccount.getOrgId();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return tAccount.getAuthorities();

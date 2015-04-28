@@ -4,8 +4,6 @@ import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.UserFollowingEntity;
 import com.yunsoo.data.service.repository.UserFollowingRepository;
-import com.yunsoo.data.service.service.Impl.UserServiceImpl;
-import com.yunsoo.data.service.service.UserService;
 import com.yunsoo.data.service.service.contract.UserFollowing;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +25,6 @@ public class UserFollowingController {
 
     @Autowired
     private UserFollowingRepository userFollowingRepository;
-//    @Autowired
-//    private UserService userService;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public UserFollowing getFollowingOrgsByUserId(@PathVariable(value = "id") Long id) {
@@ -48,7 +44,7 @@ public class UserFollowingController {
         if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
 
-        List<UserFollowing> userFollowingList = UserFollowing.FromEntityList(userFollowingRepository.findByUserId(id, new PageRequest(index, size)));
+        List<UserFollowing> userFollowingList = UserFollowing.FromEntityList(userFollowingRepository.findByUserIdAndIsFollowing(id, true, new PageRequest(index, size)));
         if (userFollowingList == null || userFollowingList.size() < 1) {
             throw new NotFoundException(40401, "找不到用户follow组织的记录! 用户ID = " + id);
         }
@@ -100,10 +96,4 @@ public class UserFollowingController {
         userFollowingRepository.save(UserFollowing.ToEntity(userFollowing));
 
     }
-
-//    @RequestMapping(value = "/delete", method = RequestMethod.PATCH)
-//    public void userUnfollow(@RequestBody UserFollowing userFollowing) {
-//        userFollowing.setIsFollowing(false);
-//        userFollowingRepository.save(UserFollowing.ToEntity(userFollowing)); //just mark isFollowing as False.
-//    }
 }

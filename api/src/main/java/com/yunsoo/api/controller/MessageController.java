@@ -2,6 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.config.Constants;
 import com.yunsoo.api.domain.AccountDomain;
+import com.yunsoo.api.domain.MessageDomain;
 import com.yunsoo.api.dto.basic.Message;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.web.client.RestClient;
@@ -15,6 +16,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +40,9 @@ public class MessageController {
     @Autowired
     private AccountDomain accountDomain;
 
+    @Autowired
+    private MessageDomain messageDomain;
+
     private final String message_created_status = "created";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
@@ -48,21 +53,16 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#id, 'AccountInToken', 'message:read')")
+//    @PreAuthorize("hasPermission(#id, 'message', 'message:read')")
+    @PostAuthorize("hasPermission(returnObject, 'message:read')")
+//    @PostAuthorize("returnObject.orgId == authentication.getOrgId()")
     public Message getById(@PathVariable(value = "id") Integer id) throws NotFoundException {
-        if (id == null || id <= 0) throw new BadRequestException("Id不能小于0！");
-        try {
-            Message message = dataAPIClient.get("message/{id}", Message.class, id);
-            if (message == null) throw new NotFoundException(40401, "Message not found for id = " + id);
-
-            return message;
-        } catch (NotFoundException ex) {
-            throw new NotFoundException(40401, "Message not found for id = " + id);
-        }
+        Message message = messageDomain.getById(id);
+        return message;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-//    @PreAuthorize("hasPermission(#orgId, 'message:read')")
+    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'message:read')")
     public List<Message> getMessages(//@RequestHeader(AUTH_HEADER_NAME) String token,
                                      @RequestParam(value = "orgid", required = true) String orgId,
                                      @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
@@ -70,7 +70,7 @@ public class MessageController {
         if (orgId == null || orgId.isEmpty()) throw new BadRequestException("OrgId不能为空！");
 
         try {
-            List<Message> messageList = dataAPIClient.get("message/get?orgid={0}&pageIndex={1}&pageSize={2}", List.class, orgId, pageIndex, pageSize);
+            List<Message> messageList = dataAPIClient.get("message?orgid={0}&pageIndex={1}&pageSize={2}", List.class, orgId, pageIndex, pageSize);
             if (messageList == null || messageList.size() == 0) {
                 throw new NotFoundException("Message not found!  OrgId = " + orgId);
             }
@@ -83,7 +83,7 @@ public class MessageController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#message, 'message:create')")
+    @PreAuthorize("hasPermission(#message.orgId, 'filterByOrg', 'message:create')")
     public long createMessages(@RequestBody Message message) {
         if (message == null) throw new BadRequestException("Message不能为空！");
         message.setStatus(message_created_status); //set as created

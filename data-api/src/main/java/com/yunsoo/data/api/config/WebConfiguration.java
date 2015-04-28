@@ -3,6 +3,7 @@ package com.yunsoo.data.api.config;
 import com.yunsoo.common.web.util.CaseInsensitiveAntPathMatcher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
  * Descriptions:
  */
 @Configuration
+//@EnableSpringDataWebSupport
 public class WebConfiguration extends WebMvcConfigurationSupport {
 
     @Bean
