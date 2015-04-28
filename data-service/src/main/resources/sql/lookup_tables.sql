@@ -26,8 +26,8 @@ CREATE TABLE product_key_type_lkp
 );
 INSERT INTO product_key_type_lkp (code, name, description, active)
 VALUES
-  ('qr_public', '二维码', '二维码', TRUE),
   ('qr_secure', '隐藏二维码', '隐藏二维码', TRUE),
+  ('qr_public', '二维码', '二维码', TRUE),
   ('rfid', 'RFID标签', 'RFID标签', TRUE);
 
 
@@ -42,8 +42,10 @@ CREATE TABLE product_key_batch_status_lkp
 );
 INSERT INTO product_key_batch_status_lkp (code, name, description, active)
 VALUES
-  ('new', '新建', 'new', TRUE),
-  ('ready', '有效', 'ready', TRUE);
+  ('creating', '新建中', 'creating', TRUE),
+  ('available', '有效', 'available', TRUE),
+  ('downloaded', '已下载', 'downloaded', TRUE),
+  ('deleted', '已删除', 'deleted', TRUE);
 
 
 #permission_resource_lkp
@@ -108,7 +110,8 @@ CREATE TABLE account_status_lkp
 );
 INSERT INTO account_status_lkp (code, name, description, active)
 VALUES
-  ('available', '正常', '正常', TRUE);
+  ('activated', '正常', '正常', TRUE),
+  ('deactivated', '停用', '已停用', TRUE);
 
 #user_status_lkp
 DROP TABLE IF EXISTS user_status_lkp;

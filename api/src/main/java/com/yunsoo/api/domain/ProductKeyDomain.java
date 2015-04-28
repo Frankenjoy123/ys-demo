@@ -1,11 +1,10 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.ProcessorClient;
-import com.yunsoo.api.dto.ProductKeyBatchStatus;
-import com.yunsoo.api.dto.ProductStatus;
-import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyType;
+import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
@@ -67,7 +66,7 @@ public class ProductKeyDomain {
     }
 
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {
-        batchObj.setStatusCode(ProductKeyBatchStatus.CREATING);
+        batchObj.setStatusCode(LookupCodes.ProductKeyBatchStatus.CREATING);
         ProductKeyBatchObject newBatchObj = dataAPIClient.post(
                 "productkeybatch",
                 batchObj,
@@ -77,7 +76,7 @@ public class ProductKeyDomain {
         ProductKeyBatchMassage sqsMessage = new ProductKeyBatchMassage();
         sqsMessage.setProductKeyBatchId(newBatchObj.getId());
         if (newBatchObj.getProductBaseId() != null) {
-            sqsMessage.setProductStatusCode(ProductStatus.ACTIVATED);  //default activated
+            sqsMessage.setProductStatusCode(LookupCodes.ProductStatus.ACTIVATED);  //default activated
         }
         processorClient.post("sqs/productkeybatch", sqsMessage);
 

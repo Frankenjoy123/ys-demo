@@ -1,11 +1,12 @@
 package com.yunsoo.processor.handler;
 
+import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.common.data.object.ProductKeyBatchDetailedObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class ProductKeyBatchHandler {
         ProductKeyBatchObject batch = dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, batchId);
 
         String productKeyBatchStatusCode = batch.getStatusCode();
-        if (!"creating".equals(productKeyBatchStatusCode)) {
+        if (!LookupCodes.ProductKeyBatchStatus.CREATING.equals(productKeyBatchStatusCode)) {
             LOGGER.error("productkeybatch status is not valid [message: {}, productKeyBatchStatus: {}]",
                     message.toString(), productKeyBatchStatusCode);
             throw new RuntimeException("productkeybatch status is not valid");

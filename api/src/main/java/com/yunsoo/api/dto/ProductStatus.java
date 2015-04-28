@@ -8,9 +8,4 @@ import com.yunsoo.common.data.object.LookupObject;
  * Descriptions:
  */
 public class ProductStatus extends LookupObject {
-    public static final String NEW = "new";
-    public static final String ACTIVATED = "activated";
-    public static final String RECALLED = "recalled";
-    public static final String DELETED = "deleted";
-
 }
