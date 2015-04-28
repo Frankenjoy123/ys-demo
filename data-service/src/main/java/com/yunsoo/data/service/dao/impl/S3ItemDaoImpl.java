@@ -8,11 +8,14 @@ import com.yunsoo.data.service.dao.S3ItemDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/2/9.
+ * Created by  : Zhe
+ * Created on  : 2015/2/9
+ * Descriptions:
  */
 @Repository("s3ItemDao")
 public class S3ItemDaoImpl implements S3ItemDao {
@@ -21,36 +24,40 @@ public class S3ItemDaoImpl implements S3ItemDao {
 
     @Autowired
     AmazonS3Client amazonS3Client;
+//
+//    @Override
+//    public void putFolderItem(String bucketName, String folderName) {
+//
+//        // create meta-data for your folder and set content-length to 0
+//        ObjectMetadata metadata = new ObjectMetadata();
+//        metadata.setContentLength(0);
+//        // create empty content
+//        InputStream emptyContent = new ByteArrayInputStream(new byte[0]);
+//        // create a PutObjectRequest passing the folder name suffixed by /
+//        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName,
+//                folderName + SUFFIX, emptyContent, metadata);
+//        // send request to S3 to create folder
+//        amazonS3Client.putObject(putObjectRequest);
+//    }
+//
+//    // upload file to folder and set CannedAccessControlList
+//    @Override
+//    public void putFileItem(String bucketName, String folderName, String fileName, File file, CannedAccessControlList cannedAccessControlList) {
+//
+//        String newFileName = folderName + SUFFIX + fileName;
+//        amazonS3Client.putObject(new PutObjectRequest(bucketName, newFileName, file)
+//                .withCannedAcl(cannedAccessControlList));
+//    }
 
     @Override
-    public void putFolderItem(String bucketName, String folderName) {
-
-        // create meta-data for your folder and set content-length to 0
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(0);
-        // create empty content
-        InputStream emptyContent = new ByteArrayInputStream(new byte[0]);
-        // create a PutObjectRequest passing the folder name suffixed by /
-        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName,
-                folderName + SUFFIX, emptyContent, metadata);
-        // send request to S3 to create folder
-        amazonS3Client.putObject(putObjectRequest);
+    public void putItem(String bucketName, String key, InputStream inputStream, ObjectMetadata objectMetadata) {
+        this.putItem(bucketName, key, inputStream, objectMetadata, CannedAccessControlList.BucketOwnerFullControl);
     }
 
-    // upload file to folder and set CannedAccessControlList
     @Override
-    public void putFileItem(String bucketName, String folderName, String fileName, File file, CannedAccessControlList cannedAccessControlList) {
-
-        String newFileName = folderName + SUFFIX + fileName;
-        amazonS3Client.putObject(new PutObjectRequest(bucketName, newFileName, file)
-                .withCannedAcl(cannedAccessControlList));
-    }
-
-    //upload item with inputstream
-    @Override
-    public void putItem(String bucketName, String objectPath, InputStream inputStream, ObjectMetadata objectMetadata, CannedAccessControlList cannedAccessControlList) {
+    public void putItem(String bucketName, String key, InputStream inputStream, ObjectMetadata objectMetadata, CannedAccessControlList cannedAccessControlList) {
         objectMetadata = objectMetadata == null ? new ObjectMetadata() : objectMetadata;
-        amazonS3Client.putObject(new PutObjectRequest(bucketName, objectPath, inputStream, objectMetadata)
+        amazonS3Client.putObject(new PutObjectRequest(bucketName, key, inputStream, objectMetadata)
                 .withCannedAcl(cannedAccessControlList));
     }
 

@@ -1,5 +1,11 @@
 package com.yunsoo.data.service.service.Impl;
 
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.util.IOUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
@@ -7,9 +13,6 @@ import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
 import com.yunsoo.data.service.service.ProductKeyBatchService;
 import com.yunsoo.data.service.service.contract.ProductKeyBatch;
 import com.yunsoo.data.service.service.contract.ProductKeys;
-import com.yunsoo.common.util.KeyGenerator;
-import com.yunsoo.common.util.DateTimeUtils;
-import com.yunsoo.data.service.dbmodel.ProductKeyBatchS3ObjectModel;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,7 +21,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -29,6 +39,12 @@ import java.util.stream.StreamSupport;
  */
 @Service("productKeyBatchService")
 public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
+
+    private static final int KEY_LENGTH = 22;
+    private static final byte[] DELIMITER1 = new byte[]{0x2C}; //,
+    private static final byte[] DELIMITER2 = new byte[]{0x3B}; //;
+
+    private static ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private ProductKeyBatchRepository productKeyBatchRepository;
@@ -70,16 +86,16 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         if (keyBatch == null || keyBatch.getProductKeysUri() == null) {
             return null;
         }
-        ProductKeyBatchS3ObjectModel model = getProductKeyListFromS3(keyBatch.getProductKeysUri());
-        if (model == null) {
+        List<List<String>> keys = getProductKeyListFromS3(keyBatch.getProductKeysUri());
+        if (keys == null) {
             return null;
         }
         ProductKeys productKeys = new ProductKeys();
-        productKeys.setBatchId(model.getId());
-        productKeys.setQuantity(model.getQuantity());
-        productKeys.setCreatedDateTime(DateTimeUtils.parse(model.getCreatedDateTime()));
-        productKeys.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(model.getProductKeyTypeCodes(), ",")));
-        productKeys.setProductKeys(model.getProductKeys());
+        productKeys.setBatchId(keyBatch.getId());
+        productKeys.setQuantity(keyBatch.getQuantity());
+        productKeys.setCreatedDateTime(keyBatch.getCreatedDateTime());
+        productKeys.setProductKeyTypeCodes(keyBatch.getProductKeyTypeCodes());
+        productKeys.setProductKeys(keys);
         return productKeys;
     }
 
@@ -104,9 +120,8 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         //save product keys to S3
         String uri = saveProductKeyListToS3(
                 newEntity.getId(),
-                newEntity.getQuantity(),
-                newEntity.getCreatedDateTime(),
-                newEntity.getProductKeyTypeCodes(),
+                quantity,
+                keyTypeCodes.size(),
                 keyList);
 
         //update batch with uri
@@ -154,32 +169,59 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     }
 
     private String saveProductKeyListToS3(String batchId,
-                                          Integer quantity,
-                                          DateTime createdDateTime,
-                                          String productKeyTypeCodes,
+                                          int quantity,
+                                          int productKeyTypeCodesCount,
                                           List<List<String>> keyList) {
-        ProductKeyBatchS3ObjectModel model = new ProductKeyBatchS3ObjectModel();
-        model.setId(batchId);
-        model.setQuantity(quantity);
-        model.setCreatedDateTime(DateTimeUtils.toString(createdDateTime));
-        model.setProductKeyTypeCodes(productKeyTypeCodes);
-        model.setProductKeys(keyList);
+        int totalKeyLength = (KEY_LENGTH + 1) * productKeyTypeCodesCount * quantity;
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(totalKeyLength);
+        for (int i = 0; i < quantity; i++) {
+            List<String> keys = keyList.get(i);
+            for (int j = 0; j < productKeyTypeCodesCount; j++) {
+                byte[] temp = keys.get(j).getBytes(StandardCharsets.UTF_8);
+                byteArrayOutputStream.write(temp, 0, KEY_LENGTH);
+                if (j < productKeyTypeCodesCount - 1) {
+                    byteArrayOutputStream.write(DELIMITER1, 0, 1);
+                }
+            }
+            byteArrayOutputStream.write(DELIMITER2, 0, 1);
+        }
+
         String bucketName = amazonSetting.getS3_basebucket();
         String key = String.join("/", amazonSetting.getS3_product_key_batch_path(), batchId);
-        s3ItemDao.putItem(bucketName, key, model);
+        InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(totalKeyLength);
+        s3ItemDao.putItem(bucketName, key, inputStream, metadata);
+
         return String.join("/", bucketName, key); //uri
     }
 
-    private ProductKeyBatchS3ObjectModel getProductKeyListFromS3(String address) {
+    private List<List<String>> getProductKeyListFromS3(String address) {
         if (address == null) {
             return null;
         }
         String[] tempArr = address.split("/", 2); //String[]{bucketName, key}
-        //ProductKeyBatchS3ObjectModel
-        return s3ItemDao.getItem(
-                tempArr[0],
-                tempArr[1],
-                ProductKeyBatchS3ObjectModel.class);
+        S3Object s3Object = s3ItemDao.getItem(tempArr[0], tempArr[1]);
+        S3ObjectInputStream inputStream = s3Object.getObjectContent();
+        byte[] buffer;
+        try {
+            buffer = IOUtils.toByteArray(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException("getProductKeyListFromS3 exception", e);
+        }
+        List<List<String>> result = new ArrayList<>();
+        int step = KEY_LENGTH + 1;
+        List<String> keys = new ArrayList<>();
+        for (int i = 0; i < buffer.length; i += step) {
+            String key = new String(buffer, i, KEY_LENGTH);
+            keys.add(key);
+            byte delimiter = buffer[i + KEY_LENGTH];
+            if (delimiter == DELIMITER2[0]) {
+                result.add(keys);
+                keys = new ArrayList<>();
+            }
+        }
+        return result;
     }
 
     private ProductKeyBatch toProductKeyBatch(ProductKeyBatchEntity entity) {
@@ -222,6 +264,56 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         }
         entity.setProductKeysUri(batch.getProductKeysUri());
         return entity;
+    }
+
+    private static class ProductKeyBatchS3Object {
+
+        private String batchId;
+        private Integer quantity;
+        private Long createdDateTime;
+        private List<String> productKeyTypeCodes;
+        private Long totalKeyLength;
+
+
+        public String getBatchId() {
+            return batchId;
+        }
+
+        public void setBatchId(String batchId) {
+            this.batchId = batchId;
+        }
+
+        public Integer getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(Integer quantity) {
+            this.quantity = quantity;
+        }
+
+        public Long getCreatedDateTime() {
+            return createdDateTime;
+        }
+
+        public void setCreatedDateTime(Long createdDateTime) {
+            this.createdDateTime = createdDateTime;
+        }
+
+        public List<String> getProductKeyTypeCodes() {
+            return productKeyTypeCodes;
+        }
+
+        public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
+            this.productKeyTypeCodes = productKeyTypeCodes;
+        }
+
+        public Long getTotalKeyLength() {
+            return totalKeyLength;
+        }
+
+        public void setTotalKeyLength(Long totalKeyLength) {
+            this.totalKeyLength = totalKeyLength;
+        }
     }
 
 }

@@ -34,7 +34,7 @@ public class ErrorResult {
 
     @Override
     public String toString() {
-        return "[" + code + "] " + message;
+        return "{code: " + code + ", message: " + message + "}";
     }
 
 }

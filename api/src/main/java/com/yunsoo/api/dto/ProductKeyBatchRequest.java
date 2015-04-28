@@ -1,9 +1,7 @@
 package com.yunsoo.api.dto;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.Max;
 import java.util.List;
 
 /**
@@ -13,7 +11,7 @@ import java.util.List;
  */
 public class ProductKeyBatchRequest {
 
-    @Range(min = 1, max = 1000, message = "单次申请数量必须大于1并且不超过1000,[测试环境限制]")
+    @Range(min = 1, max = 100000, message = "单次申请数量必须大于1并且不超过100000")
     private int quantity;
 
     private List<String> productKeyTypeCodes;

@@ -7,6 +7,7 @@ import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ public class ProductKeyBatchHandler {
         String productStatusCode = message.getProductStatusCode();
 
         LOGGER.info("start processing productkeybatch: [message: {}]", message.toString());
+        DateTime start = DateTime.now();
 
         ProductKeyBatchObject batch = dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, batchId);
 
@@ -69,6 +71,8 @@ public class ProductKeyBatchHandler {
         batch.setStatusCode("available");
         dataAPIClient.patch("productkeybatch/{id}", batch, batchId);
 
-        LOGGER.info("finished processing productkeybatch: [message: {}, quantity: {}]", message.toString(), quantity);
+        long seconds = (DateTime.now().getMillis() - start.getMillis()) / 1000;
+
+        LOGGER.info("finished processing productkeybatch: [message: {}, quantity: {}, seconds: {}]", message.toString(), quantity, seconds);
     }
 }

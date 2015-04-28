@@ -90,7 +90,7 @@ public class ProductKeyDomain {
             return null;
         }
         try {
-            List<String> productKeyTypeCodes = LookupObject.toCodeList(lookupDomain.getAllProductKeyTypes());
+            List<String> productKeyTypeCodes = object.getProductKeyTypeCodes();
             outputStream.write(
                     StringUtils.collectionToDelimitedString(productKeyTypeCodes, ",")
                             .getBytes(Charset.forName("UTF-8")));

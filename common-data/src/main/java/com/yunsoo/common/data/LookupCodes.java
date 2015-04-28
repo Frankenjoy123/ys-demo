@@ -10,6 +10,9 @@ public class LookupCodes {
     }
 
     public static class ProductKeyBatchStatus {
+        private ProductKeyBatchStatus() {
+        }
+
         public static final String CREATING = "creating";
         public static final String AVAILABLE = "available";
         public static final String DOWNLOADED = "downloaded";
@@ -17,6 +20,9 @@ public class LookupCodes {
     }
 
     public static class ProductStatus {
+        private ProductStatus() {
+        }
+
         public static final String NEW = "new";
         public static final String ACTIVATED = "activated";
         public static final String RECALLED = "recalled";
@@ -24,10 +30,15 @@ public class LookupCodes {
     }
 
     public static class ProductKeyType {
+        private ProductKeyType() {
+        }
 
     }
 
     public static class AccountStatus {
+        private AccountStatus() {
+        }
+
         public static final String ACTIVATED = "activated";
         public static final String DEACTIVATED = "deactivated";
     }
