@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.config.Constants;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.dto.basic.Message;
 import com.yunsoo.common.data.object.FileObject;
@@ -37,7 +38,6 @@ public class MessageController {
     @Autowired
     private AccountDomain accountDomain;
 
-    private final String AUTH_HEADER_NAME = "YS_WOLF_AUTH_TOKEN";
     private final String message_created_status = "created";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
@@ -101,7 +101,7 @@ public class MessageController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#message, 'message:delete')")
-    public void deleteMessages(@RequestHeader(AUTH_HEADER_NAME) String token, @PathVariable(value = "id") Long id) {
+    public void deleteMessages(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @PathVariable(value = "id") Long id) {
         if (id == null || id <= 0) throw new BadRequestException("Id不能小于0！");
         Message message = dataAPIClient.get("/user/collection/{id}", Message.class, id);
         if (!accountDomain.validateToken(token, message.getOrgId())) {
@@ -110,12 +110,12 @@ public class MessageController {
         dataAPIClient.delete("message/{id}", id);
     }
 
-    @RequestMapping(value = "/image/{imagekey}", method = RequestMethod.GET)
-    public ResponseEntity<?> getThumbnail(
-            @PathVariable(value = "imagekey") String imagekey) {
+    @RequestMapping(value = "/{id}/{imagekey}", method = RequestMethod.GET)
+    public ResponseEntity<?> getThumbnail(@PathVariable(value = "id") String id,
+                                          @PathVariable(value = "imagekey") String imagekey) {
         if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("imagekey不能为空！");
         try {
-            FileObject fileObject = dataAPIClient.get("message/image/{imagekey}", FileObject.class, imagekey);
+            FileObject fileObject = dataAPIClient.get("message/{id}/{imagekey}", FileObject.class, id, imagekey);
             if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())

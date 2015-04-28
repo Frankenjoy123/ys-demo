@@ -43,7 +43,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     @Override
     public ProductKeyBatch getById(String id) {
         ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(id);
-        return fromProductKeyBatchEntity(entity);
+        return toProductKeyBatch(entity);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         Page<ProductKeyBatchEntity> entityPage =
                 productKeyBatchRepository.findByOrgIdOrderByCreatedDateTimeDesc(orgId, new PageRequest(pageIndex, pageSize));
         return StreamSupport.stream(entityPage.spliterator(), false)
-                .map(this::fromProductKeyBatchEntity)
+                .map(this::toProductKeyBatch)
                 .collect(Collectors.toList());
     }
 
@@ -60,23 +60,17 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         Page<ProductKeyBatchEntity> entityPage =
                 productKeyBatchRepository.findByOrgIdAndProductBaseIdOrderByCreatedDateTimeDesc(orgId, productBaseId, new PageRequest(pageIndex, pageSize));
         return StreamSupport.stream(entityPage.spliterator(), false)
-                .map(this::fromProductKeyBatchEntity)
+                .map(this::toProductKeyBatch)
                 .collect(Collectors.toList());
     }
 
     @Override
     public ProductKeys getProductKeysByBatchId(String batchId) {
         ProductKeyBatch keyBatch = this.getById(batchId);
-        if (keyBatch == null) {
+        if (keyBatch == null || keyBatch.getProductKeysUri() == null) {
             return null;
         }
-        return getProductKeysByUri(keyBatch.getProductKeysUri());
-    }
-
-    @Override
-    public ProductKeys getProductKeysByUri(String uri) {
-        Assert.notNull(uri, "uri must not be null");
-        ProductKeyBatchS3ObjectModel model = getProductKeyListFromS3(uri);
+        ProductKeyBatchS3ObjectModel model = getProductKeyListFromS3(keyBatch.getProductKeysUri());
         if (model == null) {
             return null;
         }
@@ -119,7 +113,24 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         newEntity.setProductKeysUri(uri);
         newEntity = productKeyBatchRepository.save(newEntity);
 
-        return fromProductKeyBatchEntity(newEntity);
+        return toProductKeyBatch(newEntity);
+    }
+
+    @Override
+    public void patchUpdate(ProductKeyBatch batch) {
+        ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(batch.getId());
+        if (entity != null) {
+            if (batch.getOrgId() != null) {
+                entity.setOrgId(batch.getOrgId());
+            }
+            if (batch.getProductBaseId() != null) {
+                entity.setProductBaseId(batch.getProductBaseId());
+            }
+            if (batch.getStatusCode() != null) {
+                entity.setStatusCode(batch.getStatusCode());
+            }
+            productKeyBatchRepository.save(entity);
+        }
     }
 
 
@@ -171,7 +182,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
                 ProductKeyBatchS3ObjectModel.class);
     }
 
-    private ProductKeyBatch fromProductKeyBatchEntity(ProductKeyBatchEntity entity) {
+    private ProductKeyBatch toProductKeyBatch(ProductKeyBatchEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -192,7 +203,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         return batch;
     }
 
-    public static ProductKeyBatchEntity toProductKeyBatchEntity(ProductKeyBatch batch) {
+    private ProductKeyBatchEntity toProductKeyBatchEntity(ProductKeyBatch batch) {
         if (batch == null) {
             return null;
         }

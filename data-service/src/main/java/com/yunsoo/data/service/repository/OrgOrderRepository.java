@@ -15,4 +15,6 @@ public interface OrgOrderRepository extends PagingAndSortingRepository<OrgOrderE
     Page<OrgOrderEntity> findByOrgId(String orgId, Pageable pageable);
 
     Page<OrgOrderEntity> findByOrgIdAndActive(String orgId, Boolean active, Pageable pageable);
+
+    Page<OrgOrderEntity> findByOrgIdAndProductBaseIdAndActive(String orgId, String productBaseId, Boolean active, Pageable pageable);
 }

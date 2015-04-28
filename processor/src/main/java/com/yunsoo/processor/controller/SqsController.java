@@ -2,7 +2,7 @@ package com.yunsoo.processor.controller;
 
 import com.yunsoo.processor.common.LogicalQueueName;
 import com.yunsoo.processor.common.PayloadName;
-import com.yunsoo.processor.message.ProductKeyBatchMassage;
+import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.processor.handler.ProductKeyBatchHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,11 +1,12 @@
 package com.yunsoo.processor.handler;
 
+import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.common.data.object.ProductKeyBatchDetailedObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.processor.message.ProductKeyBatchMassage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,32 +30,44 @@ public class ProductKeyBatchHandler {
 
     public void execute(ProductKeyBatchMassage message) {
         String batchId = message.getProductKeyBatchId();
+        String productStatusCode = message.getProductStatusCode();
+
         LOGGER.info("start processing productkeybatch: [message: {}]", message.toString());
 
         ProductKeyBatchObject batch = dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, batchId);
+
+        String productKeyBatchStatusCode = batch.getStatusCode();
+        if (!LookupCodes.ProductKeyBatchStatus.CREATING.equals(productKeyBatchStatusCode)) {
+            LOGGER.error("productkeybatch status is not valid [message: {}, productKeyBatchStatus: {}]",
+                    message.toString(), productKeyBatchStatusCode);
+            throw new RuntimeException("productkeybatch status is not valid");
+        }
+
         ProductKeysObject productKeysObject = dataAPIClient.get("productkeybatch/{id}/keys", ProductKeysObject.class, batchId);
 
         int quantity = productKeysObject.getQuantity();
         List<String> productKeyTypeCodes = productKeysObject.getProductKeyTypeCodes();
         List<List<String>> productKeys = productKeysObject.getProductKeys();
+        String productBaseId = batch.getProductBaseId();
 
         ProductKeyBatchDetailedObject request = new ProductKeyBatchDetailedObject();
         request.setId(batchId);
         request.setProductKeyTypeCodes(productKeyTypeCodes);
-
-        for (int i = 0; i < quantity; i += SUB_BATCH_LIMIT) {
-            request.setProductKeys(productKeys.subList(i, quantity < i + SUB_BATCH_LIMIT ? quantity : i + SUB_BATCH_LIMIT));
-        }
-
-        if (batch.getProductBaseId() != null) {
+        if (productBaseId != null && productStatusCode != null) {
             ProductObject product = new ProductObject();
-            product.setProductBaseId(batch.getProductBaseId());
-            String productStatusCode = "activated"; //default activated
+            product.setProductBaseId(productBaseId);
             product.setProductStatusCode(productStatusCode);
             request.setProductTemplate(product);
         }
 
-        dataAPIClient.post("productkey/batch", request);
+        for (int i = 0; i < quantity; i += SUB_BATCH_LIMIT) {
+            request.setProductKeys(productKeys.subList(i, quantity < i + SUB_BATCH_LIMIT ? quantity : i + SUB_BATCH_LIMIT));
+            //batch create product key
+            dataAPIClient.post("productkey/batch", request);
+        }
+
+        batch.setStatusCode("available");
+        dataAPIClient.patch("productkeybatch/{id}", batch, batchId);
 
         LOGGER.info("finished processing productkeybatch: [message: {}, quantity: {}]", message.toString(), quantity);
     }

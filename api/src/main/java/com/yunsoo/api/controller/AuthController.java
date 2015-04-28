@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.config.Constants;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.AccountTokenDomain;
 import com.yunsoo.api.dto.AccountLoginRequest;
@@ -39,8 +40,8 @@ public class AuthController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public AccountLoginResult login(
-            @RequestHeader("X-YS-AppId") String appId,
-            @RequestHeader(value = "X-YS-DeviceId", required = false) String deviceId,
+            @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
+            @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
             @RequestBody AccountLoginRequest account) {
         if (account.getAccountId() == null && (account.getOrgId() == null || account.getIdentifier() == null)) {
             throw new BadRequestException("Account is not valid");

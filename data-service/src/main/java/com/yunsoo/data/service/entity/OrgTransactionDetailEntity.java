@@ -23,6 +23,9 @@ public class OrgTransactionDetailEntity {
     @Column(name = "org_id")
     private String orgId;
 
+    @Column(name = "product_base_id")
+    private String productBaseId;
+
     @Column(name = "batch_id")
     private String batchId;
 
@@ -56,6 +59,14 @@ public class OrgTransactionDetailEntity {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+
+    public String getProductBaseId() {
+        return productBaseId;
+    }
+
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
     public String getOrgId() {

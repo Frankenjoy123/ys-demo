@@ -20,6 +20,9 @@ public class OrgOrderEntity {
     @Column(name = "org_id")
     private String orgId;
 
+    @Column(name = "product_base_id")
+    private String productBaseId;
+
     @Column(name = "batch_id")
     private String batchId;
 
@@ -57,6 +60,14 @@ public class OrgOrderEntity {
 
     public void setOrgId(String orgId) {
         this.orgId = orgId;
+    }
+
+    public String getProductBaseId() {
+        return productBaseId;
+    }
+
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
     public String getBatchId() {

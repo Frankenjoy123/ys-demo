@@ -1,7 +1,7 @@
 package com.yunsoo.api.config;
 
 import com.yunsoo.api.client.DataAPIClient;
-import com.yunsoo.api.client.processor.ProcessorClient;
+import com.yunsoo.api.client.ProcessorClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.context.annotation.Bean;

@@ -68,23 +68,25 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ProductKeyBatchObject create(@RequestBody ProductKeyBatchObject batchObj) {
-        ProductKeyBatch batch = new ProductKeyBatch();
-        batch.setQuantity(batchObj.getQuantity());
-        batch.setStatusCode(batchObj.getStatusCode());
-        batch.setOrgId(batchObj.getOrgId());
-        batch.setProductBaseId(batchObj.getProductBaseId());
-        batch.setCreatedAppId(batchObj.getCreatedAppId());
-        batch.setCreatedAccountId(batchObj.getCreatedAccountId());
-        batch.setCreatedDateTime(batchObj.getCreatedDateTime());
-        batch.setProductKeyTypeCodes(batchObj.getProductKeyTypeCodes());
-
+        ProductKeyBatch batch = toProductKeyBatch(batchObj);
+        batch.setId(null);
         ProductKeyBatch newBatch = productKeyBatchService.create(batch);
 
         return toProductKeyBatchObject(newBatch);
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public void patchUpdate(@PathVariable(value = "id") String id, @RequestBody ProductKeyBatchObject batchObj) {
+        ProductKeyBatch batch = toProductKeyBatch(batchObj);
+        batch.setId(id);
+        productKeyBatchService.patchUpdate(batch);
+    }
+
 
     private ProductKeyBatchObject toProductKeyBatchObject(ProductKeyBatch batch) {
+        if (batch == null) {
+            return null;
+        }
         ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
         batchObj.setId(batch.getId());
         batchObj.setQuantity(batch.getQuantity());
@@ -95,7 +97,23 @@ public class ProductKeyBatchController {
         batchObj.setCreatedAccountId(batch.getCreatedAccountId());
         batchObj.setCreatedDateTime(batch.getCreatedDateTime());
         batchObj.setProductKeyTypeCodes(batch.getProductKeyTypeCodes());
-        batchObj.setProductKeysUri(batch.getProductKeysUri());
         return batchObj;
+    }
+
+    private ProductKeyBatch toProductKeyBatch(ProductKeyBatchObject batchObj) {
+        if (batchObj == null) {
+            return null;
+        }
+        ProductKeyBatch batch = new ProductKeyBatch();
+        batch.setId(batchObj.getId());
+        batch.setQuantity(batchObj.getQuantity());
+        batch.setStatusCode(batchObj.getStatusCode());
+        batch.setOrgId(batchObj.getOrgId());
+        batch.setProductBaseId(batchObj.getProductBaseId());
+        batch.setCreatedAppId(batchObj.getCreatedAppId());
+        batch.setCreatedAccountId(batchObj.getCreatedAccountId());
+        batch.setCreatedDateTime(batchObj.getCreatedDateTime());
+        batch.setProductKeyTypeCodes(batchObj.getProductKeyTypeCodes());
+        return batch;
     }
 }

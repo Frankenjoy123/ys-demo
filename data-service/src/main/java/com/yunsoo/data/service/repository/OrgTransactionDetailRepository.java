@@ -14,6 +14,8 @@ public interface OrgTransactionDetailRepository extends PagingAndSortingReposito
 
     Page<OrgTransactionDetailEntity> findByOrgId(String orgId, Pageable pageable);
 
+    Page<OrgTransactionDetailEntity> findByOrgIdAndProductBaseId(String orgId, String productBaseId, Pageable pageable);
+
     Page<OrgTransactionDetailEntity> findByBatchId(String batchId, Pageable pageable);
 
     Page<OrgTransactionDetailEntity> findByOrderId(String orderId, Pageable pageable);

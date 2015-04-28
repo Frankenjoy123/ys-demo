@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.config.Constants;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKeyBatch;
@@ -69,14 +70,15 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ProductKeyBatch create(@Valid @RequestBody ProductKeyBatchRequest request) {
+    public ProductKeyBatch create(
+            @RequestHeader(value = Constants.HttpHeaderName.APP_ID, required = false) String appId,
+            @Valid @RequestBody ProductKeyBatchRequest request) {
         int quantity = request.getQuantity();
         String productBaseId = request.getProductBaseId();
         List<String> productKeyTypeCodes = request.getProductKeyTypeCodes();
 
-        String statusCode = "new";
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        String appId = "1";
+        appId = (appId == null) ? "unknown" : appId;
         String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         DateTime createdDateTime = DateTime.now();
 
@@ -97,7 +99,6 @@ public class ProductKeyBatchController {
         }
 
         batchObj.setQuantity(quantity);
-        batchObj.setStatusCode(statusCode);
         batchObj.setProductBaseId(productBaseId);
         batchObj.setProductKeyTypeCodes(productKeyTypeCodes);
         batchObj.setOrgId(orgId);

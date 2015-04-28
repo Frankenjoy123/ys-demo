@@ -96,12 +96,12 @@ public class MessageController {
 
     }
 
-    @RequestMapping(value = "/image/{imagekey}", method = RequestMethod.GET)
-    public ResponseEntity<?> getThumbnail(
-            @PathVariable(value = "imagekey") String imagekey) {
+    @RequestMapping(value = "/{id}/{imagekey}", method = RequestMethod.GET)
+    public ResponseEntity<?> getThumbnail(@PathVariable(value = "id") String id,
+                                          @PathVariable(value = "imagekey") String imagekey) {
         if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("imagekey不能为空！");
         try {
-            FileObject fileObject = dataAPIClient.get("message/image/{imagekey}", FileObject.class, imagekey);
+            FileObject fileObject = dataAPIClient.get("message/{id}/{imagekey}", FileObject.class, id, imagekey);
             if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())
@@ -116,5 +116,4 @@ public class MessageController {
             throw new NotFoundException(40402, "找不到消息图片 imagekey = " + imagekey);
         }
     }
-
 }

@@ -1,15 +1,17 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.client.processor.ProcessorClient;
-import com.yunsoo.api.client.processor.message.ProductKeyBatchMassage;
+import com.yunsoo.api.client.ProcessorClient;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyType;
+import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -37,26 +39,12 @@ public class ProductKeyDomain {
     @Autowired
     private LookupDomain lookupDomain;
 
-    private final byte[] CR_LF = new byte[]{13, 10};
+    private static final byte[] CR_LF = new byte[]{13, 10};
 
+    @Value("${yunsoo.api.product_key_base_url}")
+    private String productKeyBaseUrl;
 
     //ProductKeyBatch
-
-    public List<ProductKeyBatch> getAllProductKeyBatchesByOrgId(String orgId, String productBaseId) {
-        ProductKeyBatchObject[] objects =
-                dataAPIClient.get("productkeybatch?orgId={orgid}&productBaseId={pbid}",
-                        ProductKeyBatchObject[].class,
-                        orgId,
-                        productBaseId);
-        if (objects == null) {
-            return null;
-        } else {
-            List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes();
-            return Arrays.stream(objects)
-                    .map(i -> fromProductKeyBatchObject(i, productKeyTypes))
-                    .collect(Collectors.toList());
-        }
-    }
 
     public ProductKeyBatch getProductKeyBatchById(String id) {
         return fromProductKeyBatchObject(
@@ -64,7 +52,21 @@ public class ProductKeyDomain {
                 lookupDomain.getAllProductKeyTypes(true));
     }
 
+    public List<ProductKeyBatch> getAllProductKeyBatchesByOrgId(String orgId, String productBaseId) {
+        ProductKeyBatchObject[] objects =
+                dataAPIClient.get("productkeybatch?orgId={orgid}&productBaseId={pbid}",
+                        ProductKeyBatchObject[].class,
+                        orgId,
+                        productBaseId);
+
+        List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes();
+        return Arrays.stream(objects)
+                .map(i -> fromProductKeyBatchObject(i, productKeyTypes))
+                .collect(Collectors.toList());
+    }
+
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {
+        batchObj.setStatusCode(LookupCodes.ProductKeyBatchStatus.CREATING);
         ProductKeyBatchObject newBatchObj = dataAPIClient.post(
                 "productkeybatch",
                 batchObj,
@@ -73,6 +75,9 @@ public class ProductKeyDomain {
         // send sqs message to processor
         ProductKeyBatchMassage sqsMessage = new ProductKeyBatchMassage();
         sqsMessage.setProductKeyBatchId(newBatchObj.getId());
+        if (newBatchObj.getProductBaseId() != null) {
+            sqsMessage.setProductStatusCode(LookupCodes.ProductStatus.ACTIVATED);  //default activated
+        }
         processorClient.post("sqs/productkeybatch", sqsMessage);
 
         return fromProductKeyBatchObject(newBatchObj, lookupDomain.getAllProductKeyTypes(true));
@@ -91,7 +96,7 @@ public class ProductKeyDomain {
                             .getBytes(Charset.forName("UTF-8")));
             outputStream.write(CR_LF);
             for (List<String> i : object.getProductKeys()) {
-                List<String> ks = i.stream().map(k -> "http://t.m.yunsu.co/" + k).collect(Collectors.toList());
+                List<String> ks = i.stream().map(k -> productKeyBaseUrl + k).collect(Collectors.toList());
                 outputStream.write(
                         StringUtils.collectionToDelimitedString(ks, ",")
                                 .getBytes(Charset.forName("UTF-8")));
