@@ -5,10 +5,14 @@ import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
@@ -24,9 +28,10 @@ public class OrganizationController {
 
     @Autowired
     private RestClient dataAPIClient;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationController.class);
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
     public Organization getOrganizationById(@PathVariable(value = "id") String id) {
         OrganizationObject object = dataAPIClient.get("organization/{id}", OrganizationObject.class, id);
         if (object == null) {
@@ -36,6 +41,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
+    @PreAuthorize("hasPermission(#organization.id, 'filterByOrg', 'organization:create')")
     public Organization create(@RequestBody Organization organization) {
         OrganizationObject object = toOrganizationObject(organization);
         object.setId(null);
@@ -44,6 +50,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "/{id}/{imageKey}", method = RequestMethod.GET)
+//    @PreAuthorize("hasPermission(#id, 'filterByOrg', 'organization:read')")
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") String id,
             @PathVariable(value = "imageKey") String imageKey) {

@@ -2,6 +2,7 @@ package com.yunsoo.api.security.permission;
 
 import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.basic.Message;
+import com.yunsoo.api.dto.basic.Organization;
 import com.yunsoo.api.dto.basic.User;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TPermission;
@@ -46,6 +47,8 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             TPermission currentPermission = this.getPermission((String) permission);
             if (targetDomainObject instanceof Message) {
                 currentPermission.setOrgId(((Message) targetDomainObject).getOrgId());
+            } else if (targetDomainObject instanceof Organization) {
+                currentPermission.setOrgId(((Organization) targetDomainObject).getId());
             }
 //            else {
 //                currentPermission.setOrgId(targetDomainObject.toString()); //suppose targetDomainObject is orgId
