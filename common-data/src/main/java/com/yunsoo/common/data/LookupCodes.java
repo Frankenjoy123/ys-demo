@@ -42,4 +42,11 @@ public class LookupCodes {
         public static final String ACTIVATED = "activated";
         public static final String DEACTIVATED = "deactivated";
     }
+
+    public static class MessageStatus {
+        private MessageStatus() {
+        }
+
+        public static final String CREATED = "created";
+    }
 }
