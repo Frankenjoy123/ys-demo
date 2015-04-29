@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.dto.basic.LogisticsAction;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
 import com.yunsoo.common.data.object.LogisticsPathObject;
 import com.yunsoo.common.web.client.RestClient;
@@ -10,6 +11,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,27 +27,31 @@ public class LogisticsActionController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#logisticsCheckActionObject, 'logisticsaction:create')")
-    public LogisticsCheckActionObject create(@RequestBody LogisticsCheckActionObject logisticsCheckActionObject) {
+    @PreAuthorize("hasPermission(#logisticsAction, 'logisticsaction:create')")
+    public LogisticsAction create(@RequestBody LogisticsAction logisticsAction) {
 
+        LogisticsCheckActionObject logisticsCheckActionObject = toLogisticsCheckActionObject(logisticsAction);
         LogisticsCheckActionObject newObject = dataAPIClient.post("logisticscheckaction", logisticsCheckActionObject, LogisticsCheckActionObject.class);
-        return newObject;
+
+        LogisticsAction newAction = fromLogisticsCheckActionObject(newObject);
+        return newAction;
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'logisticsaction:read')")
-    public LogisticsCheckActionObject get(@PathVariable(value = "id") Integer id) {
+    public LogisticsAction get(@PathVariable(value = "id") Integer id) {
 
         LogisticsCheckActionObject logisticsCheckActionObject = dataAPIClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, id);
         if(logisticsCheckActionObject == null)
             throw new NotFoundException("Logistics action not found id=" + id);
 
-        return logisticsCheckActionObject;
+        LogisticsAction returnAction = fromLogisticsCheckActionObject(logisticsCheckActionObject);
+        return returnAction;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'logisticsaction:read')")
-    public List<LogisticsCheckActionObject> get(@RequestParam(value = "orgId", required = true) String orgId,
+    public List<LogisticsAction> get(@RequestParam(value = "orgId", required = true) String orgId,
                                                 @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
@@ -59,13 +65,16 @@ public class LogisticsActionController {
         if (objects == null)
             throw new NotFoundException("LogisticsCheckActionObject not found");
 
-        return Arrays.asList(objects);
+        List<LogisticsAction> logisticsActions = fromLogisticsCheckActionObjectList(Arrays.asList(objects));
+
+        return logisticsActions;
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
-    @PreAuthorize("hasPermission(#logisticsCheckActionObject, 'logisticsaction:update')")
-    public void patch(@RequestBody LogisticsCheckActionObject logisticsCheckActionObject) {
+    @PreAuthorize("hasPermission(#logisticsAction, 'logisticsaction:update')")
+    public void patch(@RequestBody LogisticsAction logisticsAction) {
 
+        LogisticsCheckActionObject logisticsCheckActionObject = toLogisticsCheckActionObject(logisticsAction);
         dataAPIClient.patch("logisticscheckaction", logisticsCheckActionObject);
     }
 
@@ -74,5 +83,36 @@ public class LogisticsActionController {
     public void delete(@PathVariable(value = "id") Integer id) {
 
         dataAPIClient.delete("logisticscheckaction/{id}", id);
+    }
+
+    private LogisticsAction fromLogisticsCheckActionObject(LogisticsCheckActionObject logisticsCheckActionObject)
+    {
+        LogisticsAction logisticsAction = new LogisticsAction();
+        logisticsAction.setId(logisticsCheckActionObject.getId());
+        logisticsAction.setDescription(logisticsCheckActionObject.getDescription());
+        logisticsAction.setName(logisticsCheckActionObject.getName());
+        logisticsAction.setOrgId(logisticsCheckActionObject.getOrgId());
+
+        return logisticsAction;
+    }
+
+    private List<LogisticsAction> fromLogisticsCheckActionObjectList(List<LogisticsCheckActionObject> logisticsCheckActionObjects) {
+        List<LogisticsAction> logisticsActions = new ArrayList<LogisticsAction>();
+        for (LogisticsCheckActionObject model : logisticsCheckActionObjects) {
+            logisticsActions.add(fromLogisticsCheckActionObject(model));
+        }
+
+        return logisticsActions;
+    }
+
+    private LogisticsCheckActionObject toLogisticsCheckActionObject(LogisticsAction logisticsAction)
+    {
+        LogisticsCheckActionObject logisticsCheckActionObject = new LogisticsCheckActionObject();
+        logisticsCheckActionObject.setId(logisticsAction.getId());
+        logisticsCheckActionObject.setDescription(logisticsAction.getDescription());
+        logisticsCheckActionObject.setName(logisticsAction.getName());
+        logisticsCheckActionObject.setOrgId(logisticsAction.getOrgId());
+
+        return logisticsCheckActionObject;
     }
 }
