@@ -7,9 +7,11 @@ import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
+import com.yunsoo.common.data.object.ProductKeyObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -43,6 +45,18 @@ public class ProductKeyDomain {
 
     @Value("${yunsoo.api.product_key_base_url}")
     private String productKeyBaseUrl;
+
+
+    //ProductKey
+
+    public ProductKeyObject getProductKeyByKey(String productKey) {
+        try {
+            return dataAPIClient.get("productkey/{key}", ProductKeyObject.class, productKey);
+        } catch (NotFoundException ex) {
+            return null;
+        }
+    }
+
 
     //ProductKeyBatch
 
