@@ -3,7 +3,9 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.MessageDomain;
+import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.basic.Message;
+import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.FileObject;
@@ -45,10 +47,10 @@ public class MessageController {
     private RestClient dataAPIClient;
 
     @Autowired
-    private AccountDomain accountDomain;
-
-    @Autowired
     private MessageDomain messageDomain;
+    @Autowired
+    private PermissionDomain permissionDomain;
+
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
@@ -101,10 +103,16 @@ public class MessageController {
     public void deleteMessages(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @PathVariable(value = "id") Long id) {
         if (id == null || id <= 0) throw new BadRequestException("Id不能小于0！");
         Message message = dataAPIClient.get("/message/{id}", Message.class, id);
-        if (!accountDomain.validateToken(token, message.getOrgId())) {
-            throw new UnauthorizedException("不能删除其他机构的信息！");
+        if (message == null) return; //no such message exist!
+
+        TPermission tPermission = new TPermission();
+        tPermission.setOrgId(message.getOrgId());
+        tPermission.setResourceCode("message");
+        tPermission.setActionCode("read");
+        if (!permissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
+            throw new UnauthorizedException("没有权限删去此信息！");
         }
-        message.setStatus("deleted"); //set status as deleted
+        message.setStatus(LookupCodes.MessageStatus.DELETED); //set status as deleted
         dataAPIClient.patch("message", message);
     }
 

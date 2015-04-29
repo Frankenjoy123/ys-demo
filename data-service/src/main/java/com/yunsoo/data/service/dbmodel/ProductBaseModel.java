@@ -39,8 +39,8 @@ public class ProductBaseModel {
     private String productKeyTypeCodes;
     @Column(name = "child_pt_count")
     private Integer ChildProductCount;
-    @Column(name = "active")
-    private Boolean active;
+    @Column(name = "status")
+    private String status;
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
@@ -136,12 +136,12 @@ public class ProductBaseModel {
         ChildProductCount = childProductCount;
     }
 
-    public Boolean getActive() {
-        return active;
+    public String getStatus() {
+        return status;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public DateTime getCreatedDateTime() {

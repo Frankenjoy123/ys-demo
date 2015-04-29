@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dao.S3ItemDao;
@@ -155,7 +156,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean delete(String id) {
-        DaoStatus daoStatus = userDAO.delete(id, "DELETED");
+        DaoStatus daoStatus = userDAO.delete(id, LookupCodes.MessageStatus.DELETED);
         return daoStatus == DaoStatus.success ? true : false;
     }
 

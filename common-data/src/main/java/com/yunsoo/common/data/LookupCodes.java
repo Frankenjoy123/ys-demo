@@ -48,5 +48,16 @@ public class LookupCodes {
         }
 
         public static final String CREATED = "created";
+        public static final String DELETED = "deleted";
+        public static final String APPROVED = "approved";
+    }
+
+    public static class ProductBaseStatus {
+        private ProductBaseStatus() {
+        }
+
+        public static final String CREATED = "created";
+        public static final String DELETED = "deleted";
+        public static final String APPROVED = "approved";
     }
 }

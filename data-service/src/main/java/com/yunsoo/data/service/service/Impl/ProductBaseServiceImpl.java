@@ -87,7 +87,7 @@ public class ProductBaseServiceImpl implements ProductBaseService {
     @Override
     public void deactivate(String id) {
         ProductBase productBase = this.getById(id);
-        productBase.setActive(false);
+        productBase.setStatus("inactive");
         this.patchUpdate(productBase);
     }
 

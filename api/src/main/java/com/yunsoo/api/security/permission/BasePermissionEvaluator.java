@@ -25,21 +25,6 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
     @Autowired
     private PermissionDomain permissionDomain;
 
-    //Evaluate permission against permission of his own Resources
-    public boolean hasPermission(Authentication authentication, Object permission) {
-        boolean hasPermission = false;
-        if (authentication != null && permission instanceof String) {
-            TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
-            this.checkAccount(account);
-
-            TPermission currentPermission = this.getPermission((String) permission);
-            currentPermission.setOrgId(account.getOrgId());  //by default, just set the account's orgId
-            hasPermission = permissionDomain.hasPermission(account.getId(), currentPermission);
-        }
-        return hasPermission;
-    }
-
-
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         boolean hasPermission = false;
@@ -116,8 +101,10 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             throw new UnauthorizedException(40102, "Account is locked!");
         } else if (account.isCredentialsInvalid()) {
             throw new UnauthorizedException(40103, "Account token is invalid!");
+        } else if (account.isTokenExpired()) {
+            throw new UnauthorizedException(40104, "Account token is expired!");
         } else if (!account.isEnabled()) {
-            throw new UnauthorizedException(40104, "Account is disabled!");
+            throw new UnauthorizedException(40105, "Account is disabled!");
         }
     }
 }
