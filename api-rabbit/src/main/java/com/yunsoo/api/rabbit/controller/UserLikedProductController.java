@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserLikedProductDomain;
+import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
 import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -10,6 +11,7 @@ import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +46,8 @@ public class UserLikedProductController {
             throw new BadRequestException("UserId不应为空！");
         }
         try {
-            List<UserLikedProduct> userLikedProductList = dataAPIClient.get("/user/collection/userid/{userid}", List.class, userid);
+            List<UserLikedProduct> userLikedProductList = dataAPIClient.get("/user/collection/userid/{userid}", new ParameterizedTypeReference<List<UserLikedProduct>>() {
+            }, userid);
             if (userLikedProductList == null || userLikedProductList.size() == 0) {
                 throw new NotFoundException(40401, "UserLikedProductList not found for userid = " + userid);
             }

@@ -3,13 +3,18 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.MessageDomain;
+import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.basic.Message;
+import com.yunsoo.api.object.TPermission;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.FileObject;
+import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,14 +47,15 @@ public class MessageController {
     private RestClient dataAPIClient;
 
     @Autowired
-    private AccountDomain accountDomain;
+    private MessageDomain messageDomain;
+    @Autowired
+    private PermissionDomain permissionDomain;
 
     @Autowired
-    private MessageDomain messageDomain;
+    private TokenAuthenticationService tokenAuthenticationService;
 
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-//    @PreAuthorize("hasPermission(#id, 'message', 'message:read')")
     @PostAuthorize("hasPermission(returnObject, 'message:read')")
 //    @PostAuthorize("returnObject.orgId == authentication.getOrgId()")
     public Message getById(@PathVariable(value = "id") Integer id) {
@@ -68,10 +74,8 @@ public class MessageController {
                                      @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         if (orgId == null || orgId.isEmpty()) throw new BadRequestException("OrgId不能为空！");
-
         return dataAPIClient.get("message?orgid={0}&pageIndex={1}&pageSize={2}", new ParameterizedTypeReference<List<Message>>() {
         }, orgId, pageIndex, pageSize);
-
     }
 
 
@@ -81,6 +85,7 @@ public class MessageController {
     public long createMessages(@RequestBody Message message) {
         if (message == null) throw new BadRequestException("Message不能为空！");
         message.setStatus(LookupCodes.MessageStatus.CREATED); //set as created
+        message.setCreatedBy(tokenAuthenticationService.getAuthentication().getDetails().getId()); //set created by
         long id = dataAPIClient.post("message", message, long.class);
         return id;
     }
@@ -89,19 +94,26 @@ public class MessageController {
     @PreAuthorize("hasPermission(#message, 'message:update')")
     public void updateMessages(@RequestBody Message message) {
         if (message == null) throw new BadRequestException("Message不能为空！");
+        message.setLastUpdatedBy(tokenAuthenticationService.getAuthentication().getDetails().getId()); //set last updated by
         dataAPIClient.patch("message", message);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasPermission(#message, 'message:delete')")
     public void deleteMessages(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @PathVariable(value = "id") Long id) {
         if (id == null || id <= 0) throw new BadRequestException("Id不能小于0！");
-        Message message = dataAPIClient.get("/user/collection/{id}", Message.class, id);
-        if (!accountDomain.validateToken(token, message.getOrgId())) {
-            throw new UnauthorizedException("不能删除其他机构的信息！");
+        Message message = dataAPIClient.get("/message/{id}", Message.class, id);
+        if (message == null) return; //no such message exist!
+
+        TPermission tPermission = new TPermission();
+        tPermission.setOrgId(message.getOrgId());
+        tPermission.setResourceCode("message");
+        tPermission.setActionCode("read");
+        if (!permissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
+            throw new UnauthorizedException("没有权限删去此信息！");
         }
-        dataAPIClient.delete("message/{id}", id);
+        message.setStatus(LookupCodes.MessageStatus.DELETED); //set status as deleted
+        dataAPIClient.patch("message", message);
     }
 
     @RequestMapping(value = "/{id}/{imagekey}", method = RequestMethod.GET)

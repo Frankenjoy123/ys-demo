@@ -16,7 +16,7 @@ public class MessageObject {
     private String type;
     private String status;
     private String lastUpatedDateTime;
-    private Integer lastUpdatedBy; //associate to company's accountId
+    private String lastUpdatedBy; //associate to company's accountId
     private String postShowTime;
 
     public Long getId() {
@@ -115,11 +115,11 @@ public class MessageObject {
         this.lastUpatedDateTime = lastUpatedDateTime;
     }
 
-    public Integer getLastUpdatedBy() {
+    public String getLastUpdatedBy() {
         return lastUpdatedBy;
     }
 
-    public void setLastUpdatedBy(Integer lastUpdatedBy) {
+    public void setLastUpdatedBy(String lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 

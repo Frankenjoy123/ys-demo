@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
+import com.yunsoo.api.rabbit.dto.basic.Message;
 import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -10,6 +11,7 @@ import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +43,8 @@ public class UserFollowingController {
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
 
         try {
-            List<UserFollowing> userFollowingList = dataAPIClient.get("/user/following/who/{0}?index={1}&size={2}", List.class, id, index, size);
+            List<UserFollowing> userFollowingList = dataAPIClient.get("/user/following/who/{0}?index={1}&size={2}", new ParameterizedTypeReference<List<UserFollowing>>() {
+            }, id, index, size);
             if (userFollowingList == null || userFollowingList.size() == 0) {
                 throw new NotFoundException(40401, "User following list not found for userid = " + id);
             }

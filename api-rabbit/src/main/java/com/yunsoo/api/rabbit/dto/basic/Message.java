@@ -28,7 +28,7 @@ public class Message {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime lastUpatedDateTime;
-    private Integer lastUpdatedBy; //associate to company's accountId
+    private String lastUpdatedBy; //associate to company's accountId
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime postShowTime;
@@ -106,11 +106,11 @@ public class Message {
     }
 
 
-    public Integer getLastUpdatedBy() {
+    public String getLastUpdatedBy() {
         return lastUpdatedBy;
     }
 
-    public void setLastUpdatedBy(Integer lastUpdatedBy) {
+    public void setLastUpdatedBy(String lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 

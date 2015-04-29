@@ -8,6 +8,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +50,8 @@ public class MessageController {
 //            throw new UnauthorizedException("不能读取其他用户的收藏信息！");
 //        }
         try {
-            List<Message> messageList = dataAPIClient.get("message/pushto/{userid}/type/{typeid}", List.class, userid, typeid);
+            List<Message> messageList = dataAPIClient.get("message/pushto/{userid}/type/{typeid}", new ParameterizedTypeReference<List<Message>>() {
+            }, userid, typeid);
             if (messageList == null || messageList.size() == 0) {
                 throw new NotFoundException(40401, "Message not found for userid = " + userid);
             }
@@ -85,7 +87,8 @@ public class MessageController {
 //            throw new UnauthorizedException("不能读取其他用户的收藏信息！");
 //        }
         try {
-            List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&orgid={1}&lastreadmessageid={2}", List.class, userId, orgId, lastReadMessageId);
+            List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&orgid={1}&lastreadmessageid={2}", new ParameterizedTypeReference<List<Message>>() {
+            }, userId, orgId, lastReadMessageId);
             if (messageList == null || messageList.size() == 0) {
                 throw new NotFoundException("Message not found!");
             }
