@@ -6,6 +6,8 @@ import com.yunsoo.api.dto.basic.Organization;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TPermission;
+import com.yunsoo.common.data.object.LogisticsCheckActionObject;
+import com.yunsoo.common.data.object.LogisticsCheckPointObject;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,10 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 currentPermission.setOrgId(((Organization) targetDomainObject).getId());
             } else if (targetDomainObject instanceof ProductBase) {
                 currentPermission.setOrgId(((ProductBase) targetDomainObject).getOrgId());
+            } else if (targetDomainObject instanceof LogisticsCheckActionObject) {
+                currentPermission.setOrgId(((LogisticsCheckActionObject) targetDomainObject).getOrgId());
+            } else if (targetDomainObject instanceof LogisticsCheckPointObject) {
+                currentPermission.setOrgId(((LogisticsCheckPointObject) targetDomainObject).getOrgId());
             } else {
                 currentPermission.setOrgId(account.getOrgId());  //by default, just set the account's orgId
             }

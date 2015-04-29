@@ -6,6 +6,8 @@ import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -23,6 +25,7 @@ public class LogisticsActionController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission(#logisticsCheckActionObject, 'logisticsaction:create')")
     public LogisticsCheckActionObject create(@RequestBody LogisticsCheckActionObject logisticsCheckActionObject) {
 
         LogisticsCheckActionObject newObject = dataAPIClient.post("logisticscheckaction", logisticsCheckActionObject, LogisticsCheckActionObject.class);
@@ -30,6 +33,7 @@ public class LogisticsActionController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'logisticsaction:read')")
     public LogisticsCheckActionObject get(@PathVariable(value = "id") Integer id) {
 
         LogisticsCheckActionObject logisticsCheckActionObject = dataAPIClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, id);
@@ -40,6 +44,7 @@ public class LogisticsActionController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'logisticsaction:read')")
     public List<LogisticsCheckActionObject> get(@RequestParam(value = "orgId", required = true) String orgId,
                                                 @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
@@ -58,6 +63,7 @@ public class LogisticsActionController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
+    @PreAuthorize("hasPermission(#logisticsCheckActionObject, 'logisticsaction:update')")
     public void patch(@RequestBody LogisticsCheckActionObject logisticsCheckActionObject) {
 
         dataAPIClient.patch("logisticscheckaction", logisticsCheckActionObject);
