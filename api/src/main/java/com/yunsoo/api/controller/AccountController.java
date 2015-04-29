@@ -28,12 +28,11 @@ public class AccountController {
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Account getById(@PathVariable("id") String id) {
         AccountObject accountObject;
-        if ("current".equals(id)) {
+        if ("current".equals(id)) { //get current Account
             id = tokenAuthenticationService.getAuthentication().getDetails().getId();
         }
-        try {
-            accountObject = accountDomain.getById(id);
-        } catch (NotFoundException ex) {
+        accountObject = accountDomain.getById(id);
+        if (accountObject == null) {
             throw new NotFoundException("Account not found by [id: " + id + "]");
         }
         return fromAccountObject(accountObject);

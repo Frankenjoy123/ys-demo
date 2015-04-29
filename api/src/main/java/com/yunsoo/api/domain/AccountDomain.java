@@ -1,12 +1,10 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.dto.basic.Account;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +27,11 @@ public class AccountDomain {
 
 
     public AccountObject getById(String accountId) {
-        return dataAPIClient.get("account/{id}", AccountObject.class, accountId);
+        try {
+            return dataAPIClient.get("account/{id}", AccountObject.class, accountId);
+        } catch (NotFoundException ex) {
+            return null;
+        }
     }
 
     public AccountObject getByOrgIdAndIdentifier(String orgId, String identifier) {
