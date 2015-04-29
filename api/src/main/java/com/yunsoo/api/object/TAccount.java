@@ -59,6 +59,10 @@ public class TAccount implements UserDetails {
         return status == TAccountStatusEnum.INVALID_TOKEN;
     }
 
+    public boolean isTokenExpired() {
+        return status == TAccountStatusEnum.TOKEN_EXPIRED;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return !(status == TAccountStatusEnum.EXPIRED);

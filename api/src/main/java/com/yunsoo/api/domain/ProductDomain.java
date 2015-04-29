@@ -102,7 +102,7 @@ public class ProductDomain {
         productBase.setName(productBaseObject.getName());
         productBase.setDescription(productBaseObject.getDescription());
         productBase.setBarcode(productBaseObject.getBarcode());
-        productBase.setActive(productBaseObject.getActive());
+        productBase.setStatus(productBaseObject.getStatus());
         productBase.setDetails(productBaseObject.getDetails());
         productBase.setOrgId(productBaseObject.getOrgId());
         productBase.setShelfLife(productBaseObject.getShelfLife());

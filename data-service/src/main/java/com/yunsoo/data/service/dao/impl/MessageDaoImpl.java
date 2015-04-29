@@ -1,5 +1,6 @@
 package com.yunsoo.data.service.dao.impl;
 
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dao.MessageDao;
 import com.yunsoo.data.service.dbmodel.MessageModel;
@@ -33,8 +34,8 @@ public class MessageDaoImpl implements MessageDao {
     @Qualifier(value = "sessionfactory.read1")
     private SessionFactory readSessionFactory;
 
-    private final String message_deleted = "deleted";
-    private final String message_approved = "approved";
+//    private final String message_deleted = "deleted";
+//    private final String message_approved = "approved";
 
     @Override
     public MessageModel get(long id) {
@@ -89,7 +90,7 @@ public class MessageDaoImpl implements MessageDao {
     @Override
     public DaoStatus delete(Long id) {
         //find in config file for deleted status
-        return updateStatus(id, message_deleted);
+        return updateStatus(id, LookupCodes.MessageStatus.DELETED);
 //        MyObject myObject = (MyObject) sessionFactory.getCurrentSession().load(MyObject.class,id);
 //        sessionFactory.getCurrentSession().deletePermanantly(myObject);
     }
@@ -153,7 +154,7 @@ public class MessageDaoImpl implements MessageDao {
             c.add(Restrictions.eq("orgId", orgId));
         }
         c.addOrder(Order.desc("createdDateTime"));
-        c.add(Restrictions.eq("status", message_approved));
+        c.add(Restrictions.eq("status", LookupCodes.MessageStatus.APPROVED));
         c.add(Restrictions.gt("expiredDateTime", DateTime.now()));
 
         return c.list();

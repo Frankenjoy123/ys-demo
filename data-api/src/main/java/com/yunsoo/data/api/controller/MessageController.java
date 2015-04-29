@@ -2,6 +2,7 @@ package com.yunsoo.data.api.controller;
 
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
@@ -33,8 +34,6 @@ public class MessageController {
     @Autowired
     private AmazonSetting amazonSetting;
 
-    private final String message_approved = "approved";
-
     @Autowired
     MessageController(MessageService messageService) {
         this.messageService = messageService;
@@ -46,7 +45,7 @@ public class MessageController {
                                                                 @PathVariable(value = "typeid") Integer typeid,
                                                                 @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        List<Message> messageList = messageService.getMessagesByFilter(typeid, message_approved, null, true, pageIndex, pageSize); //push approved message only
+        List<Message> messageList = messageService.getMessagesByFilter(typeid, LookupCodes.MessageStatus.APPROVED, null, true, pageIndex, pageSize); //push approved message only
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 

@@ -25,7 +25,7 @@ public class ProductBaseObject {
     private Integer shelfLife;
     private String shelfLifeInterval;
     private List<String> productKeyTypeCodes;
-    private Boolean active;
+    private String status;
     private Integer ChildProductCount;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -122,12 +122,12 @@ public class ProductBaseObject {
         ChildProductCount = childProductCount;
     }
 
-    public Boolean getActive() {
-        return active;
+    public String getStatus() {
+        return status;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public DateTime getCreatedDateTime() {
