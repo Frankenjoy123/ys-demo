@@ -1,6 +1,6 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.config.Constants;
+import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKeyBatch;

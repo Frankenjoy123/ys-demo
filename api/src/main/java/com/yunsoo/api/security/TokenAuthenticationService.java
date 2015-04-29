@@ -1,6 +1,6 @@
 package com.yunsoo.api.security;
 
-import com.yunsoo.api.config.Constants;
+import com.yunsoo.api.Constants;
 import com.yunsoo.api.dto.basic.Token;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TAccountStatusEnum;

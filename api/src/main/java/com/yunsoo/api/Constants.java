@@ -1,4 +1,4 @@
-package com.yunsoo.api.config;
+package com.yunsoo.api;
 
 /**
  * Created by  : Lijian

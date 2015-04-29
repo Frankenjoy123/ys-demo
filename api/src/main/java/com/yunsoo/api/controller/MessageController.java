@@ -1,6 +1,6 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.config.Constants;
+import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.MessageDomain;
 import com.yunsoo.api.dto.basic.Message;
