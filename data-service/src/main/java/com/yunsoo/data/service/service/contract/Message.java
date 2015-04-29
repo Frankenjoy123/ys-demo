@@ -34,7 +34,7 @@ public class Message {
     private String status;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    private DateTime lastUpatedDateTime;
+    private DateTime lastUpdatedDateTime;
     private String lastUpdatedBy; //associate to company's accountId
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -104,12 +104,12 @@ public class Message {
         this.expiredDateTime = expiredDateTime;
     }
 
-    public DateTime getLastUpatedDateTime() {
-        return lastUpatedDateTime;
+    public DateTime getLastUpdatedDateTime() {
+        return lastUpdatedDateTime;
     }
 
-    public void setLastUpatedDateTime(DateTime lastUpatedDateTime) {
-        this.lastUpatedDateTime = lastUpatedDateTime;
+    public void setLastUpdatedDateTime(DateTime lastUpdatedDateTime) {
+        this.lastUpdatedDateTime = lastUpdatedDateTime;
     }
 
     public String getLink() {
@@ -165,12 +165,12 @@ public class Message {
         message.setCreatedBy(model.getCreatedBy());
         message.setLink(model.getLink());
         message.setCreatedDateTime(model.getCreatedDateTime());
-        message.setExpiredDateTime(model.getExpireDateTime());
+        message.setExpiredDateTime(model.getExpiredDateTime());
         message.setOrgId(model.getOrgId());
         message.setType(model.getType());
         message.setStatus(model.getStatus());
         if (model.getLastUpdatedDateTime() != null) {
-            message.setLastUpatedDateTime(model.getLastUpdatedDateTime());
+            message.setLastUpdatedDateTime(model.getLastUpdatedDateTime());
         }
         if (model.getLastUpdatedBy() != null) {
             message.setLastUpdatedBy(model.getLastUpdatedBy());
@@ -194,13 +194,13 @@ public class Message {
             model.setCreatedDateTime(message.getCreatedDateTime()); //convert string to datetime
         }
         if (message.getExpiredDateTime() != null) {
-            model.setExpireDateTime(message.getExpiredDateTime());
+            model.setExpiredDateTime(message.getExpiredDateTime());
         }
         model.setOrgId(message.getOrgId());
         model.setType(message.getType());
         model.setStatus(message.getStatus());
-        if (message.getLastUpatedDateTime() != null) {
-            model.setLastUpdatedDateTime(message.getLastUpatedDateTime());
+        if (message.getLastUpdatedDateTime() != null) {
+            model.setLastUpdatedDateTime(message.getLastUpdatedDateTime());
         }
         if (message.getPostShowTime() != null) {
             model.setPostShowTime(message.getPostShowTime());

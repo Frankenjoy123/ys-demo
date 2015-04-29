@@ -11,6 +11,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.service.ProductBaseService;
 import com.yunsoo.data.service.service.contract.ProductBase;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -94,6 +95,7 @@ public class ProductBaseController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public String create(@RequestBody ProductBaseObject productBase) {
+        productBase.setCreatedDateTime(DateTime.now());
         ProductBase p = new ProductBase();
         BeanUtils.copyProperties(productBase, p);
         return productBaseService.save(p);
@@ -102,7 +104,7 @@ public class ProductBaseController {
     //patch update, we don't provide functions like update with set null properties.
     @RequestMapping(value = "", method = RequestMethod.PATCH)
     public void patchUpdate(@RequestBody ProductBaseObject productBase) {
-        //productBase.setId(id);
+        productBase.setModifiedDateTime(DateTime.now());
         ProductBase p = new ProductBase();
         BeanUtils.copyProperties(productBase, p);
         productBaseService.patchUpdate(p);

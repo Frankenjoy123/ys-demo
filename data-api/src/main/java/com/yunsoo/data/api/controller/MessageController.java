@@ -79,13 +79,14 @@ public class MessageController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Long> createMessages(@RequestBody Message message) {
+        message.setCreatedDateTime(DateTime.now());
         long id = messageService.save(message);
         return new ResponseEntity<Long>(id, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
     public ResponseEntity updateMessages(@RequestBody Message message) {
-        message.setLastUpatedDateTime(DateTime.now());
+        message.setLastUpdatedDateTime(DateTime.now());
         messageService.patchUpdate(message);
         return new ResponseEntity(HttpStatus.OK);
     }

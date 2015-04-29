@@ -107,11 +107,11 @@ public class MessageModel {
         this.createdBy = createdBy;
     }
 
-    public DateTime getExpireDateTime() {
+    public DateTime getExpiredDateTime() {
         return expiredDateTime;
     }
 
-    public void setExpireDateTime(DateTime expiredDateTime) {
+    public void setExpiredDateTime(DateTime expiredDateTime) {
         this.expiredDateTime = expiredDateTime;
     }
 

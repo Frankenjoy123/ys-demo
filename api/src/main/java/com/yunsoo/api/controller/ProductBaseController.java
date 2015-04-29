@@ -14,8 +14,11 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
@@ -42,6 +45,7 @@ public class ProductBaseController {
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'ProductBase:read')")
     public ProductBase get(@PathVariable(value = "id") String id) {
         if (id == null || id.isEmpty()) {
             throw new BadRequestException("ProductBaseId不应为空！");
@@ -54,14 +58,18 @@ public class ProductBaseController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductBase> getAllForCurrentOrg() {
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId(); //fetch from AuthContext
+    @PreAuthorize("hasPermission(#orgid, 'ProductBase:read')")
+    public List<ProductBase> getAllForCurrentOrg(@RequestParam(value = "orgid", required = false) String orgId) {
+        if (orgId == null || orgId.isEmpty()) {
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId(); //fetch from AuthContext
+        }
         return productDomain.getAllProductBaseByOrgId(orgId);
     }
 
     //create
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'ProductBase:create')")
     public String create(@RequestBody ProductBase productBase) {
         ProductBaseObject p = new ProductBaseObject();
         BeanUtils.copyProperties(productBase, p);
@@ -71,6 +79,7 @@ public class ProductBaseController {
 
     //patch update
     @RequestMapping(value = "", method = RequestMethod.PATCH)
+    @PreAuthorize("hasPermission(#productBase, 'ProductBase:update')")
     public void update(@RequestBody ProductBase productBase) throws Exception {
         //patch update, we don't provide functions like update with set null properties.
         ProductBaseObject p = new ProductBaseObject();
