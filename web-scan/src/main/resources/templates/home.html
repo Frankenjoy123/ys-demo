@@ -26,7 +26,7 @@
         }
 
         .timeline > li {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             position: relative;
         }
 
@@ -83,7 +83,7 @@
             font-size: 1.4em;
             text-align: center;
             position: absolute;
-            top: 12px;
+            top: 18px;
             left: 17px;
 
             background-color: #666666;
@@ -241,10 +241,8 @@
                 $("#divBody").css('display', '');
 
                 if (data == null || data.product == null) {
-                    $("#imgYSDefault").attr("src", "images/ysdefault.jpg");
-                    $("#img44").attr("src", "images/images_44.png");
+                    $("#img44").attr("src", "images/icon-warning.png");
 
-                    $("#divHeadInValidKey").css('display', '');
                     $("#divScanInValidKey").css('display', '');
                     $("#divScanDetailsInValidKey").css('display', '');
 
@@ -253,10 +251,26 @@
 
                 $("#divHeadValidKey").css('display', '');
                 $("#divScanValidKey").css('display', '');
-                $("#divScanValidKey").html("<h4><p>云溯科技提醒： 您是第" + data.scanCounter + "次扫描！</p></h4>");
+                $("#imgProduct").attr("src", "/api/productbase/" + data.product.productBaseId + "/thumb-mobile");
+                if (data.validationResult.toLowerCase() == "uncertain") {
+                    $("#imgProStatus").attr("src", "images/icon-warning.png");
+                    $("#proStatus").html("此产品不确定");
+                }
+                else if (data.validationResult.toLowerCase() == "fake") {
+                    $("#imgProStatus").attr("src", "images/icon-false.png");
+                    $("#proStatus").html("此产品为假货");
+                }
+                else if (data.validationResult.toLowerCase() == "real") {
+                    $("#imgProStatus").attr("src", "images/icon-truer.png");
+                    $("#proStatus").html("此产品为真品");
+                }
+
+                $("#divRemind").css('display', '');
+                $("#imgRemind").attr("src", "images/icon-tips.png");
+
                 $("#divScanDetailsValidKey").css('display', '');
 
-                $("#productKey").html(data.product.productKey);
+                $("#productKey").html(data.product.barcode);
                 $("#productName").html(data.product.name);
 
                 if (data.product.details != null) {
@@ -269,7 +283,17 @@
                             var datItems = dat.split(":");
 
                             if (!(datItems == null || !(datItems.length >= 2))) {
-                                $("#detailItems").append("<tr><td>" + datItems[0] + "</td><td>" + datItems[1] + "</td></tr>");
+                                var td1 = $('<td></td>').css("width", "30%").html(datItems[0]);
+                                var td2 = $('<td></td>').css("width", "70%").html(datItems[1]);
+                                var tr = $('<tr></tr>').append(td1);
+                                tr.append(td2);
+
+                                var tdSpace = $('<td></td>').css('height', '10px');
+                                var trSpace = $('<tr></tr>').append(tdSpace);
+                                trSpace.append(tdSpace);
+
+                                $("#detailItems").append(tr);
+                                $("#detailItems").append(trSpace);
                             }
                         }
                     }
@@ -288,8 +312,7 @@
                     var p = $('<p></p>').html(latestScan.detail + " " + getDateString(latestScan.createdDateTime));
                     var divBody = $('<div></div>').addClass("timeline-body").append(p);
                     var divPanel = $('<div></div>').addClass("timeline-panel").append(divBody);
-                    var i = $('<i></i>').addClass("fa fa-thumbs-up");
-                    var div = $('<div></div>').addClass("timeline-badge down").append(i);
+                    var div = $('<div></div>').addClass("timeline-badge down");
                     var li = $('<li></li>').append(div);
                     var lii = li.append(divPanel);
 
@@ -300,8 +323,7 @@
                             p = $('<p></p>').html(otherScans[otherScan].detail + " " + getDateString(otherScans[otherScan].createdDateTime));
                             divBody = $('<div></div>').addClass("timeline-body").append(p);
                             divPanel = $('<div></div>').addClass("timeline-panel").append(divBody);
-                            i = $('<i></i>').addClass("fa fa-thumbs-up");
-                            div = $('<div></div>').addClass("timeline-badge primary").append(i);
+                            div = $('<div></div>').addClass("timeline-badge primary");
                             li = $('<li></li>').append(div);
                             lii = li.append(divPanel);
 
@@ -323,8 +345,7 @@
                     var p = $('<p></p>').html(getDateString(latestLogistics.dateTime) + latestLogistics.message + " " + latestLogistics.location);
                     var divBody = $('<div></div>').addClass("timeline-body").append(p);
                     var divPanel = $('<div></div>').addClass("timeline-panel").append(divBody);
-                    var i = $('<i></i>').addClass("fa fa-thumbs-up");
-                    var div = $('<div></div>').addClass("timeline-badge down").append(i);
+                    var div = $('<div></div>').addClass("timeline-badge down");
                     var li = $('<li></li>').append(div);
                     var lii = li.append(divPanel);
 
@@ -335,8 +356,7 @@
                             p = $('<p></p>').html(getDateString(otherLogistics[otherLogistic].dateTime) + otherLogistics[otherLogistic].message + " " + otherLogistics[otherLogistic].location);
                             divBody = $('<div></div>').addClass("timeline-body").append(p);
                             divPanel = $('<div></div>').addClass("timeline-panel").append(divBody);
-                            i = $('<i></i>').addClass("fa fa-thumbs-up");
-                            div = $('<div></div>').addClass("timeline-badge primary").append(i);
+                            div = $('<div></div>').addClass("timeline-badge primary");
                             li = $('<li></li>').append(div);
                             lii = li.append(divPanel);
 
@@ -345,33 +365,30 @@
                     }
                 }
 
-                $("#imgProduct").attr("src", "/api/productbase/" + data.product.productBaseId + "/thumb-mobile");
-                if (data.validationResult.toLowerCase() == "uncertain") {
-                    $("#imgReal").attr("src", "images/jinggao_53.png");
-                }
-                else if (data.validationResult.toLowerCase() == "fake") {
-                    $("#imgReal").attr("src", "images/jiahuo_52.png");
-                }
-                else if (data.validationResult.toLowerCase() == "real") {
-                    $("#imgReal").attr("src", "images/zhengpin_54.png");
-                }
+                $("#imgManufacture").attr("src", "/api/organization/" + data.manufacturer.id + "/logo-mobile");
+                $("#manuName").html(data.manufacturer.name);
+                $("#imgManuStatus").attr("src", "images/icon-certification.png");
             }
         })
     });
 </script>
 <div class="container" id="divBody" style="display:none">
-    <br/>
 
     <div class="box-group">
-        <div class="panel box box-primary ">
+
+        <br/>
+
+        <div class="panel box box-primary">
             <div class="row">
-                <div id="divHeadValidKey" class="col-xs-12 col-md-12" align="center" style="display:none">
-                    <img id="imgProduct" src="" width="40%" class="img-circle"/>
-                    <img id="imgReal" src="" width="40%" class="img-circle"/>
-                </div>
-                <div id="divHeadInValidKey" class="col-xs-12 col-md-12 bg-primary" align="center"
-                     style="display:none">
-                    <img id="imgYSDefault" src="" class="img-circle"/>
+                <div id="divHeadValidKey" class="col-xs-12 col-md-12" style="display:none;background-color:#47ABEF">
+                    <div class="col-xs-9">
+                        <img id="imgManufacture" src="" class="img-circle" height="80px" width="80px"/>
+                        <span id="manuName" style="color: white; font-size:16px; overflow:hidden"></span>
+                    </div>
+                    <div class="col-xs-3" align="center">
+                        <img id="imgManuStatus" src="" class="img-rounded" height="50px" width="50px"/>
+                        <span id="manuStatus" style="color: white; overflow:hidden">已认证</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -380,8 +397,24 @@
 
         <div class="panel box box-primary ">
             <div class="row">
-                <div id="divScanValidKey" class="col-xs-12 col-md-12 bg-primary" style="display:none">
+                <div id="divRemind" class="col-xs-12 col-md-12" style="display:none">
+                    <img id="imgRemind" src="" class="img-rounded" height="30px" width="30px"/>
+                    <span style="color:gray; overflow:hidden">云溯温馨提示：</span>
+                </div>
+            </div>
+        </div>
 
+        <div class="panel box box-primary ">
+            <div class="row">
+                <div id="divScanValidKey" class="col-xs-12 col-md-12" style="display:none">
+                    <div class="col-xs-6">
+                        <img id="imgProduct" src="" class="img-circle" height="130px" width="130px"/>
+                    </div>
+                    <div class="col-xs-6" align="center">
+                        <img id="imgProStatus" src="" class="img-rounded" height="100px" width="100px"/>
+                        <span id="proStatus" style="color: black; overflow:hidden; font-size:18px"></span>
+                        <span id="proExpire" style="color: gray; overflow:hidden"></span>
+                    </div>
                 </div>
                 <div id="divScanInValidKey" class="col-xs-12 col-md-12" align="center" style="display:none">
                     <img id="img44" src="" class="img-circle" width="80%"/>
@@ -403,27 +436,28 @@
                         <div class="tab-content">
                             <div class="tab-pane active" id="tab_1">
                                 <div class="panel box box-primary">
-                                    <div class="table-responsive">
-                                        <table class="table table-condensed">
-                                            <tr>
-                                                <td>商品码</td>
-                                                <td id="productKey"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>物品名称</td>
-                                                <td id="productName"></td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2">商品描述</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2">
-                                                    <table id="detailItems" class="table table-condensed">
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
+                                    <table class="table table-condensed">
+                                        <tr>
+                                            <td>商品码</td>
+                                            <td id="productKey"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>物品名称</td>
+                                            <td id="productName"></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" height="20px"></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">商品描述：</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <table id="detailItems" class="table table-condensed">
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
 
@@ -459,8 +493,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="divScanDetailsInValidKey" class="col-xs-12 col-md-12 bg-primary" align="center"
-                     style="display:none">
+                <div id="divScanDetailsInValidKey" class="col-xs-12 col-md-12" align="center" style="display:none;background-color:#47ABEF">
                     <h3><p class="">云溯科技提醒</p>
 
                         <p class="">无效的云溯产品码！</p></h3>
