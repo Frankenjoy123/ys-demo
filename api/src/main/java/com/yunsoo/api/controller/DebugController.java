@@ -1,11 +1,9 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.security.annotation.Permission;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.ErrorResultCode;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.util.IdGenerator;
-import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
@@ -26,7 +24,6 @@ import java.util.Map;
  * Descriptions: For developer debug use only.
  */
 @RestController
-@Permission(resource = "debug")
 @RequestMapping(value = "/debug")
 public class DebugController {
 

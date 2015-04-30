@@ -21,7 +21,7 @@ import java.util.Arrays;
 public final class TokenHandler {
 
     private static final String SPLITTER = ",";
-    private static final String SALT = "LEmrmtPfWc1txs9uC9A7PevSVSbBbQL0";
+    private static final String SALT = "LEmrmtPfWc1txs9uC9A7PevSVSbBbQL0"; //todo: make it dynamic
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenHandler.class);
 
@@ -29,21 +29,24 @@ public final class TokenHandler {
         String src = decodeToken(token);
         if (src == null) {
             //token invalid
-            LOGGER.error("Token invalid [token: {}]", token);
-            return new TAccount(TAccountStatusEnum.INVALID_TOKEN);
+            LOGGER.error("AccessToken invalid [token: {}]", token);
+            return null;
+            //return new TAccount(TAccountStatusEnum.INVALID_TOKEN);
         }
         final String[] parts = src.split(SPLITTER);
         if (parts.length != 3) {
-            LOGGER.error("Token invalid [token: {}]", token);
-            return new TAccount(TAccountStatusEnum.INVALID_TOKEN);
+            LOGGER.error("AccessToken invalid [token: {}]", token);
+            return null;
+            //return new TAccount(TAccountStatusEnum.INVALID_TOKEN);
         }
         String accountId = parts[0];
         String orgId = parts[1];
         DateTime expires = new DateTime(Long.parseLong(parts[2]));
 
         if (expires.isBeforeNow()) {
-            LOGGER.error("Token expired [token: {}, expires: {}]", token, expires.toString());
-            return new TAccount(TAccountStatusEnum.TOKEN_EXPIRED);
+            LOGGER.error("AccessToken expired [token: {}, expires: {}]", token, expires.toString());
+            return null;
+            //return new TAccount(TAccountStatusEnum.TOKEN_EXPIRED);
         }
         TAccount account = new TAccount(TAccountStatusEnum.ENABLED);
         account.setId(accountId);
@@ -54,6 +57,7 @@ public final class TokenHandler {
     public String createAccessToken(String accountId, String orgId, DateTime expires) {
         return encodeToken(accountId + SPLITTER + orgId + SPLITTER + expires.getMillis());
     }
+
 
     private String encodeToken(String src) {
         byte[] srcBytes = src.getBytes(StandardCharsets.UTF_8);
@@ -66,9 +70,6 @@ public final class TokenHandler {
 
     private String decodeToken(String token) {
         try {
-            if (token == null || token.isEmpty()) {
-                return null;
-            }
             byte[] bytes = decode(token);
             if (bytes == null || bytes.length == 0) {
                 return null;
@@ -92,7 +93,7 @@ public final class TokenHandler {
 
 
     private String encode(byte[] content) {
-        return Base64.encodeBase64String(content);
+        return Base64.encodeBase64URLSafeString(content);
     }
 
     private byte[] decode(String content) {

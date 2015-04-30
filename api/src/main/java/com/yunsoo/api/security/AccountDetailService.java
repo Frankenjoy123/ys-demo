@@ -8,8 +8,6 @@ import org.springframework.security.authentication.AccountStatusUserDetailsCheck
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-
 /**
  * Created by Zhe on 2015/3/5.
  */
@@ -24,8 +22,9 @@ public class AccountDetailService implements org.springframework.security.core.u
 
     @Override
     public final TAccount loadUserByUsername(String username) throws UsernameNotFoundException {
-        String[] splitUsername = username.split(":");
-        AccountObject accountObject = accountDomain.getByOrgIdAndIdentifier(splitUsername[0], splitUsername[1]);
+        System.out.println("AccountDetailService.loadUserByUsername is invoked");
+        String accountId = username; //username is accountId
+        AccountObject accountObject = accountDomain.getById(accountId);
         if (accountObject == null) {
             throw new UsernameNotFoundException("user not found");
         }

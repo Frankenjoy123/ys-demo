@@ -49,10 +49,4 @@ public class AccountDomain {
         return Arrays.asList(accountObjects);
     }
 
-
-    public Boolean validateToken(String token, String orgId) {
-        if (token == null || token.isEmpty()) return false;
-        if (orgId == null || orgId.isEmpty()) return false;
-        return tokenAuthenticationService.checkOrgResource(token, orgId, true);
-    }
 }
