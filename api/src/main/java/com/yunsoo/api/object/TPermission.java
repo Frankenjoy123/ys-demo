@@ -12,6 +12,15 @@ public class TPermission {
     private String actionCode;
 
 
+    public TPermission() {
+    }
+
+    public TPermission(String orgId, String resourceCode, String actionCode) {
+        this.orgId = orgId;
+        this.resourceCode = resourceCode;
+        this.actionCode = actionCode;
+    }
+
     public String getOrgId() {
         return orgId;
     }

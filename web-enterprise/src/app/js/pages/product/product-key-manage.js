@@ -22,7 +22,10 @@
                 return this;
             },
             downloadProductKeys: function (listPanel, batchId) {
-                listPanel.downloadFrameSrc = '/api/productkeybatch/' + batchId + '/keys';
+                var url = '/api/productkeybatch/' + batchId + '/keys';
+                var accessToken = $.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME);
+                accessToken && (url += '?' + YUNSOO_CONFIG.PARAMETER_ACCESS_TOKEN + '=' + accessToken);
+                listPanel.downloadFrameSrc = url;
             }
         };
     }]);

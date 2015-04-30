@@ -1,11 +1,13 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
+import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
 import com.yunsoo.api.dto.basic.ProductBase;
+import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -38,16 +40,19 @@ public class ProductKeyBatchController {
     private ProductKeyDomain productKeyDomain;
 
     @Autowired
+    private PermissionDomain permissionDomain;
+
+    @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductKeyBatch getById(@PathVariable(value = "id") String id) {
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
         if (batch == null) {
             throw new NotFoundException("product batch");
         }
-        if (!batch.getOrgId().equals(orgId)) { //todo: replace with hasPermission
+        if (!permissionDomain.hasPermission(accountId, new TPermission(batch.getOrgId(), "productkey", "read"))) {
             throw new ForbiddenException();
         }
         return batch;
@@ -77,9 +82,12 @@ public class ProductKeyBatchController {
         String productBaseId = request.getProductBaseId();
         List<String> productKeyTypeCodes = request.getProductKeyTypeCodes();
 
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        appId = (appId == null) ? "unknown" : appId;
         String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        if (!permissionDomain.hasPermission(accountId, new TPermission(orgId, "productkey", "create"))) {
+            throw new ForbiddenException();
+        }
+        appId = (appId == null) ? "unknown" : appId;
         DateTime createdDateTime = DateTime.now();
 
         ProductKeyBatchObject batchObj = new ProductKeyBatchObject();

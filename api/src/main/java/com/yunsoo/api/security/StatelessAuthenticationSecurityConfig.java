@@ -2,6 +2,7 @@ package com.yunsoo.api.security;
 
 import com.yunsoo.api.security.filter.TokenAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -23,6 +24,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Order(1)
 public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Value("${yunsoo.debug}")
+    private Boolean debug;
 
     @Autowired
     private AccountDetailService accountDetailService;
@@ -52,6 +56,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .antMatchers("/").permitAll()
                 .antMatchers("/home/**").permitAll()
                 .antMatchers("/auth/**").permitAll()
+                .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
 //                .antMatchers("/favicon.ico").permitAll()
 //                .antMatchers("/resources/**").permitAll()
                 .anyRequest().authenticated().and()

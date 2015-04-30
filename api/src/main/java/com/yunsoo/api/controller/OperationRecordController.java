@@ -7,6 +7,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,9 @@ public class OperationRecordController {
         if (typeid == null || typeid <= 0) throw new BadRequestException("TypeID不能小于0！");
         if (accountid == null || accountid <= 0) throw new BadRequestException("AccountID不能小于0！");
         try {
-            List<OperationRecord> operationRecordList = dataAPIClient.get("/operation/record/type/{typeid}/account/{accountid}", List.class, typeid, accountid);
+            List<OperationRecord> operationRecordList = dataAPIClient.get("/operation/record/type/{typeid}/account/{accountid}",
+                    new ParameterizedTypeReference<List<OperationRecord>>() {
+                    }, typeid, accountid);
             if (operationRecordList == null || operationRecordList.size() == 0) {
                 throw new NotFoundException(40401, "OperationRecord not found for accountid = " + accountid);
             }
