@@ -1,5 +1,8 @@
 package com.yunsoo.common.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by  : Lijian
  * Created on  : 2015/4/27
@@ -53,11 +56,21 @@ public class LookupCodes {
     }
 
     public static class ProductBaseStatus {
-        private ProductBaseStatus() {
-        }
 
+        private ProductBaseStatus() {
+
+        }
         public static final String CREATED = "created";
         public static final String DELETED = "deleted";
+        public static final String FROZEN = "frozen";
         public static final String APPROVED = "approved";
+        public static final List<String> CUSTOMER_INVISIABLE_STATUS;
+
+        static {
+            CUSTOMER_INVISIABLE_STATUS = new ArrayList<>();
+            CUSTOMER_INVISIABLE_STATUS.add(FROZEN);
+            CUSTOMER_INVISIABLE_STATUS.add(DELETED);
+        }
+
     }
 }

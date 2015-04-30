@@ -65,13 +65,35 @@ public class ProductBaseDaoImpl implements ProductBaseDao {
         sessionFactory.getCurrentSession().delete(productBaseModel);
     }
 
+//    @Override
+//    public List<ProductBaseModel> getByFilter(Map<String, Object> eqFilter) {
+//        Criteria c = readSessionFactory.getCurrentSession().createCriteria(ProductBaseModel.class);
+//        if (eqFilter != null && !eqFilter.isEmpty()) {
+//            eqFilter.forEach((k, v) -> {
+//                if (!StringUtils.isEmpty(k)) {
+//                    c.add(Restrictions.eqOrIsNull(k, v));
+//                }
+//            });
+//        }
+//        return c.list();
+//    }
+
     @Override
-    public List<ProductBaseModel> getByFilter(Map<String, Object> eqFilter) {
+    public List<ProductBaseModel> getByFilter(Map<String, Object> eqFilter, Map<String, List<String>> notEqFilter) {
         Criteria c = readSessionFactory.getCurrentSession().createCriteria(ProductBaseModel.class);
         if (eqFilter != null && !eqFilter.isEmpty()) {
             eqFilter.forEach((k, v) -> {
                 if (!StringUtils.isEmpty(k)) {
                     c.add(Restrictions.eqOrIsNull(k, v));
+                }
+            });
+        }
+        if (notEqFilter != null && !notEqFilter.isEmpty()) {
+            notEqFilter.forEach((k, v) -> {
+                if (!StringUtils.isEmpty(k)) {
+                    v.forEach((s) -> {
+                        c.add(Restrictions.ne(k, s));
+                    });
                 }
             });
         }

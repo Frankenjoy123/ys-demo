@@ -63,10 +63,6 @@ public class ProductDomain {
         return product;
     }
 
-    public void activeProduct(String key) {
-
-    }
-
     public ProductCategory getProductCategoryById(Integer id) {
         if (id == null) {
             return null;

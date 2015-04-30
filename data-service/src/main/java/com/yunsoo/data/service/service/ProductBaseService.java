@@ -24,7 +24,7 @@ public interface ProductBaseService {
 
     public void deactivate(String id);
 
-    public List<ProductBase> getByFilter(String orgId, Integer categoryId, Boolean active);
+    public List<ProductBase> getByFilter(String orgId, Integer categoryId, List<String> statuses);
 
     public List<ProductBase> getAll();
 }

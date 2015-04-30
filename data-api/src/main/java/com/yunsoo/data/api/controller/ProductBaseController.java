@@ -3,6 +3,7 @@ package com.yunsoo.data.api.controller;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,7 +85,7 @@ public class ProductBaseController {
     public List<ProductBaseObject> getByFilter(
             @RequestParam(value = "orgId", required = false) String orgId,
             @RequestParam(value = "categoryId", required = false) Integer categoryId) {
-        return productBaseService.getByFilter(orgId, categoryId, true).stream()
+        return productBaseService.getByFilter(orgId, categoryId, LookupCodes.ProductBaseStatus.CUSTOMER_INVISIABLE_STATUS).stream()
                 .map(p -> {
                     ProductBaseObject o = new ProductBaseObject();
                     BeanUtils.copyProperties(p, o);

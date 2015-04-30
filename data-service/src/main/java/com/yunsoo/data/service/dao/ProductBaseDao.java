@@ -18,7 +18,7 @@ public interface ProductBaseDao {
     public void delete(ProductBaseModel productBaseModel);
 
     //Search by conditions
-    public List<ProductBaseModel> getByFilter(Map<String, Object> eqFilter);
+    public List<ProductBaseModel> getByFilter(Map<String, Object> eqFilter, Map<String, List<String>> notEqFilter);
 
     public List<ProductBaseModel> getAll();
 
