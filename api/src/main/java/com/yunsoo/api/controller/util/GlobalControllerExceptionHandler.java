@@ -99,7 +99,7 @@ public class GlobalControllerExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResult handleServerError(HttpServletRequest req, Exception ex) {
-        ErrorResult result = ErrorResult.UNKNOWN;
+        ErrorResult result = new ErrorResult(RestErrorResultCode.INTERNAL_SERVER_ERROR, "服务器错误");
         LOGGER.error("[API: 500 unknown]", ex);
         return appendTraceInfo(result, ex);
     }
