@@ -15,4 +15,9 @@ public class HomeController {
         return "home";
     }
 
+    @RequestMapping(value = "")
+    public String home() {
+        return "Welcome to YUNSOO Web Scan Page!";
+    }
+
 }
