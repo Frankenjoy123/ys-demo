@@ -15,7 +15,7 @@ public class DataAPIConfiguration {
 
     @Bean
     public APIClient apiClient() {
-        String dataAPIBaseURL = "http://localhost/api";
+        String dataAPIBaseURL = "http://localhost/api-rabbit";
         if (!dataAPIBaseURL.endsWith("/")) {
             dataAPIBaseURL += "/";
         }

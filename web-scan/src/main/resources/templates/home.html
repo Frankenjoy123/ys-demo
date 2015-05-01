@@ -230,7 +230,7 @@
 
         $.ajax({
             type: 'POST',
-            url: '/api/scan',
+            url: '/api-rabbit/scan',
             data: JSON.stringify(postObject),
             dataType: 'text/json',
             contentType: 'application/json',
@@ -251,7 +251,7 @@
 
                 $("#divHeadValidKey").css('display', '');
                 $("#divScanValidKey").css('display', '');
-                $("#imgProduct").attr("src", "/api/productbase/" + data.product.productBaseId + "/thumb-mobile");
+                $("#imgProduct").attr("src", "/api-rabbit/productbase/" + data.product.productBaseId + "/thumb-mobile");
                 if (data.validationResult.toLowerCase() == "uncertain") {
                     $("#imgProStatus").attr("src", "images/icon-warning.png");
                     $("#proStatus").html("此产品不确定");
@@ -365,7 +365,7 @@
                     }
                 }
 
-                $("#imgManufacture").attr("src", "/api/organization/" + data.manufacturer.id + "/logo-mobile");
+                $("#imgManufacture").attr("src", "/api-rabbit/organization/" + data.manufacturer.id + "/logo-mobile");
                 $("#manuName").html(data.manufacturer.name);
                 $("#imgManuStatus").attr("src", "images/icon-certification.png");
             }
