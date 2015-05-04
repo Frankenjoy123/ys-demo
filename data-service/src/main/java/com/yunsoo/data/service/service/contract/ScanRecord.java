@@ -20,6 +20,7 @@ public class ScanRecord {
     private String createdDateTime;
     private Double latitude;
     private Double longitude;
+    private String location;
 
     public long getId() {
         return id;
@@ -101,6 +102,14 @@ public class ScanRecord {
         this.longitude = longitude;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public static ScanRecord FromModel(ScanRecordModel scanRecordModel) {
         if (scanRecordModel == null) return null;
 
@@ -115,6 +124,7 @@ public class ScanRecord {
         scanRecord.setCreatedDateTime(scanRecordModel.getCreatedDateTime().toString());
         scanRecord.setLatitude(scanRecordModel.getLatitude());
         scanRecord.setLongitude(scanRecordModel.getLongitude());
+        scanRecord.setLocation(scanRecordModel.getLocation());
         return scanRecord;
     }
 
@@ -129,6 +139,7 @@ public class ScanRecord {
         scanRecordModel.setUserId(scanRecord.getUserId());
         scanRecordModel.setProductKey(scanRecord.getProductKey());
         scanRecordModel.setDetail(scanRecord.getDetail());
+        scanRecordModel.setLocation(scanRecord.getLocation());
         if (scanRecord.getCreatedDateTime() != null) {
             scanRecordModel.setCreatedDateTime(DateTime.parse(scanRecord.getCreatedDateTime()));
         }
@@ -138,7 +149,6 @@ public class ScanRecord {
         if (scanRecord.getLongitude() != null) {
             scanRecordModel.setLongitude(scanRecord.getLongitude());
         }
-        ;
         return scanRecordModel;
     }
 

@@ -99,7 +99,7 @@ public class ScanController {
         UserFollowing userFollowing = new UserFollowing();
         userFollowing.setUserId(currentUser.getId());
         userFollowing.setOrganizationId(organizationObject.getId());
-        userFollowDomain.ensureFollow(userFollowing);
+        userFollowDomain.ensureFollow(userFollowing, false);
 
         //7, set validation result by our validation strategy.
         scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), currentUser, scanRecordList));
