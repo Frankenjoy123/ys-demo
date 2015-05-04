@@ -41,7 +41,7 @@ public class LogisticsDomain {
             logisticsPath.setStartDate(path.getStartDate());
 
             if(path.getAction_id() != null) {
-                LogisticsCheckActionObject actionObject = dataAPIClient.get("logisticscheckaction/id/{id}", LogisticsCheckActionObject.class, path.getAction_id());
+                LogisticsCheckActionObject actionObject = dataAPIClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, path.getAction_id());
                 logisticsPath.setActionObject(actionObject);
             }
             else {
@@ -49,7 +49,7 @@ public class LogisticsDomain {
             }
 
             if(path.getStartCheckPoint() != null) {
-                LogisticsCheckPointObject startPointObject = dataAPIClient.get("logisticscheckpoint/id/{id}", LogisticsCheckPointObject.class, path.getStartCheckPoint());
+                LogisticsCheckPointObject startPointObject = dataAPIClient.get("logisticscheckpoint/{id}", LogisticsCheckPointObject.class, path.getStartCheckPoint());
                 logisticsPath.setStartCheckPointObject(startPointObject);
 
                 if(startPointObject != null) {
@@ -65,7 +65,7 @@ public class LogisticsDomain {
             }
 
             if(path.getEndCheckPoint() != null) {
-                LogisticsCheckPointObject endPointObject = dataAPIClient.get("logisticscheckpoint/id/{id}", LogisticsCheckPointObject.class, path.getEndCheckPoint());
+                LogisticsCheckPointObject endPointObject = dataAPIClient.get("logisticscheckpoint/{id}", LogisticsCheckPointObject.class, path.getEndCheckPoint());
                 logisticsPath.setEndCheckPointObject(endPointObject);
             }
             else {
