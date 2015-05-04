@@ -18,23 +18,19 @@ public class UserFollowDomain {
     private RestClient dataAPIClient;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserFollowDomain.class);
 
-    public long ensureFollow(UserFollowing userFollowing) {
+    public long ensureFollow(UserFollowing userFollowing, Boolean forceFollow) {
         if (userFollowing == null) {
             throw new BadRequestException("UserFollowing 不能为空！");
         }
         //check if exist in DB
         UserFollowing existingUserFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class, userFollowing.getUserId(), userFollowing.getOrganizationId());
         if (existingUserFollowing != null) {
-            if (existingUserFollowing.getIsFollowing()) {
-                //when user is following org
-                return existingUserFollowing.getId();
-            } else {
-                //when user is unfollowing org
+            //when user is unfollowing org, and we need to force user to follow
+            if (!existingUserFollowing.getIsFollowing() && forceFollow) {
                 existingUserFollowing.setIsFollowing(true);
                 dataAPIClient.patch("/user/following", existingUserFollowing, long.class);
-                return existingUserFollowing.getId();
-
             }
+            return existingUserFollowing.getId();
         } else {
             //user never follow org before, just add new record.
             userFollowing.setIsFollowing(true);
