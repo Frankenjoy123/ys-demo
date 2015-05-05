@@ -15,6 +15,12 @@ public class HomeController {
         return "home";
     }
 
+    @RequestMapping("/key/{key}")
+    public String scanFull(@PathVariable(value = "key") String key, Model model) {
+        model.addAttribute("key", key);
+        return "home_full";
+    }
+
     @RequestMapping(value = "")
     public String home() {
         return "default";
