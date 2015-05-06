@@ -12,6 +12,7 @@ import com.yunsoo.data.service.service.MessageService;
 import com.yunsoo.data.service.service.contract.Message;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,11 +42,11 @@ public class MessageController {
 
     //Push unread messages to user.
     @RequestMapping(value = "/pushto/{userid}/type/{typeid}", method = RequestMethod.GET)
-    public ResponseEntity<List<Message>> getNewMessagesByUserId(@PathVariable(value = "userid") Long id,
-                                                                @PathVariable(value = "typeid") Integer typeid,
+    public ResponseEntity<List<Message>> getNewMessagesByUserId(@PathVariable(value = "userid") String id,
+                                                                @PathVariable(value = "type") String type,
                                                                 @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        List<Message> messageList = messageService.getMessagesByFilter(typeid, LookupCodes.MessageStatus.APPROVED, null, true, pageIndex, pageSize); //push approved message only
+        List<Message> messageList = messageService.getMessagesByFilter(type, LookupCodes.MessageStatus.APPROVED, null, true, null, pageIndex, pageSize); //push approved message only
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 
@@ -57,13 +58,14 @@ public class MessageController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<List<Message>> getMessagesByFilter(@RequestParam(value = "type", required = false) Integer type,
+    public ResponseEntity<List<Message>> getMessagesByFilter(@RequestParam(value = "type", required = false) String type,
                                                              @RequestParam(value = "status", required = false) String status,
                                                              @RequestParam(value = "orgid", required = false) String orgId,
                                                              @RequestParam(value = "ignoreexpiredate", required = false, defaultValue = "true") boolean ignoreExpireDate,
+                                                             @RequestParam(value = "postdatetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime postdatetime,
                                                              @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        List<Message> messageList = messageService.getMessagesByFilter(type, status, orgId, ignoreExpireDate, pageIndex, pageSize);
+        List<Message> messageList = messageService.getMessagesByFilter(type, status, orgId, ignoreExpireDate, postdatetime, pageIndex, pageSize);
         return new ResponseEntity<List<Message>>(messageList, HttpStatus.OK);
     }
 

@@ -1,6 +1,7 @@
 package com.yunsoo.data.service.dao;
 
 import com.yunsoo.data.service.dbmodel.MessageModel;
+import org.joda.time.DateTime;
 
 import java.util.List;
 
@@ -25,9 +26,9 @@ public interface MessageDao {
 
     public List<MessageModel> getMessagesByStatus(String status);
 
-    public List<MessageModel> getMessagesByType(int typeId);
+    public List<MessageModel> getMessagesByType(String type);
 
-    public List<MessageModel> getMessagesByFilter(Integer type, String status, String orgId, Boolean ignoreExpireDate, int pageIndex, int pageSize);
+    public List<MessageModel> getMessagesByFilter(String type, String status, String orgId, Boolean ignoreExpireDate, DateTime postShowtime, int pageIndex, int pageSize);
 
     public List<MessageModel> getUnreadMessages(String orgId, Long lastReadMessageId);
 }

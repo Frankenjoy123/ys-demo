@@ -114,18 +114,18 @@ public class MessageDaoImpl implements MessageDao {
     }
 
     @Override
-    public List<MessageModel> getMessagesByType(int typeId) {
+    public List<MessageModel> getMessagesByType(String type) {
         Criteria c = readSessionFactory.getCurrentSession().createCriteria(MessageModel.class)
-                .add(Restrictions.eq("type", typeId))
+                .add(Restrictions.eq("type", type))
                 .addOrder(Order.asc("id"));
         return c.list();
     }
 
     @Override
-    public List<MessageModel> getMessagesByFilter(Integer type, String status, String orgId, Boolean ignoreExpireDate, int pageIndex, int pageSize) {
+    public List<MessageModel> getMessagesByFilter(String type, String status, String orgId, Boolean ignoreExpireDate, DateTime postShowtime, int pageIndex, int pageSize) {
         Criteria c = readSessionFactory.getCurrentSession().createCriteria(MessageModel.class);
         if (type != null) {
-            c.add(Restrictions.eq("type", type.intValue()));
+            c.add(Restrictions.eq("type", type));
         }
         if (status != null) {
             c.add(Restrictions.eq("status", status));
@@ -136,6 +136,10 @@ public class MessageDaoImpl implements MessageDao {
         if (!ignoreExpireDate) {
             c.add(Restrictions.gt("expiredDateTime", DateTime.now()));
         }
+        if (postShowtime != null) {
+            c.add(Restrictions.gt("postShowTime", postShowtime));
+        }
+
         c.addOrder(Order.desc("createdDateTime"));
         c.setFirstResult(pageIndex * pageSize);
         c.setMaxResults(pageSize);
@@ -144,8 +148,6 @@ public class MessageDaoImpl implements MessageDao {
 
     @Override
     public List<MessageModel> getUnreadMessages(String orgId, Long lastReadMessageId) {
-        Session session = readSessionFactory.getCurrentSession();
-
         Criteria c = sessionFactory.getCurrentSession().createCriteria(MessageModel.class);
         if (lastReadMessageId != null) {
             c.add(Restrictions.gt("id", lastReadMessageId.longValue()));
