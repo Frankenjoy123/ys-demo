@@ -21,8 +21,8 @@ VALUES
   ('2k0r2yvydbxbvibvgft', '某广东公司', 'manufacturer', 'available', '三个自信', NULL, '', '2k0rahgcybh0l5uxtep');
 
 
-DROP TABLE IF EXISTS org_product_key_order;
-CREATE TABLE org_product_key_order
+DROP TABLE IF EXISTS product_key_order;
+CREATE TABLE product_key_order
 (
   id                 VARCHAR(20) PRIMARY KEY                     NOT NULL,
   org_id             VARCHAR(20)                                 NOT NULL,
@@ -36,8 +36,8 @@ CREATE TABLE org_product_key_order
   expire_datetime    DATETIME
 );
 
-DROP TABLE IF EXISTS org_product_key_transaction_detail;
-CREATE TABLE org_product_key_transaction_detail
+DROP TABLE IF EXISTS product_key_transaction_detail;
+CREATE TABLE product_key_transaction_detail
 (
   id                   VARCHAR(20) PRIMARY KEY                       NOT NULL,
   transaction_id       VARCHAR(20)                                   NOT NULL,

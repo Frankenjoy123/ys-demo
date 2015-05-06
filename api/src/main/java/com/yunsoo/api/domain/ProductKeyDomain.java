@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * Created on:   2015/3/16
  * Descriptions:
  */
-@Component("productKeyDomain")
+@Component
 public class ProductKeyDomain {
 
     @Autowired
@@ -61,7 +61,7 @@ public class ProductKeyDomain {
     //ProductKeyBatch
 
     public ProductKeyBatch getProductKeyBatchById(String id) {
-        return fromProductKeyBatchObject(
+        return toProductKeyBatch(
                 dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id),
                 lookupDomain.getAllProductKeyTypes(true));
     }
@@ -75,7 +75,7 @@ public class ProductKeyDomain {
 
         List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes();
         return Arrays.stream(objects)
-                .map(i -> fromProductKeyBatchObject(i, productKeyTypes))
+                .map(i -> toProductKeyBatch(i, productKeyTypes))
                 .collect(Collectors.toList());
     }
 
@@ -94,7 +94,7 @@ public class ProductKeyDomain {
         }
         processorClient.post("sqs/productkeybatch", sqsMessage);
 
-        return fromProductKeyBatchObject(newBatchObj, lookupDomain.getAllProductKeyTypes(true));
+        return toProductKeyBatch(newBatchObj, lookupDomain.getAllProductKeyTypes(true));
     }
 
     public byte[] getProductKeysByBatchId(String id) {
@@ -129,7 +129,8 @@ public class ProductKeyDomain {
                 && productKeyTypeCodes.stream().allMatch(c -> productKeyTypes.stream().anyMatch(t -> t.getCode().equals(c)));
     }
 
-    private ProductKeyBatch fromProductKeyBatchObject(ProductKeyBatchObject object, List<ProductKeyType> productKeyTypes) {
+
+    private ProductKeyBatch toProductKeyBatch(ProductKeyBatchObject object, List<ProductKeyType> productKeyTypes) {
         if (object == null) {
             return null;
         }

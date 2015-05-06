@@ -1,4 +1,4 @@
-package com.yunsoo.common.data.object;
+package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -9,10 +9,11 @@ import org.joda.time.DateTime;
 
 /**
  * Created by  : Lijian
- * Created on  : 2015/5/4
+ * Created on  : 2015/5/6
  * Descriptions:
  */
-public class OrgProductKeyOrderObject {
+public class ProductKeyOrder {
+
     @JsonProperty("id")
     private String id;
 

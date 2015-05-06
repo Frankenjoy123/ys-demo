@@ -12,8 +12,8 @@ import javax.persistence.*;
  * Descriptions:
  */
 @Entity
-@Table(name = "org_product_key_transaction_detail")
-public class OrgProductKeyTransactionDetailEntity {
+@Table(name = "product_key_transaction_detail")
+public class ProductKeyTransactionDetailEntity {
 
     @Id
     @GeneratedValue(generator = "idGenerator")
