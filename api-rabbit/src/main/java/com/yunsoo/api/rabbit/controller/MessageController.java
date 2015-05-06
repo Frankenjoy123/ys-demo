@@ -82,9 +82,8 @@ public class MessageController {
                                              @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
-        List<Message> messageList = dataAPIClient.get("message?type={0}&orgid={1}&status=" + LookupCodes.MessageStatus.APPROVED
-                + "&ignoreExpireDate=true&postdatetime={2}&pageIndex={3}&pageSize={4}", new ParameterizedTypeReference<List<Message>>() {
-        }, type, orgId, DateTimeUtils.toUTCString(postdatetime), pageIndex, pageSize);
+        List<Message> messageList = dataAPIClient.get("message?type={0}&orgid={1}&status={2}&ignoreExpireDate=true&postdatetime={3}&pageIndex={4}&pageSize={5}", new ParameterizedTypeReference<List<Message>>() {
+        }, type, orgId, LookupCodes.MessageStatus.APPROVED, DateTimeUtils.toUTCString(postdatetime), pageIndex, pageSize);
         return messageList;
     }
 
