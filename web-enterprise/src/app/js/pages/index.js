@@ -108,6 +108,7 @@
             }
         };
 
+        //This datetime format method is global, other pages will also use this method
         $scope.formatDateString = function (value) {
             return new DateTime(new Date(value)).toString('yyyy-MM-dd HH:mm:ss');
         };

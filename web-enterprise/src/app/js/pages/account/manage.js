@@ -21,8 +21,7 @@
         function ($scope, accountManageService, dataFilterService) {
 
             $scope.getDateString = function (value) {
-                var date = new Date(value);
-                return new DateTime(date).toString('yyyy-MM-dd HH:mm:ss');
+                return $scope.formatDateString(value);
             };
 
             $scope.data = {

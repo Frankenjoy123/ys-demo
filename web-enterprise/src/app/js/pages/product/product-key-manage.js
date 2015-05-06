@@ -33,7 +33,7 @@
     app.controller("productKeyManageCtrl", ["$scope", "productKeyManageService", function ($scope, productKeyManageService) {
 
         $scope.getDateString = function (value) {
-            return new DateTime(new Date(value)).toString('yyyy-MM-dd HH:mm:ss');
+            return $scope.formatDateString(value);
         };
 
         $scope.formatProductKeyTypes = function (productKeyTypes) {
