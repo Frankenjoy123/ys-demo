@@ -19,6 +19,6 @@ public class DateTimeJsonSerializer extends JsonSerializer<DateTime> {
     @Override
     public void serialize(DateTime value, JsonGenerator gen, SerializerProvider serializers)
             throws IOException, JsonProcessingException {
-        gen.writeString(DateTimeUtils.toString(value));
+        gen.writeString(DateTimeUtils.toUTCString(value));
     }
 }

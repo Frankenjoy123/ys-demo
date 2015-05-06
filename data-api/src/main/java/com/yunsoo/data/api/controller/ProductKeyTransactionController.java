@@ -1,10 +1,11 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.common.data.object.OrgProductKeyTransactionObject;
+import com.yunsoo.common.data.object.ProductKeyTransactionObject;
 import com.yunsoo.common.util.IdGenerator;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.data.service.entity.OrgProductKeyTransactionDetailEntity;
-import com.yunsoo.data.service.repository.OrgProductKeyTransactionDetailRepository;
+import com.yunsoo.data.service.entity.ProductKeyTransactionDetailEntity;
+import com.yunsoo.data.service.repository.ProductKeyTransactionDetailRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -24,37 +25,37 @@ import java.util.Map;
  * Modified on : 2015/05/05
  */
 @RestController
-@RequestMapping("/orgproductkeytransaction")
-public class OrgProductKeyTransactionController {
+@RequestMapping("/productKeyTransaction")
+public class ProductKeyTransactionController {
 
     @Autowired
-    private OrgProductKeyTransactionDetailRepository orgProductKeyTransactionDetailRepository;
+    private ProductKeyTransactionDetailRepository productKeyTransactionDetailRepository;
 
-    @RequestMapping(value = "{id}")
-    public OrgProductKeyTransactionObject getByTransactionId(@PathVariable(value = "id") String id) {
-        List<OrgProductKeyTransactionDetailEntity> detailEntities = orgProductKeyTransactionDetailRepository.findByTransactionId(id);
+    @RequestMapping(value = "{transactionId}", method = RequestMethod.GET)
+    public ProductKeyTransactionObject getByTransactionId(@PathVariable(value = "transactionId") String transactionId) {
+        List<ProductKeyTransactionDetailEntity> detailEntities = productKeyTransactionDetailRepository.findByTransactionId(transactionId);
         if (detailEntities.size() == 0) {
-            throw new NotFoundException("ProductKeyTransaction not found by [id: " + id + "]");
+            throw new NotFoundException("ProductKeyTransaction not found by [transactionId: " + transactionId + "]");
         }
         return toOrgProductKeyTransactionObjectList(detailEntities).get(0);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<OrgProductKeyTransactionObject> getByFilter(@RequestParam(value = "org_id") String orgId,
+    public List<ProductKeyTransactionObject> getByFilter(@RequestParam(value = "org_id") String orgId,
                                                             @RequestParam(value = "product_key_batch_id", required = false) String productKeyBatchId,
                                                             @RequestParam(value = "order_id", required = false) String orderId,
                                                             @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
                                                             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         PageRequest pageRequest = (pageIndex == null || pageSize == null) ? null : new PageRequest(pageIndex, pageSize);
 
-        List<OrgProductKeyTransactionDetailEntity> detailEntities = orgProductKeyTransactionDetailRepository.query(orgId, productKeyBatchId, orderId, pageRequest);
+        List<ProductKeyTransactionDetailEntity> detailEntities = productKeyTransactionDetailRepository.query(orgId, productKeyBatchId, orderId, pageRequest);
 
         return toOrgProductKeyTransactionObjectList(detailEntities);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public OrgProductKeyTransactionObject create(@RequestBody OrgProductKeyTransactionObject object) {
+    public ProductKeyTransactionObject create(@RequestBody ProductKeyTransactionObject object) {
         if (object.getId() == null) {
             object.setId(IdGenerator.getNew());
         }
@@ -62,41 +63,46 @@ public class OrgProductKeyTransactionController {
             object.setCreatedDateTime(DateTime.now());
         }
 
-        List<OrgProductKeyTransactionDetailEntity> detailEntities = toOrgProductKeyTransactionDetailEntityList(object);
-        for (OrgProductKeyTransactionDetailEntity entity : detailEntities) {
+        List<ProductKeyTransactionDetailEntity> detailEntities = toOrgProductKeyTransactionDetailEntityList(object);
+        for (ProductKeyTransactionDetailEntity entity : detailEntities) {
             entity.setId(null); //make sure it's insert
         }
-        List<OrgProductKeyTransactionDetailEntity> newEntities = orgProductKeyTransactionDetailRepository.save(detailEntities);
+        List<ProductKeyTransactionDetailEntity> newEntities = productKeyTransactionDetailRepository.save(detailEntities);
 
         return toOrgProductKeyTransactionObjectList(newEntities).get(0);
     }
-//
-//    @RequestMapping(value = "", method = RequestMethod.PATCH)
-//    public void patchUpdate(@RequestBody OrgProductKeyTransactionObject orgTransactionDetail) {
-//        if (!orgProductKeyTransactionDetailRepository.exists(orgTransactionDetail.getId())) {
-//            throw new NotFoundException("找不到Transaction Detail！ id=" + orgTransactionDetail.getId());
-//        }
-//        OrgProductKeyTransactionDetailEntity entity = orgProductKeyTransactionDetailRepository.save(OrgTransactionDetail.ToEntity(orgTransactionDetail));
-//    }
 
-    private List<OrgProductKeyTransactionObject> toOrgProductKeyTransactionObjectList(List<OrgProductKeyTransactionDetailEntity> detailEntities) {
+    @RequestMapping(value = "{transactionId}/statuscode", method = RequestMethod.PUT)
+    public void updateStatusCode(@PathVariable(value = "transactionId") String transactionId, @RequestBody String statusCode) {
+        List<ProductKeyTransactionDetailEntity> detailEntities = productKeyTransactionDetailRepository.findByTransactionId(transactionId);
+        if (detailEntities.size() == 0) {
+            throw new NotFoundException("ProductKeyTransaction not found by [transactionId: " + transactionId + "]");
+        }
+        if (statusCode == null || statusCode.length() == 0) {
+            throw new BadRequestException("status_code can not be null or empty");
+        }
+        detailEntities.forEach(e -> e.setStatusCode(statusCode));
+        productKeyTransactionDetailRepository.save(detailEntities);
+    }
+
+    private List<ProductKeyTransactionObject> toOrgProductKeyTransactionObjectList(List<ProductKeyTransactionDetailEntity> detailEntities) {
         if (detailEntities == null) {
             return null;
         }
         if (detailEntities.size() == 0) {
             return new ArrayList<>(0);
         }
-        Map<String, OrgProductKeyTransactionObject> transactionIdMap = new HashMap<>();
-        List<OrgProductKeyTransactionObject> objects = new ArrayList<>();
+        Map<String, ProductKeyTransactionObject> transactionIdMap = new HashMap<>();
+        List<ProductKeyTransactionObject> objects = new ArrayList<>();
 
-        for (OrgProductKeyTransactionDetailEntity entity : detailEntities) {
+        for (ProductKeyTransactionDetailEntity entity : detailEntities) {
             String transactionId = entity.getTransactionId();
-            OrgProductKeyTransactionObject object;
-            List<OrgProductKeyTransactionObject.Detail> details;
+            ProductKeyTransactionObject object;
+            List<ProductKeyTransactionObject.Detail> details;
             if (transactionIdMap.containsKey(transactionId)) {
                 object = transactionIdMap.get(transactionId);
             } else {
-                object = new OrgProductKeyTransactionObject();
+                object = new ProductKeyTransactionObject();
                 object.setId(entity.getTransactionId());
                 object.setOrgId(entity.getOrgId());
                 object.setProductKeyBatchId(entity.getProductKeyBatchId());
@@ -107,7 +113,7 @@ public class OrgProductKeyTransactionController {
                 transactionIdMap.put(transactionId, object);
                 objects.add(object);
             }
-            OrgProductKeyTransactionObject.Detail detail = new OrgProductKeyTransactionObject.Detail();
+            ProductKeyTransactionObject.Detail detail = new ProductKeyTransactionObject.Detail();
             detail.setId(entity.getId());
             detail.setOrderId(entity.getOrderId());
             detail.setQuantity(entity.getQuantity());
@@ -118,17 +124,17 @@ public class OrgProductKeyTransactionController {
         return objects;
     }
 
-    private List<OrgProductKeyTransactionDetailEntity> toOrgProductKeyTransactionDetailEntityList(OrgProductKeyTransactionObject object) {
+    private List<ProductKeyTransactionDetailEntity> toOrgProductKeyTransactionDetailEntityList(ProductKeyTransactionObject object) {
         if (object == null) {
             return null;
         }
-        List<OrgProductKeyTransactionObject.Detail> details = object.getDetails();
+        List<ProductKeyTransactionObject.Detail> details = object.getDetails();
         if (details == null || details.size() == 0) {
             return null;
         }
-        List<OrgProductKeyTransactionDetailEntity> detailEntities = new ArrayList<>();
-        for (OrgProductKeyTransactionObject.Detail detail : details) {
-            OrgProductKeyTransactionDetailEntity entity = new OrgProductKeyTransactionDetailEntity();
+        List<ProductKeyTransactionDetailEntity> detailEntities = new ArrayList<>();
+        for (ProductKeyTransactionObject.Detail detail : details) {
+            ProductKeyTransactionDetailEntity entity = new ProductKeyTransactionDetailEntity();
             entity.setId(detail.getId());
             entity.setTransactionId(object.getId());
             entity.setOrgId(object.getOrgId());

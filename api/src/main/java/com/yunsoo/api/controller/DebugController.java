@@ -26,7 +26,7 @@ public class DebugController {
         DateTime generatedDateTime = new DateTime(IdGenerator.getGeneratedDateFromId(id));
         Map<String, String> result = new HashMap<>();
         result.put("id", id);
-        result.put("generatedDateTime", DateTimeUtils.toString(generatedDateTime));
+        result.put("generatedDateTime", DateTimeUtils.toUTCString(generatedDateTime));
         return result;
     }
 
@@ -35,7 +35,7 @@ public class DebugController {
         DateTime generatedDateTime = new DateTime(IdGenerator.getGeneratedDateFromId(id));
         Map<String, String> result = new HashMap<>();
         result.put("id", id);
-        result.put("generatedDateTime", DateTimeUtils.toString(generatedDateTime));
+        result.put("generatedDateTime", DateTimeUtils.toUTCString(generatedDateTime));
         return result;
     }
 

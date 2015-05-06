@@ -14,7 +14,7 @@ import java.util.List;
  * Created on  : 2015/5/5
  * Descriptions:
  */
-public class OrgProductKeyTransactionObject {
+public class ProductKeyTransactionObject {
 
     @JsonProperty("id")
     private String id;

@@ -1,9 +1,10 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.common.data.object.OrgProductKeyOrderObject;
+import com.yunsoo.common.data.object.ProductKeyOrderObject;
+import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.data.service.entity.OrgProductKeyOrderEntity;
-import com.yunsoo.data.service.repository.OrgProductKeyOrderRepository;
+import com.yunsoo.data.service.entity.ProductKeyOrderEntity;
+import com.yunsoo.data.service.repository.ProductKeyOrderRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -20,15 +21,15 @@ import java.util.stream.Collectors;
  * Descriptions:
  */
 @RestController
-@RequestMapping("/orgProductKeyOrder")
-public class OrgProductKeyOrderController {
+@RequestMapping("/productKeyOrder")
+public class ProductKeyOrderController {
 
     @Autowired
-    private OrgProductKeyOrderRepository orgProductKeyOrderRepository;
+    private ProductKeyOrderRepository productKeyOrderRepository;
 
     @RequestMapping(value = "{id}")
-    public OrgProductKeyOrderObject getById(@PathVariable(value = "id") String id) {
-        OrgProductKeyOrderEntity entity = orgProductKeyOrderRepository.findOne(id);
+    public ProductKeyOrderObject getById(@PathVariable(value = "id") String id) {
+        ProductKeyOrderEntity entity = productKeyOrderRepository.findOne(id);
         if (entity == null) {
             throw new NotFoundException("ProductKeyOrder not found by [id: " + id + "]");
         }
@@ -36,23 +37,23 @@ public class OrgProductKeyOrderController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<OrgProductKeyOrderObject> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
-                                                      @RequestParam(value = "active", required = false) Boolean active,
-                                                      @RequestParam(value = "remain_ge", required = false) Long remainGE,
-                                                      @RequestParam(value = "expire_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime expireDateTimeGE,
-                                                      @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
-                                                      @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+    public List<ProductKeyOrderObject> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                                   @RequestParam(value = "active", required = false) Boolean active,
+                                                   @RequestParam(value = "remain_ge", required = false) Long remainGE,
+                                                   @RequestParam(value = "expire_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime expireDateTimeGE,
+                                                   @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
+                                                   @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         PageRequest pageRequest = (pageIndex == null || pageSize == null) ? null : new PageRequest(pageIndex, pageSize);
 
-        List<OrgProductKeyOrderEntity> entities = orgProductKeyOrderRepository.query(orgId, active, remainGE, expireDateTimeGE.toDate(), pageRequest);
+        List<ProductKeyOrderEntity> entities = productKeyOrderRepository.query(orgId, active, remainGE, DateTimeUtils.toDBString(expireDateTimeGE), pageRequest);
 
         return entities.stream().map(this::toOrgProductKeyOrderObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public OrgProductKeyOrderObject create(@RequestBody OrgProductKeyOrderObject order) {
-        OrgProductKeyOrderEntity entity = toOrgProductKeyOrderEntity(order);
+    public ProductKeyOrderObject create(@RequestBody ProductKeyOrderObject order) {
+        ProductKeyOrderEntity entity = toOrgProductKeyOrderEntity(order);
         entity.setId(null);
         if (entity.getRemain() == null) {
             entity.setRemain(entity.getTotal());
@@ -63,7 +64,7 @@ public class OrgProductKeyOrderController {
         if (entity.getCreatedDateTime() == null) {
             entity.setCreatedDateTime(DateTime.now());
         }
-        OrgProductKeyOrderEntity newEntity = orgProductKeyOrderRepository.save(entity);
+        ProductKeyOrderEntity newEntity = productKeyOrderRepository.save(entity);
         return toOrgProductKeyOrderObject(newEntity);
     }
 
@@ -76,9 +77,9 @@ public class OrgProductKeyOrderController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     @ResponseStatus(HttpStatus.OK)
-    public OrgProductKeyOrderObject patchUpdate(@PathVariable(value = "id") String id,
-                                                @RequestBody OrgProductKeyOrderObject order) {
-        OrgProductKeyOrderEntity entity = orgProductKeyOrderRepository.findOne(id);
+    public ProductKeyOrderObject patchUpdate(@PathVariable(value = "id") String id,
+                                             @RequestBody ProductKeyOrderObject order) {
+        ProductKeyOrderEntity entity = productKeyOrderRepository.findOne(id);
         if (entity == null) {
             throw new NotFoundException("ProductKeyOrder not found by [id: " + id + "]");
         }
@@ -98,16 +99,16 @@ public class OrgProductKeyOrderController {
             entity.setExpireDateTime(order.getExpireDateTime());
         }
 
-        OrgProductKeyOrderEntity newEntity = orgProductKeyOrderRepository.save(entity);
+        ProductKeyOrderEntity newEntity = productKeyOrderRepository.save(entity);
         return toOrgProductKeyOrderObject(newEntity);
     }
 
 
-    OrgProductKeyOrderObject toOrgProductKeyOrderObject(OrgProductKeyOrderEntity entity) {
+    ProductKeyOrderObject toOrgProductKeyOrderObject(ProductKeyOrderEntity entity) {
         if (entity == null) {
             return null;
         }
-        OrgProductKeyOrderObject object = new OrgProductKeyOrderObject();
+        ProductKeyOrderObject object = new ProductKeyOrderObject();
         object.setId(entity.getId());
         object.setOrgId(entity.getOrgId());
         object.setTotal(entity.getTotal());
@@ -121,11 +122,11 @@ public class OrgProductKeyOrderController {
         return object;
     }
 
-    OrgProductKeyOrderEntity toOrgProductKeyOrderEntity(OrgProductKeyOrderObject object) {
+    ProductKeyOrderEntity toOrgProductKeyOrderEntity(ProductKeyOrderObject object) {
         if (object == null) {
             return null;
         }
-        OrgProductKeyOrderEntity entity = new OrgProductKeyOrderEntity();
+        ProductKeyOrderEntity entity = new ProductKeyOrderEntity();
         entity.setId(object.getId());
         entity.setOrgId(object.getOrgId());
         entity.setTotal(object.getTotal());

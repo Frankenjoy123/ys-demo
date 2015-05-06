@@ -1,7 +1,6 @@
 package com.yunsoo.common.util;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
 
 /**
@@ -15,18 +14,13 @@ public class DateTimeUtilsTest {
     public void test_JodaDateTime() {
         DateTime now = DateTime.now();
         assert now.isEqual(DateTimeUtils.parse(DateTimeUtils.toString(now)));
-        System.out.println(DateTimeUtils.toDateString(now));
-        System.out.println(DateTime.now().toString());
-//        System.out.println(DateTime.now().toString("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
-//        System.out.println();
-//        System.out.println(DateTime.parse("2015-03-04T07:15:10.123").toString());
-//        System.out.println(DateTime.parse("2015-03-04T07:15:10.123Z").toString());
-//        System.out.println(DateTime.parse("2015-03-04T07:15:10.123+01:00").toString());
-//        System.out.println(DateTime.parse("2015-03-04T07:15:10.123+08:00").toString());
-//        System.out.println();
-//        System.out.println(DateTime.parse("2015-03-04T07:15:10.123").toString("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
-//        System.out.println(DateTime.parse("2015-03-04T07:15:10.123Z").toString("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
-//        System.out.println(DateTime.parse("2015-03-04T07:15:10.123-01:00").toString("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
-//        System.out.println(DateTime.parse("2015-03-04T07:15:10.123+08:00").toString("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
+        assert now.isEqual(DateTimeUtils.parse(DateTimeUtils.toUTCString(now)));
+        System.out.println(now);
+
+        System.out.println("DateTimeUtils.toString     :\t" + DateTimeUtils.toString(now));
+        System.out.println("DateTimeUtils.toUTCString  :\t" + DateTimeUtils.toUTCString(now));
+        System.out.println("DateTimeUtils.toDBString   :\t" + DateTimeUtils.toDBString(now));
+        System.out.println("DateTimeUtils.toDateString :\t" + DateTimeUtils.toDateString(now));
+
     }
 }
