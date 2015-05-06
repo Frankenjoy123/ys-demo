@@ -41,11 +41,12 @@ public class ProductKeyOrderController {
                                                    @RequestParam(value = "active", required = false) Boolean active,
                                                    @RequestParam(value = "remain_ge", required = false) Long remainGE,
                                                    @RequestParam(value = "expire_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime expireDateTimeGE,
+                                                   @RequestParam(value = "product_base_id", required = false) String productBaseId,
                                                    @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
                                                    @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         PageRequest pageRequest = (pageIndex == null || pageSize == null) ? null : new PageRequest(pageIndex, pageSize);
 
-        List<ProductKeyOrderEntity> entities = productKeyOrderRepository.query(orgId, active, remainGE, DateTimeUtils.toDBString(expireDateTimeGE), pageRequest);
+        List<ProductKeyOrderEntity> entities = productKeyOrderRepository.query(orgId, active, remainGE, DateTimeUtils.toDBString(expireDateTimeGE), productBaseId, pageRequest);
 
         return entities.stream().map(this::toOrgProductKeyOrderObject).collect(Collectors.toList());
     }

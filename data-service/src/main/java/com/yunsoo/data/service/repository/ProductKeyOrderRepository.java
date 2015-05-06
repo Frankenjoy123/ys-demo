@@ -19,11 +19,13 @@ public interface ProductKeyOrderRepository extends FindOneAndSaveRepository<Prod
             "(:orgId is null or o.orgId = :orgId) " +
             "and (:active is null or o.active = :active) " +
             "and (:remainGE is null or o.remain >= :remainGE) " +
-            "and (:expireDateTimeGE is null or o.expireDateTime is null or o.expireDateTime >= :expireDateTimeGE)")
+            "and (:expireDateTimeGE is null or o.expireDateTime is null or o.expireDateTime >= :expireDateTimeGE)" +
+            "and (:productBaseId is null or o.productBaseId is null or o.productBaseId = :productBaseId)")
     List<ProductKeyOrderEntity> query(@Param("orgId") String orgId,
                                       @Param("active") Boolean active,
                                       @Param("remainGE") Long remainGE,
                                       @Param("expireDateTimeGE") String expireDateTimeGE,
+                                      @Param("productBaseId") String productBaseId,
                                       Pageable pageable);
 
 }

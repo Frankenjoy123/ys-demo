@@ -38,11 +38,13 @@ public class ProductKeyOrderController {
                                              @RequestParam(value = "active", required = false) Boolean active,
                                              @RequestParam(value = "remain_ge", required = false) Long remainGE,
                                              @RequestParam(value = "expire_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime expireDateTimeGE,
+                                             @RequestParam(value = "product_base_id", required = false) String productBaseId,
                                              @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
                                              @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         return available != null && available
                 ? productKeyOrderDomain.getAvailableOrdersByOrgId(orgId, pageIndex, pageSize)
-                : productKeyOrderDomain.getOrdersByFilter(orgId, active, remainGE, expireDateTimeGE, pageIndex, pageSize);
+                : productKeyOrderDomain.getOrdersByFilter(orgId, active, remainGE, expireDateTimeGE, productBaseId, pageIndex, pageSize);
     }
+
 
 }
