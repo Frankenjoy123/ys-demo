@@ -138,6 +138,33 @@
         .timeline-body > p + p {
             margin-top: 5px;
         }
+
+        .item-action {
+            width: 100%;
+            position: fixed;
+            height: 40px;
+            bottom: 0;
+            left: 0;
+            text-align: center;
+            line-height: 40px;
+            z-index: 999;
+            font-size: 16px;
+            color: white;
+        }
+
+        .item-action .contact {
+            position: absolute;
+            left:0;
+            width: 50%;
+            background-color: #3faee0;
+        }
+
+        .item-action .buy {
+            position: absolute;
+            width: 50%;
+            right:0;
+            background-color: #3c8dbc;
+        }
     </style>
 </head>
 <body>
@@ -467,15 +494,12 @@
             </div>
         </div>
 
-        <div class="row">
-            <div style="position:relative;bottom:10px" class="col-xs-12 col-md-12">
-                <div class="col-xs-6 col-md-6">
-                    <button type="button" class="btn btn-info pull-left">联系厂家</button>
-                </div>
-                <div class="col-xs-6 col-md-6">
-                    <button type="button" class="btn btn-info pull-right">购买产品</button>
-                </div>
-            </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-md-12 item-action">
+            <div class="pull-left contact">联系厂家</div>
+            <div class="pull-right buy">购买产品</div>
         </div>
     </div>
 
