@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.OrganizationObject;
 import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
 
 /**
  * Created by  : Zhe
@@ -97,5 +99,11 @@ public class Organization {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public static Organization fromOrganizationObject(OrganizationObject object) {
+        Organization entity = new Organization();
+        BeanUtils.copyProperties(object, entity);
+        return entity;
     }
 }
