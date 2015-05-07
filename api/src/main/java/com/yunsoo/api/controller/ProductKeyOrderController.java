@@ -46,5 +46,11 @@ public class ProductKeyOrderController {
                 : productKeyOrderDomain.getOrdersByFilter(orgId, active, remainGE, expireDateTimeGE, productBaseId, pageIndex, pageSize);
     }
 
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public ProductKeyOrder create(@RequestBody ProductKeyOrder order) {
+
+
+        return productKeyOrderDomain.create(order);
+    }
 
 }

@@ -1,20 +1,16 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.api.dto.ProductKeyOrder;
 import com.yunsoo.common.data.object.ProductKeyOrderObject;
-import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -44,33 +40,24 @@ public class ProductKeyOrderDomain {
     }
 
     public List<ProductKeyOrder> getOrdersByFilter(String orgId, Boolean active, Long remainGE, DateTime expireDateTimeGE, String productBaseId, Integer pageIndex, Integer pageSize) {
-        List<ProductKeyOrderObject> orderObjects = dataAPIClient.get("productKeyOrder?org_id={orgId}&active={active}&remain_ge={remainGE}&expire_datetime_ge={now}&product_base_id={productBaseId}pageIndex={pageIndex}&pageSize={pageSize}", new ParameterizedTypeReference<List<ProductKeyOrderObject>>() {
-        }, orgId, active, remainGE, DateTimeUtils.toUTCString(expireDateTimeGE), productBaseId, pageIndex, pageSize);
+        String query = new QueryStringBuilder()
+                .append("org_id", orgId)
+                .append("active", active)
+                .append("remain_ge", remainGE)
+                .append("expire_datetime_ge", expireDateTimeGE)
+                .append("product_base_id", productBaseId)
+                .append("pageIndex", pageIndex)
+                .append("pageSize", pageSize)
+                .build();
+
+        List<ProductKeyOrderObject> orderObjects = dataAPIClient.get("productKeyOrder?{query}", new ParameterizedTypeReference<List<ProductKeyOrderObject>>() {
+        }, query);
 
         return orderObjects.stream().map(this::toProductKeyOrder).collect(Collectors.toList());
     }
 
-    private List<ProductKeyCredit> getProductKeyCredits(String orgId, String productBaseId) {
-        List<ProductKeyCredit> credits = new ArrayList<>();
-        Map<String, ProductKeyCredit> creditMap = new HashMap<>();
-        List<ProductKeyOrder> orders = getOrdersByFilter(orgId, true, 1L, DateTime.now(), productBaseId, null, null);
-        orders.forEach(o -> {
-            if (o != null) {
-                String pId = o.getProductBaseId();
-                ProductKeyCredit c;
-                if (creditMap.containsKey(pId)) {
-                    c = creditMap.get(pId);
-                } else {
-                    c = new ProductKeyCredit(pId);
-                    creditMap.put(pId, c);
-                    credits.add(c);
-                }
-                c.setTotalCredit(c.getTotalCredit() + o.getTotal());
-                c.setRemainCredit(c.getRemainCredit() + o.getRemain());
-            }
-        });
-
-        return credits;
+    public ProductKeyOrder create(ProductKeyOrder order) {
+        return null;
     }
 
 
