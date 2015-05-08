@@ -10,7 +10,7 @@ hibernate:
     hbm2ddl_auto: none
 
 spring:
-    profiles.active: qa
+    profiles.active: default
 ---
 spring:
     profiles: default
