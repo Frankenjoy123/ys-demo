@@ -16,9 +16,15 @@ public class HomeController {
     }
 
     @RequestMapping("/key/{key}")
-    public String scanFull(@PathVariable(value = "key") String key, Model model) {
+         public String scanFull(@PathVariable(value = "key") String key, Model model) {
         model.addAttribute("key", key);
         return "home_full";
+    }
+
+    @RequestMapping("/according/{key}")
+    public String scanAccording(@PathVariable(value = "key") String key, Model model) {
+        model.addAttribute("key", key);
+        return "home_according";
     }
 
     @RequestMapping(value = "")
