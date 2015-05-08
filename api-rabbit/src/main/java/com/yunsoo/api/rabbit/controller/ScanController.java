@@ -17,6 +17,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -82,9 +83,9 @@ public class ScanController {
         scanResult.setProduct(currentExistProduct);
 
         //3, retrieve scan records
-        ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}", ScanRecord[].class, scanRequestBody.getKey(), Integer.MAX_VALUE);
-        List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
-        //to-do
+        List<ScanRecord> scanRecordList = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}",
+                new ParameterizedTypeReference<List<ScanRecord>>() {
+                }, scanRequestBody.getKey(), 20);  //hard code as top 20 (desc order by created time )
         scanResult.setScanRecord(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
@@ -93,7 +94,7 @@ public class ScanController {
 
         //5, get company information.
         OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, scanResult.getProduct().getOrgId());
-        scanResult.setManufacturer(fromOrganizationObject(organizationObject));
+        scanResult.setManufacturer(Organization.fromOrganizationObject(organizationObject));
 
         //6，ensure user following the company
         UserFollowing userFollowing = new UserFollowing();
@@ -111,7 +112,7 @@ public class ScanController {
 
     @RequestMapping(value = "/history/user/{userId}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
-    public List<ScanRecord> getScanRecordsByFilter(
+    public List<ScanRecord> getUserScanRecordsByFilter(
             @PathVariable(value = "userId") String userId,
             @PathVariable(value = "pageIndex") Integer pageIndex,
             @PathVariable(value = "pageSize") Integer pageSize) {
@@ -140,7 +141,7 @@ public class ScanController {
 
     @RequestMapping(value = "/searchback/{isbackward}/user/{userId}/from/{Id}/paging/{pageIndex}/{pageSize}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
-    public List<ScanRecord> getScanRecordsByFilter(
+    public List<ScanRecord> getUserScanRecordsByFilter(
             @PathVariable(value = "Id") Long Id,
             @PathVariable(value = "userId") String userId,
             @PathVariable(value = "isbackward") Boolean isbackward,
@@ -173,6 +174,31 @@ public class ScanController {
         ScanRecord[] scanRecords = dataAPIClient.get("scan/filter?userId={userId}&Id={Id}&backward={backward}&pageIndex={pageIndex}&pageSize={pageSize}",
                 ScanRecord[].class, userId, Id, isbackward, pageIndex, pageSize);
         List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
+        return scanRecordList;
+    }
+
+    @RequestMapping(value = "/key/{key}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
+//    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
+    public List<ScanRecord> getScanRecordsByFilter(
+            @PathVariable(value = "key") String key,
+            @PathVariable(value = "pageIndex") Integer pageIndex,
+            @PathVariable(value = "pageSize") Integer pageSize) {
+
+        //验证输入参数
+        if (key.isEmpty()) {
+            throw new BadRequestException(40001, "Key不应为空！");
+        }
+        if (pageIndex < 0) {
+            throw new BadRequestException("pageIndex不应小于0！");
+        }
+        if (pageSize <= 0) {
+            throw new BadRequestException("PageSize不应小于等于0！");
+        }
+
+        List<ScanRecord> scanRecordList = dataAPIClient.get("scan/filterby?productKey={key}&pageIndex={pageIndex}&pageSize={pageSize}",
+                new ParameterizedTypeReference<List<ScanRecord>>() {
+                }, key, pageIndex, pageSize);
+        //List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
         return scanRecordList;
     }
 
@@ -225,16 +251,4 @@ public class ScanController {
         return dataAPIClient.post("scan", scanRecord, long.class);
     }
 
-    private Organization fromOrganizationObject(OrganizationObject object) {
-        Organization entity = new Organization();
-        entity.setId(object.getId());
-        entity.setName(object.getName());
-        entity.setStatusCode(object.getStatusCode());
-        entity.setDescription(object.getDescription());
-        entity.setTypeCode(object.getTypeCode());
-        entity.setDetails(object.getDetails());
-        entity.setCreatedAccountId(object.getCreatedAccountId());
-        entity.setCreatedDateTime(object.getCreatedDateTime());
-        return entity;
-    }
 }
