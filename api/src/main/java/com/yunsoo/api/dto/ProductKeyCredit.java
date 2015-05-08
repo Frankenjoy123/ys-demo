@@ -12,20 +12,19 @@ public class ProductKeyCredit {
     @JsonProperty("product_base_id")
     private String productBaseId;
 
-    @JsonProperty("total_credit")
-    private Long totalCredit;
+    @JsonProperty("total")
+    private Long total;
 
-    @JsonProperty("remain_credit")
-    private Long remainCredit;
-
+    @JsonProperty("remain")
+    private Long remain;
 
     public ProductKeyCredit() {
     }
 
     public ProductKeyCredit(String productBaseId) {
         this.productBaseId = productBaseId;
-        this.totalCredit = 0L;
-        this.remainCredit = 0L;
+        this.total = 0L;
+        this.remain = 0L;
     }
 
     public String getProductBaseId() {
@@ -36,19 +35,19 @@ public class ProductKeyCredit {
         this.productBaseId = productBaseId;
     }
 
-    public Long getTotalCredit() {
-        return totalCredit;
+    public Long getTotal() {
+        return total;
     }
 
-    public void setTotalCredit(Long totalCredit) {
-        this.totalCredit = totalCredit;
+    public void setTotal(Long total) {
+        this.total = total;
     }
 
-    public Long getRemainCredit() {
-        return remainCredit;
+    public Long getRemain() {
+        return remain;
     }
 
-    public void setRemainCredit(Long remainCredit) {
-        this.remainCredit = remainCredit;
+    public void setRemain(Long remain) {
+        this.remain = remain;
     }
 }

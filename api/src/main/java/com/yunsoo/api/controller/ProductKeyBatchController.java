@@ -14,6 +14,8 @@ import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
@@ -32,6 +34,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/productkeybatch")
 public class ProductKeyBatchController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductKeyBatchController.class);
 
     @Autowired
     private ProductDomain productDomain;
@@ -114,7 +118,11 @@ public class ProductKeyBatchController {
         batchObj.setCreatedAccountId(accountId);
         batchObj.setCreatedDateTime(createdDateTime);
 
-        return productKeyDomain.createProductKeyBatch(batchObj);
+        LOGGER.info("ProductKeyBatch creating started [quantity: {}]", batchObj.getQuantity());
+        ProductKeyBatch newBatch = productKeyDomain.createProductKeyBatch(batchObj);
+        LOGGER.info("ProductKeyBatch created [id: {}, quantity: {}]", newBatch.getId(), newBatch.getQuantity());
+
+        return newBatch;
     }
 
 }

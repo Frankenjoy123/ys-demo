@@ -2,14 +2,14 @@
 DROP TABLE IF EXISTS product_status_lkp;
 CREATE TABLE product_status_lkp
 (
-  code VARCHAR(20) PRIMARY KEY NOT NULL,
+  code VARCHAR(20) PRIMARY KEY  NOT NULL,
   name        VARCHAR(100)             NOT NULL,
   description VARCHAR(255),
   active      BIT DEFAULT b'1'         NOT NULL
 );
 INSERT INTO product_status_lkp (code, name, description, active)
 VALUES
-  ('new', '未激活', '产品初始状态', TRUE),
+  ('created', '未激活', '产品初始状态', TRUE),
   ('activated', '已激活', '已出厂激活', TRUE),
   ('recalled', '已召回', '已召回', TRUE),
   ('deleted', '已删除', '已删除', TRUE);
@@ -19,7 +19,7 @@ VALUES
 DROP TABLE IF EXISTS product_key_type_lkp;
 CREATE TABLE product_key_type_lkp
 (
-  code VARCHAR(20) PRIMARY KEY NOT NULL,
+  code VARCHAR(20) PRIMARY KEY  NOT NULL,
   name        VARCHAR(100)             NOT NULL,
   description VARCHAR(255),
   active      BIT DEFAULT b'1'         NOT NULL
@@ -35,13 +35,14 @@ VALUES
 DROP TABLE IF EXISTS product_key_batch_status_lkp;
 CREATE TABLE product_key_batch_status_lkp
 (
-  code VARCHAR(20) PRIMARY KEY NOT NULL,
+  code VARCHAR(20) PRIMARY KEY  NOT NULL,
   name        VARCHAR(100)             NOT NULL,
   description VARCHAR(255),
   active      BIT DEFAULT b'1'         NOT NULL
 );
 INSERT INTO product_key_batch_status_lkp (code, name, description, active)
 VALUES
+  ('new', '新创建', 'new', TRUE),
   ('creating', '新建中', 'creating', TRUE),
   ('available', '有效', 'available', TRUE),
   ('downloaded', '已下载', 'downloaded', TRUE),
@@ -68,7 +69,7 @@ VALUES
 DROP TABLE IF EXISTS permission_action_lkp;
 CREATE TABLE permission_action_lkp
 (
-  code VARCHAR(20) PRIMARY KEY NOT NULL,
+  code VARCHAR(20) PRIMARY KEY  NOT NULL,
   name        VARCHAR(100)             NOT NULL,
   description VARCHAR(255),
   active      BIT DEFAULT b'1'         NOT NULL
@@ -86,7 +87,7 @@ VALUES
 DROP TABLE IF EXISTS org_status_lkp;
 CREATE TABLE org_status_lkp
 (
-  code VARCHAR(20) PRIMARY KEY NOT NULL,
+  code VARCHAR(20) PRIMARY KEY  NOT NULL,
   name        VARCHAR(100)             NOT NULL,
   description VARCHAR(255),
   active      BIT DEFAULT b'1'         NOT NULL
@@ -103,7 +104,7 @@ VALUES
 DROP TABLE IF EXISTS account_status_lkp;
 CREATE TABLE account_status_lkp
 (
-  code VARCHAR(20) PRIMARY KEY NOT NULL,
+  code VARCHAR(20) PRIMARY KEY  NOT NULL,
   name        VARCHAR(100)             NOT NULL,
   description VARCHAR(255),
   active      BIT DEFAULT b'1'         NOT NULL
@@ -117,7 +118,7 @@ VALUES
 DROP TABLE IF EXISTS user_status_lkp;
 CREATE TABLE user_status_lkp
 (
-  code VARCHAR(20) PRIMARY KEY NOT NULL,
+  code VARCHAR(20) PRIMARY KEY  NOT NULL,
   name        VARCHAR(100)             NOT NULL,
   description VARCHAR(255),
   active      BIT DEFAULT b'1'         NOT NULL
@@ -128,7 +129,7 @@ CREATE TABLE user_status_lkp
 DROP TABLE IF EXISTS message_status_lkp;
 CREATE TABLE message_status_lkp
 (
-  code VARCHAR(20) PRIMARY KEY NOT NULL,
+  code VARCHAR(20) PRIMARY KEY  NOT NULL,
   name        VARCHAR(100)             NOT NULL,
   description VARCHAR(255),
   active      BIT DEFAULT b'1'         NOT NULL
@@ -139,7 +140,7 @@ CREATE TABLE message_status_lkp
 DROP TABLE IF EXISTS message_type_lkp;
 CREATE TABLE message_type_lkp
 (
-  code VARCHAR(20) PRIMARY KEY NOT NULL,
+  code VARCHAR(20) PRIMARY KEY  NOT NULL,
   name        VARCHAR(100)             NOT NULL,
   description VARCHAR(255),
   active      BIT DEFAULT b'1'         NOT NULL
@@ -150,7 +151,7 @@ CREATE TABLE message_type_lkp
 DROP TABLE IF EXISTS product_file_type_lkp;
 CREATE TABLE product_file_type_lkp
 (
-  code VARCHAR(20) PRIMARY KEY NOT NULL,
+  code VARCHAR(20) PRIMARY KEY  NOT NULL,
   name        VARCHAR(100)             NOT NULL,
   description VARCHAR(255),
   active      BIT DEFAULT b'1'         NOT NULL

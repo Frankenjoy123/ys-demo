@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.api.dto.ProductKeyOrder;
 import com.yunsoo.common.data.object.ProductKeyOrderObject;
 import com.yunsoo.common.web.client.RestClient;
@@ -10,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +62,31 @@ public class ProductKeyOrderDomain {
 
     public ProductKeyOrder create(ProductKeyOrder order) {
         return null;
+    }
+
+    public List<ProductKeyCredit> getProductKeyCredits(String orgId, String productBaseId) {
+        List<ProductKeyCredit> credits = new ArrayList<>();
+        Map<String, ProductKeyCredit> creditMap = new HashMap<>();
+        // search orders by [active = true and expire_datetime >= now], including remain is 0
+        List<ProductKeyOrder> orders = getOrdersByFilter(orgId, true, null, DateTime.now(), productBaseId, null, null);
+
+        orders.forEach(o -> {
+            if (o != null) {
+                String pId = o.getProductBaseId();
+                ProductKeyCredit c;
+                if (creditMap.containsKey(pId)) {
+                    c = creditMap.get(pId);
+                } else {
+                    c = new ProductKeyCredit(pId);
+                    creditMap.put(pId, c);
+                    credits.add(c);
+                }
+                c.setTotal(c.getTotal() + o.getTotal());
+                c.setRemain(c.getRemain() + o.getRemain());
+            }
+        });
+
+        return credits;
     }
 
 
