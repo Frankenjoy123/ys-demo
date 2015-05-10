@@ -3,6 +3,7 @@ package com.yunsoo.api.domain;
 import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.api.dto.ProductKeyOrder;
 import com.yunsoo.common.data.object.ProductKeyOrderObject;
+import com.yunsoo.common.data.object.ProductKeyTransactionObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
@@ -27,6 +28,9 @@ public class ProductKeyOrderDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+
+    @Autowired
+    private ProductKeyTransactionDomain productKeyTransactionDomain;
 
 
     public ProductKeyOrder getById(String orderId) {
@@ -74,6 +78,7 @@ public class ProductKeyOrderDomain {
             if (o != null) {
                 String pId = o.getProductBaseId();
                 ProductKeyCredit c;
+                long quantityInTransaction = getQuantityInTransaction(o.getId());
                 if (creditMap.containsKey(pId)) {
                     c = creditMap.get(pId);
                 } else {
@@ -82,11 +87,27 @@ public class ProductKeyOrderDomain {
                     credits.add(c);
                 }
                 c.setTotal(c.getTotal() + o.getTotal());
-                c.setRemain(c.getRemain() + o.getRemain());
+                c.setRemain(c.getRemain() + o.getRemain() - quantityInTransaction);
             }
         });
 
         return credits;
+    }
+
+    private long getQuantityInTransaction(String orderId) {
+        long quantity = 0L;
+        List<ProductKeyTransactionObject> transactions = productKeyTransactionDomain.getCreatedTransactionByOrderId(orderId);
+        if (transactions == null || transactions.size() == 0) {
+            return quantity;
+        }
+        for (ProductKeyTransactionObject transaction : transactions) {
+            for (ProductKeyTransactionObject.Detail detail : transaction.getDetails()) {
+                if (detail.getQuantity() != null) {
+                    quantity += detail.getQuantity();
+                }
+            }
+        }
+        return quantity;
     }
 
 

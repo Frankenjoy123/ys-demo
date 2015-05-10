@@ -44,11 +44,12 @@ public class ProductKeyTransactionController {
     public List<ProductKeyTransactionObject> getByFilter(@RequestParam(value = "org_id") String orgId,
                                                          @RequestParam(value = "product_key_batch_id", required = false) String productKeyBatchId,
                                                          @RequestParam(value = "order_id", required = false) String orderId,
+                                                         @RequestParam(value = "status_code", required = false) String statusCode,
                                                          @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
                                                          @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         PageRequest pageRequest = (pageIndex == null || pageSize == null) ? null : new PageRequest(pageIndex, pageSize);
 
-        List<ProductKeyTransactionDetailEntity> detailEntities = productKeyTransactionDetailRepository.query(orgId, productKeyBatchId, orderId, pageRequest);
+        List<ProductKeyTransactionDetailEntity> detailEntities = productKeyTransactionDetailRepository.query(orgId, productKeyBatchId, orderId, statusCode, pageRequest);
 
         return toOrgProductKeyTransactionObjectList(detailEntities);
     }

@@ -20,11 +20,13 @@ public interface ProductKeyTransactionDetailRepository extends FindOneAndSaveRep
     @Query("select o from #{#entityName} o where " +
             "(:orgId is null or o.orgId = :orgId) " +
             "and (:productKeyBatchId is null or o.productKeyBatchId = :productKeyBatchId) " +
-            "and (:orderId is null or o.orderId = :orderId) ")
+            "and (:orderId is null or o.orderId = :orderId) " +
+            "and (:statusCode is null or o.statusCode = :statusCode)")
     List<ProductKeyTransactionDetailEntity> query(@Param("orgId") String orgId,
-                                                     @Param("productKeyBatchId") String productKeyBatchId,
-                                                     @Param("orderId") String orderId,
-                                                     Pageable pageable);
+                                                  @Param("productKeyBatchId") String productKeyBatchId,
+                                                  @Param("orderId") String orderId,
+                                                  @Param("statusCode") String statusCode,
+                                                  Pageable pageable);
 
     List<ProductKeyTransactionDetailEntity> save(Iterable<ProductKeyTransactionDetailEntity> detailEntities);
 

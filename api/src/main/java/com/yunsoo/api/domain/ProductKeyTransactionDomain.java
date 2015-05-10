@@ -6,8 +6,10 @@ import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyTransactionObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -29,9 +31,12 @@ public class ProductKeyTransactionDomain {
 
     public List<ProductKeyTransactionObject> getCreatedTransactionByOrderId(String orderId) {
         String statusCode = LookupCodes.ProductKeyTransactionStatus.CREATED;
-
-
-        return null;
+        String query = new QueryStringBuilder()
+                .append("order_id", orderId)
+                .append("status_code", statusCode)
+                .build();
+        return dataAPIClient.get("productKeyTransaction?{query}", new ParameterizedTypeReference<List<ProductKeyTransactionObject>>() {
+        }, query);
     }
 
 
