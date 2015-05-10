@@ -41,7 +41,7 @@ public class ProductKeyTransactionController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductKeyTransactionObject> getByFilter(@RequestParam(value = "org_id") String orgId,
+    public List<ProductKeyTransactionObject> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                                          @RequestParam(value = "product_key_batch_id", required = false) String productKeyBatchId,
                                                          @RequestParam(value = "order_id", required = false) String orderId,
                                                          @RequestParam(value = "status_code", required = false) String statusCode,
