@@ -152,7 +152,7 @@ public class UserDto {
         BeanUtils.copyProperties(userDto, user, SpringBeanUtil.getNullPropertyNames(userDto));
         if (userDto.getThumbnailData() != null && userDto.getThumbnailData().length > 0) {
             FileObject fileObject = new FileObject();
-            fileObject.setThumbnailData(userDto.getThumbnailData());
+            fileObject.setData(userDto.getThumbnailData());
             if (userDto.getThumbnailName() != null && !userDto.getThumbnailName().isEmpty()) {
                 fileObject.setName(userDto.getThumbnailName());
             }
@@ -166,7 +166,7 @@ public class UserDto {
             if (userDto.getThumbnailContentLength() != null) {
                 fileObject.setLength(userDto.getThumbnailContentLength());
             } else {
-                fileObject.setLength((long) (fileObject.getThumbnailData().length));  //calculate length
+                fileObject.setLength((long) (fileObject.getData().length));  //calculate length
             }
             user.setFileObject(fileObject); //set user's ThumbnailFile
         }

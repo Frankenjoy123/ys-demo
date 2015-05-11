@@ -10,12 +10,9 @@ import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.dao.UserDao;
 import com.yunsoo.data.service.dbmodel.UserModel;
-import com.yunsoo.data.service.entity.UserFollowingEntity;
-import com.yunsoo.data.service.repository.UserFollowingRepository;
 import com.yunsoo.data.service.service.ServiceOperationStatus;
 import com.yunsoo.data.service.service.UserService;
 import com.yunsoo.data.service.service.contract.User;
-import com.yunsoo.data.service.service.contract.UserFollowing;
 import com.yunsoo.data.service.util.SpringBeanUtil;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.data.service.util.StatusConverter;
@@ -75,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
 //        S3ObjectInputStream objectContent = item.getObjectContent();
 
-//        thumbnail.setThumbnailData(IOUtils.toByteArray(objectContent));
+//        thumbnail.setData(IOUtils.toByteArray(objectContent));
 //
 //        String contentType = item.getObjectMetadata().getContentType();
 //        if(contentType.equals("image/jpeg")) {
@@ -175,7 +172,7 @@ public class UserServiceImpl implements UserService {
     //Save thumbnail into S3 bucket
     private String saveUserThumbnail(String userId, FileObject fileObject, String thumbnailKey) throws IOException, Exception {
         if (fileObject == null) throw new Exception("ThumbnailFile is null!");
-        InputStream inputStream = new ByteArrayInputStream(fileObject.getThumbnailData());
+        InputStream inputStream = new ByteArrayInputStream(fileObject.getData());
         //to-do:
         ObjectMetadata objectMetadata = new ObjectMetadata();
         if (fileObject.getSuffix().toLowerCase().equals("jpg") || fileObject.getSuffix().toLowerCase().equals("jpeg")) {

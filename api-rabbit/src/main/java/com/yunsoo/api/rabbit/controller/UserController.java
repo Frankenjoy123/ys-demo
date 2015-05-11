@@ -91,11 +91,11 @@ public class UserController {
             return ResponseEntity.ok()
                     .contentLength(fileObject.getLength())
                     .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                    .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                    .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
         } else {
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                    .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                    .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
         }
     }
 

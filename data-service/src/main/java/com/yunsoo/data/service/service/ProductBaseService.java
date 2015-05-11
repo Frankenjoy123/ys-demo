@@ -10,7 +10,7 @@ public interface ProductBaseService {
 
     public ProductBase getById(String id);
 
-    public S3Object getProductThumbnail(String bucketName, String key) throws IOException;
+    public S3Object getProductS3Object(String bucketName, String key) throws IOException;
 
     public String save(ProductBase productBase);
 

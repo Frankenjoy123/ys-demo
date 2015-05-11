@@ -18,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
@@ -121,11 +120,11 @@ public class MessageController {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             } else {
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             }
         } catch (NotFoundException ex) {
             throw new NotFoundException(40402, "找不到消息图片 imagekey = " + imagekey);

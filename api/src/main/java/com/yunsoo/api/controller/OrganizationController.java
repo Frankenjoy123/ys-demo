@@ -60,11 +60,11 @@ public class OrganizationController {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             } else {
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             }
         } catch (NotFoundException ex) {
             throw new NotFoundException(40402, "找不到组织图片 id = " + id + "  client = " + imageKey);

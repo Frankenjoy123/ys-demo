@@ -48,7 +48,7 @@ public class ProductKeyOrderDomain {
     }
 
     public List<ProductKeyOrder> getOrdersByFilter(String orgId, Boolean active, Long remainGE, DateTime expireDateTimeGE, String productBaseId, Integer pageIndex, Integer pageSize) {
-        String query = new QueryStringBuilder()
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .append("active", active)
                 .append("remain_ge", remainGE)
@@ -58,8 +58,8 @@ public class ProductKeyOrderDomain {
                 .append("pageSize", pageSize)
                 .build();
 
-        List<ProductKeyOrderObject> orderObjects = dataAPIClient.get("productKeyOrder?{query}", new ParameterizedTypeReference<List<ProductKeyOrderObject>>() {
-        }, query);
+        List<ProductKeyOrderObject> orderObjects = dataAPIClient.get("productKeyOrder" + query, new ParameterizedTypeReference<List<ProductKeyOrderObject>>() {
+        });
 
         return orderObjects.stream().map(this::toProductKeyOrder).collect(Collectors.toList());
     }

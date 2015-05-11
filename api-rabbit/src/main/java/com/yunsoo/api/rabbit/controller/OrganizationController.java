@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,11 +50,11 @@ public class OrganizationController {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             } else {
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             }
         } catch (NotFoundException ex) {
             throw new NotFoundException(40402, "找不到组织图片 id = " + id + "  client = " + imageKey);
