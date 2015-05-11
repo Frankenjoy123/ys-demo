@@ -27,8 +27,9 @@
                             <th>名称</th>
                             <th>品类</th>
                             <th>条码</th>
-                            <th>产品码类型</th>
                             <th>保质期</th>
+                            <th>产品码类型</th>
+                            <th>可用额度</th>
                             <th>创建时间</th>
                         </tr>
                         <tr ng-repeat="pb in productBases">
@@ -36,8 +37,18 @@
                             <td>{{pb.name}}</td>
                             <td>{{pb.category ? pb.category.name : '未知'}}</td>
                             <td>{{pb.barcode}}</td>
-                            <td>{{formatProductKeyTypes(pb.productKeyTypes)}}</td>
                             <td>{{pb.shelfLife + " " + shelfLifeIntervals[pb.shelfLifeInterval]}}</td>
+
+                            <td>{{formatProductKeyTypes(pb.productKeyTypes)}}</td>
+                            <td>
+                                <div class="progress-group"><span class="progress-number"><b>{{pb.credit.remain}}</b>/{{pb.credit.total}}</span>
+
+                                    <div class="progress sm" style="background-color: #f0ffff;">
+                                        <div class="progress-bar progress-bar-aqua"
+                                             style="width: {{pb.credit.remain*100/pb.credit.total}}%"></div>
+                                    </div>
+                                </div>
+                            </td>
                             <td>{{formatDateString(pb.createdDateTime)}}</td>
                         </tr>
                     </table>
