@@ -105,7 +105,7 @@ public class MessageController {
         TPermission tPermission = new TPermission();
         tPermission.setOrgId(message.getOrgId());
         tPermission.setResourceCode("message");
-        tPermission.setActionCode("read");
+        tPermission.setActionCode("delete");
         if (!permissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
             throw new UnauthorizedException("没有权限删去此信息！");
         }

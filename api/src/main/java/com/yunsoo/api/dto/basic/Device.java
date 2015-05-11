@@ -1,13 +1,11 @@
-package com.yunsoo.data.service.service.contract;
+package com.yunsoo.api.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
-import com.yunsoo.data.service.dbmodel.DeviceModel;
-import com.yunsoo.data.service.entity.DeviceEntity;
-import com.yunsoo.data.service.entity.UserFollowingEntity;
-import org.hibernate.annotations.Type;
+import com.yunsoo.common.data.object.DeviceObject;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 
@@ -15,24 +13,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by KB
- * Updated by Jerry and Zhe .  On May 11, 2015
- *
+ * Created by Zhe on 2015/5/11.
  */
 public class Device {
+
+    @JsonProperty("id")
     private String id;
+    @JsonProperty("device_name")
     private String deviceName;
+    @JsonProperty("device_os")
     private String deviceOs;
+    @JsonProperty("org_id")
     private String orgId;
+    @JsonProperty("status_code")
     private String statusCode;
+    @JsonProperty("check_point_id")
     private String checkPointId;
+    @JsonProperty("created_account_id")
     private String createdAccountId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
+    @JsonProperty("modified_account_id")
     private String modifiedAccountId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("modified_datetime")
     private DateTime modifiedDatetime;
 
     public String getId() {
@@ -115,43 +122,37 @@ public class Device {
         this.modifiedDatetime = modifiedDatetime;
     }
 
-    public static Device FromEntity(DeviceEntity entity) {
-        if (entity == null) return null;
-
+    public static Device fromDeviceObject(DeviceObject object) {
+        if (object == null) return null;
         Device device = new Device();
-        BeanUtils.copyProperties(entity, device, new String[]{"createdDateTime"});
-        if (entity.getCreatedDateTime() != null) {
-            device.setCreatedDateTime(entity.getCreatedDateTime());
-        }
+        BeanUtils.copyProperties(object, device);
         return device;
     }
 
-    public static DeviceEntity ToEntity(Device device) {
+    public static DeviceObject toDeviceObject(Device device) {
         if (device == null) return null;
-
-        DeviceEntity entity = new DeviceEntity();
-        BeanUtils.copyProperties(device, entity, new String[]{"createdDateTime"});
-        if (device.getCreatedDateTime() != null) {
-            entity.setCreatedDateTime(device.getCreatedDateTime());
-        }
-        return entity;
+        DeviceObject object = new DeviceObject();
+        BeanUtils.copyProperties(device, object);
+        return object;
     }
 
-    public static List<Device> FromEntityList(Iterable<DeviceEntity> entityList) {
-        if (entityList == null) return null;
+    public static List<Device> fromDeviceObjectList(List<DeviceObject> objectList) {
+        if (objectList == null) return null;
+
         List<Device> deviceList = new ArrayList<Device>();
-        for (DeviceEntity entity : entityList) {
-            deviceList.add(Device.FromEntity(entity));
+        for (DeviceObject object : objectList) {
+            deviceList.add(Device.fromDeviceObject(object));
         }
         return deviceList;
     }
 
-    public static List<DeviceEntity> ToEntityList(Iterable<Device> devices) {
+    public static List<DeviceObject> ToDeviceObjectList(Iterable<Device> devices) {
         if (devices == null) return null;
-        List<DeviceEntity> entityList = new ArrayList<DeviceEntity>();
+
+        List<DeviceObject> deviceObjects = new ArrayList<DeviceObject>();
         for (Device device : devices) {
-            entityList.add(Device.ToEntity(device));
+            deviceObjects.add(Device.toDeviceObject(device));
         }
-        return entityList;
+        return deviceObjects;
     }
 }

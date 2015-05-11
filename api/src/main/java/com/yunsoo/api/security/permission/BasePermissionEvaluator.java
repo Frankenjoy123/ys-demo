@@ -1,11 +1,13 @@
 package com.yunsoo.api.security.permission;
 
 import com.yunsoo.api.domain.PermissionDomain;
+import com.yunsoo.api.dto.basic.Device;
 import com.yunsoo.api.dto.basic.Message;
 import com.yunsoo.api.dto.basic.Organization;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TPermission;
+import com.yunsoo.common.data.object.DeviceObject;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
 import com.yunsoo.common.data.object.LogisticsCheckPointObject;
 import com.yunsoo.common.web.exception.ForbiddenException;
@@ -43,6 +45,8 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 currentPermission.setOrgId(((LogisticsCheckActionObject) targetDomainObject).getOrgId());
             } else if (targetDomainObject instanceof LogisticsCheckPointObject) {
                 currentPermission.setOrgId(((LogisticsCheckPointObject) targetDomainObject).getOrgId());
+            } else if (targetDomainObject instanceof Device) {
+                currentPermission.setOrgId(((Device) targetDomainObject).getOrgId());
             } else {
                 currentPermission.setOrgId(account.getOrgId());  //by default, just set the account's orgId
             }

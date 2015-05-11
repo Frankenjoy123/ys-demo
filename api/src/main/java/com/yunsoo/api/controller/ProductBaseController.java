@@ -102,8 +102,8 @@ public class ProductBaseController {
 
         TPermission tPermission = new TPermission();
         tPermission.setOrgId(productBase.getOrgId());
-        tPermission.setResourceCode("message");
-        tPermission.setActionCode("read");
+        tPermission.setResourceCode("Productbase");
+        tPermission.setActionCode("delete");
         if (!permissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
             throw new UnauthorizedException("没有权限删去此产品记录！");
         }
