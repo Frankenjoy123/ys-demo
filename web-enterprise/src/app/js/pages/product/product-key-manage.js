@@ -105,37 +105,41 @@
 
                 //get product key credits
                 productKeyManageService.getProductKeyCredits(function (data) {
-                    if (data) {
-                        var productKeyCredits = {
-                            general: {
-                                total: 0,
-                                remain: 0
-                            },
-                            credit_map: {}
-                        };
-                        $.each(data, function (i, item) {
-                            if (item.product_base_id) {
-                                productKeyCredits.credit_map[item.product_base_id] = item;
-                            } else {
-                                productKeyCredits.general = {total: item.total, remain: item.remain};
+                    var productKeyCredits = {
+                        general: {
+                            total: 0,
+                            remain: 0
+                        },
+                        creditMap: {}
+                    };
+                    $.each(data, function (i, item) {
+                        if (item.product_base_id) {
+                            productKeyCredits.creditMap[item.product_base_id] = {
+                                total: item.total,
+                                remain: item.remain
+                            };
+                        } else {
+                            productKeyCredits.general = {
+                                total: item.total,
+                                remain: item.remain
+                            };
+                        }
+                    });
+                    $scope.productKeyCredits = productKeyCredits;
+                    console.log('[productKeyCredits loaded]: ', productKeyCredits);
+
+                    //get product key batches
+                    $.each($scope.productBases, function (i, item) {
+                        setCredit(item, productKeyCredits);
+                        productKeyManageService.getProductKeyBatches(item.id, function (data) {
+                            if (data && data.length) {
+                                $scope.listPanel.productKeyBatches.push({
+                                    productBase: item,
+                                    batches: data
+                                });
                             }
                         });
-                        $scope.productKeyCredits = productKeyCredits;
-                        console.log('[productKeyCredits loaded]: ', productKeyCredits);
-
-                        //get product key batches
-                        $.each($scope.productBases, function (i, item) {
-                            setCredit(item, productKeyCredits);
-                            productKeyManageService.getProductKeyBatches(item.id, function (data) {
-                                if (data && data.length) {
-                                    $scope.listPanel.productKeyBatches.push({
-                                        productBase: item,
-                                        batches: data
-                                    });
-                                }
-                            });
-                        });
-                    }
+                    });
                 });
 
             }
@@ -146,9 +150,9 @@
                 var credit = productBase.credit = {total: 0, remain: 0, general: productKeyCredits.general};
                 credit.total += productKeyCredits.general.total;
                 credit.remain += productKeyCredits.general.remain;
-                if (productKeyCredits.credit_map[productBase.id]) {
-                    credit.total += productKeyCredits.credit_map[productBase.id].total;
-                    credit.remain += productKeyCredits.credit_map[productBase.id].remain;
+                if (productKeyCredits.creditMap[productBase.id]) {
+                    credit.total += productKeyCredits.creditMap[productBase.id].total;
+                    credit.remain += productKeyCredits.creditMap[productBase.id].remain;
                 }
             }
         }
