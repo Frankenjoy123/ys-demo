@@ -37,7 +37,7 @@ public class ProductBaseServiceImpl implements ProductBaseService {
     }
 
     @Override
-    public S3Object getProductThumbnail(String bucketName, String client) throws IOException {
+    public S3Object getProductS3Object(String bucketName, String client) throws IOException {
 
         try {
             S3Object item = s3ItemDao.getItem(bucketName, client);

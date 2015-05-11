@@ -109,7 +109,7 @@ public class MessageController {
 
             FileObject fileObject = new FileObject();
             fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
-            fileObject.setThumbnailData(IOUtils.toByteArray(s3Object.getObjectContent()));
+            fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
             fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
             return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
 

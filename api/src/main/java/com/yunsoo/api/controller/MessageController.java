@@ -1,7 +1,6 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
-import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.MessageDomain;
 import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.basic.Message;
@@ -9,12 +8,10 @@ import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.FileObject;
-import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,11 +123,11 @@ public class MessageController {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             } else {
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             }
         } catch (NotFoundException ex) {
             throw new NotFoundException(40402, "找不到消息图片 imagekey = " + imagekey);
