@@ -1,7 +1,9 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.api.dto.ProductKeyOrder;
 import com.yunsoo.common.data.object.ProductKeyOrderObject;
+import com.yunsoo.common.data.object.ProductKeyTransactionObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
@@ -10,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +28,9 @@ public class ProductKeyOrderDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+
+    @Autowired
+    private ProductKeyTransactionDomain productKeyTransactionDomain;
 
 
     public ProductKeyOrder getById(String orderId) {
@@ -58,6 +66,48 @@ public class ProductKeyOrderDomain {
 
     public ProductKeyOrder create(ProductKeyOrder order) {
         return null;
+    }
+
+    public List<ProductKeyCredit> getProductKeyCredits(String orgId, String productBaseId) {
+        List<ProductKeyCredit> credits = new ArrayList<>();
+        Map<String, ProductKeyCredit> creditMap = new HashMap<>();
+        // search orders by [active = true and expire_datetime >= now], including remain is 0
+        List<ProductKeyOrder> orders = getOrdersByFilter(orgId, true, null, DateTime.now(), productBaseId, null, null);
+
+        orders.forEach(o -> {
+            if (o != null) {
+                String pId = o.getProductBaseId();
+                ProductKeyCredit c;
+                long quantityInTransaction = getQuantityInTransaction(o.getId());
+                if (creditMap.containsKey(pId)) {
+                    c = creditMap.get(pId);
+                } else {
+                    c = new ProductKeyCredit(pId);
+                    creditMap.put(pId, c);
+                    credits.add(c);
+                }
+                c.setTotal(c.getTotal() + o.getTotal());
+                c.setRemain(c.getRemain() + o.getRemain() - quantityInTransaction);
+            }
+        });
+
+        return credits;
+    }
+
+    private long getQuantityInTransaction(String orderId) {
+        long quantity = 0L;
+        List<ProductKeyTransactionObject> transactions = productKeyTransactionDomain.getCreatedTransactionByOrderId(orderId);
+        if (transactions == null || transactions.size() == 0) {
+            return quantity;
+        }
+        for (ProductKeyTransactionObject transaction : transactions) {
+            for (ProductKeyTransactionObject.Detail detail : transaction.getDetails()) {
+                if (detail.getQuantity() != null) {
+                    quantity += detail.getQuantity();
+                }
+            }
+        }
+        return quantity;
     }
 
 

@@ -4,15 +4,17 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /**
  * Created by  : Zhe
  * Created on  : 2015/4/16
  * Descriptions:
  */
-@Entity
-@Table(name = "product_key_order")
+@Entity(name = "product_key_order")
 public class ProductKeyOrderEntity {
 
     @Id

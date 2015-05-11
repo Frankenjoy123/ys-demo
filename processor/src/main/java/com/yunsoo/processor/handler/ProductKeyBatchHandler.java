@@ -55,7 +55,10 @@ public class ProductKeyBatchHandler {
         ProductKeyBatchDetailedObject request = new ProductKeyBatchDetailedObject();
         request.setId(batchId);
         request.setProductKeyTypeCodes(productKeyTypeCodes);
-        if (productBaseId != null && productStatusCode != null) {
+        if (productBaseId != null) {
+            if (productStatusCode == null) {
+                productStatusCode = LookupCodes.ProductStatus.CREATED;
+            }
             ProductObject product = new ProductObject();
             product.setProductBaseId(productBaseId);
             product.setProductStatusCode(productStatusCode);

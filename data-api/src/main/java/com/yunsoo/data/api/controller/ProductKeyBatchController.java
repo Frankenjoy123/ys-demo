@@ -5,6 +5,8 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.service.ProductKeyBatchService;
 import com.yunsoo.data.service.service.contract.ProductKeyBatch;
 import com.yunsoo.data.service.service.contract.ProductKeys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/productkeybatch")
 public class ProductKeyBatchController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductKeyBatchController.class);
 
     @Autowired
     private ProductKeyBatchService productKeyBatchService;
@@ -70,15 +74,27 @@ public class ProductKeyBatchController {
     public ProductKeyBatchObject create(@RequestBody ProductKeyBatchObject batchObj) {
         ProductKeyBatch batch = toProductKeyBatch(batchObj);
         batch.setId(null);
+
+        LOGGER.info("ProductKeyBatch creating started [quantity: {}]", batch.getQuantity());
         ProductKeyBatch newBatch = productKeyBatchService.create(batch);
+        LOGGER.info("ProductKeyBatch created [id: {}, quantity: {}]", newBatch.getId(), newBatch.getQuantity());
 
         return toProductKeyBatchObject(newBatch);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void patchUpdate(@PathVariable(value = "id") String id, @RequestBody ProductKeyBatchObject batchObj) {
-        ProductKeyBatch batch = toProductKeyBatch(batchObj);
+        ProductKeyBatch batch = productKeyBatchService.getById(id);
+        if (batch == null) {
+            throw new NotFoundException("ProductKeyBatch not found by [id: " + id + "]");
+        }
         batch.setId(id);
+        if (batchObj.getProductBaseId() != null) {
+            batch.setProductBaseId(batchObj.getProductBaseId());
+        }
+        if (batchObj.getStatusCode() != null) {
+            batch.setStatusCode(batchObj.getStatusCode());
+        }
         productKeyBatchService.patchUpdate(batch);
     }
 

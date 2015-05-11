@@ -20,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,7 +84,7 @@ public class ProductBaseController {
     public List<ProductBaseObject> getByFilter(
             @RequestParam(value = "orgId", required = false) String orgId,
             @RequestParam(value = "categoryId", required = false) Integer categoryId) {
-        return productBaseService.getByFilter(orgId, categoryId, LookupCodes.ProductBaseStatus.CUSTOMER_INVISIABLE_STATUS).stream()
+        return productBaseService.getByFilter(orgId, categoryId, LookupCodes.ProductBaseStatus.CUSTOMER_INVISIBLE_STATUS).stream()
                 .map(p -> {
                     ProductBaseObject o = new ProductBaseObject();
                     BeanUtils.copyProperties(p, o);

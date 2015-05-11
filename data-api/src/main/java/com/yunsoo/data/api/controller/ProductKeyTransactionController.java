@@ -41,14 +41,15 @@ public class ProductKeyTransactionController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductKeyTransactionObject> getByFilter(@RequestParam(value = "org_id") String orgId,
-                                                            @RequestParam(value = "product_key_batch_id", required = false) String productKeyBatchId,
-                                                            @RequestParam(value = "order_id", required = false) String orderId,
-                                                            @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
-                                                            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+    public List<ProductKeyTransactionObject> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                                         @RequestParam(value = "product_key_batch_id", required = false) String productKeyBatchId,
+                                                         @RequestParam(value = "order_id", required = false) String orderId,
+                                                         @RequestParam(value = "status_code", required = false) String statusCode,
+                                                         @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
+                                                         @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         PageRequest pageRequest = (pageIndex == null || pageSize == null) ? null : new PageRequest(pageIndex, pageSize);
 
-        List<ProductKeyTransactionDetailEntity> detailEntities = productKeyTransactionDetailRepository.query(orgId, productKeyBatchId, orderId, pageRequest);
+        List<ProductKeyTransactionDetailEntity> detailEntities = productKeyTransactionDetailRepository.query(orgId, productKeyBatchId, orderId, statusCode, pageRequest);
 
         return toOrgProductKeyTransactionObjectList(detailEntities);
     }
@@ -85,6 +86,7 @@ public class ProductKeyTransactionController {
         productKeyTransactionDetailRepository.save(detailEntities);
     }
 
+
     private List<ProductKeyTransactionObject> toOrgProductKeyTransactionObjectList(List<ProductKeyTransactionDetailEntity> detailEntities) {
         if (detailEntities == null) {
             return null;
@@ -98,7 +100,6 @@ public class ProductKeyTransactionController {
         for (ProductKeyTransactionDetailEntity entity : detailEntities) {
             String transactionId = entity.getTransactionId();
             ProductKeyTransactionObject object;
-            List<ProductKeyTransactionObject.Detail> details;
             if (transactionIdMap.containsKey(transactionId)) {
                 object = transactionIdMap.get(transactionId);
             } else {
@@ -130,7 +131,7 @@ public class ProductKeyTransactionController {
         }
         List<ProductKeyTransactionObject.Detail> details = object.getDetails();
         if (details == null || details.size() == 0) {
-            return null;
+            return new ArrayList<>();
         }
         List<ProductKeyTransactionDetailEntity> detailEntities = new ArrayList<>();
         for (ProductKeyTransactionObject.Detail detail : details) {

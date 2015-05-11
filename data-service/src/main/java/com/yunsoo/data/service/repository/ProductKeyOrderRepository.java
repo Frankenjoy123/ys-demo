@@ -15,6 +15,8 @@ import java.util.List;
  */
 public interface ProductKeyOrderRepository extends FindOneAndSaveRepository<ProductKeyOrderEntity, String> {
 
+    List<ProductKeyOrderEntity> findAll(Iterable<String> ids);
+
     @Query("select o from #{#entityName} o where " +
             "(:orgId is null or o.orgId = :orgId) " +
             "and (:active is null or o.active = :active) " +
@@ -28,4 +30,5 @@ public interface ProductKeyOrderRepository extends FindOneAndSaveRepository<Prod
                                       @Param("productBaseId") String productBaseId,
                                       Pageable pageable);
 
+    List<ProductKeyOrderEntity> save(Iterable<ProductKeyOrderEntity> entities);
 }

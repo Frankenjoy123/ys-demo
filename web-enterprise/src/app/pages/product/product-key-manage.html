@@ -33,6 +33,16 @@
                             </select>
                         </label>
                     </div>
+                    <div class="form-group col-xs-4" ng-show="creationPanel.selectedProductBase">
+                        <label>产品码类型：
+                            <span class="inline">
+                                {{formatProductKeyTypes(creationPanel.selectedProductBase.productKeyTypes)}}
+                            </span>
+                        </label>
+                        <label>可用额度：{{creationPanel.selectedProductBase.credit.remain}}</label>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="form-group col-xs-4">
                         <label>数量：
                             <!--<input type="text" name="quantity" ng-model="creationModel.quantity" class="form-control inline"-->
@@ -49,15 +59,6 @@
                                 <option value="100000">100,000</option>
 
                             </select></label>
-                    </div>
-                </div>
-                <div class="row" ng-show="creationPanel.selectedProductBase">
-                    <div class="form-group col-xs-4">
-                        <label>产品码类型：</label>
-
-                        <div class="checkbox inline">
-                            {{formatProductKeyTypes(creationPanel.selectedProductBase.productKeyTypes)}}
-                        </div>
                     </div>
                 </div>
             </div>
