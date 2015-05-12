@@ -65,8 +65,8 @@
         }
     }
 
-    angular.module("interceptor", [])
-        .factory('interceptorTrack', ["$q", "$templateCache", function ($q, $templateCache) {
+    angular.module("interceptor", ['YUNSOO_CONFIG'])
+        .factory('interceptorTrack', ["$q", "$templateCache", 'YUNSOO_CONFIG', function ($q, $templateCache, YUNSOO_CONFIG) {
             return {
                 request: function (config) {
                     if ($templateCache && $templateCache.get(config.url)) {
