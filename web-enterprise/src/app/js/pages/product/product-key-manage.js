@@ -65,11 +65,11 @@
                 var selectedProductBase = this.selectedProductBase;
                 productKeyManageService.createProductKeyBatch(requestData, function (data) {
                     console.log('[newProductKeyBatch created]:', data);
-                    $scope.addAlertMsg('创建成功', 'success', true);
-                    if (!data.productBase) {
-                        data.productBase = selectedProductBase;
-                    }
+                    data.productBase = selectedProductBase;
+                    selectedProductBase.credit.remain -= requestData.quantity;
                     $scope.listPanel.newProductKeyBatches.push(data);
+
+                    $scope.addAlertMsg('创建成功', 'success', true);
                 }, function (error, data) {
                     console.log(error, data);
                     $scope.addAlertMsg(error.message, 'danger', true);
@@ -77,7 +77,7 @@
             },
             productBaseIdChanged: function (productBaseId) {
                 console.log('[productBaseId changed]:', productBaseId);
-                var selectedProductBase;
+                var selectedProductBase = null;
                 $.each(this.productBases, function (i, item) {
                     if (item && item.id === productBaseId) {
                         selectedProductBase = item;
