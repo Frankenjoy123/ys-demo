@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="login">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云溯管理平台 | 登录</title>
+
+    <!--STYLESHEET-->
+    <!--=================================================-->
+
+    <!--Open Sans Font [ OPTIONAL ] -->
+    <!--<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin" rel="stylesheet">-->
+
+    <!--Bootstrap Stylesheet [ REQUIRED ]-->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!--Nifty Stylesheet [ REQUIRED ]-->
+    <link href="css/nifty.min.css" rel="stylesheet">
+
+    <!--Font Awesome [ OPTIONAL ]-->
+    <link href="plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="css/shared.css" rel="stylesheet"/>
+
+    <style>
+        .bg-img-specific {
+            background-image: url("img/bg-img/bg-img-5.jpg");
+        }
+    </style>
+
+    <link href="img/favicon.ico" rel="icon" type="image/ico"/>
+
+    <!--SCRIPT-->
+    <!--=================================================-->
+
+    <!--Page Load Progress Bar [ OPTIONAL ]-->
+    <link href="plugins/pace/pace.min.css" rel="stylesheet">
+    <script src="plugins/pace/pace.min.js"></script>
+
+</head>
+
+<body>
+<div id="container" class="cls-container">
+
+    <!-- BACKGROUND IMAGE -->
+    <!--===================================================-->
+    <div id="bg-overlay" class="bg-img bg-img-specific"></div>
+
+
+    <!-- HEADER -->
+    <!--===================================================-->
+    <div class="cls-header cls-header-lg">
+        <div class="cls-brand">
+            <a class="box-inline" href="index.html">
+                <!-- <img alt="Nifty Admin" src="img/logo.png" class="brand-icon"> -->
+                <span class="brand-title"><span class="text-thin">云溯管理平台</span></span>
+            </a>
+        </div>
+    </div>
+    <!--===================================================-->
+
+
+    <!-- LOGIN FORM -->
+    <!--===================================================-->
+    <div class="cls-content" ng-controller="loginController">
+        <div class="cls-content-sm panel">
+            <div class="panel-body">
+                <p class="pad-btm">组织账号登陆</p>
+
+                <form>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-group"></i></div>
+                            <input type="text" class="form-control" placeholder="组织名称"
+                                   ng-model="loginForm.organization">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                            <input type="text" class="form-control" placeholder="用户名" ng-model="loginForm.identifier">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
+                            <input type="password" class="form-control" placeholder="密码" ng-model="loginForm.password">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-8 text-left checkbox">
+                            <label class="form-checkbox form-icon">
+                                <input type="checkbox" ng-model="loginForm.rememberMe"> 记住我
+                            </label>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="form-group text-right">
+                                <button class="btn btn-success text-uppercase" type="submit" ng-click="login()">登陆
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!--
+                    <div class="mar-btm"><em>- or -</em></div>
+                    <button class="btn btn-primary btn-lg btn-block" type="button">
+                        <i class="fa fa-facebook fa-fw"></i> Login with Facebook
+                    </button>
+                    -->
+                </form>
+            </div>
+        </div>
+        <div class="pad-ver">
+            <a href="password-reminder.html" class="btn-link mar-rgt">忘记密码?</a>
+            <a href="register.html" class="btn-link mar-lft">注册新账号</a>
+        </div>
+    </div>
+    <!--===================================================-->
+
+
+</div>
+<!--===================================================-->
+<!-- END OF CONTAINER -->
+
+
+<!--JAVASCRIPT-->
+<!--=================================================-->
+
+<!--Angular [ REQUIRED ]-->
+<script src="js/lib/angular.js" type="text/javascript"></script>
+
+<!--jQuery [ REQUIRED ]-->
+<script src="js/jquery-2.1.1.min.js"></script>
+<script src="js/jquery.cookie.js"></script>
+
+<!--BootstrapJS [ RECOMMENDED ]-->
+<script src="js/bootstrap.min.js"></script>
+
+<!--Fast Click [ OPTIONAL ]-->
+<script src="plugins/fast-click/fastclick.min.js"></script>
+
+<!--Nifty Admin [ RECOMMENDED ]-->
+<script src="js/nifty.min.js"></script>
+
+<!--Yunsoo [ REQUIRED ]-->
+<script src="js/shared/config.js" type="text/javascript"></script>
+<script src="js/shared/interceptor.js" type="text/javascript"></script>
+<script src="js/pages/login.js" type="text/javascript"></script>
+
+</body>
+</html>

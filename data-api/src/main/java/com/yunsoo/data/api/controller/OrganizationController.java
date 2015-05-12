@@ -42,6 +42,15 @@ public class OrganizationController {
         return fromOrganizationEntity(organizationEntity);
     }
 
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public OrganizationObject getOrganizationByName(@RequestParam(value = "name") String name) {
+        OrganizationEntity organizationEntity = organizationRepository.findByName(name);
+        if (organizationEntity == null) {
+            throw new NotFoundException("organization not found by [name: " + name + "]");
+        }
+        return fromOrganizationEntity(organizationEntity);
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     public OrganizationObject create(@RequestBody OrganizationObject organizationObject) {
         OrganizationEntity entity = toOrganizationEntity(organizationObject);

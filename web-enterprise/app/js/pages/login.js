@@ -1,11 +1,11 @@
 (function () {
-    var app = angular.module("login", ["interceptor"]);
+    var app = angular.module('login', ['YUNSOO_CONFIG', 'interceptor']);
 
-    app.factory("loginService", ["$http", function ($http) {
+    app.factory('loginService', ['$http', function ($http) {
         return {
-            login: function (orgId, identifier, password, fnSuccess, fnError) {
-                $http.post("/api/auth/login", {
-                    organization: orgId,
+            login: function (organization, identifier, password, fnSuccess, fnError) {
+                $http.post('/api/auth/login', {
+                    organization: organization,
                     identifier: identifier,
                     password: password
                 }).success(function (data) {
@@ -24,48 +24,50 @@
         };
     }]);
 
-    app.controller("loginController", ["$scope", "$timeout", "loginService",
-        function ($scope, $timeout, loginService) {
+    app.controller('loginController', ['$scope', '$timeout', 'loginService', 'YUNSOO_CONFIG',
+        function ($scope, $timeout, loginService, YUNSOO_CONFIG) {
             $scope.loginForm = loginService.loginForm();
             $scope.loginForm || ($scope.loginForm = {
-                orgId: "",
-                identifier: "",
-                password: "",
+                organization: '',
+                identifier: '',
+                password: '',
                 rememberMe: false
             });
 
             $scope.alertMsgs = [];
             $scope.login = function () {
                 var loginForm = $scope.loginForm;
-                if (!loginForm.orgId) {
-                    $scope.addAlertMsg("组织ID不能为空", "danger");
+                if (!loginForm.organization) {
+                    $scope.addAlertMsg('组织名称不能为空', 'danger');
                     return;
                 }
                 if (!loginForm.identifier) {
-                    $scope.addAlertMsg("用户名不能为空", "danger");
+                    $scope.addAlertMsg('用户名不能为空', 'danger');
                     return;
                 }
                 if (!loginForm.password) {
-                    $scope.addAlertMsg("密码不能为空", "danger");
+                    $scope.addAlertMsg('密码不能为空', 'danger');
                     return;
                 }
-                loginService.login(loginForm.orgId, loginForm.identifier, loginForm.password, function (data) {
+                loginService.login(loginForm.organization, loginForm.identifier, loginForm.password, function (data) {
                     if (!data || !data.access_token || !data.access_token.token) {
-                        $scope.addAlertMsg("登陆失败，请再次尝试", "danger");
+                        $scope.addAlertMsg('登陆失败，请再次尝试', 'danger');
                         return;
                     }
-                    $.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME, data.access_token.token, {
+
+                    $.cookie(YUNSOO_CONFIG.AUTH_ACCESS_TOKEN, data.access_token.token, {
                         expires: data.access_token.expires_in / (60 * 60 * 24),
                         path: '/'
                     });
+
                     if (loginForm.rememberMe) {
                         //save current login form
-                        loginForm.password = "";
+                        loginForm.password = '';
                         loginService.loginForm(loginForm);
                     }
-                    window.location.href = "index.html";
+                    window.location.href = 'index.html';
                 }, function () {
-                    $scope.addAlertMsg("登陆失败，请再次尝试", "danger");
+                    $scope.addAlertMsg('登陆失败，请再次尝试', 'danger');
                 });
             };
 

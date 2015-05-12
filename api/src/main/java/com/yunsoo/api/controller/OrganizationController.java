@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.basic.Organization;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.OrganizationObject;
@@ -28,14 +29,28 @@ public class OrganizationController {
 
     @Autowired
     private RestClient dataAPIClient;
+
+    @Autowired
+    private OrganizationDomain organizationDomain;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationController.class);
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
     public Organization getOrganizationById(@PathVariable(value = "id") String id) {
-        OrganizationObject object = dataAPIClient.get("organization/{id}", OrganizationObject.class, id);
+        OrganizationObject object = organizationDomain.getOrganizationById(id);
         if (object == null) {
             throw new NotFoundException("organization not found by [id: " + id + "]");
+        }
+        return fromOrganizationObject(object);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
+    public Organization getByFilter(@RequestParam(value = "name") String name) {
+        OrganizationObject object = organizationDomain.getOrganizationByName(name);
+        if (object == null) {
+            throw new NotFoundException("organization not found by [name: " + name + "]");
         }
         return fromOrganizationObject(object);
     }
