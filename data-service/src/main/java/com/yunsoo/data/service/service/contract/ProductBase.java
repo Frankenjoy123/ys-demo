@@ -24,12 +24,12 @@ public class ProductBase {
     private String orgId;
     private String barcode;
     private String name;
-    private String description;
-    private String details;
+    //    private String description;
+    private String comment;
     private Integer shelfLife;
     private String shelfLifeInterval;
     private List<String> productKeyTypeCodes;
-    private Integer ChildProductCount;
+    private Integer childProductCount;
     private String status;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -78,20 +78,12 @@ public class ProductBase {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getComment() {
+        return comment;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public Integer getShelfLife() {
@@ -119,11 +111,11 @@ public class ProductBase {
     }
 
     public Integer getChildProductCount() {
-        return ChildProductCount;
+        return childProductCount;
     }
 
     public void setChildProductCount(Integer childProductCount) {
-        ChildProductCount = childProductCount;
+        this.childProductCount = childProductCount;
     }
 
     public String getStatus() {
@@ -157,9 +149,8 @@ public class ProductBase {
         productBase.setCategoryId(model.getCategoryId());
         productBase.setOrgId(model.getOrgId());
         productBase.setName(model.getName());
-        productBase.setDescription(model.getDescription());
         productBase.setBarcode(model.getBarcode());
-        productBase.setDetails(model.getDetails());
+        productBase.setComment(model.getComment());
         productBase.setShelfLife(model.getShelfLife());
         productBase.setShelfLifeInterval(model.getShelfLifeInterval());
         String ids = model.getProductKeyTypeCodes();
@@ -183,9 +174,8 @@ public class ProductBase {
         model.setCategoryId(productBase.getCategoryId());
         model.setOrgId(productBase.getOrgId());
         model.setName(productBase.getName());
-        model.setDescription(productBase.getDescription());
         model.setBarcode(productBase.getBarcode());
-        model.setDetails(productBase.getDetails());
+        model.setComment(productBase.getComment());
         model.setShelfLife(productBase.getShelfLife());
         model.setShelfLifeInterval(productBase.getShelfLifeInterval());
         List<String> ids = productBase.getProductKeyTypeCodes();

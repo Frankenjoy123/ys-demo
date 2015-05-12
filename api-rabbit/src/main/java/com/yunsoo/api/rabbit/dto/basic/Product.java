@@ -18,8 +18,7 @@ public class Product {
     private String orgId;
     private String barcode;
     private String name;
-    private String description;
-    private String details;
+    private String comment;
     private int shelfLife;
     private String shelfLifeInterval;
     private String createdDateTime;
@@ -75,20 +74,12 @@ public class Product {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getComment() {
+        return comment;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public int getShelfLife() {
