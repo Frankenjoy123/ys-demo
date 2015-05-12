@@ -40,6 +40,16 @@ public class OrganizationController {
         return fromOrganizationObject(object);
     }
 
+    @RequestMapping(value = "name/{name}", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
+    public Organization getOrganizationByName(@PathVariable(value = "name") String name) {
+        OrganizationObject object = dataAPIClient.get("organization/name/{name}", OrganizationObject.class, name);
+        if (object == null) {
+            throw new NotFoundException("organization not found by [name: " + name + "]");
+        }
+        return fromOrganizationObject(object);
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @PreAuthorize("hasPermission(#organization.id, 'filterByOrg', 'organization:create')")
     public Organization create(@RequestBody Organization organization) {
