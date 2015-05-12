@@ -63,7 +63,7 @@
                         loginForm.password = "";
                         loginService.loginForm(loginForm);
                     }
-                    window.location.href = "index.html";
+                    window.location.href = "obsolete/index.html";
                 }, function () {
                     $scope.addAlertMsg("登陆失败，请再次尝试", "danger");
                 });

@@ -19,45 +19,45 @@
     app.config(["$routeProvider", function ($routeProvider) {
         $routeProvider
             .when('/account', {
-                templateUrl: "pages/account/manage.html",
+                templateUrl: "obsolete/pages/account/manage.html",
                 controller: "accountManageCtrl"
             })
             .when('/product-base-manage', {
-                templateUrl: "pages/product/product-base-manage.html",
+                templateUrl: "obsolete/pages/product/product-base-manage.html",
                 controller: "productBaseManageCtrl"
             })
             .when('/product-key-manage', {
-                templateUrl: "pages/product/product-key-manage.html",
+                templateUrl: "obsolete/pages/product/product-key-manage.html",
                 controller: "productKeyManageCtrl"
             })
             .when('/msg', {
-                templateUrl: "pages/msg/msg.html",
+                templateUrl: "obsolete/pages/msg/msg.html",
                 controller: "msgCtrl"
             })
             .when('/test', {
-                templateUrl: "pages/empty.html"
+                templateUrl: "obsolete/pages/empty.html"
             })
             .when('/packageManage', {
-                templateUrl: "pages/package/packageManage.html",
+                templateUrl: "obsolete/pages/package/packageManage.html",
                 controller: "packageCtrl"
             })
             .when('/packageSearch', {
-                templateUrl: "pages/package/packageSearch.html",
+                templateUrl: "obsolete/pages/package/packageSearch.html",
                 controller: "packageSearchCtrl"
             })
             .when('/logistics', {
-                templateUrl: "pages/logistics/logistics.html",
+                templateUrl: "obsolete/pages/logistics/logistics.html",
                 controller: "logisticsManageCtrl"
             })
             .when('/search', {
-                templateUrl: "pages/search/search.html"
+                templateUrl: "obsolete/pages/search/search.html"
             })
             .when('/config', {
-                templateUrl: "pages/config/config.html",
+                templateUrl: "obsolete/pages/config/config.html",
                 controller: "configCtrl"
             })
             .otherwise({
-                templateUrl: "pages/product/product-key-manage.html",
+                templateUrl: "obsolete/pages/product/product-key-manage.html",
                 controller: "productKeyManageCtrl"
             });
     }]);
@@ -65,13 +65,13 @@
     app.controller("rootCtrl", ["$scope", "$timeout", "$http", function ($scope, $timeout, $http) {
         if (!$.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME)) {
             //todo
-            window.location.href = "login.html";
+            window.location.href = "obsolete/login.html";
         }
 
         $scope.logout = function () {
             console.log('[logout]');
             $.removeCookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME, {path: '/'});
-            window.location.href = "login.html";
+            window.location.href = "obsolete/login.html";
         };
 
         $http.get("/api/account/current")
