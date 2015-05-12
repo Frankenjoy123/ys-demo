@@ -2,7 +2,6 @@ package com.yunsoo.api.rabbit.dto.basic;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.api.rabbit.dto.ProductKeyType;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
@@ -21,12 +20,11 @@ public class ProductBase {
     private String orgId;
     private String barcode;
     private String name;
-    private String description;
-    private String details;
+    private String comment;
     private Integer shelfLife;
     private String shelfLifeInterval;
     private List<String> productKeyTypeCodes;
-    private Integer ChildProductCount;
+    private Integer childProductCount;
     private String status;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -77,20 +75,12 @@ public class ProductBase {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getComment() {
+        return comment;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public Integer getShelfLife() {
@@ -118,11 +108,11 @@ public class ProductBase {
     }
 
     public Integer getChildProductCount() {
-        return ChildProductCount;
+        return childProductCount;
     }
 
     public void setChildProductCount(Integer childProductCount) {
-        ChildProductCount = childProductCount;
+        this.childProductCount = childProductCount;
     }
 
     public String getStatus() {

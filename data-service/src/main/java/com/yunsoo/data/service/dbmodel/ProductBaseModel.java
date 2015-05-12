@@ -27,10 +27,10 @@ public class ProductBaseModel {
     private String barcode;
     @Column(name = "name")
     private String name;
-    @Column(name = "description")
-    private String description;
-    @Column(name = "details")
-    private String details;
+    //    @Column(name = "description")
+//    private String description;
+    @Column(name = "comment")
+    private String comment;
     @Column(name = "shelf_life")
     private Integer shelfLife;
     @Column(name = "shelf_life_interval")
@@ -38,7 +38,7 @@ public class ProductBaseModel {
     @Column(name = "product_key_type_ids")
     private String productKeyTypeCodes;
     @Column(name = "child_pt_count")
-    private Integer ChildProductCount;
+    private Integer childProductCount;
     @Column(name = "status")
     private String status;
     @Column(name = "created_datetime")
@@ -88,20 +88,12 @@ public class ProductBaseModel {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getComment() {
+        return comment;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public Integer getShelfLife() {
@@ -129,11 +121,11 @@ public class ProductBaseModel {
     }
 
     public Integer getChildProductCount() {
-        return ChildProductCount;
+        return childProductCount;
     }
 
     public void setChildProductCount(Integer childProductCount) {
-        ChildProductCount = childProductCount;
+        this.childProductCount = childProductCount;
     }
 
     public String getStatus() {

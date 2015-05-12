@@ -7,6 +7,8 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import javax.validation.constraints.Min;
+
 /**
  * Created by  : Lijian
  * Created on  : 2015/5/6
@@ -20,6 +22,7 @@ public class ProductKeyOrder {
     @JsonProperty("org_id")
     private String orgId;
 
+    @Min(value = 1, message = "额度必须大于0")
     @JsonProperty("total")
     private Long total;
 

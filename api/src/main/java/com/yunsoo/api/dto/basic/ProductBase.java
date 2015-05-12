@@ -22,8 +22,7 @@ public class ProductBase {
     private String orgId;
     private String barcode;
     private String name;
-    private String description;
-    private String details;
+    private String comment;
     private Integer shelfLife;
     private String shelfLifeInterval;
     private List<String> productKeyTypeCodes;
@@ -87,20 +86,12 @@ public class ProductBase {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getComment() {
+        return comment;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public Integer getShelfLife() {
