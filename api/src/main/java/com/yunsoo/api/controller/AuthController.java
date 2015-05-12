@@ -3,12 +3,14 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.AccountTokenDomain;
+import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.AccountLoginRequest;
 import com.yunsoo.api.dto.AccountLoginResult;
 import com.yunsoo.api.dto.basic.Token;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AccountTokenObject;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
@@ -30,6 +32,9 @@ public class AuthController {
     private AccountDomain accountDomain;
 
     @Autowired
+    private OrganizationDomain organizationDomain;
+
+    @Autowired
     private AccountTokenDomain accountTokenDomain;
 
     @Autowired
@@ -43,12 +48,28 @@ public class AuthController {
             @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
             @RequestBody AccountLoginRequest account) {
-        if (account.getAccountId() == null && (account.getOrgId() == null || account.getIdentifier() == null)) {
+        if (account.getAccountId() == null && (account.getOrganization() == null || account.getIdentifier() == null)) {
             throw new BadRequestException("Account is not valid");
         }
-        AccountObject accountObject = account.getAccountId() != null
-                ? accountDomain.getById(account.getAccountId())
-                : accountDomain.getByOrgIdAndIdentifier(account.getOrgId(), account.getIdentifier());
+
+        AccountObject accountObject;
+        if (account.getAccountId() != null) {
+            accountObject = accountDomain.getById(account.getAccountId().trim());
+        } else {
+            String org = account.getOrganization().trim();
+            OrganizationObject orgObject = null;
+            if (org.length() == 19) {
+                orgObject = organizationDomain.getOrganizationById(org);
+            }
+            if (orgObject == null) {
+                orgObject = organizationDomain.getOrganizationByName(org);
+            }
+            if (orgObject == null) {
+                throw new UnauthorizedException("Account is not valid");
+            }
+            accountObject = accountDomain.getByOrgIdAndIdentifier(orgObject.getId(), account.getIdentifier().trim());
+        }
+
         if (accountObject == null) {
             throw new UnauthorizedException("Account is not valid");
         }

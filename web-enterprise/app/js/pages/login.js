@@ -3,9 +3,9 @@
 
     app.factory("loginService", ["$http", function ($http) {
         return {
-            login: function (orgId, identifier, password, fnSuccess, fnError) {
+            login: function (organization, identifier, password, fnSuccess, fnError) {
                 $http.post("/api/auth/login", {
-                    organization: orgId,
+                    organization: organization,
                     identifier: identifier,
                     password: password
                 }).success(function (data) {
@@ -28,7 +28,7 @@
         function ($scope, $timeout, loginService) {
             $scope.loginForm = loginService.loginForm();
             $scope.loginForm || ($scope.loginForm = {
-                orgId: "",
+                organization: "",
                 identifier: "",
                 password: "",
                 rememberMe: false
@@ -37,8 +37,8 @@
             $scope.alertMsgs = [];
             $scope.login = function () {
                 var loginForm = $scope.loginForm;
-                if (!loginForm.orgId) {
-                    $scope.addAlertMsg("组织ID不能为空", "danger");
+                if (!loginForm.organization) {
+                    $scope.addAlertMsg("组织名称不能为空", "danger");
                     return;
                 }
                 if (!loginForm.identifier) {
@@ -49,7 +49,7 @@
                     $scope.addAlertMsg("密码不能为空", "danger");
                     return;
                 }
-                loginService.login(loginForm.orgId, loginForm.identifier, loginForm.password, function (data) {
+                loginService.login(loginForm.organization, loginForm.identifier, loginForm.password, function (data) {
                     if (!data || !data.access_token || !data.access_token.token) {
                         $scope.addAlertMsg("登陆失败，请再次尝试", "danger");
                         return;

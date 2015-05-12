@@ -12,8 +12,8 @@ public class AccountLoginRequest {
     @JsonProperty("account_id")
     private String accountId;
 
-    @JsonProperty("org_id")
-    private String orgId;
+    @JsonProperty("organization")
+    private String organization;
 
     @JsonProperty("identifier")
     private String identifier;
@@ -30,12 +30,12 @@ public class AccountLoginRequest {
         this.accountId = accountId;
     }
 
-    public String getOrgId() {
-        return orgId;
+    public String getOrganization() {
+        return organization;
     }
 
-    public void setOrgId(String orgId) {
-        this.orgId = orgId;
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 
     public String getIdentifier() {

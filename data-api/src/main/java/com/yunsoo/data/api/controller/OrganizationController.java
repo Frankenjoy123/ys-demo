@@ -42,8 +42,8 @@ public class OrganizationController {
         return fromOrganizationEntity(organizationEntity);
     }
 
-    @RequestMapping(value = "name/{name}", method = RequestMethod.GET)
-    public OrganizationObject getOrganizationByName(@PathVariable(value = "name") String name) {
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public OrganizationObject getOrganizationByName(@RequestParam(value = "name") String name) {
         OrganizationEntity organizationEntity = organizationRepository.findByName(name);
         if (organizationEntity == null) {
             throw new NotFoundException("organization not found by [name: " + name + "]");
