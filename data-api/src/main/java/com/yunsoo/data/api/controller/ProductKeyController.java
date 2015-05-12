@@ -23,7 +23,7 @@ public class ProductKeyController {
     public ProductKeyObject getKey(@PathVariable(value = "key") String key) {
         ProductKey productKey = productKeyService.get(key);
         if (productKey == null) {
-            throw new NotFoundException("ProductKey");
+            throw new NotFoundException("ProductKey " + key);
         }
         return toProductKeyObject(productKey);
     }
@@ -43,6 +43,10 @@ public class ProductKeyController {
 
     @RequestMapping(value = "{key}/disabled", method = RequestMethod.PUT)
     public void disableKey(@PathVariable(value = "key") String key, @RequestBody Boolean disabled) {
+        ProductKey productKey = productKeyService.get(key);
+        if (productKey == null) {
+            throw new NotFoundException("ProductKey " + key);
+        }
         productKeyService.setDisabled(key, disabled);
     }
 
