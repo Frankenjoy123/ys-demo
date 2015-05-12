@@ -1,13 +1,13 @@
 package com.yunsoo.api.security.permission;
 
 import com.yunsoo.api.domain.PermissionDomain;
+import com.yunsoo.api.dto.ProductKeyOrder;
 import com.yunsoo.api.dto.basic.Device;
 import com.yunsoo.api.dto.basic.Message;
 import com.yunsoo.api.dto.basic.Organization;
 import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TPermission;
-import com.yunsoo.common.data.object.DeviceObject;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
 import com.yunsoo.common.data.object.LogisticsCheckPointObject;
 import com.yunsoo.common.web.exception.ForbiddenException;
@@ -20,7 +20,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.io.Serializable;
 
 /**
- * Created by Zhe on 2015/3/6.
+ * Created by  : Zhe
+ * Created on  : 2015/3/6
+ * Descriptions:
  */
 public class BasePermissionEvaluator implements PermissionEvaluator {
 
@@ -47,12 +49,14 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 currentPermission.setOrgId(((LogisticsCheckPointObject) targetDomainObject).getOrgId());
             } else if (targetDomainObject instanceof Device) {
                 currentPermission.setOrgId(((Device) targetDomainObject).getOrgId());
-            } else {
+            } else if (targetDomainObject instanceof ProductKeyOrder) {
+                currentPermission.setOrgId(((ProductKeyOrder) targetDomainObject).getOrgId());
+            }
+
+            if (currentPermission.getOrgId() == null || currentPermission.getOrgId().trim().isEmpty()) {
                 currentPermission.setOrgId(account.getOrgId());  //by default, just set the account's orgId
             }
-//            else {
-//                currentPermission.setOrgId(targetDomainObject.toString()); //suppose targetDomainObject is orgId
-//            }
+
             hasPermission = permissionDomain.hasPermission(account.getId(), currentPermission);
         }
         return hasPermission;
@@ -89,7 +93,10 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
     }
 
     private TPermission getPermission(String permission) {
-        String[] pArray = ((String) permission).toLowerCase().split(":");
+        String[] pArray = permission.toLowerCase().split(":");
+        if (pArray.length != 2) {
+            throw new RuntimeException("incorrect permission setting {" + permission + "}");
+        }
         TPermission currentPermission = new TPermission();
         currentPermission.setResourceCode(pArray[0]);
         currentPermission.setActionCode(pArray[1]);

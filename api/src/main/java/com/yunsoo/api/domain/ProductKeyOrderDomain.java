@@ -65,7 +65,9 @@ public class ProductKeyOrderDomain {
     }
 
     public ProductKeyOrder create(ProductKeyOrder order) {
-        return null;
+        ProductKeyOrderObject object = toProductKeyOrderObject(order);
+        ProductKeyOrderObject newObject = dataAPIClient.post("productKeyOrder", object, ProductKeyOrderObject.class);
+        return toProductKeyOrder(newObject);
     }
 
     public List<ProductKeyCredit> getProductKeyCredits(String orgId, String productBaseId) {
@@ -127,5 +129,23 @@ public class ProductKeyOrderDomain {
         productKeyOrder.setCreatedDateTime(object.getCreatedDateTime());
         productKeyOrder.setExpireDateTime(object.getExpireDateTime());
         return productKeyOrder;
+    }
+
+    private ProductKeyOrderObject toProductKeyOrderObject(ProductKeyOrder order) {
+        if (order == null) {
+            return null;
+        }
+        ProductKeyOrderObject object = new ProductKeyOrderObject();
+        object.setId(order.getId());
+        object.setOrgId(order.getOrgId());
+        object.setTotal(order.getTotal());
+        object.setRemain(order.getRemain());
+        object.setActive(order.getActive());
+        object.setProductBaseId(order.getProductBaseId());
+        object.setDescription(order.getDescription());
+        object.setCreatedAccountId(order.getCreatedAccountId());
+        object.setCreatedDateTime(order.getCreatedDateTime());
+        object.setExpireDateTime(order.getExpireDateTime());
+        return object;
     }
 }
