@@ -79,8 +79,8 @@
                         config.cache = false;
                         config.headers['X-Requested-With'] = 'XMLHttpRequest';
                         config.headers[YUNSOO_CONFIG.HEADER_APP_ID] = YUNSOO_CONFIG.APP_ID;
-                        var accessToken = $.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME);
-                        accessToken && (config.headers[YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
+                        var accessToken = $.cookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN);
+                        (typeof accessToken === 'string') && (config.headers[YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
 
                         if (!csrfSafeMethod(config.method) && sameOrigin(config.url)) {
                             config.headers[HEADER_CSRF_TOKEN] = getCsrfToken();

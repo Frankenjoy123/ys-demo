@@ -47,7 +47,7 @@
                         return;
                     }
 
-                    $.cookie(YUNSOO_CONFIG.AUTH_ACCESS_TOKEN, data.access_token.token, {
+                    $.cookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN, data.access_token.token, {
                         expires: data.access_token.expires_in / (60 * 60 * 24),
                         path: '/'
                     });
