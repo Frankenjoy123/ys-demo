@@ -2,8 +2,8 @@
     angular.module('YUNSOO_CONFIG', [])
         .factory('YUNSOO_CONFIG', function () {
             return {
-                AUTH_ACCESS_TOKEN: 'YS_ACCESS_TOKEN',
-                AUTH_PERMANENT_TOKEN: 'YS_PERMANENT_TOKEN',
+                NAME_ACCESS_TOKEN: 'YS_ACCESS_TOKEN',
+                NAME_PERMANENT_TOKEN: 'YS_PERMANENT_TOKEN',
 
                 HEADER_ACCESS_TOKEN: 'X-YS-AccessToken',
                 HEADER_APP_ID: 'X-YS-AppId',

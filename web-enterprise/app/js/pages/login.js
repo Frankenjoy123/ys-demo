@@ -3,16 +3,12 @@
 
     app.factory('loginService', ['$http', function ($http) {
         return {
-            login: function (organization, identifier, password, fnSuccess, fnError) {
+            login: function (loginForm, onSuccess, onError) {
                 $http.post('/api/auth/login', {
-                    organization: organization,
-                    identifier: identifier,
-                    password: password
-                }).success(function (data) {
-                    fnSuccess(data);
-                }).error(function (data) {
-                    fnError(data);
-                });
+                    organization: loginForm.organization,
+                    identifier: loginForm.identifier,
+                    password: loginForm.password
+                }).success(onSuccess).error(onError);
             },
             loginForm: function (loginForm) {
                 if (loginForm) {
@@ -26,8 +22,7 @@
 
     app.controller('loginController', ['$scope', '$timeout', 'loginService', 'YUNSOO_CONFIG',
         function ($scope, $timeout, loginService, YUNSOO_CONFIG) {
-            $scope.loginForm = loginService.loginForm();
-            $scope.loginForm || ($scope.loginForm = {
+            ($scope.loginForm = loginService.loginForm()) || ($scope.loginForm = {
                 organization: '',
                 identifier: '',
                 password: '',
@@ -35,27 +30,24 @@
             });
 
             $scope.alertMsgs = [];
-            $scope.login = function () {
+
+            function login() {
                 var loginForm = $scope.loginForm;
-                if (!loginForm.organization) {
-                    $scope.addAlertMsg('组织名称不能为空', 'danger');
-                    return;
-                }
-                if (!loginForm.identifier) {
-                    $scope.addAlertMsg('用户名不能为空', 'danger');
-                    return;
-                }
-                if (!loginForm.password) {
-                    $scope.addAlertMsg('密码不能为空', 'danger');
-                    return;
-                }
-                loginService.login(loginForm.organization, loginForm.identifier, loginForm.password, function (data) {
+                console.log('[before login]', 'organization:', loginForm.organization, ', identifier:', loginForm.identifier);
+
+                loginService.login(loginForm, function (data) {
                     if (!data || !data.access_token || !data.access_token.token) {
-                        $scope.addAlertMsg('登陆失败，请再次尝试', 'danger');
+                        $.niftyNoty({
+                            type: 'danger',
+                            container: '#panel-login',
+                            html: '登陆失败请稍后再试',
+                            focus: false,
+                            timer: 3000
+                        });
                         return;
                     }
 
-                    $.cookie(YUNSOO_CONFIG.AUTH_ACCESS_TOKEN, data.access_token.token, {
+                    $.cookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN, data.access_token.token, {
                         expires: data.access_token.expires_in / (60 * 60 * 24),
                         path: '/'
                     });
@@ -63,40 +55,66 @@
                     if (loginForm.rememberMe) {
                         //save current login form
                         loginForm.password = '';
+                        console.log('[saving login form]');
                         loginService.loginForm(loginForm);
                     }
+                    //redirect to index
                     window.location.href = 'index.html';
-                }, function () {
-                    $scope.addAlertMsg('登陆失败，请再次尝试', 'danger');
-                });
-            };
 
-            function getMsgIndex(msgs, msg, level) {
-                var index = -1;
-                for (var i = 0; i < msgs.length; i++) {
-                    var item = msgs[i];
-                    if (item.level == level && item.message == msg) {
-                        index = i;
-                        break;
+                }, function (data, code) {
+                    console.log('[login failed]', data.message, code);
+                    $scope.loginForm.password = '';
+                    $.niftyNoty({
+                        type: 'danger',
+                        container: '#panel-login',
+                        html: '账号或密码错误',
+                        focus: false,
+                        timer: 3000
+                    });
+                });
+            }
+
+
+            //init  validator
+            $timeout(function () {
+                $('form.bv-form').bootstrapValidator({
+                    message: '非法输入',
+                    feedbackIcons: {
+                        valid: 'fa fa-check-circle fa-lg text-success',
+                        invalid: 'fa fa-times-circle fa-lg',
+                        validating: 'fa fa-refresh'
+                    },
+                    fields: {
+                        organization: {
+                            validators: {
+                                notEmpty: {
+                                    message: '组织名称不可空'
+                                }
+                            }
+                        },
+                        identifier: {
+                            validators: {
+                                notEmpty: {
+                                    message: '用户名不可空'
+                                }
+                            }
+                        },
+                        password: {
+                            validators: {
+                                notEmpty: {
+                                    message: '密码不可空'
+                                }
+                            }
+                        }
                     }
-                }
-                return index;
-            }
-
-            $scope.addAlertMsg = function (msg, level, autoHide) {
-                $scope.alertMsgs.push({
-                    level: level,
-                    message: msg
+                }).on('success.form.bv', function (e, data) {
+                    e.preventDefault();
+                    //login on validation success
+                    login();
                 });
-                if (autoHide != false) {
-                    var index = getMsgIndex($scope.alertMsgs, msg, level);
-                    $timeout((function (i) {
-                        return function (i) {
-                            $scope.alertMsgs.splice(i, 1);
-                        };
-                    })(index), 3 * 1000);
-                }
-            }
+
+            }, 0); //end of $timeout
+
         }]);
 
 })();
