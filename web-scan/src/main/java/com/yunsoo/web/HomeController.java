@@ -32,4 +32,8 @@ public class HomeController {
         return "default";
     }
 
+    @RequestMapping(value = "/usercontract")
+    public String usercontract() {
+        return "usercontract";
+    }
 }

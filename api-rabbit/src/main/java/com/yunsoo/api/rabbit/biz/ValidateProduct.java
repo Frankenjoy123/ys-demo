@@ -30,7 +30,7 @@ public class ValidateProduct {
                     return ValidationResult.Uncertain;  //虽然第一次是自己扫的，任然需要用户判断是否扫的是同一物品。
                 } else {
                     //do-check...根据扫码时间，地点是否和用户当前扫描有明显差异，提醒用户。
-                    return ValidationResult.Fake;
+                    return ValidationResult.Uncertain;
                 }
             }
         }
