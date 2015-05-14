@@ -21,11 +21,8 @@
                 $http.post("/api/productkeybatch", request).success(fnSuccess).error(fnFail);
                 return this;
             },
-            downloadProductKeys: function (listPanel, batchId) {
-                var url = '/api/productkeybatch/' + batchId + '/keys';
-                var accessToken = $scope.context.getAccessToken();
-                accessToken && (url += '?' + $scope.YUNSOO_CONFIG.PARAMETER_ACCESS_TOKEN + '=' + accessToken);
-                listPanel.downloadFrameSrc = url;
+            downloadProductKeys: function (listPanel, batchId, auth) {
+                listPanel.downloadFrameSrc = '/api/productkeybatch/' + batchId + '/keys?' + auth;
             }
         };
     }]);
@@ -88,7 +85,11 @@
             productKeyBatches: [],
             newProductKeyBatches: [],
             download: function (batchId) {
-                batchId && productKeyManageService.downloadProductKeys(this, batchId);
+                if (batchId) {
+                    var accessToken = $scope.context.getAccessToken();
+                    var auth = accessToken ? $scope.YUNSOO_CONFIG.PARAMETER_ACCESS_TOKEN + '=' + accessToken : '';
+                    productKeyManageService.downloadProductKeys(this, batchId, auth);
+                }
             },
             downloadFrameSrc: ''
         };
