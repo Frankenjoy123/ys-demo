@@ -7,11 +7,17 @@
     <link href="bootstrap-3.3.4-dist/css/bootstrap.min.css" rel="stylesheet"/>
     <script src="zepto/zepto.min.js" type="text/javascript"/>
 
-    <style>.timeline{list-style:none;padding:0px 0 0px;position:relative;}.timeline:before{top:0;bottom:0;position:absolute;content:" ";width:2px;background-color:#CCCCCC;left:25px;margin-left:-1.5px;margin-top:20px;}.timeline > li{margin-bottom:10px;position:relative;}.timeline > li:before,.timeline > li:after{content:" ";display:table;}.timeline > li:after{clear:both;}.timeline > li:before,.timeline > li:after{content:" ";display:table;}.timeline > li:after{clear:both;}.timeline > li > .timeline-panel{width:85%;float:right;border-radius:22px;padding:10px;position:relative;}.timeline > li > .timeline-panel:before{position:absolute;top:26px;left:0px;display:inline-block;}.timeline > li > .timeline-panel:after{position:absolute;top:27px;left:0px;display:inline-block;}.timeline > li > .timeline-badge{color:#FFFF99;line-height:25px;font-size:1.4em;text-align:center;position:absolute;background-color:#666666;z-index:100;border-top-right-radius:50%;border-top-left-radius:50%;border-bottom-right-radius:50%;border-bottom-left-radius:50%;}.timeline > li.timeline-inverted > .timeline-panel{float:left;}.timeline > li.timeline-inverted > .timeline-panel:before{border-left-width:0;border-right-width:15px;right:-15px;right:auto;}.timeline > li.timeline-inverted > .timeline-panel:after{border-left-width:0;border-right-width:14px;left:-14px;right:auto;}.timeline-badge.primary{width:12px;height:12px;top:10px;left:19px;background-color:#999999 !important;}.timeline-badge.down{width:15px;height:15px;top:10px;left:17px;background-color:#006699 !important;}.timeline-body > p,.timeline-body > ul{margin-bottom:0;}.timeline-body > p + p{margin-top:5px;}.item-action{width:100%;position:fixed;height:40px;bottom:0;left:0;text-align:center;line-height:40px;z-index:999;font-size:16px;color:white;}.item-action .contact{position:absolute;left:0;width:50%;background-color:#3faee0;}.item-action .buy{position:absolute;width:50%;right:0;background-color:#3c8dbc;}.float-img{position:relative;left:20px;bottom:25px;}</style>
+    <style>.timeline{list-style:none;padding:0px 0 0px;position:relative;}.timeline:before{top:0;bottom:0;position:absolute;content:" ";width:2px;background-color:#CCCCCC;left:25px;margin-left:-1.5px;margin-top:20px;}.timeline > li{margin-bottom:10px;position:relative;}.timeline > li:before,.timeline > li:after{content:" ";display:table;}.timeline > li:after{clear:both;}.timeline > li:before,.timeline > li:after{content:" ";display:table;}.timeline > li:after{clear:both;}.timeline > li > .timeline-panel{width:85%;float:right;border-radius:22px;padding:10px;position:relative;}.timeline > li > .timeline-panel:before{position:absolute;top:26px;left:0px;display:inline-block;}.timeline > li > .timeline-panel:after{position:absolute;top:27px;left:0px;display:inline-block;}.timeline > li > .timeline-badge{color:#FFFF99;line-height:25px;font-size:1.4em;text-align:center;position:absolute;background-color:#666666;z-index:100;border-top-right-radius:50%;border-top-left-radius:50%;border-bottom-right-radius:50%;border-bottom-left-radius:50%;}.timeline > li.timeline-inverted > .timeline-panel{float:left;}.timeline > li.timeline-inverted > .timeline-panel:before{border-left-width:0;border-right-width:15px;right:-15px;right:auto;}.timeline > li.timeline-inverted > .timeline-panel:after{border-left-width:0;border-right-width:14px;left:-14px;right:auto;}.timeline-badge.primary{width:12px;height:12px;top:10px;left:19px;background-color:#999999 !important;}.timeline-badge.down{width:15px;height:15px;top:10px;left:17px;background-color:#006699 !important;}.timeline-body > p,.timeline-body > ul{margin-bottom:0;}.timeline-body > p + p{margin-top:5px;}.item-action{width:100%;position:fixed;height:40px;bottom:0;left:0;text-align:center;line-height:40px;z-index:999;font-size:16px;color:white;}.item-action .contact{position:absolute;left:0;width:50%;background-color:#3faee0;}.item-action .buy{position:absolute;width:50%;right:0;background-color:#3c8dbc;}.float-img{position:relative;left:20px;bottom:30px;height:60px;width:60px;}</style>
 </head>
 <body>
 <script type="text/javascript">
     $(document).ready(function () {
+
+        var control = navigator.control || {};
+        if (control.gesture) {
+            control.gesture(false);
+        }
+
         function activeTabOne() {
             $("#tab_1").addClass("active");
             $("#li_tab_a_1").addClass("active");
@@ -154,8 +160,8 @@
 
         var postObject = {
             key: productKey,
-            deviceCode: 'UIDSL-SD832-230DS-623043',
-            location: '用户选择不公开',
+            deviceCode: '00000-00000-00000-00000',
+            location: 'Web端无法获取',
             appId: '2k4d3xp24wpxxcf4myt'
         };
 
@@ -199,11 +205,21 @@
                 }
 
                 $("#divRemind").css('display', '');
-
                 $("#divScanDetailsValidKey").css('display', '');
 
-                $("#productKey").html(data.product.barcode);
-                $("#productName").html(data.product.name);
+                var td1 = $('<td></td>').css("width", "30%").html("商品码");
+                var td2 = $('<td></td>').css("width", "70%").html(data.product.barcode);
+                var tr = $('<tr></tr>').append(td1).append(td2);
+                var tdSpace = $('<td></td>').css('height', '10px');
+                var trSpace = $('<tr></tr>').append(tdSpace);
+                $("#detailItems").append(tr).append(trSpace)
+
+                td1 = $('<td></td>').css("width", "30%").html("物品名称");
+                td2 = $('<td></td>').css("width", "70%").html(data.product.name);
+                tr = $('<tr></tr>').append(td1).append(td2);
+                tdSpace = $('<td></td>').css('height', '10px');
+                trSpace = $('<tr></tr>').append(tdSpace);
+                $("#detailItems").append(tr).append(trSpace);
 
                 $.ajax({
                     type: 'GET',
@@ -216,8 +232,6 @@
                         if (data.comment != null) {
                             var details = data.comment.split(";");
                             if (details != null) {
-                                $("#detailItems").html("");
-
                                 for (var detail in details) {
                                     var dat = details[detail];
                                     var datItems = dat.split(":");
@@ -225,15 +239,11 @@
                                     if (!(datItems == null || !(datItems.length >= 2))) {
                                         var td1 = $('<td></td>').css("width", "30%").html(datItems[0]);
                                         var td2 = $('<td></td>').css("width", "70%").html(datItems[1]);
-                                        var tr = $('<tr></tr>').append(td1);
-                                        tr.append(td2);
-
+                                        var tr = $('<tr></tr>').append(td1).append(td2);
                                         var tdSpace = $('<td></td>').css('height', '10px');
                                         var trSpace = $('<tr></tr>').append(tdSpace);
-                                        trSpace.append(tdSpace);
 
-                                        $("#detailItems").append(tr);
-                                        $("#detailItems").append(trSpace);
+                                        $("#detailItems").append(tr).append(trSpace);
                                     }
                                 }
                             }
@@ -354,11 +364,11 @@
                 <div id="divScanValidKey" style="display:none" width="100%">
                     <img id="imgProduct" src="" width="100%"/>
                     <div class="float-img">
-                        <img id="imgManufacture" src="" width="50px" height="50px" class="img-circle"/>
+                        <img id="imgManufacture" src="" width="60px" height="60px" class="img-circle"/>
                     </div>
                 </div>
-                <div id="divScanInValidKey" class="col-xs-12 col-md-12" align="center" style="display:none">
-                    <img id="img44" src="" class="img-circle" width="80%"/>
+                <div id="divScanInValidKey" class="col-xs-12 col-md-12" align="center" style="display:none; position:relative;top:50px;">
+                    <img id="img44" src="" class="img-circle" width="200px" height="200px"/>
                 </div>
             </div>
         </div>
@@ -377,9 +387,9 @@
             </div>
         </div>
 
-        <div class="panel box box-primary" style="position:relative;top:-30px;">
+        <div class="panel box box-primary">
             <div class="row">
-                <div id="divScanDetailsValidKey" style="display:none" class="col-xs-12 col-md-12">
+                <div id="divScanDetailsValidKey" style="display:none; position:relative; top:-30px;" class="col-xs-12 col-md-12">
                     <div class="nav-tabs-custom">
                         <ul class="nav nav-tabs">
                             <li class="active" id="li_tab_a_1" style="width: 33.3%;text-align: center"><a id="tab_a_1" data-toggle="tab">基本信息</a></li>
@@ -390,20 +400,6 @@
                             <div class="tab-pane active" id="tab_1">
                                 <div class="panel box box-primary">
                                     <table class="table table-condensed" style="margin-top:20px">
-                                        <tr>
-                                            <td>商品码</td>
-                                            <td id="productKey"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>物品名称</td>
-                                            <td id="productName"></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2" height="20px"></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2">商品描述：</td>
-                                        </tr>
                                         <tr>
                                             <td colspan="2">
                                                 <table id="detailItems" class="table table-condensed">
@@ -447,7 +443,7 @@
                     </div>
                 </div>
                 <div id="divScanDetailsInValidKey" class="col-xs-12 col-md-12" align="center"
-                     style="display:none;background-color:#47ABEF">
+                     style="display:none;background-color:#47ABEF;position:relative;top:100px;">
                     <h3><p class="">云溯科技提醒</p>
 
                         <p class="">无效的云溯产品码！</p></h3>
@@ -459,7 +455,7 @@
 
     <div id="divFooterValidKey" class="row">
         <div class="col-xs-12 col-md-12 item-action">
-            <div class="pull-left contact">联系厂家</div>
+            <div class="pull-left contact">400-000-0000</div>
             <div class="pull-right buy">购买产品</div>
         </div>
     </div>
