@@ -108,6 +108,25 @@
                     container: 'floating',
                     timer: 3000
                 });
+            },
+            //show float notification on the top right
+            notification: function (type, message, title) {
+                $.niftyNoty && $.niftyNoty({
+                    type: type,
+                    container: 'floating',
+                    title: title,
+                    message: message,
+                    timer: 3000
+                });
+            },
+            //show alert, default in page top
+            alert: function (type, message, container) {
+                $.niftyNoty && $.niftyNoty({
+                    type: type,
+                    container: container || 'page',
+                    message: message,
+                    timer: 3000
+                });
             }
         });
 
@@ -120,13 +139,9 @@
         });
 
         //show welcome message
+
         $timeout(function () {
-            $.niftyNoty && $.niftyNoty({
-                type: 'info',
-                message: '欢迎登陆云溯管理平台',
-                container: 'floating',
-                timer: 3000
-            });
+            $scope.utils.notification('info', '欢迎登陆云溯管理平台');
         }, 3000);
 
         console.log('[root controller end]');

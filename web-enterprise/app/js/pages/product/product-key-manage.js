@@ -62,10 +62,11 @@
                     selectedProductBase.credit.remain -= requestData.quantity;
                     $scope.listPanel.newProductKeyBatches.push(data);
 
-                    $scope.addAlertMsg('创建成功', 'success', true);
+                    $scope.utils.alert('success', '产品码创建成功');
                 }, function (error, data) {
                     console.log(error, data);
-                    $scope.addAlertMsg(error.message, 'danger', true);
+                    var message = (error.message || '').substring(0, 100);
+                    $scope.utils.alert('danger', message);
                 });
             },
             productBaseIdChanged: function (productBaseId) {
