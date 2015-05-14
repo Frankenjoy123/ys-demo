@@ -149,9 +149,31 @@
             return xYear + "-" + xMonth + "-" + xDay + " " + xHours + ":" + xMinutes + ":" + xSeconds;
         }
 
+        Date.prototype.toShortCase = function () {
+            var xYear = this.getYear();
+            xYear = xYear + 1900;
+
+            var xMonth = this.getMonth() + 1;
+            if (!(xMonth > 9)) {
+                xMonth = "0" + xMonth;
+            }
+
+            var xDay = this.getDate();
+            if (!(xDay > 9)) {
+                xDay = "0" + xDay;
+            }
+
+            return xYear + "-" + xMonth + "-" + xDay;
+        }
+
         var getDateString = function (value) {
             var date = new Date(value);
             return date.toCommonCase();
+        };
+
+        var getShortDateString = function (value) {
+            var date = new Date(value);
+            return date.toShortCase();
         };
 
         var productKey = '<p th:text="${key}"/>';
@@ -258,6 +280,28 @@
 
                     var latestScan = data.scanRecord[0];
                     var otherScans = data.scanRecord.slice(1);
+                    var firstScan = data.scanRecord[data.scanRecord.length - 1];
+
+                    if (data.validationResult.toLowerCase() == "uncertain") {
+                        var plocation;
+                        if (!(firstScan.location.indexOf(":") >= 0))
+                            plocation = "未知地点";
+                        else {
+                            var details = firstScan.location.split(";");
+                            for (var detail in details) {
+                                var dat = details[detail];
+                                var datItems = dat.split(":");
+                                if (!(datItems == null || !(datItems.length >= 2))) {
+                                    if (datItems[0] == "City") {
+                                        plocation = datItems[1];
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        $("#proStatus").html("第一次扫描在 " + getShortDateString(firstScan.createdDateTime) + " " + plocation);
+                    }
 
                     $("#scanRecords").html("");
 
@@ -377,7 +421,7 @@
             <div class="row">
                 <div id="divScanResultValidKey" class="col-xs-12 col-md-12" style="display:none" align="center">
                     <div>
-                        <img id="imgProStatus" src="" class="img-rounded" height="80px" width="80px"/>
+                        <img id="imgProStatus" src="" class="img-rounded" height="90px" width="90px"/>
                     </div>
                     <br/>
                     <div>
