@@ -72,6 +72,7 @@
 
 
     app.controller('rootCtrl', ['$scope', '$timeout', '$http', 'YUNSOO_CONFIG', function ($scope, $timeout, $http, YUNSOO_CONFIG) {
+        console.log('[root controller start]');
         //YUNSOO_CONFIG
         $scope.YUNSOO_CONFIG = YUNSOO_CONFIG;
 
@@ -128,6 +129,7 @@
             });
         }, 3000);
 
+        console.log('[root controller end]');
     }]);//end of controller
 
 })();

@@ -1,3 +1,10 @@
+
 body {
-    font-family: "Microsoft YaHei", "微软雅黑", "Lucida Grande", "Lucida Sans Unicode", 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    font-family: "Lucida Grande", "Helvetica Neue", Helvetica, STHeiti, "Microsoft Yahei", "WenQuanYi Micro Hei", Arial, Verdana, sans-serif;
+    /*font-family: "Microsoft YaHei", "微软雅黑", "Lucida Grande", "Lucida Sans Unicode", 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+    font-size: 14px;
+}
+
+.brand-text {
+    font-weight: 400;
 }
