@@ -1,79 +1,93 @@
 (function () {
     var app = angular.module('root', [
         'ngRoute',
-        'ngAnimate',
+        //'ngAnimate',
         'YUNSOO_CONFIG',
-        'interceptor'
+        'interceptor',
         //'head',
         //'nav',
-        //'accountManage',
-        //'productBaseManage',
-        //'productKeyManage',
-        //'msg',
-        //'logistics',
-        //'logisticsManage',
-        //'package',
-        //'packageSearch',
-        //'config'
+        'dashboard',
+        'accountManage',
+        'productBaseManage',
+        'productKeyManage',
+        'msg',
+        'logistics',
+        'logisticsManage',
+        'package',
+        'packageSearch',
+        'setting'
     ]);
 
 
     //config root
     app.config(['$routeProvider', function ($routeProvider) {
         $routeProvider
+            .when('/dashboard', {
+                templateUrl: 'pages/dashboard/dashboard.html',
+                controller: 'dashboardCtrl'
+            })
             .when('/account', {
-                templateUrl: 'obsolete/pages/account/manage.html',
+                templateUrl: 'pages/account/account-manage.html',
                 controller: 'accountManageCtrl'
             })
             .when('/product-base-manage', {
-                templateUrl: 'obsolete/pages/product/product-base-manage.html',
+                templateUrl: 'pages/product/product-base-manage.html',
                 controller: 'productBaseManageCtrl'
             })
             .when('/product-key-manage', {
-                templateUrl: 'obsolete/pages/product/product-key-manage.html',
+                templateUrl: 'pages/product/product-key-manage.html',
                 controller: 'productKeyManageCtrl'
             })
             .when('/msg', {
-                templateUrl: 'obsolete/pages/msg/msg.html',
+                templateUrl: 'pages/msg/msg.html',
                 controller: 'msgCtrl'
             })
             .when('/test', {
-                templateUrl: 'obsolete/pages/empty.html'
+                templateUrl: 'pages/empty.html'
             })
             .when('/packageManage', {
-                templateUrl: 'obsolete/pages/package/packageManage.html',
+                templateUrl: 'pages/package/packageManage.html',
                 controller: 'packageCtrl'
             })
             .when('/packageSearch', {
-                templateUrl: 'obsolete/pages/package/packageSearch.html',
+                templateUrl: 'pages/package/packageSearch.html',
                 controller: 'packageSearchCtrl'
             })
             .when('/logistics', {
-                templateUrl: 'obsolete/pages/logistics/logistics.html',
+                templateUrl: 'pages/logistics/logistics.html',
                 controller: 'logisticsManageCtrl'
             })
             .when('/search', {
-                templateUrl: 'obsolete/pages/search/search.html'
+                templateUrl: 'pages/search/search.html'
             })
-            .when('/config', {
-                templateUrl: 'obsolete/pages/config/config.html',
-                controller: 'configCtrl'
+            .when('/setting', {
+                templateUrl: 'pages/setting/setting.html',
+                controller: 'settingCtrl'
             })
             .otherwise({
-                templateUrl: 'obsolete/pages/product/product-key-manage.html',
-                controller: 'productKeyManageCtrl'
+                templateUrl: 'pages/dashboard/dashboard.html',
+                controller: 'dashboardCtrl'
             });
     }]);
 
 
     app.controller('rootCtrl', ['$scope', '$timeout', '$http', 'YUNSOO_CONFIG', function ($scope, $timeout, $http, YUNSOO_CONFIG) {
-        if (!$.cookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN)) {
+        //YUNSOO_CONFIG
+        $scope.YUNSOO_CONFIG = YUNSOO_CONFIG;
+
+        //context
+        $scope.context || ($scope.context = {
+            getAccessToken: function () {
+                var accessToken = $.cookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN);
+                return typeof accessToken === 'string' ? accessToken : null;
+            }
+        });
+
+        //check authentication
+        if (!$scope.context.getAccessToken()) {
             //redirect back to login page
             window.location.href = 'login.html';
         }
-
-        //context
-        $scope.context || ($scope.context = {});
 
         //utils
         $scope.utils || ($scope.utils = {
@@ -86,7 +100,8 @@
                 window.location.href = 'login.html';
             },
             lock: function () {
-                console.log('[lock screen]'); $.niftyNoty({
+                console.log('[lock screen]');
+                $.niftyNoty({
                     type: 'warning',
                     message: '锁屏界面开发中...',
                     container: 'floating',
@@ -103,10 +118,9 @@
             console.log('[get current account]', 'failed', code);
         });
 
-
         //show welcome message
         $timeout(function () {
-            $.niftyNoty({
+            $.niftyNoty && $.niftyNoty({
                 type: 'info',
                 message: '欢迎登陆云溯管理平台',
                 container: 'floating',
@@ -114,8 +128,6 @@
             });
         }, 3000);
 
-    }
-    ])
-    ;
-})
-();
+    }]);//end of controller
+
+})();

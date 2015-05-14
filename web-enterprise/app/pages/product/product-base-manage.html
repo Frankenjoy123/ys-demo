@@ -1,0 +1,79 @@
+<!--Page Title-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<div id="page-title">
+    <h1 class="page-header text-overflow">产品管理</h1>
+
+    <!--Searchbox-->
+    <div class="searchbox" ng-include="'pages/search-box.html'"></div>
+</div>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End page title-->
+
+
+<!--Breadcrumb-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--<ol class="breadcrumb">-->
+    <!--<li><a href="#">首页</a></li>-->
+    <!--<li><a href="#/product-base-manage">产品</a></li>-->
+    <!--<li class="active"><a href="#/product-base-manage">产品管理</a></li>-->
+<!--</ol>-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End breadcrumb-->
+
+
+<!--Page content-->
+<!--===================================================-->
+<div id="page-content">
+
+    <section class="content">
+        <div class="box-group" id="results">
+            <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
+            <div class="panel box box-primary">
+                <div class="box-header">
+                    <h4 class="box-title">
+                        产品列表
+                    </h4>
+                </div>
+                <div class="panel-collapse collapse in">
+                    <div class="box-body">
+                        <table class="table table-hover">
+                            <tr>
+                                <th>ID</th>
+                                <th>名称</th>
+                                <th>品类</th>
+                                <th>条码</th>
+                                <th>保质期</th>
+                                <th>产品码类型</th>
+                                <th>可用额度</th>
+                                <th>创建时间</th>
+                            </tr>
+                            <tr ng-repeat="pb in productBases">
+                                <td>{{pb.id}}</td>
+                                <td>{{pb.name}}</td>
+                                <td>{{pb.category ? pb.category.name : '未知'}}</td>
+                                <td>{{pb.barcode}}</td>
+                                <td>{{pb.shelfLife + " " + shelfLifeIntervals[pb.shelfLifeInterval]}}</td>
+
+                                <td>{{formatProductKeyTypes(pb.productKeyTypes)}}</td>
+                                <td>
+                                    <div class="progress-group"><span
+                                            class="progress-number"><b>{{pb.credit.remain}}</b>/{{pb.credit.total}}</span>
+
+                                        <div class="progress sm" style="background-color: #f0ffff;">
+                                            <div class="progress-bar progress-bar-aqua"
+                                                 style="width: {{pb.credit.remain*100/pb.credit.total}}%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{utils.formatDateString(pb.createdDateTime)}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+<!--===================================================-->
+<!--End page content-->

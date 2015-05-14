@@ -23,18 +23,14 @@
             },
             downloadProductKeys: function (listPanel, batchId) {
                 var url = '/api/productkeybatch/' + batchId + '/keys';
-                var accessToken = $.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME);
-                accessToken && (url += '?' + YUNSOO_CONFIG.PARAMETER_ACCESS_TOKEN + '=' + accessToken);
+                var accessToken = $scope.context.getAccessToken();
+                accessToken && (url += '?' + $scope.YUNSOO_CONFIG.PARAMETER_ACCESS_TOKEN + '=' + accessToken);
                 listPanel.downloadFrameSrc = url;
             }
         };
     }]);
 
     app.controller("productKeyManageCtrl", ["$scope", "productKeyManageService", function ($scope, productKeyManageService) {
-
-        $scope.getDateString = function (value) {
-            return $scope.formatDateString(value);
-        };
 
         $scope.formatProductKeyTypes = function (productKeyTypes) {
             var result = '';

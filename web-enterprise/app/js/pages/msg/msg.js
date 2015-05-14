@@ -22,10 +22,6 @@
 
     app.controller("msgCtrl", ["$scope", "msgService", function($scope, msgService){
 
-        $scope.getDateString = function (value) {
-            return $scope.formatDateString(value);
-        };
-
         var AngularDataTable = function (data) {
 
             var adt = {
@@ -127,7 +123,7 @@
         $scope.itemIndex = 0;
 
         var getMessageInfo = function (currentPage) {
-            msgService.getInfo($scope.account.org_id,currentPage,function(data){
+            msgService.getInfo($scope.context.account.org_id,currentPage,function(data){
                 $scope.data = data;
                 $scope.dataTable = new AngularDataTable($scope.data);
             });

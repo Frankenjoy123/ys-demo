@@ -46,8 +46,8 @@
         });
 
         //set AccessToken http header
-        var accessToken = $.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME);
-        accessToken && (uploader.headers[YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
+        var accessToken = $scope.context.getAccessToken();
+        accessToken && (uploader.headers[$scope.YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
 
         uploader.filters.push({
             name: 'customFilter',
@@ -181,10 +181,10 @@
         $scope.totalCounts = 0;
         $scope.itemIndex = 0;
 
-        $scope.getItemIndex = function() {
+        $scope.getItemIndex = function () {
             $scope.itemIndex += 1;
             return $scope.itemIndex;
-        }
+        };
 
         packageService.getPackageHistoryInfoCount(function (data) {
             $scope.totalCounts = data;
@@ -202,8 +202,5 @@
 
         getPackageHistoryInfo(0);
 
-        $scope.getDateString = function (value) {
-            return $scope.formatDateString(value);
-        };
     }]);
 })();

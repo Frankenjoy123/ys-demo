@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module('login', ['YUNSOO_CONFIG', 'interceptor']);
+    var app = angular.module('login', ['interceptor', 'YUNSOO_CONFIG']);
 
     app.factory('loginService', ['$http', function ($http) {
         return {

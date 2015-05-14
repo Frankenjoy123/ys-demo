@@ -20,10 +20,6 @@
         "dataFilterService",
         function ($scope, accountManageService, dataFilterService) {
 
-            $scope.getDateString = function (value) {
-                return $scope.formatDateString(value);
-            };
-
             $scope.data = {
                 accounts: []
             };

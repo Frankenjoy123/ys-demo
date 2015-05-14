@@ -1,7 +1,7 @@
 (function () {
-    var app = angular.module("config", ["interceptor"]);
+    var app = angular.module("setting", ["interceptor"]);
 
-    app.factory("configService", ["$http", function ($http) {
+    app.factory("settingService", ["$http", function ($http) {
         return {
             getInfo: function (productKey, fnSuccess, fnError) {
                 $http.get("/api/" + productKey)
@@ -14,15 +14,11 @@
         };
     }]);
 
-    app.controller("configCtrl", ["$scope", "configService", function ($scope, configService) {
+    app.controller("settingCtrl", ["$scope", "settingService", function ($scope, settingService) {
 
         $scope.originalPassword = "";
         $scope.currentPassword = "";
         $scope.confirmPassword = "";
-
-        $scope.getDateString = function (value) {
-            return $scope.formatDateString(value);
-        };
 
         $scope.submit = function () {
             if ($scope.originalPassword == "") {

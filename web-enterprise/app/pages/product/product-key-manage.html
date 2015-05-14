@@ -115,7 +115,7 @@
                             <td>
                                 {{formatProductKeyTypes(b.productKeyTypes)}}
                             </td>
-                            <td>{{getDateString(b.createdDateTime)}}</td>
+                            <td>{{utils.formatDateString(b.createdDateTime)}}</td>
                             <td>
                                 <button type="button" class="btn btn-success btn-xs"
                                         ng-click="listPanel.download(b.id)">下载
@@ -153,7 +153,7 @@
                             <td>
                                 {{formatProductKeyTypes(b.productKeyTypes)}}
                             </td>
-                            <td>{{getDateString(b.createdDateTime)}}</td>
+                            <td>{{utils.formatDateString(b.createdDateTime)}}</td>
                             <td>
                                 <button type="button" class="btn btn-success btn-xs"
                                         ng-click="listPanel.download(b.id)">下载

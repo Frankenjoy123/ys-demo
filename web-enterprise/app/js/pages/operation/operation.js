@@ -20,10 +20,6 @@
 
         $scope.bodyShow = 0;
 
-        $scope.getDateString = function (value) {
-            return $scope.formatDateString(value);
-        };
-
         $scope.packageClick = function () {
 
             if ($scope.productKey == null || $scope.productKey == "") {

@@ -27,10 +27,6 @@
 
         $scope.bodyShow = 0;
 
-        $scope.getDateString = function (value) {
-            return $scope.formatDateString(value);
-        };
-
         function listAllNode(thejson) {
 
             if (thejson == null)

@@ -45,8 +45,8 @@
         });
 
         //set AccessToken http header
-        var accessToken = $.cookie(YUNSOO_CONFIG.AUTH_COOKIE_NAME);
-        accessToken && (uploader.headers[YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
+        var accessToken = $scope.context.getAccessToken();
+        accessToken && (uploader.headers[$scope.YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
 
         uploader.filters.push({
             name: 'customFilter',
@@ -195,10 +195,6 @@
         };
 
         getLogisticsHistoryInfo(0);
-
-        $scope.getDateString = function (value) {
-            return $scope.formatDateString(value);
-        };
 
         console.info('uploader', uploader);
     }]);
