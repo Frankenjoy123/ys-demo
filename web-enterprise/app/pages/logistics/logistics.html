@@ -24,8 +24,8 @@
 <!-- Main content -->
 <div id="page-content">
     <section class="content" uploader="uploader" filters="queueLimit, customFilter">
-        <div class="box box-solid">
-            <div class="box-body">
+        <div class="panel panel-primary">
+            <div class="panel-body">
            <span class="btn btn-primary fileinput-button " ng-class="{disabled: disabled}">
                     <i class="glyphicon glyphicon-plus"></i>
                     <span>选择上传文件</span>
@@ -90,58 +90,53 @@
             <!-- /.box -->
         </div>
 
-        </br>
+        <div class="panel panel-primary" ng-show="isShowHisSec">
+            <div class="panel-body table-responsive">
+                <div class="dataTables_wrapper form-inline" role="grid">
+                    <div class="col-xs-12">
+                        <table id="packageHisFileTable" class="table table-hover dataTable">
+                            <thead>
+                            <tr role="row">
+                                <th>文件名称</th>
+                                <th>产品类型</th>
+                                <th>上传状态</th>
+                                <th>上传时间</th>
+                            </tr>
+                            </thead>
 
-        <div class="box-group" ng-show="isShowHisSec">
-            <div class="panel box box-primary ">
-                <div class="box-body table-responsive">
-                    <div class="dataTables_wrapper form-inline" role="grid">
-                        <div class="col-xs-12">
-                            <table id="packageHisFileTable" class="table table-hover dataTable">
-                                <thead>
-                                <tr role="row">
-                                    <th>文件名称</th>
-                                    <th>产品类型</th>
-                                    <th>上传状态</th>
-                                    <th>上传时间</th>
-                                </tr>
-                                </thead>
-
-                                <tbody
-                                        ng-repeat="da in dataTable.filteredData = (dataTable.data | filter:dataTable.filter)">
-                                <tr>
-                                    <td>{{da.fileName}}</td>
-                                    <td>识别中...</td>
-                                    <td><span ng-show="da.status == 1"><span
-                                            class="label label-success">成功</span></span>
-                                        <span ng-hide="da.status == 1"><span class="label label-danger">失败</span></span>
-                                    </td>
-                                    <td>{{utils.formatDateString(da.createDate)}}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="col-xs-12">
-                            <div class="pull-right">
-                                <ul class="pagination">
-                                    <li class="prev" ng-class="{ disabled: dataTable.onFirstPage()}"><a
-                                            ng-click="dataTable.goToFirstPage()">首页</a></li>
-                                    <li class="prev" ng-class="{ disabled: dataTable.onFirstPage()}"><a
-                                            ng-click="dataTable.previous()">上一页</a></li>
-                                    <li ng-repeat-start="page in dataTable.pages()" ng-repeat-end
-                                        ng-class="{active: dataTable.currentPage() === page}"><a
-                                            ng-click="dataTable.goToPage(page)">{{page + 1}}</a></li>
-                                    <li class="next" ng-class="{ disabled: dataTable.onLastPage()}"><a
-                                            ng-click="dataTable.next()">下一页</a></li>
-                                    <li class="next" ng-class="{ disabled: dataTable.onLastPage()}"><a
-                                            ng-click="dataTable.gotoLastPage()">末页</a></li>
-                                </ul>
-                            </div>
+                            <tbody
+                                    ng-repeat="da in dataTable.filteredData = (dataTable.data | filter:dataTable.filter)">
+                            <tr>
+                                <td>{{da.fileName}}</td>
+                                <td>识别中...</td>
+                                <td><span ng-show="da.status == 1"><span
+                                        class="label label-success">成功</span></span>
+                                    <span ng-hide="da.status == 1"><span class="label label-danger">失败</span></span>
+                                </td>
+                                <td>{{utils.formatDateString(da.createDate)}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="pull-right">
+                            <ul class="pagination">
+                                <li class="prev" ng-class="{ disabled: dataTable.onFirstPage()}"><a
+                                        ng-click="dataTable.goToFirstPage()">首页</a></li>
+                                <li class="prev" ng-class="{ disabled: dataTable.onFirstPage()}"><a
+                                        ng-click="dataTable.previous()">上一页</a></li>
+                                <li ng-repeat-start="page in dataTable.pages()" ng-repeat-end
+                                    ng-class="{active: dataTable.currentPage() === page}"><a
+                                        ng-click="dataTable.goToPage(page)">{{page + 1}}</a></li>
+                                <li class="next" ng-class="{ disabled: dataTable.onLastPage()}"><a
+                                        ng-click="dataTable.next()">下一页</a></li>
+                                <li class="next" ng-class="{ disabled: dataTable.onLastPage()}"><a
+                                        ng-click="dataTable.gotoLastPage()">末页</a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
 
 
