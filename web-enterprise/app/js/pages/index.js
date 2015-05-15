@@ -108,6 +108,35 @@
                     container: 'floating',
                     timer: 3000
                 });
+            },
+            /**
+             * shortcut of $.niftyNoty, show floating notification on the top right
+             * @param type string ["info", "primary", "success", "warning", "danger", "mint", "purple", "pink", "dark"]
+             * @param message string
+             * @param title string
+             */
+            notification: function (type, message, title) {
+                $.niftyNoty && $.niftyNoty({
+                    type: type,
+                    container: 'floating',
+                    title: title,
+                    message: message,
+                    timer: 3000
+                });
+            },
+            /**
+             * shortcut of $.niftyNoty, show alert, default in page top
+             * @param type string ["info", "primary", "success", "warning", "danger", "mint", "purple", "pink", "dark"]
+             * @param message string
+             * @param container string ["floating", "page"] | "jQuery selector"
+             */
+            alert: function (type, message, container) {
+                $.niftyNoty && $.niftyNoty({
+                    type: type,
+                    container: container || 'page',
+                    message: message,
+                    timer: 3000
+                });
             }
         });
 
@@ -120,13 +149,9 @@
         });
 
         //show welcome message
+
         $timeout(function () {
-            $.niftyNoty && $.niftyNoty({
-                type: 'info',
-                message: '欢迎登陆云溯管理平台',
-                container: 'floating',
-                timer: 3000
-            });
+            $scope.utils.notification('info', '欢迎登陆云溯管理平台');
         }, 3000);
 
         console.log('[root controller end]');
