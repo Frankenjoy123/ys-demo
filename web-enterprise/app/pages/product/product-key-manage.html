@@ -22,7 +22,7 @@
                     <div class="row">
                         <div class="form-group col-xs-4">
                             <select name="productType"
-                                    class="form-control inline"
+                                    class="selectpicker form-control"
                                     ng-model="creationPanel.model.productBaseId"
                                     ng-change="creationPanel.productBaseIdChanged(creationPanel.model.productBaseId)">
                                 <option value="0">请选择产品</option>
@@ -55,8 +55,8 @@
                     </div>
                     <div class="row">
                         <div class="form-group col-xs-4">
-                            <select name="quantity" ng-model="creationPanel.model.quantity"
-                                    class="form-control inline">
+                            <select name="quantity" class="selectpicker form-control"
+                                    ng-model="creationPanel.model.quantity">
                                 <option value="0">请选择数量</option>
                                 <option value="100">100</option>
                                 <option value="1000">1,000</option>
