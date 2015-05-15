@@ -199,7 +199,7 @@
 
                 $("#divBody").css('display', '');
 
-                if (data == null || data.product == null) {
+                if (data == null || data.product == null || data.validationResult.toLowerCase() == "fake") {
                     $("#img44").attr("src", "images/icon-false.png");
 
                     $("#divScanInValidKey").css('display', '');
@@ -217,10 +217,6 @@
                     $("#imgProStatus").attr("src", "images/icon-warning.png");
                     $("#proStatus").html("此产品不确定");
                 }
-                else if (data.validationResult.toLowerCase() == "fake") {
-                    $("#imgProStatus").attr("src", "images/icon-false.png");
-                    $("#proStatus").html("此产品为假货");
-                }
                 else if (data.validationResult.toLowerCase() == "real") {
                     $("#imgProStatus").attr("src", "images/icon-truer.png");
                     $("#proStatus").html("此产品为真品");
@@ -234,7 +230,7 @@
                 var tr = $('<tr></tr>').append(td1).append(td2);
                 var tdSpace = $('<td></td>').css('height', '10px');
                 var trSpace = $('<tr></tr>').append(tdSpace);
-                $("#detailItems").append(tr).append(trSpace)
+                $("#detailItems").append(tr).append(trSpace);
 
                 td1 = $('<td></td>').css("width", "30%").html("物品名称");
                 td2 = $('<td></td>').css("width", "70%").html(data.product.name);
@@ -245,28 +241,23 @@
 
                 $.ajax({
                     type: 'GET',
-                    url: '/api-rabbit/productbase/' + data.product.productBaseId,
+                    url: '/api-rabbit/productbase/' + data.product.productBaseId + '/notes/json',
                     dataType: 'text/json',
                     success: function (dataStr) {
 
                         var data = $.parseJSON(dataStr);
 
-                        if (data.comment != null) {
-                            var details = data.comment.split(";");
+                        if (data.details != null) {
+                            var details = data.details;
                             if (details != null) {
                                 for (var detail in details) {
-                                    var dat = details[detail];
-                                    var datItems = dat.split(":");
+                                    var td1 = $('<td></td>').css("width", "30%").html(detail);
+                                    var td2 = $('<td></td>').css("width", "70%").html(details[detail]);
+                                    var tr = $('<tr></tr>').append(td1).append(td2);
+                                    var tdSpace = $('<td></td>').css('height', '10px');
+                                    var trSpace = $('<tr></tr>').append(tdSpace);
 
-                                    if (!(datItems == null || !(datItems.length >= 2))) {
-                                        var td1 = $('<td></td>').css("width", "30%").html(datItems[0]);
-                                        var td2 = $('<td></td>').css("width", "70%").html(datItems[1]);
-                                        var tr = $('<tr></tr>').append(td1).append(td2);
-                                        var tdSpace = $('<td></td>').css('height', '10px');
-                                        var trSpace = $('<tr></tr>').append(tdSpace);
-
-                                        $("#detailItems").append(tr).append(trSpace);
-                                    }
+                                    $("#detailItems").append(tr).append(trSpace);
                                 }
                             }
                         }
@@ -373,7 +364,7 @@
 
                     $("#divLogistics").html("");
 
-                    var p = $('<p></p>').html(getDateString(latestLogistics.dateTime) + latestLogistics.message + " " + latestLogistics.location);
+                    var p = $('<p></p>').html(getDateString(latestLogistics.dateTime) + " " + latestLogistics.message + " " + latestLogistics.location);
                     var divPanel = $('<div></div>').addClass("timeline-panel").append(p);
                     var div = $('<div></div>').addClass("timeline-badge down");
                     var li = $('<li></li>').append(div);
@@ -383,7 +374,7 @@
 
                     if (otherLogistics.length > 0) {
                         for (var otherLogistic in otherLogistics) {
-                            p = $('<p></p>').html(getDateString(otherLogistics[otherLogistic].dateTime) + otherLogistics[otherLogistic].message + " " + otherLogistics[otherLogistic].location);
+                            p = $('<p></p>').html(getDateString(otherLogistics[otherLogistic].dateTime) + " " + otherLogistics[otherLogistic].message + " " + otherLogistics[otherLogistic].location);
                             divPanel = $('<div></div>').addClass("timeline-panel").append(p);
                             div = $('<div></div>').addClass("timeline-badge primary");
                             li = $('<li></li>').append(div);
