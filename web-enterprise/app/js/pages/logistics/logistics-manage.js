@@ -78,6 +78,8 @@
         uploader.onSuccessItem = function (fileItem, response, status, headers) {
             //console.info('onSuccessItem', fileItem, response, status, headers);
             console.info('onSuccessItem', response, status);
+
+            $scope.utils.alert('success', '上传成功！');
         };
         uploader.onErrorItem = function (fileItem, response, status, headers) {
             console.info('onErrorItem', fileItem, response, status, headers);
@@ -195,39 +197,5 @@
         };
 
         getLogisticsHistoryInfo(0);
-
-        $('#logistics-step-wz').bootstrapWizard({
-            tabClass		: 'wz-steps',
-            nextSelector	: '.next',
-            previousSelector	: '.previous',
-            onTabClick: function(tab, navigation, index) {
-                return false;
-            },
-            onInit : function(){
-                $('#logistics-step-wz').find('.finish').hide().prop('disabled', true);
-            },
-            onTabShow: function(tab, navigation, index) {
-                var $total = navigation.find('li').length;
-                var $current = index+1;
-                var $percent = (index/$total) * 100;
-                var wdt = 100/$total;
-                var lft = wdt*index;
-                var margin = (100/$total)/2;
-                $('#logistics-step-wz').find('.progress-bar').css({width:$percent+'%', 'margin': 0 + 'px ' + margin + '%'});
-
-
-                // If it's the last tab then hide the last button and show the finish instead
-                if($current >= $total) {
-                    $('#logistics-step-wz').find('.next').hide();
-                    $('#logistics-step-wz').find('.finish').show();
-                    $('#logistics-step-wz').find('.finish').prop('disabled', false);
-                } else {
-                    $('#logistics-step-wz').find('.next').show();
-                    $('#logistics-step-wz').find('.finish').hide().prop('disabled', true);
-                }
-            }
-        });
-
-        console.info('uploader', uploader);
     }]);
 })();
