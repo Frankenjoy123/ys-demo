@@ -92,6 +92,8 @@
             console.info('onCompleteItem', response, status);
 
             getLogisticsHistoryInfo(0);
+
+            $scope.utils.alert('success', '上传成功！');
         };
         uploader.onCompleteAll = function () {
             // console.info('onCompleteAll');
