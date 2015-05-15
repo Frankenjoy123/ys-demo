@@ -109,7 +109,12 @@
                     timer: 3000
                 });
             },
-            //show float notification on the top right
+            /**
+             * shortcut of $.niftyNoty, show floating notification on the top right
+             * @param type string ["info", "primary", "success", "warning", "danger", "mint", "purple", "pink", "dark"]
+             * @param message string
+             * @param title string
+             */
             notification: function (type, message, title) {
                 $.niftyNoty && $.niftyNoty({
                     type: type,
@@ -119,7 +124,12 @@
                     timer: 3000
                 });
             },
-            //show alert, default in page top
+            /**
+             * shortcut of $.niftyNoty, show alert, default in page top
+             * @param type string ["info", "primary", "success", "warning", "danger", "mint", "purple", "pink", "dark"]
+             * @param message string
+             * @param container string ["floating", "page"] | "jQuery selector"
+             */
             alert: function (type, message, container) {
                 $.niftyNoty && $.niftyNoty({
                     type: type,
