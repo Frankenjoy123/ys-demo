@@ -12,49 +12,51 @@
 <!--Page content-->
 <!--===================================================-->
 <div id="page-content">
-    <div class="panel">
+    <div class="panel panel-bordered-primary" >
         <div class="panel-heading">
             <h3 class="panel-title">产品列表</h3>
         </div>
-        <div class="panel-body">
-            <table class="table table-hover table-vcenter">
-                <thead>
-                <tr>
-                    <th>名称</th>
-                    <th>品类</th>
-                    <th>条码</th>
-                    <th>保质期</th>
-                    <th>产品码类型</th>
-                    <th>可用额度</th>
-                    <th>备注</th>
-                    <th>创建时间</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="pb in productBases track by pb.id">
-                    <td>{{pb.name}}</td>
-                    <td>{{pb.category ? pb.category.name : '未知'}}</td>
-                    <td>{{pb.barcode}}</td>
-                    <td>{{pb.shelfLife + " " + SHELFLIFE_INTERVALS[pb.shelfLifeInterval]}}</td>
+        <div class="animated slideInRight" ng-show="productBases">
+            <div class="panel-body">
+                <table class="table table-hover table-vcenter">
+                    <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>品类</th>
+                        <th>条码</th>
+                        <th>保质期</th>
+                        <th>产品码类型</th>
+                        <th>可用额度</th>
+                        <th>备注</th>
+                        <th>创建时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="pb in productBases track by pb.id">
+                        <td>{{pb.name}}</td>
+                        <td>{{pb.category ? pb.category.name : '未知'}}</td>
+                        <td>{{pb.barcode}}</td>
+                        <td>{{pb.shelfLife + " " + SHELFLIFE_INTERVALS[pb.shelfLifeInterval]}}</td>
 
-                    <td>{{formatProductKeyTypes(pb.productKeyTypes)}}</td>
-                    <td>
-                        <div class="progress-group"><span
-                                class="progress-number"><span
-                                class="text-semibold">{{pb.credit.remain}}</span>/{{pb.credit.total}}</span>
+                        <td>{{formatProductKeyTypes(pb.productKeyTypes)}}</td>
+                        <td>
+                            <div class="progress-group"><span
+                                    class="progress-number"><span
+                                    class="text-semibold">{{pb.credit.remain}}</span>/{{pb.credit.total}}</span>
 
-                            <div class="progress progress-md">
-                                <div class="progress-bar {{(pb.credit.remain*100/pb.credit.total)<=10 ? 'progress-bar-danger':'progress-bar-primary' }}
+                                <div class="progress progress-md">
+                                    <div class="progress-bar {{(pb.credit.percentage)<=10 ? 'progress-bar-danger':'progress-bar-primary' }}
                                 progress-bar-striped active"
-                                     style="width: {{pb.credit.remain*100/pb.credit.total}}%"></div>
+                                         ng-style="{width: pb.credit.percentage + '%'}"></div>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>{{pb.comment}}</td>
-                    <td>{{utils.formatDateString(pb.createdDateTime)}}</td>
-                </tr>
-                </tbody>
-            </table>
+                        </td>
+                        <td>{{pb.comment}}</td>
+                        <td>{{utils.formatDateString(pb.createdDateTime)}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

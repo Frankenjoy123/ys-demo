@@ -79,6 +79,7 @@
                     credit.total += productKeyCredits.creditMap[productBase.id].total;
                     credit.remain += productKeyCredits.creditMap[productBase.id].remain;
                 }
+                credit.percentage = (credit.remain * 100 / credit.total) | 0;
             }
         }
 

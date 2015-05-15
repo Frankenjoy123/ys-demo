@@ -1,7 +1,7 @@
 (function () {
     var app = angular.module('root', [
         'ngRoute',
-        'ngAnimate',
+        //'ngAnimate',
         'YUNSOO_CONFIG',
         'interceptor',
         //'head',

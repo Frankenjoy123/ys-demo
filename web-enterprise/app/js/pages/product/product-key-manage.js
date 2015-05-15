@@ -103,42 +103,45 @@
 
                 //get product key credits
                 productKeyManageService.getProductKeyCredits(function (data) {
-                    var productKeyCredits = {
-                        general: {
-                            total: 0,
-                            remain: 0
-                        },
-                        creditMap: {}
-                    };
-                    $.each(data, function (i, item) {
-                        if (item.product_base_id) {
-                            productKeyCredits.creditMap[item.product_base_id] = {
-                                total: item.total,
-                                remain: item.remain
-                            };
-                        } else {
-                            productKeyCredits.general = {
-                                total: item.total,
-                                remain: item.remain
-                            };
-                        }
-                    });
-                    $scope.productKeyCredits = productKeyCredits;
-                    console.log('[productKeyCredits loaded]: ', productKeyCredits);
-
-                    //get product key batches
-                    $.each($scope.productBases, function (i, item) {
-                        setCredit(item, productKeyCredits);
-                        productKeyManageService.getProductKeyBatches(item.id, function (data) {
-                            if (data && data.length) {
-                                $scope.listPanel.productKeyBatches.push({
-                                    productBase: item,
-                                    batches: data
-                                });
+                        var productKeyCredits = {
+                            general: {
+                                total: 0,
+                                remain: 0
+                            },
+                            creditMap: {}
+                        };
+                        $.each(data, function (i, item) {
+                            if (item.product_base_id) {
+                                productKeyCredits.creditMap[item.product_base_id] = {
+                                    total: item.total,
+                                    remain: item.remain
+                                };
+                            }
+                            else {
+                                productKeyCredits.general = {
+                                    total: item.total,
+                                    remain: item.remain
+                                };
                             }
                         });
-                    });
-                });
+                        $scope.productKeyCredits = productKeyCredits;
+                        console.log('[productKeyCredits loaded]: ', productKeyCredits);
+
+                        //get product key batches
+                        $.each($scope.productBases, function (i, item) {
+                            setCredit(item, productKeyCredits);
+                            productKeyManageService.getProductKeyBatches(item.id, function (data) {
+                                if (data && data.length) {
+                                    $scope.listPanel.productKeyBatches.push({
+                                        productBase: item,
+                                        batches: data
+                                    });
+                                }
+                            });
+                        });
+                    }
+                )
+                ;
 
             }
         });
@@ -152,9 +155,14 @@
                     credit.total += productKeyCredits.creditMap[productBase.id].total;
                     credit.remain += productKeyCredits.creditMap[productBase.id].remain;
                 }
+                credit.percentage = (credit.remain * 100 / credit.total) | 0;
             }
         }
 
-    }]);//end of controller
+    }
+    ])
+    ;
+//end of controller
 
-})();
+})
+();
