@@ -67,10 +67,12 @@ public class MessageController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'message:read')")
     public List<Message> getMessages(//@RequestHeader(AUTH_HEADER_NAME) String token,
-                                     @RequestParam(value = "orgid", required = true) String orgId,
+                                     @RequestParam(value = "orgid", required = false) String orgId,
                                      @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        if (orgId == null || orgId.isEmpty()) throw new BadRequestException("OrgId不能为空！");
+        if (orgId == null) {
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
         return dataAPIClient.get("message?orgid={0}&pageIndex={1}&pageSize={2}", new ParameterizedTypeReference<List<Message>>() {
         }, orgId, pageIndex, pageSize);
     }
