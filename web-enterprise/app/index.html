@@ -296,13 +296,14 @@
                                     <ul class="list-group">
                                         <li class="list-header pad-no pad-ver">产品码</li>
                                         <li class="mar-btm">
-                                            <span class="label label-primary pull-right">15%</span>
+                                            <span class="label label-primary pull-right">{{productKeyCreditSum.percentage}}%</span>
 
                                             <p>总可用额度</p>
 
                                             <div class="progress progress-sm">
-                                                <div class="progress-bar progress-bar-primary" style="width: 15%;">
-                                                    <span class="sr-only">15%</span>
+                                                <div class="progress-bar progress-bar-primary"
+                                                     ng-style="{width: productKeyCreditSum.percentage + '%'}">
+                                                    <span class="sr-only">{{productKeyCreditSum.percentage}}%</span>
                                                 </div>
                                             </div>
                                         </li>
