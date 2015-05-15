@@ -15,7 +15,7 @@
     }]);
 
     app.controller("productBaseManageCtrl", ["$scope", "productBaseManageService", function ($scope, productBaseManageService) {
-        $scope.shelfLifeIntervals = {
+        $scope.SHELFLIFE_INTERVALS = {
             "year": "年",
             "month": "月",
             "week": "周",

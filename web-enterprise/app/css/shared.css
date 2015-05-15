@@ -2,7 +2,7 @@
 body {
     /*font-family: "Lucida Grande", "Helvetica Neue", Helvetica, STHeiti, "Microsoft Yahei", "WenQuanYi Micro Hei", Arial, Verdana, sans-serif;*/
     /*font-family: "Microsoft YaHei", "微软雅黑", "Lucida Grande", "Lucida Sans Unicode", 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
-    font-family: "Microsoft YaHei", "Lucida Grande", "Lucida Sans Unicode", 'Open Sans', "WenQuanYi Micro Hei", Arial, sans-serif;
+    font-family: "Microsoft YaHei", "Lucida Grande", "Lucida Sans Unicode", 'Open Sans', "WenQuanYi Micro Hei", Helvetica, Arial, sans-serif;
     font-size: 14px;
 }
 

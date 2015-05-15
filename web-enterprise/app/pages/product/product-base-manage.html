@@ -35,7 +35,7 @@
                     <td>{{pb.name}}</td>
                     <td>{{pb.category ? pb.category.name : '未知'}}</td>
                     <td>{{pb.barcode}}</td>
-                    <td>{{pb.shelfLife + " " + shelfLifeIntervals[pb.shelfLifeInterval]}}</td>
+                    <td>{{pb.shelfLife + " " + SHELFLIFE_INTERVALS[pb.shelfLifeInterval]}}</td>
 
                     <td>{{formatProductKeyTypes(pb.productKeyTypes)}}</td>
                     <td>
@@ -50,7 +50,7 @@
                             </div>
                         </div>
                     </td>
-                    <td>{{pb.comments}}</td>
+                    <td>{{pb.comment}}</td>
                     <td>{{utils.formatDateString(pb.createdDateTime)}}</td>
                 </tr>
                 </tbody>
