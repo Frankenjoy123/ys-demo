@@ -110,6 +110,9 @@
                     if (rejection.config) {
                         endAjax(rejection.config.loading);
                     }
+                    if (rejection.status == 401 && rejection.config.url.indexOf('/api/auth') < 0) {
+                        window.location.href = 'login.html';
+                    }
                     return $q.reject(rejection);
                 }
             };

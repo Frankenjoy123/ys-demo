@@ -1,26 +1,28 @@
-(function(){
-    var app = angular.module("msg",["interceptor"]);
+(function () {
+    var app = angular.module("msg", ["interceptor"]);
 
     app.filter('startFrom', function () {
         return function (input, start) {
-            if (!input || !input.length) { return; }
+            if (!input || !input.length) {
+                return;
+            }
 
             return input.slice(start - 1);
         };
     });
 
-    app.factory("msgService", ["$http", function($http){
+    app.factory("msgService", ["$http", function ($http) {
         return {
-            getInfo: function(org_id, pageIndex, fnSuccess, fnError){
+            getInfo: function (org_id, pageIndex, fnSuccess, fnError) {
                 $http.get("/api/message?orgid=" + org_id + "&&pageIndex=" + pageIndex)
-                    .success(function(data){
+                    .success(function (data) {
                         fnSuccess(data);
                     });
             }
         };
     }]);
 
-    app.controller("msgCtrl", ["$scope", "msgService", function($scope, msgService){
+    app.controller("msgCtrl", ["$scope", "$timeout", "msgService", function ($scope, $timeout, msgService) {
 
         var AngularDataTable = function (data) {
 
@@ -122,14 +124,16 @@
         $scope.totalCounts = 0;
         $scope.itemIndex = 0;
 
-        var getMessageInfo = function (currentPage) {
-            msgService.getInfo($scope.context.account.org_id,currentPage,function(data){
+        function getMessageInfo(currentPage) {
+            msgService.getInfo($scope.context.account.org_id, currentPage, function (data) {
                 $scope.data = data;
                 $scope.dataTable = new AngularDataTable($scope.data);
             });
-        };
+        }
 
-        getMessageInfo(0);
+        $timeout(function () {
+            getMessageInfo(0);
+        }, 1000);
 
     }]);
 })();
