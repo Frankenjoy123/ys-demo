@@ -300,7 +300,7 @@
                             }
                         }
 
-                        $("#proStatus").html("请注意，本产品码已失效" + "<br/>" + "首次扫描时间:" + getShortDateString(firstScan.createdDateTime) + " 地点:" + plocation);
+                        $("#proStatus").html("请注意，本产品码已失效" + "<br/>" + "首次扫描时间:<b>" + getShortDateString(firstScan.createdDateTime) + "</b>" + " 地点:<b>" + plocation + "</b>");
                     }
 
                     $("#scanRecords").html("");
@@ -425,7 +425,7 @@
                     </div>
                     <br/>
                     <div>
-                        <span id="proStatus" style="color: black; overflow:hidden; font-size:15px;" align="center"></span>
+                        <span id="proStatus" align="center"></span>
                     </div>
                 </div>
             </div>
