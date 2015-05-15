@@ -149,7 +149,6 @@
         });
 
         //show welcome message
-
         $timeout(function () {
             $scope.utils.notification('info', '欢迎登陆云溯管理平台');
         }, 3000);

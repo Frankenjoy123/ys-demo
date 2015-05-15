@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by Zhe on 2015/3/5.
- * //Wait for Kaibing to implements it.
+ *
  */
 @RestController
 @RequestMapping("/auth")
