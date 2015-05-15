@@ -232,21 +232,21 @@ public class ScanController {
         if (scanRequestBody.getAppId() != null && !scanRequestBody.getAppId().isEmpty()) {
             scanRecord.setAppId(scanRequestBody.getAppId()); //记录扫描客户端
         } else {
-            scanRecord.setAppId("未知的AppId");
+            scanRecord.setAppId("未知");
         }
         scanRecord.setProductKey(currentProduct.getProductKey());
         scanRecord.setBaseProductId(currentProduct.getProductBaseId());
         if (scanRequestBody.getDetail() != null && !scanRequestBody.getDetail().isEmpty()) {
             scanRecord.setDetail(scanRequestBody.getDetail()); //接受扫描的相关详情
         } else {
-            scanRecord.setDetail("用户扫描验证真伪。");
+            scanRecord.setDetail("匿名用户扫描");
         }
         scanRecord.setLongitude(scanRequestBody.getLongitude());
         scanRecord.setLatitude(scanRequestBody.getLatitude());
         if (scanRequestBody.getLocation() != null && !scanRequestBody.getLocation().isEmpty()) {
             scanRecord.setLocation(scanRequestBody.getLocation());
         } else {
-            scanRecord.setLocation("未公开地址"); //用户选择不公开隐私地址信息
+            scanRecord.setLocation("未公开"); //用户选择不公开隐私地址信息
         }
         return dataAPIClient.post("scan", scanRecord, long.class);
     }
