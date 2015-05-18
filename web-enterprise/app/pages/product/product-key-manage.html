@@ -49,6 +49,7 @@
                                 <option value="20000">20,000</option>
                                 <option value="50000">50,000</option>
                                 <option value="100000">100,000</option>
+                                <option value="100000">200,000</option>
                             </select>
                         </div>
                         <div class="form-group col-xs-4 animated slideInRight"
@@ -88,7 +89,6 @@
                 <table class="table table-hover">
                     <tr>
                         <th style="width: 10%">产品</th>
-                        <th style="width: 10%">ID</th>
                         <th style="width: 10%">数量</th>
                         <th style="width: 25%">产品码类型</th>
                         <th>创建时间</th>
@@ -96,7 +96,6 @@
                     </tr>
                     <tr ng-repeat="b in listPanel.newProductKeyBatches">
                         <td>{{b.productBase.name}}</td>
-                        <td>{{b.id}}</td>
                         <td>{{b.quantity}}</td>
                         <td>
                             {{formatProductKeyTypes(b.productKeyTypes)}}
@@ -127,14 +126,12 @@
                 <div class="panel-body"> <!--panel-collapse collapse in-->
                     <table class="table table-hover">
                         <tr>
-                            <th style="width: 10%">ID</th>
                             <th style="width: 10%">数量</th>
                             <th style="width: 25%">产品码类型</th>
                             <th>创建时间</th>
                             <th style="width: 10%">操作</th>
                         </tr>
                         <tr ng-repeat="b in batch.batches">
-                            <td>{{b.id}}</td>
                             <td>{{b.quantity}}</td>
                             <td>
                                 {{formatProductKeyTypes(b.productKeyTypes)}}

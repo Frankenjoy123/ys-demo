@@ -132,10 +132,10 @@
                                     </a>
                                 </li>
                                 <!--<li>-->
-                                    <!--<a href="">-->
-                                        <!--&lt;!&ndash;<span class="badge badge-danger pull-right">9</span>&ndash;&gt;-->
-                                        <!--<i class="fa fa-envelope fa-fw fa-lg"></i> 消息-->
-                                    <!--</a>-->
+                                <!--<a href="">-->
+                                <!--&lt;!&ndash;<span class="badge badge-danger pull-right">9</span>&ndash;&gt;-->
+                                <!--<i class="fa fa-envelope fa-fw fa-lg"></i> 消息-->
+                                <!--</a>-->
                                 <!--</li>-->
                                 <li>
                                     <a href="#/setting">
@@ -226,7 +226,7 @@
 
                                 <!--Menu list item-->
                                 <li>
-                                    <a href="#dashboard">
+                                    <a href="#/dashboard">
                                         <i class="fa fa-fw fa-dashboard "></i>
                                         <span class="menu-title"><strong>仪表台</strong></span>
                                     </a>
@@ -234,21 +234,15 @@
 
                                 <!--Menu list item-->
                                 <li>
-                                    <a href="">
+                                    <a href="#/product-key-manage">
                                         <i class="fa fa-fw fa-tags"></i>
-                                        <span class="menu-title"><strong>产品</strong></span>
-                                        <i class="arrow"></i>
+                                        <span class="menu-title"><strong>产品码</strong></span>
                                     </a>
-                                    <!--Submenu-->
-                                    <ul class="collapse">
-                                        <li><a href="#/product-base-manage"><strong>产品</strong></a></li>
-                                        <li><a href="#/product-key-manage"><strong>产品码</strong></a></li>
-                                    </ul>
                                 </li>
 
                                 <!--Menu list item-->
                                 <li>
-                                    <a href="#packageManage">
+                                    <a href="#/package-manage">
                                         <i class="fa fa-fw fa-gift"></i>
                                         <span class="menu-title"><strong>包装</strong></span>
                                     </a>
@@ -263,14 +257,15 @@
                                 </li>
 
                                 <!--Menu list item-->
-                                <li>
+                                <li data-menu-group="setting">
                                     <a href="">
                                         <i class="fa fa-fw fa-cogs"></i>
                                         <span class="menu-title"><strong>设置</strong></span>
                                         <i class="arrow"></i>
                                     </a>
                                     <!--Submenu-->
-                                    <ul class="collapse">
+                                    <ul class="collapse" data-menu-group="setting">
+                                        <li><a href="#/product-base-manage">产品</a></li>
                                         <li><a href="#/msg">消息</a></li>
                                         <li><a href="#/account">账号</a></li>
                                         <li><a href="#/setting">密码</a></li>

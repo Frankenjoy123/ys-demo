@@ -45,11 +45,11 @@
             .when('/test', {
                 templateUrl: 'pages/empty.html'
             })
-            .when('/packageManage', {
+            .when('/package-manage', {
                 templateUrl: 'pages/package/packageManage.html',
                 controller: 'packageCtrl'
             })
-            .when('/packageSearch', {
+            .when('/package-search', {
                 templateUrl: 'pages/package/packageSearch.html',
                 controller: 'packageSearchCtrl'
             })
@@ -166,12 +166,41 @@
                 console.log('[get productKeyCreditSum]: ', sum);
             });
 
+            //init menu
+            var menu = {};
+            $('#mainnav').find('#mainnav-menu').find('>li').each(function (i, item) {
+                var $item = $(item);
+                var name = $item.find('>a').attr('href');
+                var menuItem = {$html: $item};
+                name && (menu[name] = menuItem);
+                $item.find('>ul>li').each(function (j, subItem) {
+                    var $subItem = $(subItem);
+                    var subName = $subItem.find('>a').attr('href');
+                    subName && (menu[subName] = {$html: $subItem, parent: menuItem});
+                });
+            });
+            $scope.$on('$routeChangeSuccess', function (angularEvent, current, previous) {
+                var mainnav = $('#mainnav');
+                mainnav.find('li.active-link').removeClass('active-link');
+                mainnav.find('li.active-sub').removeClass('active-sub');
+                var menuItem = menu['#' + current.$$route.originalPath];
+                if (menuItem) {
+                    menuItem.$html.addClass('active-link');
+                    if (menuItem.parent) {
+                        menuItem.parent.$html.addClass('active-sub');
+                        menuItem.$html.parent('ul.collapse').addClass('in');
+                    }
+                }
+            });
+
             //show welcome message
             $timeout(function () {
                 $scope.utils.notification('info', '欢迎登陆云溯管理平台');
             }, 3000);
 
             console.log('[root controller end]');
-        }]);//end of controller
+        }
+    ]);
+//end of controller
 
 })();
