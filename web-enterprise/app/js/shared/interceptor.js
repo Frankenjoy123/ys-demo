@@ -65,8 +65,8 @@
         }
     }
 
-    angular.module("interceptor", ['YUNSOO_CONFIG'])
-        .factory('interceptorTrack', ["$q", "$templateCache", 'YUNSOO_CONFIG', function ($q, $templateCache, YUNSOO_CONFIG) {
+    angular.module("interceptor", ['YUNSOO_CONFIG', 'utils'])
+        .factory('interceptorTrack', ["$q", "$templateCache", 'YUNSOO_CONFIG', 'utils', function ($q, $templateCache, YUNSOO_CONFIG, utils) {
             return {
                 request: function (config) {
                     if ($templateCache && $templateCache.get(config.url)) {
@@ -112,6 +112,8 @@
                     }
                     if (rejection.status == 401 && rejection.config.url.indexOf('/api/auth') < 0) {
                         window.location.href = 'login.html';
+                    } else if (rejection.status >= 500 && rejection.status < 600) {
+                        utils.notification('danger', '服务器错误，请稍后重试');
                     }
                     return $q.reject(rejection);
                 }
