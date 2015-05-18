@@ -13,15 +13,14 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var productKey = '<p th:text="${key}"/>';
-        productKey = productKey.replace("<p>", "");
-        productKey = productKey.replace("</p>", "");
+        var productKey = '<p th:text="${key}"/>'.replace("<p>", "").replace("</p>", "");
+        var appId = '<p th:text="${appId}"/>'.replace("<p>", "").replace("</p>", "");
 
         var postObject = {
             key: productKey,
             deviceCode: '00000-00000-00000-00000',
             location: '未知地址',
-            appId: '2k4d3xp24wpxxcf4myt'
+            appId: appId
         };
 
         var control = navigator.control || {};
