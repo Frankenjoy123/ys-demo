@@ -1,26 +1,26 @@
 (function () {
-    var app = angular.module("productBaseManage", ["interceptor"]);
+    var app = angular.module('root');
 
-    app.factory("productBaseManageService", ["$http", function ($http) {
+    app.factory('productBaseManageService', ['$http', function ($http) {
         return {
             getProductBases: function (fnSuccess) {
-                $http.get("/api/productbase").success(fnSuccess);
+                $http.get('/api/productbase').success(fnSuccess);
                 return this;
             },
             getProductKeyCredits: function (fnSuccess) {
-                $http.get("/api/productkeycredit").success(fnSuccess);
+                $http.get('/api/productkeycredit').success(fnSuccess);
                 return this;
             }
         };
     }]);
 
-    app.controller("productBaseManageCtrl", ["$scope", "productBaseManageService", function ($scope, productBaseManageService) {
+    app.controller('productBaseManageCtrl', ['$scope', 'productBaseManageService', function ($scope, productBaseManageService) {
         $scope.SHELFLIFE_INTERVALS = {
-            "year": "年",
-            "month": "月",
-            "week": "周",
-            "day": "天",
-            "hour": "小时"
+            'year': '年',
+            'month': '月',
+            'week': '周',
+            'day': '天',
+            'hour': '小时'
         };
 
         $scope.formatProductKeyTypes = function (productKeyTypes) {

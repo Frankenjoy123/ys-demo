@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module("productKeyManage", ["interceptor"]);
+    var app = angular.module('root');
 
     app.factory("productKeyManageService", ["$http", function ($http) {
         return {

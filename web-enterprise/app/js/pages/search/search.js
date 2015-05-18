@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module("search", ["interceptor"]);
+    var app = angular.module('root');
 
     app.controller("searchCtrl", ["$scope", function ($scope) {
 

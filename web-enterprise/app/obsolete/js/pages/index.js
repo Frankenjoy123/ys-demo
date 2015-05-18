@@ -31,7 +31,7 @@
                 controller: "productKeyManageCtrl"
             })
             .when('/msg', {
-                templateUrl: "pages/msg/msg.html",
+                templateUrl: "pages/message/message.html",
                 controller: "msgCtrl"
             })
             .when('/test', {

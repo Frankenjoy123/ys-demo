@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module("accountManage", ["interceptor", "dataFilterService"]);
+    var app = angular.module('root');
 
     app.factory("accountManageService", ["$http", function ($http) {
         return {

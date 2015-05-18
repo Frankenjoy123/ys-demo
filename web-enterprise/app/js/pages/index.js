@@ -5,18 +5,8 @@
         'YUNSOO_CONFIG',
         'utils',
         'interceptor',
-        //'head',
-        //'nav',
-        'dashboard',
-        'accountManage',
-        'productBaseManage',
-        'productKeyManage',
-        'msg',
-        'logistics',
-        'logisticsManage',
-        'package',
-        'packageSearch',
-        'setting'
+        'angularFileUpload',
+        'dataFilterService'
     ]);
 
 
@@ -39,9 +29,9 @@
                 templateUrl: 'pages/product/product-key-manage.html',
                 controller: 'productKeyManageCtrl'
             })
-            .when('/msg', {
-                templateUrl: 'pages/msg/msg.html',
-                controller: 'msgCtrl'
+            .when('/message', {
+                templateUrl: 'pages/message/message.html',
+                controller: 'messageCtrl'
             })
             .when('/test', {
                 templateUrl: 'pages/empty.html'
@@ -139,7 +129,8 @@
                 var mainnav = $('#mainnav');
                 mainnav.find('li.active-link').removeClass('active-link');
                 mainnav.find('li.active-sub').removeClass('active-sub');
-                var menuItem = menu['#' + current.$$route.originalPath];
+                var path = current.$$route ? current.$$route.originalPath : '/dashboard';
+                var menuItem = menu['#' + path];
                 if (menuItem) {
                     menuItem.$html.addClass('active-link');
                     if (menuItem.parent) {

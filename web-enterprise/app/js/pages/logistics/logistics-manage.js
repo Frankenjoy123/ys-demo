@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module("logisticsManage", ["interceptor", "angularFileUpload"]);
+    var app = angular.module('root');
 
     app.filter('startFrom', function () {
         return function (input, start) {

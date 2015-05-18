@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module("packageSearch", ["interceptor"]);
+    var app = angular.module('root');
 
     app.factory("packageSearchService", ["$http", function ($http) {
         return {

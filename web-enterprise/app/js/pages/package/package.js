@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module("package", ["interceptor", "angularFileUpload"]);
+    var app = angular.module('root');
 
     app.factory("packageService", ["$http", function ($http) {
         return {

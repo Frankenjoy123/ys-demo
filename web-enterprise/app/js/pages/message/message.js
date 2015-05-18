@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module("msg", ["interceptor"]);
+    var app = angular.module('root');
 
     app.filter('startFrom', function () {
         return function (input, start) {
@@ -11,7 +11,7 @@
         };
     });
 
-    app.factory("msgService", ["$http", function ($http) {
+    app.factory("messageService", ["$http", function ($http) {
         return {
             getInfo: function (org_id, pageIndex, fnSuccess, fnError) {
                 $http.get("/api/message?orgid=" + org_id + "&&pageIndex=" + pageIndex)
@@ -22,7 +22,7 @@
         };
     }]);
 
-    app.controller("msgCtrl", ["$scope", "$timeout", "msgService", function ($scope, $timeout, msgService) {
+    app.controller("messageCtrl", ["$scope", "$timeout", "messageService", function ($scope, $timeout, messageService) {
 
         var AngularDataTable = function (data) {
 
@@ -125,7 +125,7 @@
         $scope.itemIndex = 0;
 
         function getMessageInfo(currentPage) {
-            msgService.getInfo($scope.context.account.org_id, currentPage, function (data) {
+            messageService.getInfo($scope.context.account.org_id, currentPage, function (data) {
                 $scope.data = data;
                 $scope.dataTable = new AngularDataTable($scope.data);
             });

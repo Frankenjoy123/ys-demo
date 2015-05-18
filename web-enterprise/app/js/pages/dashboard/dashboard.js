@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module("dashboard", ["interceptor"]);
+    var app = angular.module('root');
 
     app.factory("dashboardService", ["$http", function ($http) {
         return {};
