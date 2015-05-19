@@ -11,7 +11,6 @@ import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AccountTokenObject;
 import com.yunsoo.common.data.object.OrganizationObject;
-import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
@@ -80,7 +79,7 @@ public class AuthController {
         String password = accountObject.getPassword();
         String hashSalt = accountObject.getHashSalt();
 
-        if (!HashUtils.sha1HexString(rawPassword + hashSalt).equals(password)) {
+        if (!accountDomain.validPassword(rawPassword, hashSalt, password)) {
             throw new UnauthorizedException("Account is not valid");
         }
         //login successfully
