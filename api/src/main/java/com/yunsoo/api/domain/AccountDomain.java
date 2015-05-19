@@ -1,12 +1,14 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -51,13 +53,20 @@ public class AccountDomain {
         return Arrays.asList(accountObjects);
     }
 
+    public AccountObject createAccount(AccountObject accountObject) {
+        accountObject.setId(null);
+        accountObject.setCreatedDateTime(DateTime.now());
+        accountObject.setStatusCode(LookupCodes.AccountStatus.CREATED);
+        return dataAPIClient.post("account", accountObject, AccountObject.class);
+    }
+
     public void updatePassword(String accountId, String rawNewPassword) {
         String hashSalt = RandomUtils.generateString(8);
         String password = hashPassword(rawNewPassword, hashSalt);
         AccountObject accountObject = new AccountObject();
         accountObject.setPassword(password);
         accountObject.setHashSalt(hashSalt);
-        dataAPIClient.patch("{id}", accountObject, accountId);
+        dataAPIClient.patch("account/{id}", accountObject, accountId);
     }
 
     public boolean validPassword(String rawPassword, String hashSalt, String password) {

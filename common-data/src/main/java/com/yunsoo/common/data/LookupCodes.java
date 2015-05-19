@@ -43,6 +43,7 @@ public class LookupCodes {
         private AccountStatus() {
         }
 
+        public static final String CREATED = "created";
         public static final String ACTIVATED = "activated";
         public static final String DEACTIVATED = "deactivated";
     }

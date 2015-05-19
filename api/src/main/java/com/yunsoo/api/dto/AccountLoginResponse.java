@@ -8,7 +8,7 @@ import com.yunsoo.api.dto.basic.Token;
  * Created on  : 2015/4/21
  * Descriptions:
  */
-public class AccountLoginResult {
+public class AccountLoginResponse {
 
     @JsonProperty("permanent_token")
     private Token permanentToken;

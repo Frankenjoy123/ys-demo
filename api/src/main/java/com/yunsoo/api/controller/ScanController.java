@@ -22,12 +22,6 @@ import java.util.List;
  * Created by:   Zhe
  * Created on:   2015/2/27
  * Descriptions:
- * <p>
- * ErrorCode
- * 40001    :   查询码不能为空
- * 40002    :   查询参数UserId不能为空
- * 40401    :   User not found!
- * 40402    :   ProductKey not found!
  */
 
 @RestController

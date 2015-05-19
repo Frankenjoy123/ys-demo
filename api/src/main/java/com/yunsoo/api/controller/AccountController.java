@@ -1,15 +1,19 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountDomain;
-import com.yunsoo.api.dto.AccountPassword;
+import com.yunsoo.api.dto.AccountCreateRequest;
+import com.yunsoo.api.dto.AccountUpdatePasswordRequest;
 import com.yunsoo.api.dto.basic.Account;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,8 +44,26 @@ public class AccountController {
         return toAccount(accountObject);
     }
 
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId) {
+        if (orgId == null) {
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
+        return accountDomain.getByOrgId(orgId).stream().map(this::toAccount).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission(#request.orgId, 'filterByOrg', 'account:create')")
+    public Account create(@Valid @RequestBody AccountCreateRequest request) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        AccountObject accountObject = toAccountObject(request);
+        accountObject.setCreatedAccountId(currentAccountId);
+        return toAccount(accountDomain.createAccount(accountObject));
+    }
+
     @RequestMapping(value = "/current/password", method = RequestMethod.POST)
-    public void updatePassword(@RequestBody AccountPassword accountPassword) {
+    public void updatePassword(@RequestBody AccountUpdatePasswordRequest accountPassword) {
 
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
@@ -63,14 +85,6 @@ public class AccountController {
         accountDomain.updatePassword(currentAccountId, rawNewPassword);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId) {
-        if (orgId == null) {
-            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        }
-        return accountDomain.getByOrgId(orgId).stream().map(this::toAccount).collect(Collectors.toList());
-    }
-
 
     private Account toAccount(AccountObject accountObject) {
         if (accountObject == null) {
@@ -90,6 +104,21 @@ public class AccountController {
         account.setCreatedAccountId(accountObject.getCreatedAccountId());
         account.setCreatedDateTime(accountObject.getCreatedDateTime());
         return account;
+    }
+
+    private AccountObject toAccountObject(AccountCreateRequest request) {
+        if (request == null) {
+            return null;
+        }
+        AccountObject accountObject = new AccountObject();
+        accountObject.setOrgId(request.getOrgId());
+        accountObject.setIdentifier(request.getIdentifier());
+        accountObject.setEmail(request.getEmail());
+        accountObject.setFirstName(request.getFirstName());
+        accountObject.setLastName(request.getLastName());
+        accountObject.setPhone(request.getPhone());
+        accountObject.setPassword(request.getPassword());
+        return accountObject;
     }
 
 }

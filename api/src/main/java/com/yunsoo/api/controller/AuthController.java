@@ -5,7 +5,7 @@ import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.AccountTokenDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.AccountLoginRequest;
-import com.yunsoo.api.dto.AccountLoginResult;
+import com.yunsoo.api.dto.AccountLoginResponse;
 import com.yunsoo.api.dto.basic.Token;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
@@ -43,7 +43,7 @@ public class AuthController {
 
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public AccountLoginResult login(
+    public AccountLoginResponse login(
             @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
             @RequestBody AccountLoginRequest account) {
@@ -87,7 +87,7 @@ public class AuthController {
 
         AccountTokenObject accountTokenObject = accountTokenDomain.create(accountId, appId, deviceId);
 
-        AccountLoginResult result = new AccountLoginResult();
+        AccountLoginResponse result = new AccountLoginResponse();
         result.setPermanentToken(new Token(accountTokenObject.getPermanentToken(), accountTokenObject.getPermanentTokenExpiresDateTime()));
         result.setAccessToken(tokenAuthenticationService.generateAccessToken(accountId, orgId));
         return result;
