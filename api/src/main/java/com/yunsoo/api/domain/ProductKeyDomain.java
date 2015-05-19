@@ -145,11 +145,11 @@ public class ProductKeyDomain {
             return null;
         }
         try {
-            List<String> productKeyTypeCodes = object.getProductKeyTypeCodes();
-            outputStream.write(
-                    StringUtils.collectionToDelimitedString(productKeyTypeCodes, ",")
-                            .getBytes(Charset.forName("UTF-8")));
-            outputStream.write(CR_LF);
+//            List<String> productKeyTypeCodes = object.getProductKeyTypeCodes();
+//            outputStream.write(
+//                    StringUtils.collectionToDelimitedString(productKeyTypeCodes, ",")
+//                            .getBytes(Charset.forName("UTF-8")));
+//            outputStream.write(CR_LF);
             for (List<String> i : object.getProductKeys()) {
                 List<String> ks = i.stream().map(k -> productKeyBaseUrl + k).collect(Collectors.toList());
                 outputStream.write(
