@@ -6,7 +6,5 @@ include 'data-service'
 include 'data-api'
 include 'processor'
 include 'api'
-include 'web-scan'
-include 'setup'
 include 'api-rabbit'
-
+include 'web-scan'

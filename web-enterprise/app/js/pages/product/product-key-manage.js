@@ -4,9 +4,7 @@
     app.factory("productKeyManageService", ["$http", function ($http) {
         return {
             getProductKeyBatches: function (productBaseId, fnSuccess) {
-                $http.get("/api/productkeybatch?productBaseId=" + productBaseId).success(function (data) {
-                    fnSuccess(data);
-                });
+                $http.get("/api/productkeybatch?product_base_id=" + productBaseId).success(fnSuccess);
                 return this;
             },
             getProductBases: function (fnSuccess) {
