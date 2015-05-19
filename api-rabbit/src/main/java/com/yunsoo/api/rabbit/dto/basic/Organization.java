@@ -1,25 +1,39 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.OrganizationObject;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
 
 /**
- * Created by Zhe on 2015/2/27.
+ * Created by  : Zhe
+ * Created on  : 2015/2/27
+ * Descriptions:
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Organization {
-    private Long id;
-    private String name;
-    private String description;
-    private String imageUrl;
-    private String detail;
-    private Integer type;
-    private Integer status;
 
-    public Long getId() {
+    private String id;
+    private String name;
+    private String typeCode;
+    private String statusCode;
+    private String description;
+    private String details;
+    private String createdAccountId;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime createdDateTime;
+
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -31,6 +45,22 @@ public class Organization {
         this.name = name;
     }
 
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -39,35 +69,41 @@ public class Organization {
         this.description = description;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+//    public String getImageUri() {
+//        return imageUri;
+//    }
+//
+//    public void setImageUri(String imageUri) {
+//        this.imageUri = imageUri;
+//    }
+
+    public String getDetails() {
+        return details;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setDetails(String details) {
+        this.details = details;
     }
 
-    public String getDetail() {
-        return detail;
+    public String getCreatedAccountId() {
+        return createdAccountId;
     }
 
-    public void setDetail(String detail) {
-        this.detail = detail;
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
     }
 
-    public Integer getType() {
-        return type;
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
+    public static Organization fromOrganizationObject(OrganizationObject object) {
+        Organization entity = new Organization();
+        BeanUtils.copyProperties(object, entity);
+        return entity;
     }
 }

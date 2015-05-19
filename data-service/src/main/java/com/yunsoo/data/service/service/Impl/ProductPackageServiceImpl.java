@@ -4,7 +4,7 @@ package com.yunsoo.data.service.service.Impl;
 import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dao.ProductDao;
 import com.yunsoo.data.service.dao.ProductPackageDao;
-import com.yunsoo.data.service.dbmodel.ProductPackageModel;
+import com.yunsoo.data.service.dbmodel.dynamodb.ProductPackageModel;
 import com.yunsoo.data.service.service.ProductPackageService;
 import com.yunsoo.data.service.service.contract.PackageBoundContract;
 import com.yunsoo.data.service.service.contract.PackageContract;

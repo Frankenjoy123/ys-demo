@@ -1,4 +1,0 @@
-window.YUNSOO_CONFIG || (window.YUNSOO_CONFIG = {
-    AUTH_COOKIE_NAME: 'YS_ACCESS_TOKEN',
-    HEADER_ACCESS_TOKEN: 'X-YS-AccessToken'
-});

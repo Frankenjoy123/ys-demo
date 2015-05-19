@@ -1,5 +1,6 @@
 package com.yunsoo.data.service.dao.impl;
 
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dao.MessageDao;
 import com.yunsoo.data.service.dbmodel.MessageModel;
@@ -33,8 +34,8 @@ public class MessageDaoImpl implements MessageDao {
     @Qualifier(value = "sessionfactory.read1")
     private SessionFactory readSessionFactory;
 
-    private final String message_deleted = "deleted";
-    private final String message_approved = "approved";
+//    private final String message_deleted = "deleted";
+//    private final String message_approved = "approved";
 
     @Override
     public MessageModel get(long id) {
@@ -48,7 +49,7 @@ public class MessageDaoImpl implements MessageDao {
 //       long result = (long)sessionFactory.getCurrentSession().save(messageModelForPatch);
 //        messageModel.setStatus(dataServiceSetting.getMessage_created_status_id());//always as newly created for newly created newMessage.
         messageModel.setCreatedDateTime(DateTime.now());
-        messageModel.setExpireDateTime(DateTime.now().plusDays(100)); //default 100 days to expire.
+        messageModel.setExpiredDateTime(DateTime.now().plusDays(100)); //default 100 days to expire.
         sessionFactory.getCurrentSession().save(messageModel);
         return messageModel.getId();
     }
@@ -89,7 +90,7 @@ public class MessageDaoImpl implements MessageDao {
     @Override
     public DaoStatus delete(Long id) {
         //find in config file for deleted status
-        return updateStatus(id, message_deleted);
+        return updateStatus(id, LookupCodes.MessageStatus.DELETED);
 //        MyObject myObject = (MyObject) sessionFactory.getCurrentSession().load(MyObject.class,id);
 //        sessionFactory.getCurrentSession().deletePermanantly(myObject);
     }
@@ -113,18 +114,18 @@ public class MessageDaoImpl implements MessageDao {
     }
 
     @Override
-    public List<MessageModel> getMessagesByType(int typeId) {
+    public List<MessageModel> getMessagesByType(String type) {
         Criteria c = readSessionFactory.getCurrentSession().createCriteria(MessageModel.class)
-                .add(Restrictions.eq("type", typeId))
+                .add(Restrictions.eq("type", type))
                 .addOrder(Order.asc("id"));
         return c.list();
     }
 
     @Override
-    public List<MessageModel> getMessagesByFilter(Integer type, String status, String orgId, Boolean ignoreExpireDate, int pageIndex, int pageSize) {
+    public List<MessageModel> getMessagesByFilter(String type, String status, String orgId, Boolean ignoreExpireDate, DateTime postShowtime, int pageIndex, int pageSize) {
         Criteria c = readSessionFactory.getCurrentSession().createCriteria(MessageModel.class);
         if (type != null) {
-            c.add(Restrictions.eq("type", type.intValue()));
+            c.add(Restrictions.eq("type", type));
         }
         if (status != null) {
             c.add(Restrictions.eq("status", status));
@@ -135,6 +136,10 @@ public class MessageDaoImpl implements MessageDao {
         if (!ignoreExpireDate) {
             c.add(Restrictions.gt("expiredDateTime", DateTime.now()));
         }
+        if (postShowtime != null) {
+            c.add(Restrictions.gt("postShowTime", postShowtime));
+        }
+
         c.addOrder(Order.desc("createdDateTime"));
         c.setFirstResult(pageIndex * pageSize);
         c.setMaxResults(pageSize);
@@ -143,8 +148,6 @@ public class MessageDaoImpl implements MessageDao {
 
     @Override
     public List<MessageModel> getUnreadMessages(String orgId, Long lastReadMessageId) {
-        Session session = readSessionFactory.getCurrentSession();
-
         Criteria c = sessionFactory.getCurrentSession().createCriteria(MessageModel.class);
         if (lastReadMessageId != null) {
             c.add(Restrictions.gt("id", lastReadMessageId.longValue()));
@@ -152,7 +155,8 @@ public class MessageDaoImpl implements MessageDao {
         if (orgId != null) {
             c.add(Restrictions.eq("orgId", orgId));
         }
-        c.add(Restrictions.eq("status", message_approved));
+        c.addOrder(Order.desc("createdDateTime"));
+        c.add(Restrictions.eq("status", LookupCodes.MessageStatus.APPROVED));
         c.add(Restrictions.gt("expiredDateTime", DateTime.now()));
 
         return c.list();

@@ -22,13 +22,13 @@ public class ProductBase {
     private String orgId;
     private String barcode;
     private String name;
-    private String description;
-    private String details;
+    private String comment;
     private Integer shelfLife;
     private String shelfLifeInterval;
     private List<String> productKeyTypeCodes;
+    private List<ProductKeyType> productKeyTypes;
     private Integer ChildProductCount;
-    private Boolean active;
+    private String status;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
@@ -86,20 +86,12 @@ public class ProductBase {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getComment() {
+        return comment;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public Integer getShelfLife() {
@@ -126,6 +118,14 @@ public class ProductBase {
         this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
+    public List<ProductKeyType> getProductKeyTypes() {
+        return productKeyTypes;
+    }
+
+    public void setProductKeyTypes(List<ProductKeyType> productKeyTypes) {
+        this.productKeyTypes = productKeyTypes;
+    }
+
     public Integer getChildProductCount() {
         return ChildProductCount;
     }
@@ -134,12 +134,12 @@ public class ProductBase {
         ChildProductCount = childProductCount;
     }
 
-    public Boolean getActive() {
-        return active;
+    public String getStatus() {
+        return status;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public DateTime getCreatedDateTime() {

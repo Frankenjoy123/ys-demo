@@ -2,6 +2,7 @@ package com.yunsoo.data.service.service;
 
 import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.data.service.service.contract.Message;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,9 +28,9 @@ public interface MessageService {
 
     public List<Message> getMessagesByStatus(String status);
 
-    public List<Message> getMessagesByType(int typeId);
+    public List<Message> getMessagesByType(String typeId);
 
-    public List<Message> getMessagesByFilter(Integer type, String status, String orgId, Boolean ignoreExpireDate, int pageIndex, int pageSize);
+    public List<Message> getMessagesByFilter(String type, String status, String orgId, Boolean ignoreExpireDate, DateTime postShowtime, int pageIndex, int pageSize);
 
     public List<Message> getUnreadMessages(String userId, String orgId, Long lastReadMessageId);
 

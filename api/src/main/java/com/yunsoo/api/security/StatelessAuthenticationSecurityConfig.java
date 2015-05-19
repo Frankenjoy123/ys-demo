@@ -1,29 +1,32 @@
 package com.yunsoo.api.security;
 
-import com.yunsoo.api.security.filter.StatelessAuthenticationFilter;
+import com.yunsoo.api.security.filter.TokenAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Created by Zhe on 2015/3/4.
+ * Created by  : Zhe
+ * Created on  : 2015/3/4
+ * Descriptions:
  */
-
 @EnableWebSecurity
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Order(1)
 public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Value("${yunsoo.debug}")
+    private Boolean debug;
 
     @Autowired
     private AccountDetailService accountDetailService;
@@ -37,37 +40,30 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.exceptionHandling().and()
+        http.exceptionHandling().authenticationEntryPoint(new TokenInvalidAuthenticationEntryPoint())
+//                .accessDeniedHandler(new AccessDeniedHandler() {
+//            @Override
+//            public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+//                response.getOutputStream().write(new byte[]{65, 66, 67});
+//            }
+//        })
+                .and()
                 .anonymous().and()
                 .servletApi().and()
                 .headers().cacheControl().and()
                 .authorizeRequests()
 
-                        //allow anonymous resource requests
-                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/").permitAll()
                 .antMatchers("/home/**").permitAll()
+                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
 //                .antMatchers("/favicon.ico").permitAll()
 //                .antMatchers("/resources/**").permitAll()
-               // .antMatchers("/productbase/**").permitAll()
-//                .antMatchers("/scan/**").permitAll()
-//                .antMatchers("/organization/**").permitAll()
                 .anyRequest().authenticated().and()
                 //.antMatchers("/**").permitAll()
 
-                //allow anonymous POSTs to login
-                // .antMatchers(HttpMethod.POST, "/auth/**").permitAll().and()
-
-                //allow anonymous GETs to API
-                // .antMatchers(HttpMethod.GET, "/api/**").permitAll()
-
-                //all other request need to be authenticated
-//               .anyRequest().hasRole("COM_USER").and()
-
-                // custom JSON based authentication by POST of {"username":"<name>","password":"<password>"} which sets the token header upon authentication
-                //.addFilterBefore(new StatelessLoginFilter("/auth/login", tokenAuthenticationService, accountDetailService, authenticationManager()), UsernamePasswordAuthenticationFilter.class)
-
                 // custom Token based authentication based on the header previously given to the client
-                .addFilterBefore(new StatelessAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new TokenAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
@@ -78,7 +74,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(accountDetailService).passwordEncoder(new BCryptPasswordEncoder());
+        auth.userDetailsService(accountDetailService);
     }
 
     @Override

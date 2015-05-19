@@ -4,6 +4,11 @@ server:
 multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
+hibernate:
+    dialect: org.hibernate.dialect.MySQL5Dialect
+    show_sql: true
+    hbm2ddl_auto: none
+
 spring:
     profiles.active: default
 ---
@@ -19,6 +24,7 @@ logging:
         org.hibernate: 'ERROR'
 yunsoo:
     debug: true
+    environment: dev
 
 AmazonSettings:
     s3_basebucket:  yunsudev
@@ -54,13 +60,14 @@ management:
     address: 127.0.0.1
 
 logging:
-    path: /var/logs
+    path: /var/log
     file: yunsoo-data-api.log
     level:
         org.springframework: 'INFO'
         org.hibernate: 'INFO'
 yunsoo:
     debug: false
+    environment: test
 
 AmazonSettings:
     s3_basebucket:  yunsudev

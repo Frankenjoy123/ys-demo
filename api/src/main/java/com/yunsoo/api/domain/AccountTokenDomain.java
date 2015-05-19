@@ -38,7 +38,7 @@ public class AccountTokenDomain {
     public AccountTokenObject create(String accountId, String appId, String deviceId) {
         DateTime now = DateTime.now();
         DateTime expires = now.plusMinutes(permanent_token_expires_minutes);
-        String permanentToken = HashUtils.sha1(UUID.randomUUID().toString()); //random sha1
+        String permanentToken = HashUtils.sha1HexString(UUID.randomUUID().toString()); //random sha1
         AccountTokenObject accountTokenObject = new AccountTokenObject();
         accountTokenObject.setAccountId(accountId);
         accountTokenObject.setAppId(appId);

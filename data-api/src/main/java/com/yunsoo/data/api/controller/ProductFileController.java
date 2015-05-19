@@ -25,28 +25,29 @@ public class ProductFileController {
     @Autowired
     ProductFileRepository productFileRepository;
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public Long create(@RequestBody ProductFileObject productFileObject) {
 
         ProductFileEntity entity = new ProductFileEntity();
         BeanUtils.copyProperties(productFileObject, entity);
 
-        ProductFileEntity newEntity = productFileRepository.save(entity);
+        ProductFileEntity newEntity = productFileRepository.saveAndFlush(entity);
         return newEntity.getId();
     }
 
-    @RequestMapping(value = "/createby/{createby}/status/{status}/filetype/{filetype}/page/{page}", method = RequestMethod.GET)
-      public List<ProductFileObject> get(@PathVariable(value = "createby") String createby,
-                                         @PathVariable(value = "status") Integer status,
-                                         @PathVariable(value = "filetype") Integer filetype,
-                                         @PathVariable(value = "page") Integer page) {
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<ProductFileObject> get(@RequestParam(value = "createby", required = true) String createby,
+                                       @RequestParam(value = "status", required = false, defaultValue = "0") Integer status,
+                                       @RequestParam(value = "filetype", required = false, defaultValue = "0") Integer filetype,
+                                       @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
+                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
         Iterable<ProductFileEntity> entityList = null;
         if (status == 0)
-            entityList = productFileRepository.findByCreateByAndFileTypeOrderByCreateDateDesc(createby, filetype, new PageRequest(page, 10));
+            entityList = productFileRepository.findByCreateByAndFileTypeOrderByCreateDateDesc(createby, filetype, new PageRequest(pageIndex, pageSize));
         else
-            entityList = productFileRepository.findByCreateByAndStatusAndFileTypeOrderByCreateDateDesc(createby, status, filetype, new PageRequest(page, 10));
+            entityList = productFileRepository.findByCreateByAndStatusAndFileTypeOrderByCreateDateDesc(createby, status, filetype, new PageRequest(pageIndex, pageSize));
 
         if (entityList == null) {
             throw new NotFoundException("ProductFile");
@@ -62,10 +63,10 @@ public class ProductFileController {
         return productFileObjects;
     }
 
-    @RequestMapping(value = "/countby/createby/{createby}/status/{status}/filetype/{filetype}", method = RequestMethod.GET)
-    public Long getCount(@PathVariable(value = "createby") String createby,
-                                       @PathVariable(value = "status") Integer status,
-                                       @PathVariable(value = "filetype") Integer filetype) {
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public Long getCount(@RequestParam(value = "createby", required = true) String createby,
+                         @RequestParam(value = "status", required = false, defaultValue = "0") Integer status,
+                         @RequestParam(value = "filetype", required = false, defaultValue = "0") Integer filetype) {
 
         Long count = 0l;
 

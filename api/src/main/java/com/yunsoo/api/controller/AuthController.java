@@ -1,15 +1,16 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.AccountTokenDomain;
+import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.AccountLoginRequest;
-import com.yunsoo.api.dto.AccountLoginResult;
-import com.yunsoo.api.dto.basic.Account;
+import com.yunsoo.api.dto.AccountLoginResponse;
 import com.yunsoo.api.dto.basic.Token;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AccountTokenObject;
-import com.yunsoo.common.util.HashUtils;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
@@ -30,6 +31,9 @@ public class AuthController {
     private AccountDomain accountDomain;
 
     @Autowired
+    private OrganizationDomain organizationDomain;
+
+    @Autowired
     private AccountTokenDomain accountTokenDomain;
 
     @Autowired
@@ -39,16 +43,32 @@ public class AuthController {
 
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public AccountLoginResult login(
-            @RequestHeader("X-YS-AppId") String appId,
-            @RequestHeader(value = "X-YS-DeviceId", required = false) String deviceId,
+    public AccountLoginResponse login(
+            @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
+            @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
             @RequestBody AccountLoginRequest account) {
-        if (account.getAccountId() == null && (account.getOrgId() == null || account.getIdentifier() == null)) {
+        if (account.getAccountId() == null && (account.getOrganization() == null || account.getIdentifier() == null)) {
             throw new BadRequestException("Account is not valid");
         }
-        AccountObject accountObject = account.getAccountId() != null
-                ? accountDomain.getById(account.getAccountId())
-                : accountDomain.getByOrgIdAndIdentifier(account.getOrgId(), account.getIdentifier());
+
+        AccountObject accountObject;
+        if (account.getAccountId() != null) {
+            accountObject = accountDomain.getById(account.getAccountId().trim());
+        } else {
+            String org = account.getOrganization().trim();
+            OrganizationObject orgObject = null;
+            if (org.length() == 19) {
+                orgObject = organizationDomain.getOrganizationById(org);
+            }
+            if (orgObject == null) {
+                orgObject = organizationDomain.getOrganizationByName(org);
+            }
+            if (orgObject == null) {
+                throw new UnauthorizedException("Account is not valid");
+            }
+            accountObject = accountDomain.getByOrgIdAndIdentifier(orgObject.getId(), account.getIdentifier().trim());
+        }
+
         if (accountObject == null) {
             throw new UnauthorizedException("Account is not valid");
         }
@@ -59,7 +79,7 @@ public class AuthController {
         String password = accountObject.getPassword();
         String hashSalt = accountObject.getHashSalt();
 
-        if (!HashUtils.sha1(rawPassword + hashSalt).equals(password)) {
+        if (!accountDomain.validPassword(rawPassword, hashSalt, password)) {
             throw new UnauthorizedException("Account is not valid");
         }
         //login successfully
@@ -67,9 +87,9 @@ public class AuthController {
 
         AccountTokenObject accountTokenObject = accountTokenDomain.create(accountId, appId, deviceId);
 
-        AccountLoginResult result = new AccountLoginResult();
+        AccountLoginResponse result = new AccountLoginResponse();
         result.setPermanentToken(new Token(accountTokenObject.getPermanentToken(), accountTokenObject.getPermanentTokenExpiresDateTime()));
-        result.setAccessToken(tokenAuthenticationService.generateAccessToken(accountId));
+        result.setAccessToken(tokenAuthenticationService.generateAccessToken(accountId, orgId));
         return result;
     }
 
@@ -79,19 +99,16 @@ public class AuthController {
         if (accountTokenObject == null || accountTokenObject.getPermanentTokenExpiresDateTime().isBeforeNow()) {
             throw new UnauthorizedException("permanent_token invalid");
         }
+        String accountId = accountTokenObject.getAccountId();
+        AccountObject accountObject = accountDomain.getById(accountId);
+        String orgId = accountObject.getOrgId();
 
-        Token accessToken = tokenAuthenticationService.generateAccessToken(accountTokenObject.getAccountId());
+        Token accessToken = tokenAuthenticationService.generateAccessToken(accountId, orgId);
 
         LOGGER.info("AccessToken refreshed for Account [id: {}]", accountTokenObject.getAccountId());
 
         return accessToken;
     }
 
-    public Account getCurrentAccount() {
-        //        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication instanceof AccountAuthentication) {
-//            return ((AccountAuthentication) authentication).getDetails();
-//        }
-        return null;
-    }
+
 }

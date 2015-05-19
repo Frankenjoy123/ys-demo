@@ -11,6 +11,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -21,12 +22,6 @@ import java.util.List;
  * Created by:   Zhe
  * Created on:   2015/2/27
  * Descriptions:
- * <p>
- * ErrorCode
- * 40001    :   查询码不能为空
- * 40002    :   查询参数UserId不能为空
- * 40401    :   User not found!
- * 40402    :   ProductKey not found!
  */
 
 @RestController
@@ -44,7 +39,8 @@ public class ScanController {
 
 
     //仅仅能够访问属于特定组织的Key
-    @RequestMapping(value = "/web/{orgid}/{key}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{orgid}/{key}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'scan:read')")
     public ScanResultWeb getDetailForWebByKey(@PathVariable(value = "orgid") String orgid,
                                               @PathVariable(value = "key") String key) {
 

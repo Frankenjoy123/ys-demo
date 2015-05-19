@@ -58,9 +58,9 @@ public class UserController {
         return users.get(0);
     }
 
-    @RequestMapping(value = "/thumbnail/{id}/{key}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{key}", method = RequestMethod.GET)
     public ResponseEntity getThumbnail(
-            @PathVariable(value = "id") Long id,
+            @PathVariable(value = "id") String id,
             @PathVariable(value = "key") String key) {
 
         if (key == null || key.isEmpty()) throw new BadRequestException("Key不能为空！");
@@ -71,7 +71,7 @@ public class UserController {
 
             FileObject fileObject = new FileObject();
             fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
-            fileObject.setThumbnailData(IOUtils.toByteArray(s3Object.getObjectContent()));
+            fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
             fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
             return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
 

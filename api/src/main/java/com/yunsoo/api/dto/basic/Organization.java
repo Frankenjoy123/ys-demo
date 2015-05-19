@@ -1,25 +1,56 @@
 package com.yunsoo.api.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.joda.time.DateTime;
 
 /**
- * Created by Zhe on 2015/2/27.
+ * Created by  : Zhe
+ * Created on  : 2015/2/27
+ * Descriptions:
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Organization {
-    private Long id;
-    private String name;
-    private String description;
-    private String imageUrl;
-    private String detail;
-    private Integer type;
-    private Integer status;
 
-    public Long getId() {
+    @JsonProperty("id")
+    private String id;
+
+    @JsonProperty("name")
+    private String name;
+
+    @JsonProperty("type_code")
+    private String typeCode;
+
+    @JsonProperty("status_code")
+    private String statusCode;
+
+    @JsonProperty("description")
+    private String description;
+
+//    @JsonProperty("image_uri")
+//    private String imageUri;
+
+    @JsonProperty("details")
+    private String details;
+
+    @JsonProperty("created_account_id")
+    private String createdAccountId;
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
+    private DateTime createdDateTime;
+
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -31,6 +62,22 @@ public class Organization {
         this.name = name;
     }
 
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -39,35 +86,27 @@ public class Organization {
         this.description = description;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getDetails() {
+        return details;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setDetails(String details) {
+        this.details = details;
     }
 
-    public String getDetail() {
-        return detail;
+    public String getCreatedAccountId() {
+        return createdAccountId;
     }
 
-    public void setDetail(String detail) {
-        this.detail = detail;
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
     }
 
-    public Integer getType() {
-        return type;
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 }

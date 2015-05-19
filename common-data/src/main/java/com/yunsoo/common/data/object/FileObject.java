@@ -5,18 +5,18 @@ package com.yunsoo.common.data.object;
  * Created by Zhe on 2015/3/2.
  */
 public class FileObject {
-    private byte[] thumbnailData;
+    private byte[] data;
     private String name;
     private String suffix;
     private String contentType;
     private Long length;
 
-    public byte[] getThumbnailData() {
-        return thumbnailData;
+    public byte[] getData() {
+        return data;
     }
 
-    public void setThumbnailData(byte[] thumbnailData) {
-        this.thumbnailData = thumbnailData;
+    public void setData(byte[] data) {
+        this.data = data;
     }
 
     public String getName() {

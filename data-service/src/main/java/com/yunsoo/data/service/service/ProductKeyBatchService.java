@@ -14,13 +14,13 @@ public interface ProductKeyBatchService {
 
     ProductKeyBatch getById(String batchId);
 
-    List<ProductKeyBatch> getByOrganizationIdPaged(String orgId, int pageIndex, int pageSize);
+    List<ProductKeyBatch> getByFilterPaged(String orgId, int pageIndex, int pageSize);
 
     List<ProductKeyBatch> getByFilterPaged(String orgId, String productBaseId, int pageIndex, int pageSize);
 
     ProductKeys getProductKeysByBatchId(String batchId);
 
-    ProductKeys getProductKeysByUri(String uri);
-
     ProductKeyBatch create(ProductKeyBatch batch);
+
+    void patchUpdate(ProductKeyBatch batch);
 }

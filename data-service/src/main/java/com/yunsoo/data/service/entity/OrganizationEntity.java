@@ -33,8 +33,8 @@ public class OrganizationEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "image_uri")
-    private String imageUri;
+//    @Column(name = "image_uri")
+//    private String imageUri;
 
     @Column(name = "details")
     private String details;
@@ -84,14 +84,6 @@ public class OrganizationEntity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getImageUri() {
-        return imageUri;
-    }
-
-    public void setImageUri(String imageUri) {
-        this.imageUri = imageUri;
     }
 
     public String getDetails() {

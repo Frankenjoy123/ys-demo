@@ -34,6 +34,10 @@ public class UserLikedProductEntity {
     @Column(name = "location")
     private String location;
 
+    @Column(name = "last_update_time", nullable = true)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedDateTime;
+
     public Long getId() {
         return id;
     }
@@ -80,6 +84,14 @@ public class UserLikedProductEntity {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public DateTime getLastUpdatedDateTime() {
+        return lastUpdatedDateTime;
+    }
+
+    public void setLastUpdatedDateTime(DateTime lastUpdatedDateTime) {
+        this.lastUpdatedDateTime = lastUpdatedDateTime;
     }
 
     public UserLikedProductEntity() {

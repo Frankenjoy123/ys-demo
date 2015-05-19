@@ -5,18 +5,19 @@ package com.yunsoo.api.rabbit.dto.basic;
  */
 public class UserLikedProduct {
 
-    private Integer id;
+    private Long id;
     private String userId;
     private String baseProductId;
     private Boolean active;
     private String createdDateTime;
     private String location;
+    private String lastUpdatedDateTime;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -60,4 +61,11 @@ public class UserLikedProduct {
         this.location = location;
     }
 
+    public String getLastUpdatedDateTime() {
+        return lastUpdatedDateTime;
+    }
+
+    public void setLastUpdatedDateTime(String lastUpdatedDateTime) {
+        this.lastUpdatedDateTime = lastUpdatedDateTime;
+    }
 }

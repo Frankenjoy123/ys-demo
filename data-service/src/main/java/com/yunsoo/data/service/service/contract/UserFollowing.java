@@ -16,10 +16,10 @@ import java.util.List;
  */
 public class UserFollowing {
 
-    private long id;
+    private Long id;
     private String userId;
     private String organizationId;
-    private long lastReadMessageId;
+    private Long lastReadMessageId;
     private Boolean isFollowing;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -28,11 +28,11 @@ public class UserFollowing {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime lastUpdatedDateTime;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -52,11 +52,11 @@ public class UserFollowing {
         this.organizationId = organizationId;
     }
 
-    public long getLastReadMessageId() {
+    public Long getLastReadMessageId() {
         return lastReadMessageId;
     }
 
-    public void setLastReadMessageId(long lastReadMessageId) {
+    public void setLastReadMessageId(Long lastReadMessageId) {
         this.lastReadMessageId = lastReadMessageId;
     }
 
@@ -88,9 +88,9 @@ public class UserFollowing {
         if (userFollowing == null) return null;
 
         UserFollowingEntity entity = new UserFollowingEntity();
-        BeanUtils.copyProperties(userFollowing, entity, new String[]{"createdDateTime", "id"});
-//        if (userLikedProduct.getId() != null && userLikedProduct.getId() != 0) {
-//            entity.setId(userLikedProduct.getId());
+        BeanUtils.copyProperties(userFollowing, entity, new String[]{"createdDateTime"});
+//        if (userFollowing.getId() != null && userFollowing.getId() != 0) {
+//            entity.setId(userFollowing.getId());
 //        }
         if (userFollowing.getCreatedDateTime() != null) {
             entity.setCreatedDateTime(userFollowing.getCreatedDateTime());

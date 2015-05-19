@@ -11,10 +11,7 @@ import java.util.Set;
 public class TAccount implements UserDetails {
     private String id;
     private String orgId;
-    private String username;
-    private String password;
-    private TAccountStatusEnum status;
-    private Long expires;
+    private TAccountStatusEnum status = TAccountStatusEnum.UNDEFINED;
     private Set<TAccountAuthority> authorities;
 
     public TAccount() {
@@ -31,21 +28,14 @@ public class TAccount implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return id;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public boolean isDefined() {
         return !(status == TAccountStatusEnum.UNDEFINED);
@@ -57,6 +47,10 @@ public class TAccount implements UserDetails {
 
     public boolean isCredentialsInvalid() {
         return status == TAccountStatusEnum.INVALID_TOKEN;
+    }
+
+    public boolean isTokenExpired() {
+        return status == TAccountStatusEnum.TOKEN_EXPIRED;
     }
 
     @Override
@@ -101,14 +95,6 @@ public class TAccount implements UserDetails {
 
     public void setStatus(int status) {
         this.status = TAccountStatusEnum.valueOf(status);
-    }
-
-    public Long getExpires() {
-        return expires;
-    }
-
-    public void setExpires(Long expired) {
-        this.expires = expired;
     }
 
 }

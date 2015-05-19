@@ -1,7 +1,7 @@
 package com.yunsoo.data.service.dao.impl;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.yunsoo.data.service.dbmodel.ProductPackageModel;
+import com.yunsoo.data.service.dbmodel.dynamodb.ProductPackageModel;
 import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dao.ProductPackageDao;
 

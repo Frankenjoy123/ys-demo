@@ -23,8 +23,13 @@ public class TAccountToken {
     private String accessToken;
 
 
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Integer getStatus() { return status; }
     public void setStatus(Integer status) { this.status = status; }

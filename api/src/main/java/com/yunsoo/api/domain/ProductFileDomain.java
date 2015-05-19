@@ -15,6 +15,6 @@ public class ProductFileDomain {
     private RestClient dataAPIClient;
 
     public void createProductFile(ProductFileObject productFileObject) {
-        dataAPIClient.post("productfile/", productFileObject, Long.class);
+        dataAPIClient.post("productfile", productFileObject, Long.class);
     }
 }

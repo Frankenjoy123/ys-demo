@@ -5,6 +5,8 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.service.ProductKeyBatchService;
 import com.yunsoo.data.service.service.contract.ProductKeyBatch;
 import com.yunsoo.data.service.service.contract.ProductKeys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/productkeybatch")
 public class ProductKeyBatchController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductKeyBatchController.class);
 
     @Autowired
     private ProductKeyBatchService productKeyBatchService;
@@ -45,7 +49,7 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyBatchObject> getByFilter(@RequestParam(value = "orgId") String orgId,
-                                                   @RequestParam(value = "productBaseId") String productBaseId,
+                                                   @RequestParam(value = "productBaseId", required = false) String productBaseId,
                                                    @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
                                                    @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         if (pageIndex == null || pageIndex < 0) {
@@ -54,30 +58,51 @@ public class ProductKeyBatchController {
         if (pageSize == null || pageSize > 1000) {
             pageSize = 1000;
         }
-        return productKeyBatchService.getByFilterPaged(orgId, productBaseId, pageIndex, pageSize).stream()
-                .map(this::toProductKeyBatchObject)
-                .collect(Collectors.toList());
+        if (productBaseId == null) {
+            return productKeyBatchService.getByFilterPaged(orgId, pageIndex, pageSize).stream()
+                    .map(this::toProductKeyBatchObject)
+                    .collect(Collectors.toList());
+        } else {
+            String pId = productBaseId.toLowerCase().equals("null") ? null : productBaseId;
+            return productKeyBatchService.getByFilterPaged(orgId, pId, pageIndex, pageSize).stream()
+                    .map(this::toProductKeyBatchObject)
+                    .collect(Collectors.toList());
+        }
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ProductKeyBatchObject create(@RequestBody ProductKeyBatchObject batchObj) {
-        ProductKeyBatch batch = new ProductKeyBatch();
-        batch.setQuantity(batchObj.getQuantity());
-        batch.setStatusCode(batchObj.getStatusCode());
-        batch.setOrgId(batchObj.getOrgId());
-        batch.setProductBaseId(batchObj.getProductBaseId());
-        batch.setCreatedAppId(batchObj.getCreatedAppId());
-        batch.setCreatedAccountId(batchObj.getCreatedAccountId());
-        batch.setCreatedDateTime(batchObj.getCreatedDateTime());
-        batch.setProductKeyTypeCodes(batchObj.getProductKeyTypeCodes());
+        ProductKeyBatch batch = toProductKeyBatch(batchObj);
+        batch.setId(null);
 
+        LOGGER.info("ProductKeyBatch creating started [quantity: {}]", batch.getQuantity());
         ProductKeyBatch newBatch = productKeyBatchService.create(batch);
+        LOGGER.info("ProductKeyBatch created [id: {}, quantity: {}]", newBatch.getId(), newBatch.getQuantity());
 
         return toProductKeyBatchObject(newBatch);
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public void patchUpdate(@PathVariable(value = "id") String id, @RequestBody ProductKeyBatchObject batchObj) {
+        ProductKeyBatch batch = productKeyBatchService.getById(id);
+        if (batch == null) {
+            throw new NotFoundException("ProductKeyBatch not found by [id: " + id + "]");
+        }
+        batch.setId(id);
+        if (batchObj.getProductBaseId() != null) {
+            batch.setProductBaseId(batchObj.getProductBaseId());
+        }
+        if (batchObj.getStatusCode() != null) {
+            batch.setStatusCode(batchObj.getStatusCode());
+        }
+        productKeyBatchService.patchUpdate(batch);
+    }
+
 
     private ProductKeyBatchObject toProductKeyBatchObject(ProductKeyBatch batch) {
+        if (batch == null) {
+            return null;
+        }
         ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
         batchObj.setId(batch.getId());
         batchObj.setQuantity(batch.getQuantity());
@@ -88,7 +113,23 @@ public class ProductKeyBatchController {
         batchObj.setCreatedAccountId(batch.getCreatedAccountId());
         batchObj.setCreatedDateTime(batch.getCreatedDateTime());
         batchObj.setProductKeyTypeCodes(batch.getProductKeyTypeCodes());
-        batchObj.setProductKeysUri(batch.getProductKeysUri());
         return batchObj;
+    }
+
+    private ProductKeyBatch toProductKeyBatch(ProductKeyBatchObject batchObj) {
+        if (batchObj == null) {
+            return null;
+        }
+        ProductKeyBatch batch = new ProductKeyBatch();
+        batch.setId(batchObj.getId());
+        batch.setQuantity(batchObj.getQuantity());
+        batch.setStatusCode(batchObj.getStatusCode());
+        batch.setOrgId(batchObj.getOrgId());
+        batch.setProductBaseId(batchObj.getProductBaseId());
+        batch.setCreatedAppId(batchObj.getCreatedAppId());
+        batch.setCreatedAccountId(batchObj.getCreatedAccountId());
+        batch.setCreatedDateTime(batchObj.getCreatedDateTime());
+        batch.setProductKeyTypeCodes(batchObj.getProductKeyTypeCodes());
+        return batch;
     }
 }

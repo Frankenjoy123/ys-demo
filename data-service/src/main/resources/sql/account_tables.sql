@@ -21,6 +21,8 @@ CREATE UNIQUE INDEX org_id_identifier ON account (org_id, identifier);
 INSERT INTO account (id, org_id, identifier, status_code, first_name, last_name, email, phone, password, hash_salt, created_account_id)
 VALUES ('2k0rahgcybh0l5uxtep', '2k0r1l55i2rs5544wz5', 'admin', 'available', '序猿', '程', 'it@yunsu.co', '1234567890',
         '9c35409589f9c52269cf6d7b4cfdd44c792da4f9', '5L0t6ltM', '2k0rahgcybh0l5uxtep');
+INSERT INTO `yunsoo2015DB`.`account` (`id`, `org_id`, `identifier`, `status_code`, `first_name`, `last_name`, `email`, `phone`, `password`, `hash_salt`, `created_account_id`, `created_datetime`)
+VALUES ('2k0rahgc0089l98ki64', '2k0r487o60akld83lsd2', 'admin', 'available', '某某', '王', 'goodl@yunsu.co', '88090435', '9c35409589f9c52269cf6d7b4cfdd44c792da4f9', '5L0t6ltM', '2k0rahgcybh0l5uxtep', '2015-04-22 06:57:26');
 
 
 #account_permission

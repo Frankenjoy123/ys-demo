@@ -4,6 +4,8 @@ import com.yunsoo.api.rabbit.dto.LogisticsPath;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,8 @@ public class LogisticsDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LogisticsDomain.class);
 
     public List<LogisticsPath> getLogisticsPathsOrderByStartDate(String key) {
         List<LogisticsPath> logisticsPaths = new ArrayList<LogisticsPath>();
@@ -37,19 +41,36 @@ public class LogisticsDomain {
             logisticsPath.setStartDate(path.getStartDate());
 
             if (path.getAction_id() != null) {
-                LogisticsCheckActionObject actionObject = dataAPIClient.get("logisticscheckaction/id/{id}", LogisticsCheckActionObject.class, path.getAction_id());
-                logisticsPath.setActionObject(actionObject);
+                try {
+                    LogisticsCheckActionObject actionObject = dataAPIClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, path.getAction_id());
+                    logisticsPath.setActionObject(actionObject);
+                } catch (Exception ex) {
+                    logisticsPath.setActionObject(null);
+                    LOGGER.error("getLogisticsPathsOrderByStartDate error", ex);
+                }
             } else {
                 logisticsPath.setActionObject(null);
             }
 
             if (path.getStartCheckPoint() != null) {
-                LogisticsCheckPointObject startPointObject = dataAPIClient.get("logisticscheckpoint/id/{id}", LogisticsCheckPointObject.class, path.getStartCheckPoint());
-                logisticsPath.setStartCheckPointObject(startPointObject);
+                LogisticsCheckPointObject startPointObject = null;
+                try {
+                    startPointObject = dataAPIClient.get("logisticscheckpoint/{id}", LogisticsCheckPointObject.class, path.getStartCheckPoint());
+                    logisticsPath.setStartCheckPointObject(startPointObject);
+                } catch (Exception ex) {
+                    logisticsPath.setStartCheckPointObject(null);
+                    LOGGER.error("getLogisticsPathsOrderByStartDate error", ex);
+                }
 
                 if (startPointObject != null) {
-                    OrganizationObject startPointOrgObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, startPointObject.getOrgId());
-                    logisticsPath.setStartCheckPointOrgObject(startPointOrgObject);
+                    try {
+                        OrganizationObject startPointOrgObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, startPointObject.getOrgId());
+                        logisticsPath.setStartCheckPointOrgObject(startPointOrgObject);
+                    }
+                    catch (Exception ex) {
+                        logisticsPath.setStartCheckPointOrgObject(null);
+                        LOGGER.error("getLogisticsPathsOrderByStartDate error", ex);
+                    }
                 } else {
                     logisticsPath.setStartCheckPointOrgObject(null);
                 }
@@ -58,8 +79,14 @@ public class LogisticsDomain {
             }
 
             if (path.getEndCheckPoint() != null) {
-                LogisticsCheckPointObject endPointObject = dataAPIClient.get("logisticscheckpoint/id/{id}", LogisticsCheckPointObject.class, path.getEndCheckPoint());
-                logisticsPath.setEndCheckPointObject(endPointObject);
+                try {
+                    LogisticsCheckPointObject endPointObject = dataAPIClient.get("logisticscheckpoint/{id}", LogisticsCheckPointObject.class, path.getEndCheckPoint());
+                    logisticsPath.setEndCheckPointObject(endPointObject);
+                }
+                catch (Exception ex) {
+                    logisticsPath.setEndCheckPointObject(null);
+                    LOGGER.error("getLogisticsPathsOrderByStartDate error", ex);
+                }
             } else {
                 logisticsPath.setEndCheckPointObject(null);
             }

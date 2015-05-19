@@ -16,9 +16,6 @@ import java.util.Properties;
 
 // Needed by Spring to add this class to the ApplicationContext's configuration
 @Configuration
-//@ComponentScan(basePackages = {"com.yunsoo.data.service.config"})
-// Property file in which are written the MySQL connection properties
-//@PropertySource("classpath:jdbc.properties")
 public class DALRead1Config {
 
     @Autowired

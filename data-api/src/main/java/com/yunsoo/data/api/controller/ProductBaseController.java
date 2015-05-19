@@ -3,6 +3,7 @@ package com.yunsoo.data.api.controller;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -11,6 +12,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.service.ProductBaseService;
 import com.yunsoo.data.service.service.contract.ProductBase;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,7 +48,7 @@ public class ProductBaseController {
         return productBaseObject;
     }
 
-    @RequestMapping(value = "/thumbnail/{id}/{client}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{client}", method = RequestMethod.GET)
     public ResponseEntity getThumbnail(
             @PathVariable(value = "id") String id,
             @PathVariable(value = "client") String client) {
@@ -54,15 +56,14 @@ public class ProductBaseController {
         if (client == null || client.isEmpty()) throw new BadRequestException("client不能为空！");
         S3Object s3Object;
         try {
-            s3Object = productBaseService.getProductThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_productbaseurl() + "/" + id + "/" + client);
+            s3Object = productBaseService.getProductS3Object(amazonSetting.getS3_basebucket(), amazonSetting.getS3_productbaseurl() + "/" + id + "/" + client);
             if (s3Object == null) {
-                //throw new NotFoundException(40402, "找不到图片 id = " + id +"  client = " + client);
-                s3Object = productBaseService.getProductThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_product_default_image_url());
+                s3Object = productBaseService.getProductS3Object(amazonSetting.getS3_basebucket(), amazonSetting.getS3_product_default_image_url());
             }
 
             FileObject fileObject = new FileObject();
             fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
-            fileObject.setThumbnailData(IOUtils.toByteArray(s3Object.getObjectContent()));
+            fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
             fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
             return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
 
@@ -77,12 +78,42 @@ public class ProductBaseController {
         }
     }
 
+    @RequestMapping(value = "/{id}/{key}/json", method = RequestMethod.GET)
+    public ResponseEntity getNotes(
+            @PathVariable(value = "id") String id,
+            @PathVariable(value = "key") String key) {
+        if (id == null || id.isEmpty()) throw new BadRequestException("ID不能为空！");
+        if (key == null || key.isEmpty()) throw new BadRequestException("key不能为空！");
+        S3Object s3Object;
+        try {
+            s3Object = productBaseService.getProductS3Object(amazonSetting.getS3_basebucket(), amazonSetting.getS3_productbaseurl() + "/" + id + "/" + key + ".json");
+            if (s3Object == null) {
+                throw new NotFoundException("找不到产品相关的文件（json描述）");
+            }
+            FileObject fileObject = new FileObject();
+            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+            fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
+            fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
+            return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
+//            return new ResponseEntity<S3Object>(s3Object, HttpStatus.OK);
+
+        } catch (AmazonS3Exception s3ex) {
+            if (s3ex.getErrorCode() == "NoSuchKey") {
+                throw new NotFoundException(40402, "找不到Notes.json id = " + id);
+            }
+            throw new InternalServerErrorException(50001, s3ex.getErrorMessage());
+        } catch (IOException ex) {
+            //to-do: log
+            throw new InternalServerErrorException(50002, "S3文件获取出错！");
+        }
+    }
+
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductBaseObject> getByFilter(
             @RequestParam(value = "orgId", required = false) String orgId,
             @RequestParam(value = "categoryId", required = false) Integer categoryId) {
-        return productBaseService.getByFilter(orgId, categoryId, true).stream()
+        return productBaseService.getByFilter(orgId, categoryId, LookupCodes.ProductBaseStatus.CUSTOMER_INVISIBLE_STATUS).stream()
                 .map(p -> {
                     ProductBaseObject o = new ProductBaseObject();
                     BeanUtils.copyProperties(p, o);
@@ -94,15 +125,16 @@ public class ProductBaseController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public String create(@RequestBody ProductBaseObject productBase) {
+        productBase.setCreatedDateTime(DateTime.now());
         ProductBase p = new ProductBase();
         BeanUtils.copyProperties(productBase, p);
         return productBaseService.save(p);
     }
 
     //patch update, we don't provide functions like update with set null properties.
-    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public void patchUpdate(@PathVariable(value = "id") String id, @RequestBody ProductBaseObject productBase) {
-        productBase.setId(id);
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public void patchUpdate(@RequestBody ProductBaseObject productBase) {
+        productBase.setModifiedDateTime(DateTime.now());
         ProductBase p = new ProductBase();
         BeanUtils.copyProperties(productBase, p);
         productBaseService.patchUpdate(p);

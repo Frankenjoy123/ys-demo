@@ -1,15 +1,21 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.Constants;
+import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
 import com.yunsoo.api.dto.basic.ProductBase;
+import com.yunsoo.api.object.TPermission;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
@@ -29,20 +35,28 @@ import java.util.List;
 @RequestMapping(value = "/productkeybatch")
 public class ProductKeyBatchController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductKeyBatchController.class);
+
     @Autowired
     private ProductDomain productDomain;
 
     @Autowired
     private ProductKeyDomain productKeyDomain;
 
+    @Autowired
+    private PermissionDomain permissionDomain;
+
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductKeyBatch getById(@PathVariable(value = "id") String id) {
-        String orgId = "2k0r1l55i2rs5544wz5";
+        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
         if (batch == null) {
             throw new NotFoundException("product batch");
         }
-        if (!batch.getOrgId().equals(orgId)) { //todo: replace with hasPermission
+        if (!permissionDomain.hasPermission(accountId, new TPermission(batch.getOrgId(), "productkey", "read"))) {
             throw new ForbiddenException();
         }
         return batch;
@@ -60,20 +74,24 @@ public class ProductKeyBatchController {
     public List<ProductKeyBatch> getByFilter(@RequestParam(value = "productBaseId", required = false) String productBaseId,
                                              @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
                                              @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        String orgId = "2k0r1l55i2rs5544wz5";
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         return productKeyDomain.getAllProductKeyBatchesByOrgId(orgId, productBaseId);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ProductKeyBatch create(@Valid @RequestBody ProductKeyBatchRequest request) {
+    public ProductKeyBatch create(
+            @RequestHeader(value = Constants.HttpHeaderName.APP_ID, required = false) String appId,
+            @Valid @RequestBody ProductKeyBatchRequest request) {
         int quantity = request.getQuantity();
         String productBaseId = request.getProductBaseId();
         List<String> productKeyTypeCodes = request.getProductKeyTypeCodes();
 
-        String statusCode = "new";
-        String orgId = "2k0r1l55i2rs5544wz5";
-        String appId = "1";
-        String accountId = "2k0rahgcybh0l5uxtep";
+        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        if (!permissionDomain.hasPermission(accountId, new TPermission(orgId, "productkey", "create"))) {
+            throw new ForbiddenException();
+        }
+        appId = (appId == null) ? "unknown" : appId;
         DateTime createdDateTime = DateTime.now();
 
         ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
@@ -93,7 +111,6 @@ public class ProductKeyBatchController {
         }
 
         batchObj.setQuantity(quantity);
-        batchObj.setStatusCode(statusCode);
         batchObj.setProductBaseId(productBaseId);
         batchObj.setProductKeyTypeCodes(productKeyTypeCodes);
         batchObj.setOrgId(orgId);
@@ -101,7 +118,11 @@ public class ProductKeyBatchController {
         batchObj.setCreatedAccountId(accountId);
         batchObj.setCreatedDateTime(createdDateTime);
 
-        return productKeyDomain.createProductKeyBatch(batchObj);
+        LOGGER.info("ProductKeyBatch creating started [quantity: {}]", batchObj.getQuantity());
+        ProductKeyBatch newBatch = productKeyDomain.createProductKeyBatch(batchObj);
+        LOGGER.info("ProductKeyBatch created [id: {}, quantity: {}]", newBatch.getId(), newBatch.getQuantity());
+
+        return newBatch;
     }
 
 }

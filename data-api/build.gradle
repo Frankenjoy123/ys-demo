@@ -28,6 +28,7 @@ apply plugin: 'spring-boot'
 //}
 
 dependencies {
+    compile project(":common")
     compile project(":common-web")
     compile project(":common-data")
     compile project(':data-service')
@@ -36,7 +37,7 @@ dependencies {
     }
     compile("org.springframework.boot:spring-boot-starter-jetty")
     compile("org.springframework.boot:spring-boot-starter-actuator")
-//    compile 'org.springframework.data:spring-data-mongodb:1.7.0.RELEASE'
+//    compile("org.springframework.hateoas:spring-hateoas")
 //    compile("org.springframework.boot:spring-boot-starter-data-rest")
 //    compile("org.apache.commons:commons-dbcp2:2.0")
     testCompile("org.springframework.boot:spring-boot-starter-test")

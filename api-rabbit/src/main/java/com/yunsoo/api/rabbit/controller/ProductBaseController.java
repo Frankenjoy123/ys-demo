@@ -45,7 +45,7 @@ public class ProductBaseController {
         return productBase;
     }
 
-    @RequestMapping(value = "/thumbnail/{id}/{client}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{client}", method = RequestMethod.GET)
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") String id,
             @PathVariable(value = "client") String client) {
@@ -57,20 +57,47 @@ public class ProductBaseController {
         }
 
         try {
-            FileObject fileObject = dataAPIClient.get("productbase/thumbnail/{id}/{client}", FileObject.class, id, client);
+            FileObject fileObject = dataAPIClient.get("productbase/{id}/{client}", FileObject.class, id, client);
             if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             } else {
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             }
         } catch (NotFoundException ex) {
             throw new NotFoundException(40402, "找不到产品图片 id = " + id + "  client = " + client);
         }
     }
 
+    @RequestMapping(value = "/{id}/{key}/json", method = RequestMethod.GET)
+    public ResponseEntity<?> getFileInJson(
+            @PathVariable(value = "id") String id,
+            @PathVariable(value = "key") String key) {
+        if (id == null || id.isEmpty()) {
+            throw new BadRequestException("Id不应为空！");
+        }
+        if (key == null || key.isEmpty()) {
+            throw new BadRequestException("Key不应为空！");
+        }
+
+        try {
+            FileObject fileObject = dataAPIClient.get("productbase/{id}/{key}/json", FileObject.class, id, key);
+            if (fileObject.getLength() > 0) {
+                return ResponseEntity.ok()
+                        .contentLength(fileObject.getLength())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
+            } else {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
+            }
+        } catch (NotFoundException ex) {
+            throw new NotFoundException(40402, "找不到文件 id = " + id + "  key = " + key);
+        }
+    }
 }

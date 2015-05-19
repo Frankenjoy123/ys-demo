@@ -20,7 +20,6 @@ public class ProductKeyBatchObject {
     private String statusCode;
     private List<String> productKeyTypeCodes;
     private String productBaseId;
-    private String productKeysUri;
     private String orgId;
     private String createdAppId;
     private String createdAccountId;
@@ -67,14 +66,6 @@ public class ProductKeyBatchObject {
 
     public void setProductBaseId(String productBaseId) {
         this.productBaseId = productBaseId;
-    }
-
-    public String getProductKeysUri() {
-        return productKeysUri;
-    }
-
-    public void setProductKeysUri(String productKeysUri) {
-        this.productKeysUri = productKeysUri;
     }
 
     public String getOrgId() {

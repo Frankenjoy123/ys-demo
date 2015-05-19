@@ -1,5 +1,7 @@
 server:
     port: 6080
+management:
+    port: 6081
 
 multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
@@ -9,17 +11,14 @@ yunsoo:
         permanent_token:
             expires_minutes: 4320 #three days
         access_token:
-            header_name: X-YS-AccessToken
-            expires_minutes: 10
+            expires_minutes: 60
 
 spring:
     profiles.active: default
 ---
 spring:
     profiles: default
-management:
-    port: 6081
-    address: 127.0.0.1
+
 
 logging:
 #    file: c:/logs/yunsoo-api.log
@@ -28,10 +27,7 @@ logging:
         org.hibernate: 'ERROR'
 
 yunsoo:
-    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
-
-    #token secret issued to client whoc can consume our Business API
-    token_secret: 9SyECk96oDsKiLfogIieDI0cD/8FpnojlYSUJT5U9I/FGVmBz5oskmjOR8cbXTvoPjX+Pq/T/b1PqpHX0lYm0oCBjXWICA==
+#    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
 
     debug: true
     api:
@@ -40,6 +36,7 @@ yunsoo:
                 baseurl: http://dataapi:8080/
             processor:
                 baseurl: http://processor:4080/
+        product_key_base_url: http://t.m.yunsu.co/
 ---
 spring:
     profiles: qa
@@ -55,10 +52,8 @@ logging:
         org.hibernate: 'INFO'
 
 yunsoo:
-    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
+#    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
 
-    #token secret issued to client whoc can consume our Business API
-    token_secret: 9SyECk96oDsTmXfogIieDI0cD/8FpnojlYSUJT5U9I/FGVmBz5oskmjOR8cbXTvoPjX+Pq/T/b1PqpHX0lYm0oCBjXWICA==
     debug: true
     api:
         client:
@@ -66,3 +61,4 @@ yunsoo:
                 baseurl: http://localhost:8080/
             processor:
                 baseurl: http://localhost:4080/
+        product_key_base_url: http://t.m.yunsu.co/

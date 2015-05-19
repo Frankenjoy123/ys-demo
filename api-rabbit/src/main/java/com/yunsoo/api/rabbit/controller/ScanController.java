@@ -4,10 +4,12 @@ import com.yunsoo.api.rabbit.biz.ValidateProduct;
 import com.yunsoo.api.rabbit.domain.LogisticsDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.domain.UserDomain;
+import com.yunsoo.api.rabbit.domain.UserFollowDomain;
 import com.yunsoo.api.rabbit.dto.LogisticsPath;
 import com.yunsoo.api.rabbit.dto.basic.*;
 import com.yunsoo.api.rabbit.object.TScanRecord;
 import com.yunsoo.api.rabbit.object.ValidationResult;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -15,6 +17,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +48,8 @@ public class ScanController {
     @Autowired
     private UserDomain userDomain;
     @Autowired
+    private UserFollowDomain userFollowDomain;
+    @Autowired
     private ProductDomain productDomain;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
@@ -57,7 +62,7 @@ public class ScanController {
         scanRequestBody.validateForScan();
 
         //1, get user
-        User currentUser = userDomain.ensureUser(scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
+        User currentUser = userDomain.ensureUser(scanRequestBody.getUserId(), scanRequestBody.getDeviceCode(), null);
         if (currentUser == null) {
 //            LOGGER.error("User not found by userId ={0}, deviceCode = {1}", scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
             throw new NotFoundException(40401, "User not found by userId = " + scanRequestBody.getUserId() + " deviceCode = " + scanRequestBody.getDeviceCode());
@@ -78,9 +83,9 @@ public class ScanController {
         scanResult.setProduct(currentExistProduct);
 
         //3, retrieve scan records
-        ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}", ScanRecord[].class, scanRequestBody.getKey(), Integer.MAX_VALUE);
-        List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
-        //to-do
+        List<ScanRecord> scanRecordList = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}",
+                new ParameterizedTypeReference<List<ScanRecord>>() {
+                }, scanRequestBody.getKey(), 20);  //hard code as top 20 (desc order by created time )
         scanResult.setScanRecord(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
@@ -88,26 +93,32 @@ public class ScanController {
         scanResult.setLogisticsList(getLogisticsInfo(scanRequestBody.getKey()));
 
         //5, get company information.
-        Organization organization = dataAPIClient.get("organization/id/{id}", Organization.class, scanResult.getProduct().getOrgId());
-        scanResult.setManufacturer(organization);
+        OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, scanResult.getProduct().getOrgId());
+        scanResult.setManufacturer(Organization.fromOrganizationObject(organizationObject));
 
-        //6, set validation result by our validation strategy.
+        //6，ensure user following the company
+        UserFollowing userFollowing = new UserFollowing();
+        userFollowing.setUserId(currentUser.getId());
+        userFollowing.setOrganizationId(organizationObject.getId());
+        userFollowDomain.ensureFollow(userFollowing, false);
+
+        //7, set validation result by our validation strategy.
         scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), currentUser, scanRecordList));
 
-        //7, save scan Record
+        //8, save scan Record
         long scanSave = SaveScanRecord(currentUser, currentExistProduct, scanRequestBody);
         return scanResult;
     }
 
     @RequestMapping(value = "/history/user/{userId}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
-    public List<ScanRecord> getScanRecordsByFilter(
+    public List<ScanRecord> getUserScanRecordsByFilter(
             @PathVariable(value = "userId") String userId,
             @PathVariable(value = "pageIndex") Integer pageIndex,
             @PathVariable(value = "pageSize") Integer pageSize) {
 
         //验证输入参数
-        if (userId == null || !userId.isEmpty()) {
+        if (userId == null || userId.isEmpty()) {
             throw new BadRequestException(40001, "用户ID不应为空！");
         }
         if (pageIndex == null) {
@@ -130,7 +141,7 @@ public class ScanController {
 
     @RequestMapping(value = "/searchback/{isbackward}/user/{userId}/from/{Id}/paging/{pageIndex}/{pageSize}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
-    public List<ScanRecord> getScanRecordsByFilter(
+    public List<ScanRecord> getUserScanRecordsByFilter(
             @PathVariable(value = "Id") Long Id,
             @PathVariable(value = "userId") String userId,
             @PathVariable(value = "isbackward") Boolean isbackward,
@@ -138,7 +149,7 @@ public class ScanController {
             @PathVariable(value = "pageSize") Integer pageSize) {
 
         //验证输入参数
-        if (userId == null || !userId.isEmpty()) {
+        if (userId == null || userId.isEmpty()) {
             throw new BadRequestException(40001, "用户ID不应为空！");
         }
         if (Id == null || Id <= 0) {
@@ -163,6 +174,31 @@ public class ScanController {
         ScanRecord[] scanRecords = dataAPIClient.get("scan/filter?userId={userId}&Id={Id}&backward={backward}&pageIndex={pageIndex}&pageSize={pageSize}",
                 ScanRecord[].class, userId, Id, isbackward, pageIndex, pageSize);
         List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
+        return scanRecordList;
+    }
+
+    @RequestMapping(value = "/key/{key}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
+//    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
+    public List<ScanRecord> getScanRecordsByFilter(
+            @PathVariable(value = "key") String key,
+            @PathVariable(value = "pageIndex") Integer pageIndex,
+            @PathVariable(value = "pageSize") Integer pageSize) {
+
+        //验证输入参数
+        if (key.isEmpty()) {
+            throw new BadRequestException(40001, "Key不应为空！");
+        }
+        if (pageIndex < 0) {
+            throw new BadRequestException("pageIndex不应小于0！");
+        }
+        if (pageSize <= 0) {
+            throw new BadRequestException("PageSize不应小于等于0！");
+        }
+
+        List<ScanRecord> scanRecordList = dataAPIClient.get("scan/filterby?productKey={key}&pageIndex={pageIndex}&pageSize={pageSize}",
+                new ParameterizedTypeReference<List<ScanRecord>>() {
+                }, key, pageIndex, pageSize);
+        //List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
         return scanRecordList;
     }
 
@@ -196,22 +232,23 @@ public class ScanController {
         if (scanRequestBody.getAppId() != null && !scanRequestBody.getAppId().isEmpty()) {
             scanRecord.setAppId(scanRequestBody.getAppId()); //记录扫描客户端
         } else {
-            scanRecord.setAppId("未知的AppId");
+            scanRecord.setAppId("未知");
         }
         scanRecord.setProductKey(currentProduct.getProductKey());
         scanRecord.setBaseProductId(currentProduct.getProductBaseId());
         if (scanRequestBody.getDetail() != null && !scanRequestBody.getDetail().isEmpty()) {
             scanRecord.setDetail(scanRequestBody.getDetail()); //接受扫描的相关详情
         } else {
-            scanRecord.setDetail("用户扫描验证真伪。");
+            scanRecord.setDetail("匿名用户扫描");
         }
         scanRecord.setLongitude(scanRequestBody.getLongitude());
         scanRecord.setLatitude(scanRequestBody.getLatitude());
         if (scanRequestBody.getLocation() != null && !scanRequestBody.getLocation().isEmpty()) {
             scanRecord.setLocation(scanRequestBody.getLocation());
         } else {
-            scanRecord.setLocation("未公开地址"); //用户选择不公开隐私地址信息
+            scanRecord.setLocation("未公开"); //用户选择不公开隐私地址信息
         }
-        return dataAPIClient.post("scan", scanRecord, Long.class);
+        return dataAPIClient.post("scan", scanRecord, long.class);
     }
+
 }

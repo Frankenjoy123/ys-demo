@@ -1,10 +1,10 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.dto.basic.User;
+import com.yunsoo.api.rabbit.object.TAccountStatusEnum;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class UserDomain {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDomain.class);
 
     //call dataAPI to get current User
-    public User ensureUser(String userId, String deviceCode) {
+    public User ensureUser(String userId, String deviceCode, String cellular) {
         User user = null;
         if (userId != null) {
             try {
@@ -35,15 +35,29 @@ public class UserDomain {
             }
         } else {
             try {
-                user = dataAPIClient.get("user/device/{devicecode}", User.class, deviceCode);
+                if (cellular != null) {
+                    user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
+                }
             } catch (NotFoundException ex) {
-                LOGGER.info("Notfound user for deviceCode = {0}", deviceCode);
+                LOGGER.info("Notfound user for cellular = {0}", cellular);
+            }
+
+            try {
+                if (user == null) {
+                    user = dataAPIClient.get("user/device/{devicecode}", User.class, deviceCode);
+                }
+            } catch (NotFoundException ex) {
+                LOGGER.info("Notfound user for cellular = {0}", cellular);
             }
 
             if (user == null) {
                 User newUser = new User();
+                newUser.setYsCreadit(0);  //set default properties.
+                newUser.setLevel(1);
                 newUser.setDeviceCode(deviceCode);
-                newUser.setName(Long.toString(DateTime.now().getMillis())); //default name is the time.
+                newUser.setCellular(cellular);
+                newUser.setName("求真名"); //default name is the time.
+                newUser.setStatus(TAccountStatusEnum.ENABLED.value()); //default is enabled
                 String id = dataAPIClient.post("user", newUser, String.class); //save user
                 newUser.setId(id);
                 return newUser;

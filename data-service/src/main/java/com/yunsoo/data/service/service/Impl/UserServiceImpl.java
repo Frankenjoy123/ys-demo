@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dao.S3ItemDao;
@@ -71,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
 //        S3ObjectInputStream objectContent = item.getObjectContent();
 
-//        thumbnail.setThumbnailData(IOUtils.toByteArray(objectContent));
+//        thumbnail.setData(IOUtils.toByteArray(objectContent));
 //
 //        String contentType = item.getObjectMetadata().getContentType();
 //        if(contentType.equals("image/jpeg")) {
@@ -152,7 +153,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean delete(String id) {
-        DaoStatus daoStatus = userDAO.delete(id, "DELETED");
+        DaoStatus daoStatus = userDAO.delete(id, LookupCodes.MessageStatus.DELETED);
         return daoStatus == DaoStatus.success ? true : false;
     }
 
@@ -171,7 +172,7 @@ public class UserServiceImpl implements UserService {
     //Save thumbnail into S3 bucket
     private String saveUserThumbnail(String userId, FileObject fileObject, String thumbnailKey) throws IOException, Exception {
         if (fileObject == null) throw new Exception("ThumbnailFile is null!");
-        InputStream inputStream = new ByteArrayInputStream(fileObject.getThumbnailData());
+        InputStream inputStream = new ByteArrayInputStream(fileObject.getData());
         //to-do:
         ObjectMetadata objectMetadata = new ObjectMetadata();
         if (fileObject.getSuffix().toLowerCase().equals("jpg") || fileObject.getSuffix().toLowerCase().equals("jpeg")) {
@@ -203,4 +204,11 @@ public class UserServiceImpl implements UserService {
         }
         return model;
     }
+
+//    @Transactional
+//    @Override
+//    public long createUserFollowing(UserFollowing userFollowing) {
+//        UserFollowingEntity newEntity = userFollowingRepository.save(UserFollowing.ToEntity(userFollowing));
+//        return newEntity.getId();
+//    }
 }

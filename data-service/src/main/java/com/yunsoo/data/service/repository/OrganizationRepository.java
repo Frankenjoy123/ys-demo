@@ -1,6 +1,9 @@
 package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.OrganizationEntity;
+import com.yunsoo.data.service.entity.UserFollowingEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -9,4 +12,6 @@ import org.springframework.data.repository.CrudRepository;
  * Descriptions:
  */
 public interface OrganizationRepository extends CrudRepository<OrganizationEntity, String> {
+
+    OrganizationEntity findByName(String name);
 }

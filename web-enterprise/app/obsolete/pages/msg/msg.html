@@ -1,0 +1,96 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        消息管理
+        <!--<small>Control panel</small>-->
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>首页</a></li>
+        <li class="active">消息管理</li>
+    </ol>
+</section>
+
+<section class="content">
+    <script type="text/javascript">
+        $(function () {
+            $('#msgTable').dataTable({
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": false,
+                "bSort": true,
+                "bAutoWidth": false,
+                "bInfo": false
+            });
+        });
+    </script>
+    <div class="box-group">
+        <div class="panel box box-primary ">
+            <div class="box-body table-responsive">
+                <div class="dataTables_wrapper form-inline" role="grid">
+                    <div class="col-xs-12">
+                        <table id="msgTable" class="table table-hover dataTable">
+                            <thead>
+                            <tr role="row">
+                                <th ng-click="dataTable.sort('title')">消息名称
+                                </th>
+                                <th ng-click="dataTable.sort('body')">消息内容
+                                </th>
+                                <th ng-click="dataTable.sort('type')" width="10%">消息类型
+                                </th>
+                                <th ng-click="dataTable.sort('status')" width="5%">消息状态
+                                </th>
+                                <th ng-click="dataTable.sort('createdDateTime')" width="15%">创建时间
+                                </th>
+                                <th ng-click="dataTable.sort('expiredDateTime')" width="15%">过期时间
+                                </th>
+                            </tr>
+                            </thead>
+
+                            <tbody
+                                    ng-repeat="da in dataTable.filteredData = (dataTable.data | filter:dataTable.filter) | orderBy:dataTable.sortColumn:dataTable.sortDescending">
+                            <tr>
+                                <td>
+                                    <span>{{da.title}}</span>
+                                </td>
+                                <td>
+                                    <span>{{da.body}}</span>
+                                </td>
+                                <td>
+                                    <span ng-show="da.type == 'business'">商家信息</span>
+                                    <span ng-show="da.type == 'platform'">云溯平台信息</span>
+                                </td>
+                                <td>
+                                    <span ng-show="da.status == 'approved'"><span class="label label-success">通过审核</span></span>
+                                    <span ng-show="da.status == 'created'"><span class="label label-info">已创建</span></span>
+                                    <span ng-show="da.status == 'deleted'"><span class="label label-danger">已删除</span></span>
+                                    <span ng-show="da.status == 'processing'"><span class="label label-info">审核中</span></span>
+                                    <span ng-show="da.status == 'wait for response'"><span class="label label-info">待处理</span></span>
+                                </td>
+                                <td>{{getDateString(da.createdDateTime)}}</td>
+                                <td>{{getDateString(da.expiredDateTime)}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="dataTables_paginate paging_bootstrap">
+                            <ul class="pagination">
+                                <li class="prev" ng-class="{ disabled: dataTable.onFirstPage()}"><a
+                                        ng-click="dataTable.goToFirstPage()">首页</a></li>
+                                <li class="prev" ng-class="{ disabled: dataTable.onFirstPage()}"><a
+                                        ng-click="dataTable.previous()">上一页</a></li>
+                                <li ng-repeat-start="page in dataTable.pages()" ng-repeat-end
+                                    ng-class="{active: dataTable.currentPage() === page}"><a
+                                        ng-click="dataTable.goToPage(page)">{{page + 1}}</a></li>
+                                <li class="next" ng-class="{ disabled: dataTable.onLastPage()}"><a
+                                        ng-click="dataTable.next()">下一页</a></li>
+                                <li class="next" ng-class="{ disabled: true}"><a>末页</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

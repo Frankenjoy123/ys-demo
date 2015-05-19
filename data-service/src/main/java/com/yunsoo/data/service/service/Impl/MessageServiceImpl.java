@@ -10,6 +10,7 @@ import com.yunsoo.data.service.service.contract.Message;
 import com.yunsoo.data.service.service.MessageService;
 import com.yunsoo.data.service.service.ServiceOperationStatus;
 import com.yunsoo.data.service.util.SpringBeanUtil;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -90,14 +91,14 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> getMessagesByType(int typeId) {
-        return Message.FromModelList(messageDao.getMessagesByType(typeId));
+    public List<Message> getMessagesByType(String type) {
+        return Message.FromModelList(messageDao.getMessagesByType(type));
     }
 
     @Override
     @Transactional
-    public List<Message> getMessagesByFilter(Integer type, String status, String orgId, Boolean ignoreExpireDate, int pageIndex, int pageSize) {
-        return Message.FromModelList(messageDao.getMessagesByFilter(type, status, orgId, ignoreExpireDate, pageIndex, pageSize));
+    public List<Message> getMessagesByFilter(String type, String status, String orgId, Boolean ignoreExpireDate, DateTime postShowtime, int pageIndex, int pageSize) {
+        return Message.FromModelList(messageDao.getMessagesByFilter(type, status, orgId, ignoreExpireDate, postShowtime, pageIndex, pageSize));
     }
 
     @Override

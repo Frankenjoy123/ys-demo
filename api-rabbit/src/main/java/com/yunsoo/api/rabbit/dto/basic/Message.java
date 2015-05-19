@@ -10,7 +10,7 @@ import org.joda.time.DateTime;
  * Created by Zhe on 2015/3/9.
  */
 public class Message {
-    private long Id;
+    private Long Id;
     private String title;
     private String body;
     private String digest;
@@ -28,16 +28,16 @@ public class Message {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime lastUpatedDateTime;
-    private Integer lastUpdatedBy; //associate to company's accountId
+    private String lastUpdatedBy; //associate to company's accountId
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime postShowTime;
 
-    public long getId() {
+    public Long getId() {
         return Id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         Id = id;
     }
 
@@ -106,11 +106,11 @@ public class Message {
     }
 
 
-    public Integer getLastUpdatedBy() {
+    public String getLastUpdatedBy() {
         return lastUpdatedBy;
     }
 
-    public void setLastUpdatedBy(Integer lastUpdatedBy) {
+    public void setLastUpdatedBy(String lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 

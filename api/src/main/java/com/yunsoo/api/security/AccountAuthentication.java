@@ -16,8 +16,8 @@ public class AccountAuthentication implements Authentication {
     private final TAccount tAccount;
     private boolean authenticated = true;
 
-    public AccountAuthentication(TAccount user) {
-        this.tAccount = user;
+    public AccountAuthentication(TAccount tAccount) {
+        this.tAccount = tAccount;
     }
 
     @Override
@@ -41,8 +41,8 @@ public class AccountAuthentication implements Authentication {
     }
 
     @Override
-    public Object getPrincipal() {
-        return tAccount.getUsername();
+    public TAccount getPrincipal() {
+        return tAccount;
     }
 
     @Override

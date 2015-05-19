@@ -1,5 +1,7 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.dto.basic.ProductFile;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductFileObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,38 +24,74 @@ public class ProductFileController {
     @Autowired
     private RestClient dataAPIClient;
 
-    @RequestMapping(value = "/createby/{createby}/status/{status}/filetype/{filetype}/page/{page}", method = RequestMethod.GET)
-    public List<ProductFileObject> get(@PathVariable(value = "createby") String createby,
-                                       @PathVariable(value = "status") Integer status,
-                                       @PathVariable(value = "filetype") Integer filetype,
-                                       @PathVariable(value = "page") Integer page) {
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<ProductFile> get(@RequestParam(value = "createby", required = false) String createby,
+                                 @RequestParam(value = "status", required = false, defaultValue = "0") Integer status,
+                                 @RequestParam(value = "filetype", required = false, defaultValue = "0") Integer filetype,
+                                 @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
+                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+
+        if (createby == null)
+            createby = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
         ProductFileObject[] objects =
-                dataAPIClient.get("productfile/createby/{createby}/status/{status}/filetype/{filetype}/page/{page}",
+                dataAPIClient.get("productfile?createby={createby}&&status={status}&&filetype={filetype}&&pageIndex={pageIndex}&&pageSize={pageSize}",
                         ProductFileObject[].class,
                         createby,
                         status,
                         filetype,
-                        page);
+                        pageIndex,
+                        pageSize);
 
         if (objects == null)
             throw new NotFoundException("Product file not found");
 
-        return Arrays.asList(objects);
+        List<ProductFile> productFiles = fromProductFileObjectList(Arrays.asList(objects));
+
+        return productFiles;
     }
 
-    @RequestMapping(value = "/countby/createby/{createby}/status/{status}/filetype/{filetype}", method = RequestMethod.GET)
-    public Long getCount(@PathVariable(value = "createby") String createby,
-                         @PathVariable(value = "status") Integer status,
-                         @PathVariable(value = "filetype") Integer filetype) {
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public Long getCount(@RequestParam(value = "createby", required = false) String createby,
+                         @RequestParam(value = "status", required = false, defaultValue = "0") Integer status,
+                         @RequestParam(value = "filetype", required = false, defaultValue = "0") Integer filetype) {
+
+        if (createby == null)
+            createby = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
         Long count = 0l;
-        count = dataAPIClient.get("productfile/countby/createby/{createby}/status/{status}/filetype/{filetype}",
+        count = dataAPIClient.get("productfile/count?createby={createby}&&status={status}&&filetype={filetype}",
                 Long.class,
                 createby,
                 status,
                 filetype);
 
         return count;
+    }
+
+    private ProductFile fromProductFileObject(ProductFileObject productFileObject) {
+        ProductFile productFile = new ProductFile();
+        productFile.setId(productFileObject.getId());
+        productFile.setFileName(productFileObject.getFileName());
+        productFile.setFileType(productFileObject.getFileType());
+        productFile.setOrgId(productFileObject.getOrgId());
+        productFile.setCreateBy(productFileObject.getCreateBy());
+        productFile.setCreateDate(productFileObject.getCreateDate());
+        productFile.setFilePath(productFileObject.getFilePath());
+        productFile.setStatus(productFileObject.getStatus());
+
+        return productFile;
+    }
+
+    private List<ProductFile> fromProductFileObjectList(List<ProductFileObject> productFileObjects) {
+        List<ProductFile> productFiles = new ArrayList<ProductFile>();
+        for (ProductFileObject model : productFileObjects) {
+            productFiles.add(fromProductFileObject(model));
+        }
+
+        return productFiles;
     }
 }

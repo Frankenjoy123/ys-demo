@@ -1,12 +1,13 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.common.error.ErrorResult;
-import com.yunsoo.common.error.ErrorResultCode;
 import com.yunsoo.common.util.IdGenerator;
-import com.yunsoo.common.web.exception.RestErrorResultException;
-import com.yunsoo.common.web.exception.NotFoundException;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by:   Lijian
@@ -17,49 +18,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/debug")
 public class DebugController {
 
-    @RequestMapping(value = "ok")
-    @ResponseStatus(HttpStatus.OK)
-    public String ok() {
-        return "200 OK";
-    }
+    @Value("${yunsoo.debug}")
+    private Boolean debug;
 
-    @RequestMapping(value = "created")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void created() {
-    }
+    @Value("${yunsoo.environment}")
+    private String environment;
 
-    @RequestMapping(value = "accepted")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void accepted() {
-    }
 
-    @RequestMapping(value = "nocontent")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void noContent() {
-    }
+    @RequestMapping(value = "")
+    public Map<String, Object> info() {
+        Map<String, Object> result = new HashMap<>();
 
-    @RequestMapping(value = "error/{code}")
-    public void throwError(@PathVariable(value = "code") int code) throws RestErrorResultException {
-        HttpStatus status;
-        RestErrorResultException apiEx;
-        try {
-            status = HttpStatus.valueOf(code);
-        } catch (IllegalArgumentException ex) {
-            throw new NotFoundException("Error");
-        }
-        if (status.is4xxClientError() || status.is5xxServerError()) {
-            throw new RestErrorResultException(status, new ErrorResult(ErrorResultCode.DEBUG, "Debug"));
-        }
-        throw new NotFoundException("Error");
-    }
+        //common info
+        result.put("debug", debug);
+        result.put("environment", environment);
 
-    @RequestMapping(value = "error")
-    public void throwError() throws Exception {
-        throw new Exception("Error");
-    }
 
-    @RequestMapping(value = "id", method = RequestMethod.GET)
-    public String getNewId(){
-        return IdGenerator.getNew();
+
+        return result;
     }
 }

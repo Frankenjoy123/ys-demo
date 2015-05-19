@@ -15,8 +15,8 @@ import org.springframework.web.client.RestTemplate;
  * Descriptions:
  */
 public class RestClient {
-    private static final int CONNECT_TIMEOUT = 3 * 1000;
-    private static final int READ_TIMEOUT = 3 * 60 * 1000;
+    private static final int CONNECT_TIMEOUT = 3 * 1000; //3 seconds
+    private static final int READ_TIMEOUT = 10 * 60 * 1000; //10 minutes
 
     private RestTemplate restTemplate;
     private String baseURL;

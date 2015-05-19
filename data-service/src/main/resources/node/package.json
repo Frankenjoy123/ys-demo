@@ -1,0 +1,9 @@
+{
+  "name": "setup",
+  "version": "0.0.1",
+  "description": "setup scripts for data-service",
+  "dependencies": {
+    "aws-sdk": "2.x",
+    "commander": "2.6.0"
+  }
+}

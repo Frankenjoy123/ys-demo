@@ -1,6 +1,6 @@
 package com.yunsoo.data.service.dao;
 
-import com.yunsoo.data.service.dbmodel.LogisticsPathModel;
+import com.yunsoo.data.service.dbmodel.dynamodb.LogisticsPathModel;
 
 import java.util.List;
 

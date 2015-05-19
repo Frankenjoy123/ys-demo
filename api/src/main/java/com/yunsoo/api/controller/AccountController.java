@@ -1,21 +1,19 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountDomain;
+import com.yunsoo.api.dto.AccountRequest;
+import com.yunsoo.api.dto.AccountUpdatePasswordRequest;
 import com.yunsoo.api.dto.basic.Account;
-import com.yunsoo.api.object.TAccount;
-import com.yunsoo.api.object.TAccountToken;
-import com.yunsoo.api.security.AccountAuthentication;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,23 +28,75 @@ public class AccountController {
     @Autowired
     private AccountDomain accountDomain;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Account getById(@PathVariable("id") String id) {
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public Account getById(@PathVariable("id") String accountId) {
         AccountObject accountObject;
-        try {
-            accountObject = accountDomain.getById(id);
-        } catch (NotFoundException ex) {
-            throw new NotFoundException("Account not found by [id: " + id + "]");
+        if ("current".equals(accountId)) { //get current Account
+            accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         }
-        return fromAccountObject(accountObject);
+        accountObject = accountDomain.getById(accountId);
+        if (accountObject == null) {
+            throw new NotFoundException("Account not found by [id: " + accountId + "]");
+        }
+        return toAccount(accountObject);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<Account> getByFilter(@RequestParam("org_id") String orgId) {
-        return accountDomain.getByOrgId(orgId).stream().map(this::fromAccountObject).collect(Collectors.toList());
+    public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId) {
+        if (orgId == null) {
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
+        return accountDomain.getByOrgId(orgId).stream().map(this::toAccount).collect(Collectors.toList());
     }
 
-    private Account fromAccountObject(AccountObject accountObject) {
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission(#request.orgId, 'filterByOrg', 'account:create')")
+    public Account create(@Valid @RequestBody AccountRequest request) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        AccountObject accountObject = toAccountObject(request);
+        accountObject.setCreatedAccountId(currentAccountId);
+        return toAccount(accountDomain.createAccount(accountObject));
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    public void updateStatus(@PathVariable("id") String accountId, @RequestBody String statusCode) {
+        //todo
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public void patchUpdate(@PathVariable("id") String accountId, @RequestBody AccountRequest accountRequest) {
+        //todo
+    }
+
+    @RequestMapping(value = "/current/password", method = RequestMethod.POST)
+    public void updatePassword(@RequestBody AccountUpdatePasswordRequest accountPassword) {
+
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+
+        AccountObject accountObject = accountDomain.getById(currentAccountId);
+
+        if (accountObject == null) {
+            throw new NotFoundException("Account not found");
+        }
+
+        String rawOldPassword = accountPassword.getOldPassword();
+        String rawNewPassword = accountPassword.getNewPassword();
+        String password = accountObject.getPassword();
+        String hashSalt = accountObject.getHashSalt();
+
+        if (!accountDomain.validPassword(rawOldPassword, hashSalt, password)) {
+            throw new UnprocessableEntityException("当前密码不匹配");
+        }
+
+        accountDomain.updatePassword(currentAccountId, rawNewPassword);
+    }
+
+
+    private Account toAccount(AccountObject accountObject) {
         if (accountObject == null) {
             return null;
         }
@@ -64,6 +114,21 @@ public class AccountController {
         account.setCreatedAccountId(accountObject.getCreatedAccountId());
         account.setCreatedDateTime(accountObject.getCreatedDateTime());
         return account;
+    }
+
+    private AccountObject toAccountObject(AccountRequest request) {
+        if (request == null) {
+            return null;
+        }
+        AccountObject accountObject = new AccountObject();
+        accountObject.setOrgId(request.getOrgId());
+        accountObject.setIdentifier(request.getIdentifier());
+        accountObject.setEmail(request.getEmail());
+        accountObject.setFirstName(request.getFirstName());
+        accountObject.setLastName(request.getLastName());
+        accountObject.setPhone(request.getPhone());
+        accountObject.setPassword(request.getPassword());
+        return accountObject;
     }
 
 }

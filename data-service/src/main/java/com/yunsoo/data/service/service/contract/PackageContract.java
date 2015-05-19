@@ -5,7 +5,7 @@
  */
 package com.yunsoo.data.service.service.contract;
 
-import com.yunsoo.data.service.dbmodel.ProductPackageModel;
+import com.yunsoo.data.service.dbmodel.dynamodb.ProductPackageModel;
 import org.joda.time.DateTime;
 
 import java.util.List;

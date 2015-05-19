@@ -4,19 +4,19 @@ package com.yunsoo.api.rabbit.dto.basic;
  * Created by Zhe on 2015/4/21.
  */
 public class UserFollowing {
-    private long id;
+    private Long id;
     private String userId;
     private String organizationId;
-    private long lastReadMessageId;
+    private Long lastReadMessageId;
     private Boolean isFollowing;
     private String createdDateTime;
     private String lastUpdatedDateTime;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -36,11 +36,11 @@ public class UserFollowing {
         this.organizationId = organizationId;
     }
 
-    public long getLastReadMessageId() {
+    public Long getLastReadMessageId() {
         return lastReadMessageId;
     }
 
-    public void setLastReadMessageId(long lastReadMessageId) {
+    public void setLastReadMessageId(Long lastReadMessageId) {
         this.lastReadMessageId = lastReadMessageId;
     }
 

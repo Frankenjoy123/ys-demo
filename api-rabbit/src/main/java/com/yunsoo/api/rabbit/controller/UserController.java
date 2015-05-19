@@ -74,7 +74,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/thumbnail/{id}/{key}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{key}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#user, 'user:read')")
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") String id,
@@ -86,16 +86,16 @@ public class UserController {
             throw new BadRequestException("Key不应为空！");
         }
 
-        FileObject fileObject = dataAPIClient.get("user/thumbnail/{id}/{key}", FileObject.class, id, key);
+        FileObject fileObject = dataAPIClient.get("user/{id}/{key}", FileObject.class, id, key);
         if (fileObject.getLength() > 0) {
             return ResponseEntity.ok()
                     .contentLength(fileObject.getLength())
                     .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                    .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                    .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
         } else {
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
-                    .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getThumbnailData())));
+                    .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
         }
     }
 

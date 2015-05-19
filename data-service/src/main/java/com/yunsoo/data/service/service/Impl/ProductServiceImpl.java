@@ -5,7 +5,7 @@ import com.yunsoo.data.service.dao.ProductDao;
 import com.yunsoo.data.service.service.ProductService;
 import com.yunsoo.data.service.service.contract.Product;
 import com.yunsoo.data.service.service.exception.ServiceException;
-import com.yunsoo.data.service.dbmodel.ProductModel;
+import com.yunsoo.data.service.dbmodel.dynamodb.ProductModel;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

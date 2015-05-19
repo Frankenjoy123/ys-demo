@@ -17,8 +17,6 @@ import java.util.Properties;
 
 @Configuration
 @Import(DBSetting.class)
-//@ComponentScan(basePackages = {"com.yunsoo.data.service.dbmodel"})
-//@PropertySource("classpath:jdbc.properties")
 public class HibernateConfig {
 
     @Autowired

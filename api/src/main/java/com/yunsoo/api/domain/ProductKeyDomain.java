@@ -1,15 +1,23 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.client.processor.ProcessorClient;
-import com.yunsoo.api.client.processor.message.ProductKeyBatchMassage;
+import com.yunsoo.api.client.ProcessorClient;
 import com.yunsoo.api.dto.ProductKeyBatch;
+import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.api.dto.ProductKeyType;
+import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
+import com.yunsoo.common.data.object.ProductKeyObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
+import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.exception.UnprocessableEntityException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -25,8 +33,12 @@ import java.util.stream.Collectors;
  * Created on:   2015/3/16
  * Descriptions:
  */
-@Component("productKeyDomain")
+@Component
 public class ProductKeyDomain {
+
+    private static final byte[] CR_LF = new byte[]{13, 10};
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductKeyDomain.class);
 
     @Autowired
     private RestClient dataAPIClient;
@@ -37,10 +49,35 @@ public class ProductKeyDomain {
     @Autowired
     private LookupDomain lookupDomain;
 
-    private final byte[] CR_LF = new byte[]{13, 10};
+    @Autowired
+    private ProductKeyOrderDomain productKeyOrderDomain;
+
+    @Autowired
+    private ProductKeyTransactionDomain productKeyTransactionDomain;
+
+
+    @Value("${yunsoo.api.product_key_base_url}")
+    private String productKeyBaseUrl;
+
+
+    //ProductKey
+
+    public ProductKeyObject getProductKeyByKey(String productKey) {
+        try {
+            return dataAPIClient.get("productkey/{key}", ProductKeyObject.class, productKey);
+        } catch (NotFoundException ex) {
+            return null;
+        }
+    }
 
 
     //ProductKeyBatch
+
+    public ProductKeyBatch getProductKeyBatchById(String id) {
+        return toProductKeyBatch(
+                dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id),
+                lookupDomain.getAllProductKeyTypes(true));
+    }
 
     public List<ProductKeyBatch> getAllProductKeyBatchesByOrgId(String orgId, String productBaseId) {
         ProductKeyBatchObject[] objects =
@@ -48,34 +85,57 @@ public class ProductKeyDomain {
                         ProductKeyBatchObject[].class,
                         orgId,
                         productBaseId);
-        if (objects == null) {
-            return null;
-        } else {
-            List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes();
-            return Arrays.stream(objects)
-                    .map(i -> fromProductKeyBatchObject(i, productKeyTypes))
-                    .collect(Collectors.toList());
-        }
-    }
 
-    public ProductKeyBatch getProductKeyBatchById(String id) {
-        return fromProductKeyBatchObject(
-                dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id),
-                lookupDomain.getAllProductKeyTypes(true));
+        List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes();
+        return Arrays.stream(objects)
+                .map(i -> toProductKeyBatch(i, productKeyTypes))
+                .collect(Collectors.toList());
     }
 
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {
-        ProductKeyBatchObject newBatchObj = dataAPIClient.post(
-                "productkeybatch",
-                batchObj,
-                ProductKeyBatchObject.class);
+        String productBaseId = batchObj.getProductBaseId();
 
-        // send sqs message to processor
+        //check product key credit
+        List<ProductKeyCredit> credits = productKeyOrderDomain.getProductKeyCredits(batchObj.getOrgId(), productBaseId == null ? "*" : productBaseId);
+        Long remain = 0L;
+        for (ProductKeyCredit c : credits) {
+            if (c.getProductBaseId() == null || c.getProductBaseId().equals(productBaseId)) {
+                remain += c.getRemain();
+            }
+        }
+        if (remain < batchObj.getQuantity()) {
+            LOGGER.warn("insufficient ProductKeyCredit");
+            throw new UnprocessableEntityException("产品码可用额度不足");
+        }
+
+        //create new product key batch
+        batchObj.setStatusCode(LookupCodes.ProductKeyBatchStatus.NEW);
+        ProductKeyBatchObject newBatchObj = dataAPIClient.post("productkeybatch", batchObj, ProductKeyBatchObject.class);
+        LOGGER.info("ProductKeyBatch created [id: {}, statusCode: {}]", newBatchObj.getId(), newBatchObj.getStatusCode());
+
+        //purchase
+        String transactionId = productKeyTransactionDomain.purchase(newBatchObj);
+        LOGGER.info("ProductKeyBatch purchased [transactionId: {}]", transactionId);
+
+        //update status to creating
+        newBatchObj.setStatusCode(LookupCodes.ProductKeyBatchStatus.CREATING);
+        dataAPIClient.patch("productkeybatch/{id}", newBatchObj, newBatchObj.getId());
+        LOGGER.info("ProductKeyBatch status changed [id: {}, statusCode: {}]", newBatchObj.getId(), newBatchObj.getStatusCode());
+
+        //send sqs message to processor
         ProductKeyBatchMassage sqsMessage = new ProductKeyBatchMassage();
-        sqsMessage.setBatchId(newBatchObj.getId());
-        processorClient.post("sqs/productkeybatch", sqsMessage);
+        sqsMessage.setProductKeyBatchId(newBatchObj.getId());
+        if (newBatchObj.getProductBaseId() != null) {
+            sqsMessage.setProductStatusCode(LookupCodes.ProductStatus.ACTIVATED);  //default activated
+        }
+        try {
+            processorClient.post("sqs/productkeybatch", sqsMessage);
+            LOGGER.info("ProductKeyBatchMassage posted to sqs {}", sqsMessage);
+        } catch (Exception ex) {
+            LOGGER.error("ProductKeyBatchMassage posting to sqs failed [exceptionMessage: {}]", ex.getMessage());
+        }
 
-        return fromProductKeyBatchObject(newBatchObj, lookupDomain.getAllProductKeyTypes(true));
+        return toProductKeyBatch(newBatchObj, lookupDomain.getAllProductKeyTypes(true));
     }
 
     public byte[] getProductKeysByBatchId(String id) {
@@ -85,13 +145,13 @@ public class ProductKeyDomain {
             return null;
         }
         try {
-            List<String> productKeyTypeCodes = LookupObject.toCodeList(lookupDomain.getAllProductKeyTypes());
+            List<String> productKeyTypeCodes = object.getProductKeyTypeCodes();
             outputStream.write(
                     StringUtils.collectionToDelimitedString(productKeyTypeCodes, ",")
                             .getBytes(Charset.forName("UTF-8")));
             outputStream.write(CR_LF);
             for (List<String> i : object.getProductKeys()) {
-                List<String> ks = i.stream().map(k -> "http://t.m.yunsu.co/" + k).collect(Collectors.toList());
+                List<String> ks = i.stream().map(k -> productKeyBaseUrl + k).collect(Collectors.toList());
                 outputStream.write(
                         StringUtils.collectionToDelimitedString(ks, ",")
                                 .getBytes(Charset.forName("UTF-8")));
@@ -110,7 +170,8 @@ public class ProductKeyDomain {
                 && productKeyTypeCodes.stream().allMatch(c -> productKeyTypes.stream().anyMatch(t -> t.getCode().equals(c)));
     }
 
-    private ProductKeyBatch fromProductKeyBatchObject(ProductKeyBatchObject object, List<ProductKeyType> productKeyTypes) {
+
+    private ProductKeyBatch toProductKeyBatch(ProductKeyBatchObject object, List<ProductKeyType> productKeyTypes) {
         if (object == null) {
             return null;
         }

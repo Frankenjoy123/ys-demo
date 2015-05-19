@@ -24,11 +24,12 @@ public class ScanController {
         this.scanRecordService = scanRecordService;
     }
 
-    @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<ScanRecord> getNewMessagesByMessageId(@PathVariable(value = "id") Long id) {
         return new ResponseEntity(scanRecordService.get(id), HttpStatus.OK);
     }
 
+    //General 的扫描记录filter
     @RequestMapping(value = "/filterby", method = RequestMethod.GET)
     public List<ScanRecord> getScanRecordsByFilter(@RequestParam(value = "productKey", required = false) String productKey,
                                                    @RequestParam(value = "baseProductId", required = false) Integer baseProductId,
@@ -41,6 +42,7 @@ public class ScanController {
         return scanRecordList;
     }
 
+    //找用户的扫描记录，根据某记录的id向前或者向后搜寻
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
     public List<ScanRecord> filterScanRecords(@RequestParam(value = "Id", required = false) Long Id,
                                               @RequestParam(value = "userId", required = false) String userId,
@@ -51,7 +53,7 @@ public class ScanController {
         return scanRecordList;
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public long createScanRecord(@RequestBody ScanRecord scanRecord) {
         long id = scanRecordService.save(scanRecord);

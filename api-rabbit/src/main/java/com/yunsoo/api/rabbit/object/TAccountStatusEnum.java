@@ -3,6 +3,7 @@ package com.yunsoo.api.rabbit.object;
 public enum TAccountStatusEnum {
     UNDEFINED("UNDEFINED"),
     ENABLED("ENABLED"),
+    VERIFIED("VERIFIED"),
     LOCKED("LOCKED"),
     EXPIRED("EXPIRED"),
     TOKEN_EXPIRED("TOKEN_EXPIRED"),

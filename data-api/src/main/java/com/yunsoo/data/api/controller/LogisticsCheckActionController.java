@@ -1,16 +1,16 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.data.api.dto.ResultWrapper;
-import com.yunsoo.data.api.factory.ResultFactory;
-import com.yunsoo.data.service.service.LogisticsCheckActionService;
-import com.yunsoo.data.service.service.ServiceOperationStatus;
+import com.yunsoo.common.data.object.LogisticsCheckActionObject;
+import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.data.service.entity.LogisticsCheckActionEntity;
+import com.yunsoo.data.service.repository.LogisticsCheckActionRepository;
 
-import com.yunsoo.data.service.service.contract.LogisticsCheckAction;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,44 +21,75 @@ import java.util.List;
 public class LogisticsCheckActionController {
 
     @Autowired
-    private final LogisticsCheckActionService actionService;
+    private LogisticsCheckActionRepository logisticsCheckActionRepository;
 
-    @Autowired
-    LogisticsCheckActionController(LogisticsCheckActionService actionService) {
-        this.actionService = actionService;
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public LogisticsCheckActionObject get(@PathVariable(value = "id") Integer id) {
+
+        LogisticsCheckActionEntity logisticsCheckActionEntity = logisticsCheckActionRepository.findOne(id);
+        if (logisticsCheckActionEntity == null) {
+            throw new NotFoundException("logisticsCheckActionEntity not found by [id: " + id + "]");
+        }
+
+        LogisticsCheckActionObject logisticsCheckActionObject = new LogisticsCheckActionObject();
+        BeanUtils.copyProperties(logisticsCheckActionEntity, logisticsCheckActionObject);
+
+        return logisticsCheckActionObject;
     }
 
-    @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
-    public ResponseEntity<LogisticsCheckAction> getLogisticsCheckActionById(@PathVariable(value = "id") int id) {
-        return new ResponseEntity<LogisticsCheckAction>(actionService.get(id), HttpStatus.OK);
-    }
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<LogisticsCheckActionObject> get(@RequestParam(value = "orgId", required = true) String orgId,
+                                       @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
+                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
-    @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
-    public ResponseEntity<LogisticsCheckAction> getLogisticsCheckActionByName(@PathVariable(value = "name") String name) {
-        return new ResponseEntity<LogisticsCheckAction>(actionService.get(name), HttpStatus.OK);
-    }
+        Iterable<LogisticsCheckActionEntity> entityList = null;
+        entityList = logisticsCheckActionRepository.findByOrgId(orgId, new PageRequest(pageIndex, pageSize));
 
-    @RequestMapping(value = "/org/{id}", method = RequestMethod.GET)
-    public ResponseEntity<List<LogisticsCheckAction>> getLogisticsCheckActionByOrg(@PathVariable(value = "id") Long id) {
-        return new ResponseEntity<List<LogisticsCheckAction>>(actionService.getLogisticsCheckActionsByOrg(id), HttpStatus.OK);
+        if (entityList == null) {
+            throw new NotFoundException("LogisticsCheckActionObject");
+        }
+
+        List<LogisticsCheckActionObject> actionObjects = new ArrayList<>();
+        for (LogisticsCheckActionEntity entity : entityList) {
+            LogisticsCheckActionObject actionObject = new LogisticsCheckActionObject();
+            BeanUtils.copyProperties(entity, actionObject);
+            actionObjects.add(actionObject);
+        }
+
+        return actionObjects;
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<ResultWrapper> createLogisticsCheckAction(@RequestBody LogisticsCheckAction action) {
-        int id = actionService.save(action);
-        HttpStatus status = id > 0 ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(id), status);
+    public LogisticsCheckActionObject create(@RequestBody LogisticsCheckActionObject action) {
+
+        LogisticsCheckActionEntity logisticsCheckActionEntity = new LogisticsCheckActionEntity();
+        BeanUtils.copyProperties(action, logisticsCheckActionEntity);
+
+        LogisticsCheckActionEntity newEntity = logisticsCheckActionRepository.save(logisticsCheckActionEntity);
+
+        LogisticsCheckActionObject logisticsCheckActionObject = new LogisticsCheckActionObject();
+        BeanUtils.copyProperties(newEntity, logisticsCheckActionObject);
+
+        return logisticsCheckActionObject;
     }
 
-    @RequestMapping(value = "", method = RequestMethod.PUT)
-    public ResponseEntity<ResultWrapper> updateLogisticsCheckAction(@RequestBody LogisticsCheckAction action) {
-        Boolean result = actionService.update(action).equals(ServiceOperationStatus.Success) ? true : false;
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.OK);
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public LogisticsCheckActionObject update(@RequestBody LogisticsCheckActionObject action) {
+
+        LogisticsCheckActionEntity logisticsCheckActionEntity = new LogisticsCheckActionEntity();
+        BeanUtils.copyProperties(action, logisticsCheckActionEntity);
+
+        LogisticsCheckActionEntity newEntity = logisticsCheckActionRepository.save(logisticsCheckActionEntity);
+
+        LogisticsCheckActionObject logisticsCheckActionObject = new LogisticsCheckActionObject();
+        BeanUtils.copyProperties(newEntity, logisticsCheckActionObject);
+
+        return logisticsCheckActionObject;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<ResultWrapper> deleteLogisticsCheckAction(@PathVariable(value = "id") int id) {
-        Boolean result = actionService.delete(id, 5); //deletePermanantly status is 5 in dev DB
-        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    public void delete(@PathVariable(value = "id") Integer id) {
+
+        logisticsCheckActionRepository.delete(id);
     }
 }

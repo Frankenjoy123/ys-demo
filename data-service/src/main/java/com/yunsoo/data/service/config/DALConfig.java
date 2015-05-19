@@ -17,9 +17,6 @@ import java.util.Properties;
 
 @Configuration
 @Import(DBSetting.class)
-//@ComponentScan(basePackages = {"com.yunsoo.data.service.config"})
-// Property file in which are written the MySQL connection properties
-//@PropertySource("classpath:jdbc.properties")
 public class DALConfig {
 
     @Autowired

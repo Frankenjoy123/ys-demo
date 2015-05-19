@@ -19,6 +19,7 @@ buildscript {
 apply plugin: 'spring-boot'
 
 dependencies {
+    compile project(":common")
     compile project(":common-web")
     compile project(":common-data")
     compile("org.springframework.boot:spring-boot-starter-web") {

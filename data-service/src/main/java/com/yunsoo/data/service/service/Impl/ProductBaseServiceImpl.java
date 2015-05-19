@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.S3Object;
@@ -36,7 +37,7 @@ public class ProductBaseServiceImpl implements ProductBaseService {
     }
 
     @Override
-    public S3Object getProductThumbnail(String bucketName, String client) throws IOException {
+    public S3Object getProductS3Object(String bucketName, String client) throws IOException {
 
         try {
             S3Object item = s3ItemDao.getItem(bucketName, client);
@@ -87,12 +88,13 @@ public class ProductBaseServiceImpl implements ProductBaseService {
     @Override
     public void deactivate(String id) {
         ProductBase productBase = this.getById(id);
-        productBase.setActive(false);
+        productBase.setStatus("inactive");
         this.patchUpdate(productBase);
     }
 
+    //statues is used for not equal filter
     @Override
-    public List<ProductBase> getByFilter(String orgId, Integer categoryId, Boolean active) {
+    public List<ProductBase> getByFilter(String orgId, Integer categoryId, List<String> statuses) {
         Map<String, Object> eqFilter = new HashMap<>();
         if (orgId != null) {
             eqFilter.put("orgId", orgId);
@@ -100,10 +102,10 @@ public class ProductBaseServiceImpl implements ProductBaseService {
         if (categoryId != null) {
             eqFilter.put("categoryId", categoryId);
         }
-        if (active != null) {
-            eqFilter.put("active", active);
-        }
-        return ProductBase.fromModelList(productBaseDao.getByFilter(eqFilter));
+
+        Map<String, List<String>> notEqFilter = new HashMap<String, List<String>>();
+        notEqFilter.put("status", statuses);
+        return ProductBase.fromModelList(productBaseDao.getByFilter(eqFilter, notEqFilter));
     }
 
     @Override
