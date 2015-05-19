@@ -11,6 +11,7 @@ import com.yunsoo.data.service.entity.OrganizationEntity;
 import com.yunsoo.data.service.repository.OrganizationRepository;
 import com.yunsoo.data.service.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -52,6 +53,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public OrganizationObject create(@RequestBody OrganizationObject organizationObject) {
         OrganizationEntity entity = toOrganizationEntity(organizationObject);
         entity.setId(null);
