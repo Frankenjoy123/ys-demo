@@ -3,13 +3,9 @@
 
     app.factory("settingService", ["$http", function ($http) {
         return {
-            getInfo: function (productKey, fnSuccess, fnError) {
-                $http.get("/api/" + productKey)
-                    .success(function (data) {
-                        fnSuccess(data);
-                    }).error(function (data, state) {
-                        fnSuccess();
-                    });
+            updatePassword: function (passwordObj, fnSuccess, fnFail) {
+                $http.post("/api/account/current/password", passwordObj).success(fnSuccess).error(fnFail);
+                return this;
             }
         };
     }]);
@@ -20,6 +16,8 @@
         $scope.currentPassword = "";
         $scope.confirmPassword = "";
 
+
+
         $scope.submit = function () {
             if ($scope.originalPassword == "") {
                 $scope.utils.alert('warning', '请输入原密码！');
@@ -29,14 +27,21 @@
                 $scope.utils.alert('warning', '请输入修改密码！');
                 return;
             }
-            if ($scope.currentPassword.length < 6) {
-                $scope.utils.alert('warning', '新密码不能少于六位！');
-                return;
-            }
             if ($scope.currentPassword != $scope.confirmPassword) {
                 $scope.utils.alert('warning', '确认密码与输入密码不一致！');
                 return;
             }
+
+            var passwordObj = {
+                old_password: $scope.originalPassword,
+                new_password: $scope.currentPassword
+            };
+
+            settingService.updatePassword(passwordObj, function (data) {
+                $scope.utils.alert('success', '修改密码成功！');
+            }, function (data) {
+                $scope.utils.alert('warning', '修改密码失败！');
+            });
         };
     }]);
 })();
