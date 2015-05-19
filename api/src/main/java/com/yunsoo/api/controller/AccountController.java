@@ -37,7 +37,7 @@ public class AccountController {
         if (accountObject == null) {
             throw new NotFoundException("Account not found by [id: " + id + "]");
         }
-        return fromAccountObject(accountObject);
+        return toAccount(accountObject);
     }
 
     @RequestMapping(value = "/current/password", method = RequestMethod.POST)
@@ -68,11 +68,11 @@ public class AccountController {
         if (orgId == null) {
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         }
-        return accountDomain.getByOrgId(orgId).stream().map(this::fromAccountObject).collect(Collectors.toList());
+        return accountDomain.getByOrgId(orgId).stream().map(this::toAccount).collect(Collectors.toList());
     }
 
 
-    private Account fromAccountObject(AccountObject accountObject) {
+    private Account toAccount(AccountObject accountObject) {
         if (accountObject == null) {
             return null;
         }
