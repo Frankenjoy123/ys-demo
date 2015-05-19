@@ -1,11 +1,17 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountDomain;
+import com.yunsoo.api.dto.AccountPassword;
 import com.yunsoo.api.dto.basic.Account;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
+import com.yunsoo.common.data.object.LogisticsCheckPointObject;
+import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.exception.UnauthorizedException;
+import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +42,30 @@ public class AccountController {
             throw new NotFoundException("Account not found by [id: " + id + "]");
         }
         return fromAccountObject(accountObject);
+    }
+
+    @RequestMapping(value = "/current/password", method = RequestMethod.POST)
+    public void updatePassword(@RequestBody AccountPassword accountPassword) {
+
+        String currentAccountID = tokenAuthenticationService.getAuthentication().getDetails().getId();
+
+        AccountObject accountObject;
+        accountObject = accountDomain.getById(currentAccountID);
+
+        if (accountObject == null) {
+            throw new UnauthorizedException("Account is not valid");
+        }
+
+        String rawOldPassword = accountPassword.getOldPassword();
+        String rawNewPassword = accountPassword.getNewPassword();
+        String password = accountObject.getPassword();
+        String hashSalt = accountObject.getHashSalt();
+
+        if (!HashUtils.sha1HexString(rawOldPassword + hashSalt).equals(password)) {
+            throw new UnprocessableEntityException("当前密码不匹配");
+        }
+
+
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
