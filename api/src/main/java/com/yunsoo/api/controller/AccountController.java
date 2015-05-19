@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountDomain;
-import com.yunsoo.api.dto.AccountCreateRequest;
+import com.yunsoo.api.dto.AccountRequest;
 import com.yunsoo.api.dto.AccountUpdatePasswordRequest;
 import com.yunsoo.api.dto.basic.Account;
 import com.yunsoo.api.security.TokenAuthenticationService;
@@ -32,14 +32,14 @@ public class AccountController {
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public Account getById(@PathVariable("id") String id) {
+    public Account getById(@PathVariable("id") String accountId) {
         AccountObject accountObject;
-        if ("current".equals(id)) { //get current Account
-            id = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        if ("current".equals(accountId)) { //get current Account
+            accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         }
-        accountObject = accountDomain.getById(id);
+        accountObject = accountDomain.getById(accountId);
         if (accountObject == null) {
-            throw new NotFoundException("Account not found by [id: " + id + "]");
+            throw new NotFoundException("Account not found by [id: " + accountId + "]");
         }
         return toAccount(accountObject);
     }
@@ -55,11 +55,21 @@ public class AccountController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#request.orgId, 'filterByOrg', 'account:create')")
-    public Account create(@Valid @RequestBody AccountCreateRequest request) {
+    public Account create(@Valid @RequestBody AccountRequest request) {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         AccountObject accountObject = toAccountObject(request);
         accountObject.setCreatedAccountId(currentAccountId);
         return toAccount(accountDomain.createAccount(accountObject));
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    public void updateStatus(@PathVariable("id") String accountId, @RequestBody String statusCode) {
+        //todo
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public void patchUpdate(@PathVariable("id") String accountId, @RequestBody AccountRequest accountRequest) {
+        //todo
     }
 
     @RequestMapping(value = "/current/password", method = RequestMethod.POST)
@@ -106,7 +116,7 @@ public class AccountController {
         return account;
     }
 
-    private AccountObject toAccountObject(AccountCreateRequest request) {
+    private AccountObject toAccountObject(AccountRequest request) {
         if (request == null) {
             return null;
         }

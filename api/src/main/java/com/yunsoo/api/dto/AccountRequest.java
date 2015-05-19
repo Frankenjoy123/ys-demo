@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * Created on  : 2015/5/19
  * Descriptions:
  */
-public class AccountCreateRequest {
+public class AccountRequest {
     @NotBlank(message="org_id must not be null or empty")
     @JsonProperty("org_id")
     private String orgId;
