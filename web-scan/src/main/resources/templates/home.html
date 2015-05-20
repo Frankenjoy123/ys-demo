@@ -365,6 +365,7 @@
                 $("#divScanValidKey").css('display', '');
                 $("#divScanResultValidKey").css('display', '');
 
+                $("#imgManufacture").attr("src", "/api-rabbit/organization/" + data.manufacturer.id + "/logo-mobile");
                 $("#imgProduct").attr("src", "/api-rabbit/productbase/" + data.product.productBaseId + "/full-mobile");
                 if (data.validationResult.toLowerCase() == "uncertain") {
                     $("#imgProStatus").attr("src", "images/icon-warning.png");
@@ -545,8 +546,6 @@
                         }
                     }
                 }
-
-                $("#imgManufacture").attr("src", "/api-rabbit/organization/" + data.manufacturer.id + "/logo-mobile");
             }
         });
     });
@@ -617,7 +616,7 @@
                                             <div class="timeline-badge down"><i class="fa fa-thumbs-up"></i></div>
                                             <div class="timeline-panel">
                                                 <div class="timeline-body">
-                                                    <p>您没有扫描记录！</p>
+                                                    <p>您是第一次扫描！</p>
                                                 </div>
                                             </div>
                                         </li>
