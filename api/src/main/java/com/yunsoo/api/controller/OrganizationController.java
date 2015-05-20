@@ -2,6 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.basic.Organization;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.RestClient;
@@ -33,14 +34,20 @@ public class OrganizationController {
     @Autowired
     private OrganizationDomain organizationDomain;
 
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationController.class);
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
-    public Organization getOrganizationById(@PathVariable(value = "id") String id) {
-        OrganizationObject object = organizationDomain.getOrganizationById(id);
+    public Organization getById(@PathVariable(value = "id") String orgId) {
+        if ("current".equals(orgId)) { //get current Organization
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
+        OrganizationObject object = organizationDomain.getOrganizationById(orgId);
         if (object == null) {
-            throw new NotFoundException("organization not found by [id: " + id + "]");
+            throw new NotFoundException("organization not found by [id: " + orgId + "]");
         }
         return fromOrganizationObject(object);
     }

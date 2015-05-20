@@ -42,7 +42,19 @@
                         message: message,
                         timer: 3000
                     });
+                },
+                arrayToMap: function (array, keyName) {
+                    var map = {};
+                    if (array && keyName && Array.isArray(array)) {
+                        $.each(array, function (i, item) {
+                            if (item.hasOwnProperty(keyName)) {
+                                map[item[keyName]] = item;
+                            }
+                        });
+                    }
+                    return map;
                 }
+
             };
         }]);
 })();

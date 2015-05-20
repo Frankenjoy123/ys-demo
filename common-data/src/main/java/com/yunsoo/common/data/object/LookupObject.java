@@ -67,6 +67,21 @@ public class LookupObject {
                 && this.getCode().equals(((LookupObject) obj).getCode()));
     }
 
+    public static <T extends LookupObject> T fromCode(List<T> lookup, String code) {
+        if (lookup == null) {
+            throw new IllegalArgumentException("lookup is null");
+        }
+        if (code == null) {
+            return null;
+        }
+        for (T item : lookup) {
+            if (code.equals(item.getCode())) {
+                return item;
+            }
+        }
+        return null;
+    }
+
     public static <T extends LookupObject> List<T> fromCodeList(List<T> lookup, List<String> codeList) {
         if (lookup == null) {
             throw new IllegalArgumentException("lookup is null");

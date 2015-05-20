@@ -31,7 +31,7 @@
 
             function login() {
                 var loginForm = $scope.loginForm;
-                console.log('[before login]', 'organization:', loginForm.organization, ', identifier:', loginForm.identifier);
+                console.log('[before login]', 'organization:', loginForm.organization, 'identifier:', loginForm.identifier);
 
                 loginService.login(loginForm, function (data) {
                     if (!data || !data.access_token || !data.access_token.token) {

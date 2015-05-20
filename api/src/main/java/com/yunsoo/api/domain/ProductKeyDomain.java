@@ -2,6 +2,7 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.ProcessorClient;
 import com.yunsoo.api.dto.ProductKeyBatch;
+import com.yunsoo.api.dto.ProductKeyBatchStatus;
 import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.common.data.LookupCodes;
@@ -14,6 +15,7 @@ import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,19 +78,24 @@ public class ProductKeyDomain {
     public ProductKeyBatch getProductKeyBatchById(String id) {
         return toProductKeyBatch(
                 dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id),
-                lookupDomain.getAllProductKeyTypes(true));
+                lookupDomain.getAllProductKeyTypes(),
+                lookupDomain.getAllProductKeyBatchStatuses());
     }
 
-    public List<ProductKeyBatch> getAllProductKeyBatchesByOrgId(String orgId, String productBaseId) {
+    public List<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Integer pageIndex, Integer pageSize) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("page_index", pageIndex)
+                .append("page_size", pageSize)
+                .build();
         ProductKeyBatchObject[] objects =
-                dataAPIClient.get("productkeybatch?orgId={orgid}&productBaseId={pbid}",
-                        ProductKeyBatchObject[].class,
-                        orgId,
-                        productBaseId);
+                dataAPIClient.get("productkeybatch" + query, ProductKeyBatchObject[].class);
 
         List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes();
+        List<ProductKeyBatchStatus> productKeyBatchStatuses = lookupDomain.getAllProductKeyBatchStatuses();
         return Arrays.stream(objects)
-                .map(i -> toProductKeyBatch(i, productKeyTypes))
+                .map(i -> toProductKeyBatch(i, productKeyTypes, productKeyBatchStatuses))
                 .collect(Collectors.toList());
     }
 
@@ -135,7 +142,7 @@ public class ProductKeyDomain {
             LOGGER.error("ProductKeyBatchMassage posting to sqs failed [exceptionMessage: {}]", ex.getMessage());
         }
 
-        return toProductKeyBatch(newBatchObj, lookupDomain.getAllProductKeyTypes(true));
+        return toProductKeyBatch(newBatchObj, lookupDomain.getAllProductKeyTypes(), lookupDomain.getAllProductKeyBatchStatuses());
     }
 
     public byte[] getProductKeysByBatchId(String id) {
@@ -171,7 +178,9 @@ public class ProductKeyDomain {
     }
 
 
-    private ProductKeyBatch toProductKeyBatch(ProductKeyBatchObject object, List<ProductKeyType> productKeyTypes) {
+    private ProductKeyBatch toProductKeyBatch(ProductKeyBatchObject object,
+                                              List<ProductKeyType> productKeyTypes,
+                                              List<ProductKeyBatchStatus> productKeyBatchStatuses) {
         if (object == null) {
             return null;
         }
@@ -179,6 +188,7 @@ public class ProductKeyDomain {
         batch.setId(object.getId());
         batch.setQuantity(object.getQuantity());
         batch.setStatusCode(object.getStatusCode());
+        batch.setStatus(LookupObject.fromCode(productKeyBatchStatuses, object.getStatusCode()));
         batch.setProductKeyTypeCodes(object.getProductKeyTypeCodes());
         batch.setProductKeyTypes(LookupObject.fromCodeList(productKeyTypes, object.getProductKeyTypeCodes()));
         batch.setProductBaseId(object.getProductBaseId());

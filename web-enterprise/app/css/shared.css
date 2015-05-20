@@ -7,5 +7,12 @@ body {
 }
 
 .brand-text {
-    font-weight: 400;
+    font-weight: 400; /*override*/
+}
+
+.img-logo {
+    width: 24px;
+    height: 24px;
+    margin: 0 0 4px 14px;
+    border-radius: 3px;
 }
