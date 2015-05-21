@@ -45,7 +45,7 @@
                 },
                 arrayToMap: function (array, keyName) {
                     var map = {};
-                    if (array && keyName && Array.isArray(array)) {
+                    if (Array.isArray(array) && keyName) {
                         $.each(array, function (i, item) {
                             if (item.hasOwnProperty(keyName)) {
                                 map[item[keyName]] = item;

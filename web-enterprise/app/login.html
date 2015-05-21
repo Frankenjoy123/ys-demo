@@ -19,6 +19,9 @@
     <!--Font Awesome [ OPTIONAL ]-->
     <link href="plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
+    <!--Animate.css [ OPTIONAL ]-->
+    <link href="plugins/animate-css/animate.min.css" rel="stylesheet">
+
     <link href="css/shared.css" rel="stylesheet"/>
 
     <style>
@@ -37,8 +40,8 @@
 
 </head>
 
-<body class="animated">
-<div id="container" class="cls-container">
+<body>
+<div id="container" class="cls-container" ng-controller="loginController">
 
     <!-- BACKGROUND IMAGE -->
     <!--===================================================-->
@@ -60,8 +63,8 @@
 
     <!-- LOGIN FORM -->
     <!--===================================================-->
-    <div class="cls-content" ng-controller="loginController">
-        <div id="panel-login" class="cls-content-sm panel">
+    <div class="cls-content">
+        <div id="panel-login" class="cls-content-sm panel animated zoomIn" ng-show="showLoginFormDelay">
             <div class="panel-body">
                 <p class="pad-btm">组织账号登陆</p>
 
@@ -100,12 +103,6 @@
                             </div>
                         </div>
                     </div>
-                    <!--
-                    <div class="mar-btm"><em>- or -</em></div>
-                    <button class="btn btn-primary btn-lg btn-block" type="button">
-                        <i class="fa fa-facebook fa-fw"></i> Login with Facebook
-                    </button>
-                    -->
                 </form>
             </div>
         </div>
