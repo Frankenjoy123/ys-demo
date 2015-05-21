@@ -54,10 +54,9 @@ public class ScanController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
 
-    //能够访问所有的Key
+    //能够访问所有的Key,为移动客户端调用，因此每次Scan都save扫描记录。
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ScanResult getDetailByKey(@RequestBody ScanRequestBody scanRequestBody) {
-
+    public ScanResult getDetail(@RequestBody ScanRequestBody scanRequestBody) {
         //0，validate input
         scanRequestBody.validateForScan();
 
@@ -107,6 +106,48 @@ public class ScanController {
 
         //8, save scan Record
         long scanSave = SaveScanRecord(currentUser, currentExistProduct, scanRequestBody);
+        return scanResult;
+    }
+
+    //能够访问所有的Key,为WebScan调用，因此每次Scan都!!不会save扫描记录。
+    @RequestMapping(value = "{key}", method = RequestMethod.GET)
+    public ScanResult getDetailWithoutSaveScanRecord(@PathVariable(value = "key") String key) {
+
+        //1，validate input
+        if (key == null || key.isEmpty()) {
+            throw new BadRequestException("Key不能为空！");
+        }
+
+        ScanResult scanResult = new ScanResult();
+        scanResult.setKey(key);
+
+        //2, set product information
+        Product currentExistProduct = productDomain.getProductByKey(key);
+        if (currentExistProduct == null) {
+            //Not found by the product Key
+            LOGGER.warn("Key = {0} 不存在！", key);
+            scanResult.setValidationResult(ValidationResult.Fake);  //no such key in our Yunsoo Platform.
+            return scanResult;
+        }
+        scanResult.setProduct(currentExistProduct);
+
+        //3, retrieve scan records
+        List<ScanRecord> scanRecordList = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}",
+                new ParameterizedTypeReference<List<ScanRecord>>() {
+                }, key, 20);  //hard code as top 20 (desc order by created time )
+        scanResult.setScanRecord(scanRecordList);
+        scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
+
+        //4, retrieve logistics information
+        scanResult.setLogisticsList(getLogisticsInfo(key));
+
+        //5, get company information.
+        OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, scanResult.getProduct().getOrgId());
+        scanResult.setManufacturer(Organization.fromOrganizationObject(organizationObject));
+
+        //7, set validation result by our validation strategy.
+        scanResult.setValidationResult(scanRecordList.size() == 0 ? ValidationResult.Real : ValidationResult.Uncertain);
+
         return scanResult;
     }
 
@@ -177,7 +218,7 @@ public class ScanController {
         return scanRecordList;
     }
 
-    @RequestMapping(value = "/key/{key}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
+    @RequestMapping(value = "/record/{key}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
     public List<ScanRecord> getScanRecordsByFilter(
             @PathVariable(value = "key") String key,
@@ -207,7 +248,6 @@ public class ScanController {
         try {
             logisticsPaths = logisticsDomain.getLogisticsPathsOrderByStartDate(key);
         } catch (NotFoundException ex) {
-            //to do: log
             LOGGER.warn("物流信息找不到 - Key = " + key);
             return null;
         }
