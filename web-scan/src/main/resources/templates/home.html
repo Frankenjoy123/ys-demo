@@ -161,7 +161,27 @@
         bottom: 30px;
         height: 60px;
         width: 60px;
-    }</style>
+    }
+
+    .loading {
+        width: 200px;
+        height: 100px;
+        position: absolute;
+        top: 40%;
+        left: 20%;
+        line-height: 30px;
+        color: #fff;
+        padding-left: 60px;
+        font-size: 20px;
+        background: #47ABEF url(images/loader.gif) no-repeat 10px 50%;
+        opacity: 0.8;
+        z-index: 9999;
+        padding-top: 15px;
+        -moz-border-radius: 20px;
+        -webkit-border-radius: 20px;
+        border-radius: 20px;
+        filter: progid:DXImageTransform.Microsoft.Alpha(opacity=70);
+    }  </style>
 </head>
 <body>
 <script type="text/javascript">
@@ -340,216 +360,242 @@
             return date.toShortCase();
         };
 
-        $.ajax({
-            type: 'POST',
-            url: '/api-rabbit/scan',
-            data: JSON.stringify(postObject),
-            dataType: 'text/json',
-            contentType: 'application/json',
-            success: function (dataStr) {
+        function showData(dataStr) {
+            var data = $.parseJSON(dataStr);
 
-                var data = $.parseJSON(dataStr);
+            $("#divBody").css('display', '');
 
-                $("#divBody").css('display', '');
+            if (data == null || data.product == null || data.validationResult.toLowerCase() == "fake") {
+                $("#img44").attr("src", "images/icon-false.png");
 
-                if (data == null || data.product == null || data.validationResult.toLowerCase() == "fake") {
-                    $("#img44").attr("src", "images/icon-false.png");
+                $("#divScanInValidKey").css('display', '');
+                $("#divScanDetailsInValidKey").css('display', '');
+                $("#divFooterValidKey").css('display', 'none');
 
-                    $("#divScanInValidKey").css('display', '');
-                    $("#divScanDetailsInValidKey").css('display', '');
-                    $("#divFooterValidKey").css('display', 'none');
+                return;
+            }
 
-                    return;
-                }
+            $("#divScanValidKey").css('display', '');
+            $("#divScanResultValidKey").css('display', '');
 
-                $("#divScanValidKey").css('display', '');
-                $("#divScanResultValidKey").css('display', '');
+            $("#imgManufacture").attr("src", "/api-rabbit/organization/" + data.manufacturer.id + "/logo-mobile");
+            $("#imgProduct").attr("src", "/api-rabbit/productbase/" + data.product.productBaseId + "/full-mobile");
+            if (data.validationResult.toLowerCase() == "uncertain") {
+                $("#imgProStatus").attr("src", "images/icon-warning.png");
+                $("#proStatus").html("此产品不确定");
+            }
+            else if (data.validationResult.toLowerCase() == "real") {
+                $("#imgProStatus").attr("src", "images/icon-truer.png");
+                $("#proStatus").html("此产品为真品");
+            }
 
-                $("#imgManufacture").attr("src", "/api-rabbit/organization/" + data.manufacturer.id + "/logo-mobile");
-                $("#imgProduct").attr("src", "/api-rabbit/productbase/" + data.product.productBaseId + "/full-mobile");
-                if (data.validationResult.toLowerCase() == "uncertain") {
-                    $("#imgProStatus").attr("src", "images/icon-warning.png");
-                    $("#proStatus").html("此产品不确定");
-                }
-                else if (data.validationResult.toLowerCase() == "real") {
-                    $("#imgProStatus").attr("src", "images/icon-truer.png");
-                    $("#proStatus").html("此产品为真品");
-                }
+            $("#divRemind").css('display', '');
+            $("#divScanDetailsValidKey").css('display', '');
 
-                $("#divRemind").css('display', '');
-                $("#divScanDetailsValidKey").css('display', '');
+            var td1 = $('<td></td>').css("width", "30%").html("商品码");
+            var td2 = $('<td></td>').css("width", "70%").html(data.product.barcode);
+            var tr = $('<tr></tr>').append(td1).append(td2);
+            var tdSpace = $('<td></td>').css('height', '10px');
+            var trSpace = $('<tr></tr>').append(tdSpace);
+            $("#detailItems").append(tr).append(trSpace);
 
-                var td1 = $('<td></td>').css("width", "30%").html("商品码");
-                var td2 = $('<td></td>').css("width", "70%").html(data.product.barcode);
-                var tr = $('<tr></tr>').append(td1).append(td2);
-                var tdSpace = $('<td></td>').css('height', '10px');
-                var trSpace = $('<tr></tr>').append(tdSpace);
-                $("#detailItems").append(tr).append(trSpace);
+            td1 = $('<td></td>').css("width", "30%").html("物品名称");
+            td2 = $('<td></td>').css("width", "70%").html(data.product.name);
+            tr = $('<tr></tr>').append(td1).append(td2);
+            tdSpace = $('<td></td>').css('height', '10px');
+            trSpace = $('<tr></tr>').append(tdSpace);
+            $("#detailItems").append(tr).append(trSpace);
 
-                td1 = $('<td></td>').css("width", "30%").html("物品名称");
-                td2 = $('<td></td>').css("width", "70%").html(data.product.name);
-                tr = $('<tr></tr>').append(td1).append(td2);
-                tdSpace = $('<td></td>').css('height', '10px');
-                trSpace = $('<tr></tr>').append(tdSpace);
-                $("#detailItems").append(tr).append(trSpace);
+            $.ajax({
+                type: 'GET',
+                url: '/api-rabbit/productbase/' + data.product.productBaseId + '/notes/json',
+                dataType: 'text/json',
+                success: function (dataStr) {
 
-                $.ajax({
-                    type: 'GET',
-                    url: '/api-rabbit/productbase/' + data.product.productBaseId + '/notes/json',
-                    dataType: 'text/json',
-                    success: function (dataStr) {
+                    var data = $.parseJSON(dataStr);
 
-                        var data = $.parseJSON(dataStr);
-
-                        if (data.details != null) {
-                            var details = data.details;
-                            if (details != null) {
-                                for (var detail in details) {
-                                    var td1 = $('<td></td>').css("width", "30%").html(detail);
-                                    var td2 = $('<td></td>').css("width", "70%").html(details[detail]);
-                                    var tr = $('<tr></tr>').append(td1).append(td2);
-                                    var tdSpace = $('<td></td>').css('height', '10px');
-                                    var trSpace = $('<tr></tr>').append(tdSpace);
-
-                                    $("#detailItems").append(tr).append(trSpace);
-                                }
-                            }
-                        }
-
-                        if (data.contact != null) {
-                            $("#contactPhone").attr('href', 'tel:' + data.contact.hotline);
-                        }
-
-                        if (data['e-commerce'] != null) {
-                            $("#buyStore").attr('href', data['e-commerce'].tmall);
-                        }
-                    }
-                });
-
-                if (data.scanRecord != null) {
-
-                    if (data.scanRecord.length == 0)
-                        return;
-
-                    var latestScan = data.scanRecord[0];
-                    var otherScans = data.scanRecord.slice(1);
-                    var firstScan = data.scanRecord[data.scanRecord.length - 1];
-
-                    if (data.validationResult.toLowerCase() == "uncertain") {
-                        var plocation;
-                        if (!(firstScan.location.indexOf(":") >= 0))
-                            plocation = "未知地点";
-                        else {
-                            var details = firstScan.location.split(";");
+                    if (data.details != null) {
+                        var details = data.details;
+                        if (details != null) {
                             for (var detail in details) {
-                                var dat = details[detail];
-                                var datItems = dat.split(":");
-                                if (!(datItems == null || !(datItems.length >= 2))) {
-                                    if (datItems[0] == "City") {
-                                        plocation = datItems[1];
-                                        break;
-                                    }
-                                }
+                                var td1 = $('<td></td>').css("width", "30%").html(detail);
+                                var td2 = $('<td></td>').css("width", "70%").html(details[detail]);
+                                var tr = $('<tr></tr>').append(td1).append(td2);
+                                var tdSpace = $('<td></td>').css('height', '10px');
+                                var trSpace = $('<tr></tr>').append(tdSpace);
+
+                                $("#detailItems").append(tr).append(trSpace);
                             }
                         }
-
-                        $("#proStatus").html("请注意，本产品码已失效" + "<br/>" + "首次扫描时间:<b>" + getShortDateString(firstScan.createdDateTime) + "</b>" + " 地点:<b>" + plocation + "</b>");
                     }
 
-                    $("#scanRecords").html("");
+                    if (data.contact != null) {
+                        $("#contactPhone").attr('href', 'tel:' + data.contact.hotline);
+                    }
 
-                    var p = $('<p></p>').html(latestScan.detail);
+                    if (data['e-commerce'] != null) {
+                        $("#buyStore").attr('href', data['e-commerce'].tmall);
+                    }
+                }
+            });
 
+            if (data.scanRecord != null) {
+
+                if (data.scanRecord.length == 0)
+                    return;
+
+                var latestScan = data.scanRecord[0];
+                var otherScans = data.scanRecord.slice(1);
+                var firstScan = data.scanRecord[data.scanRecord.length - 1];
+
+                if (data.validationResult.toLowerCase() == "uncertain") {
                     var plocation;
-                    if (!(latestScan.location.indexOf(":") >= 0))
-                        plocation = $('<span></span>').html("未知" + " " + getDateString(latestScan.createdDateTime));
+                    if (!(firstScan.location.indexOf(":") >= 0))
+                        plocation = "未知地点";
                     else {
-                        var details = latestScan.location.split(";");
+                        var details = firstScan.location.split(";");
                         for (var detail in details) {
                             var dat = details[detail];
                             var datItems = dat.split(":");
                             if (!(datItems == null || !(datItems.length >= 2))) {
                                 if (datItems[0] == "City") {
-                                    plocation = $('<span></span>').html(datItems[1] + " " + getDateString(latestScan.createdDateTime));
+                                    plocation = datItems[1];
                                     break;
                                 }
                             }
                         }
                     }
 
-                    var imglocation = $('<img/>').addClass("img-rounded").attr("src", "images/location.png").css("height", "20px").css("width", "20px");
-                    var divPanel = $('<div></div>').addClass("timeline-panel").append(p).append(imglocation).append(plocation);
-                    var div = $('<div></div>').addClass("timeline-badge down");
-                    var li = $('<li></li>').append(div);
-                    var lii = li.append(divPanel);
+                    $("#proStatus").html("请注意，本产品码已失效" + "<br/>" + "首次扫描时间:<b>" + getShortDateString(firstScan.createdDateTime) + "</b>" + " 地点:<b>" + plocation + "</b>");
+                }
 
-                    $("#scanRecords").append(lii);
+                $("#scanRecords").html("");
 
-                    if (otherScans.length > 0) {
-                        for (var otherScan in otherScans) {
-                            p = $('<p></p>').html(otherScans[otherScan].detail);
+                var p = $('<p></p>').html(latestScan.detail);
 
-                            if (!(otherScans[otherScan].location.indexOf(":") >= 0))
-                                plocation = $('<span></span>').html("未知" + " " + getDateString(otherScans[otherScan].createdDateTime));
-                            else {
-                                var details = otherScans[otherScan].location.split(";");
-                                for (var detail in details) {
-                                    var dat = details[detail];
-                                    var datItems = dat.split(":");
-                                    if (!(datItems == null || !(datItems.length >= 2))) {
-                                        if (datItems[0] == "City") {
-                                            plocation = $('<span></span>').html(datItems[1] + " " + getDateString(otherScans[otherScan].createdDateTime));
-                                            break;
-                                        }
+                var plocation;
+                if (!(latestScan.location.indexOf(":") >= 0))
+                    plocation = $('<span></span>').html("未知" + " " + getDateString(latestScan.createdDateTime));
+                else {
+                    var details = latestScan.location.split(";");
+                    for (var detail in details) {
+                        var dat = details[detail];
+                        var datItems = dat.split(":");
+                        if (!(datItems == null || !(datItems.length >= 2))) {
+                            if (datItems[0] == "City") {
+                                plocation = $('<span></span>').html(datItems[1] + " " + getDateString(latestScan.createdDateTime));
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                var imglocation = $('<img/>').addClass("img-rounded").attr("src", "images/location.png").css("height", "20px").css("width", "20px");
+                var divPanel = $('<div></div>').addClass("timeline-panel").append(p).append(imglocation).append(plocation);
+                var div = $('<div></div>').addClass("timeline-badge down");
+                var li = $('<li></li>').append(div);
+                var lii = li.append(divPanel);
+
+                $("#scanRecords").append(lii);
+
+                if (otherScans.length > 0) {
+                    for (var otherScan in otherScans) {
+                        p = $('<p></p>').html(otherScans[otherScan].detail);
+
+                        if (!(otherScans[otherScan].location.indexOf(":") >= 0))
+                            plocation = $('<span></span>').html("未知" + " " + getDateString(otherScans[otherScan].createdDateTime));
+                        else {
+                            var details = otherScans[otherScan].location.split(";");
+                            for (var detail in details) {
+                                var dat = details[detail];
+                                var datItems = dat.split(":");
+                                if (!(datItems == null || !(datItems.length >= 2))) {
+                                    if (datItems[0] == "City") {
+                                        plocation = $('<span></span>').html(datItems[1] + " " + getDateString(otherScans[otherScan].createdDateTime));
+                                        break;
                                     }
                                 }
                             }
-
-                            imglocation = $('<img/>').addClass("img-rounded").attr("src", "images/location.png").css("height", "20px").css("width", "20px");
-                            divPanel = $('<div></div>').addClass("timeline-panel").append(p).append(imglocation).append(plocation);
-                            div = $('<div></div>').addClass("timeline-badge primary");
-                            li = $('<li></li>').append(div);
-                            lii = li.append(divPanel);
-
-                            $("#scanRecords").append(lii);
                         }
-                    }
-                }
 
-                if (data.logisticsList != null) {
+                        imglocation = $('<img/>').addClass("img-rounded").attr("src", "images/location.png").css("height", "20px").css("width", "20px");
+                        divPanel = $('<div></div>').addClass("timeline-panel").append(p).append(imglocation).append(plocation);
+                        div = $('<div></div>').addClass("timeline-badge primary");
+                        li = $('<li></li>').append(div);
+                        lii = li.append(divPanel);
 
-                    if (data.logisticsList.length == 0)
-                        return;
-
-                    var latestLogistics = data.logisticsList[0];
-                    var otherLogistics = data.logisticsList.slice(1);
-
-                    $("#divLogistics").html("");
-
-                    var p = $('<p></p>').html(getDateString(latestLogistics.dateTime) + " " + latestLogistics.message + " " + latestLogistics.location);
-                    var divPanel = $('<div></div>').addClass("timeline-panel").append(p);
-                    var div = $('<div></div>').addClass("timeline-badge down");
-                    var li = $('<li></li>').append(div);
-                    var lii = li.append(divPanel);
-
-                    $("#divLogistics").append(lii);
-
-                    if (otherLogistics.length > 0) {
-                        for (var otherLogistic in otherLogistics) {
-                            p = $('<p></p>').html(getDateString(otherLogistics[otherLogistic].dateTime) + " " + otherLogistics[otherLogistic].message + " " + otherLogistics[otherLogistic].location);
-                            divPanel = $('<div></div>').addClass("timeline-panel").append(p);
-                            div = $('<div></div>').addClass("timeline-badge primary");
-                            li = $('<li></li>').append(div);
-                            lii = li.append(divPanel);
-
-                            $("#divLogistics").append(lii);
-                        }
+                        $("#scanRecords").append(lii);
                     }
                 }
             }
-        });
+
+            if (data.logisticsList != null) {
+
+                if (data.logisticsList.length == 0)
+                    return;
+
+                var latestLogistics = data.logisticsList[0];
+                var otherLogistics = data.logisticsList.slice(1);
+
+                $("#divLogistics").html("");
+
+                var p = $('<p></p>').html(getDateString(latestLogistics.dateTime) + " " + latestLogistics.message + " " + latestLogistics.location);
+                var divPanel = $('<div></div>').addClass("timeline-panel").append(p);
+                var div = $('<div></div>').addClass("timeline-badge down");
+                var li = $('<li></li>').append(div);
+                var lii = li.append(divPanel);
+
+                $("#divLogistics").append(lii);
+
+                if (otherLogistics.length > 0) {
+                    for (var otherLogistic in otherLogistics) {
+                        p = $('<p></p>').html(getDateString(otherLogistics[otherLogistic].dateTime) + " " + otherLogistics[otherLogistic].message + " " + otherLogistics[otherLogistic].location);
+                        divPanel = $('<div></div>').addClass("timeline-panel").append(p);
+                        div = $('<div></div>').addClass("timeline-badge primary");
+                        li = $('<li></li>').append(div);
+                        lii = li.append(divPanel);
+
+                        $("#divLogistics").append(lii);
+                    }
+                }
+            }
+        }
+
+        if (location.href.lastIndexOf('#scaned') > 0) {
+            $.ajax({
+                type: 'GET',
+                url: '/api-rabbit/scan/' + productKey,
+                dataType: 'text/json',
+                success: function (dataStr) {
+                    showData(dataStr);
+
+                    $("#loading").css('display', 'none');
+                }
+            });
+        }
+        else {
+            location.href += '#scaned';
+
+            $.ajax({
+                type: 'POST',
+                url: '/api-rabbit/scan',
+                data: JSON.stringify(postObject),
+                dataType: 'text/json',
+                contentType: 'application/json',
+                success: function (dataStr) {
+                    showData(dataStr);
+
+                    $("#loading").css('display', 'none');
+                }
+            });
+        }
     });
 </script>
+
+<div id="loading" class="loading"><p>网络不给力...</p>
+
+    <p>努力加载中...</p></div>
+
 <div class="container" id="divBody" style="display:none">
 
     <div class="box-group">
@@ -591,9 +637,15 @@
                      class="col-xs-12 col-md-12">
                     <div class="nav-tabs-custom">
                         <ul class="nav nav-tabs">
-                            <li class="active" id="li_tab_a_1" style="width: 33.3%;text-align: center"><a id="tab_a_1" data-toggle="tab">基本信息</a></li>
-                            <li id="li_tab_a_2" style="width: 33.3%;text-align: center"><a id="tab_a_2" data-toggle="tab">扫描信息</a></li>
-                            <li id="li_tab_a_3" style="width: 33.3%;text-align: center"><a id="tab_a_3" data-toggle="tab">物流跟踪</a></li>
+                            <li class="active" id="li_tab_a_1" style="width: 33.3%;text-align: center"><a id="tab_a_1"
+                                                                                                          data-toggle="tab">基本信息</a>
+                            </li>
+                            <li id="li_tab_a_2" style="width: 33.3%;text-align: center"><a id="tab_a_2"
+                                                                                           data-toggle="tab">扫描信息</a>
+                            </li>
+                            <li id="li_tab_a_3" style="width: 33.3%;text-align: center"><a id="tab_a_3"
+                                                                                           data-toggle="tab">物流跟踪</a>
+                            </li>
                         </ul>
                         <div class="tab-content" id="tabContent">
                             <div class="tab-pane active" id="tab_1">
