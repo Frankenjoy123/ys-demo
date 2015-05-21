@@ -48,10 +48,11 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductKeyBatchObject> getByFilter(@RequestParam(value = "orgId") String orgId,
-                                                   @RequestParam(value = "productBaseId", required = false) String productBaseId,
-                                                   @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
-                                                   @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+    public List<ProductKeyBatchObject> getByFilter(@RequestParam(value = "org_id") String orgId,
+                                                   @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                   @RequestParam(value = "status_code_list", required = false) String statusCodeList,
+                                                   @RequestParam(value = "page_index", required = false) Integer pageIndex,
+                                                   @RequestParam(value = "page_size", required = false) Integer pageSize) {
         if (pageIndex == null || pageIndex < 0) {
             pageIndex = 0;
         }

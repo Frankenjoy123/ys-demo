@@ -22,6 +22,7 @@
 
     app.controller('loginController', ['$scope', '$timeout', 'loginService', 'YUNSOO_CONFIG',
         function ($scope, $timeout, loginService, YUNSOO_CONFIG) {
+
             ($scope.loginForm = loginService.loginForm()) || ($scope.loginForm = {
                 organization: '',
                 identifier: '',
@@ -31,7 +32,11 @@
 
             function login() {
                 var loginForm = $scope.loginForm;
-                console.log('[before login]', 'organization:', loginForm.organization, ', identifier:', loginForm.identifier);
+                //trim
+                loginForm.organization = $.trim(loginForm.organization);
+                loginForm.identifier = $.trim(loginForm.identifier);
+
+                console.log('[before login]', 'organization:', loginForm.organization, 'identifier:', loginForm.identifier);
 
                 loginService.login(loginForm, function (data) {
                     if (!data || !data.access_token || !data.access_token.token) {
@@ -44,20 +49,28 @@
                         });
                         return;
                     }
+
+                    //save auth
                     $.removeCookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN, {path: '/'});
                     $.cookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN, data.access_token.token, {
                         expires: data.access_token.expires_in / (60 * 60 * 24),
                         path: '/'
                     });
 
+                    //save current login form
                     if (loginForm.rememberMe) {
-                        //save current login form
                         loginForm.password = '';
                         console.log('[saving login form]');
                         loginService.loginForm(loginForm);
                     }
+
+                    //animation
+                    $('body').addClass('animated fadeOut');
+                    $('#panel-login').addClass('animated zoomOut');
                     //redirect to index
-                    window.location.href = 'index.html';
+                    $timeout(function () {
+                        window.location.href = 'index.html';
+                    }, 1000);
 
                 }, function (data, code) {
                     console.log('[login failed]', data.message, code);
@@ -71,7 +84,6 @@
                     });
                 });
             }
-
 
             //init  validator
             $timeout(function () {
@@ -113,6 +125,10 @@
 
             }, 0); //end of $timeout
 
+            //show login form
+            $timeout(function () {
+                $scope.showLoginFormDelay = true;
+            }, 1500);
         }]);
 
 })();

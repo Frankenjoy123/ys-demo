@@ -33,11 +33,10 @@ public class AccountController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Account getById(@PathVariable("id") String accountId) {
-        AccountObject accountObject;
         if ("current".equals(accountId)) { //get current Account
             accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         }
-        accountObject = accountDomain.getById(accountId);
+        AccountObject accountObject = accountDomain.getById(accountId);
         if (accountObject == null) {
             throw new NotFoundException("Account not found by [id: " + accountId + "]");
         }

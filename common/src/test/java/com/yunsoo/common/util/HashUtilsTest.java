@@ -24,7 +24,7 @@ public class HashUtilsTest {
 
     @Test
     public void generatePassword() {
-        String rawPassword = "1234568";
+        String rawPassword = "123456";
         String hashSalt = RandomUtils.generateString(8);
         String password = HashUtils.sha1HexString(rawPassword + hashSalt);
         System.out.println("rawPassword:\t" + rawPassword);

@@ -17,6 +17,7 @@ public class ProductKeyBatch {
     private String id;
     private Integer quantity;
     private String statusCode;
+    private ProductKeyBatchStatus status;
     private List<String> productKeyTypeCodes;
     private List<ProductKeyType> productKeyTypes;
     private String productBaseId;
@@ -50,6 +51,14 @@ public class ProductKeyBatch {
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public ProductKeyBatchStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ProductKeyBatchStatus status) {
+        this.status = status;
     }
 
     public List<String> getProductKeyTypeCodes() {

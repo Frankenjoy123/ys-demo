@@ -4,7 +4,7 @@
     app.factory("productKeyManageService", ["$http", function ($http) {
         return {
             getProductKeyBatches: function (productBaseId, fnSuccess) {
-                $http.get("/api/productkeybatch?product_base_id=" + productBaseId).success(fnSuccess);
+                $http.get("/api/productkeybatch" + (productBaseId ? "?product_base_id=" + productBaseId : "")).success(fnSuccess);
                 return this;
             },
             getProductBases: function (fnSuccess) {
@@ -12,7 +12,11 @@
                 return this;
             },
             getProductKeyCredits: function (fnSuccess) {
-                $http.get("/api/productkeycredit", {test: "hello"}).success(fnSuccess);
+                $http.get("/api/productkeycredit").success(fnSuccess);
+                return this;
+            },
+            getAccountById: function (accountId, fnSuccess) {
+                $http.get("/api/account/" + accountId).success(fnSuccess);
                 return this;
             },
             createProductKeyBatch: function (request, fnSuccess, fnFail) {
@@ -27,19 +31,7 @@
 
     app.controller("productKeyManageCtrl", ["$scope", "productKeyManageService", function ($scope, productKeyManageService) {
 
-        $scope.formatProductKeyTypes = function (productKeyTypes) {
-            var result = '';
-            if (productKeyTypes) {
-                $.each(productKeyTypes, function (i, item) {
-                    result += item.name;
-                    if (i < productKeyTypes.length - 1) {
-                        result += ', ';
-                    }
-                });
-            }
-            return result;
-        };
-
+        $scope.cache || ($scope.cache = {});
 
         $scope.creationPanel = {
             model: {
@@ -48,14 +40,16 @@
             },
             create: function () {
                 var model = this.model;
-                console.log('[before productKeyBatch create]: ', model);
+                console.log('[before productKeyBatch create]', model);
+
                 var requestData = {
                     quantity: model.quantity,
                     productBaseId: model.productBaseId
                 };
                 var selectedProductBase = this.selectedProductBase;
                 productKeyManageService.createProductKeyBatch(requestData, function (data) {
-                    console.log('[newProductKeyBatch created]:', data);
+                    console.log('[newProductKeyBatch created]', data);
+
                     data.productBase = selectedProductBase;
                     selectedProductBase.credit.remain -= requestData.quantity;
                     $scope.listPanel.newProductKeyBatches.push(data);
@@ -68,12 +62,12 @@
                 });
             },
             productBaseIdChanged: function (productBaseId) {
-                console.log('[productBaseId changed]:', productBaseId);
+                console.log('[productBaseId changed]', productBaseId);
                 var selectedProductBase = null;
                 $.each(this.productBases, function (i, item) {
                     if (item && item.id === productBaseId) {
                         selectedProductBase = item;
-                        console.log('[selectedProductBase]:', selectedProductBase);
+                        console.log('[selectedProductBase]', selectedProductBase);
                     }
                 });
                 this.selectedProductBase = selectedProductBase;
@@ -93,10 +87,37 @@
             downloadFrameSrc: ''
         };
 
+        $scope.formatProductKeyTypes = function (productKeyTypes) {
+            var result = '';
+            if (productKeyTypes) {
+                $.each(productKeyTypes, function (i, item) {
+                    result += item.name;
+                    if (i < productKeyTypes.length - 1) {
+                        result += ', ';
+                    }
+                });
+            }
+            return result;
+        };
+
+        $scope.cache.accounts || ($scope.cache.accounts = []);
+        $scope.getAccountCached = function (accountId) {
+            var accounts = $scope.cache.accounts;
+            if (accounts[accountId]) {
+                return accounts[accountId];
+            } else {
+                accounts[accountId] = '加载中';
+                productKeyManageService.getAccountById(accountId, function (data) {
+                    accounts[accountId] = data;
+                });
+            }
+        };
+
         //init
         //get product bases
         productKeyManageService.getProductBases(function (data) {
             $scope.productBases = $scope.creationPanel.productBases = data;
+            $scope.productBaseMap = $scope.utils.arrayToMap($scope.productBases, "id");
             if ($scope.productBases) {
 
                 //get product key credits
@@ -125,22 +146,20 @@
                         $scope.productKeyCredits = productKeyCredits;
                         console.log('[productKeyCredits loaded]: ', productKeyCredits);
 
-                        //get product key batches
                         $.each($scope.productBases, function (i, item) {
                             setCredit(item, productKeyCredits);
-                            productKeyManageService.getProductKeyBatches(item.id, function (data) {
-                                if (data && data.length) {
-                                    $scope.listPanel.productKeyBatches.push({
-                                        productBase: item,
-                                        batches: data
-                                    });
-                                }
-                            });
                         });
                     }
-                )
-                ;
+                );
 
+            }
+        });
+
+        //get product key batches
+        productKeyManageService.getProductKeyBatches(null, function (data) {
+            console.log('[productKeyBatches loaded]', data);
+            if (Array.isArray(data)) {
+                $scope.listPanel.productKeyBatches = data;
             }
         });
 
@@ -157,10 +176,6 @@
             }
         }
 
-    }
-    ])
-    ;
-//end of controller
+    }]);//end of controller
 
-})
-();
+})();

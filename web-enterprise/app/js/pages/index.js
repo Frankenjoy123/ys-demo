@@ -9,7 +9,6 @@
         'dataFilterService'
     ]);
 
-
     //config root
     app.config(['$routeProvider', function ($routeProvider) {
         $routeProvider
@@ -61,9 +60,31 @@
             });
     }]);
 
+    app.factory('rootService', ['$http', '$rootScope', function ($http) {
+        return {
+            initContext: function () {
+                var context = this;
+                //load current account info
+                $http.get('/api/account/current').success(function (data) {
+                    context.account = data;
+                    console.log('[get current account]', data);
+                }).error(function (data, code) {
+                    console.log('[get current account]', 'failed', code);
+                });
 
-    app.controller('rootCtrl', ['$scope', '$timeout', '$http', 'YUNSOO_CONFIG', 'utils', 'productBaseManageService',
-        function ($scope, $timeout, $http, YUNSOO_CONFIG, utils, productBaseManageService) {
+                //load current organization info
+                $http.get('/api/organization/current').success(function (data) {
+                    context.organization = data;
+                    console.log('[get current organization]', data);
+                }).error(function (data, code) {
+                    console.log('[get current organization]', 'failed', code);
+                });
+            }
+        };
+    }]);
+
+    app.controller('rootCtrl', ['$scope', '$timeout', '$http', 'YUNSOO_CONFIG', 'utils', 'rootService', 'productBaseManageService',
+        function ($scope, $timeout, $http, YUNSOO_CONFIG, utils, rootService, productBaseManageService) {
             console.log('[root controller start]');
 
             //YUNSOO_CONFIG
@@ -92,14 +113,9 @@
                 percentage: 0
             };
 
+            //init current context
+            rootService.initContext.apply($scope.context);
 
-            //load current account info
-            $http.get('/api/account/current').success(function (data) {
-                $scope.context.account = data;
-                console.log('[get current account]', data);
-            }).error(function (data, code) {
-                console.log('[get current account]', 'failed', code);
-            });
 
             //load product key credit for product key widget on the main menu
             productBaseManageService.getProductKeyCredits(function (data) {
