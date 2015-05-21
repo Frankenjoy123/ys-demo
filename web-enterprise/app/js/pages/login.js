@@ -44,6 +44,7 @@
                         });
                         return;
                     }
+                    $('body').addClass('fadeOut'); //fade out animation
                     $.removeCookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN, {path: '/'});
                     $.cookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN, data.access_token.token, {
                         expires: data.access_token.expires_in / (60 * 60 * 24),
@@ -57,7 +58,7 @@
                         loginService.loginForm(loginForm);
                     }
                     //redirect to index
-                    window.location.href = 'index.html';
+                    $timeout(function(){window.location.href = 'index.html';}, 1000);
 
                 }, function (data, code) {
                     console.log('[login failed]', data.message, code);
