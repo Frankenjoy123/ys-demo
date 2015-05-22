@@ -472,7 +472,7 @@
                         }
                     }
 
-                    $("#proStatus").html("请注意，本产品码已失效" + "<br/>" + "首次扫描时间:<b>" + getShortDateString(firstScan.createdDateTime) + "</b>" + " 地点:<b>" + plocation + "</b>");
+                    $("#proStatus").html("请注意，本产品码已失效" + "<br/>" + "首次扫描时间：<b>" + getDateString(firstScan.createdDateTime) + "</b>" + "<br/>首次扫描地点：<b>" + plocation + "</b>");
                 }
 
                 $("#scanRecords").html("");
