@@ -72,11 +72,11 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyBatch> getByFilter(@RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                             @RequestParam(value = "page_index", required = false) Integer pageIndex,
-                                             @RequestParam(value = "page_size", required = false) Integer pageSize) {
+                                             @RequestParam(value = "page", required = false) Integer page,
+                                             @RequestParam(value = "size", required = false) Integer size) {
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
 
-        return productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, pageIndex, pageSize);
+        return productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, page, size);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

@@ -14,9 +14,9 @@ public interface ProductKeyBatchService {
 
     ProductKeyBatch getById(String batchId);
 
-    List<ProductKeyBatch> getByFilterPaged(String orgId, int pageIndex, int pageSize);
+    List<ProductKeyBatch> getByFilterPaged(String orgId, int page, int size);
 
-    List<ProductKeyBatch> getByFilterPaged(String orgId, String productBaseId, int pageIndex, int pageSize);
+    List<ProductKeyBatch> getByFilterPaged(String orgId, String productBaseId, int page, int size);
 
     ProductKeys getProductKeysByBatchId(String batchId);
 

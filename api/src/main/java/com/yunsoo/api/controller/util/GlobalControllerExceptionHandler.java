@@ -83,14 +83,22 @@ public class GlobalControllerExceptionHandler {
     }
 
     //404
-    @ExceptionHandler({
-            NoHandlerFoundException.class,
-            HttpRequestMethodNotSupportedException.class})
+    @ExceptionHandler({NoHandlerFoundException.class})
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResult handleNoHandlerFound(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.NOT_FOUND, "no handler found");
         LOGGER.warn("[API: 404 no handler found]", ex);
+        return appendTraceInfo(result, ex);
+    }
+
+    //405
+    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+    @ResponseBody
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    public ErrorResult handleMethodNotSupported(HttpServletRequest req, Exception ex) {
+        ErrorResult result = new ErrorResult(RestErrorResultCode.METHOD_NOT_ALLOWED, "method not allowed");
+        LOGGER.warn("[API: 404 method not allowed]", ex);
         return appendTraceInfo(result, ex);
     }
 

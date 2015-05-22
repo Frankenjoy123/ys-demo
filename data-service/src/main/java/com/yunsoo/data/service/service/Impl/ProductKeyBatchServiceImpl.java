@@ -63,18 +63,18 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     }
 
     @Override
-    public List<ProductKeyBatch> getByFilterPaged(String orgId, int pageIndex, int pageSize) {
+    public List<ProductKeyBatch> getByFilterPaged(String orgId, int page, int size) {
         Page<ProductKeyBatchEntity> entityPage =
-                productKeyBatchRepository.findByOrgIdOrderByCreatedDateTimeDesc(orgId, new PageRequest(pageIndex, pageSize));
+                productKeyBatchRepository.findByOrgIdOrderByCreatedDateTimeDesc(orgId, new PageRequest(page, size));
         return StreamSupport.stream(entityPage.spliterator(), false)
                 .map(this::toProductKeyBatch)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ProductKeyBatch> getByFilterPaged(String orgId, String productBaseId, int pageIndex, int pageSize) {
+    public List<ProductKeyBatch> getByFilterPaged(String orgId, String productBaseId, int page, int size) {
         Page<ProductKeyBatchEntity> entityPage =
-                productKeyBatchRepository.findByOrgIdAndProductBaseIdOrderByCreatedDateTimeDesc(orgId, productBaseId, new PageRequest(pageIndex, pageSize));
+                productKeyBatchRepository.findByOrgIdAndProductBaseIdOrderByCreatedDateTimeDesc(orgId, productBaseId, new PageRequest(page, size));
         return StreamSupport.stream(entityPage.spliterator(), false)
                 .map(this::toProductKeyBatch)
                 .collect(Collectors.toList());

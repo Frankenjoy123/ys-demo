@@ -50,22 +50,22 @@ public class ProductKeyBatchController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyBatchObject> getByFilter(@RequestParam(value = "org_id") String orgId,
                                                    @RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                                   @RequestParam(value = "status_code_list", required = false) String statusCodeList,
-                                                   @RequestParam(value = "page_index", required = false) Integer pageIndex,
-                                                   @RequestParam(value = "page_size", required = false) Integer pageSize) {
-        if (pageIndex == null || pageIndex < 0) {
-            pageIndex = 0;
+                                                   @RequestParam(value = "status_code_in", required = false) String statusCodeIn,
+                                                   @RequestParam(value = "page", required = false) Integer page,
+                                                   @RequestParam(value = "size", required = false) Integer size) {
+        if (page == null || page < 0) {
+            page = 0;
         }
-        if (pageSize == null || pageSize > 1000) {
-            pageSize = 1000;
+        if (size == null) {
+            size = 1000;
         }
         if (productBaseId == null) {
-            return productKeyBatchService.getByFilterPaged(orgId, pageIndex, pageSize).stream()
+            return productKeyBatchService.getByFilterPaged(orgId, page, size).stream()
                     .map(this::toProductKeyBatchObject)
                     .collect(Collectors.toList());
         } else {
             String pId = productBaseId.toLowerCase().equals("null") ? null : productBaseId;
-            return productKeyBatchService.getByFilterPaged(orgId, pId, pageIndex, pageSize).stream()
+            return productKeyBatchService.getByFilterPaged(orgId, pId, page, size).stream()
                     .map(this::toProductKeyBatchObject)
                     .collect(Collectors.toList());
         }

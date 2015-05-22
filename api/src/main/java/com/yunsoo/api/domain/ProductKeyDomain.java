@@ -82,15 +82,14 @@ public class ProductKeyDomain {
                 lookupDomain.getAllProductKeyBatchStatuses());
     }
 
-    public List<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Integer pageIndex, Integer pageSize) {
+    public List<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Integer page, Integer size) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .append("product_base_id", productBaseId)
-                .append("page_index", pageIndex)
-                .append("page_size", pageSize)
+                .append("page", page)
+                .append("size", size)
                 .build();
-        ProductKeyBatchObject[] objects =
-                dataAPIClient.get("productkeybatch" + query, ProductKeyBatchObject[].class);
+        ProductKeyBatchObject[] objects = dataAPIClient.get("productkeybatch" + query, ProductKeyBatchObject[].class);
 
         List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes();
         List<ProductKeyBatchStatus> productKeyBatchStatuses = lookupDomain.getAllProductKeyBatchStatuses();
