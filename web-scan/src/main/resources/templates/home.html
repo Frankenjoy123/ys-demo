@@ -189,7 +189,93 @@
         -webkit-border-radius: 20px;
         border-radius: 20px;
         filter: progid:DXImageTransform.Microsoft.Alpha(opacity=70);
-    }  </style>
+    }
+
+    @keyframes myfirst {
+        from {
+            transition: border linear .2s, box-shadow linear .5s;
+            -moz-transition: border linear .2s, -moz-box-shadow linear .5s;
+            -webkit-transition: border linear .2s, -webkit-box-shadow linear .5s;
+            outline: none;
+            border-color: rgba(71, 171, 239, .75);
+            box-shadow: 0 0 15px rgba(71, 171, 239, .105);
+            -moz-box-shadow: 0 0 15px rgba(71, 171, 239, .5);
+            -webkit-box-shadow: 0 0 15px rgba(71, 171, 239, 3);
+        }
+
+        to {
+            transition: border linear .2s, box-shadow linear .5s;
+            -moz-transition: border linear .2s, -moz-box-shadow linear .5s;
+            -webkit-transition: border linear .2s, -webkit-box-shadow linear .5s;
+            outline: none;
+            border-color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, .105);
+            -moz-box-shadow: 0 0 15px rgba(255, 255, 255, .5);
+            -webkit-box-shadow: 0 0 15px rgba(255, 255, 255, 3);
+        }
+    }
+
+    @-moz-keyframes myfirst {
+        from {
+            transition: border linear .2s, box-shadow linear .5s;
+            -moz-transition: border linear .2s, -moz-box-shadow linear .5s;
+            -webkit-transition: border linear .2s, -webkit-box-shadow linear .5s;
+            outline: none;
+            border-color: rgba(71, 171, 239, .75);
+            box-shadow: 0 0 15px rgba(71, 171, 239, .105);
+            -moz-box-shadow: 0 0 15px rgba(71, 171, 239, .5);
+            -webkit-box-shadow: 0 0 15px rgba(71, 171, 239, 3);
+        }
+
+        to {
+            transition: border linear .2s, box-shadow linear .5s;
+            -moz-transition: border linear .2s, -moz-box-shadow linear .5s;
+            -webkit-transition: border linear .2s, -webkit-box-shadow linear .5s;
+            outline: none;
+            border-color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, .105);
+            -moz-box-shadow: 0 0 15px rgba(255, 255, 255, .5);
+            -webkit-box-shadow: 0 0 15px rgba(255, 255, 255, 3);
+        }
+    }
+
+    @-webkit-keyframes myfirst {
+        from {
+            transition: border linear .2s, box-shadow linear .5s;
+            -moz-transition: border linear .2s, -moz-box-shadow linear .5s;
+            -webkit-transition: border linear .2s, -webkit-box-shadow linear .5s;
+            outline: none;
+            border-color: rgba(71, 171, 239, .75);
+            box-shadow: 0 0 15px rgba(71, 171, 239, .105);
+            -moz-box-shadow: 0 0 15px rgba(71, 171, 239, .5);
+            -webkit-box-shadow: 0 0 15px rgba(71, 171, 239, 3);
+        }
+
+        to {
+            transition: border linear .2s, box-shadow linear .5s;
+            -moz-transition: border linear .2s, -moz-box-shadow linear .5s;
+            -webkit-transition: border linear .2s, -webkit-box-shadow linear .5s;
+            outline: none;
+            border-color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, .105);
+            -moz-box-shadow: 0 0 15px rgba(255, 255, 255, .5);
+            -webkit-box-shadow: 0 0 15px rgba(255, 255, 255, 3);
+        }
+    }
+
+    .animationDiv {
+        animation: myfirst 1s;
+        -moz-animation: myfirst 1s;
+        -webkit-animation: myfirst 1s;
+        animation-iteration-count: infinite;
+        -moz-animation-iteration-count: infinite;
+        -webkit-animation-iteration-count: infinite;
+        animation-timing-function: ease;
+        -moz-animation-timing-function: ease;
+        -webkit-animation-timing-function: ease;
+        border-radius: 50%;
+    }
+    </style>
 </head>
 <body>
 <script type="text/javascript">
@@ -610,9 +696,9 @@
     });
 </script>
 
-<div id="loading" class="loading"><p>网络不给力...</p>
+<div id="loading" class="loading"><p>努力加载中...</p>
 
-    <p>努力加载中...</p></div>
+    <p>请耐心等待...</p></div>
 
 <div class="container" id="divBody" style="display:none">
 
@@ -623,7 +709,7 @@
                 <div id="divScanValidKey" style="display:none" width="100%">
                     <img id="imgProduct" src="" width="100%"/>
 
-                    <div class="float-img">
+                    <div class="float-img animationDiv">
                         <img id="imgManufacture" src="" width="60px" height="60px" class="img-circle"/>
                     </div>
 
