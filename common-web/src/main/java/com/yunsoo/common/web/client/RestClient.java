@@ -9,6 +9,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/3/2
@@ -73,6 +75,27 @@ public class RestClient {
     public <T> T get(String url, ParameterizedTypeReference<T> responseType, Object... uriVariables) {
         ResponseEntity<T> result = restTemplate.exchange(createURL(url), HttpMethod.GET, null, responseType, uriVariables);
         return result.getBody();
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    public <T> Page<T> getPaged(String url, ParameterizedTypeReference<T> responseType, Object... uriVariables) {
+        ResponseEntity<T> result = restTemplate.exchange(createURL(url), HttpMethod.GET, null, responseType, uriVariables);
+        T resultContent = result.getBody();
+        int page = 0;
+        int total = 1;
+        List<String> pagesValue = result.getHeaders().get("Content-Range");
+        if (pagesValue != null && pagesValue.size() == 1) {
+            String[] pagesArray = pagesValue.get(0).replace("pages ", "").split("/");
+            try {
+                page = Integer.parseInt(pagesArray[0]);
+                total = Integer.parseInt(pagesArray[1]);
+            } catch (NumberFormatException ex) {
+                page = 0;
+                total = 1;
+            }
+        }
+
+        return new Page(resultContent, page, total);
     }
 
     //POST

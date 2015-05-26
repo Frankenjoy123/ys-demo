@@ -11,6 +11,7 @@ import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -20,13 +21,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,20 +84,22 @@ public class ProductKeyDomain {
                 lookupDomain.getAllProductKeyBatchStatuses());
     }
 
-    public List<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Integer page, Integer size) {
+    public Page<List<ProductKeyBatch>> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .append("product_base_id", productBaseId)
-                .append("page", page)
-                .append("size", size)
+                .append("page", pageable.getPageNumber())
+                .append("size", pageable.getPageSize())
+                //.append("sort", pageable.getSort())
                 .build();
-        ProductKeyBatchObject[] objects = dataAPIClient.get("productkeybatch" + query, ProductKeyBatchObject[].class);
+        Page<List<ProductKeyBatchObject>> objectsPage = dataAPIClient.getPaged("productkeybatch" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
+        });
 
         List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes();
         List<ProductKeyBatchStatus> productKeyBatchStatuses = lookupDomain.getAllProductKeyBatchStatuses();
-        return Arrays.stream(objects)
+        return new Page(objectsPage.getContent().stream()
                 .map(i -> toProductKeyBatch(i, productKeyTypes, productKeyBatchStatuses))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()), objectsPage.getPage(), objectsPage.getTotal());
     }
 
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {

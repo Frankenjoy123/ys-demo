@@ -14,7 +14,7 @@
         };
     }]);
 
-    app.controller("logisticsCtrl", ["$scope", "logisticsService", function ($scope, logisticsService) {
+    app.controller("LogisticsCtrl", ["$scope", "logisticsService", function ($scope, logisticsService) {
 
         $scope.productKey = "";
 

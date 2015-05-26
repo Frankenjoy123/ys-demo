@@ -14,7 +14,7 @@
         };
     }]);
 
-    app.controller('productBaseManageCtrl', ['$scope', 'productBaseManageService', function ($scope, productBaseManageService) {
+    app.controller('ProductBaseManageCtrl', ['$scope', 'productBaseManageService', function ($scope, productBaseManageService) {
         $scope.SHELFLIFE_INTERVALS = {
             'year': '年',
             'month': '月',

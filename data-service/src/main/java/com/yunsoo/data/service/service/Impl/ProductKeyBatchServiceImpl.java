@@ -15,8 +15,6 @@ import com.yunsoo.data.service.service.contract.ProductKeyBatch;
 import com.yunsoo.data.service.service.contract.ProductKeys;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -29,8 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Created by:   Lijian
@@ -61,24 +57,24 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(id);
         return toProductKeyBatch(entity);
     }
-
-    @Override
-    public List<ProductKeyBatch> getByFilterPaged(String orgId, int page, int size) {
-        Page<ProductKeyBatchEntity> entityPage =
-                productKeyBatchRepository.findByOrgIdOrderByCreatedDateTimeDesc(orgId, new PageRequest(page, size));
-        return StreamSupport.stream(entityPage.spliterator(), false)
-                .map(this::toProductKeyBatch)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ProductKeyBatch> getByFilterPaged(String orgId, String productBaseId, int page, int size) {
-        Page<ProductKeyBatchEntity> entityPage =
-                productKeyBatchRepository.findByOrgIdAndProductBaseIdOrderByCreatedDateTimeDesc(orgId, productBaseId, new PageRequest(page, size));
-        return StreamSupport.stream(entityPage.spliterator(), false)
-                .map(this::toProductKeyBatch)
-                .collect(Collectors.toList());
-    }
+//
+//    @Override
+//    public List<ProductKeyBatch> getByFilterPaged(String orgId, int $page, int $size) {
+//        Page<ProductKeyBatchEntity> entityPage =
+//                productKeyBatchRepository.findByOrgIdOrderByCreatedDateTimeDesc(orgId, new PageRequest($page, $size));
+//        return StreamSupport.stream(entityPage.spliterator(), false)
+//                .map(this::toProductKeyBatch)
+//                .collect(Collectors.toList());
+//    }
+//
+//    @Override
+//    public List<ProductKeyBatch> getByFilterPaged(String orgId, String productBaseId, int page, int size) {
+//        Page<ProductKeyBatchEntity> entityPage =
+//                productKeyBatchRepository.findByOrgIdAndProductBaseIdOrderByCreatedDateTimeDesc(orgId, productBaseId, new PageRequest(page, size));
+//        return StreamSupport.stream(entityPage.spliterator(), false)
+//                .map(this::toProductKeyBatch)
+//                .collect(Collectors.toList());
+//    }
 
     @Override
     public ProductKeys getProductKeysByBatchId(String batchId) {

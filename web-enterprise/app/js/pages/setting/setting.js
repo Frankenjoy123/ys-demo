@@ -10,7 +10,7 @@
         };
     }]);
 
-    app.controller("settingCtrl", ["$scope", "settingService", '$timeout', function ($scope, settingService, $timeout) {
+    app.controller("SettingCtrl", ["$scope", "settingService", '$timeout', function ($scope, settingService, $timeout) {
 
         $scope.originalPassword = "";
         $scope.currentPassword = "";

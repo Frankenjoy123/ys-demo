@@ -22,7 +22,7 @@
         };
     }]);
 
-    app.controller("messageCtrl", ["$scope", "$timeout", "messageService", function ($scope, $timeout, messageService) {
+    app.controller("MessageCtrl", ["$scope", "$timeout", "messageService", function ($scope, $timeout, messageService) {
 
         var AngularDataTable = function (data) {
 

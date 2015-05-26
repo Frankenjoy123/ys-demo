@@ -20,7 +20,7 @@
         };
     }]);
 
-    app.controller('loginController', ['$scope', '$timeout', 'loginService', 'YUNSOO_CONFIG',
+    app.controller('LoginCtrl', ['$scope', '$timeout', 'loginService', 'YUNSOO_CONFIG',
         function ($scope, $timeout, loginService, YUNSOO_CONFIG) {
 
             ($scope.loginForm = loginService.loginForm()) || ($scope.loginForm = {

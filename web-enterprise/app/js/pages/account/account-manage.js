@@ -14,7 +14,7 @@
         };
     }]);
 
-    app.controller("accountManageCtrl", [
+    app.controller("AccountManageCtrl", [
         "$scope",
         "accountManageService",
         "dataFilterService",
