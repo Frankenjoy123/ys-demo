@@ -7,6 +7,15 @@
                 $http.get("/api/productkeybatch" + (productBaseId ? "?product_base_id=" + productBaseId : "")).success(fnSuccess);
                 return this;
             },
+            getProductKeyBatchesPaged: function (pageable, productBaseId, fnSuccess) {
+                var url = "/api/productkeybatch?";
+                if (productBaseId) {
+                    url += "product_base_id=" + productBaseId + '&';
+                }
+                url += pageable.toQueryString();
+                $http.get(url).success(fnSuccess);
+                return this;
+            },
             getProductBases: function (fnSuccess) {
                 $http.get("/api/productbase").success(fnSuccess);
                 return this;
@@ -29,7 +38,7 @@
         };
     }]);
 
-    app.controller("productKeyManageCtrl", ["$scope", "productKeyManageService", function ($scope, productKeyManageService) {
+    app.controller("ProductKeyManageCtrl", ["$scope", "utils", "productKeyManageService", function ($scope, utils, productKeyManageService) {
 
         $scope.cache || ($scope.cache = {});
 
@@ -75,7 +84,15 @@
         };
 
         $scope.listPanel = {
-            productKeyBatches: [],
+            pageable: new utils.Pageable({
+                page: 0,
+                size: 20,
+                onTurn: function (callback) {
+                    productKeyManageService.getProductKeyBatchesPaged(this, null, function (data, status, headers) {
+                        callback(data, headers);
+                    });
+                }
+            }),
             newProductKeyBatches: [],
             download: function (batchId) {
                 if (batchId) {
@@ -144,7 +161,7 @@
                             }
                         });
                         $scope.productKeyCredits = productKeyCredits;
-                        console.log('[productKeyCredits loaded]: ', productKeyCredits);
+                        console.log('[productKeyCredits loaded]', productKeyCredits);
 
                         $.each($scope.productBases, function (i, item) {
                             setCredit(item, productKeyCredits);
@@ -152,14 +169,6 @@
                     }
                 );
 
-            }
-        });
-
-        //get product key batches
-        productKeyManageService.getProductKeyBatches(null, function (data) {
-            console.log('[productKeyBatches loaded]', data);
-            if (Array.isArray(data)) {
-                $scope.listPanel.productKeyBatches = data;
             }
         });
 

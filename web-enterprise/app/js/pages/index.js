@@ -14,49 +14,47 @@
         $routeProvider
             .when('/dashboard', {
                 templateUrl: 'pages/dashboard/dashboard.html',
-                controller: 'dashboardCtrl'
+                controller: 'DashboardCtrl'
             })
             .when('/account', {
                 templateUrl: 'pages/account/account-manage.html',
-                controller: 'accountManageCtrl'
+                controller: 'AccountManageCtrl'
             })
             .when('/product-base-manage', {
                 templateUrl: 'pages/product/product-base-manage.html',
-                controller: 'productBaseManageCtrl'
+                controller: 'ProductBaseManageCtrl'
             })
             .when('/product-key-manage', {
                 templateUrl: 'pages/product/product-key-manage.html',
-                controller: 'productKeyManageCtrl'
+                controller: 'ProductKeyManageCtrl'
             })
             .when('/message', {
                 templateUrl: 'pages/message/message.html',
-                controller: 'messageCtrl'
-            })
-            .when('/test', {
-                templateUrl: 'pages/empty.html'
+                controller: 'MessageCtrl'
             })
             .when('/package-manage', {
                 templateUrl: 'pages/package/packageManage.html',
-                controller: 'packageCtrl'
+                controller: 'PackageCtrl'
             })
             .when('/package-search', {
                 templateUrl: 'pages/package/packageSearch.html',
-                controller: 'packageSearchCtrl'
+                controller: 'PackageSearchCtrl'
             })
             .when('/logistics', {
                 templateUrl: 'pages/logistics/logistics.html',
-                controller: 'logisticsManageCtrl'
+                controller: 'LogisticsManageCtrl'
             })
             .when('/search', {
-                templateUrl: 'pages/search/search.html'
+                templateUrl: 'pages/search/search.html',
+                controller: 'SearchCtrl'
             })
             .when('/setting', {
                 templateUrl: 'pages/setting/setting.html',
-                controller: 'settingCtrl'
+                controller: 'SettingCtrl'
             })
             .otherwise({
                 templateUrl: 'pages/dashboard/dashboard.html',
-                controller: 'dashboardCtrl'
+                controller: 'DashboardCtrl'
             });
     }]);
 

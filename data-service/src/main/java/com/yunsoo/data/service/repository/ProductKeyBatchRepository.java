@@ -5,6 +5,8 @@ import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/4/14
@@ -12,7 +14,7 @@ import org.springframework.data.domain.Pageable;
  */
 public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<ProductKeyBatchEntity, String> {
 
-    Page<ProductKeyBatchEntity> findByOrgIdOrderByCreatedDateTimeDesc(String orgId, Pageable pageable);
+    Page<ProductKeyBatchEntity> findByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodes, Pageable pageable);
 
-    Page<ProductKeyBatchEntity> findByOrgIdAndProductBaseIdOrderByCreatedDateTimeDesc(String orgId, String productBaseId, Pageable pageable);
+    Page<ProductKeyBatchEntity> findByOrgIdAndProductBaseIdAndStatusCodeIn(String orgId, String productBaseId, List<String> statusCodes, Pageable pageable);
 }

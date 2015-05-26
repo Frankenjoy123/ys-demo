@@ -14,7 +14,7 @@
         };
     }]);
 
-    app.controller("operationCtrl", ["$scope", "operationService", function ($scope, operationService) {
+    app.controller("OperationCtrl", ["$scope", "operationService", function ($scope, operationService) {
 
         $scope.productKey = "";
 

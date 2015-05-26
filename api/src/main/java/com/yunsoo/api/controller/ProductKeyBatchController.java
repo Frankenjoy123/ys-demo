@@ -10,6 +10,7 @@ import com.yunsoo.api.dto.basic.ProductBase;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -18,10 +19,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -72,14 +79,19 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyBatch> getByFilter(@RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                             @RequestParam(value = "page", required = false) Integer page,
-                                             @RequestParam(value = "size", required = false) Integer size) {
+                                             @PageableDefault(page = 0, size = 100)
+                                             @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
+                                             Pageable pageable,
+                                             HttpServletResponse response) {
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
 
-        return productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, page, size);
+        Page<List<ProductKeyBatch>> page = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, pageable);
+        response.setHeader("Content-Range", "pages " + page.getPage() + "/" + page.getTotal());
+        return page.getContent();
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public ProductKeyBatch create(
             @RequestHeader(value = Constants.HttpHeaderName.APP_ID, required = false) String appId,
             @Valid @RequestBody ProductKeyBatchRequest request) {

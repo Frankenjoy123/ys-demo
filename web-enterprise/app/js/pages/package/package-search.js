@@ -21,7 +21,7 @@
         };
     }]);
 
-    app.controller("packageSearchCtrl", ["$scope", "packageSearchService", function ($scope, packageSearchService) {
+    app.controller("PackageSearchCtrl", ["$scope", "packageSearchService", function ($scope, packageSearchService) {
 
         $scope.productKey = "";
 

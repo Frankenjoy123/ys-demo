@@ -39,7 +39,7 @@
         };
     }]);
 
-    app.controller("packageCtrl", ["$scope", "FileUploader", "packageService", function ($scope, FileUploader, packageService) {
+    app.controller("PackageCtrl", ["$scope", "FileUploader", "packageService", function ($scope, FileUploader, packageService) {
         var uploader = $scope.uploader = new FileUploader({
             url: '/api/package/file'
             /*headers:{"Content-Type":"multipart/form-data; charset=utf-8"}*/

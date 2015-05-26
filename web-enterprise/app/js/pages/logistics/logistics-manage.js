@@ -38,7 +38,7 @@
         };
     }]);
 
-    app.controller("logisticsManageCtrl", ["$scope", "FileUploader", "logisticsManageService", function ($scope, FileUploader, logisticsManageService) {
+    app.controller("LogisticsManageCtrl", ["$scope", "FileUploader", "logisticsManageService", function ($scope, FileUploader, logisticsManageService) {
         var uploader = $scope.uploader = new FileUploader({
             url: '/api/logistics/file'
             /*headers:{"Content-Type":"multipart/form-data; charset=utf-8"}*/

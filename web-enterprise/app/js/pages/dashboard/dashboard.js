@@ -5,7 +5,7 @@
         return {};
     }]);
 
-    app.controller("dashboardCtrl", ["$scope", "dashboardService", function ($scope, dashboardService) {
+    app.controller("DashboardCtrl", ["$scope", "dashboardService", function ($scope, dashboardService) {
 
     }]);
 })();
