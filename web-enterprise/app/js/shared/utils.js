@@ -115,7 +115,7 @@
                         return this.page === 0;
                     };
                     Pageable.prototype.isLast = function () {
-                        return this.page === this.totalPages - 1;
+                        return this.page >= this.totalPages - 1;
                     };
                     Pageable.prototype.adjacentPages = function (count) {
                         var pages = [];

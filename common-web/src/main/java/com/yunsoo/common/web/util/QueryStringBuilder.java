@@ -3,6 +3,9 @@ package com.yunsoo.common.web.util;
 import com.yunsoo.common.util.DateTimeUtils;
 import org.joda.time.DateTime;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
+
+import java.util.Collection;
 
 /**
  * Created by  : Lijian
@@ -79,6 +82,10 @@ public class QueryStringBuilder {
             return "";
         } else if (value instanceof DateTime) {
             return DateTimeUtils.toUTCString((DateTime) value);
+        } else if (value instanceof Collection) {
+            return StringUtils.collectionToCommaDelimitedString((Collection<?>) value);
+        } else if (value instanceof Object[]) {
+            return StringUtils.arrayToCommaDelimitedString((Object[]) value);
         }
         return value.toString();
     }
