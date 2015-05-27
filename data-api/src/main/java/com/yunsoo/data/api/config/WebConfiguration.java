@@ -31,6 +31,6 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
 
     @Override
     protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(new PageableHandlerMethodArgumentResolver(null));
+        argumentResolvers.add(new PageableHandlerMethodArgumentResolver());
     }
 }

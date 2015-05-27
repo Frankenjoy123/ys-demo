@@ -2,10 +2,14 @@ package com.yunsoo.common.web.util;
 
 import com.yunsoo.common.util.DateTimeUtils;
 import org.joda.time.DateTime;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by  : Lijian
@@ -44,6 +48,48 @@ public class QueryStringBuilder {
     }
 
     /**
+     * @param pageable page, size, sort
+     * @return this
+     */
+    public QueryStringBuilder append(Pageable pageable) {
+        if (pageable != null) {
+            this.append("page", pageable.getPageNumber());
+            this.append("size", pageable.getPageSize());
+            //sort
+            Sort sort = pageable.getSort();
+            if (sort != null) {
+                Sort.Direction direction = null;
+                List<String> properties = new ArrayList<>();
+                for (Sort.Order order : sort) {
+                    String prop = order.getProperty();
+                    if (StringUtils.hasText(prop)) {
+                        if (direction != order.getDirection()) {
+                            if (properties.size() > 0) {
+                                if (direction != null) {
+                                    properties.add(direction.name().toLowerCase());
+                                }
+                                this.append("sort", properties);
+                                properties = new ArrayList<>();
+                            }
+                            direction = order.getDirection();
+                        }
+                        properties.add(prop);
+                    }
+                }
+                //check if there are properties left behind
+                if (properties.size() > 0) {
+                    if (direction != null) {
+                        properties.add(direction.name().toLowerCase());
+                    }
+                    this.append("sort", properties);
+                }
+            }
+
+        }
+        return this;
+    }
+
+    /**
      * append the parameter even the value is null
      * be careful use this method, the value will be empty string if it's null
      *
@@ -70,6 +116,10 @@ public class QueryStringBuilder {
         return query.toString();
     }
 
+    @Override
+    public String toString() {
+        return build();
+    }
 
     private void checkSuffix() {
         if (hasParameter) {
@@ -91,7 +141,7 @@ public class QueryStringBuilder {
     }
 
 
-    public static enum Prefix {
+    public enum Prefix {
 
         QUESTION_MARK('?'),
 

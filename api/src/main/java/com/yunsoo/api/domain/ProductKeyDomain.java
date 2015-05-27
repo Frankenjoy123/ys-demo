@@ -94,9 +94,7 @@ public class ProductKeyDomain {
                 .append("org_id", orgId)
                 .append("product_base_id", productBaseId)
                 .append("status_code_in", statusCodes)
-                .append("page", pageable.getPageNumber())
-                .append("size", pageable.getPageSize())
-                        //.append("sort", pageable.getSort())
+                .append(pageable)
                 .build();
         Page<List<ProductKeyBatchObject>> objectsPage = dataAPIClient.getPaged("productkeybatch" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
         });

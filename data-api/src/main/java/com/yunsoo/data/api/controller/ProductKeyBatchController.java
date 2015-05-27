@@ -12,9 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -63,14 +61,13 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductKeyBatchObject> getByFilter(@RequestParam(value = "org_id") String orgId,
-                                                   @RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                                   @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
-                                                   @PageableDefault(page = 0, size = 100)
-                                                   @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
-                                                   Pageable pageable,
-                                                   HttpServletResponse response) {
-          Page<ProductKeyBatchEntity> entityPage;
+    public List<ProductKeyBatchObject> getByFilterPaged(@RequestParam(value = "org_id") String orgId,
+                                                        @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                        @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+                                                        @PageableDefault(size = 1000)
+                                                        Pageable pageable,
+                                                        HttpServletResponse response) {
+        Page<ProductKeyBatchEntity> entityPage;
 
         if (productBaseId == null) {
             entityPage = productKeyBatchRepository.findByOrgIdAndStatusCodeIn(orgId, statusCodeIn, pageable);
