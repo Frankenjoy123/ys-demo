@@ -53,10 +53,6 @@ public class RestClient {
         return baseURL;
     }
 
-    public RestTemplate getRestTemplate() {
-        return restTemplate;
-    }
-
 
     private String createURL(String url) {
         Assert.notNull(url, "'url' must not be null");
