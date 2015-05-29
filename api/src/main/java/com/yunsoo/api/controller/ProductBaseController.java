@@ -10,6 +10,7 @@ import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.springframework.beans.BeanUtils;
@@ -21,8 +22,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -131,6 +137,25 @@ public class ProductBaseController {
             }
         } catch (NotFoundException ex) {
             throw new NotFoundException(40402, "找不到产品图片 id = " + id + "  client = " + client);
+        }
+    }
+
+    @RequestMapping(value = "/{id}/{filekey}", method = RequestMethod.POST)
+    public void UpdateThumbnail(MultipartHttpServletRequest request, HttpServletResponse response,
+                                @PathVariable(value = "id") String id,
+                                @PathVariable(value = "filekey") String filekey) {
+        try {
+            Iterator<String> itr = request.getFileNames();
+            MultipartFile file = request.getFile(itr.next());
+
+            FileObject fileObject = new FileObject();
+            fileObject.setData(file.getBytes());
+            fileObject.setLength(file.getSize());
+            fileObject.setContentType(file.getContentType());
+
+            dataAPIClient.post("productbase/{id}/{filekey}", fileObject, id, filekey);
+        } catch (IOException ex) {
+            throw new InternalServerErrorException("文件获取出错！");
         }
     }
 

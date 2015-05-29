@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,7 +61,8 @@ public class ProductBaseController {
             }
 
             FileObject fileObject = new FileObject();
-            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+//            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+            fileObject.setContentType(s3Object.getObjectMetadata().getContentType());
             fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
             fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
             return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
@@ -107,6 +107,7 @@ public class ProductBaseController {
             throw new InternalServerErrorException(50002, "S3文件获取出错！");
         }
     }
+
 
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)

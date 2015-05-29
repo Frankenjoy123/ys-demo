@@ -108,7 +108,7 @@ public class MessageController {
             if (s3Object == null) throw new NotFoundException("找不到图片!");
 
             FileObject fileObject = new FileObject();
-            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+            fileObject.setContentType(s3Object.getObjectMetadata().getContentType());
             fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
             fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
             return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);

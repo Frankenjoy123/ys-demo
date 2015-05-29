@@ -9,6 +9,7 @@ public class FileObject {
     private String name;
     private String suffix;
     private String contentType;
+    private String s3Path;
     private Long length;
 
     public byte[] getData() {
@@ -43,6 +44,14 @@ public class FileObject {
         this.contentType = contentType;
     }
 
+    public String getS3Path() {
+        return s3Path;
+    }
+
+    public void setS3Path(String s3Path) {
+        this.s3Path = s3Path;
+    }
+
     public Long getLength() {
         return length;
     }
@@ -50,4 +59,5 @@ public class FileObject {
     public void setLength(Long length) {
         this.length = length;
     }
+
 }
