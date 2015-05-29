@@ -129,18 +129,25 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th>#</th>
-                        <th class="sortable" data-sort-name="quantity">数量</th>
-                        <th>产品码类型</th>
-                        <th>产品</th>
-                        <th class="sortable" data-sort-name="statusCode">状态</th>
-                        <th class="sortable" data-sort-name="createdDateTime">申请时间</th>
-                        <th style="width: 10%">操作</th>
+                        <th ng-repeat="f in listPanel.table.fields"
+                            ng-click="f.direction=f.direction!=='asc'?'asc':'desc';
+                            listPanel.table.sortBy=f.sort;
+                            listPanel.table.sortable.sortBy(f.sort, f.direction)"
+                            ng-class="{'sortable':f.sort,
+                                       'sortable-asc':f.direction==='asc'&&listPanel.table.sortBy===f.sort,
+                                       'sortable-desc':f.direction==='desc'&&listPanel.table.sortBy===f.sort}">{{f.title}}</th>
+                        <!--<th class="sortable" data-sort-name="quantity"-->
+                            <!--ng-click="listPanel.table.sortable.sortBy('quantity','desc')">数量-->
+                        <!--</th>-->
+                        <!--<th>产品码类型</th>-->
+                        <!--<th>产品</th>-->
+                        <!--<th class="sortable" data-sort-name="statusCode">状态</th>-->
+                        <!--<th class="sortable" data-sort-name="createdDateTime">申请时间</th>-->
+                        <!--<th>操作</th>-->
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="b in listPanel.pageable.content track by b.id"
-                        data-id="{{b.id}}">
+                    <tr ng-repeat="b in listPanel.table.pageable.data track by b.id" data-id="{{b.id}}">
                         <td>{{$index + 1}}</td>
                         <td>{{b.quantity}}</td>
                         <td>
@@ -165,35 +172,35 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="pull-right pagination" ng-init="pageable=listPanel.pageable">
+                <div class="pull-right pagination" ng-init="pageable=listPanel.table.pageable">
                     <ul class="pagination">
-                        <li ng-class="{disabled:pageable.isFirst()}"
+                        <li ng-class="{'disabled':pageable.isFirst()}"
                             class="page-first">
                             <a href="" ng-click="pageable.first()">
                                 <i class="fa fa-fw fa-angle-double-left"></i>
                             </a>
                         </li>
-                        <li ng-class="{disabled:pageable.isFirst()}"
+                        <li ng-class="{'disabled':pageable.isFirst()}"
                             class="page-pre">
                             <a href="" ng-click="pageable.previous()">
                                 <i class="fa fa-fw fa-angle-left"></i>
                             </a>
                         </li>
                         <li ng-repeat="p in pageable.adjacentPages(5)"
-                            ng-class="{active:p===pageable.page}"
+                            ng-class="{'active':p===pageable.page}"
                             class="page-number">
                             <a href=""
                                ng-click="pageable.goto(p)">
                                 {{p+1}}
                             </a>
                         </li>
-                        <li ng-class="{disabled:pageable.isLast()}"
+                        <li ng-class="{'disabled':pageable.isLast()}"
                             class="page-next">
                             <a href="" ng-click="pageable.next()">
                                 <i class="fa fa-fw fa-angle-right"></i>
                             </a>
                         </li>
-                        <li ng-class="{disabled:pageable.isLast()}"
+                        <li ng-class="{'disabled':pageable.isLast()}"
                             class="page-last">
                             <a href="" ng-click="pageable.last()">
                                 <i class=" fa fa-fw fa-angle-double-right"></i>
