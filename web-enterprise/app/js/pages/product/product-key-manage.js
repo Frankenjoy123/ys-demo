@@ -87,12 +87,12 @@
             pageable: new utils.DataTable.Pageable({
                 page: 0,
                 size: 20,
-                onTurn: function (callback) {
+                flush: function (callback) {
                     productKeyManageService.getProductKeyBatchesPaged(this, null, function (data, status, headers) {
                         callback(data, headers);
                     });
                 }
-            }),
+            }).init(),
             newProductKeyBatches: [],
             download: function (batchId) {
                 if (batchId) {

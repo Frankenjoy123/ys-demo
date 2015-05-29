@@ -65,20 +65,66 @@
                      * options.sortable
                      * options.pageable
                      * options.filterable
+                     * options.flush      function, It will be invoked when any condition is changed.
+                     *                    e.g. function(callback) {
+                     *                             ...
+                     *                             callback(data, headers); //with data(body) and headers from server response;
+                     *                             ...
+                     *                         }
                      * @constructor
                      */
                     function DataTable(options) {
                         options || (options = {});
+                        if (options.filterable) {
+                            this.filterable = options.filterable instanceof Filterable ? options.filterable : new Filterable(options.filterable);
+                        }
                         if (options.sortable) {
                             this.sortable = options.sortable instanceof Sortable ? options.sortable : new Sortable(options.sortable);
                         }
                         if (options.pageable) {
                             this.pageable = options.pageable instanceof Pageable ? options.pageable : new Pageable(options.pageable);
                         }
-                        if (options.filterable) {
-                            this.filterable = options.filterable instanceof Filterable ? options.filterable : new Filterable(options.filterable);
-                        }
+                        this.flush = typeof options.flush === 'function' ? options.flush : function () {
+                        };
                     }
+
+                    DataTable.prototype.refresh = function () {
+
+                    };
+
+                    DataTable.prototype.toString = function () {
+                        var params = [];
+                        if (this.filterable) {
+                            params.push(this.filterable.toString);
+                        }
+                        if (this.sortable) {
+                            //sortable should always be ahead of pageable
+                            //in order to have higher priority than static sort expressions in pageable
+                            params.push(this.sortable.toString);
+                        }
+                        if (this.pageable) {
+                            params.push(this.pageable.toString);
+                        }
+                        return params.join('&');
+                    };
+
+
+                    var Filterable = (function () {
+                        /**
+                         *
+                         * @param options
+                         * @constructor
+                         */
+                        function Filterable(options) {
+
+                        }
+
+                        Filterable.prototype.toString = function () {
+                            return 'filterable=todo';
+                        };
+
+                        return Filterable;
+                    })(); //Filterable end
 
 
                     var Sortable = (function () {
@@ -87,12 +133,17 @@
                          * @param sort string, sort expression of properties that should be sorted by in the format property,property(,ASC|DESC).
                          *                     Default sort direction is ascending.
                          *             array,  Use array of sort expressions if you want to switch directions.
-                         *                     e.g. ['first_name', 'age,desc']
+                         *                     e.g. ['first_name', 'age,desc'].
                          * @constructor
                          */
                         function Sortable(sort) {
                             this.sort = sort;
                         }
+
+                        Sortable.prototype.test = function ($event) {
+                            console.log($($event.srcElement));
+                            console.log($($event.srcElement).attr('data-sort-name'));
+                        };
 
                         Sortable.prototype.toString = function () {
                             var params = [];
@@ -113,7 +164,7 @@
                         return Sortable;
                     })(); //Sortable end
 
-                    var Pageable = (function (Sortable) {
+                    var Pageable = (function () {
                         /**
                          *
                          * @param options
@@ -122,14 +173,13 @@
                          * options.sort   string,   sort expression of properties that should be sorted by in the format property,property(,ASC|DESC).
                          *                          Default sort direction is ascending.
                          *                array,    Use array of sort expressions if you want to switch directions.
-                         *                          e.g. ['first_name', 'age,desc']
-                         *                Sortable, Dynamic sort expressions from the instance of Sortable.
-                         * options.onTurn function, It will be invoked when page is changed.
-                         *              e.g. function(callback) {
-                             *                  ...
-                             *                  callback(data, headers); //with data and headers from server response;
-                             *                  ...
-                             *              }
+                         *                          e.g. ['first_name', 'age,desc'].
+                         * options.flush  function, It will be invoked when page is changed.
+                         *                e.g. function(callback) {
+                         *                         ...
+                         *                         callback(data, headers); //with data and headers from server response;
+                         *                         ...
+                         *                     }
                          * @constructor
                          */
                         function Pageable(options) {
@@ -137,12 +187,10 @@
                             this.page = options.page || 0;
                             this.size = options.size || 20;
                             this.sort = options.sort || '';
-                            this.onTurn = typeof options.onTurn === 'function' ? options.onTurn : function () {
+                            this.flush = typeof options.flush === 'function' ? options.flush : function () {
                             };
                             this.totalPages = 0;
                             this.content = [];
-                            //init
-                            this.onTurn(callbackOnResponse.bind(this));
                         }
 
                         function callbackOnResponse(data, headers) {
@@ -160,6 +208,11 @@
                             }
                         }
 
+                        Pageable.prototype.init = function () {
+                            this.flush(callbackOnResponse.bind(this));
+                            return this;
+                        };
+
                         Pageable.prototype.first = function () {
                             return this.goto(0);
                         };
@@ -176,7 +229,7 @@
                             if (page >= 0 && page < this.totalPages && this.page !== page) {
                                 this.page = page;
                                 console.log("[turn page]", page + '/' + this.totalPages);
-                                this.onTurn(callbackOnResponse.bind(this));
+                                this.flush(callbackOnResponse.bind(this));
                             }
                             return this;
                         };
@@ -217,41 +270,18 @@
                                     }
                                 } else if (typeof this.sort === 'string') {
                                     params.push('sort=' + this.sort);
-                                } else if (typeof this.sort === Sortable) {
-                                    params.push(this.sort.toString());
                                 }
                             }
                             return params.join('&');
                         };
 
-                        Pageable.prototype.test = function ($event) {
-                            console.log($($event.srcElement));
-                            console.log($($event.srcElement).attr('data-sort-name'));
-                        };
-
                         return Pageable;
-                    })(Sortable); //Pageable end
+                    })(); //Pageable end
 
-                    var Filterable = (function () {
-                        /**
-                         *
-                         * @param options
-                         * @constructor
-                         */
-                        function Filterable(options) {
 
-                        }
-
-                        Filterable.prototype.toString = function () {
-                            return 'todo';
-                        };
-
-                        return Filterable;
-                    })();
-
+                    DataTable.Filterable = Filterable;
                     DataTable.Sortable = Sortable;
                     DataTable.Pageable = Pageable;
-                    DataTable.Filterable = Filterable;
 
                     return DataTable;
                 })() //DataTable end
