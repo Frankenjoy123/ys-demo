@@ -52,6 +52,10 @@
                 templateUrl: 'pages/setting/setting.html',
                 controller: 'SettingCtrl'
             })
+            .when('/emulator', {
+                templateUrl: 'pages/emulator/emulator.html',
+                controller: 'emulatorCtrl'
+            })
             .otherwise({
                 templateUrl: 'pages/dashboard/dashboard.html',
                 controller: 'DashboardCtrl'

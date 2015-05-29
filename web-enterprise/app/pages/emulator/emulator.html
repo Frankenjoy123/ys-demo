@@ -1,0 +1,224 @@
+<div id="page-title">
+    <h1 class="page-header text-overflow">产品编辑</h1>
+</div>
+
+<div id="page-content">
+    <style>
+        .deviceWrap {
+            background-image: url(img/emulator/iphone-6-portrait.png);
+            background-position: 50% 0%;
+            background-repeat: no-repeat;
+            display: block;
+            font-family: helvetica, arial, sans-serif;
+            font-size: 13px;
+            height: 887px;
+            line-height: 13px;
+            margin-bottom: 20px;
+            margin-left: 0px;
+            margin-right: 0px;
+            padding-bottom: 117px;
+            padding-left: 0px;
+            padding-right: 0px;
+            padding-top: 103px;
+            position: relative;
+            text-align: center;
+            width: 100%;
+        }
+
+        .device {
+            display: block;
+            font-family: helvetica, arial, sans-serif;
+            font-size: 13px;
+            height: 667px;
+            line-height: 13px;
+            margin-bottom: 0px;
+            margin-left: 122px;
+            margin-top: 0px;
+            padding-bottom: 44px;
+            padding-top: 20px;
+            position: relative;
+            text-align: center;
+            width: 375px;
+        }
+
+        .flashingTop {
+            display: block;
+            font-family: helvetica, arial, sans-serif;
+            font-size: 13px;
+            height: 20px;
+            left: 0px;
+            line-height: 13px;
+            padding-top: 4px;
+            position: absolute;
+            text-align: center;
+            top: 0px;
+            width: 375px;
+        }
+
+        .flashingBottom {
+            bottom: 0px;
+            display: block;
+            font-family: helvetica, arial, sans-serif;
+            font-size: 13px;
+            height: 44px;
+            left: 0px;
+            line-height: 13px;
+            position: absolute;
+            text-align: center;
+            width: 375px;
+        }
+
+        .time {
+            color: rgb(255, 255, 255);
+            display: inline;
+            font-family: helvetica, arial, sans-serif;
+            font-size: 12px;
+            height: auto;
+            line-height: 13px;
+            text-align: center;
+            width: auto;
+        }
+
+        .iframe {
+            border-bottom-color: rgb(209, 209, 209);
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-image-outset: 0px;
+            border-image-repeat: stretch;
+            border-image-slice: 100%;
+            border-image-source: none;
+            border-image-width: 1;
+            border-left-color: rgb(209, 209, 209);
+            border-left-style: solid;
+            border-left-width: 1px;
+            border-right-color: rgb(209, 209, 209);
+            border-right-style: solid;
+            border-right-width: 1px;
+            border-top-color: rgb(209, 209, 209);
+            border-top-style: solid;
+            border-top-width: 1px;
+            display: inline;
+            font-family: helvetica, arial, sans-serif;
+            font-size: 13px;
+            height: 603px;
+            line-height: 13px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            margin-right: 0px;
+            margin-top: 0px;
+            text-align: center;
+            width: 375px;
+        }
+    </style>
+
+    <div class="panel panel-bordered-primary">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">产品管理</h3>
+                        </div>
+
+                        <!--Horizontal Form-->
+                        <!--===================================================-->
+                        <form class="form-horizontal">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="barCode">BARCODE</label>
+
+                                    <div class="col-sm-9">
+                                        <input type="text" placeholder="BARCODE" id="barCode"
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="productName">产品名</label>
+
+                                    <div class="col-sm-9">
+                                        <input type="text" placeholder="产品名" id="productName"
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">产品信息</label>
+
+                                    <div class="col-sm-9">
+                                        <div ng-repeat="data in productInfos">
+                                            <input type="text" ng-model="data.key">
+                                            <input type="text" ng-model="data.value">
+                                        </div>
+                                        <div>
+                                            <a ng-click="addProductInfo()"><i class="fa fa-plus-square-o"></i></a>
+                                            <a ng-click="subProductInfo()"><i class="fa fa-minus-square-o"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="expireDate">产品过期时间</label>
+
+                                    <div class="col-sm-9">
+                                        <input type="text" placeholder="产品过期时间" id="expireDate"
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="expireDateUnit">产品过期单位</label>
+
+                                    <div class="col-sm-9">
+                                        <select id="expireDateUnit" class="form-control">
+                                            <option>年</option>
+                                            <option>月</option>
+                                            <option>周</option>
+                                            <option>天</option>
+                                            <option>小时</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="comment">备注</label>
+
+                                    <div class="col-sm-9">
+                                        <textarea placeholder="备注" id="comment" rows="5"
+                                                  class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-9 col-sm-offset-3" id="divImgWrap">
+                                        <img id="imgProductbase" height="178px" width="356px">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">产品图片</label>
+
+                                    <div class="col-sm-9">
+                                        <input class="input-file" id="fileInput" type="file">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row text-center">
+                                        <button class="btn btn-primary" type="button">提交</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!--===================================================-->
+                        <!--End Horizontal Form-->
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="deviceWrap">
+                        <div class="device">
+                            <div class="flashingTop"><span
+                                    class="time">4:17 <span>PM</span></span></div>
+                            <div class="flashingBottom"></div>
+                            <iframe src="pages/emulator/home.html" id="iphone-6-portrait" class="iframe"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
