@@ -129,7 +129,7 @@
 
                                     <div class="col-sm-9">
                                         <input type="text" placeholder="BARCODE" id="barCode"
-                                               class="form-control">
+                                               class="form-control" ng-model="barCode">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -137,7 +137,7 @@
 
                                     <div class="col-sm-9">
                                         <input type="text" placeholder="产品名" id="productName"
-                                               class="form-control">
+                                               class="form-control" ng-model="productName">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -159,14 +159,14 @@
 
                                     <div class="col-sm-9">
                                         <input type="text" placeholder="产品过期时间" id="expireDate"
-                                               class="form-control">
+                                               class="form-control" ng-model="expireDate">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" for="expireDateUnit">产品过期单位</label>
 
                                     <div class="col-sm-9">
-                                        <select id="expireDateUnit" class="form-control">
+                                        <select id="expireDateUnit" class="form-control" ng-model="expireDateUnit">
                                             <option>年</option>
                                             <option>月</option>
                                             <option>周</option>
@@ -180,7 +180,7 @@
 
                                     <div class="col-sm-9">
                                         <textarea placeholder="备注" id="comment" rows="5"
-                                                  class="form-control"></textarea>
+                                                  class="form-control" ng-model="comment"></textarea>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -197,7 +197,9 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row text-center">
-                                        <button class="btn btn-primary" type="button">提交</button>
+                                        <button class="btn btn-info" type="button" ng-click="preview()">预览</button>
+                                        &nbsp;&nbsp;
+                                        <button class="btn btn-primary" type="button" ng-click="">提交</button>
                                     </div>
                                 </div>
                             </div>

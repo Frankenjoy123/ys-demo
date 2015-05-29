@@ -17,14 +17,32 @@
     app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", function ($scope, emulatorService, $timeout) {
 
         $scope.productInfos = [{key: '', value: ''}];
+        $scope.barCode = '';
+        $scope.productName = '';
+        $scope.expireDate = '';
+        $scope.expireDateUnit = '';
+        $scope.comment = '';
+        $scope.fileInput = '';
 
         $scope.addProductInfo = function () {
             $scope.productInfos.push({key: '', value: ''});
         }
 
-        $scope.subProductInfo = function (data) {
+        $scope.subProductInfo = function () {
             $scope.productInfos.pop();
-        }
+        };
+
+        $scope.preview = function () {
+
+            var dataPreview = {};
+            dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo-mobile?access_token=" + $scope.context.getAccessToken();
+            dataPreview.proImgUrl = $scope.fileInput;
+            dataPreview.barcode = $scope.barCode;
+            dataPreview.name = $scope.productName;
+            dataPreview.details = $scope.productInfos;
+
+            $('#iphone-6-portrait')[0].contentWindow.refresh(dataPreview);
+        };
 
         $timeout(function () {
 
@@ -41,6 +59,7 @@
                         reader.readAsDataURL(file);
                         reader.onload = function (e) {
                             imgProductbase.attr('src', this.result);
+                            $scope.fileInput = this.result;
                         }
                     }
                 );
