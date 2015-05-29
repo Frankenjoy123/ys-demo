@@ -11,6 +11,7 @@ public class Page<T> {
     private int page;
     private int total;
 
+
     public Page(T content, int page, int total) {
         this.content = content;
         this.page = page;

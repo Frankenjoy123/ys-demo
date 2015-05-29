@@ -124,11 +124,11 @@ public class MessageController {
             if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())
-                        .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
+                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
                         .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             } else {
                 return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
+                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
                         .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             }
         } catch (NotFoundException ex) {

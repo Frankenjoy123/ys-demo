@@ -105,22 +105,6 @@ public class UserServiceImpl implements UserService {
             String thumbKey = saveUserThumbnail(userId, user.getFileObject(), thumbnailKey);
         }
         return userId;
-
-//        //Check if need to Save thumbnail into S3 bucket
-//        if (user.getThumbnailFile() != null) {
-//            String thumbKey = saveUserThumbnail(userId, user.getThumbnailFile());
-//            //to-do: Async the below update.
-//            // patch update thumbnail url
-//            UserModel currentUser = userDAO.getById(userId);
-//            if (currentUser == null) {
-//                return -2;
-//            }
-//            currentUser.setThumbnail(thumbKey);
-//            DaoStatus result = userDAO.patchUpdate(currentUser);
-//            return result == DaoStatus.fail ? -3 : userId;
-//        } else {
-//            return userId;
-//        }
     }
 
     @Override

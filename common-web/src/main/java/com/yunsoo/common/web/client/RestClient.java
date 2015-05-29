@@ -53,10 +53,6 @@ public class RestClient {
         return baseURL;
     }
 
-    public RestTemplate getRestTemplate() {
-        return restTemplate;
-    }
-
 
     private String createURL(String url) {
         Assert.notNull(url, "'url' must not be null");
@@ -77,7 +73,6 @@ public class RestClient {
         return result.getBody();
     }
 
-    @SuppressWarnings(value = "unchecked")
     public <T> Page<T> getPaged(String url, ParameterizedTypeReference<T> responseType, Object... uriVariables) {
         ResponseEntity<T> result = restTemplate.exchange(createURL(url), HttpMethod.GET, null, responseType, uriVariables);
         T resultContent = result.getBody();
@@ -95,7 +90,7 @@ public class RestClient {
             }
         }
 
-        return new Page(resultContent, page, total);
+        return new Page<>(resultContent, page, total);
     }
 
     //POST

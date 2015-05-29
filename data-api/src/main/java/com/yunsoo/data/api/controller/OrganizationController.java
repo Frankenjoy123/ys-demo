@@ -76,7 +76,8 @@ public class OrganizationController {
             }
 
             FileObject fileObject = new FileObject();
-            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+//            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+            fileObject.setContentType(s3Object.getObjectMetadata().getContentType());
             fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
             fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
             return fileObject;

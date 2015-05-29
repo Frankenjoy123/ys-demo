@@ -12,15 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,25 +61,20 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductKeyBatchObject> getByFilter(@RequestParam(value = "org_id") String orgId,
-                                                   @RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                                   //@RequestParam(value = "status_code_in", required = false) String statusCodeIn,
-                                                   @PageableDefault(page = 0, size = 100)
-                                                   @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
-                                                   Pageable pageable,
-                                                   HttpServletResponse response) {
-        List<String> statusCodes = new ArrayList<>();
-        statusCodes.add("available");
-        statusCodes.add("creating");
-        statusCodes.add("downloaded");
+    public List<ProductKeyBatchObject> getByFilterPaged(@RequestParam(value = "org_id") String orgId,
+                                                        @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                        @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+                                                        @PageableDefault(size = 1000)
+                                                        Pageable pageable,
+                                                        HttpServletResponse response) {
         Page<ProductKeyBatchEntity> entityPage;
 
         if (productBaseId == null) {
-            entityPage = productKeyBatchRepository.findByOrgIdAndStatusCodeIn(orgId, statusCodes, pageable);
+            entityPage = productKeyBatchRepository.findByOrgIdAndStatusCodeIn(orgId, statusCodeIn, pageable);
 
         } else {
             String pId = productBaseId.toLowerCase().equals("null") ? null : productBaseId;
-            entityPage = productKeyBatchRepository.findByOrgIdAndProductBaseIdAndStatusCodeIn(orgId, pId, statusCodes, pageable);
+            entityPage = productKeyBatchRepository.findByOrgIdAndProductBaseIdAndStatusCodeIn(orgId, pId, statusCodeIn, pageable);
         }
 
         response.setHeader("Content-Range", "pages " + entityPage.getNumber() + "/" + entityPage.getTotalPages());

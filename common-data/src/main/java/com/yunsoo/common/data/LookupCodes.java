@@ -19,7 +19,6 @@ public class LookupCodes {
         public static final String NEW = "new";
         public static final String CREATING = "creating";
         public static final String AVAILABLE = "available";
-        public static final String DOWNLOADED = "downloaded";
         public static final String DELETED = "deleted";
     }
 

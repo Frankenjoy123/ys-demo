@@ -20,3 +20,29 @@ body {
     margin: 0 0 4px 14px;
     border-radius: 3px;
 }
+
+/*sortable*/
+.sortable {
+    cursor: pointer;
+}
+
+.sortable:after {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f0dc";
+    padding-left: .5em;
+    color: #a0a0a0;
+}
+
+.sortable.sortable-asc:after {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f0de";
+    padding-left: .5em;
+    color: inherit;
+}
+
+.sortable.sortable-desc:after {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f0dd";
+    padding-left: .5em;
+    color: inherit;
+}

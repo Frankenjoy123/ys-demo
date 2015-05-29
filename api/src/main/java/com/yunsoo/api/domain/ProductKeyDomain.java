@@ -85,19 +85,23 @@ public class ProductKeyDomain {
     }
 
     public Page<List<ProductKeyBatch>> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Pageable pageable) {
+        String[] statusCodes = new String[]{
+                LookupCodes.ProductKeyBatchStatus.CREATING,
+                LookupCodes.ProductKeyBatchStatus.AVAILABLE
+        };
+
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .append("product_base_id", productBaseId)
-                .append("page", pageable.getPageNumber())
-                .append("size", pageable.getPageSize())
-                //.append("sort", pageable.getSort())
+                .append("status_code_in", statusCodes)
+                .append(pageable)
                 .build();
         Page<List<ProductKeyBatchObject>> objectsPage = dataAPIClient.getPaged("productkeybatch" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
         });
 
         List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes();
         List<ProductKeyBatchStatus> productKeyBatchStatuses = lookupDomain.getAllProductKeyBatchStatuses();
-        return new Page(objectsPage.getContent().stream()
+        return new Page<>(objectsPage.getContent().stream()
                 .map(i -> toProductKeyBatch(i, productKeyTypes, productKeyBatchStatuses))
                 .collect(Collectors.toList()), objectsPage.getPage(), objectsPage.getTotal());
     }
