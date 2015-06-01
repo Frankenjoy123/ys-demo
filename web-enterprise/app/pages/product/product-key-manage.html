@@ -93,19 +93,31 @@
             <div class="panel-body">
                 <table class="table table-hover">
                     <tr>
-                        <th style="width: 10%">产品</th>
-                        <th style="width: 10%">数量</th>
-                        <th style="width: 25%">产品码类型</th>
+                        <th>#</th>
+                        <th>数量</th>
+                        <th>产品码类型</th>
+                        <th>产品</th>
+                        <th>状态</th>
                         <th>申请时间</th>
-                        <th style="width: 10%">操作</th>
+                        <th>操作</th>
                     </tr>
                     <tr ng-repeat="b in listPanel.newProductKeyBatches">
-                        <td>{{b.productBase.name}}</td>
+                        <td>{{$index + 1}}</td>
                         <td>{{b.quantity}}</td>
                         <td>
-                            {{formatProductKeyTypes(b.productKeyTypes)}}
+                            {{formatProductKeyTypes(b.product_key_types)}}
                         </td>
-                        <td>{{utils.formatDateString(b.createdDateTime)}}</td>
+                        <td>{{productBaseMap[b.product_base_id].name}}</td>
+                        <td>
+                            <div class="label label-table"
+                                 data-status.code="{{b.status.code}}"
+                                 ng-class="{'label-success': b.status.code==='available',
+                                            'label-info': b.status.code==='creating',
+                                            'label-warning': b.status.code!=='available' && b.status.code!=='creating'}">
+                                {{b.status.name}}
+                            </div>
+                        </td>
+                        <td>{{utils.formatDateString(b.created_datetime)}}</td>
                         <td>
                             <button class="btn btn-primary btn-labeled fa fa-cloud-download"
                                     ng-click="listPanel.download(b.id)">下载
@@ -142,9 +154,9 @@
                     <td>{{$index + 1}}</td>
                     <td>{{b.quantity}}</td>
                     <td>
-                        {{formatProductKeyTypes(b.productKeyTypes)}}
+                        {{formatProductKeyTypes(b.product_key_types)}}
                     </td>
-                    <td>{{productBaseMap[b.productBaseId].name}}</td>
+                    <td>{{productBaseMap[b.product_base_id].name}}</td>
                     <td>
                         <div class="label label-table"
                              data-status.code="{{b.status.code}}"
@@ -154,7 +166,7 @@
                             {{b.status.name}}
                         </div>
                     </td>
-                    <td>{{utils.formatDateString(b.createdDateTime)}}</td>
+                    <td>{{utils.formatDateString(b.created_datetime)}}</td>
                     <td>
                         <button class="btn btn-primary btn-labeled fa fa-cloud-download"
                                 ng-click="listPanel.download(b.id)">下载

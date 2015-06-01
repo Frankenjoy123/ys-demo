@@ -53,13 +53,13 @@
 
                 var requestData = {
                     quantity: model.quantity,
-                    productBaseId: model.productBaseId
+                    product_base_id: model.productBaseId
                 };
                 var selectedProductBase = this.selectedProductBase;
                 productKeyManageService.createProductKeyBatch(requestData, function (data) {
                     console.log('[newProductKeyBatch created]', data);
 
-                    data.productBase = selectedProductBase;
+                    data.product_base = selectedProductBase;
                     selectedProductBase.credit.remain -= requestData.quantity;
                     $scope.listPanel.newProductKeyBatches.push(data);
 

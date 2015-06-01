@@ -1,5 +1,6 @@
 package com.yunsoo.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Range;
 
 import java.util.List;
@@ -12,10 +13,13 @@ import java.util.List;
 public class ProductKeyBatchRequest {
 
     @Range(min = 1, max = 100000, message = "单次申请数量必须大于1并且不超过100000")
+    @JsonProperty("quantity")
     private int quantity;
 
+    @JsonProperty("product_key_type_codes")
     private List<String> productKeyTypeCodes;
 
+    @JsonProperty("product_base_id")
     private String productBaseId;
 
 
