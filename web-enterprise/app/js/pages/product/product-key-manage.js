@@ -85,35 +85,20 @@
 
         $scope.listPanel = {
             table: new utils.DataTable({
-                sortable: {},
+                sortable: {
+                    target: '#sort-bar',
+                    sort: 'createdDateTime,desc'
+                },
                 pageable: {
                     page: 0,
                     size: 20
                 },
-                fields: [{
-                    title: '#'
-                }, {
-                    title: '数量',
-                    sort: 'quantity'
-                }, {
-                    title: '产品码类型'
-                }, {
-                    title: '产品'
-                }, {
-                    title: '状态',
-                    sort: 'statusCode'
-                }, {
-                    title: '申请时间',
-                    sort: 'createdDateTime'
-                }, {
-                    title: '操作'
-                }],
                 flush: function (callback) {
                     productKeyManageService.getProductKeyBatchesPaged(this, null, function (data, status, headers) {
                         callback({data: data, headers: headers});
                     });
                 }
-            }).init(),
+            }),
             newProductKeyBatches: [],
             download: function (batchId) {
                 if (batchId) {

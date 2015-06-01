@@ -127,23 +127,15 @@
 
             <div class="panel-body"> <!--panel-collapse collapse in-->
                 <table class="table table-hover">
-                    <thead>
+                    <thead id="sort-bar">
                     <tr>
-                        <th ng-repeat="f in listPanel.table.fields"
-                            ng-click="f.direction=f.direction!=='asc'?'asc':'desc';
-                            listPanel.table.sortBy=f.sort;
-                            listPanel.table.sortable.sortBy(f.sort, f.direction)"
-                            ng-class="{'sortable':f.sort,
-                                       'sortable-asc':f.direction==='asc'&&listPanel.table.sortBy===f.sort,
-                                       'sortable-desc':f.direction==='desc'&&listPanel.table.sortBy===f.sort}">{{f.title}}</th>
-                        <!--<th class="sortable" data-sort-name="quantity"-->
-                            <!--ng-click="listPanel.table.sortable.sortBy('quantity','desc')">数量-->
-                        <!--</th>-->
-                        <!--<th>产品码类型</th>-->
-                        <!--<th>产品</th>-->
-                        <!--<th class="sortable" data-sort-name="statusCode">状态</th>-->
-                        <!--<th class="sortable" data-sort-name="createdDateTime">申请时间</th>-->
-                        <!--<th>操作</th>-->
+                        <th>#</th>
+                        <th data-sort-field="quantity">数量</th>
+                        <th>产品码类型</th>
+                        <th>产品</th>
+                        <th data-sort-field="statusCode">状态</th>
+                        <th data-sort-field="createdDateTime">申请时间</th>
+                        <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>

@@ -96,6 +96,9 @@
                 this.pageable = options.pageable instanceof Pageable ? options.pageable : new Pageable(options.pageable);
                 bindFlush(this, this.pageable);
             }
+
+            //init
+            this.flush(this.refresh.bind(this));
         }
 
         function bindFlush(dataTable, target) {
@@ -105,11 +108,6 @@
                 dataTable.flush.call(dataTable, dataTable.refresh.bind(dataTable));
             };
         }
-
-        DataTable.prototype.init = function () {
-            this.flush(this.refresh.bind(this));
-            return this;
-        };
 
         DataTable.prototype.refresh = function (response) {
             if (response) {
@@ -166,15 +164,23 @@
             /**
              *
              * @param options
-             * options.sort string, sort expression of properties that should be sorted by in the format property,property(,ASC|DESC).
-             *                      Default sort direction is ascending.
-             *              array,  Use array of sort expressions if you want to switch directions.
-             *                      e.g. ['first_name', 'age,desc'].
+             * options.sort   string,   sort expression of properties that should be sorted by in the format property,property(,ASC|DESC).
+             *                          Default sort direction is ascending.
+             *                array,    Use array of sort expressions if you want to switch directions.
+             *                          e.g. ['first_name', 'age,desc'].
+             * options.target selector, sort header container
+             * options.flush  function, It will be invoked when sort expression is changed.
+             *                          e.g. function(callback) {
+             *                                   ...
+             *                                   callback({data: data, headers: headers}); //with data and headers from server response;
+             *                                   ...
+             *                               }
              * @constructor
              */
             function Sortable(options) {
                 options || (options = {});
                 this.sort = options.sort;
+                this.target = options.target;
                 this.flush = typeof options.flush === 'function' ? options.flush : function () {
                 };
             }
@@ -183,8 +189,70 @@
                 if (response) {
                     this.data = response.data || [];
                 }
+                //refresh sort header
+                refreshSortHeader.apply(this);
+
                 return this;
             };
+
+            //depend on jQuery
+            function refreshSortHeader() {
+                if (this.target) {
+                    var $target = $(this.target);
+                    var $sorts = $target.find('[data-sort-field]');
+                    if ($sorts.length > 0) {
+                        //reset classes
+                        $sorts.each(function (i, item) {
+                            $(item).addClass('sortable').removeClass('sortable-asc').removeClass('sortable-desc');
+                        });
+                        //add sort direction class
+                        $.each(parseSort(this.sort), function (i, item) {
+                            $target.find('[data-sort-field="' + item.name + '"]').addClass('sortable-' + item.direction);
+                        });
+                        //bind event
+                        if (!$target.data('hasTrigger')) {
+                            $target.on('click', (function (sortable) {
+                                return trigger.bind(sortable);
+                            })(this));
+                            $target.data('hasTrigger', true);
+                        }
+                    }
+                }
+            }
+
+            //depend on jQuery
+            function trigger($event) {
+                var $src = $($event.target);
+                var field = $src.attr('data-sort-field');
+                if (field) {
+                    var currentDirection = $src.hasClass('sortable-asc') ? 'asc' : $src.hasClass('sortable-desc') ? 'desc' : null;
+                    $src.removeClass('sortable-asc').removeClass('sortable-desc');
+                    var direction = currentDirection !== 'asc' ? 'asc' : 'desc';
+                    this.sortBy(field, direction);
+                    $src.addClass('sortable-' + direction);
+                }
+            }
+
+            function parseSort(sort) {
+                var result = [];
+                if (Array.isArray(sort)) {
+                    for (var i = 0; i < sort.length; i++) {
+                        result = result.concat(parseSort(sort[i]));
+                    }
+                } else if (typeof sort === 'string') {
+                    var sorts = sort.split(',');
+                    if (sorts.length > 0) {
+                        var last = sorts[sorts.length - 1];
+                        if (last !== 'asc' && last !== 'desc') {
+                            sorts.push('asc');
+                        }
+                        for (var j = 0; j < sorts.length - 1; j++) {
+                            result.push({name: sorts[j], direction: sorts[sorts.length - 1]});
+                        }
+                    }
+                }
+                return result;
+            }
 
             Sortable.prototype.sortBy = function () {
                 var sort = [];
@@ -203,15 +271,13 @@
                     }
                 }
                 if (sort.length > 0) {
+                    var oldSortExpression = this.toString();
                     this.sort = sort.length === 1 ? sort[0] : sort;
-                    this.flush(this.refresh.bind(this));
+                    if (oldSortExpression !== this.toString()) {
+                        this.flush(this.refresh.bind(this));
+                    }
                 }
                 return this;
-            };
-
-            Sortable.prototype.test = function ($event) {
-                console.log($($event.srcElement));
-                console.log($($event.srcElement).attr('data-sort-name'));
             };
 
             Sortable.prototype.toString = function () {
@@ -259,25 +325,21 @@
                 this.flush = typeof options.flush === 'function' ? options.flush : function () {
                 };
                 this.totalPages = 0;
-                this.content = [];
-            }
+                this.data = [];
 
-            Pageable.prototype.init = function () {
+                //init
                 this.flush(this.refresh.bind(this));
-                return this;
-            };
+            }
 
             Pageable.prototype.refresh = function (response) {
                 if (response) {
                     this.data = response.data || [];
-                    var expression;
                     this.totalPages = '*';
-                    if (typeof response.headers === 'function' && (expression = response.headers('Content-Range'))) {
-                        var match = /^pages (\d+)\/(\d+|\*)$/.exec(expression);
-                        if (match) {
-                            this.page = +match[1];
-                            this.totalPages = +match[2];
-                        }
+                    var expression = typeof response.headers === 'function' ? response.headers('Content-Range') : response.headers['Content-Range'];
+                    var match = /^pages (\d+)\/(\d+|\*)$/.exec(expression);
+                    if (match) {
+                        this.page = +match[1];
+                        this.totalPages = +match[2];
                     }
                     if (this.totalPages === '*') {
                         this.totalPages = this.data.length === this.size ? this.page + 2 : this.page + 1;
