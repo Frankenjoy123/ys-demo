@@ -8,6 +8,7 @@ import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.FileObject;
+import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -17,6 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +29,10 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Zhe on 2015/3/9.
@@ -66,15 +73,19 @@ public class MessageController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'message:read')")
-    public List<Message> getMessages(//@RequestHeader(AUTH_HEADER_NAME) String token,
-                                     @RequestParam(value = "orgid", required = false) String orgId,
-                                     @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
-                                     @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+    public List<Message> getMessages(@RequestParam(value = "org_id", required = false) String orgId,
+                                     @PageableDefault(page = 0, size = 20)
+                                     @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
+                                     Pageable pageable,
+                                     HttpServletResponse response) {
         if (orgId == null) {
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         }
-        return dataAPIClient.get("message?orgid={0}&pageIndex={1}&pageSize={2}", new ParameterizedTypeReference<List<Message>>() {
-        }, orgId, pageIndex, pageSize);
+
+        List<MessageObject> messageObjects = dataAPIClient.get("message?orgid={0}&pageIndex={1}&pageSize={2}", new ParameterizedTypeReference<List<MessageObject>>() {
+        }, orgId, pageable.getPageNumber(), pageable.getPageSize());
+        response.setHeader("Content-Range", "pages " + pageable.getPageNumber() + "/*");
+        return messageObjects.stream().map(this::toMessage).collect(Collectors.toList());
     }
 
 
@@ -134,6 +145,28 @@ public class MessageController {
         } catch (NotFoundException ex) {
             throw new NotFoundException(40402, "找不到消息图片 imagekey = " + imagekey);
         }
+    }
+
+    private Message toMessage(MessageObject object) {
+        if (object == null) {
+            return null;
+        }
+        Message message = new Message();
+        message.setId(object.getId());
+        message.setOrgId(object.getOrgId());
+        message.setTitle(object.getTitle());
+        message.setBody(object.getBody());
+        message.setDigest(object.getDigest());
+        message.setExpiredDateTime(object.getExpiredDateTime());
+        message.setLink(object.getLink());
+        message.setType(object.getType());
+        message.setStatus(object.getStatus());
+        message.setPostShowTime(object.getPostShowTime());
+        message.setCreatedBy(object.getCreatedBy());
+        message.setCreatedDateTime(object.getCreatedDateTime());
+        message.setLastUpdatedBy(object.getLastUpdatedBy());
+        message.setLastUpatedDateTime(object.getLastUpatedDateTime());
+        return message;
     }
 
 }

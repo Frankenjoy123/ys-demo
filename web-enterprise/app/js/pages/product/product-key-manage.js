@@ -38,7 +38,7 @@
         };
     }]);
 
-    app.controller("ProductKeyManageCtrl", ["$scope", "utils", "productKeyManageService", function ($scope, utils, productKeyManageService) {
+    app.controller("ProductKeyManageCtrl", ["$scope", "productKeyManageService", function ($scope, productKeyManageService) {
 
         $scope.cache || ($scope.cache = {});
 
@@ -84,7 +84,7 @@
         };
 
         $scope.listPanel = {
-            table: new utils.DataTable({
+            table: new $scope.utils.DataTable({
                 sortable: {
                     target: '#sort-bar',
                     sort: 'createdDateTime,desc'

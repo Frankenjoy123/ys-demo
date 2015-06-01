@@ -93,7 +93,7 @@ public class AuthController {
         return result;
     }
 
-    @RequestMapping(value = "/accessToken/refresh", method = RequestMethod.GET)
+    @RequestMapping(value = "/accesstoken/refresh", method = RequestMethod.GET)
     public Token refreshToken(@RequestParam("permanent_token") String permanentToken) {
         AccountTokenObject accountTokenObject = accountTokenDomain.getByPermanentToken(permanentToken);
         if (accountTokenObject == null || accountTokenObject.getPermanentTokenExpiresDateTime().isBeforeNow()) {

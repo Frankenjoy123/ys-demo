@@ -339,7 +339,7 @@
                     var match = /^pages (\d+)\/(\d+|\*)$/.exec(expression);
                     if (match) {
                         this.page = +match[1];
-                        this.totalPages = +match[2];
+                        this.totalPages = match[2] === '*' ? '*' : +match[2];
                     }
                     if (this.totalPages === '*') {
                         this.totalPages = this.data.length === this.size ? this.page + 2 : this.page + 1;
@@ -393,6 +393,9 @@
                     right = this.totalPages - 1;
                     if (left < 0) {
                         left = 0;
+                    }
+                    if (right < left) {
+                        right = left;
                     }
                 }
                 for (var i = left; i <= right; i++) {
