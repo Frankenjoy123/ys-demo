@@ -1,5 +1,6 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
@@ -12,23 +13,50 @@ import org.joda.time.DateTime;
  * Descriptions:
  */
 public class AccountObject {
+    @JsonProperty("id")
     private String id;
+
+    @JsonProperty("org_id")
     private String orgId;
+
+    @JsonProperty("identifier")
     private String identifier;
+
+    @JsonProperty("status_code")
     private String statusCode;
+
+    @JsonProperty("first_name")
     private String firstName;
+
+    @JsonProperty("last_name")
     private String lastName;
+
+    @JsonProperty("email")
     private String email;
+
+    @JsonProperty("phone")
     private String phone;
+
+    @JsonProperty("password")
     private String password;
+
+    @JsonProperty("hash_salt")
     private String hashSalt;
+
+    @JsonProperty("created_account_id")
     private String createdAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
+
+    @JsonProperty("modified_account_id")
     private String modifiedAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("modified_datetime")
     private DateTime modifiedDatetime;
 
     public String getId() {

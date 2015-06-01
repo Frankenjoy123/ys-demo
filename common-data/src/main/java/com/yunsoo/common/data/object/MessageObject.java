@@ -1,7 +1,15 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.joda.time.DateTime;
+
 /**
- * Created by Zhe on 2015/3/9.
+ * Created by  : Zhe
+ * Created on  : 2015/3/9
+ * Descriptions:
  */
 public class MessageObject {
     private Long Id;
@@ -9,15 +17,27 @@ public class MessageObject {
     private String body;
     private String digest;
     private String orgId;
-    private String createdDateTime;
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime createdDateTime;
     private String createdBy; //associate to company's accountId
-    private String expiredDateTime;
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime expiredDateTime;
     private String link;
     private String type;
     private String status;
-    private String lastUpatedDateTime;
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime lastUpatedDateTime;
     private String lastUpdatedBy; //associate to company's accountId
-    private String postShowTime;
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime postShowTime;
 
     public Long getId() {
         return Id;
@@ -59,11 +79,11 @@ public class MessageObject {
         this.orgId = orgId;
     }
 
-    public String getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 
@@ -75,11 +95,11 @@ public class MessageObject {
         this.createdBy = createdBy;
     }
 
-    public String getExpiredDateTime() {
+    public DateTime getExpiredDateTime() {
         return expiredDateTime;
     }
 
-    public void setExpiredDateTime(String expiredDateTime) {
+    public void setExpiredDateTime(DateTime expiredDateTime) {
         this.expiredDateTime = expiredDateTime;
     }
 
@@ -107,11 +127,11 @@ public class MessageObject {
         this.status = status;
     }
 
-    public String getLastUpatedDateTime() {
+    public DateTime getLastUpatedDateTime() {
         return lastUpatedDateTime;
     }
 
-    public void setLastUpatedDateTime(String lastUpatedDateTime) {
+    public void setLastUpatedDateTime(DateTime lastUpatedDateTime) {
         this.lastUpatedDateTime = lastUpatedDateTime;
     }
 
@@ -123,11 +143,11 @@ public class MessageObject {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    public String getPostShowTime() {
+    public DateTime getPostShowTime() {
         return postShowTime;
     }
 
-    public void setPostShowTime(String postShowTime) {
+    public void setPostShowTime(DateTime postShowTime) {
         this.postShowTime = postShowTime;
     }
 }

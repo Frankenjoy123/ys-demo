@@ -117,90 +117,87 @@
         </div>
     </div>
 
-    <div ng-show="listPanel">
-        <div class="panel panel-bordered-primary ">
-            <a href="">
-                <div class="panel-heading">
-                    <h3 class="panel-title"> 产品码批次</h3>
-                </div>
-            </a>
+    <div ng-show="listPanel" class="panel panel-bordered-primary">
+        <a href="">
+            <div class="panel-heading">
+                <h3 class="panel-title"> 产品码批次</h3>
+            </div>
+        </a>
 
-            <div class="panel-body"> <!--panel-collapse collapse in-->
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th class="sortable" data-sort-name="quantity">数量</th>
-                        <th>产品码类型</th>
-                        <th>产品</th>
-                        <th class="sortable" data-sort-name="statusCode">状态</th>
-                        <th class="sortable" data-sort-name="createdDateTime">申请时间</th>
-                        <th style="width: 10%">操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="b in listPanel.pageable.content track by b.id"
-                        data-id="{{b.id}}">
-                        <td>{{$index + 1}}</td>
-                        <td>{{b.quantity}}</td>
-                        <td>
-                            {{formatProductKeyTypes(b.productKeyTypes)}}
-                        </td>
-                        <td>{{productBaseMap[b.productBaseId].name}}</td>
-                        <td>
-                            <div class="label label-table"
-                                 data-status.code="{{b.status.code}}"
-                                 ng-class="{'label-success': b.status.code==='available',
+        <div class="panel-body"> <!--panel-collapse collapse in-->
+            <table class="table table-hover">
+                <thead id="sort-bar">
+                <tr>
+                    <th>#</th>
+                    <th data-sort-field="quantity">数量</th>
+                    <th>产品码类型</th>
+                    <th>产品</th>
+                    <th data-sort-field="statusCode">状态</th>
+                    <th data-sort-field="createdDateTime">申请时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="b in listPanel.table.pageable.data track by b.id" data-id="{{b.id}}">
+                    <td>{{$index + 1}}</td>
+                    <td>{{b.quantity}}</td>
+                    <td>
+                        {{formatProductKeyTypes(b.productKeyTypes)}}
+                    </td>
+                    <td>{{productBaseMap[b.productBaseId].name}}</td>
+                    <td>
+                        <div class="label label-table"
+                             data-status.code="{{b.status.code}}"
+                             ng-class="{'label-success': b.status.code==='available',
                                             'label-info': b.status.code==='creating',
                                             'label-warning': b.status.code!=='available' && b.status.code!=='creating'}">
-                                {{b.status.name}}
-                            </div>
-                        </td>
-                        <td>{{utils.formatDateString(b.createdDateTime)}}</td>
-                        <td>
-                            <button class="btn btn-primary btn-labeled fa fa-cloud-download"
-                                    ng-click="listPanel.download(b.id)">下载
-                            </button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div class="pull-right pagination" ng-init="pageable=listPanel.pageable">
-                    <ul class="pagination">
-                        <li ng-class="{disabled:pageable.isFirst()}"
-                            class="page-first">
-                            <a href="" ng-click="pageable.first()">
-                                <i class="fa fa-fw fa-angle-double-left"></i>
-                            </a>
-                        </li>
-                        <li ng-class="{disabled:pageable.isFirst()}"
-                            class="page-pre">
-                            <a href="" ng-click="pageable.previous()">
-                                <i class="fa fa-fw fa-angle-left"></i>
-                            </a>
-                        </li>
-                        <li ng-repeat="p in pageable.adjacentPages(5)"
-                            ng-class="{active:p===pageable.page}"
-                            class="page-number">
-                            <a href=""
-                               ng-click="pageable.goto(p)">
-                                {{p+1}}
-                            </a>
-                        </li>
-                        <li ng-class="{disabled:pageable.isLast()}"
-                            class="page-next">
-                            <a href="" ng-click="pageable.next()">
-                                <i class="fa fa-fw fa-angle-right"></i>
-                            </a>
-                        </li>
-                        <li ng-class="{disabled:pageable.isLast()}"
-                            class="page-last">
-                            <a href="" ng-click="pageable.last()">
-                                <i class=" fa fa-fw fa-angle-double-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                            {{b.status.name}}
+                        </div>
+                    </td>
+                    <td>{{utils.formatDateString(b.createdDateTime)}}</td>
+                    <td>
+                        <button class="btn btn-primary btn-labeled fa fa-cloud-download"
+                                ng-click="listPanel.download(b.id)">下载
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="pull-right pagination" ng-init="pageable=listPanel.table.pageable">
+                <ul class="pagination">
+                    <li ng-class="{'disabled':pageable.isFirst()}"
+                        class="page-first">
+                        <a href="" ng-click="pageable.first()">
+                            <i class="fa fa-fw fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li ng-class="{'disabled':pageable.isFirst()}"
+                        class="page-pre">
+                        <a href="" ng-click="pageable.previous()">
+                            <i class="fa fa-fw fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li ng-repeat="p in pageable.adjacentPages(5)"
+                        ng-class="{'active':p===pageable.page}"
+                        class="page-number">
+                        <a href=""
+                           ng-click="pageable.goto(p)">
+                            {{p+1}}
+                        </a>
+                    </li>
+                    <li ng-class="{'disabled':pageable.isLast()}"
+                        class="page-next">
+                        <a href="" ng-click="pageable.next()">
+                            <i class="fa fa-fw fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li ng-class="{'disabled':pageable.isLast()}"
+                        class="page-last">
+                        <a href="" ng-click="pageable.last()">
+                            <i class=" fa fa-fw fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

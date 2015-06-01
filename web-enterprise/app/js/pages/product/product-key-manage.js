@@ -7,12 +7,12 @@
                 $http.get("/api/productkeybatch" + (productBaseId ? "?product_base_id=" + productBaseId : "")).success(fnSuccess);
                 return this;
             },
-            getProductKeyBatchesPaged: function (pageable, productBaseId, fnSuccess) {
+            getProductKeyBatchesPaged: function (table, productBaseId, fnSuccess) {
                 var url = "/api/productkeybatch?";
                 if (productBaseId) {
                     url += "product_base_id=" + productBaseId + '&';
                 }
-                url += pageable.toString();
+                url += table.toString();
                 $http.get(url).success(fnSuccess);
                 return this;
             },
@@ -38,7 +38,7 @@
         };
     }]);
 
-    app.controller("ProductKeyManageCtrl", ["$scope", "utils", "productKeyManageService", function ($scope, utils, productKeyManageService) {
+    app.controller("ProductKeyManageCtrl", ["$scope", "productKeyManageService", function ($scope, productKeyManageService) {
 
         $scope.cache || ($scope.cache = {});
 
@@ -84,15 +84,21 @@
         };
 
         $scope.listPanel = {
-            pageable: new utils.DataTable.Pageable({
-                page: 0,
-                size: 20,
+            table: new $scope.utils.DataTable({
+                sortable: {
+                    target: '#sort-bar',
+                    sort: 'createdDateTime,desc'
+                },
+                pageable: {
+                    page: 0,
+                    size: 20
+                },
                 flush: function (callback) {
                     productKeyManageService.getProductKeyBatchesPaged(this, null, function (data, status, headers) {
-                        callback(data, headers);
+                        callback({data: data, headers: headers});
                     });
                 }
-            }).init(),
+            }),
             newProductKeyBatches: [],
             download: function (batchId) {
                 if (batchId) {
@@ -100,7 +106,9 @@
                     var auth = accessToken ? $scope.YUNSOO_CONFIG.PARAMETER_ACCESS_TOKEN + '=' + accessToken : '';
                     productKeyManageService.downloadProductKeys(this, batchId, auth);
                 }
-            },
+            }
+
+            ,
             downloadFrameSrc: ''
         };
 

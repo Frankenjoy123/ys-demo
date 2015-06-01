@@ -73,7 +73,11 @@ public class ProductDomain {
         if (id == null) {
             return null;
         }
-        return dataAPIClient.get("productcategory/{id}", ProductCategory.class, id);
+        try {
+            return dataAPIClient.get("productcategory/{id}", ProductCategory.class, id);
+        } catch (NotFoundException ex) {
+            return null;
+        }
     }
 
     //获取基本产品信息 - ProductBase
