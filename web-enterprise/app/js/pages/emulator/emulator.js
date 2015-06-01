@@ -3,26 +3,29 @@
 
     app.factory("emulatorService", ["$http", function ($http) {
         return {
-            getInfo: function (productKey, fnSuccess, fnError) {
-                $http.get("/api/logistics/" + productKey)
-                    .success(function (data) {
-                        fnSuccess(data);
-                    }).error(function (data, state) {
-                        fnSuccess();
-                    });
+            createProWithDetail: function (proDetail, fnSuccess, fnError) {
+                $http.post("/api/productbase/withdetail", proDetail).success(fnSuccess).error(fnError);
             }
         };
     }]);
 
-    app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", function ($scope, emulatorService, $timeout) {
+    app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", "FileUploader", function ($scope, emulatorService, $timeout, FileUploader) {
+
+        var uploader = $scope.uploader = new FileUploader({
+            url: ''
+        });
 
         $scope.productInfos = [{key: '', value: ''}];
         $scope.barCode = '';
         $scope.productName = '';
-        $scope.expireDate = '';
+        $scope.expireDate = 0;
         $scope.expireDateUnit = '';
         $scope.comment = '';
         $scope.fileInput = '';
+        $scope.keyTypePubInput = '';
+        $scope.keyTypePriInput = '';
+        $scope.keyTypeRFIDInput = '';
+        $scope.submitEnable = 1;
 
         $scope.addProductInfo = function () {
             $scope.productInfos.push({key: '', value: ''});
@@ -44,6 +47,74 @@
             $('#iphone-6-portrait')[0].contentWindow.refresh(dataPreview);
         };
 
+        $scope.submit = function () {
+
+            var proWithDetails = {};
+
+            proWithDetails.categoryId = 0;
+            proWithDetails.barcode = $scope.barCode;
+            proWithDetails.name = $scope.productName;
+            proWithDetails.comment = $scope.comment;
+            proWithDetails.productKeyTypeCodes = [];
+            if ($scope.keyTypePubInput)
+                proWithDetails.productKeyTypeCodes.push("qr_public");
+            if ($scope.keyTypePriInput)
+                proWithDetails.productKeyTypeCodes.push("qr_secure");
+            if ($scope.keyTypeRFIDInput)
+                proWithDetails.productKeyTypeCodes.push("rfid");
+
+            proWithDetails.shelfLife = $scope.expireDate - 0;
+            if ($scope.expireDateUnit == "年")
+                proWithDetails.shelfLifeInterval = 'year';
+            else if ($scope.expireDateUnit == "月")
+                proWithDetails.shelfLifeInterval = 'month';
+            else if ($scope.expireDateUnit == "周")
+                proWithDetails.shelfLifeInterval = 'week';
+            else if ($scope.expireDateUnit == "天")
+                proWithDetails.shelfLifeInterval = 'day';
+            else if ($scope.expireDateUnit == "小时")
+                proWithDetails.shelfLifeInterval = 'hour';
+
+            proWithDetails.status = '待审核';
+
+            var proDetails = {};
+            proDetails.details = {};
+            for (var proInfo in $scope.productInfos) {
+                if ($scope.productInfos[proInfo].key != '')
+                    proDetails.details[$scope.productInfos[proInfo].key] = $scope.productInfos[proInfo].value;
+            }
+
+            proWithDetails.proDetails = JSON.stringify(proDetails);
+
+            try {
+                emulatorService.createProWithDetail(proWithDetails, function (data) {
+
+                        uploader.url = '/api/productbase/withdetailfile/' + data + "/full-mobile";
+
+                        //set AccessToken http header
+                        var accessToken = $scope.context.getAccessToken();
+                        accessToken && (uploader.headers[$scope.YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
+
+                        uploader.uploadAll();
+
+                        uploader.onCompleteAll = function () {
+                            $scope.utils.alert('success', '产品图片上传成功');
+
+                        };
+
+                    },
+                    function (data) {
+                        //$scope.utils.alert('error', '创建产品失败');
+                    });
+
+                $scope.utils.alert('success', '创建产品成功');
+                $scope.submitEnable = 0;
+            }
+            catch (ex) {
+
+            }
+        };
+
         $timeout(function () {
 
             var divImgWrap = $("#divImgWrap");
@@ -54,7 +125,8 @@
                 divImgWrap.html("您的浏览器不支持图片预览");
             } else {
                 fileInput.change(function () {
-                        var file = this.files[0];
+
+                        var file = uploader.queue[0]._file;
                         var reader = new FileReader();
                         reader.readAsDataURL(file);
                         reader.onload = function (e) {
@@ -64,7 +136,6 @@
                     }
                 );
             }
-
         }, 0);
 
     }]);

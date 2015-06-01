@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.dto.basic.ProductBase;
+import com.yunsoo.api.dto.basic.ProductBaseRequest;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
@@ -21,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -28,6 +30,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 
@@ -85,6 +88,66 @@ public class ProductBaseController {
         BeanUtils.copyProperties(productBase, p);
         String id = dataAPIClient.post("productbase/", p, String.class);
         return id;
+    }
+
+    //create with details
+    @RequestMapping(value = "/withdetail", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createDetails(@RequestBody ProductBaseRequest productBase) {
+
+        ProductBaseObject p = new ProductBaseObject();
+        p.setName(productBase.getName());
+
+        if (StringUtils.hasText(productBase.getOrgId()))
+            p.setOrgId(productBase.getOrgId());
+        else
+            p.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+
+        p.setBarcode(productBase.getBarcode());
+        p.setStatus(productBase.getStatus());
+        p.setCategoryId(productBase.getCategoryId());
+        p.setChildProductCount(productBase.getChildProductCount());
+        p.setComment(productBase.getComment());
+        p.setCreatedDateTime(productBase.getCreatedDateTime());
+        p.setId(productBase.getId());
+        p.setModifiedDateTime(productBase.getModifiedDateTime());
+        p.setProductKeyTypeCodes(productBase.getProductKeyTypeCodes());
+        p.setShelfLife(productBase.getShelfLife());
+        p.setShelfLifeInterval(productBase.getShelfLifeInterval());
+
+        String id = dataAPIClient.post("productbase/", p, String.class);
+
+        if (StringUtils.hasText(id)) {
+            FileObject fileObject = new FileObject();
+            fileObject.setData(productBase.getProDetails().getBytes(StandardCharsets.UTF_8));
+            fileObject.setContentType("application/octet-stream");
+            fileObject.setS3Path("photo/coms/products/" + id + "/notes.json");
+
+            dataAPIClient.post("file/", fileObject, Long.class);
+        }
+
+        return id;
+    }
+
+    @RequestMapping(value = "withdetailfile/{id}/{filekey}", method = RequestMethod.POST)
+    public void createDetailsThumbnail(MultipartHttpServletRequest request, HttpServletResponse response,
+                                @PathVariable(value = "id") String id,
+                                @PathVariable(value = "filekey") String filekey) {
+        try {
+            Iterator<String> itr = request.getFileNames();
+            MultipartFile file = request.getFile(itr.next());
+
+            FileObject fileObject = new FileObject();
+            fileObject.setData(file.getBytes());
+            fileObject.setLength(file.getSize());
+            fileObject.setContentType(file.getContentType());
+            fileObject.setS3Path("photo/coms/products/" + id + "/" + filekey);
+
+            dataAPIClient.post("file/", fileObject, Long.class);
+
+        } catch (IOException ex) {
+            throw new InternalServerErrorException("文件上传出错！");
+        }
     }
 
     //patch update

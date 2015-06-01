@@ -19,7 +19,7 @@
 </head>
 <body>
 <script type="text/javascript">
-    function refresh(data){
+    function refresh(data) {
 
         $("#imgManufacture").attr("src", data.orgImgUrl);
         $("#imgProduct").attr("src", data.proImgUrl);
@@ -55,13 +55,13 @@
             }
         }
 
-//        if (data.contact != null) {
-//            $("#contactPhone").attr('href', 'tel:' + data.contact.hotline);
-//        }
-//
-//        if (data['e-commerce'] != null) {
-//            $("#buyStore").attr('href', data['e-commerce'].tmall);
-//        }
+        if (data.contact != null) {
+            $("#contactPhone").attr('href', 'tel:' + data.contact.hotline);
+        }
+
+        if (data['e-commerce'] != null) {
+            $("#buyStore").attr('href', data['e-commerce'].tmall);
+        }
 
         $("#divMainBody").css('display', '');
     }
@@ -170,13 +170,7 @@
                         <div class="tab-content" id="tabContent" style="min-height: 200px;">
                             <div class="tab-pane active" id="tab_1">
                                 <div class="panel box box-primary">
-                                    <table class="table table-condensed" style="margin-top:20px">
-                                        <tr>
-                                            <td colspan="2">
-                                                <table id="detailItems" class="table table-condensed">
-                                                </table>
-                                            </td>
-                                        </tr>
+                                    <table class="table table-condensed" style="margin-top:20px" id="detailItems">
                                     </table>
                                 </div>
                             </div>
@@ -188,7 +182,7 @@
                                             <div class="timeline-badge down"><i class="fa fa-thumbs-up"></i></div>
                                             <div class="timeline-panel">
                                                 <div class="timeline-body">
-                                                    <p>您没有扫描信息！</p>
+                                                    <p>您是第一次扫描！</p>
                                                 </div>
                                             </div>
                                         </li>
