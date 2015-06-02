@@ -5,6 +5,8 @@
         return {
             createProWithDetail: function (proDetail, fnSuccess, fnError) {
                 $http.post("/api/productbase/withdetail", proDetail).success(fnSuccess).error(fnError);
+
+                return this;
             }
         };
     }]);
@@ -14,6 +16,10 @@
         var uploader = $scope.uploader = new FileUploader({
             url: ''
         });
+
+        //set AccessToken http header
+        var accessToken = $scope.context.getAccessToken();
+        accessToken && (uploader.headers[$scope.YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
 
         $scope.productInfos = [{key: '', value: ''}];
         $scope.barCode = '';
@@ -25,7 +31,6 @@
         $scope.keyTypePubInput = '';
         $scope.keyTypePriInput = '';
         $scope.keyTypeRFIDInput = '';
-        $scope.submitEnable = 1;
 
         $scope.addProductInfo = function () {
             $scope.productInfos.push({key: '', value: ''});
@@ -48,7 +53,6 @@
         };
 
         $scope.submit = function () {
-
             var proWithDetails = {};
 
             proWithDetails.categoryId = 0;
@@ -88,27 +92,18 @@
 
             try {
                 emulatorService.createProWithDetail(proWithDetails, function (data) {
+                        if (data.id != null && data.id != '') {
+                            uploader.queue[0].url = '/api/productbase/withdetailfile/' + data.id + "/full-mobile";
+                            uploader.queue[0].headers[$scope.YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken;
 
-                        uploader.url = '/api/productbase/withdetailfile/' + data + "/full-mobile";
+                            uploader.uploadAll();
 
-                        //set AccessToken http header
-                        var accessToken = $scope.context.getAccessToken();
-                        accessToken && (uploader.headers[$scope.YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
-
-                        uploader.uploadAll();
-
-                        uploader.onCompleteAll = function () {
-                            $scope.utils.alert('success', '产品图片上传成功');
-
-                        };
-
+                            $scope.utils.alert('success', '创建产品成功');
+                        }
                     },
-                    function (data) {
-                        //$scope.utils.alert('error', '创建产品失败');
+                    function (data, state) {
+                        $scope.utils.alert('error', '创建产品失败');
                     });
-
-                $scope.utils.alert('success', '创建产品成功');
-                $scope.submitEnable = 0;
             }
             catch (ex) {
 

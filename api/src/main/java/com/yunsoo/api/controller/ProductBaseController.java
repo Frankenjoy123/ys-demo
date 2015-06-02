@@ -93,7 +93,7 @@ public class ProductBaseController {
     //create with details
     @RequestMapping(value = "/withdetail", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public String createDetails(@RequestBody ProductBaseRequest productBase) {
+    public ProductBase createDetails(@RequestBody ProductBaseRequest productBase) {
 
         ProductBaseObject p = new ProductBaseObject();
         p.setName(productBase.getName());
@@ -126,10 +126,14 @@ public class ProductBaseController {
             dataAPIClient.post("file/", fileObject, Long.class);
         }
 
-        return id;
+        ProductBase productBase1 = new ProductBase();
+        productBase1.setId(id);
+
+        return productBase1;
     }
 
     @RequestMapping(value = "withdetailfile/{id}/{filekey}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public void createDetailsThumbnail(MultipartHttpServletRequest request, HttpServletResponse response,
                                 @PathVariable(value = "id") String id,
                                 @PathVariable(value = "filekey") String filekey) {
