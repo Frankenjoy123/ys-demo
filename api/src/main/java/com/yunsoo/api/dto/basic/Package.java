@@ -1,18 +1,24 @@
 package com.yunsoo.api.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-/**
- * Created by Hope on 2015/3/8.
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Package {
 
+    @JsonProperty("key")
     private String key;
+
+    @JsonProperty("product_count")
     private int productCount;
+
+    @JsonProperty("package_count")
     private int packageCount;
+
+    @JsonProperty("sub_packages")
     private List<Package> subPackages;
 
     public String getKey() {

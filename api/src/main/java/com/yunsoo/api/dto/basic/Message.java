@@ -60,8 +60,8 @@ public class Message {
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("last_Upated_DateTime")
-    private DateTime lastUpatedDateTime;
+    @JsonProperty("last_updated_DateTime")
+    private DateTime lastUpdatedDateTime;
 
 
     public Long getId() {
@@ -162,12 +162,12 @@ public class Message {
         this.expiredDateTime = expiredDateTime;
     }
 
-    public DateTime getLastUpatedDateTime() {
-        return lastUpatedDateTime;
+    public DateTime getLastUpdatedDateTime() {
+        return lastUpdatedDateTime;
     }
 
-    public void setLastUpatedDateTime(DateTime lastUpatedDateTime) {
-        this.lastUpatedDateTime = lastUpatedDateTime;
+    public void setLastUpdatedDateTime(DateTime lastUpdatedDateTime) {
+        this.lastUpdatedDateTime = lastUpdatedDateTime;
     }
 
     public DateTime getPostShowTime() {

@@ -1,5 +1,7 @@
 package com.yunsoo.common.error;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/3/5
@@ -7,8 +9,13 @@ package com.yunsoo.common.error;
  */
 public class TraceInfo {
 
+    @JsonProperty("message")
     private String message;
+
+    @JsonProperty("stack_trace")
     private StackTraceElement[] stackTrace;
+
+    @JsonProperty("inner_trace_info")
     private TraceInfo innerTraceInfo;
 
     public TraceInfo() {

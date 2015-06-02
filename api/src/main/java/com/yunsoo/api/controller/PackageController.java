@@ -48,7 +48,7 @@ public class PackageController {
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
-    public com.yunsoo.api.dto.basic.Package getDetailByKey(@PathVariable(value = "key") String key) {
+    public Package getDetailByKey(@PathVariable(value = "key") String key) {
 
         Package productPackage;
         productPackage = dataAPIClient.get("package/{key}", Package.class, key);
