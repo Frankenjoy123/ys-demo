@@ -100,31 +100,31 @@
 
             var proWithDetails = {};
 
-            proWithDetails.categoryId = 0;
+            proWithDetails.category_id = 0;
             proWithDetails.barcode = $scope.barCode;
             proWithDetails.name = $scope.productName;
-            proWithDetails.comment = $scope.comment;
-            proWithDetails.productKeyTypeCodes = [];
+            proWithDetails.comments = $scope.comment;
+            proWithDetails.product_key_type_codes = [];
             if ($scope.keyTypePubInput)
-                proWithDetails.productKeyTypeCodes.push("qr_public");
+                proWithDetails.product_key_type_codes.push("qr_public");
             if ($scope.keyTypePriInput)
-                proWithDetails.productKeyTypeCodes.push("qr_secure");
+                proWithDetails.product_key_type_codes.push("qr_secure");
             if ($scope.keyTypeRFIDInput)
-                proWithDetails.productKeyTypeCodes.push("rfid");
+                proWithDetails.product_key_type_codes.push("rfid");
 
-            proWithDetails.shelfLife = $scope.expireDate - 0;
+            proWithDetails.shelf_life = $scope.expireDate - 0;
             if ($scope.expireDateUnit == "年")
-                proWithDetails.shelfLifeInterval = 'year';
+                proWithDetails.shelf_life_interval = 'year';
             else if ($scope.expireDateUnit == "月")
-                proWithDetails.shelfLifeInterval = 'month';
+                proWithDetails.shelf_life_interval = 'month';
             else if ($scope.expireDateUnit == "周")
-                proWithDetails.shelfLifeInterval = 'week';
+                proWithDetails.shelf_life_interval = 'week';
             else if ($scope.expireDateUnit == "天")
-                proWithDetails.shelfLifeInterval = 'day';
+                proWithDetails.shelf_life_interval = 'day';
             else if ($scope.expireDateUnit == "小时")
-                proWithDetails.shelfLifeInterval = 'hour';
+                proWithDetails.shelf_life_interval = 'hour';
 
-            proWithDetails.status = '待审核';
+            proWithDetails.status_code = '待审核';
 
             var proDetails = {};
             proDetails.details = {};
@@ -152,7 +152,7 @@
                 }
             }
 
-            proWithDetails.proDetails = JSON.stringify(proDetails);
+            proWithDetails.details = JSON.stringify(proDetails);
 
             try {
                 emulatorService.createProWithDetail(proWithDetails, function (data) {
