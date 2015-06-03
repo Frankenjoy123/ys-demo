@@ -1,7 +1,6 @@
 package com.yunsoo.api.dto.basic;
 
-
-import com.yunsoo.api.object.ValidationResult;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
@@ -11,13 +10,26 @@ import java.util.List;
  */
 public class ScanResultWeb {
 
+    @JsonProperty("key")
     private String Key;
+
+    @JsonProperty("product")
     private Product product;
+
+    @JsonProperty("scan_record_list")
     private List<ScanRecord> scanRecordList;
-    private List<Logistics> logisticses;
+
+    @JsonProperty("logistics_list")
+    private List<Logistics> logisticsList;
+
+    @JsonProperty("scan_counter")
     private int scanCounter;
+
+    @JsonProperty("message")
     private String message;
     //0 - 查询key不存在， 1 - ，成功， 2 - 无权查看
+
+    @JsonProperty("result_code")
     private int resultCode;
 
     public String getKey() {
@@ -44,12 +56,12 @@ public class ScanResultWeb {
         this.scanRecordList = ScanRecordList;
     }
 
-    public List<Logistics> getLogisticses() {
-        return logisticses;
+    public List<Logistics> getLogisticsList() {
+        return logisticsList;
     }
 
-    public void setLogisticses(List<Logistics> logisticses) {
-        this.logisticses = logisticses;
+    public void setLogisticsList(List<Logistics> logisticsList) {
+        this.logisticsList = logisticsList;
     }
 
     public int getScanCounter() {

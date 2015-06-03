@@ -2,32 +2,52 @@ package com.yunsoo.api.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yunsoo.common.util.DateTimeUtils;
 
 import java.util.Comparator;
 
 /**
- * Created by Zhe on 2015/2/27.
+ * Created by  : Zhe
+ * Created on  : 2015/2/27
+ * Descriptions:
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ScanRecord implements Comparator<ScanRecord> {
 
-    private Long Id;
+    @JsonProperty("id")
+    private Long id;
+
+    @JsonProperty("product_key")
     private String productKey;
-    private String baseProductId;
+
+    @JsonProperty("product_base_id")
+    private String productBaseId;
+
+    @JsonProperty("app_id")
     private String appId;
+
+    @JsonProperty("device_id")
     private String deviceId;
+
+    @JsonProperty("user_id")
     private String userId;
-    private String detail;
+
+    @JsonProperty("details")
+    private String details;
+
+    @JsonProperty("created_datetime")
     private String createdDateTime;
+
+    @JsonProperty("location")
     private String location;
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     @JsonIgnore
@@ -39,12 +59,12 @@ public class ScanRecord implements Comparator<ScanRecord> {
         this.productKey = productKey;
     }
 
-    public String getBaseProductId() {
-        return baseProductId;
+    public String getProductBaseId() {
+        return productBaseId;
     }
 
-    public void setBaseProductId(String baseProductId) {
-        this.baseProductId = baseProductId;
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
     public String getAppId() {
@@ -71,12 +91,12 @@ public class ScanRecord implements Comparator<ScanRecord> {
         this.userId = userId;
     }
 
-    public String getDetail() {
-        return detail;
+    public String getDetails() {
+        return details;
     }
 
-    public void setDetail(String detail) {
-        this.detail = detail;
+    public void setDetails(String details) {
+        this.details = details;
     }
 
     public String getCreatedDateTime() {
