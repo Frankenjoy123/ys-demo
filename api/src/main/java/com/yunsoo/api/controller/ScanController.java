@@ -67,7 +67,7 @@ public class ScanController {
                 scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
                 //retrieve logistics information
-                scanResult.setLogisticses(getLogisticsInfo(key));
+                scanResult.setLogisticsList(getLogisticsInfo(key));
                 scanResult.setResultCode(1); //产品码存在
                 scanResult.setMessage("查询成功！");
             } else {

@@ -1,5 +1,6 @@
 package com.yunsoo.api.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
@@ -7,18 +8,36 @@ import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
- * Created by Jerry on 4/29/2015.
+ * Created by  : Jerry
+ * Created on  : 4/29/2015
+ * Descriptions:
  */
 public class ProductFile {
+
+    @JsonProperty("id")
     private Long id;
+
+    @JsonProperty("file_name")
     private String fileName;
+
+    @JsonProperty("create_by")
     private String createBy;
+
+    @JsonProperty("status")
     private Integer status;
+
+    @JsonProperty("file_type")
     private Integer fileType;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    private DateTime createDate;
+    @JsonProperty("create_datetime")
+    private DateTime createDateTime;
+
+    @JsonProperty("file_path")
     private String filePath;
+
+    @JsonProperty("org_id")
     private String orgId;
 
     public Long getId() {
@@ -61,12 +80,12 @@ public class ProductFile {
         this.fileType = fileType;
     }
 
-    public DateTime getCreateDate() {
-        return createDate;
+    public DateTime getCreateDateTime() {
+        return createDateTime;
     }
 
-    public void setCreateDate(DateTime createDate) {
-        this.createDate = createDate;
+    public void setCreateDateTime(DateTime createDateTime) {
+        this.createDateTime = createDateTime;
     }
 
     public String getFilePath() {
