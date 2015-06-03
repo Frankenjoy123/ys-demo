@@ -165,7 +165,7 @@ public class MessageController {
         message.setCreatedBy(object.getCreatedBy());
         message.setCreatedDateTime(object.getCreatedDateTime());
         message.setLastUpdatedBy(object.getLastUpdatedBy());
-        message.setLastUpatedDateTime(object.getLastUpatedDateTime());
+        message.setLastUpdatedDateTime(object.getLastUpatedDateTime());
         return message;
     }
 

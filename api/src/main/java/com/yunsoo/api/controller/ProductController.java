@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 /**
  * Created by:   Lijian
  * Created on:   2015/3/9
@@ -27,7 +25,7 @@ public class ProductController {
     public Product get(@PathVariable(value = "key") String key) {
         Product product = productDomain.getProductByKey(key);
         if (product == null) {
-            throw new NotFoundException("product");
+            throw new NotFoundException("product not found");
         }
         return product;
     }

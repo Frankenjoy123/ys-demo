@@ -19,24 +19,33 @@ public class Device {
 
     @JsonProperty("id")
     private String id;
+
     @JsonProperty("device_name")
     private String deviceName;
+
     @JsonProperty("device_os")
-    private String deviceOs;
+    private String deviceOS;
+
     @JsonProperty("org_id")
     private String orgId;
+
     @JsonProperty("status_code")
     private String statusCode;
+
     @JsonProperty("check_point_id")
     private String checkPointId;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
+
     @JsonProperty("modified_account_id")
     private String modifiedAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
@@ -58,12 +67,12 @@ public class Device {
         this.deviceName = deviceName;
     }
 
-    public String getDeviceOs() {
-        return deviceOs;
+    public String getDeviceOS() {
+        return deviceOS;
     }
 
-    public void setDeviceOs(String deviceOs) {
-        this.deviceOs = deviceOs;
+    public void setDeviceOS(String deviceOS) {
+        this.deviceOS = deviceOS;
     }
 
     public String getOrgId() {

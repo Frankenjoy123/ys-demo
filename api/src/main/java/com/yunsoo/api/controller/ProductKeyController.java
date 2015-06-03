@@ -27,9 +27,9 @@ public class ProductKeyController {
     public ProductKey get(@PathVariable(value = "key") String key) {
         try {
             ProductKeyObject productKeyObject = dataAPIClient.get("productkey/{key}", ProductKeyObject.class, key);
-            return fromProductKeyObject(productKeyObject);
+            return toProductKey(productKeyObject);
         } catch (NotFoundException ex) {
-            throw new NotFoundException("product key " + key);
+            throw new NotFoundException("product key not found");
         }
     }
 
@@ -51,7 +51,7 @@ public class ProductKeyController {
         }
     }
 
-    private ProductKey fromProductKeyObject(ProductKeyObject object) {
+    private ProductKey toProductKey(ProductKeyObject object) {
         ProductKey productKey = new ProductKey();
         productKey.setProductKey(object.getProductKey());
         productKey.setProductKeyTypeCode(object.getProductKeyTypeCode());

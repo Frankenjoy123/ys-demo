@@ -1,6 +1,7 @@
 package com.yunsoo.api.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
@@ -12,19 +13,43 @@ import org.joda.time.DateTime;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
+    @JsonProperty("product_key")
     private String productKey;
+
+    @JsonProperty("product_category")
     private ProductCategory productCategory;
+
+    @JsonProperty("product_base_id")
     private String ProductBaseId;
+
+    @JsonProperty("org_id")
     private String orgId;
-    private String barcode;
+
+    @JsonProperty("name")
     private String name;
+
+    @JsonProperty("barcode")
+    private String barcode;
+
+    @JsonProperty("comment")
     private String comment;
+
+    @JsonProperty("shelf_life")
     private int shelfLife;
+
+    @JsonProperty("shelf_life_interval")
     private String shelfLifeInterval;
-    private String createdDateTime;
+
+    @JsonProperty("status_code")
     private String statusCode;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonProperty("manufacturing_datetime")
     private DateTime manufacturingDateTime;
+
+    @JsonProperty("created_datetime")
+    private String createdDateTime;
+
 
     public String getProductKey() {
         return productKey;
@@ -58,20 +83,20 @@ public class Product {
         this.orgId = orgId;
     }
 
-    public String getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(String barcode) {
-        this.barcode = barcode;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 
     public String getComment() {
@@ -98,14 +123,6 @@ public class Product {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
-    public String getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(String createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
     public String getStatusCode() {
         return statusCode;
     }
@@ -120,5 +137,13 @@ public class Product {
 
     public void setManufacturingDateTime(DateTime manufacturingDateTime) {
         this.manufacturingDateTime = manufacturingDateTime;
+    }
+
+    public String getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(String createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 }

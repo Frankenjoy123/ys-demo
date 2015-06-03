@@ -1,5 +1,6 @@
 package com.yunsoo.api.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.api.dto.ProductKeyType;
@@ -16,26 +17,56 @@ import java.util.List;
  */
 public class ProductBase {
 
+    @JsonProperty("id")
     private String id;
+
+    @JsonProperty("category")
     private ProductCategory category;
+
+    @JsonProperty("category_id")
     private Integer categoryId;
+
+    @JsonProperty("org_id")
     private String orgId;
+
+    @JsonProperty("barcode")
     private String barcode;
+
+    @JsonProperty("name")
     private String name;
-    private String comment;
+
+    @JsonProperty("comments")
+    private String comments;
+
+    @JsonProperty("shelf_life")
     private Integer shelfLife;
+
+    @JsonProperty("shelf_life_interval")
     private String shelfLifeInterval;
+
+    @JsonProperty("product_key_type_codes")
     private List<String> productKeyTypeCodes;
+
+    @JsonProperty("product_key_types")
     private List<ProductKeyType> productKeyTypes;
+
+    @JsonProperty("child_product_count")
     private Integer ChildProductCount;
+
+    @JsonProperty("status")
     private String status;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
 
+    @JsonProperty("thumbnail_url")
     private String thumbnailURL;
 
     public String getId() {
@@ -86,12 +117,12 @@ public class ProductBase {
         this.name = name;
     }
 
-    public String getComment() {
-        return comment;
+    public String getComments() {
+        return comments;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public Integer getShelfLife() {

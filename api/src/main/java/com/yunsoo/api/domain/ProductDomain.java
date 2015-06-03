@@ -106,14 +106,14 @@ public class ProductDomain {
         productBase.setName(productBaseObject.getName());
         productBase.setBarcode(productBaseObject.getBarcode());
         productBase.setStatus(productBaseObject.getStatus());
-        productBase.setComment(productBaseObject.getComment());
+        productBase.setComments(productBaseObject.getComment());
         productBase.setOrgId(productBaseObject.getOrgId());
         productBase.setShelfLife(productBaseObject.getShelfLife());
         productBase.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
         productBase.setCreatedDateTime(productBaseObject.getCreatedDateTime());
         productBase.setModifiedDateTime(productBaseObject.getModifiedDateTime());
 
-        productBase.setCategory(getProductCategoryById(productBaseObject.getCategoryId()));
+        //productBase.setCategory(getProductCategoryById(productBaseObject.getCategoryId()));
         if (productBaseObject.getProductKeyTypeCodes() != null) {
             productBase.setProductKeyTypeCodes(productBaseObject.getProductKeyTypeCodes());
             productBase.setProductKeyTypes(LookupObject.fromCodeList(productKeyTypes, productBaseObject.getProductKeyTypeCodes()));
