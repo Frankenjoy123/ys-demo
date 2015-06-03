@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
@@ -12,18 +13,30 @@ import org.joda.time.DateTime;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
+    @JsonProperty("product_key")
     private String productKey;
+    @JsonProperty("product_category")
     private ProductCategory productCategory;
+    @JsonProperty("product_base_id")
     private String ProductBaseId;
+    @JsonProperty("org_id")
     private String orgId;
+    @JsonProperty("barcode")
     private String barcode;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("comment")
     private String comment;
+    @JsonProperty("shelf_life")
     private int shelfLife;
+    @JsonProperty("shelf_life_interval")
     private String shelfLifeInterval;
+    @JsonProperty("created_datetime")
     private String createdDateTime;
+    @JsonProperty("status_code")
     private String statusCode;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonProperty("manufacturing_datetime")
     private DateTime manufacturingDateTime;
 
     public String getProductKey() {

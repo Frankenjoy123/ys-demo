@@ -2,11 +2,14 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.data.service.service.ScanRecordService;
 import com.yunsoo.data.service.service.contract.ScanRecord;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.yunsoo.common.data.object.ScanRecordObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,4 +62,37 @@ public class ScanController {
         long id = scanRecordService.save(scanRecord);
         return id;
     }
+
+    private ScanRecordObject FromScanRecord(ScanRecord scanRecord) {
+        ScanRecordObject scanRecordObject = new ScanRecordObject();
+        BeanUtils.copyProperties(scanRecord, scanRecordObject);
+        return scanRecordObject;
+    }
+
+    private ScanRecord ToScanRecord(ScanRecordObject scanRecordObject) {
+        ScanRecord scanRecord = new ScanRecord();
+        BeanUtils.copyProperties(scanRecordObject, scanRecord);
+        return scanRecord;
+    }
+
+    private List<ScanRecordObject> FromScanRecordList(List<ScanRecord> scanRecordList) {
+        if (scanRecordList == null) return null;
+
+        List<ScanRecordObject> scanRecordObjectList = new ArrayList<>();
+        for (ScanRecord scanRecord : scanRecordList) {
+            scanRecordObjectList.add(this.FromScanRecord(scanRecord));
+        }
+        return scanRecordObjectList;
+    }
+
+    private List<ScanRecord> ToScanRecordList(List<ScanRecordObject> scanRecordObjectList) {
+        if (scanRecordObjectList == null) return null;
+
+        List<ScanRecord> scanRecordList = new ArrayList<>();
+        for (ScanRecordObject scanRecordObject : scanRecordObjectList) {
+            scanRecordList.add(this.ToScanRecord(scanRecordObject));
+        }
+        return scanRecordList;
+    }
+    
 }

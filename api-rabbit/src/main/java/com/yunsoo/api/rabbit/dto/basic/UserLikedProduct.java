@@ -1,16 +1,25 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by Zhe on 2015/4/3.
  */
 public class UserLikedProduct {
 
+    @JsonProperty("id")
     private Long id;
+    @JsonProperty("user_id")
     private String userId;
+    @JsonProperty("base_product_id")
     private String baseProductId;
+    @JsonProperty("active")
     private Boolean active;
+    @JsonProperty("created_datetime")
     private String createdDateTime;
+    @JsonProperty("location")
     private String location;
+    @JsonProperty("last_updated_datetime")
     private String lastUpdatedDateTime;
 
     public Long getId() {

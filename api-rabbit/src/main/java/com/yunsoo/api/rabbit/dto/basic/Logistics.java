@@ -1,18 +1,23 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.joda.time.DateTime;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by Zhe on 2015/2/27.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Logistics {
+    @JsonProperty("org_id")
     private String OrgId;
+    @JsonProperty("org_name")
     private String OrgName;
     //    private String OrgVerified; //removed
+    @JsonProperty("message")
     private String message;
+    @JsonProperty("location")
     private String location;
+    @JsonProperty("datetime")
     private String dateTime;
 
     public String getOrgId() {

@@ -1,24 +1,40 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by Zhe on 2015/3/3.
  */
 public class User {
-
+    @JsonProperty("id")
     private String id;
+    @JsonProperty("address")
     private String address;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("cellular")
     private String cellular;
+    @JsonProperty("device_code")
     private String deviceCode;
+    @JsonProperty("thumbnail")
     private String thumbnail;
+    @JsonProperty("thumbnail_data")
     private byte[] thumbnailData;
+    @JsonProperty("thumbnail_name")
     private String thumbnailName;
+    @JsonProperty("thumbnail_suffix")
     private String thumbnailSuffix;
+    @JsonProperty("thumbnail_content_type")
     private String thumbnailContentType;
+    @JsonProperty("thumbnail_content_length")
     private Long thumbnailContentLength;
+    @JsonProperty("ys_creadit")
     private Integer ysCreadit;
+    @JsonProperty("level")
     private Integer level;
+    @JsonProperty("status")
     private String status;
+    @JsonProperty("created_datetime")
     private String createdDateTime;
 
     public String getId() {

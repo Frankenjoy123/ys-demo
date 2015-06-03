@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yunsoo.common.util.DateTimeUtils;
 
 import java.util.Comparator;
@@ -11,15 +12,23 @@ import java.util.Comparator;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ScanRecord implements Comparator<ScanRecord> {
-
+    @JsonProperty("id")
     private Long Id;
+    @JsonProperty("product_key")
     private String productKey;
+    @JsonProperty("base_product_id")
     private String baseProductId;
+    @JsonProperty("app_id")
     private String appId;
+    @JsonProperty("device_id")
     private String deviceId;
+    @JsonProperty("user_id")
     private String userId;
+    @JsonProperty("detail")
     private String detail;
+    @JsonProperty("created_datetime")
     private String createdDateTime;
+    @JsonProperty("location")
     private String location;
 
     public Long getId() {

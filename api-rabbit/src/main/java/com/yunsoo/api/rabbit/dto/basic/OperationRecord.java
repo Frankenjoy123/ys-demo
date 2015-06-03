@@ -1,15 +1,24 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by Zhe on 2015/4/8.
  */
 public class OperationRecord {
+    @JsonProperty("id")
     private Long id;
+    @JsonProperty("digest")
     private String digest;
+    @JsonProperty("result")
     private String result;
+    @JsonProperty("account_id")
     private Long accountId;
+    @JsonProperty("operation_type")
     private int operationType;
+    @JsonProperty("created_datetime")
     private String createdDateTime;
+    @JsonProperty("location")
     private String location;
 
     public Long getId() {

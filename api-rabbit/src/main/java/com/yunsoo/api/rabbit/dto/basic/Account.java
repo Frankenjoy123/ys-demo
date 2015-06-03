@@ -1,27 +1,26 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yunsoo.api.rabbit.object.TAccountStatusEnum;
 
 /**
  * Created by Zhe on 2015/3/3.
  */
 public class Account {
-    private Long id;
+    @JsonProperty("id")
+    private String id;
+    @JsonProperty("username")
     private String username;
+    @JsonProperty("password")
     private String password;
+    @JsonProperty("status")
     private TAccountStatusEnum status;
-//    private String ssid;
-//    private String identifier;
-//    private String firstName;
-//    private String lastName;
-//    private String email;
-//    private String phone;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

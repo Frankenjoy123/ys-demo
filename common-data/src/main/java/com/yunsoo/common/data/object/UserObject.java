@@ -1,29 +1,40 @@
-package com.yunsoo.data.api.dto;
+package com.yunsoo.common.data.object;
 
-import com.yunsoo.common.data.object.FileObject;
-import com.yunsoo.data.service.service.contract.User;
-import com.yunsoo.data.service.util.SpringBeanUtil;
-import org.springframework.beans.BeanUtils;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Created by Zhe on 2015/3/3.
+ * Created by Zhe on 2015/6/3.
  */
-public class UserDto {
+public class UserObject {
+    @JsonProperty("id")
     private String id;
+    @JsonProperty("address")
     private String address;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("cellular")
     private String cellular;
+    @JsonProperty("device_code")
     private String deviceCode;
+    @JsonProperty("thumbnail")
     private String thumbnail;
-    //private ThumbnailFile thumbnailFile;
+    @JsonProperty("thumbnail_data")
     private byte[] thumbnailData;
+    @JsonProperty("thumbnail_name")
     private String thumbnailName;
+    @JsonProperty("thumbnail_suffix")
     private String thumbnailSuffix;
+    @JsonProperty("thumbnail_content_type")
     private String thumbnailContentType;
+    @JsonProperty("thumbnail_content_length")
     private Long thumbnailContentLength;
+    @JsonProperty("ys_creadit")
     private Integer ysCreadit;
+    @JsonProperty("level")
     private Integer level;
+    @JsonProperty("status")
     private String status;
+    @JsonProperty("created_datetime")
     private String createdDateTime;
 
     public String getId() {
@@ -144,40 +155,5 @@ public class UserDto {
 
     public void setCreatedDateTime(String createdDateTime) {
         this.createdDateTime = createdDateTime;
-    }
-
-    //convert UserDto into User
-    public static User ToUser(UserDto userDto) {
-        User user = new User();
-        BeanUtils.copyProperties(userDto, user, SpringBeanUtil.getNullPropertyNames(userDto));
-        if (userDto.getThumbnailData() != null && userDto.getThumbnailData().length > 0) {
-            FileObject fileObject = new FileObject();
-            fileObject.setData(userDto.getThumbnailData());
-            if (userDto.getThumbnailName() != null && !userDto.getThumbnailName().isEmpty()) {
-                fileObject.setName(userDto.getThumbnailName());
-            }
-            if (userDto.getThumbnailSuffix() != null) {
-                fileObject.setSuffix(userDto.getThumbnailSuffix());
-            }
-            if (userDto.getThumbnailContentType() != null) {
-                fileObject.setContentType(userDto.getThumbnailContentType());
-            }
-
-            if (userDto.getThumbnailContentLength() != null) {
-                fileObject.setLength(userDto.getThumbnailContentLength());
-            } else {
-                fileObject.setLength((long) (fileObject.getData().length));  //calculate length
-            }
-            user.setFileObject(fileObject); //set user's ThumbnailFile
-        }
-        return user;
-    }
-
-    //convert User into UserDto
-    public static UserDto FromUser(User user) {
-        if (user == null) return null;
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(user, userDto, SpringBeanUtil.getNullPropertyNames(user));
-        return userDto;
     }
 }

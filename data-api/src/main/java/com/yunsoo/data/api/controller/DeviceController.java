@@ -2,17 +2,12 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.data.api.dto.ResultWrapper;
-import com.yunsoo.data.api.factory.ResultFactory;
 import com.yunsoo.data.service.entity.DeviceEntity;
 import com.yunsoo.data.service.repository.DeviceRepository;
-import com.yunsoo.data.service.service.ServiceOperationStatus;
 import com.yunsoo.data.service.service.contract.Device;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -79,9 +74,4 @@ public class DeviceController {
         DeviceEntity entity = deviceRepository.save(Device.ToEntity(device));
     }
 
-//    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-//    public ResponseEntity<ResultWrapper> deleteDevice(@PathVariable(value = "id") int id) {
-//        Boolean result = deviceService.delete(id, 5); //delete status is 5 in dev DB
-//        return new ResponseEntity<ResultWrapper>(ResultFactory.CreateResult(result), HttpStatus.NO_CONTENT);
-//    }
 }

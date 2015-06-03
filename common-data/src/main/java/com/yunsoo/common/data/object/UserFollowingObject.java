@@ -1,11 +1,11 @@
-package com.yunsoo.api.rabbit.dto.basic;
+package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Created by Zhe on 2015/4/21.
+ * Created by Zhe on 2015/6/3.
  */
-public class UserFollowing {
+public class UserFollowingObject {
     @JsonProperty("id")
     private Long id;
     @JsonProperty("user_id")

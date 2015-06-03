@@ -1,5 +1,6 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yunsoo.api.rabbit.object.ValidationResult;
 
 import java.util.List;
@@ -9,14 +10,21 @@ import java.util.List;
  * Created by Zhe on 2015/2/27.
  */
 public class ScanResult {
-
+    @JsonProperty("key")
     private String Key;
+    @JsonProperty("product")
     private Product product;
+    @JsonProperty("manufacturer")
     private Organization manufacturer;
+    @JsonProperty("scan_record_list")
     private List<ScanRecord> scanRecordList;
+    @JsonProperty("logistics_list")
     private List<Logistics> logisticsList;
+    @JsonProperty("validation_result")
     private ValidationResult validationResult;
+    @JsonProperty("scan_counter")
     private int scanCounter;
+    @JsonProperty("user_id")
     private String userId;
 
     public String getKey() {

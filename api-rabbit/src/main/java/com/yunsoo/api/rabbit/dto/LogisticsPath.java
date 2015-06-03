@@ -1,5 +1,6 @@
 package com.yunsoo.api.rabbit.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
@@ -13,22 +14,28 @@ import org.joda.time.DateTime;
  * Created by Jerry on 3/16/2015.
  */
 public class LogisticsPath {
+    @JsonProperty("product_key")
     private String productKey;
-
+    @JsonProperty("action_object")
     private LogisticsCheckActionObject actionObject;
-
+    @JsonProperty("start_check_point_object")
     private LogisticsCheckPointObject startCheckPointObject;
+    @JsonProperty("start_check_point_org_object")
     private OrganizationObject startCheckPointOrgObject;
-
+    @JsonProperty("end_check_point_object")
     private LogisticsCheckPointObject endCheckPointObject;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("start_date")
     private DateTime startDate;
+    @JsonProperty("desc")
     private String desc;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("end_date")
     private DateTime endDate;
+    @JsonProperty("operator")
     private String operator;
 
     public void setActionObject(LogisticsCheckActionObject actionObject) {

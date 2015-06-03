@@ -1,5 +1,6 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
@@ -10,27 +11,41 @@ import org.joda.time.DateTime;
  * Created by Zhe on 2015/3/9.
  */
 public class Message {
+    @JsonProperty("id")
     private Long Id;
+    @JsonProperty("title")
     private String title;
+    @JsonProperty("body")
     private String body;
+    @JsonProperty("digest")
     private String digest;
+    @JsonProperty("org_id")
     private String orgId;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
+    @JsonProperty("created_by")
     private String createdBy; //associate to company's accountId
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("expired_datetime")
     private DateTime expiredDateTime;
+    @JsonProperty("link")
     private String link;
+    @JsonProperty("type")
     private String type;
+    @JsonProperty("status")
     private String status;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    private DateTime lastUpatedDateTime;
+    @JsonProperty("last_updated_datetime")
+    private DateTime lastUpdatedDateTime;
+    @JsonProperty("last_updated_by")
     private String lastUpdatedBy; //associate to company's accountId
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("post_show_time")
     private DateTime postShowTime;
 
     public Long getId() {
@@ -131,12 +146,12 @@ public class Message {
         this.expiredDateTime = expiredDateTime;
     }
 
-    public DateTime getLastUpatedDateTime() {
-        return lastUpatedDateTime;
+    public DateTime getLastUpdatedDateTime() {
+        return lastUpdatedDateTime;
     }
 
-    public void setLastUpatedDateTime(DateTime lastUpatedDateTime) {
-        this.lastUpatedDateTime = lastUpatedDateTime;
+    public void setLastUpdatedDateTime(DateTime lastUpdatedDateTime) {
+        this.lastUpdatedDateTime = lastUpdatedDateTime;
     }
 
     public DateTime getPostShowTime() {

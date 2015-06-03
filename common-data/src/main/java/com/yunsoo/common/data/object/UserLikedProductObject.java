@@ -1,23 +1,23 @@
-package com.yunsoo.api.rabbit.dto.basic;
+package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Created by Zhe on 2015/4/21.
+ * Created by Zhe on 2015/6/3.
  */
-public class UserFollowing {
+public class UserLikedProductObject {
     @JsonProperty("id")
     private Long id;
     @JsonProperty("user_id")
     private String userId;
-    @JsonProperty("organization_id")
-    private String organizationId;
-    @JsonProperty("last_read_message_id")
-    private Long lastReadMessageId;
-    @JsonProperty("is_following")
-    private Boolean isFollowing;
+    @JsonProperty("base_product_id")
+    private String baseProductId;
+    @JsonProperty("active")
+    private Boolean active;
     @JsonProperty("created_datetime")
     private String createdDateTime;
+    @JsonProperty("location")
+    private String location;
     @JsonProperty("last_updated_datetime")
     private String lastUpdatedDateTime;
 
@@ -37,28 +37,20 @@ public class UserFollowing {
         this.userId = userId;
     }
 
-    public String getOrganizationId() {
-        return organizationId;
+    public String getBaseProductId() {
+        return baseProductId;
     }
 
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
+    public void setBaseProductId(String baseProductId) {
+        this.baseProductId = baseProductId;
     }
 
-    public Long getLastReadMessageId() {
-        return lastReadMessageId;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setLastReadMessageId(Long lastReadMessageId) {
-        this.lastReadMessageId = lastReadMessageId;
-    }
-
-    public Boolean getIsFollowing() {
-        return isFollowing;
-    }
-
-    public void setIsFollowing(Boolean isFollowing) {
-        this.isFollowing = isFollowing;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public String getCreatedDateTime() {
@@ -67,6 +59,14 @@ public class UserFollowing {
 
     public void setCreatedDateTime(String createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getLastUpdatedDateTime() {

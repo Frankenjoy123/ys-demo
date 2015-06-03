@@ -1,19 +1,27 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yunsoo.common.web.exception.BadRequestException;
 
 /**
  * Created by Zhe on 2015/3/24.
  */
 public class ScanRequestBody {
-
+    @JsonProperty("key")
     private String Key;
+    @JsonProperty("user_id")
     private String userId;
+    @JsonProperty("device_code")
     private String deviceCode;
+    @JsonProperty("app_id")
     private String appId;
+    @JsonProperty("latitude")
     private Double latitude;
+    @JsonProperty("longitude")
     private Double longitude;
+    @JsonProperty("location")
     private String location;
+    @JsonProperty("detail")
     private String detail;
 
     public String getKey() {
