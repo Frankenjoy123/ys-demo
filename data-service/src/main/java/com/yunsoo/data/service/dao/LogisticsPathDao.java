@@ -5,14 +5,17 @@ import com.yunsoo.data.service.dbmodel.dynamodb.LogisticsPathModel;
 import java.util.List;
 
 /**
- * Created by Jerry on 3/23/2015.
+ * Created by  : Jerry
+ * Created on  : 3/23/2015
+ * Descriptions:
  */
 public interface LogisticsPathDao {
-    public List<LogisticsPathModel> get(String productKey);
 
-    public void save(LogisticsPathModel logisticsModel);
+    List<LogisticsPathModel> get(String productKey);
 
-    public void batchSave(List<LogisticsPathModel> logisticsPathModelList);
+    void save(LogisticsPathModel logisticsModel);
 
-    public void update(LogisticsPathModel logisticsModel);
+    void batchSave(List<LogisticsPathModel> logisticsPathModelList);
+
+    void update(LogisticsPathModel logisticsModel);
 }

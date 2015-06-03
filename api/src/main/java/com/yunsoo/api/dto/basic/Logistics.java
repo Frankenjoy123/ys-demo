@@ -1,34 +1,51 @@
 package com.yunsoo.api.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.joda.time.DateTime;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 
 /**
- * Created by Zhe on 2015/2/27.
+ * Created by  : Zhe
+ * Created on  : 2015/2/27
+ * Descriptions:
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Logistics {
-    private String OrgId;
-    private String OrgName;
-    //    private String OrgVerified; //removed
+
+    @JsonProperty("org_id")
+    private String orgId;
+
+    @JsonProperty("org_name")
+    private String orgName;
+
+    @JsonProperty("message")
     private String message;
+
+    @JsonProperty("location")
     private String location;
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("dateTime")
     private String dateTime;
 
     public String getOrgId() {
-        return OrgId;
+        return orgId;
     }
 
     public void setOrgId(String orgId) {
-        OrgId = orgId;
+        this.orgId = orgId;
     }
 
     public String getOrgName() {
-        return OrgName;
+        return orgName;
     }
 
     public void setOrgName(String orgName) {
-        OrgName = orgName;
+        this.orgName = orgName;
     }
 
     public String getMessage() {

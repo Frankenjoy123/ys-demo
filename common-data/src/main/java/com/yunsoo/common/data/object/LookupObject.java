@@ -1,5 +1,7 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,9 +12,16 @@ import java.util.stream.Collectors;
  */
 public class LookupObject {
 
+    @JsonProperty("code")
     private String code;
+
+    @JsonProperty("name")
     private String name;
+
+    @JsonProperty("description")
     private String description;
+
+    @JsonProperty("active")
     private boolean active;
 
 

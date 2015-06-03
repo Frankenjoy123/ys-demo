@@ -8,16 +8,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by Jerry on 3/16/2015.
+ * Created by  : Jerry
+ * Created on  : 3/16/2015
+ * Descriptions:
  */
 @Component
 public class LogisticsDomain {
@@ -27,7 +26,7 @@ public class LogisticsDomain {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LogisticsDomain.class);
 
-    public List<LogisticsPath> getLogisticsPathsOrderByStartDate(String key) {
+    public List<LogisticsPath> getLogisticsPathsOrderByStartDateTime(String key) {
         List<LogisticsPath> logisticsPaths = new ArrayList<LogisticsPath>();
 
         LogisticsPathObject[] logisticsPathObjects = dataAPIClient.get("logisticspath/key/{key}", LogisticsPathObject[].class, key);
@@ -37,19 +36,19 @@ public class LogisticsDomain {
         List<LogisticsPathObject> logisticsPathObjectsList = Arrays.asList(logisticsPathObjects);
         for (LogisticsPathObject path : logisticsPathObjectsList) {
             LogisticsPath logisticsPath = new LogisticsPath();
-            logisticsPath.setDesc(path.getDesc());
-            logisticsPath.setEndDate(path.getEndDate());
+            logisticsPath.setDescription(path.getDescription());
+            logisticsPath.setEndDate(path.getEndDateTime());
             logisticsPath.setOperator(path.getOperator());
             logisticsPath.setProductKey(path.getProductKey());
-            logisticsPath.setStartDate(path.getStartDate());
+            logisticsPath.setStartDate(path.getStartDateTime());
 
-            if (path.getAction_id() != null) {
+            if (path.getActionId() != null) {
                 try {
-                    LogisticsCheckActionObject actionObject = dataAPIClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, path.getAction_id());
+                    LogisticsCheckActionObject actionObject = dataAPIClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, path.getActionId());
                     logisticsPath.setActionObject(actionObject);
                 } catch (Exception ex) {
                     logisticsPath.setActionObject(null);
-                    LOGGER.error("getLogisticsPathsOrderByStartDate error", ex);
+                    LOGGER.error("getLogisticsPathsOrderByStartDateTime error", ex);
                 }
             } else {
                 logisticsPath.setActionObject(null);
@@ -62,7 +61,7 @@ public class LogisticsDomain {
                     logisticsPath.setStartCheckPointObject(startPointObject);
                 } catch (Exception ex) {
                     logisticsPath.setStartCheckPointObject(null);
-                    LOGGER.error("getLogisticsPathsOrderByStartDate error", ex);
+                    LOGGER.error("getLogisticsPathsOrderByStartDateTime error", ex);
                 }
 
                 if (startPointObject != null) {
@@ -72,7 +71,7 @@ public class LogisticsDomain {
                     }
                     catch (Exception ex) {
                         logisticsPath.setStartCheckPointOrgObject(null);
-                        LOGGER.error("getLogisticsPathsOrderByStartDate error", ex);
+                        LOGGER.error("getLogisticsPathsOrderByStartDateTime error", ex);
                     }
                 } else {
                     logisticsPath.setStartCheckPointOrgObject(null);
@@ -88,7 +87,7 @@ public class LogisticsDomain {
                 }
                 catch (Exception ex) {
                     logisticsPath.setEndCheckPointObject(null);
-                    LOGGER.error("getLogisticsPathsOrderByStartDate error", ex);
+                    LOGGER.error("getLogisticsPathsOrderByStartDateTime error", ex);
                 }
             } else {
                 logisticsPath.setEndCheckPointObject(null);

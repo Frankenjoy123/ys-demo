@@ -18,7 +18,7 @@ public class LogisticsPathServiceImpl implements LogisticsPathService {
     private LogisticsPathDao logisticsPathDao;
 
     @Override
-    public List<LogisticsPath> get(String productKey) {
+    public List<LogisticsPath> getByProductKey(String productKey) {
         return LogisticsPath.FromModelList(logisticsPathDao.get(productKey));
     }
 

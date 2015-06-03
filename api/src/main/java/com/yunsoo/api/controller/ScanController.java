@@ -82,7 +82,7 @@ public class ScanController {
     private List<Logistics> getLogisticsInfo(String key) {
         List<LogisticsPath> logisticsPaths;
         try {
-            logisticsPaths = logisticsDomain.getLogisticsPathsOrderByStartDate(key);
+            logisticsPaths = logisticsDomain.getLogisticsPathsOrderByStartDateTime(key);
         } catch (NotFoundException ex) {
             //to do: log
             LOGGER.warn("物流信息找不到 - Key = " + key);

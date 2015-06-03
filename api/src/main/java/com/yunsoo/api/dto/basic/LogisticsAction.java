@@ -1,12 +1,24 @@
 package com.yunsoo.api.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
- * Created by Jerry on 4/29/2015.
+ * Created by  : Jerry
+ * Created on  : 4/29/2015
+ * Descriptions:
  */
 public class LogisticsAction {
+
+    @JsonProperty("id")
     private Integer id;
+
+    @JsonProperty("name")
     private String name;
+
+    @JsonProperty("description")
     private String description;
+
+    @JsonProperty("org_id")
     private String orgId;
 
     public Integer getId() {

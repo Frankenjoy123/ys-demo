@@ -51,10 +51,10 @@ public class ProductBase {
     private List<ProductKeyType> productKeyTypes;
 
     @JsonProperty("child_product_count")
-    private Integer ChildProductCount;
+    private Integer childProductCount;
 
-    @JsonProperty("status")
-    private String status;
+    @JsonProperty("status_code")
+    private String statusCode;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -158,19 +158,19 @@ public class ProductBase {
     }
 
     public Integer getChildProductCount() {
-        return ChildProductCount;
+        return childProductCount;
     }
 
     public void setChildProductCount(Integer childProductCount) {
-        ChildProductCount = childProductCount;
+        this.childProductCount = childProductCount;
     }
 
-    public String getStatus() {
-        return status;
+    public String getStatusCode() {
+        return statusCode;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
     public DateTime getCreatedDateTime() {

@@ -1,5 +1,6 @@
 package com.yunsoo.api.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.api.dto.ProductKeyType;
@@ -10,33 +11,66 @@ import org.joda.time.DateTime;
 import java.util.List;
 
 /**
- * Created by Jerry on 6/1/2015.
+ * Created by  : Jerry
+ * Created on  : 6/1/2015
+ * Descriptions:
  */
 public class ProductBaseRequest {
 
+    @JsonProperty("id")
     private String id;
+
+    @JsonProperty("category")
     private ProductCategory category;
+
+    @JsonProperty("category_id")
     private Integer categoryId;
+
+    @JsonProperty("org_id")
     private String orgId;
+
+    @JsonProperty("barcode")
     private String barcode;
+
+    @JsonProperty("name")
     private String name;
-    private String comment;
+
+    @JsonProperty("comments")
+    private String comments;
+
+    @JsonProperty("shelf_life")
     private Integer shelfLife;
+
+    @JsonProperty("shelf_life_interval")
     private String shelfLifeInterval;
+
+    @JsonProperty("product_key_type_codes")
     private List<String> productKeyTypeCodes;
+
+    @JsonProperty("product_key_types")
     private List<ProductKeyType> productKeyTypes;
-    private Integer ChildProductCount;
-    private String status;
+
+    @JsonProperty("child_product_count")
+    private Integer childProductCount;
+
+    @JsonProperty("status_code")
+    private String statusCode;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
 
+    @JsonProperty("thumbnail_url")
     private String thumbnailURL;
 
-    private String proDetails;
+    @JsonProperty("details")
+    private String details;
 
     public String getId() {
         return id;
@@ -86,12 +120,12 @@ public class ProductBaseRequest {
         this.name = name;
     }
 
-    public String getComment() {
-        return comment;
+    public String getComments() {
+        return comments;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public Integer getShelfLife() {
@@ -127,19 +161,19 @@ public class ProductBaseRequest {
     }
 
     public Integer getChildProductCount() {
-        return ChildProductCount;
+        return childProductCount;
     }
 
     public void setChildProductCount(Integer childProductCount) {
-        ChildProductCount = childProductCount;
+        this.childProductCount = childProductCount;
     }
 
-    public String getStatus() {
-        return status;
+    public String getStatusCode() {
+        return statusCode;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
     public DateTime getCreatedDateTime() {
@@ -166,11 +200,11 @@ public class ProductBaseRequest {
         this.thumbnailURL = thumbnailURL;
     }
 
-    public String getProDetails() {
-        return proDetails;
+    public String getDetails() {
+        return details;
     }
 
-    public void setProDetails(String proDetails) {
-        this.proDetails = proDetails;
+    public void setDetails(String details) {
+        this.details = details;
     }
 }

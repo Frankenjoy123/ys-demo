@@ -104,10 +104,10 @@ public class ProductBaseController {
             p.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
 
         p.setBarcode(productBase.getBarcode());
-        p.setStatus(productBase.getStatus());
+        p.setStatus(productBase.getStatusCode());
         p.setCategoryId(productBase.getCategoryId());
         p.setChildProductCount(productBase.getChildProductCount());
-        p.setComment(productBase.getComment());
+        p.setComment(productBase.getComments());
         p.setCreatedDateTime(productBase.getCreatedDateTime());
         p.setId(productBase.getId());
         p.setModifiedDateTime(productBase.getModifiedDateTime());
@@ -119,7 +119,7 @@ public class ProductBaseController {
 
         if (StringUtils.hasText(id)) {
             FileObject fileObject = new FileObject();
-            fileObject.setData(productBase.getProDetails().getBytes(StandardCharsets.UTF_8));
+            fileObject.setData(productBase.getDetails().getBytes(StandardCharsets.UTF_8));
             fileObject.setContentType("application/octet-stream");
             fileObject.setS3Path("photo/coms/products/" + id + "/notes.json");
 
@@ -180,7 +180,7 @@ public class ProductBaseController {
         if (!permissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
             throw new UnauthorizedException("没有权限删去此产品记录！");
         }
-        productBase.setStatus(LookupCodes.ProductBaseStatus.DELETED);  //just mark as inactive
+        productBase.setStatusCode(LookupCodes.ProductBaseStatus.DELETED);  //just mark as inactive
         ProductBaseObject p = new ProductBaseObject();
         BeanUtils.copyProperties(productBase, p);
         dataAPIClient.patch("productbase/", p);
