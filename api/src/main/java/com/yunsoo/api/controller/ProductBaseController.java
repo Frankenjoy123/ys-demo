@@ -71,8 +71,8 @@ public class ProductBaseController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgid, 'ProductBase:read')")
-    public List<ProductBase> getAllForCurrentOrg(@RequestParam(value = "orgid", required = false) String orgId) {
+    @PreAuthorize("hasPermission(#orgId, 'ProductBase:read')")
+    public List<ProductBase> getAllForCurrentOrg(@RequestParam(value = "org_id", required = false) String orgId) {
         if (orgId == null || orgId.isEmpty()) {
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId(); //fetch from AuthContext
         }

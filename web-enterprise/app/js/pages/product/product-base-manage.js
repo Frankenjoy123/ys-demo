@@ -36,10 +36,31 @@
             return result;
         };
 
-        //init
-        productBaseManageService.getProductBases(function (data) {
-            $scope.productBases = data;
-            //get product key credits
+        $scope.formatComments = function (comments) {
+            comments || (comments = '');
+            return comments.length > 30 ? comments.substring(0, 30) + '...' : comments;
+        };
+
+        $scope.dataTable = new $scope.utils.DataTable({
+            pageable: {
+                page: 0,
+                size: 20
+            },
+            flush: function (callback) {
+                productBaseManageService.getProductBases(function (data, status, headers) {
+                    if ($scope.productKeyCredits) {
+                        setProductKeyCredits(data, $scope.productKeyCredits);
+                    } else {
+                        getProductKeyCredits(function (productKeyCredits) {
+                            setProductKeyCredits(data, productKeyCredits);
+                        });
+                    }
+                    callback({data: data, headers: headers});
+                });
+            }
+        });
+
+        function getProductKeyCredits(callback) {
             productBaseManageService.getProductKeyCredits(function (data) {
                 var productKeyCredits = {
                     general: {
@@ -62,25 +83,24 @@
                     }
                 });
                 $scope.productKeyCredits = productKeyCredits;
-                console.log('[productKeyCredits loaded]: ', productKeyCredits);
-                $.each($scope.productBases, function (i, item) {
-                    setCredit(item, productKeyCredits);
-                });
+                console.log('[productKeyCredits loaded]', productKeyCredits);
+                callback(productKeyCredits);
             });
-        });
+        }
 
-
-        function setCredit(productBase, productKeyCredits) {
-            if (productBase && productKeyCredits) {
-                var credit = productBase.credit = {total: 0, remain: 0, general: productKeyCredits.general};
-                credit.total += productKeyCredits.general.total;
-                credit.remain += productKeyCredits.general.remain;
-                if (productKeyCredits.creditMap[productBase.id]) {
-                    credit.total += productKeyCredits.creditMap[productBase.id].total;
-                    credit.remain += productKeyCredits.creditMap[productBase.id].remain;
+        function setProductKeyCredits(productBases, productKeyCredits) {
+            $.each(productBases, function (i, item) {
+                if (item && productKeyCredits) {
+                    var credit = item.credit = {total: 0, remain: 0, general: productKeyCredits.general};
+                    credit.total += productKeyCredits.general.total;
+                    credit.remain += productKeyCredits.general.remain;
+                    if (productKeyCredits.creditMap[item.id]) {
+                        credit.total += productKeyCredits.creditMap[item.id].total;
+                        credit.remain += productKeyCredits.creditMap[item.id].remain;
+                    }
+                    credit.percentage = (credit.remain * 100 / credit.total) | 0;
                 }
-                credit.percentage = (credit.remain * 100 / credit.total) | 0;
-            }
+            });
         }
 
     }]);
