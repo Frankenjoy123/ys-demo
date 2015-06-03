@@ -27,14 +27,14 @@
         $("#detailItems").html("");
 
         var td1 = $('<td></td>').css("width", "30%").html("商品码");
-        var td2 = $('<td></td>').css("width", "70%").html(data.barcode);
+        var td2 = $('<td></td>').css("width", "70%").css("word-break","break-all").html(data.barcode);
         var tr = $('<tr></tr>').append(td1).append(td2);
         var tdSpace = $('<td></td>').css('height', '10px');
         var trSpace = $('<tr></tr>').append(tdSpace);
         $("#detailItems").append(tr).append(trSpace);
 
         td1 = $('<td></td>').css("width", "30%").html("物品名称");
-        td2 = $('<td></td>').css("width", "70%").html(data.name);
+        td2 = $('<td></td>').css("width", "70%").css("word-break","break-all").html(data.name);
         tr = $('<tr></tr>').append(td1).append(td2);
         tdSpace = $('<td></td>').css('height', '10px');
         trSpace = $('<tr></tr>').append(tdSpace);
@@ -44,8 +44,8 @@
             var details = data.details;
             if (details != null) {
                 for (var detail in details) {
-                    var td1 = $('<td></td>').css("width", "30%").html(details[detail].key);
-                    var td2 = $('<td></td>').css("width", "70%").html(details[detail].value);
+                    var td1 = $('<td></td>').css("width", "30%").css("word-break","break-all").html(details[detail].key);
+                    var td2 = $('<td></td>').css("width", "70%").css("word-break","break-all").html(details[detail].value);
                     var tr = $('<tr></tr>').append(td1).append(td2);
                     var tdSpace = $('<td></td>').css('height', '10px');
                     var trSpace = $('<tr></tr>').append(tdSpace);

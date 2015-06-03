@@ -13,6 +13,7 @@
             font-size: 13px;
             height: 887px;
             line-height: 13px;
+            margin-top: 50px;
             margin-bottom: 20px;
             margin-left: 0px;
             margin-right: 0px;
@@ -117,53 +118,56 @@
                 <div class="col-md-6">
                     <div class="panel">
                         <div class="panel-heading">
-                            <h3 class="panel-title">产品管理</h3>
+                            <h3 class="panel-title">产品编辑</h3>
                         </div>
 
                         <!--Horizontal Form-->
                         <!--===================================================-->
-                        <form class="form-horizontal">
+                        <div class="form-horizontal" id="createProduct">
                             <div class="panel-body">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label" for="barCode">BARCODE</label>
-
-                                    <div class="col-sm-9">
-                                        <input type="text" placeholder="BARCODE" id="barCode"
-                                               class="form-control" ng-model="barCode">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label" for="productName">产品名</label>
+                                    <label class="col-sm-3" for="productName">产品名</label>
 
                                     <div class="col-sm-9">
                                         <input type="text" placeholder="产品名" id="productName"
-                                               class="form-control" ng-model="productName">
+                                               class="form-control" ng-model="productName" name="productName">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">产品信息</label>
+                                    <label class="col-sm-3" for="barCode">BARCODE</label>
 
                                     <div class="col-sm-9">
-                                        <div ng-repeat="data in productInfos">
-                                            <input type="text" ng-model="data.key" style="width:30%">
-                                            <input type="text" ng-model="data.value" style="width:69%">
-                                        </div>
-                                        <div>
-                                            <a ng-click="addProductInfo()"><i class="fa fa-plus-square-o"></i></a>
-                                            <a ng-click="subProductInfo()"><i class="fa fa-minus-square-o"></i></a>
-                                        </div>
+                                        <input type="text" placeholder="BARCODE" id="barCode"
+                                               class="form-control" ng-model="barCode" name="barCode">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label" for="expireDate">产品过期时间</label>
+                                    <label class="col-sm-3">产品码类型</label>
+
+                                    <div class="col-sm-3">
+                                        <!-- Inline Checkboxes -->
+                                        <input type="checkbox" ng-model="keyTypePubInput" ng-true-value="true"
+                                               ng-false-value="false"/>二维码
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="checkbox" ng-model="keyTypePriInput" ng-true-value="true"
+                                               ng-false-value="false"/>隐藏二维码
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="checkbox" ng-model="keyTypeRFIDInput" ng-true-value="true"
+                                               ng-false-value="false"/>RFID标签
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3" for="expireDate">产品过期时间</label>
 
                                     <div class="col-sm-9">
-                                        <input type="text" placeholder="产品过期时间" id="expireDate"
+                                        <input type="number" name="greaterthan" placeholder="请输入大于1的正整数" id="expireDate"
                                                class="form-control" ng-model="expireDate">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label" for="expireDateUnit">产品过期单位</label>
+                                    <label class="col-sm-3" for="expireDateUnit">产品过期单位</label>
 
                                     <div class="col-sm-9">
                                         <select id="expireDateUnit" class="form-control" ng-model="expireDateUnit">
@@ -176,37 +180,82 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">产品码类型</label>
+                                    <label class="col-sm-3">产品详细信息</label>
 
                                     <div class="col-sm-9">
-                                        <!-- Inline Checkboxes -->
-                                        <input type="checkbox" ng-model="keyTypePubInput" ng-true-value="true"
-                                               ng-false-value="false"/>二维码&nbsp;&nbsp;
-                                        <input type="checkbox" ng-model="keyTypePriInput" ng-true-value="true"
-                                               ng-false-value="false"/>隐藏二维码&nbsp;&nbsp;
-                                        <input type="checkbox" ng-model="keyTypeRFIDInput" ng-true-value="true"
-                                               ng-false-value="false"/>RFID标签
-
+                                        <div ng-repeat="data in productInfos" class="form-inline"
+                                             style="margin-top: 5px">
+                                            <input type="text" ng-model="data.key" style="width:30%"
+                                                   class="form-control"
+                                                   name="productInfoKey"/>
+                                            <input type="text" ng-model="data.value" style="width:69%"
+                                                   class="form-control"
+                                                   name="productInfoName"/>
+                                        </div>
+                                        <div>
+                                            <a ng-click="addProductInfo()"><i class="fa fa-plus-square-o"></i></a>
+                                            <a ng-click="subProductInfo()"><i class="fa fa-minus-square-o"></i></a>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label" for="comment">备注</label>
+                                    <label class="col-sm-3">联系方式</label>
 
                                     <div class="col-sm-9">
-                                        <textarea placeholder="备注" id="comment" rows="5"
+                                        <div style="margin-top: 5px" class="form-inline">
+                                            <input type="text" ng-model="hotline" style="width:49%" class="form-control"
+                                                   placeholder="热线电话"/>
+                                            <input type="text" ng-model="support" style="width:50%" class="form-control"
+                                                   placeholder="技术支持"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 ">在线商城</label>
+
+                                    <div class="col-sm-9">
+                                        <div style="margin-top: 5px" class="form-inline">
+                                            <input type="text" ng-model="taobao" style="width:49%" class="form-control"
+                                                   placeholder="淘宝商城"/>
+                                            <input type="text" ng-model="tmall" style="width:50%" class="form-control"
+                                                   placeholder="天猫商城"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3">实体店列表</label>
+
+                                    <div class="col-sm-offset-3 form-inline" style="margin-top: 5px"
+                                         ng-repeat="data in productAddress">
+                                        <input type="text" ng-model="data.address" style="width:49%"
+                                               class="form-control" placeholder="地址"/>
+                                        <input type="text" ng-model="data.tel" style="width:50%" class="form-control"
+                                               placeholder="电话"/>
+                                    </div>
+                                    <div class="col-sm-offset-3">
+                                        <a ng-click="addProAddress()"><i class="fa fa-plus-square-o"></i></a>
+                                        <a ng-click="subProAddress()"><i class="fa fa-minus-square-o"></i></a>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3" for="comment">产品备注</label>
+
+                                    <div class="col-sm-9">
+                                        <textarea placeholder="产品备注" id="comment" rows="5"
                                                   class="form-control" ng-model="comment"></textarea>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="col-sm-9 col-sm-offset-3" id="divImgWrap">
-                                        <img id="imgProductbase" height="211px" width="422px">
+                                    <label class="col-sm-3">产品图片</label>
+
+                                    <div class="col-sm-9" id="divImgWrap">
+                                        <img id="imgProductbase" style="width:422px;height:211px">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">产品图片</label>
-
-                                    <div class="col-sm-9">
-                                        <input class="input-file" id="fileInput" type="file" nv-file-select="" uploader="uploader">
+                                    <div class="col-sm-offset-3">
+                                        <input class="input-file" id="fileInput" type="file" nv-file-select=""
+                                               uploader="uploader" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -219,7 +268,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                        </div>
 
                         <!--===================================================-->
                         <!--End Horizontal Form-->
