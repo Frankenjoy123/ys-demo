@@ -5,7 +5,6 @@ import com.yunsoo.api.rabbit.object.TAccountStatusEnum;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -64,7 +63,7 @@ public class TokenAuthenticationService {
 
         TAccount tAccount = tokenHandler.parseUserFromToken(token);
         if (!tAccount.isAnonymous()) {
-            throw new ForbiddenException(40101, "Action placeholder", "Anonymous user is denied!");
+            throw new ForbiddenException(40101, "Anonymous user is denied!");
         } else if (!tAccount.isAccountNonExpired()) {
             throw new UnauthorizedException(40102, "Account is expired");
         } else if (!tAccount.isAccountNonLocked()) {

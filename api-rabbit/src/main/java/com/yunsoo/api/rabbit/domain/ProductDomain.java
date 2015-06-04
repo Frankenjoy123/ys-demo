@@ -44,7 +44,7 @@ public class ProductDomain {
 
         product.setStatusCode(productObject.getProductStatusCode());
         product.setManufacturingDateTime(productObject.getManufacturingDateTime());
-        product.setCreatedDateTime(productObject.getCreatedDateTime().toString());
+        product.setCreatedDateTime(productObject.getCreatedDateTime());
 
         //fill with ProductBase information.
         String productBaseId = productObject.getProductBaseId();
