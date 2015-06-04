@@ -7,9 +7,9 @@ import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
 import com.yunsoo.api.rabbit.dto.LogisticsPath;
 import com.yunsoo.api.rabbit.dto.basic.*;
-import com.yunsoo.api.rabbit.object.TScanRecord;
 import com.yunsoo.api.rabbit.object.ValidationResult;
 import com.yunsoo.common.data.object.OrganizationObject;
+import com.yunsoo.common.data.object.ScanRecordObject;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -266,7 +266,7 @@ public class ScanController {
     }
 
     private long SaveScanRecord(User currentUser, Product currentProduct, ScanRequestBody scanRequestBody) {
-        TScanRecord scanRecord = new TScanRecord();
+        ScanRecordObject scanRecord = new ScanRecordObject();
         scanRecord.setUserId(currentUser.getId());
         scanRecord.setDeviceId(currentUser.getDeviceCode());
         if (scanRequestBody.getAppId() != null && !scanRequestBody.getAppId().isEmpty()) {

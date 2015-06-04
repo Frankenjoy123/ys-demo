@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.object;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 这个对象对应dataapi所用的数据接口。
@@ -8,15 +9,25 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TScanRecord {
+    @JsonProperty("product_key")
     private String productKey;
+    @JsonProperty("base_product_id")
     private String baseProductId;
+    @JsonProperty("app_id")
     private String appId;
+    @JsonProperty("device_id")
     private String deviceId;
+    @JsonProperty("user_id")
     private String userId;
+    @JsonProperty("detail")
     private String detail;
+    @JsonProperty("created_datetime")
     private String createdDateTime;
+    @JsonProperty("latitude")
     private Double latitude;
+    @JsonProperty("longitude")
     private Double longitude;
+    @JsonProperty("location")
     private String location;
 
     public String getProductKey() {
