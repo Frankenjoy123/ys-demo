@@ -1,16 +1,16 @@
-package com.yunsoo.api.dto.basic;
+package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Created by  : Zhe
- * Created on  : 2015/2/27
+ * Created by  : Jerry
+ * Created on  : 4/29/2015
  * Descriptions:
  */
-public class ProductCategory {
+public class LogisticsAction {
 
     @JsonProperty("id")
-    private int id;
+    private Integer id;
 
     @JsonProperty("name")
     private String name;
@@ -18,17 +18,14 @@ public class ProductCategory {
     @JsonProperty("description")
     private String description;
 
-    @JsonProperty("parent_id")
-    private int parentId;
+    @JsonProperty("org_id")
+    private String orgId;
 
-    @JsonProperty("active")
-    private boolean active;
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -48,19 +45,11 @@ public class ProductCategory {
         this.description = description;
     }
 
-    public int getParentId() {
-        return parentId;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 }

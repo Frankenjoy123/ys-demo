@@ -6,7 +6,7 @@ import com.yunsoo.api.domain.AccountTokenDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.AccountLoginRequest;
 import com.yunsoo.api.dto.AccountLoginResponse;
-import com.yunsoo.api.dto.basic.Token;
+import com.yunsoo.api.dto.Token;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AccountTokenObject;

@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.ProductFileDomain;
-import com.yunsoo.api.dto.basic.Package;
+import com.yunsoo.api.dto.Package;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.PackageBoundObject;
 import com.yunsoo.common.data.object.ProductFileObject;

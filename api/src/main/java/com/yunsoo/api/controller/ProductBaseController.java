@@ -2,8 +2,8 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.domain.ProductDomain;
-import com.yunsoo.api.dto.basic.ProductBase;
-import com.yunsoo.api.dto.basic.ProductBaseRequest;
+import com.yunsoo.api.dto.ProductBase;
+import com.yunsoo.api.dto.ProductBaseRequest;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;

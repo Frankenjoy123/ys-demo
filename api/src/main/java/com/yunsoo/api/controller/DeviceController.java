@@ -1,6 +1,6 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.dto.basic.Device;
+import com.yunsoo.api.dto.Device;
 import com.yunsoo.common.data.object.DeviceObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;

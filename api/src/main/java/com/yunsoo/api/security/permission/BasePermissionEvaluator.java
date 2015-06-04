@@ -2,10 +2,10 @@ package com.yunsoo.api.security.permission;
 
 import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.ProductKeyOrder;
-import com.yunsoo.api.dto.basic.Device;
-import com.yunsoo.api.dto.basic.Message;
-import com.yunsoo.api.dto.basic.Organization;
-import com.yunsoo.api.dto.basic.ProductBase;
+import com.yunsoo.api.dto.Device;
+import com.yunsoo.api.dto.Message;
+import com.yunsoo.api.dto.Organization;
+import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;

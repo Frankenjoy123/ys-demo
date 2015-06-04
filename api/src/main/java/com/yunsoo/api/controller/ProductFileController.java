@@ -1,6 +1,6 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.dto.basic.ProductFile;
+import com.yunsoo.api.dto.ProductFile;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductFileObject;
 import com.yunsoo.common.web.client.RestClient;

@@ -1,9 +1,8 @@
-package com.yunsoo.api.dto.basic;
+package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
@@ -11,11 +10,11 @@ import org.joda.time.DateTime;
 import java.util.List;
 
 /**
- * Created by  : Jerry
- * Created on  : 6/1/2015
+ * Created by:   Zhe
+ * Created on:   2015/3/19
  * Descriptions:
  */
-public class ProductBaseRequest {
+public class ProductBase {
 
     @JsonProperty("id")
     private String id;
@@ -68,9 +67,6 @@ public class ProductBaseRequest {
 
     @JsonProperty("thumbnail_url")
     private String thumbnailURL;
-
-    @JsonProperty("details")
-    private String details;
 
     public String getId() {
         return id;
@@ -198,13 +194,5 @@ public class ProductBaseRequest {
 
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
     }
 }

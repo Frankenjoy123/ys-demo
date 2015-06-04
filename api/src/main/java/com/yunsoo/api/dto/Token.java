@@ -1,4 +1,4 @@
-package com.yunsoo.api.dto.basic;
+package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
