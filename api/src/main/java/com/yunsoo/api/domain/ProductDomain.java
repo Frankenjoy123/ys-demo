@@ -1,9 +1,9 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.dto.ProductKeyType;
-import com.yunsoo.api.dto.basic.Product;
-import com.yunsoo.api.dto.basic.ProductBase;
-import com.yunsoo.api.dto.basic.ProductCategory;
+import com.yunsoo.api.dto.Product;
+import com.yunsoo.api.dto.ProductBase;
+import com.yunsoo.api.dto.ProductCategory;
 import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;

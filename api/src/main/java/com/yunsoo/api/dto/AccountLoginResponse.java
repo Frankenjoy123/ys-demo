@@ -1,7 +1,6 @@
 package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yunsoo.api.dto.basic.Token;
 
 /**
  * Created by  : Lijian

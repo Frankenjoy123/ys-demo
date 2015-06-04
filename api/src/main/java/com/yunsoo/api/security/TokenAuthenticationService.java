@@ -1,6 +1,6 @@
 package com.yunsoo.api.security;
 
-import com.yunsoo.api.dto.basic.Token;
+import com.yunsoo.api.dto.Token;
 import com.yunsoo.api.object.TAccount;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;

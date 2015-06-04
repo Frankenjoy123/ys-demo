@@ -1,4 +1,4 @@
-package com.yunsoo.api.dto.basic;
+package com.yunsoo.api.dto;
 
 /**
  * Created by Zhe on 2015/4/8.

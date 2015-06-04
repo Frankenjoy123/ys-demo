@@ -3,7 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.MessageDomain;
 import com.yunsoo.api.domain.PermissionDomain;
-import com.yunsoo.api.dto.basic.Message;
+import com.yunsoo.api.dto.Message;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;

@@ -1,6 +1,6 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.dto.basic.LogisticsPoint;
+import com.yunsoo.api.dto.LogisticsPoint;
 import com.yunsoo.common.data.object.LogisticsCheckPointObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;

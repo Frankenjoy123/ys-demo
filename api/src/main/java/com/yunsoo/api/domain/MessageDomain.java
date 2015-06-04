@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.dto.basic.Message;
+import com.yunsoo.api.dto.Message;
 import com.yunsoo.common.web.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

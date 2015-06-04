@@ -1,31 +1,20 @@
-package com.yunsoo.api.dto.basic;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+package com.yunsoo.api.dto;
 
 /**
- * Created by  : Jerry
- * Created on  : 4/29/2015
- * Descriptions:
+ * Created by Jerry on 4/29/2015.
  */
-public class LogisticsAction {
-
-    @JsonProperty("id")
-    private Integer id;
-
-    @JsonProperty("name")
+public class LogisticsPoint {
+    private String id;
     private String name;
-
-    @JsonProperty("description")
     private String description;
-
-    @JsonProperty("org_id")
+    private int locationId;
     private String orgId;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -43,6 +32,14 @@ public class LogisticsAction {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(int locationId) {
+        this.locationId = locationId;
     }
 
     public String getOrgId() {

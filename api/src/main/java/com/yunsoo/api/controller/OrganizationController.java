@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.OrganizationDomain;
-import com.yunsoo.api.dto.basic.Organization;
+import com.yunsoo.api.dto.Organization;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.OrganizationObject;
