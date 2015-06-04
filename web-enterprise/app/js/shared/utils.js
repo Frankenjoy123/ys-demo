@@ -335,7 +335,12 @@
                 if (response) {
                     this.data = response.data || [];
                     this.totalPages = '*';
-                    var expression = typeof response.headers === 'function' ? response.headers('Content-Range') : response.headers['Content-Range'];
+                    var expression = null;
+                    if (response.headers) {
+                        expression = typeof response.headers === 'function'
+                            ? response.headers('Content-Range')
+                            : response.headers['Content-Range'];
+                    }
                     var match = /^pages (\d+)\/(\d+|\*)$/.exec(expression);
                     if (match) {
                         this.page = +match[1];

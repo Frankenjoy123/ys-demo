@@ -4,6 +4,7 @@ import com.yunsoo.common.error.DebugErrorResult;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.TraceInfo;
 import com.yunsoo.common.web.error.RestErrorResultCode;
+import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -78,7 +80,17 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResult handleUnauthorized(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.UNAUTHORIZED, "Unauthorized request.");
-        LOGGER.info("[API: 401 UNAUTHORIZED] " + ex.getMessage());
+        LOGGER.info("[API: 401 Unauthorized] " + ex.getMessage());
+        return appendTraceInfo(result, ex);
+    }
+
+    //403
+    @ExceptionHandler({ForbiddenException.class, AccessDeniedException.class})
+    @ResponseBody
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResult handleForbiddenException(HttpServletRequest req, Exception ex) {
+        ErrorResult result = new ErrorResult(RestErrorResultCode.FORBIDDEN, "Forbidden request.");
+        LOGGER.info("[API: 403 Forbidden] " + ex.getMessage());
         return appendTraceInfo(result, ex);
     }
 

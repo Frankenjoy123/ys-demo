@@ -10,10 +10,7 @@ import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.InternalServerErrorException;
-import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.common.web.exception.UnauthorizedException;
+import com.yunsoo.common.web.exception.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -198,7 +195,7 @@ public class ProductBaseController {
         tPermission.setResourceCode("Productbase");
         tPermission.setActionCode("delete");
         if (!permissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
-            throw new UnauthorizedException("没有权限删去此产品记录！");
+            throw new ForbiddenException("没有权限删此产品记录！");
         }
         productBase.setStatusCode(LookupCodes.ProductBaseStatus.DELETED);  //just mark as inactive
         ProductBaseObject p = new ProductBaseObject();

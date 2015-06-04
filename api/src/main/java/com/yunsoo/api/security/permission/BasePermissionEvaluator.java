@@ -1,11 +1,7 @@
 package com.yunsoo.api.security.permission;
 
 import com.yunsoo.api.domain.PermissionDomain;
-import com.yunsoo.api.dto.ProductKeyOrder;
-import com.yunsoo.api.dto.Device;
-import com.yunsoo.api.dto.Message;
-import com.yunsoo.api.dto.Organization;
-import com.yunsoo.api.dto.ProductBase;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
@@ -16,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 
@@ -75,7 +72,8 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             //check if user trying to take action on it's own orgId's resource
             if (targetType.compareToIgnoreCase("filterByOrg") == 0) {
 //                hasPermission = account.getOrgId().equals(targetId) ? true : false;
-                currentPermission.setOrgId(targetId.toString());
+                String orgId = targetId == null ? null : targetId.toString();
+                currentPermission.setOrgId(StringUtils.hasText(orgId) ? orgId : account.getOrgId());
             }
 //            else if (targetType.compareToIgnoreCase("UserLikedProduct") == 0) {
 //                hasPermission = account.getId().equals(targetId) ? true : false;
@@ -105,7 +103,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 
     private void checkAccount(TAccount account) {
         if (!account.isAnonymous()) {
-            throw new ForbiddenException(40301, "Action", "Anonymous user is denied!");
+            throw new ForbiddenException(40301, "Anonymous user is denied!");
         } else if (!account.isAccountNonExpired()) {
             throw new UnauthorizedException(40101, "Account is expired");
         } else if (!account.isAccountNonLocked()) {
