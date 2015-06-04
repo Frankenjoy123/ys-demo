@@ -13,7 +13,7 @@ import org.joda.time.DateTime;
  */
 public class ScanRecordObject {
     @JsonProperty("id")
-    private Long Id;
+    private Long id;
     @JsonProperty("product_key")
     private String productKey;
     @JsonProperty("base_product_id")
@@ -38,11 +38,11 @@ public class ScanRecordObject {
     private String location;
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     @JsonIgnore

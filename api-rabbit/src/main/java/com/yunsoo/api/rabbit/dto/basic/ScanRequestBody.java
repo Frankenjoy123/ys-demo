@@ -93,7 +93,7 @@ public class ScanRequestBody {
             throw new BadRequestException("Key不能为空！");
         }
         if (userId == null && (deviceCode == null || deviceCode.isEmpty())) {
-            throw new BadRequestException("至少需要指定一个参数： userId或deviceCode！");
+            throw new BadRequestException("至少需要指定一个参数： user_id或device_code！");
         }
         return true;
     }
