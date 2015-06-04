@@ -95,7 +95,7 @@ public class ScanController {
             logistics.setOrgName(path.getStartCheckPointOrgObject().getName());
             logistics.setMessage(path.getActionObject().getName());
             logistics.setLocation(path.getStartCheckPointObject().getName());
-            logistics.setDateTime(DateTimeUtils.toString(path.getStartDate()));
+            logistics.setDateTime(DateTimeUtils.toString(path.getStartDateTime()));
             logisticsList.add(logistics);
         }
         return logisticsList;

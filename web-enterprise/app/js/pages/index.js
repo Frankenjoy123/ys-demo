@@ -56,6 +56,10 @@
                 templateUrl: 'pages/emulator/emulator.html',
                 controller: 'emulatorCtrl'
             })
+            .when('/device', {
+                templateUrl: 'pages/device/device.html',
+                controller: 'deviceCtrl'
+            })
             .otherwise({
                 templateUrl: 'pages/dashboard/dashboard.html',
                 controller: 'DashboardCtrl'

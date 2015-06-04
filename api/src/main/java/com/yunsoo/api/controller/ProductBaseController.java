@@ -85,7 +85,27 @@ public class ProductBaseController {
     @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'ProductBase:create')")
     public String create(@RequestBody ProductBase productBase) {
         ProductBaseObject p = new ProductBaseObject();
-        BeanUtils.copyProperties(productBase, p);
+        //BeanUtils.copyProperties(productBase, p);
+
+        p.setName(productBase.getName());
+
+        if (StringUtils.hasText(productBase.getOrgId()))
+            p.setOrgId(productBase.getOrgId());
+        else
+            p.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+
+        p.setBarcode(productBase.getBarcode());
+        p.setStatus(productBase.getStatusCode());
+        p.setCategoryId(productBase.getCategoryId());
+        p.setChildProductCount(productBase.getChildProductCount());
+        p.setComment(productBase.getComments());
+        p.setCreatedDateTime(productBase.getCreatedDateTime());
+        p.setId(productBase.getId());
+        p.setModifiedDateTime(productBase.getModifiedDateTime());
+        p.setProductKeyTypeCodes(productBase.getProductKeyTypeCodes());
+        p.setShelfLife(productBase.getShelfLife());
+        p.setShelfLifeInterval(productBase.getShelfLifeInterval());
+
         String id = dataAPIClient.post("productbase/", p, String.class);
         return id;
     }

@@ -15,7 +15,7 @@ public class MessageModel {
     @javax.persistence.Id
     @GeneratedValue
     @Column(name = "id")
-    private long Id;
+    private Long Id;
     @Column(name = "title")
     private String title;
     @Column(name = "body")
@@ -51,11 +51,11 @@ public class MessageModel {
 //    @JoinColumn(name = "user_Id")
 //    private Set<UserOrganizationModel> userOrganizationModelSet;
 
-    public long getId() {
+    public Long getId() {
         return Id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.Id = id;
     }
 

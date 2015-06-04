@@ -35,12 +35,12 @@ public class LogisticsPath {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("start_datetime")
-    private DateTime startDate;
+    private DateTime startDateTime;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("end_date_time")
-    private DateTime endDate;
+    @JsonProperty("end_datetime")
+    private DateTime endDateTime;
 
     @JsonProperty("operator")
     private String operator;
@@ -92,20 +92,20 @@ public class LogisticsPath {
         this.startCheckPointOrgObject = startCheckPointOrgObject;
     }
 
-    public DateTime getStartDate() {
-        return startDate;
+    public DateTime getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setStartDate(DateTime startDate) {
-        this.startDate = startDate;
+    public void setStartDateTime(DateTime startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
-    public DateTime getEndDate() {
-        return endDate;
+    public DateTime getEndDateTime() {
+        return endDateTime;
     }
 
-    public void setEndDate(DateTime endDate) {
-        this.endDate = endDate;
+    public void setEndDateTime(DateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     public String getOperator() {

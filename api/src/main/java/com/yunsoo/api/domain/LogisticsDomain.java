@@ -37,10 +37,10 @@ public class LogisticsDomain {
         for (LogisticsPathObject path : logisticsPathObjectsList) {
             LogisticsPath logisticsPath = new LogisticsPath();
             logisticsPath.setDescription(path.getDescription());
-            logisticsPath.setEndDate(path.getEndDateTime());
+            logisticsPath.setEndDateTime(path.getEndDateTime());
             logisticsPath.setOperator(path.getOperator());
             logisticsPath.setProductKey(path.getProductKey());
-            logisticsPath.setStartDate(path.getStartDateTime());
+            logisticsPath.setStartDateTime(path.getStartDateTime());
 
             if (path.getActionId() != null) {
                 try {
