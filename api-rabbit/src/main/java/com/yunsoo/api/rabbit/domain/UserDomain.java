@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * 个人用户的业务域。
@@ -35,7 +36,7 @@ public class UserDomain {
             }
         } else {
             try {
-                if (cellular != null) {
+                if (StringUtils.hasText(cellular)) {
                     user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
                 }
             } catch (NotFoundException ex) {
@@ -43,11 +44,11 @@ public class UserDomain {
             }
 
             try {
-                if (user == null) {
+                if (StringUtils.hasText(deviceCode)) {
                     user = dataAPIClient.get("user/device/{devicecode}", User.class, deviceCode);
                 }
             } catch (NotFoundException ex) {
-                LOGGER.info("Notfound user for cellular = {0}", cellular);
+                LOGGER.info("Notfound user for devicecode = {0}", cellular);
             }
 
             if (user == null) {

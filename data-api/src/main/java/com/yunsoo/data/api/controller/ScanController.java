@@ -28,13 +28,13 @@ public class ScanController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<ScanRecord> getNewMessagesByMessageId(@PathVariable(value = "id") Long id) {
-        return new ResponseEntity(scanRecordService.get(id), HttpStatus.OK);
+    public ResponseEntity<ScanRecordObject> getNewMessagesByMessageId(@PathVariable(value = "id") Long id) {
+        return new ResponseEntity(this.FromScanRecord(scanRecordService.get(id)), HttpStatus.OK);
     }
 
     //General 的扫描记录filter
     @RequestMapping(value = "/filterby", method = RequestMethod.GET)
-    public List<ScanRecord> getScanRecordsByFilter(@RequestParam(value = "productKey", required = false) String productKey,
+    public List<ScanRecordObject> getScanRecordsByFilter(@RequestParam(value = "productKey", required = false) String productKey,
                                                    @RequestParam(value = "baseProductId", required = false) Integer baseProductId,
                                                    @RequestParam(value = "userId", required = false) String userId,
                                                    @RequestParam(value = "createdDateTime", required = false, defaultValue = "") String createdDateTime,
@@ -42,26 +42,28 @@ public class ScanController {
                                                    @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         List<ScanRecord> scanRecordList = scanRecordService.getScanRecordsByFilter(productKey, baseProductId, userId, createdDateTime,
                 pageIndex, pageSize);
-        return scanRecordList;
+        return this.FromScanRecordList(scanRecordList);
     }
 
     //找用户的扫描记录，根据某记录的id向前或者向后搜寻
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
-    public List<ScanRecord> filterScanRecords(@RequestParam(value = "Id", required = false) Long Id,
+    public List<ScanRecordObject> filterScanRecords(@RequestParam(value = "Id", required = false) Long Id,
                                               @RequestParam(value = "userId", required = false) String userId,
                                               @RequestParam(value = "backward", required = false) Boolean backward,
                                               @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         List<ScanRecord> scanRecordList = scanRecordService.filterScanRecords(Id, userId, backward, pageIndex, pageSize);
-        return scanRecordList;
+        return this.FromScanRecordList(scanRecordList);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public long createScanRecord(@RequestBody ScanRecord scanRecord) {
+    public long createScanRecord(@RequestBody ScanRecordObject scanRecordObject) {
+        ScanRecord scanRecord = this.ToScanRecord(scanRecordObject);
         long id = scanRecordService.save(scanRecord);
         return id;
     }
+
 
     private ScanRecordObject FromScanRecord(ScanRecord scanRecord) {
         ScanRecordObject scanRecordObject = new ScanRecordObject();
