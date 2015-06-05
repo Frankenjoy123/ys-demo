@@ -1,11 +1,9 @@
 package com.yunsoo.api.rabbit.security.permission;
 
-import com.yunsoo.api.rabbit.dto.basic.Message;
 import com.yunsoo.api.rabbit.dto.basic.User;
 import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
 import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
 import com.yunsoo.api.rabbit.object.TAccount;
-import com.yunsoo.common.data.object.AccountPermissionObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
@@ -15,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by Zhe on 2015/3/6.
@@ -32,7 +29,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 
             TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
             if (!account.isAnonymous()) {
-                throw new ForbiddenException(40301, "Action-" + permission, "Anonymous user is denied!");
+                throw new ForbiddenException(40301, "Anonymous user is denied!");
             } else if (!account.isAccountNonExpired()) {
                 throw new UnauthorizedException(40101, "Account is expired");
             } else if (!account.isAccountNonLocked()) {
@@ -76,7 +73,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
 
             TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
             if (!account.isAnonymous()) {
-                throw new ForbiddenException(40301, "Action-" + permission, "Anonymous user is denied!");
+                throw new ForbiddenException(40301, "Anonymous user is denied!");
             } else if (!account.isAccountNonExpired()) {
                 throw new UnauthorizedException(40101, "Account is expired");
             } else if (!account.isAccountNonLocked()) {

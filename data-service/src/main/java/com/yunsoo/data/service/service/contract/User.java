@@ -1,7 +1,11 @@
 package com.yunsoo.data.service.service.contract;
 
-import com.yunsoo.data.service.dbmodel.UserModel;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.FileObject;
+import com.yunsoo.data.service.dbmodel.UserModel;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 
@@ -25,7 +29,9 @@ public class User {
     private int ysCreadit;
     private int level;
     private String status;
-    private String createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime createdDateTime;
 
     public String getId() {
         return id;
@@ -99,11 +105,11 @@ public class User {
         this.status = status;
     }
 
-    public String getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 
@@ -121,7 +127,7 @@ public class User {
         BeanUtils.copyProperties(model, user, new String[]{"createdDateTime"});
         user.setId(String.valueOf(model.getId()));
         if (model.getCreatedDateTime() != null) {
-            user.setCreatedDateTime(model.getCreatedDateTime().toString());
+            user.setCreatedDateTime(model.getCreatedDateTime());
         }
         return user;
     }
@@ -134,7 +140,7 @@ public class User {
             model.setId(user.getId());
         }
         if (user.getCreatedDateTime() != null) {
-            model.setCreatedDateTime(DateTime.parse(user.getCreatedDateTime()));
+            model.setCreatedDateTime(user.getCreatedDateTime());
         }
         return model;
     }

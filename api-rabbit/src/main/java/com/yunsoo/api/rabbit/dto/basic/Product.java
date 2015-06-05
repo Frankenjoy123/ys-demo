@@ -2,7 +2,9 @@ package com.yunsoo.api.rabbit.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
@@ -31,8 +33,10 @@ public class Product {
     private int shelfLife;
     @JsonProperty("shelf_life_interval")
     private String shelfLifeInterval;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
-    private String createdDateTime;
+    private DateTime createdDateTime;
     @JsonProperty("status_code")
     private String statusCode;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
@@ -111,11 +115,11 @@ public class Product {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
-    public String getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 

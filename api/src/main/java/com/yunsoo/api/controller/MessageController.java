@@ -11,8 +11,8 @@ import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +120,7 @@ public class MessageController {
         tPermission.setResourceCode("message");
         tPermission.setActionCode("delete");
         if (!permissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
-            throw new UnauthorizedException("没有权限删去此信息！");
+            throw new ForbiddenException("没有权限删去此信息！");
         }
         message.setStatus(LookupCodes.MessageStatus.DELETED); //set status as deleted
         dataAPIClient.patch("message", message);

@@ -36,7 +36,7 @@ public class UserDomain {
             }
         } else {
             try {
-                if (StringUtils.hasText(cellular)) {
+                if (StringUtils.isEmpty(cellular)) {
                     user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
                 }
             } catch (NotFoundException ex) {
@@ -44,7 +44,7 @@ public class UserDomain {
             }
 
             try {
-                if (StringUtils.hasText(deviceCode)) {
+                if (StringUtils.isEmpty(deviceCode)) {
                     user = dataAPIClient.get("user/device/{devicecode}", User.class, deviceCode);
                 }
             } catch (NotFoundException ex) {

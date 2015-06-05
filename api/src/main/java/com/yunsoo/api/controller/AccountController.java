@@ -44,6 +44,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'account:read')")
     public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId) {
         if (orgId == null) {
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();

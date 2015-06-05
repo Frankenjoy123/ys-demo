@@ -10,23 +10,23 @@ import java.util.stream.Collectors;
  * Created by Zhe on 2015/2/4.
  */
 public class ScanRecord {
-    private long id;
+    private Long id;
     private String productKey;
     private String baseProductId;
     private String appId;
     private String deviceId;
     private String userId;
     private String detail;
-    private String createdDateTime;
+    private DateTime createdDateTime;
     private Double latitude;
     private Double longitude;
     private String location;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -78,11 +78,11 @@ public class ScanRecord {
         this.detail = detail;
     }
 
-    public String getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDatetime) {
+    public void setCreatedDateTime(DateTime createdDatetime) {
         this.createdDateTime = createdDatetime;
     }
 
@@ -121,7 +121,7 @@ public class ScanRecord {
         scanRecord.setUserId(scanRecordModel.getUserId());
         scanRecord.setProductKey(scanRecordModel.getProductKey());
         scanRecord.setDetail(scanRecordModel.getDetail());
-        scanRecord.setCreatedDateTime(scanRecordModel.getCreatedDateTime().toString());
+        scanRecord.setCreatedDateTime(scanRecordModel.getCreatedDateTime());
         scanRecord.setLatitude(scanRecordModel.getLatitude());
         scanRecord.setLongitude(scanRecordModel.getLongitude());
         scanRecord.setLocation(scanRecordModel.getLocation());
@@ -141,7 +141,7 @@ public class ScanRecord {
         scanRecordModel.setDetail(scanRecord.getDetail());
         scanRecordModel.setLocation(scanRecord.getLocation());
         if (scanRecord.getCreatedDateTime() != null) {
-            scanRecordModel.setCreatedDateTime(DateTime.parse(scanRecord.getCreatedDateTime()));
+            scanRecordModel.setCreatedDateTime(scanRecord.getCreatedDateTime());
         }
         if (scanRecord.getLatitude() != null) {
             scanRecordModel.setLatitude(scanRecord.getLatitude());

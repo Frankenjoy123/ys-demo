@@ -115,14 +115,14 @@
                             <tbody
                                     ng-repeat="da in dataTable.filteredData = (dataTable.data | filter:dataTable.filter)">
                             <tr>
-                                <td>{{da.fileName}}</td>
+                                <td>{{da.file_name}}</td>
                                 <td>识别中...</td>
                                 <td>
                                         <span ng-show="da.status == 1"><span
                                                 class="label label-success">成功</span></span>
                                     <span ng-hide="da.status == 1"><span class="label label-danger">失败</span></span>
                                 </td>
-                                <td>{{utils.formatDateString(da.createDate)}}</td>
+                                <td>{{utils.formatDateString(da.create_datetime)}}</td>
                             </tr>
                             </tbody>
                         </table>

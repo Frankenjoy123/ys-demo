@@ -1,6 +1,11 @@
 package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.joda.time.DateTime;
 
 /**
  * Created by Zhe on 2015/6/3.
@@ -16,10 +21,14 @@ public class UserFollowingObject {
     private Long lastReadMessageId;
     @JsonProperty("is_following")
     private Boolean isFollowing;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
-    private String createdDateTime;
+    private DateTime createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("last_updated_datetime")
-    private String lastUpdatedDateTime;
+    private DateTime lastUpdatedDateTime;
 
     public Long getId() {
         return id;
@@ -61,19 +70,19 @@ public class UserFollowingObject {
         this.isFollowing = isFollowing;
     }
 
-    public String getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 
-    public String getLastUpdatedDateTime() {
+    public DateTime getLastUpdatedDateTime() {
         return lastUpdatedDateTime;
     }
 
-    public void setLastUpdatedDateTime(String lastUpdatedDateTime) {
+    public void setLastUpdatedDateTime(DateTime lastUpdatedDateTime) {
         this.lastUpdatedDateTime = lastUpdatedDateTime;
     }
 }

@@ -112,6 +112,8 @@
                     }
                     if (rejection.status == 401 && rejection.config.url.indexOf('/api/auth') < 0) {
                         window.location.href = 'login.html';
+                    } else if (rejection.status == 403) {
+                        utils.notification('danger', '没有操作权限');
                     } else if (rejection.status >= 500 && rejection.status < 600) {
                         utils.notification('danger', '服务器错误，请稍后重试');
                     }
