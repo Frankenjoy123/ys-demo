@@ -4,6 +4,7 @@ import com.yunsoo.common.error.DebugErrorResult;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.TraceInfo;
 import com.yunsoo.common.web.error.RestErrorResultCode;
+import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
@@ -81,13 +82,14 @@ public class GlobalControllerExceptionHandler {
         return appendTraceInfo(result, ex);
     }
 
-
+    //403
     @ExceptionHandler({
+            ForbiddenException.class,
             AccessDeniedException.class})
     @ResponseBody
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResult handleAccessDenied(HttpServletRequest req, Exception ex) {
-        ErrorResult result = new ErrorResult(RestErrorResultCode.UNAUTHORIZED, "Access denied.");
+        ErrorResult result = new ErrorResult(RestErrorResultCode.FORBIDDEN, "Access denied.");
         LOGGER.warn("[API: 403 Access denied]", ex);
         return appendTraceInfo(result, ex);
     }
