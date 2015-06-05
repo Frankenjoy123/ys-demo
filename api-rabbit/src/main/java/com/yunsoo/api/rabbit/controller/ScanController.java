@@ -85,7 +85,7 @@ public class ScanController {
         List<ScanRecord> scanRecordList = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}",
                 new ParameterizedTypeReference<List<ScanRecord>>() {
                 }, scanRequestBody.getKey(), 20);  //hard code as top 20 (desc order by created time )
-        scanResult.setScanRecord(scanRecordList);
+        scanResult.setScanRecordList(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
         //4, retrieve logistics information
@@ -135,7 +135,7 @@ public class ScanController {
         List<ScanRecord> scanRecordList = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}",
                 new ParameterizedTypeReference<List<ScanRecord>>() {
                 }, key, 20);  //hard code as top 20 (desc order by created time )
-        scanResult.setScanRecord(scanRecordList);
+        scanResult.setScanRecordList(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
         //4, retrieve logistics information

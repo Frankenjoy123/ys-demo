@@ -51,12 +51,12 @@ public class ScanResult {
         this.manufacturer = manufacturer;
     }
 
-    public List<ScanRecord> getScanRecord() {
+    public List<ScanRecord> getScanRecordList() {
         return scanRecordList;
     }
 
-    public void setScanRecord(List<ScanRecord> ScanRecordList) {
-        this.scanRecordList = ScanRecordList;
+    public void setScanRecordList(List<ScanRecord> scanRecordList) {
+        this.scanRecordList = scanRecordList;
     }
 
     public List<Logistics> getLogisticsList() {
