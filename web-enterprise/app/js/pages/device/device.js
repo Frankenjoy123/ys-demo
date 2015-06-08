@@ -3,36 +3,51 @@
 
     app.factory("deviceService", ["$http", function ($http) {
         return {
-            createProWithDetail: function (proDetail, fnSuccess, fnError) {
-                $http.post("/api/productbase/withdetail", proDetail).success(fnSuccess).error(fnError);
+            getDevices: function (dataTable, orgId, fnSuccess) {
+                var url = '/api/device/org/' + orgId + '?';
 
-                return this;
+                url += dataTable.toString();
+                $http.get(url).success(fnSuccess);
             }
         };
     }]);
 
-    app.controller("deviceCtrl", ["$scope", "deviceService", "$timeout", function ($scope, emulatorService, $timeout) {
+    app.controller("deviceCtrl", ["$scope", "deviceService", "$timeout", function ($scope, deviceService, $timeout) {
 
-        $scope.preview = function () {
+        (function newDataTable() {
+            if ($scope.context.account) {
+                $scope.deviceTable = new $scope.utils.DataTable({
+                    sortable: {
+                        target: '#sort-bar',
+                        sort: 'createdDateTime,desc'
+                    },
+                    pageable: {
+                        page: 0,
+                        size: 20
+                    },
+                    flush: function (callback) {
+                        deviceService.getDevices(this, $scope.context.account.org_id, function (data, status, headers) {
+                            callback({data: data, headers: headers});
+                        });
+                    }
+                });
+            } else {
+                $timeout(newDataTable, 1000);
+            }
+        })();
 
-        };
+        $scope.deviceAuth = function (){
 
-        $timeout(function () {
+            $("#authQRCode").html('');
 
-            $("#code").qrcode({
-                render: "table",
-                width: 200, //宽度
-                height: 200, //高度
-                text: "www.163.com" //任意内容
+            $scope.qrcode = $("#authQRCode").qrcode({
+                render: "table", //table方式
+                width: 300, //宽度
+                height:300, //高度
+                foreground: "#337ab7",//前景颜色
+                text: "token" //任意内容
             });
+        }
 
-            $("#code").qrcode({
-                render: "table",
-                width: 200, //宽度
-                height: 200, //高度
-                text: "www.qq.com" //任意内容
-            });
-
-        }, 0);
     }]);
 })();

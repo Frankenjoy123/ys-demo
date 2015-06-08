@@ -1,16 +1,103 @@
+<!--Page Title-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <div id="page-title">
-    <h1 class="page-header text-overflow">设备管理授权</h1>
+    <h1 class="page-header text-overflow">设备管理</h1>
 </div>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End page title-->
+
+<!--Page content-->
+<!--===================================================-->
 
 <div id="page-content">
-    <div class="panel panel-bordered-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">设备列表</h3>
+    <div ng-show="deviceTable" class="panel panel-bordered-primary">
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">设备授权</h4>
+                    </div>
+                    <div class="modal-body" id="authQRCode" style="height:300px;width:300px;align:center">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="panel-body">
-            <div class="row">
-
+        <div class="panel-body"> <!--panel-collapse collapse in-->
+            <table class="table table-hover">
+                <thead id="sort-bar">
+                <tr>
+                    <th class="col-xs-1">#</th>
+                    <th class="col-xs-2" data-sort-field="deviceName">设备名称</th>
+                    <th data-sort-field="deviceOs">设备操作系统</th>
+                    <th data-sort-field="checkPointId" class="col-xs-2">地点</th>
+                    <th data-sort-field="statusCode" class="col-xs-1">状态</th>
+                    <th data-sort-field="createdDateTime" class="col-xs-2">创建时间</th>
+                    <th class="col-xs-1">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="m in deviceTable.pageable.data track by m.id" data-id="{{m.id}}">
+                    <td>{{$index + 1}}</td>
+                    <td>{{m.device_name}}</td>
+                    <td>{{m.device_os}}</td>
+                    <td>{{m.check_point_id}}</td>
+                    <td><span ng-show="m.status_code == 'active'"><span class="label label-success">已激活</span></span></td>
+                    <td>{{utils.formatDateString(m.created_datetime)}}</td>
+                    <td>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary btn-labeled fa fa-barcode" data-toggle="modal"
+                                data-target="#myModal" ng-click="deviceAuth()">
+                            授权
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="pull-right pagination">
+                <ul class="pagination">
+                    <li ng-class="{'disabled':deviceTable.pageable.isFirst()}"
+                        class="page-first">
+                        <a href="" ng-click="deviceTable.pageable.first()">
+                            <i class="fa fa-fw fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li ng-class="{'disabled':deviceTable.pageable.isFirst()}"
+                        class="page-pre">
+                        <a href="" ng-click="deviceTable.pageable.previous()">
+                            <i class="fa fa-fw fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li ng-repeat="p in deviceTable.pageable.adjacentPages(5)"
+                        ng-class="{'active':p===deviceTable.pageable.page}"
+                        class="page-number">
+                        <a href=""
+                           ng-click="deviceTable.pageable.goto(p)">
+                            {{p+1}}
+                        </a>
+                    </li>
+                    <li ng-class="{'disabled':deviceTable.pageable.isLast()}"
+                        class="page-next">
+                        <a href="" ng-click="deviceTable.pageable.next()">
+                            <i class="fa fa-fw fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li ng-class="{'disabled':deviceTable.pageable.isLast()}"
+                        class="page-last">
+                        <a href="" ng-click="deviceTable.pageable.last()">
+                            <i class=" fa fa-fw fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

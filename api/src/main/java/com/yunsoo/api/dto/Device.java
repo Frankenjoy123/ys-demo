@@ -24,7 +24,7 @@ public class Device {
     private String deviceName;
 
     @JsonProperty("device_os")
-    private String deviceOS;
+    private String deviceOs;
 
     @JsonProperty("org_id")
     private String orgId;
@@ -67,12 +67,12 @@ public class Device {
         this.deviceName = deviceName;
     }
 
-    public String getDeviceOS() {
-        return deviceOS;
+    public String getDeviceOs() {
+        return deviceOs;
     }
 
-    public void setDeviceOS(String deviceOS) {
-        this.deviceOS = deviceOS;
+    public void setDeviceOs(String deviceOs) {
+        this.deviceOs = deviceOs;
     }
 
     public String getOrgId() {

@@ -7,10 +7,16 @@ import com.yunsoo.data.service.repository.DeviceRepository;
 import com.yunsoo.data.service.service.contract.Device;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by Jerry on 3/13/2015.
@@ -32,17 +38,21 @@ public class DeviceController {
 
     @RequestMapping(value = "/org/{id}", method = RequestMethod.GET)
     public List<Device> getDeviceByOrgId(@PathVariable(value = "id") String id,
-                                         @RequestParam(value = "index") Integer index,
-                                         @RequestParam(value = "size") Integer size) {
+                                         @PageableDefault(size = 1000)
+                                         Pageable pageable,
+                                         HttpServletResponse response) {
         if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
-        if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
-        if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
 
-        List<Device> deviceList = Device.FromEntityList(deviceRepository.findByOrgId(id, new PageRequest(index, size)));
-        if (deviceList == null || deviceList.size() < 1) {
+        Page<DeviceEntity> deviceList = deviceRepository.findByOrgId(id, pageable);
+        if (deviceList == null) {
             throw new NotFoundException(40401, "找不到组织的device记录! 组织ID = " + id);
         }
-        return deviceList;
+
+        response.setHeader("Content-Range", "pages " + deviceList.getNumber() + "/" + deviceList.getTotalPages());
+
+        return StreamSupport.stream(deviceList.spliterator(), false)
+                .map(Device::FromEntity)
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/whose/{id}", method = RequestMethod.GET)
