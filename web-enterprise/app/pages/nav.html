@@ -1,0 +1,127 @@
+<div id="mainnav" ng-controller="NavCtrl">
+
+    <!--Shortcut buttons-->
+    <!--================================-->
+    <div id="mainnav-shortcut">
+        <!--<ul class="list-unstyled">-->
+        <!--<li class="col-xs-4" data-content="Additional Sidebar">-->
+        <!--<a id="demo-toggle-aside" class="shortcut-grid" href="#">-->
+        <!--<i class="fa fa-magic"></i>-->
+        <!--</a>-->
+        <!--</li>-->
+        <!--<li class="col-xs-4" data-content="Notification">-->
+        <!--<a id="demo-alert" class="shortcut-grid" href="#">-->
+        <!--<i class="fa fa-bullhorn"></i>-->
+        <!--</a>-->
+        <!--</li>-->
+        <!--<li class="col-xs-4" data-content="Page Alerts">-->
+        <!--<a id="demo-page-alert" class="shortcut-grid" href="#">-->
+        <!--<i class="fa fa-bell"></i>-->
+        <!--</a>-->
+        <!--</li>-->
+        <!--</ul>-->
+    </div>
+    <!--================================-->
+    <!--End shortcut buttons-->
+
+
+    <!--Menu-->
+    <!--================================-->
+    <div id="mainnav-menu-wrap">
+        <div class="nano">
+            <div class="nano-content">
+                <ul id="mainnav-menu" class="list-group">
+
+                    <!--Menu list item-->
+                    <li>
+                        <a href="#/dashboard">
+                            <i class="fa fa-fw fa-dashboard "></i>
+                            <span class="menu-title"><strong>仪表台</strong></span>
+                        </a>
+                    </li>
+
+                    <!--Menu list item-->
+                    <li>
+                        <a href="#/product-key-manage">
+                            <i class="fa fa-fw fa-tags"></i>
+                            <span class="menu-title"><strong>产品码</strong></span>
+                        </a>
+                    </li>
+
+                    <!--Menu list item-->
+                    <li>
+                        <a href="#/package-manage">
+                            <i class="fa fa-fw fa-gift"></i>
+                            <span class="menu-title"><strong>包装</strong></span>
+                        </a>
+                    </li>
+
+                    <!--Menu list item-->
+                    <li>
+                        <a href="#/logistics">
+                            <i class="fa fa-fw fa-truck"></i>
+                            <span class="menu-title"><strong>物流</strong></span>
+                        </a>
+                    </li>
+
+                    <!--Menu list item-->
+                    <li data-menu-group="setting">
+                        <a href="">
+                            <i class="fa fa-fw fa-cogs"></i>
+                            <span class="menu-title"><strong>设置</strong></span>
+                            <i class="arrow"></i>
+                        </a>
+                        <!--Submenu-->
+                        <ul class="collapse" data-menu-group="setting">
+                            <li><a href="#/product-base-manage">产品</a></li>
+                            <li><a href="#/message">消息</a></li>
+                            <li><a href="#/account">账号</a></li>
+                            <li><a href="#/setting">密码</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+
+
+                <!--Widget-->
+                <!--================================-->
+                <div class="mainnav-widget">
+
+                    <!-- Show the button on collapsed navigation -->
+                    <div class="show-small">
+                        <a href="" data-toggle="menu-widget" data-target="#wg-product-key">
+                            <i class="fa fa-qrcode"></i>
+                        </a>
+                    </div>
+
+                    <!-- Hide the content on collapsed navigation -->
+                    <div id="wg-product-key" class="hide-small mainnav-widget-content">
+                        <ul class="list-group">
+                            <li class="list-header pad-no pad-ver">产品码</li>
+                            <li class="mar-btm">
+                                <span class="label label-primary pull-right">{{productKeyCreditSum.percentage}}%</span>
+
+                                <p>总可用额度</p>
+
+                                <div class="progress progress-sm">
+                                    <div class="progress-bar progress-bar-primary"
+                                         ng-style="{width: productKeyCreditSum.percentage + '%'}">
+                                        <span class="sr-only">{{productKeyCreditSum.percentage}}%</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="pad-ver"><a href="#/product-base-manage"
+                                                   class="btn btn-success btn-bock">查看详情</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--================================-->
+                <!--End widget-->
+
+            </div>
+        </div>
+    </div>
+    <!--================================-->
+    <!--End menu-->
+
+</div>

@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
     var app = angular.module('root', [
         'ngRoute',
         //'ngAnimate',
@@ -134,33 +134,6 @@
                 console.log('[get productKeyCreditSum]: ', sum);
             });
 
-            //init menu
-            var menu = {};
-            $('#mainnav').find('#mainnav-menu').find('>li').each(function (i, item) {
-                var $item = $(item);
-                var name = $item.find('>a').attr('href');
-                var menuItem = {$html: $item};
-                name && (menu[name] = menuItem);
-                $item.find('>ul>li').each(function (j, subItem) {
-                    var $subItem = $(subItem);
-                    var subName = $subItem.find('>a').attr('href');
-                    subName && (menu[subName] = {$html: $subItem, parent: menuItem});
-                });
-            });
-            $scope.$on('$routeChangeSuccess', function (angularEvent, current, previous) {
-                var mainnav = $('#mainnav');
-                mainnav.find('li.active-link').removeClass('active-link');
-                mainnav.find('li.active-sub').removeClass('active-sub');
-                var path = current.$$route ? current.$$route.originalPath : '/dashboard';
-                var menuItem = menu['#' + path];
-                if (menuItem) {
-                    menuItem.$html.addClass('active-link');
-                    if (menuItem.parent) {
-                        menuItem.parent.$html.addClass('active-sub');
-                        menuItem.$html.parent('ul.collapse').addClass('in');
-                    }
-                }
-            });
 
             //show welcome message
             $timeout(function () {
@@ -169,7 +142,41 @@
 
             console.log('[root controller end]');
         }
-    ]);
-//end of controller
+    ]);//end of controller
 
-})();
+    app.directive('scrollTop', function () {
+        return {
+            restrict: 'A',
+            scope: true,
+            link: function (scope, $element, attrs) {
+                if (!nifty.isMobile) {
+                    var isVisible = false;
+                    var offsetTop = 250;
+                    var $window = $(window);
+                    var $bodyHtml = $('body, html');
+
+                    $window.scroll(function () {
+                        if ($window.scrollTop() > offsetTop && !isVisible) {
+                            //nifty.navbar.addClass('shadow');
+                            $element.addClass('in');
+                            isVisible = true;
+                        } else if ($window.scrollTop() < offsetTop && isVisible) {
+                            //nifty.navbar.removeClass('shadow');
+                            $element.removeClass('in');
+                            isVisible = false;
+                        }
+                    });
+
+                    $element.on('click', function (e) {
+                        e.preventDefault();
+
+                        $bodyHtml.animate({
+                            scrollTop: 0
+                        }, 500);
+                    });
+                }
+            }
+        };
+    });
+
+})(jQuery);
