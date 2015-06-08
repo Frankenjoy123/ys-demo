@@ -26,8 +26,8 @@ public class User {
     private FileObject fileObject;
     //    private byte[] thumbnailData;
 //    private HashMap<String, String> thumbnailDataProperties;
-    private int ysCreadit;
-    private int level;
+    private Integer ysCreadit;
+    private Integer level;
     private String status;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -81,19 +81,19 @@ public class User {
         this.thumbnail = thumbnail;
     }
 
-    public int getLevel() {
+    public Integer getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(Integer level) {
         this.level = level;
     }
 
-    public int getYsCreadit() {
+    public Integer getYsCreadit() {
         return ysCreadit;
     }
 
-    public void setYsCreadit(int ysCreadit) {
+    public void setYsCreadit(Integer ysCreadit) {
         this.ysCreadit = ysCreadit;
     }
 

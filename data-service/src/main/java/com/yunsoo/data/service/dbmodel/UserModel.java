@@ -43,9 +43,9 @@ public class UserModel {
     @Transient
     private FileObject fileObject;
     @Column(name = "ys_creadit")
-    private int ysCreadit;
+    private Integer ysCreadit;
     @Column(name = "level")
-    private int level;
+    private Integer level;
     @Column(name = "status")
     private String status;
     @Column(name = "created_datetime", nullable = true, updatable = false)
@@ -142,19 +142,19 @@ public class UserModel {
         this.fileObject = fileObject;
     }
 
-    public int getYsCreadit() {
+    public Integer getYsCreadit() {
         return ysCreadit;
     }
 
-    public void setYsCreadit(int ysCreadit) {
+    public void setYsCreadit(Integer ysCreadit) {
         this.ysCreadit = ysCreadit;
     }
 
-    public int getLevel() {
+    public Integer getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(Integer level) {
         this.level = level;
     }
 
