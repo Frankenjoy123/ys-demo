@@ -177,6 +177,14 @@
                 }
             }
         };
+    }).directive('dtPageable', function () {
+        return {
+            restrict: 'A',
+            scope: {
+                pageable: '=dtPageable'
+            },
+            templateUrl:'partials/widgets/pageable.html'
+        };
     });
 
 })(jQuery);
