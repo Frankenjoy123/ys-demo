@@ -25,23 +25,35 @@
                                 aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title" id="myModalLabel">设备授权</h4>
                     </div>
-                    <div class="modal-body" style="height:330px;width:600px">
+                    <div class="modal-body" style="height:350px;width:600px">
                         <div class="row">
                             <div class="col-md-5">
-                                <form class="form">
-                                    <div class="form-group" style="min-height: 250px">
-                                        <label for="selectAccount">账号</label>
+                                <form class="form" id="deviceForm">
+                                    <div class="form-group" id="divSelectAccount">
+                                        <label for="selectAccount">授权账号</label>
 
                                         <select id="selectAccount"
-                                                class="selectpicker form-control"
-                                                >
-                                            <option value="0">请选择账号</option>
-                                            <!--<option ng-repeat="" value="">-->
-                                            <!--</option>-->
+                                                class="form-control" ng-model="selectAccount" name="selectAccount">
+                                            <option ng-repeat="opt in curOrgAccounts" value="{{opt.id}}">{{opt.last_name}}{{opt.first_name}}</option>
                                         </select>
                                     </div>
+                                    <div class="form-group" id="divDeviceName">
+                                        <label for="deviceName">设备名称</label>
+
+                                        <input type="text" id="deviceName" placeholder="设备名称" name="deviceName"
+                                               class="form-control" ng-model="deviceName">
+                                        </input>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="deviceComment">设备备注</label>
+
+                                          <textarea placeholder="设备备注" id="deviceComment" rows="4"
+                                                    class="form-control" ng-model="deviceComment"></textarea>
+                                    </div>
                                     <div class="form-group" style="text-align: center">
-                                        <button type="button" class="btn btn-primary btn-labeled fa fa-barcode" ng-click="deviceAuth()">生成授权码</button>
+                                        <button type="button" class="btn btn-primary btn-labeled fa fa-barcode"
+                                                ng-click="deviceAuth()">生成授权码
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -72,8 +84,8 @@
                         <th class="col-xs-1">#</th>
                         <th class="col-xs-2" data-sort-field="deviceName">设备名称</th>
                         <th data-sort-field="deviceOs">设备操作系统</th>
-                        <th data-sort-field="checkPointId" class="col-xs-2">地点</th>
                         <th data-sort-field="statusCode" class="col-xs-1">状态</th>
+                        <th data-sort-field="statusCode" class="col-xs-2">授权用户</th>
                         <th data-sort-field="createdDateTime" class="col-xs-2">创建时间</th>
                         <th class="col-xs-1">操作</th>
                     </tr>
@@ -83,14 +95,14 @@
                         <td>{{$index + 1}}</td>
                         <td>{{m.device_name}}</td>
                         <td>{{m.device_os}}</td>
-                        <td>{{m.check_point_id}}</td>
                         <td><span ng-show="m.status_code == 'active'"><span
                                 class="label label-success">已授权</span></span></td>
+                        <td>{{m.created_account_id}}</td>
                         <td>{{utils.formatDateString(m.created_datetime)}}</td>
                         <td>
                             <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-primary btn-labeled fa fa-barcode" ng-click="">
-                                延长期限
+                            <button type="button" class="btn btn-primary btn-labeled fa fa-remove" ng-click="cancelDeviceAuth()">
+                                取消授权
                             </button>
                         </td>
                     </tr>
