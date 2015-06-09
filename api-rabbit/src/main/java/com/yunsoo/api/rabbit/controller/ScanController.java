@@ -7,7 +7,10 @@ import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
 import com.yunsoo.api.rabbit.dto.LogisticsPath;
 import com.yunsoo.api.rabbit.dto.basic.*;
+import com.yunsoo.api.rabbit.object.Constants;
+import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.api.rabbit.object.ValidationResult;
+import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ScanRecordObject;
 import com.yunsoo.common.util.DateTimeUtils;
@@ -51,20 +54,24 @@ public class ScanController {
     private UserFollowDomain userFollowDomain;
     @Autowired
     private ProductDomain productDomain;
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
 
     //能够访问所有的Key,为移动客户端调用，因此每次Scan都save扫描记录。
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ScanResult getDetail(@RequestBody ScanRequestBody scanRequestBody) {
+    public ScanResult getDetail(@RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = true) String accessToken,
+                                @RequestBody ScanRequestBody scanRequestBody) {
         //0，validate input
         scanRequestBody.validateForScan();
 
         //1, get user
-        User currentUser = userDomain.ensureUser(scanRequestBody.getUserId(), null, null);
+        TAccount tAccount = tokenAuthenticationService.parseUser(accessToken);
+        User currentUser = userDomain.ensureUser(tAccount.getId(), null, null);
         if (currentUser == null) {
 //            LOGGER.error("User not found by userId ={0}, deviceCode = {1}", scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
-            throw new NotFoundException(40401, "User not found by userId = " + scanRequestBody.getUserId() + " deviceCode = " + scanRequestBody.getDeviceCode());
+            throw new NotFoundException(40401, "User not found by userId = " + tAccount.getId() + " deviceCode = " + scanRequestBody.getDeviceCode());
         }
 
         ScanResult scanResult = new ScanResult();
