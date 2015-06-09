@@ -386,6 +386,7 @@
             };
 
             Pageable.prototype.adjacentPages = function (count) {
+                count || (count = 5);
                 var pages = [];
                 var right = this.page + count / 2 | 0;
                 var left = right - count + 1;
