@@ -64,8 +64,14 @@
                 return;
             }
 
+            if ($scope.deviceComment.length > 30) {
+                $('#divDeviceComment').addClass('has-error').addClass('has-feedback');
+                return;
+            }
+
             $('#divDeviceName').addClass('has-success').addClass('has-feedback');
             $('#divSelectAccount').addClass('has-success').addClass('has-feedback');
+            $('#divDeviceComment').addClass('has-success').addClass('has-feedback');
 
             $("#authQRCode").html('');
 
