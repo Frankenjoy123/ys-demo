@@ -108,41 +108,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="pull-right pagination">
-                    <ul class="pagination">
-                        <li ng-class="{'disabled':deviceTable.pageable.isFirst()}"
-                            class="page-first">
-                            <a href="" ng-click="deviceTable.pageable.first()">
-                                <i class="fa fa-fw fa-angle-double-left"></i>
-                            </a>
-                        </li>
-                        <li ng-class="{'disabled':deviceTable.pageable.isFirst()}"
-                            class="page-pre">
-                            <a href="" ng-click="deviceTable.pageable.previous()">
-                                <i class="fa fa-fw fa-angle-left"></i>
-                            </a>
-                        </li>
-                        <li ng-repeat="p in deviceTable.pageable.adjacentPages(5)"
-                            ng-class="{'active':p===deviceTable.pageable.page}"
-                            class="page-number">
-                            <a href=""
-                               ng-click="deviceTable.pageable.goto(p)">
-                                {{p+1}}
-                            </a>
-                        </li>
-                        <li ng-class="{'disabled':deviceTable.pageable.isLast()}"
-                            class="page-next">
-                            <a href="" ng-click="deviceTable.pageable.next()">
-                                <i class="fa fa-fw fa-angle-right"></i>
-                            </a>
-                        </li>
-                        <li ng-class="{'disabled':deviceTable.pageable.isLast()}"
-                            class="page-last">
-                            <a href="" ng-click="deviceTable.pageable.last()">
-                                <i class=" fa fa-fw fa-angle-double-right"></i>
-                            </a>
-                        </li>
-                    </ul>
+                <div class="pull-right pagination" dt-pageable="deviceTable.pageable">
                 </div>
             </div>
         </div>

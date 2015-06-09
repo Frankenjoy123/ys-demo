@@ -2,8 +2,8 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserLikedProductDomain;
-import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
 import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
+import com.yunsoo.api.rabbit.object.Constants;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -35,7 +35,7 @@ public class UserLikedProductController {
     private UserDomain userDomain;
     @Autowired
     private UserLikedProductDomain userLikedProductDomain;
-    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
+    //    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
     private static final Logger LOGGER = LoggerFactory.getLogger(UserLikedProductController.class);
 
     @RequestMapping(value = "/who/{userid}", method = RequestMethod.GET)
@@ -79,7 +79,7 @@ public class UserLikedProductController {
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
 //    @PreAuthorize("hasPermission(#userLikedProduct, 'authenticated')")
-    public void deleteUserLikedProduct(@RequestHeader(AUTH_HEADER_NAME) String token,
+    public void deleteUserLikedProduct(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token,
                                        @RequestBody UserLikedProduct userLikedProduct) throws Exception {
         if (userLikedProduct == null) {
             throw new BadRequestException("userLikedProduct不能为空！");
