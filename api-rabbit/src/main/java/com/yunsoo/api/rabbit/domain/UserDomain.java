@@ -28,34 +28,47 @@ public class UserDomain {
     //call dataAPI to get current User
     public User ensureUser(String userId, String deviceCode, String cellular) {
         User user = null;
+        //Step 1: try ensure user by cellphone!
         if (!StringUtils.isEmpty(cellular)) {
             try {
                 user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
+                if (user != null) {
+                    //update device code if has new value. e.g. : rebind cellphone to new device
+                    if (user.getDeviceCode() != deviceCode) {
+                        user.setDeviceCode(deviceCode);
+                        dataAPIClient.patch("user", user);
+                    }
+                    return user; //find and return user by cellphone
+                }
             } catch (NotFoundException ex) {
                 LOGGER.info("Notfound user for cellular = {0}", cellular);
             }
+        }
 
-            //update device code if has new value. e.g. : rebind cellphone to new device
-            if (user.getDeviceCode() != deviceCode) {
-                user.setDeviceCode(deviceCode);
-                dataAPIClient.patch("user", user);
-            }
-        } else {
-            if (!StringUtils.isEmpty(userId)) {
-                try {
-                    user = dataAPIClient.get("user/id/{id}", User.class, userId);
-                } catch (NotFoundException ex) {
-                    LOGGER.info("Notfound user id = {0}", userId);
+        //Step 2: try ensure user by existing user Id!
+        if (!StringUtils.isEmpty(userId)) {
+            try {
+                user = dataAPIClient.get("user/id/{id}", User.class, userId);
+                if (user != null) {
+                    //update cellular and device code if has new value.
+                    if (user.getCellular() != cellular || user.getDeviceCode() != deviceCode) {
+                        if (!StringUtils.isEmpty(cellular)) {
+                            user.setCellular(cellular);
+                        }
+                        if (!StringUtils.isEmpty(deviceCode)) {
+                            user.setDeviceCode(deviceCode);
+                        }
+                        dataAPIClient.patch("user", user);
+                    }
+                    return user;  //return existing user.
                 }
 
-                //update cellular and device code if has new value.
-                if (user.getDeviceCode() != deviceCode) {
-                    user.setDeviceCode(deviceCode);
-                    dataAPIClient.patch("user", user);
-                }
+            } catch (NotFoundException ex) {
+                LOGGER.info("Notfound user id = {0}", userId);
             }
         }
 
+        //Step 3: ensure user if still can't get it!
         if (user == null) {
             User newUser = this.generateDefaultUser();
             newUser.setDeviceCode(deviceCode);
@@ -65,7 +78,7 @@ public class UserDomain {
             }
             return this.createNewUser(newUser);
         }
-        return user;
+        return null;
     }
 
     //Always create new User

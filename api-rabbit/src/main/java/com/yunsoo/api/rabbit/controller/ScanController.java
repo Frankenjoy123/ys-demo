@@ -61,7 +61,7 @@ public class ScanController {
         scanRequestBody.validateForScan();
 
         //1, get user
-        User currentUser = userDomain.ensureUser(scanRequestBody.getUserId(), scanRequestBody.getDeviceCode(), null);
+        User currentUser = userDomain.ensureUser(scanRequestBody.getUserId(), null, null);
         if (currentUser == null) {
 //            LOGGER.error("User not found by userId ={0}, deviceCode = {1}", scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
             throw new NotFoundException(40401, "User not found by userId = " + scanRequestBody.getUserId() + " deviceCode = " + scanRequestBody.getDeviceCode());
@@ -268,7 +268,7 @@ public class ScanController {
     private long SaveScanRecord(User currentUser, Product currentProduct, ScanRequestBody scanRequestBody) {
         ScanRecordObject scanRecord = new ScanRecordObject();
         scanRecord.setUserId(currentUser.getId());
-        scanRecord.setDeviceId(currentUser.getDeviceCode());
+        scanRecord.setDeviceId(scanRequestBody.getDeviceCode());
         if (scanRequestBody.getAppId() != null && !scanRequestBody.getAppId().isEmpty()) {
             scanRecord.setAppId(scanRequestBody.getAppId()); //记录扫描客户端
         } else {
