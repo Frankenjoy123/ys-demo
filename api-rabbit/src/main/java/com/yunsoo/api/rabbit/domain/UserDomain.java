@@ -28,43 +28,69 @@ public class UserDomain {
     //call dataAPI to get current User
     public User ensureUser(String userId, String deviceCode, String cellular) {
         User user = null;
-        if (userId != null) {
+        if (!StringUtils.isEmpty(cellular)) {
             try {
-                user = dataAPIClient.get("user/id/{id}", User.class, userId);
-            } catch (NotFoundException ex) {
-                LOGGER.info("Notfound user id = {0}", userId);
-            }
-        } else {
-            try {
-                if (!StringUtils.isEmpty(cellular)) {
-                    user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
-                }
+                user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
             } catch (NotFoundException ex) {
                 LOGGER.info("Notfound user for cellular = {0}", cellular);
             }
 
-            try {
-                if (!StringUtils.isEmpty(deviceCode)) {
-                    user = dataAPIClient.get("user/device/{devicecode}", User.class, deviceCode);
-                }
-            } catch (NotFoundException ex) {
-                LOGGER.info("Notfound user for devicecode = {0}", cellular);
+            //update device code if has new value. e.g. : rebind cellphone to new device
+            if (user.getDeviceCode() != deviceCode) {
+                user.setDeviceCode(deviceCode);
+                dataAPIClient.patch("user", user);
             }
+        } else {
+            if (!StringUtils.isEmpty(userId)) {
+                try {
+                    user = dataAPIClient.get("user/id/{id}", User.class, userId);
+                } catch (NotFoundException ex) {
+                    LOGGER.info("Notfound user id = {0}", userId);
+                }
 
-            if (user == null) {
-                User newUser = new User();
-                newUser.setYsCreadit(0);  //set default properties.
-                newUser.setLevel(1);
-                newUser.setDeviceCode(deviceCode);
-                newUser.setCellular(cellular);
-                newUser.setName("求真名"); //default name is the time.
-                newUser.setStatus(TAccountStatusEnum.ENABLED.value()); //default is enabled
-                String id = dataAPIClient.post("user", newUser, String.class); //save user
-                newUser.setId(id);
-                return newUser;
+                //update cellular and device code if has new value.
+                if (user.getDeviceCode() != deviceCode) {
+                    user.setDeviceCode(deviceCode);
+                    dataAPIClient.patch("user", user);
+                }
             }
         }
+
+        if (user == null) {
+            User newUser = this.generateDefaultUser();
+            newUser.setDeviceCode(deviceCode);
+            newUser.setCellular(cellular);
+            if (!StringUtils.isEmpty(cellular)) {
+                newUser.setStatus(TAccountStatusEnum.VERIFIED.value()); //if cellular is not null
+            }
+            return this.createNewUser(newUser);
+        }
         return user;
+    }
+
+    //Always create new User
+    public User generateDefaultUser() {
+        User newUser = new User();
+        newUser.setYsCreadit(100);  //set default properties.
+        newUser.setLevel(1);
+        newUser.setName("求真名"); //default name is the time.
+        newUser.setStatus(TAccountStatusEnum.ENABLED.value()); //default is enabled
+        return newUser;
+    }
+
+    //Always create new anonymous User
+    public User createAnonymousUser(String deviceCode) {
+        User newUser = this.generateDefaultUser();
+        newUser.setDeviceCode(deviceCode);
+        newUser.setStatus(TAccountStatusEnum.ENABLED.value());
+        return createNewUser(newUser);
+    }
+
+    //Just create new User - call data-api
+    public User createNewUser(User newUser) {
+        String id = dataAPIClient.post("user", newUser, String.class); //save user
+        newUser.setId(id);
+        return newUser;
     }
 
     public Boolean validateToken(String token) {

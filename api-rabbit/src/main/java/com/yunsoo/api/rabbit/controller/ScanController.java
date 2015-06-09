@@ -286,7 +286,7 @@ public class ScanController {
         if (scanRequestBody.getLocation() != null && !scanRequestBody.getLocation().isEmpty()) {
             scanRecord.setLocation(scanRequestBody.getLocation());
         } else {
-            scanRecord.setLocation("未公开"); //用户选择不公开隐私地址信息
+            scanRecord.setLocation("Address:未公开;"); //用户选择不公开隐私地址信息
         }
         return dataAPIClient.post("scan", scanRecord, long.class);
     }

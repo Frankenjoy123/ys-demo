@@ -2,8 +2,8 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
-import com.yunsoo.api.rabbit.dto.basic.Message;
 import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
+import com.yunsoo.api.rabbit.object.Constants;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -30,7 +30,7 @@ public class UserFollowingController {
     private UserDomain userDomain;
     @Autowired
     private UserFollowDomain userFollowDomain;
-    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
+    //    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
     private static final Logger LOGGER = LoggerFactory.getLogger(UserLikedProductController.class);
 
     @RequestMapping(value = "/who/{id}", method = RequestMethod.GET)
@@ -72,7 +72,7 @@ public class UserFollowingController {
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
 //    @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
-    public void userUnfollowOrg(@RequestHeader(AUTH_HEADER_NAME) String token, @RequestBody UserFollowing userFollowing) {
+    public void userUnfollowOrg(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @RequestBody UserFollowing userFollowing) {
         if (userFollowing == null) throw new BadRequestException("userFollowing 不能为空！");
 
         UserFollowing existingUserFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class,
