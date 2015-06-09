@@ -1,5 +1,5 @@
 (function () {
-    var app = angular.module('login', ['interceptor', 'YUNSOO_CONFIG']);
+    var app = angular.module('login', ['interceptor', 'YUNSOO_CONFIG', 'utils']);
 
     app.factory('loginService', ['$http', function ($http) {
         return {
@@ -20,8 +20,8 @@
         };
     }]);
 
-    app.controller('LoginCtrl', ['$scope', '$timeout', 'loginService', 'YUNSOO_CONFIG',
-        function ($scope, $timeout, loginService, YUNSOO_CONFIG) {
+    app.controller('LoginCtrl', ['$scope', '$timeout', 'loginService', 'YUNSOO_CONFIG', 'utils',
+        function ($scope, $timeout, loginService, YUNSOO_CONFIG, utils) {
 
             ($scope.loginForm = loginService.loginForm()) || ($scope.loginForm = {
                 organization: '',
@@ -67,9 +67,9 @@
                     //animation
                     $('body').addClass('animated fadeOut');
                     $('#panel-login').addClass('animated zoomOut');
-                    //redirect to index
+                    //redirect to index.html
                     $timeout(function () {
-                        window.location.href = 'index.html';
+                        window.location.href = './';
                     }, 1000);
 
                 }, function (data, code) {

@@ -139,7 +139,7 @@ Both of the above methods will produce the same results.
 				chk = methods[method].apply($(this).find('input'),Array.prototype.slice.call(arguments, 1));
 			}else if (typeof method === 'object' || !method) {
 				mega($(this));
-			};
+			}
 		});
 		return chk;
 	};
@@ -396,7 +396,7 @@ Both of the above methods will produce the same results.
 				if (!pageHolder) {
 					pageHolder = $('<div id="page-alert"></div>');
 					nifty.contentContainer.prepend(pageHolder);
-				};
+				}
 
 				notyContainer = pageHolder;
 				if (opt.focus) focusElement(0);
@@ -541,7 +541,7 @@ Both of the above methods will produce the same results.
 				chk = methods[method].apply($(this).find('input'),Array.prototype.slice.call(arguments, 1));
 			}else if (typeof method === 'object' || !method) {
 				formElement($(this));
-			};
+			}
 		});
 		return chk;
 	};
