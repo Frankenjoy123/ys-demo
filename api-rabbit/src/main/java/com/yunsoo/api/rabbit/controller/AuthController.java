@@ -8,6 +8,7 @@ import com.yunsoo.api.rabbit.object.Constants;
 import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ public class AuthController {
                                       @RequestBody User user) {
         if (user == null) {
             return new ResponseEntity<>("用户不能为空！", HttpStatus.FORBIDDEN);
+        }
+        if (StringUtils.isEmpty(user.getDeviceCode())) {
+            throw new BadRequestException("device_code不能为空！");
         }
 
         User currentUser = null;
