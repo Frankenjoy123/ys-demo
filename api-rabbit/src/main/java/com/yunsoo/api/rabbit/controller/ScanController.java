@@ -61,17 +61,23 @@ public class ScanController {
 
     //能够访问所有的Key,为移动客户端调用，因此每次Scan都save扫描记录。
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ScanResult getDetail(@RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = true) String accessToken,
+    public ScanResult getDetail(@RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
                                 @RequestBody ScanRequestBody scanRequestBody) {
         //0，validate input
         scanRequestBody.validateForScan();
 
         //1, get user
-        TAccount tAccount = tokenAuthenticationService.parseUser(accessToken);
-        User currentUser = userDomain.ensureUser(tAccount.getId(), null, null);
+        User currentUser = null;
+        if (accessToken != null) {
+            TAccount tAccount = tokenAuthenticationService.parseUser(accessToken);
+            currentUser = userDomain.ensureUser(tAccount.getId(), null, null);
+        } else {
+            currentUser = dataAPIClient.get("user/id/{id}", User.class, "2k64dcya672axp5jcgv"); //hardcode for web-scan
+        }
+
         if (currentUser == null) {
 //            LOGGER.error("User not found by userId ={0}, deviceCode = {1}", scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
-            throw new NotFoundException(40401, "User not found by userId = " + tAccount.getId() + " deviceCode = " + scanRequestBody.getDeviceCode());
+            throw new NotFoundException(40401, "User not found by userId = " + currentUser.getId() + " deviceCode = " + scanRequestBody.getDeviceCode());
         }
 
         ScanResult scanResult = new ScanResult();
