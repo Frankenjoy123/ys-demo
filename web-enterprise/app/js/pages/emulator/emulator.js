@@ -11,7 +11,7 @@
         };
     }]);
 
-    app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", "FileUploader", function ($scope, emulatorService, $timeout, FileUploader) {
+    app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", "FileUploader", "$location", function ($scope, emulatorService, $timeout, FileUploader, $location) {
 
         var uploader = $scope.uploader = new FileUploader({
             url: ''
@@ -92,8 +92,7 @@
                 return;
             }
 
-            if(uploader.queue.length == 0)
-            {
+            if (uploader.queue.length == 0) {
                 $scope.utils.alert('info', '产品图片不能为空');
                 return;
             }
@@ -157,12 +156,14 @@
             try {
                 emulatorService.createProWithDetail(proWithDetails, function (data) {
                         if (data.id != null && data.id != '') {
-                            uploader.queue[0].url = '/api/productbase/withdetailfile/' + data.id + "/full-mobile";
-                            uploader.queue[0].headers[$scope.YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken;
+                            uploader.queue[uploader.queue.length - 1].url = '/api/productbase/withdetailfile/' + data.id + "/full-mobile";
+                            uploader.queue[uploader.queue.length - 1].headers[$scope.YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken;
 
                             uploader.uploadAll();
 
                             $scope.utils.alert('success', '创建产品成功');
+
+                            $location.path('/product-base-manage');
                         }
                     },
                     function (data, state) {
@@ -185,31 +186,31 @@
                 "use strict";
 
                 var allFormEl,
-                    formElement = function(el){
-                        if (el.data('nifty-check')){
+                    formElement = function (el) {
+                        if (el.data('nifty-check')) {
                             return;
-                        }else{
+                        } else {
                             el.data('nifty-check', true);
-                            if (el.text().trim().length){
+                            if (el.text().trim().length) {
                                 el.addClass("form-text");
-                            }else{
+                            } else {
                                 el.removeClass("form-text");
                             }
                         }
 
 
-                        var input 	= el.find('input')[0],
-                            groupName 	= input.name,
-                            $groupInput	= function(){
+                        var input = el.find('input')[0],
+                            groupName = input.name,
+                            $groupInput = function () {
                                 if (input.type == 'radio' && groupName) {
-                                    return $('.form-radio').not(el).find('input').filter('input[name='+groupName+']').parent();
-                                }else{
+                                    return $('.form-radio').not(el).find('input').filter('input[name=' + groupName + ']').parent();
+                                } else {
                                     return false;
                                 }
                             }(),
-                            changed = function(){
-                                if(input.type == 'radio' && $groupInput.length) {
-                                    $groupInput.each(function(){
+                            changed = function () {
+                                if (input.type == 'radio' && $groupInput.length) {
+                                    $groupInput.each(function () {
                                         var $gi = $(this);
                                         if ($gi.hasClass('active')) $gi.trigger('nifty.ch.unchecked');
                                         $gi.removeClass('active');
@@ -219,37 +220,37 @@
 
                                 if (input.checked) {
                                     el.addClass('active').trigger('nifty.ch.checked');
-                                }else{
+                                } else {
                                     el.removeClass('active').trigger('nifty.ch.unchecked');
                                 }
                             };
 
                         if (input.checked) {
                             el.addClass('active');
-                        }else{
+                        } else {
                             el.removeClass('active');
                         }
 
                         $(input).on('change', changed);
                     },
                     methods = {
-                        isChecked : function(){
+                        isChecked: function () {
                             return this[0].checked;
                         },
-                        toggle : function(){
+                        toggle: function () {
                             this[0].checked = !this[0].checked;
                             this.trigger('change');
                             return null;
                         },
-                        toggleOn : function(){
-                            if(!this[0].checked){
+                        toggleOn: function () {
+                            if (!this[0].checked) {
                                 this[0].checked = true;
                                 this.trigger('change');
                             }
                             return null;
                         },
-                        toggleOff : function(){
-                            if(this[0].checked && this[0].type == 'checkbox'){
+                        toggleOff: function () {
+                            if (this[0].checked && this[0].type == 'checkbox') {
                                 this[0].checked = false;
                                 this.trigger('change');
                             }
@@ -257,42 +258,42 @@
                         }
                     };
 
-                $.fn.niftyCheck = function(method){
+                $.fn.niftyCheck = function (method) {
                     var chk = false;
-                    this.each(function(){
-                        if(methods[method]){
-                            chk = methods[method].apply($(this).find('input'),Array.prototype.slice.call(arguments, 1));
-                        }else if (typeof method === 'object' || !method) {
+                    this.each(function () {
+                        if (methods[method]) {
+                            chk = methods[method].apply($(this).find('input'), Array.prototype.slice.call(arguments, 1));
+                        } else if (typeof method === 'object' || !method) {
                             formElement($(this));
-                        };
+                        }
+                        ;
                     });
                     return chk;
                 };
 
-                nifty.document.ready(function() {
+                nifty.document.ready(function () {
                     allFormEl = $('.form-checkbox, .form-radio');
-                    if(allFormEl.length) allFormEl.niftyCheck();
+                    if (allFormEl.length) allFormEl.niftyCheck();
                 });
 
-                nifty.document.on('change', '.btn-file :file', function() {
+                nifty.document.on('change', '.btn-file :file', function () {
                     var input = $(this),
                         numFiles = input.get(0).files ? input.get(0).files.length : 1,
                         label = input.val().replace(/\\/g, '/').replace(/.*\//, ''),
-                        size = function(){
-                            try{
+                        size = function () {
+                            try {
                                 return input[0].files[0].size;
-                            }catch(err){
+                            } catch (err) {
                                 return 'Nan';
                             }
                         }(),
-                        fileSize = function(){
-                            if (size == 'Nan' ) {
+                        fileSize = function () {
+                            if (size == 'Nan') {
                                 return "Unknown";
                             }
-                            var rSize = Math.floor( Math.log(size) / Math.log(1024) );
+                            var rSize = Math.floor(Math.log(size) / Math.log(1024));
                             return ( size / Math.pow(1024, rSize) ).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][rSize];
                         }();
-
 
 
                     input.trigger('fileselect', [numFiles, label, fileSize]);
@@ -308,13 +309,15 @@
             } else {
                 fileInput.change(function () {
 
-                        var file = uploader.queue[0]._file;
+                        var file = uploader.queue[uploader.queue.length - 1]._file;
                         var reader = new FileReader();
                         reader.readAsDataURL(file);
                         reader.onload = function (e) {
                             imgProductbase.attr('src', this.result);
                             $scope.fileInput = this.result;
                         }
+
+                        uploader.queue = uploader.queue.slice(uploader.queue.length - 1, uploader.queue.length);
                     }
                 );
             }
@@ -347,7 +350,7 @@
                                 message: '请输入产品过期时间'
                             },
                             greaterThan: {
-                                inclusive:false,
+                                inclusive: false,
                                 //If true, the input value must be greater than or equal to the comparison one.
                                 //If false, the input value must be greater than the comparison one
                                 value: 0,
