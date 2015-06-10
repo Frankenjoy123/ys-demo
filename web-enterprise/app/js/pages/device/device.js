@@ -15,6 +15,12 @@
                 $http.get(url).success(fnSuccess);
 
                 return this;
+            },
+            getDeviceAuthToken: function (accountId, fnSuccess) {
+                var url = '/api/auth/logintoken?account_id=' + accountId;
+                $http.get(url).success(fnSuccess);
+
+                return this;
             }
         };
     }]);
@@ -64,7 +70,7 @@
                 return;
             }
 
-            if ($scope.deviceComment.length > 30) {
+            if ($scope.deviceComment.length > 20) {
                 $('#divDeviceComment').addClass('has-error').addClass('has-feedback');
                 return;
             }
@@ -75,17 +81,24 @@
 
             $("#authQRCode").html('');
 
-            var postObject = {};
-            postObject.selectAccount = $scope.selectAccount;
-            postObject.deviceName = $scope.deviceName;
-            postObject.deviceComment = $scope.deviceComment;
+            deviceService.getDeviceAuthToken($scope.selectAccount, function (data) {
 
-            $scope.qrcode = $("#authQRCode").qrcode({
-                render: "table", //table方式
-                width: 300, //宽度
-                height: 300, //高度
-                foreground: "#337ab7",//前景颜色
-                text: utf16to8("测试") //任意内容
+                var postObject = {};
+                postObject.a = $scope.context.account.id;
+                postObject.t = data.token;
+                postObject.dn = $scope.deviceName;
+                postObject.dc = $scope.deviceComment;
+
+                var qrCodeContent = JSON.stringify(postObject);
+
+                $scope.qrcode = $("#authQRCode").qrcode({
+                    render: "canvas", //table方式
+                    width: 300, //宽度
+                    height: 300, //高度
+                    foreground: "#337ab7",//前景颜色
+                    correctLevel: 3,//纠错等级
+                    text: utf16to8(qrCodeContent) //任意内容
+                });
             });
         };
 
