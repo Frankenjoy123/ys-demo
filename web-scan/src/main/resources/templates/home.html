@@ -259,7 +259,7 @@
 
             $("#divBody").css('display', '');
 
-            if (data == null || data.product == null || data.validationResult.toLowerCase() == "fake") {
+            if (data == null || data.product == null || data.validation_result == null || data.validation_result.toLowerCase() == "fake") {
                 $("#img44").attr("src", "images/icon-false.png");
 
                 $("#divScanInValidKey").css('display', '');
@@ -274,12 +274,12 @@
             $("#divScanResultValidKey").css('display', '');
 
             $("#imgManufacture").attr("src", "/api-rabbit/organization/" + data.manufacturer.id + "/logo-mobile");
-            $("#imgProduct").attr("src", "/api-rabbit/productbase/" + data.product.productBaseId + "/full-mobile");
-            if (data.validationResult.toLowerCase() == "uncertain") {
+            $("#imgProduct").attr("src", "/api-rabbit/productbase/" + data.product.product_base_id + "/full-mobile");
+            if (data.validation_result.toLowerCase() == "uncertain") {
                 $("#imgProStatus").attr("src", "images/icon-warning.png");
                 $("#proStatus").html("此产品不确定");
             }
-            else if (data.validationResult.toLowerCase() == "real") {
+            else if (data.validation_result.toLowerCase() == "real") {
                 $("#imgProStatus").attr("src", "images/icon-truer.png");
                 $("#proStatus").html("此产品为真品");
             }
@@ -303,7 +303,7 @@
 
             $.ajax({
                 type: 'GET',
-                url: '/api-rabbit/productbase/' + data.product.productBaseId + '/notes/json',
+                url: '/api-rabbit/productbase/' + data.product.product_base_id + '/notes/json',
                 dataType: 'text/json',
                 success: function (dataStr) {
 
@@ -334,16 +334,16 @@
                 }
             });
 
-            if (data.scanRecord != null) {
+            if (data.scan_record_list != null) {
 
-                if (data.scanRecord.length == 0)
+                if (data.scan_record_list.length == 0)
                     return;
 
-                var latestScan = data.scanRecord[0];
-                var otherScans = data.scanRecord.slice(1);
-                var firstScan = data.scanRecord[data.scanRecord.length - 1];
+                var latestScan = data.scan_record_list[0];
+                var otherScans = data.scan_record_list.slice(1);
+                var firstScan = data.scan_record_list[data.scan_record_list.length - 1];
 
-                if (data.validationResult.toLowerCase() == "uncertain") {
+                if (data.validation_result.toLowerCase() == "uncertain") {
                     var plocation;
                     if (!(firstScan.location.indexOf(":") >= 0))
                         plocation = "未知地点";
@@ -361,7 +361,7 @@
                         }
                     }
 
-                    $("#proStatus").html("请注意，本产品码已失效" + "<br/>" + "首次扫描时间：<b>" + getDateString(firstScan.createdDateTime) + "</b>" + "<br/>首次扫描地点：<b>" + plocation + "</b>");
+                    $("#proStatus").html("请注意，本产品码已失效" + "<br/>" + "首次扫描时间：<b>" + getDateString(firstScan.created_datetime) + "</b>" + "<br/>首次扫描地点：<b>" + plocation + "</b>");
                 }
 
                 $("#scanRecords").html("");
@@ -370,7 +370,7 @@
 
                 var plocation;
                 if (!(latestScan.location.indexOf(":") >= 0))
-                    plocation = $('<span></span>').html("未知" + " " + getDateString(latestScan.createdDateTime));
+                    plocation = $('<span></span>').html("未知" + " " + getDateString(latestScan.created_datetime));
                 else {
                     var details = latestScan.location.split(";");
                     for (var detail in details) {
@@ -378,7 +378,7 @@
                         var datItems = dat.split(":");
                         if (!(datItems == null || !(datItems.length >= 2))) {
                             if (datItems[0] == "City") {
-                                plocation = $('<span></span>').html(datItems[1] + " " + getDateString(latestScan.createdDateTime));
+                                plocation = $('<span></span>').html(datItems[1] + " " + getDateString(latestScan.created_datetime));
                                 break;
                             }
                         }
@@ -398,7 +398,7 @@
                         p = $('<p></p>').html(otherScans[otherScan].detail);
 
                         if (!(otherScans[otherScan].location.indexOf(":") >= 0))
-                            plocation = $('<span></span>').html("未知" + " " + getDateString(otherScans[otherScan].createdDateTime));
+                            plocation = $('<span></span>').html("未知" + " " + getDateString(otherScans[otherScan].created_datetime));
                         else {
                             var details = otherScans[otherScan].location.split(";");
                             for (var detail in details) {
@@ -406,7 +406,7 @@
                                 var datItems = dat.split(":");
                                 if (!(datItems == null || !(datItems.length >= 2))) {
                                     if (datItems[0] == "City") {
-                                        plocation = $('<span></span>').html(datItems[1] + " " + getDateString(otherScans[otherScan].createdDateTime));
+                                        plocation = $('<span></span>').html(datItems[1] + " " + getDateString(otherScans[otherScan].created_datetime));
                                         break;
                                     }
                                 }
@@ -424,17 +424,17 @@
                 }
             }
 
-            if (data.logisticsList != null) {
+            if (data.logistics_list != null) {
 
-                if (data.logisticsList.length == 0)
+                if (data.logistics_list.length == 0)
                     return;
 
-                var latestLogistics = data.logisticsList[0];
-                var otherLogistics = data.logisticsList.slice(1);
+                var latestLogistics = data.logistics_list[0];
+                var otherLogistics = data.logistics_list.slice(1);
 
                 $("#divLogistics").html("");
 
-                var p = $('<p></p>').html(getDateString(latestLogistics.dateTime) + " " + latestLogistics.message + " " + latestLogistics.location);
+                var p = $('<p></p>').html(getDateString(latestLogistics.datetime) + " " + latestLogistics.message + " " + latestLogistics.location);
                 var divPanel = $('<div></div>').addClass("timeline-panel").append(p);
                 var div = $('<div></div>').addClass("timeline-badge down");
                 var li = $('<li></li>').append(div);
@@ -444,7 +444,7 @@
 
                 if (otherLogistics.length > 0) {
                     for (var otherLogistic in otherLogistics) {
-                        p = $('<p></p>').html(getDateString(otherLogistics[otherLogistic].dateTime) + " " + otherLogistics[otherLogistic].message + " " + otherLogistics[otherLogistic].location);
+                        p = $('<p></p>').html(getDateString(otherLogistics[otherLogistic].datetime) + " " + otherLogistics[otherLogistic].message + " " + otherLogistics[otherLogistic].location);
                         divPanel = $('<div></div>').addClass("timeline-panel").append(p);
                         div = $('<div></div>').addClass("timeline-badge primary");
                         li = $('<li></li>').append(div);
