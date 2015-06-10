@@ -69,7 +69,7 @@ public final class TokenHandler {
     private String encodeToken(String src) {
         byte[] srcBytes = src.getBytes(StandardCharsets.UTF_8);
 
-        byte[] hash = HashUtils.sha256(concat(srcBytes, hashSalt)); //hash
+        byte[] hash = HashUtils.sha1(concat(srcBytes, hashSalt)); //hash
 
         return encode(concat(new byte[]{(byte) hash.length}, hash, srcBytes));
     }
@@ -86,7 +86,7 @@ public final class TokenHandler {
             }
             byte[] hash = Arrays.copyOfRange(bytes, 1, hashLength + 1);
             byte[] srcBytes = Arrays.copyOfRange(bytes, hashLength + 1, bytes.length);
-            byte[] checkHash = HashUtils.sha256(concat(srcBytes, hashSalt));
+            byte[] checkHash = HashUtils.sha1(concat(srcBytes, hashSalt));
             if (!compare(hash, checkHash)) {
                 return null;
             }
