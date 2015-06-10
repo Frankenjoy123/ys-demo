@@ -9,8 +9,8 @@ import com.yunsoo.common.web.exception.BadRequestException;
 public class ScanRequestBody {
     @JsonProperty("key")
     private String Key;
-    @JsonProperty("user_id")
-    private String userId;
+    //    @JsonProperty("user_id")
+//    private String userId;
     @JsonProperty("device_code")
     private String deviceCode;
     @JsonProperty("app_id")
@@ -30,14 +30,6 @@ public class ScanRequestBody {
 
     public void setKey(String key) {
         Key = key;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getDeviceCode() {
@@ -92,8 +84,8 @@ public class ScanRequestBody {
         if (this.getKey() == null || this.getKey().isEmpty()) {
             throw new BadRequestException("Key不能为空！");
         }
-        if (userId == null && (deviceCode == null || deviceCode.isEmpty())) {
-            throw new BadRequestException("至少需要指定一个参数： user_id或device_code！");
+        if (deviceCode == null || deviceCode.isEmpty()) {
+            throw new BadRequestException("需要指定device_code！");
         }
         return true;
     }
