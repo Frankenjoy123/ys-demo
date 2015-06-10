@@ -120,7 +120,7 @@ public class PermissionDomain {
      * @return if is match
      */
     private boolean wildcardMatch(String expression, String target) {
-        return expression != null && Pattern.compile(expression.replace("*", "\\w*")).matcher(target).matches();
+        return expression != null && Pattern.compile(expression.replace("*", "[\\w]*")).matcher(target).matches();
     }
 
 }

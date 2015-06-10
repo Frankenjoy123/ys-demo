@@ -2,6 +2,8 @@ package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by  : Lijian
  * Created on  : 2015/4/21
@@ -18,6 +20,7 @@ public class AccountLoginRequest {
     @JsonProperty("identifier")
     private String identifier;
 
+    @NotNull(message = "password must not be null")
     @JsonProperty("password")
     private String password;
 

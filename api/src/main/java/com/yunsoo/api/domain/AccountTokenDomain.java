@@ -26,7 +26,7 @@ public class AccountTokenDomain {
     private RestClient dataAPIClient;
 
     public AccountTokenObject getByPermanentToken(String permanentToken) {
-        return dataAPIClient.get("accountToken?permanent_token={0}", AccountTokenObject.class, permanentToken);
+        return dataAPIClient.get("accounttoken?permanent_token={0}", AccountTokenObject.class, permanentToken);
     }
 
     /**
@@ -47,7 +47,7 @@ public class AccountTokenDomain {
         accountTokenObject.setPermanentTokenExpiresDateTime(expires);
         accountTokenObject.setCreatedAccountId(accountId);
         accountTokenObject.setCreatedDateTime(now);
-        return dataAPIClient.post("accountToken", accountTokenObject, AccountTokenObject.class);
+        return dataAPIClient.post("accounttoken", accountTokenObject, AccountTokenObject.class);
     }
 
 

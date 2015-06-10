@@ -1,9 +1,9 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountDomain;
+import com.yunsoo.api.dto.Account;
 import com.yunsoo.api.dto.AccountRequest;
 import com.yunsoo.api.dto.AccountUpdatePasswordRequest;
-import com.yunsoo.api.dto.Account;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.web.exception.NotFoundException;

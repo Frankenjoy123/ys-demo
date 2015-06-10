@@ -1,6 +1,5 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.util.HashUtils;
@@ -11,6 +10,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,11 +26,11 @@ public class AccountDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
-
 
     public AccountObject getById(String accountId) {
+        if (StringUtils.isEmpty(accountId)) {
+            return null;
+        }
         try {
             return dataAPIClient.get("account/{id}", AccountObject.class, accountId);
         } catch (NotFoundException ex) {
@@ -43,7 +43,7 @@ public class AccountDomain {
         if (accountObjects == null || accountObjects.length <= 0) {
             return null;
         } else if (accountObjects.length > 1) {
-            throw new InternalServerErrorException("duplicated account found by [orgId: " + orgId + ", identifier: " + identifier + "]");
+            throw new InternalServerErrorException("duplicated account found by [org_id: " + orgId + ", identifier: " + identifier + "]");
         }
         return accountObjects[0];
     }
@@ -61,12 +61,14 @@ public class AccountDomain {
     }
 
     public void updatePassword(String accountId, String rawNewPassword) {
-        String hashSalt = RandomUtils.generateString(8);
-        String password = hashPassword(rawNewPassword, hashSalt);
-        AccountObject accountObject = new AccountObject();
-        accountObject.setPassword(password);
-        accountObject.setHashSalt(hashSalt);
-        dataAPIClient.patch("account/{id}", accountObject, accountId);
+        if (!StringUtils.isEmpty(accountId)) {
+            String hashSalt = RandomUtils.generateString(8);
+            String password = hashPassword(rawNewPassword, hashSalt);
+            AccountObject accountObject = new AccountObject();
+            accountObject.setPassword(password);
+            accountObject.setHashSalt(hashSalt);
+            dataAPIClient.patch("account/{id}", accountObject, accountId);
+        }
     }
 
     public boolean validPassword(String rawPassword, String hashSalt, String password) {

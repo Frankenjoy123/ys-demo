@@ -6,8 +6,6 @@ import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
 import com.yunsoo.common.data.object.LogisticsCheckPointObject;
-import com.yunsoo.common.web.exception.ForbiddenException;
-import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -31,7 +29,6 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         boolean hasPermission = false;
         if (authentication != null && permission instanceof String) {
             TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
-            this.checkAccount(account);
 
             TPermission currentPermission = this.getPermission((String) permission);
             if (targetDomainObject instanceof Message) {
@@ -66,7 +63,6 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         if (authentication != null && permission instanceof String) {
 
             TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
-            this.checkAccount(account);
 
             TPermission currentPermission = this.getPermission((String) permission);
             //check if user trying to take action on it's own orgId's resource
@@ -101,19 +97,4 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         return currentPermission;
     }
 
-    private void checkAccount(TAccount account) {
-        if (!account.isAnonymous()) {
-            throw new ForbiddenException(40301, "Anonymous user is denied!");
-        } else if (!account.isAccountNonExpired()) {
-            throw new UnauthorizedException(40101, "Account is expired");
-        } else if (!account.isAccountNonLocked()) {
-            throw new UnauthorizedException(40102, "Account is locked!");
-        } else if (account.isCredentialsInvalid()) {
-            throw new UnauthorizedException(40103, "Account token is invalid!");
-        } else if (account.isTokenExpired()) {
-            throw new UnauthorizedException(40104, "Account token is expired!");
-        } else if (!account.isEnabled()) {
-            throw new UnauthorizedException(40105, "Account is disabled!");
-        }
-    }
 }

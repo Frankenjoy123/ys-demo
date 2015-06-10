@@ -4,7 +4,7 @@
     app.factory('loginService', ['$http', function ($http) {
         return {
             login: function (loginForm, onSuccess, onError) {
-                $http.post('/api/auth/login', {
+                $http.post('/api/auth/login/password', {
                     organization: loginForm.organization,
                     identifier: loginForm.identifier,
                     password: loginForm.password

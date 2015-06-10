@@ -12,6 +12,8 @@ yunsoo:
             expires_minutes: 4320 #three days
         access_token:
             expires_minutes: 60
+        login_token:
+            expires_minutes: 5
 
 spring:
     profiles.active: default
