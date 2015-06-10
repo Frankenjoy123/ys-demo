@@ -1,6 +1,8 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.dto.basic.User;
+import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
+import com.yunsoo.api.rabbit.object.Constants;
 import com.yunsoo.api.rabbit.object.TAccountStatusEnum;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.web.client.RestClient;
@@ -23,6 +25,8 @@ public class UserDomain {
     private RestClient dataAPIClient;
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
+    @Autowired
+    private UserFollowDomain userFollowDomain;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDomain.class);
 
     //call dataAPI to get current User
@@ -103,6 +107,13 @@ public class UserDomain {
     public User createNewUser(User newUser) {
         String id = dataAPIClient.post("user", newUser, String.class); //save user
         newUser.setId(id);
+
+        //force following 云溯科技
+        UserFollowing userFollowing = new UserFollowing();
+        userFollowing.setUserId(id);
+        userFollowing.setOrganizationId(Constants.Yunsoo.ORG_ID); //get Yunsu's orgID
+        userFollowing.setIsFollowing(true);
+        userFollowDomain.ensureFollow(userFollowing, true);
         return newUser;
     }
 
