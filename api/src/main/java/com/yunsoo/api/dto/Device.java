@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/5/11.
+ * Created by  : Zhe
+ * Created on  : 2015/5/11
+ * Descriptions:
  */
 public class Device {
 

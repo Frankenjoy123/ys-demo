@@ -71,12 +71,18 @@ public class AccountDomain {
         }
     }
 
-    public boolean validPassword(String rawPassword, String hashSalt, String password) {
+    public boolean isActiveAccount(AccountObject accountObject) {
+        String statusCode = accountObject.getStatusCode();
+        return LookupCodes.AccountStatus.AVAILABLE.equals(statusCode);
+    }
+
+    public boolean validatePassword(String rawPassword, String hashSalt, String password) {
         return rawPassword != null && hashSalt != null && hashPassword(rawPassword, hashSalt).equals(password);
     }
 
     private String hashPassword(String rawPassword, String hashSalt) {
         return HashUtils.sha1HexString(rawPassword + hashSalt);
     }
+
 
 }

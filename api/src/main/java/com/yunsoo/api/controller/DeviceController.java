@@ -25,16 +25,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by Zhe on 2015/5/11.
+ * Created by  : Zhe
+ * Created on  : 2015/5/11
+ * Descriptions:
  */
-
 @RestController
 @RequestMapping(value = "/device")
 public class DeviceController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeviceController.class);
+
     @Autowired
     private RestClient dataAPIClient;
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeviceController.class);
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -101,5 +103,13 @@ public class DeviceController {
     public void update(@RequestBody Device device) {
         DeviceObject object = Device.toDeviceObject(device);
         dataAPIClient.patch("device", object, DeviceObject.class);
+    }
+
+
+    @RequestMapping(value = "register", method = RequestMethod.POST)
+    public Device register(@RequestBody Device device) {
+
+
+        return null;
     }
 }
