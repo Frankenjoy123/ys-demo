@@ -15,6 +15,13 @@ public class AccountLoginResponse {
     @JsonProperty("access_token")
     private Token accessToken;
 
+    public AccountLoginResponse() {
+    }
+
+    public AccountLoginResponse(Token permanentToken, Token accessToken) {
+        this.permanentToken = permanentToken;
+        this.accessToken = accessToken;
+    }
 
     public Token getPermanentToken() {
         return permanentToken;

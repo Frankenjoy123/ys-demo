@@ -88,7 +88,7 @@ public class AccountController {
         String password = accountObject.getPassword();
         String hashSalt = accountObject.getHashSalt();
 
-        if (!accountDomain.validPassword(rawOldPassword, hashSalt, password)) {
+        if (!accountDomain.validatePassword(rawOldPassword, hashSalt, password)) {
             throw new UnprocessableEntityException("当前密码不匹配");
         }
 
