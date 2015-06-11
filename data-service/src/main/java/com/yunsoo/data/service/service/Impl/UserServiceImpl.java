@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dao.S3ItemDao;
@@ -14,7 +15,6 @@ import com.yunsoo.data.service.service.ServiceOperationStatus;
 import com.yunsoo.data.service.service.UserService;
 import com.yunsoo.data.service.service.contract.User;
 import com.yunsoo.data.service.util.SpringBeanUtil;
-import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.data.service.util.StatusConverter;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
@@ -66,28 +66,6 @@ public class UserServiceImpl implements UserService {
             //to-do: log
             return null;
         }
-
-
-//        ThumbnailFile thumbnail = new ThumbnailFile();
-
-//        S3ObjectInputStream objectContent = item.getObjectContent();
-
-//        thumbnail.setData(IOUtils.toByteArray(objectContent));
-//
-//        String contentType = item.getObjectMetadata().getContentType();
-//        if(contentType.equals("image/jpeg")) {
-//            thumbnail.setSuffix("jpg");
-//        }
-//        else if(contentType.equals("image/png")) {
-//            thumbnail.setSuffix("png");
-//        }
-//        else if(contentType.equals("image/bmp")) {
-//            thumbnail.setSuffix("bmp");
-//        }
-//        else if(contentType.equals("image/gif")) {
-//            thumbnail.setSuffix("gif");
-//        }
-//        return thumbnail;
     }
 
     @Override
@@ -124,8 +102,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public ServiceOperationStatus patchUpdate(User user) throws Exception {
         if (user.getFileObject() != null) {
-            DateTime userCreatedTime = DateTime.now();
-            String thumbnailKey = "thumb-" + Long.toString(userCreatedTime.getMillis());
+            DateTime userUpdatedTime = DateTime.now();
+            String thumbnailKey = "thumb-" + Long.toString(userUpdatedTime.getMillis());
             user.setThumbnail(thumbnailKey);
             saveUserThumbnail(user.getId(), user.getFileObject(), thumbnailKey);
         }

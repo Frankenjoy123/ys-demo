@@ -129,6 +129,18 @@ public class UserController {
     private User ToUser(UserObject userObject) {
         User user = new User();
         BeanUtils.copyProperties(userObject, user);
+        //convert thumbnail information into FileObject if exists
+        if (userObject.getThumbnailData() != null) {
+            FileObject fileObject = new FileObject();
+            fileObject.setData(userObject.getThumbnailData());
+            fileObject.setSuffix(userObject.getThumbnailSuffix());
+            if (userObject.getThumbnailContentLength() != null) {
+                fileObject.setLength(userObject.getThumbnailContentLength());
+            } else {
+                fileObject.setLength((long) userObject.getThumbnailData().length);
+            }
+            user.setFileObject(fileObject);
+        }
         return user;
     }
 
