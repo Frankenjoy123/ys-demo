@@ -106,6 +106,7 @@ public class DeviceController {
         String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         deviceNew.setOrgId(orgId);
+        deviceNew.setLoginAccountId(accountId);
         deviceNew.setStatusCode(LookupCodes.DeviceStatus.ACTIVATED);
 
         DeviceObject deviceCurrent = deviceDomain.getById(deviceNew.getId());
@@ -121,6 +122,7 @@ public class DeviceController {
         } else {
             //update device
             deviceCurrent.setOrgId(deviceNew.getOrgId());
+            deviceNew.setLoginAccountId(deviceNew.getLoginAccountId());
             deviceCurrent.setStatusCode(deviceNew.getStatusCode());
             deviceCurrent.setModifiedAccountId(deviceNew.getModifiedAccountId() != null ? deviceNew.getModifiedAccountId() : accountId);
             deviceCurrent.setModifiedDatetime(DateTime.now());
@@ -129,6 +131,9 @@ public class DeviceController {
             }
             if (deviceNew.getOs() != null) {
                 deviceCurrent.setOs(deviceNew.getOs());
+            }
+            if (deviceNew.getComments() != null) {
+                deviceCurrent.setComments(deviceNew.getComments());
             }
             if (deviceNew.getCheckPointId() != null) {
                 deviceCurrent.setCheckPointId(deviceNew.getCheckPointId());
