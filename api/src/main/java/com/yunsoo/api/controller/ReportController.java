@@ -31,7 +31,7 @@ public class ReportController {
     private RestClient dataAPIClient;
     private String folder = "report";
 
-    @RequestMapping(value = "/ProductList", method = RequestMethod.GET)
+    @RequestMapping(value = "/productlist", method = RequestMethod.GET)
     public ResponseEntity get(@RequestParam(value = "type", required = true) String type,
                               @RequestParam(value = "period", required = true) String period) {
         String currentOrgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
