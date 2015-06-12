@@ -1,6 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.FileObject;
+import com.yunsoo.common.data.object.S3FileObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.data.service.config.AmazonSetting;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.net.URL;
 
 /**
  * Created by Zhe on 2015/5/29.
@@ -38,5 +41,12 @@ public class FileController {
         } catch (Exception e) {
             throw new Exception("上传文件失败！ Message = " + e.getMessage());
         }
+    }
+
+    @RequestMapping(value = "/tempURL", method = RequestMethod.POST)
+    public URL getPresignedURL(@RequestBody S3FileObject s3FileObject) {
+
+//        if (key == null || key.isEmpty()) throw new BadRequestException("Key不能为空！");
+        return fileService.getPresignedUrl(s3FileObject.getBucketName(), s3FileObject.getKey(), s3FileObject.getExpiration());
     }
 }

@@ -1,11 +1,11 @@
 package com.yunsoo.data.service.service;
 
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.common.data.object.FileObject;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Created by Zhe on 2015/5/29.
@@ -16,4 +16,5 @@ public interface FileService {
 
     public int uploadFile(String bucketName, String key, FileObject fileObject, Boolean override) throws Exception;
 
+    public URL getPresignedUrl(String bucketName, String key, DateTime expiration);
 }
