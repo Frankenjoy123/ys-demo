@@ -60,9 +60,13 @@
                 templateUrl: 'pages/device/device.html',
                 controller: 'deviceCtrl'
             })
-            .when('/echarts', {
-                templateUrl: 'pages/echarts/echarts.html',
-                controller: 'echartsCtrl'
+            .when('/echarts-bar', {
+                templateUrl: 'pages/echarts/echarts-bar.html',
+                controller: 'echartsBarCtrl'
+            })
+            .when('/stacked-bar', {
+                templateUrl: 'pages/echarts/stacked-bar.html',
+                controller: 'stackedBarCtrl'
             })
             .otherwise({
                 templateUrl: 'pages/dashboard/dashboard.html',
