@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 
 
 /**
- * Created by Zhe on 2015/5/8.
+ * Created by  : Zhe
+ * Created on  : 2015/5/8
+ * Descriptions:
  */
 public interface DeviceRepository extends FindOneAndSaveRepository<DeviceEntity, String> {
 
@@ -15,6 +17,7 @@ public interface DeviceRepository extends FindOneAndSaveRepository<DeviceEntity,
 
     Page<DeviceEntity> findByOrgId(String orgId, Pageable pageable);
 
-    Page<DeviceEntity> findByCreatedAccountId(String createdAccountId, Pageable pageable);
+    Page<DeviceEntity> findByLoginAccountId(String createdAccountId, Pageable pageable);
 
+    Page<DeviceEntity> findAll(Pageable pageable);
 }
