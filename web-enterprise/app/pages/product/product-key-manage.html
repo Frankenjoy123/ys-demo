@@ -12,25 +12,28 @@
 <!--Page content-->
 <!--===================================================-->
 <div id="page-content">
-    <div class="panel panel-bordered panel-primary" ng-show="productBases">
-        <a data-toggle="collapse" href="" data-target="#collapse_create">
-            <div class="panel-heading">
-                <h3 class="panel-title">批量申请产品码</h3>
-            </div>
-        </a>
 
-        <div id="collapse_create" class="panel-collapse collapse">
-            <div class="panel-body">
-                <form role="form" id="createForm">
-                    <div class="box-body">
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">批量申请产品码</h4>
+                </div>
+                <div class="modal-body" style="height:250px;width:800px">
+                    <form role="form" id="createForm">
                         <div class="row">
                             <div class="form-group col-xs-4">
                                 <select name="productType"
-                                        class="selectpicker form-control"
+                                        class="form-control"
                                         ng-model="creationPanel.model.productBaseId"
                                         ng-change="creationPanel.productBaseIdChanged(creationPanel.model.productBaseId)">
                                     <option value="0">请选择产品</option>
-                                    <option ng-repeat="pb in creationPanel.productBases" value="{{pb.id}}">
+                                    <option ng-repeat="pb in creationPanel.productBases"
+                                            value="{{pb.id}}">
                                         {{pb.name}}
                                     </option>
                                 </select>
@@ -42,7 +45,7 @@
                         </div>
                         <div class="row">
                             <div class="form-group col-xs-4">
-                                <select name="quantity" class="selectpicker form-control"
+                                <select name="quantity" class="form-control"
                                         ng-model="creationPanel.model.quantity">
                                     <option value="0">请选择数量</option>
                                     <option value="100">100</option>
@@ -60,27 +63,102 @@
                                  ng-show="creationPanel.selectedProductBase">
                                 <div class="progress-group">
                                     <span class="progress-text">可用额度</span>
-                                    <span class="progress-number"><b>{{creationPanel.selectedProductBase.credit.remain}}</b>
-                                /{{creationPanel.selectedProductBase.credit.total}}</span>
+                    <span class="progress-number"><b>{{creationPanel.selectedProductBase.credit.remain}}</b>
+                    /{{creationPanel.selectedProductBase.credit.total}}</span>
 
-                                    <div class="progress progress-md" style="background-color: #f0ffff;">
+                                    <div class="progress progress-md"
+                                         style="background-color: #f0ffff;">
                                         <div class="progress-bar progress-bar-primary progress-bar-striped active"
                                              ng-style="{width: creationPanel.selectedProductBase.credit.percentage + '%'}"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- /.box-body -->
-                    <div class="box-footer">
-                        <button type="submit" class="btn btn-primary" ng-click="creationPanel.create()">创建</button>
-                        <!--<div class="clearfix"></div>-->
-                    </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <button type="submit" class="btn btn-primary btn-labeled fa fa-barcode" ng-click="creationPanel.create()" data-dismiss="modal">
+                                    创建
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
 
-                </form>
             </div>
         </div>
     </div>
+
+    <!--<div class="panel panel-bordered panel-primary" ng-show="productBases">-->
+    <!--<a data-toggle="collapse" href="" data-target="#collapse_create">-->
+    <!--<div class="panel-heading">-->
+    <!--<h3 class="panel-title">批量申请产品码</h3>-->
+    <!--</div>-->
+    <!--</a>-->
+
+    <!--<div id="collapse_create" class="panel-collapse collapse">-->
+    <!--<div class="panel-body">-->
+    <!--<form role="form" id="createForm">-->
+    <!--<div class="box-body">-->
+    <!--<div class="row">-->
+    <!--<div class="form-group col-xs-4">-->
+    <!--<select name="productType"-->
+    <!--class="selectpicker form-control"-->
+    <!--ng-model="creationPanel.model.productBaseId"-->
+    <!--ng-change="creationPanel.productBaseIdChanged(creationPanel.model.productBaseId)">-->
+    <!--<option value="0">请选择产品</option>-->
+    <!--<option ng-repeat="pb in creationPanel.productBases" value="{{pb.id}}">-->
+    <!--{{pb.name}}-->
+    <!--</option>-->
+    <!--</select>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-4 animated slideInRight"-->
+    <!--ng-show="creationPanel.selectedProductBase">-->
+    <!--<label>产品码类型：<span class="inline">{{formatProductKeyTypes(creationPanel.selectedProductBase.productKeyTypes)}}</span></label>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row">-->
+    <!--<div class="form-group col-xs-4">-->
+    <!--<select name="quantity" class="selectpicker form-control"-->
+    <!--ng-model="creationPanel.model.quantity">-->
+    <!--<option value="0">请选择数量</option>-->
+    <!--<option value="100">100</option>-->
+    <!--<option value="1000">1,000</option>-->
+    <!--<option value="2000">2,000</option>-->
+    <!--<option value="5000">5,000</option>-->
+    <!--<option value="10000">10,000</option>-->
+    <!--<option value="20000">20,000</option>-->
+    <!--<option value="50000">50,000</option>-->
+    <!--<option value="100000">100,000</option>-->
+    <!--<option value="100000">200,000</option>-->
+    <!--</select>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-4 animated slideInRight"-->
+    <!--ng-show="creationPanel.selectedProductBase">-->
+    <!--<div class="progress-group">-->
+    <!--<span class="progress-text">可用额度</span>-->
+    <!--<span class="progress-number"><b>{{creationPanel.selectedProductBase.credit.remain}}</b>-->
+    <!--/{{creationPanel.selectedProductBase.credit.total}}</span>-->
+
+    <!--<div class="progress progress-md" style="background-color: #f0ffff;">-->
+    <!--<div class="progress-bar progress-bar-primary progress-bar-striped active"-->
+    <!--ng-style="{width: creationPanel.selectedProductBase.credit.percentage + '%'}"></div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--&lt;!&ndash; /.box-body &ndash;&gt;-->
+    <!--<div class="box-footer">-->
+    <!--<button type="submit" class="btn btn-primary" ng-click="creationPanel.create()">创建</button>-->
+    <!--&lt;!&ndash;<div class="clearfix"></div>&ndash;&gt;-->
+    <!--</div>-->
+
+    <!--</form>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
 
     <div class="panel panel-success animated slideInRight" ng-show="listPanel.newProductKeyBatches.length > 0">
         <a data-toggle="collapse" href="" data-target="#collapse_new">
@@ -135,6 +213,12 @@
                 <h3 class="panel-title"> 产品码批次</h3>
             </div>
         </a>
+
+        <div class="col-sm-12 pull-left" style="padding: 20px 20px;">
+            <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" data-toggle="modal"
+                    data-target="#myModal">产品码申请
+            </button>
+        </div>
 
         <div class="panel-body">
             <table class="table table-hover">
