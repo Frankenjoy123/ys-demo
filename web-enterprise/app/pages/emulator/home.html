@@ -55,14 +55,6 @@
             }
         }
 
-        if (data.contact != null) {
-            $("#contactPhone").attr('href', 'tel:' + data.contact.hotline);
-        }
-
-        if (data['e-commerce'] != null) {
-            $("#buyStore").attr('href', data['e-commerce'].tmall);
-        }
-
         $("#divMainBody").css('display', '');
     }
 
@@ -179,8 +171,7 @@
                                 <div class="panel box box-primary">
                                     <ul class="timeline" id="scanRecords">
                                         <li>
-                                            <div class="timeline-badge down"><i class="fa fa-thumbs-up"></i></div>
-                                            <div class="timeline-panel">
+                                            <div style="text-align:center">
                                                 <div class="timeline-body">
                                                     <p>您是第一次扫描！</p>
                                                 </div>
@@ -194,8 +185,7 @@
                                 <div class="panel box box-primary">
                                     <ul class="timeline" id="divLogistics">
                                         <li>
-                                            <div class="timeline-badge down"><i class="fa fa-thumbs-up"></i></div>
-                                            <div class="timeline-panel">
+                                            <div style="text-align:center">
                                                 <div class="timeline-body">
                                                     <p>您没有物流信息！</p>
                                                 </div>
@@ -214,8 +204,8 @@
 
     <div id="divFooterValidKey" class="row">
         <div class="col-xs-12 col-md-12 item-action">
-            <div class="pull-left contact"><a id="contactPhone" href="" style="color:white">客服热线</a></div>
-            <div class="pull-right buy"><a id="buyStore" href="" style="color:white">购买产品</a></div>
+            <div class="pull-left contact">客服热线</div>
+            <div class="pull-right buy">购买产品</div>
         </div>
     </div>
 
