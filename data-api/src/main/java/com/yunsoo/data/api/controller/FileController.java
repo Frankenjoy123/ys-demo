@@ -1,17 +1,20 @@
 package com.yunsoo.data.api.controller;
 
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.S3FileObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.net.URL;
 
 /**
@@ -25,6 +28,27 @@ public class FileController {
     private FileService fileService;
     @Autowired
     private AmazonSetting amazonSetting;
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResponseEntity getS3File(@RequestParam(value = "path", required = true) String path) throws Exception {
+        if (path.isEmpty()) {
+            throw new BadRequestException("Path未指定！");
+        }
+
+        try {
+            S3Object s3Object = fileService.getFile(amazonSetting.getS3_basebucket(), path);
+            if (s3Object == null) throw new NotFoundException("找不到S3File!");
+
+            FileObject fileObject = new FileObject();
+            fileObject.setContentType(s3Object.getObjectMetadata().getContentType());
+            fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
+            fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
+            return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
+
+        } catch (IOException ex) {
+            throw new InternalServerErrorException("文件获取出错！");
+        }
+    }
 
     //upload resource to S3 by full path
     @RequestMapping(value = "", method = RequestMethod.POST)
