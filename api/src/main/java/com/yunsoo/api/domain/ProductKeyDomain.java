@@ -106,6 +106,14 @@ public class ProductKeyDomain {
                 .collect(Collectors.toList()), objectsPage.getPage(), objectsPage.getTotal());
     }
 
+    public Long sumQuantity(String orgId, String productBaseId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .build();
+        return dataAPIClient.get("productkeybatch/sum/quantity" + query, Long.class);
+    }
+
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {
         String productBaseId = batchObj.getProductBaseId();
 

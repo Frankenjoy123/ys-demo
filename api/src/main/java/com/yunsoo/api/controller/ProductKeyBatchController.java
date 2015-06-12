@@ -4,9 +4,9 @@ import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
+import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
-import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
@@ -26,6 +26,8 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -88,6 +90,17 @@ public class ProductKeyBatchController {
         Page<List<ProductKeyBatch>> page = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, pageable);
         response.setHeader("Content-Range", "pages " + page.getPage() + "/" + page.getTotal());
         return page.getContent();
+    }
+
+    @RequestMapping(value = "sum/quantity", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'productkeybatch:read')")
+    public Long sumQuantity(
+            @RequestParam(value = "org_id", required = false) String orgId,
+            @RequestParam(value = "product_base_id", required = false) String productBaseId) {
+        if (StringUtils.isEmpty(orgId)) {
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
+        return productKeyDomain.sumQuantity(orgId, productBaseId);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
