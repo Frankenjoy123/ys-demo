@@ -34,15 +34,16 @@
 
                                         <select id="selectAccount"
                                                 class="form-control" ng-model="selectAccount" name="selectAccount">
-                                            <option ng-repeat="opt in curOrgAccounts" value="{{opt.id}}">{{opt.last_name}}{{opt.first_name}}</option>
+                                            <option ng-repeat="opt in curOrgAccounts" value="{{opt.id}}">
+                                                {{opt.last_name}}{{opt.first_name}}
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="form-group" id="divDeviceName">
                                         <label for="deviceName">设备名称</label>
 
                                         <input type="text" id="deviceName" placeholder="设备名称" name="deviceName"
-                                               class="form-control" ng-model="deviceName">
-                                        </input>
+                                               class="form-control" ng-model="deviceName"/>
                                     </div>
                                     <div class="form-group" id="divDeviceComment">
                                         <label for="deviceComment">设备备注</label>
@@ -82,8 +83,8 @@
                     <thead id="sort-bar">
                     <tr>
                         <th class="col-xs-1">#</th>
-                        <th class="col-xs-2" data-sort-field="deviceName">设备名称</th>
-                        <th data-sort-field="deviceOs">设备操作系统</th>
+                        <th class="col-xs-2" data-sort-field="name">设备名称</th>
+                        <th data-sort-field="os">设备操作系统</th>
                         <th data-sort-field="statusCode" class="col-xs-1">状态</th>
                         <th data-sort-field="createdAccountId" class="col-xs-2">授权用户</th>
                         <th data-sort-field="createdDateTime" class="col-xs-2">创建时间</th>
@@ -93,15 +94,16 @@
                     <tbody>
                     <tr ng-repeat="m in deviceTable.pageable.data track by m.id" data-id="{{m.id}}">
                         <td>{{$index + 1}}</td>
-                        <td>{{m.device_name}}</td>
-                        <td>{{m.device_os}}</td>
-                        <td><span ng-show="m.status_code == 'active'"><span
+                        <td>{{m.name}}</td>
+                        <td>{{m.os}}</td>
+                        <td><span ng-show="m.status_code == 'activated'"><span
                                 class="label label-success">已授权</span></span></td>
                         <td>{{m.created_account_id}}</td>
                         <td>{{utils.formatDateString(m.created_datetime)}}</td>
                         <td>
                             <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-primary btn-labeled fa fa-remove" ng-click="cancelDeviceAuth()">
+                            <button type="button" class="btn btn-primary btn-labeled fa fa-remove"
+                                    ng-click="cancelDeviceAuth()">
                                 取消授权
                             </button>
                         </td>

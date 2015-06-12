@@ -1,25 +1,24 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.DeviceDomain;
+import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.Device;
+import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.DeviceObject;
 import com.yunsoo.common.web.client.Page;
-import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +38,7 @@ public class DeviceController {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceController.class);
 
     @Autowired
-    private RestClient dataAPIClient;
+    private PermissionDomain permissionDomain;
 
     @Autowired
     private DeviceDomain deviceDomain;
@@ -49,56 +48,55 @@ public class DeviceController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'device:read')")
-    public Device getDeviceById(@PathVariable(value = "id") String id) {
-        DeviceObject object = dataAPIClient.get("device/{id}", DeviceObject.class, id);
-        if (object == null) {
+    public Device getById(@PathVariable(value = "id") String id) {
+        DeviceObject deviceObject = deviceDomain.getById(id);
+        if (deviceObject == null) {
             throw new NotFoundException("device not found by [id: " + id + "]");
         }
-        return toDevice(object);
+        return toDevice(deviceObject);
     }
 
-    @RequestMapping(value = "org/{orgid}", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(#orgid, 'filterByOrg', 'device:read')")
-    public List<Device> getDeviceByOrgId(@PathVariable(value = "orgid") String orgid,
-                                         @PageableDefault(page = 0, size = 20)
-                                         @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
-                                         Pageable pageable,
-                                         HttpServletResponse response) {
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(#orgId, 'filterByOrg', 'device:read')")
+    public List<Device> getByFilterPaged(
+            @RequestParam(value = "org_id", required = false) String orgId,
+            @RequestParam(value = "login_account_id", required = false) String accountId,
+            @PageableDefault(page = 0, size = 20)
+            @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
+            Pageable pageable,
+            HttpServletResponse response) {
 
-        if (!StringUtils.hasText(orgid))
-            orgid = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        if (!StringUtils.hasText(orgId)) {
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
 
-        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append(pageable)
-                .build();
+        Page<List<DeviceObject>> devices = deviceDomain.getByFilterPaged(orgId, accountId, pageable);
 
-        Page<List<DeviceObject>> deviceList = dataAPIClient.getPaged("device/org/" + orgid + query, new ParameterizedTypeReference<List<DeviceObject>>() {
-        });
+        response.setHeader("Content-Range", "pages " + devices.getPage() + "/" + devices.getTotal());
 
-        response.setHeader("Content-Range", "pages " + deviceList.getPage() + "/" + deviceList.getTotal());
-
-        Page<List<Device>> deivceResults = new Page<>(deviceList.getContent().stream()
-                .map(this::toDevice)
-                .collect(Collectors.toList()), deviceList.getPage(), deviceList.getTotal());
-
-        return deivceResults.getContent();
-    }
-
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    @PreAuthorize("hasPermission(#device.orgId, 'filterByOrg', 'device:create')")
-    public String create(@RequestBody Device device) {
-        DeviceObject object = toDeviceObject(device);
-        object.setId(null);
-        object.setCreatedDateTime(DateTime.now());
-        String deviceId = dataAPIClient.post("device", object, String.class);
-        return deviceId;
+        return devices.getContent().stream().map(this::toDevice).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
-    @PreAuthorize("hasPermission(#device, 'device:update')")
     public void update(@RequestBody Device device) {
-        DeviceObject object = toDeviceObject(device);
-        dataAPIClient.patch("device", object, DeviceObject.class);
+        String id = device.getId();
+        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        DeviceObject deviceCurrent = deviceDomain.getById(id);
+        if (deviceCurrent == null) {
+            throw new NotFoundException("device not found by [id: " + id + "]");
+        }
+        if (!permissionDomain.hasPermission(accountId, new TPermission(deviceCurrent.getOrgId(), "device", "update"))) {
+            throw new ForbiddenException();
+        }
+
+        if (device.getCheckPointId() != null) deviceCurrent.setCheckPointId(device.getCheckPointId());
+        if (device.getName() != null) deviceCurrent.setName(device.getName());
+        if (device.getComments() != null) deviceCurrent.setComments(device.getComments());
+        if (device.getStatusCode() != null) deviceCurrent.setStatusCode(device.getStatusCode());
+
+        deviceCurrent.setModifiedAccountId(accountId);
+        deviceCurrent.setModifiedDatetime(DateTime.now());
+        deviceDomain.update(deviceCurrent);
     }
 
 
@@ -135,7 +133,7 @@ public class DeviceController {
             if (deviceNew.getCheckPointId() != null) {
                 deviceCurrent.setCheckPointId(deviceNew.getCheckPointId());
             }
-            deviceNew = deviceDomain.update(deviceNew);
+            deviceDomain.update(deviceNew);
         }
         return toDevice(deviceNew);
     }
@@ -147,10 +145,12 @@ public class DeviceController {
         Device device = new Device();
         device.setId(deviceObject.getId());
         device.setOrgId(deviceObject.getOrgId());
-        device.setDeviceName(deviceObject.getName());
-        device.setDeviceOs(deviceObject.getOs());
+        device.setLoginAccountId(deviceObject.getLoginAccountId());
+        device.setName(deviceObject.getName());
+        device.setOs(deviceObject.getOs());
         device.setCheckPointId(deviceObject.getCheckPointId());
         device.setStatusCode(deviceObject.getStatusCode());
+        device.setComments(deviceObject.getComments());
         device.setCreatedAccountId(deviceObject.getCreatedAccountId());
         device.setCreatedDateTime(deviceObject.getCreatedDateTime());
         device.setModifiedAccountId(deviceObject.getModifiedAccountId());
@@ -165,10 +165,12 @@ public class DeviceController {
         DeviceObject deviceObject = new DeviceObject();
         deviceObject.setId(device.getId());
         deviceObject.setOrgId(device.getOrgId());
-        deviceObject.setName(device.getDeviceName());
-        deviceObject.setOs(device.getDeviceOs());
+        deviceObject.setLoginAccountId(device.getLoginAccountId());
+        deviceObject.setName(device.getName());
+        deviceObject.setOs(device.getOs());
         deviceObject.setCheckPointId(device.getCheckPointId());
         deviceObject.setStatusCode(device.getStatusCode());
+        deviceObject.setComments(device.getComments());
         deviceObject.setCreatedAccountId(device.getCreatedAccountId());
         deviceObject.setCreatedDateTime(device.getCreatedDateTime());
         deviceObject.setModifiedAccountId(device.getModifiedAccountId());

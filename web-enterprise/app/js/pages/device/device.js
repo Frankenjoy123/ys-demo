@@ -3,9 +3,8 @@
 
     app.factory("deviceService", ["$http", function ($http) {
         return {
-            getDevices: function (dataTable, orgId, fnSuccess) {
-                var url = '/api/device/org/' + orgId + '?';
-                url += dataTable.toString();
+            getCurrentOrgDevices: function (dataTable, fnSuccess) {
+                var url = '/api/device?' + dataTable.toString();
                 $http.get(url).success(fnSuccess);
 
                 return this;
@@ -44,7 +43,7 @@
                         size: 20
                     },
                     flush: function (callback) {
-                        deviceService.getDevices(this, $scope.context.account.org_id, function (data, status, headers) {
+                        deviceService.getCurrentOrgDevices(this, function (data, status, headers) {
                             callback({data: data, headers: headers});
                         });
                     }
@@ -107,17 +106,17 @@
 
             out = "";
             len = str.length;
-            for(i = 0; i < len; i++) {
+            for (i = 0; i < len; i++) {
                 c = str.charCodeAt(i);
                 if ((c >= 0x0001) && (c <= 0x007F)) {
                     out += str.charAt(i);
                 } else if (c > 0x07FF) {
                     out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
-                    out += String.fromCharCode(0x80 | ((c >>  6) & 0x3F));
-                    out += String.fromCharCode(0x80 | ((c >>  0) & 0x3F));
+                    out += String.fromCharCode(0x80 | ((c >> 6) & 0x3F));
+                    out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
                 } else {
-                    out += String.fromCharCode(0xC0 | ((c >>  6) & 0x1F));
-                    out += String.fromCharCode(0x80 | ((c >>  0) & 0x3F));
+                    out += String.fromCharCode(0xC0 | ((c >> 6) & 0x1F));
+                    out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
                 }
             }
             return out;
