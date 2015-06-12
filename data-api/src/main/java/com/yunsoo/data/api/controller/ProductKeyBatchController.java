@@ -61,12 +61,13 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductKeyBatchObject> getByFilterPaged(@RequestParam(value = "org_id") String orgId,
-                                                        @RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                                        @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
-                                                        @PageableDefault(size = 1000)
-                                                        Pageable pageable,
-                                                        HttpServletResponse response) {
+    public List<ProductKeyBatchObject> getByFilterPaged(
+            @RequestParam(value = "org_id") String orgId,
+            @RequestParam(value = "product_base_id", required = false) String productBaseId,
+            @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+            @PageableDefault(size = 1000)
+            Pageable pageable,
+            HttpServletResponse response) {
         Page<ProductKeyBatchEntity> entityPage;
 
         if (productBaseId == null) {
@@ -82,6 +83,15 @@ public class ProductKeyBatchController {
         return StreamSupport.stream(entityPage.spliterator(), false)
                 .map(this::toProductKeyBatchObject)
                 .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "sum/quantity", method = RequestMethod.GET)
+    public Long sumQuantity(
+            @RequestParam(value = "org_id", required = false) String orgId,
+            @RequestParam(value = "product_base_id", required = false) String productBaseId) {
+        Long sum = productKeyBatchRepository.sumQuantity(orgId, productBaseId);
+
+        return sum;
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
