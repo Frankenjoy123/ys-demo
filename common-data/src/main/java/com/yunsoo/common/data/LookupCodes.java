@@ -44,7 +44,6 @@ public class LookupCodes {
 
         public static final String CREATED = "created";
         public static final String AVAILABLE = "available";
-        public static final String DEACTIVATED = "deactivated";
     }
 
     public static class MessageStatus {
@@ -82,5 +81,12 @@ public class LookupCodes {
         public static final String CREATED = "created";
         public static final String COMMITTED = "committed";
         public static final String ROLLBACKED = "rollbacked";
+    }
+
+    public static class DeviceStatus {
+        private DeviceStatus() {
+        }
+
+        public static final String ACTIVATED = "activated";
     }
 }

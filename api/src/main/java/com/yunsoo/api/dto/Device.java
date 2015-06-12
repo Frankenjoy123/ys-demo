@@ -5,12 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
-import com.yunsoo.common.data.object.DeviceObject;
+import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by  : Zhe
@@ -19,6 +15,7 @@ import java.util.List;
  */
 public class Device {
 
+    @NotBlank(message = "id must not be null or empty")
     @JsonProperty("id")
     private String id;
 
@@ -131,39 +128,5 @@ public class Device {
 
     public void setModifiedDatetime(DateTime modifiedDatetime) {
         this.modifiedDatetime = modifiedDatetime;
-    }
-
-    public static Device fromDeviceObject(DeviceObject object) {
-        if (object == null) return null;
-        Device device = new Device();
-        BeanUtils.copyProperties(object, device);
-        return device;
-    }
-
-    public static DeviceObject toDeviceObject(Device device) {
-        if (device == null) return null;
-        DeviceObject object = new DeviceObject();
-        BeanUtils.copyProperties(device, object);
-        return object;
-    }
-
-    public static List<Device> fromDeviceObjectList(List<DeviceObject> objectList) {
-        if (objectList == null) return null;
-
-        List<Device> deviceList = new ArrayList<Device>();
-        for (DeviceObject object : objectList) {
-            deviceList.add(Device.fromDeviceObject(object));
-        }
-        return deviceList;
-    }
-
-    public static List<DeviceObject> ToDeviceObjectList(Iterable<Device> devices) {
-        if (devices == null) return null;
-
-        List<DeviceObject> deviceObjects = new ArrayList<DeviceObject>();
-        for (Device device : devices) {
-            deviceObjects.add(Device.toDeviceObject(device));
-        }
-        return deviceObjects;
     }
 }
