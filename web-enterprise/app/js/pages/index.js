@@ -68,6 +68,14 @@
                 templateUrl: 'pages/echarts/stacked-bar.html',
                 controller: 'stackedBarCtrl'
             })
+            .when('/mix-map', {
+                templateUrl: 'pages/echarts/mix-map.html',
+                controller: 'mixMapCtrl'
+            })
+            .when('/pie-map', {
+                templateUrl: 'pages/echarts/pie-map.html',
+                controller: 'pieMapCtrl'
+            })
             .otherwise({
                 templateUrl: 'pages/dashboard/dashboard.html',
                 controller: 'DashboardCtrl'

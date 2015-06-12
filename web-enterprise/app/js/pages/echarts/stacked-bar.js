@@ -21,7 +21,7 @@
 
             var option = {
                 title: {
-                    text: '消费次数统计'
+                    text: '产品扫码月统计'
                 },
                 tooltip: {
                     trigger: 'axis',

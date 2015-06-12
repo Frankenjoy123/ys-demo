@@ -21,13 +21,13 @@
 
             var option = {
                 title: {
-                    text: '贴码量统计'
+                    text: '产品贴码统计'
                 },
                 tooltip: {
                     trigger: 'axis'
                 },
                 legend: {
-                    data: ['贴码量统计']
+                    data: ['产品贴码统计']
                 },
                 toolbox: {
                     show: true,
@@ -54,7 +54,7 @@
                 ],
                 series: [
                     {
-                        name: '贴码量统计',
+                        name: '产品贴码统计',
                         type: 'bar',
                         data: [56, 6, 35, 2, 7, 24, 4, 9]
                     }
