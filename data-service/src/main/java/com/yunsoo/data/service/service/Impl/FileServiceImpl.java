@@ -1,19 +1,21 @@
 package com.yunsoo.data.service.service.Impl;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.common.data.object.FileObject;
-import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.service.FileService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Created by Zhe on 2015/5/29.
@@ -38,6 +40,11 @@ public class FileServiceImpl implements FileService {
             //to-do: log
             return null;
         }
+    }
+
+    @Override
+    public URL getPresignedUrl(String bucketName, String key, DateTime expiration) {
+        return s3ItemDao.generatePresignedUrl(bucketName, key, expiration, HttpMethod.GET);
     }
 
     @Override

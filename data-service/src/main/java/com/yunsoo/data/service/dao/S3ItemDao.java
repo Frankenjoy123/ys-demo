@@ -1,11 +1,14 @@
 package com.yunsoo.data.service.dao;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import org.joda.time.DateTime;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -15,15 +18,13 @@ import java.util.List;
  */
 public interface S3ItemDao {
 
-//    void putFolderItem(String bucketName, String folderName);
-//
-//    void putFileItem(String bucketName, String folderName, String fileName, File file, CannedAccessControlList cannedAccessControlList);
-
     void putItem(String bucketName, String key, InputStream inputStream, ObjectMetadata objectMetadata);
 
     void putItem(String bucketName, String key, InputStream inputStream, ObjectMetadata objectMetadata, CannedAccessControlList cannedAccessControlList);
 
     S3Object getItem(String bucketName, String key);
+
+    URL generatePresignedUrl(String bucketName, String key, DateTime expiration, HttpMethod method);
 
     boolean hasItem(String bucketName, String key);
 
