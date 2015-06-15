@@ -1,0 +1,48 @@
+/*Angular ngCloak*/
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    display: none !important;
+}
+
+body {
+    /*font-family: "Lucida Grande", "Helvetica Neue", Helvetica, STHeiti, "Microsoft Yahei", "WenQuanYi Micro Hei", Arial, Verdana, sans-serif;*/
+    /*font-family: "Microsoft YaHei", "微软雅黑", "Lucida Grande", "Lucida Sans Unicode", 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+    font-family: "Microsoft YaHei", "Lucida Grande", "Lucida Sans Unicode", 'Open Sans', "WenQuanYi Micro Hei", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+}
+
+.brand-text {
+    font-weight: 400; /*override*/
+}
+
+.img-logo {
+    width: 24px;
+    height: 24px;
+    margin: 0 0 4px 14px;
+    border-radius: 3px;
+}
+
+/*sortable*/
+.sortable {
+    cursor: pointer;
+}
+
+.sortable:after {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f0dc";
+    padding-left: .5em;
+    color: #a0a0a0;
+}
+
+.sortable.sortable-asc:after {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f0de";
+    padding-left: .5em;
+    color: inherit;
+}
+
+.sortable.sortable-desc:after {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f0dd";
+    padding-left: .5em;
+    color: inherit;
+}
