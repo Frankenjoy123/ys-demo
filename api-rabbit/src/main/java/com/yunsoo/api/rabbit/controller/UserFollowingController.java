@@ -45,9 +45,9 @@ public class UserFollowingController {
         try {
             List<UserFollowing> userFollowingList = dataAPIClient.get("/user/following/who/{0}?index={1}&size={2}", new ParameterizedTypeReference<List<UserFollowing>>() {
             }, id, index, size);
-            if (userFollowingList == null || userFollowingList.size() == 0) {
-                throw new NotFoundException(40401, "User following list not found for userid = " + id);
-            }
+//            if (userFollowingList == null || userFollowingList.size() == 0) {
+//                throw new NotFoundException(40401, "User following list not found for userid = " + id);
+//            }
             return userFollowingList;
         } catch (NotFoundException ex) {
             throw new NotFoundException(40401, "User following list not found for useid = " + id);

@@ -48,9 +48,9 @@ public class UserFollowingController {
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
 
         List<UserFollowing> userFollowingList = UserFollowing.FromEntityList(userFollowingRepository.findByUserIdAndIsFollowing(id, true, new PageRequest(index, size)));
-        if (userFollowingList == null || userFollowingList.size() < 1) {
-            throw new NotFoundException(40401, "找不到用户follow组织的记录! 用户ID = " + id);
-        }
+//        if (userFollowingList == null || userFollowingList.size() < 1) {
+//            throw new NotFoundException(40401, "找不到用户follow组织的记录! 用户ID = " + id);
+//        }
         return this.FromUserFollowingList(userFollowingList);
     }
 
@@ -63,9 +63,9 @@ public class UserFollowingController {
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
 
         List<UserFollowing> userFollowingList = UserFollowing.FromEntityList(userFollowingRepository.findByOrganizationId(id, new PageRequest(index, size)));
-        if (userFollowingList == null || userFollowingList.size() < 1) {
-            throw new NotFoundException(40401, "找不到组织的粉丝记录! 组织ID = " + id);
-        }
+//        if (userFollowingList == null || userFollowingList.size() < 1) {
+//            throw new NotFoundException(40401, "找不到组织的粉丝记录! 组织ID = " + id);
+//        }
         return this.FromUserFollowingList(userFollowingList);
     }
 

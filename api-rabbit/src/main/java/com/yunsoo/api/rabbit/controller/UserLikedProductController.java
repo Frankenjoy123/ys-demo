@@ -48,9 +48,9 @@ public class UserLikedProductController {
         try {
             List<UserLikedProduct> userLikedProductList = dataAPIClient.get("/user/collection/userid/{userid}", new ParameterizedTypeReference<List<UserLikedProduct>>() {
             }, userid);
-            if (userLikedProductList == null || userLikedProductList.size() == 0) {
-                throw new NotFoundException(40401, "UserLikedProductList not found for userid = " + userid);
-            }
+//            if (userLikedProductList == null || userLikedProductList.size() == 0) {
+//                throw new NotFoundException(40401, "UserLikedProductList not found for userid = " + userid);
+//            }
             return userLikedProductList;
         } catch (NotFoundException ex) {
             throw new NotFoundException(40401, "UserLikedProductList not found for useid = " + userid);
