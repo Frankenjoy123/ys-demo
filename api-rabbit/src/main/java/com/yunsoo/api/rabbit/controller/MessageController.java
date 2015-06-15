@@ -32,7 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/message")
 public class MessageController {
-
+    @Autowired
     private RestClient dataAPIClient;
     //    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);

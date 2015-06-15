@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.net.URL;
 
@@ -69,8 +68,6 @@ public class FileController {
 
     @RequestMapping(value = "/tempURL", method = RequestMethod.POST)
     public URL getPresignedURL(@RequestBody S3FileObject s3FileObject) {
-
-//        if (key == null || key.isEmpty()) throw new BadRequestException("Key不能为空！");
         return fileService.getPresignedUrl(s3FileObject.getBucketName(), s3FileObject.getKey(), s3FileObject.getExpiration());
     }
 }
