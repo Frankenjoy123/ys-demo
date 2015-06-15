@@ -24,7 +24,7 @@
         function ($scope, $timeout, loginService, YUNSOO_CONFIG, utils) {
 
             ($scope.loginForm = loginService.loginForm()) || ($scope.loginForm = {
-                organization: '',
+                organization: '2k0r1l55i2rs5544wz5',//hard code the current yunsoo org
                 identifier: '',
                 password: '',
                 rememberMe: false
@@ -95,13 +95,6 @@
                         validating: 'fa fa-refresh'
                     },
                     fields: {
-                        organization: {
-                            validators: {
-                                notEmpty: {
-                                    message: '组织名称不可空'
-                                }
-                            }
-                        },
                         identifier: {
                             validators: {
                                 notEmpty: {

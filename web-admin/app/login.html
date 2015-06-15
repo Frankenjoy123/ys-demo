@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 | 云溯管理平台</title>
+    <title>登录 | 云溯内部管理平台</title>
     <link href="img/favicon.ico" rel="icon" type="image/ico"/>
 
     <!--STYLESHEET-->
@@ -54,7 +54,7 @@
         <div class="cls-brand">
             <a class="box-inline" href="index.html">
                 <!-- <img alt="Nifty Admin" src="img/logo.png" class="brand-icon"> -->
-                <span class="brand-title"><span class="text-thin">云溯管理平台</span></span>
+                <span class="brand-title"><span class="text-thin">云溯内部管理平台</span></span>
             </a>
         </div>
     </div>
@@ -66,16 +66,9 @@
     <div class="cls-content">
         <div id="panel-login" class="cls-content-sm panel animated zoomIn" ng-show="showLoginFormDelay">
             <div class="panel-body">
-                <p class="pad-btm">组织账号登陆</p>
+                <p class="pad-btm">账号登陆</p>
 
                 <form class="bv-form">
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-addon"><i class="fa fa-group"></i></div>
-                            <input type="text" class="form-control" name="organization" placeholder="组织名称"
-                                   ng-model="loginForm.organization">
-                        </div>
-                    </div>
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon"><i class="fa fa-user"></i></div>
@@ -90,17 +83,17 @@
                                    ng-model="loginForm.password">
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-xs-8 text-left checkbox">
+                    <div class="form-group">
+                        <div class="text-left checkbox">
                             <label class="form-checkbox form-icon">
                                 <input type="checkbox" ng-model="loginForm.rememberMe"> 记住我
                             </label>
                         </div>
-                        <div class="col-xs-4">
-                            <div class="form-group text-right">
-                                <button class="btn btn-success text-uppercase" type="submit">登&nbsp;&nbsp;陆
-                                </button>
-                            </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-group text-center">
+                            <button class="btn btn-success text-uppercase btn-labeled fa fa-desktop" type="submit">登陆
+                            </button>
                         </div>
                     </div>
                 </form>

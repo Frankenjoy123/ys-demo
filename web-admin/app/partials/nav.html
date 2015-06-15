@@ -40,43 +40,26 @@
                         </a>
                     </li>
 
+                    <li>
+                        <a href="#/message">
+                            <i class="fa fa-fw fa-comment"></i>
+                            <span class="menu-title"><strong>消息审核</strong></span>
+                        </a>
+                    </li>
+
                     <!--Menu list item-->
                     <li>
                         <a href="#/product-key-manage">
                             <i class="fa fa-fw fa-tags"></i>
-                            <span class="menu-title"><strong>产品码</strong></span>
+                            <span class="menu-title"><strong>产品码审核</strong></span>
                         </a>
                     </li>
 
-                    <!--Menu list item-->
                     <li>
-                        <a href="#/package-manage">
-                            <i class="fa fa-fw fa-gift"></i>
-                            <span class="menu-title"><strong>包装</strong></span>
+                        <a href="#/account">
+                            <i class="fa fa-fw fa-group"></i>
+                            <span class="menu-title"><strong>企业账号管理</strong></span>
                         </a>
-                    </li>
-
-                    <!--Menu list item-->
-                    <li>
-                        <a href="#/logistics">
-                            <i class="fa fa-fw fa-truck"></i>
-                            <span class="menu-title"><strong>物流</strong></span>
-                        </a>
-                    </li>
-
-                    <li data-menu-group="echarts">
-                        <a href="">
-                            <i class="fa fa-fw fa-bar-chart"></i>
-                            <span class="menu-title"><strong>图表</strong></span>
-                            <i class="arrow"></i>
-                        </a>
-                        <!--Submenu-->
-                        <ul class="collapse" data-menu-group="echarts">
-                            <li><a href="#/echarts-bar">产品贴码统计</a></li>
-                            <li><a href="#/pie-map">产品扫码统计</a></li>
-                            <li><a href="#/stacked-bar">产品扫码月统计</a></li>
-                            <li><a href="#/mix-map">产品地域统计</a></li>
-                        </ul>
                     </li>
 
                     <!--Menu list item-->
@@ -88,16 +71,11 @@
                         </a>
                         <!--Submenu-->
                         <ul class="collapse" data-menu-group="setting">
-                            <li><a href="#/product-base-manage">产品</a></li>
-                            <li><a href="#/message">消息</a></li>
-                            <li><a href="#/device">设备</a></li>
-                            <li><a href="#/account">账号</a></li>
                             <li><a href="#/setting">密码</a></li>
                         </ul>
                     </li>
 
                 </ul>
-
 
                 <!--Widget-->
                 <!--================================-->
@@ -110,26 +88,6 @@
                         </a>
                     </div>
 
-                    <!-- Hide the content on collapsed navigation -->
-                    <div id="wg-product-key" class="hide-small mainnav-widget-content">
-                        <ul class="list-group">
-                            <li class="list-header pad-no pad-ver">产品码</li>
-                            <li class="mar-btm">
-                                <span class="label label-primary pull-right">{{productKeyCreditSum.percentage}}%</span>
-
-                                <p>总可用额度</p>
-
-                                <div class="progress progress-sm">
-                                    <div class="progress-bar progress-bar-primary"
-                                         ng-style="{width: productKeyCreditSum.percentage + '%'}">
-                                        <span class="sr-only">{{productKeyCreditSum.percentage}}%</span>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="pad-ver"><a href="#/product-base-manage"
-                                                   class="btn btn-success btn-bock">查看详情</a></li>
-                        </ul>
-                    </div>
                 </div>
                 <!--================================-->
                 <!--End widget-->
