@@ -8,11 +8,16 @@ import com.yunsoo.data.service.repository.AccountRepository;
 import com.yunsoo.data.service.repository.OrganizationRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by  : KB
@@ -46,6 +51,21 @@ public class AccountController {
                 : accountRepository.findByOrgIdAndIdentifier(orgId, identifier);
 
         return entities.stream().map(this::toAccountObject).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "pageable", method = RequestMethod.GET)
+    public List<AccountObject> getByFilter(@RequestParam("org_id") String orgId,
+                                           @PageableDefault(size = 1000)
+                                           Pageable pageable,
+                                           HttpServletResponse response) {
+
+        Page<AccountEntity> entities = accountRepository.findByOrgId(orgId,pageable);
+
+        response.setHeader("Content-Range", "pages " + entities.getNumber() + "/" + entities.getTotalPages());
+
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::toAccountObject)
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

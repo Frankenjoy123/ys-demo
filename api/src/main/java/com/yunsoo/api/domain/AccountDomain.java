@@ -4,15 +4,18 @@ import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.RandomUtils;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -48,15 +51,26 @@ public class AccountDomain {
         return accountObjects[0];
     }
 
-    public List<AccountObject> getByOrgId(String orgId) {
-        AccountObject[] accountObjects = dataAPIClient.get("account?org_id={0}", AccountObject[].class, orgId);
-        return Arrays.asList(accountObjects);
+    public Page<List<AccountObject>> getByOrgId(String orgId, Pageable pageable) {
+
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append(pageable)
+                .build();
+
+        return dataAPIClient.getPaged("account/pageable" + query, new ParameterizedTypeReference<List<AccountObject>>() {
+        });
     }
 
     public AccountObject createAccount(AccountObject accountObject) {
         accountObject.setId(null);
         accountObject.setCreatedDateTime(DateTime.now());
         accountObject.setStatusCode(LookupCodes.AccountStatus.CREATED);
+        String hashSalt = RandomUtils.generateString(8);
+        String password = hashPassword(accountObject.getPassword(), hashSalt);
+        accountObject.setHashSalt(hashSalt);
+        accountObject.setPassword(password);
+
         return dataAPIClient.post("account", accountObject, AccountObject.class);
     }
 

@@ -6,13 +6,19 @@ import com.yunsoo.api.dto.AccountRequest;
 import com.yunsoo.api.dto.AccountUpdatePasswordRequest;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,11 +51,20 @@ public class AccountController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'account:read')")
-    public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId) {
+    public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                     @PageableDefault(page = 0, size = 20)
+                                     @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
+                                     Pageable pageable,
+                                     HttpServletResponse response) {
         if (orgId == null) {
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         }
-        return accountDomain.getByOrgId(orgId).stream().map(this::toAccount).collect(Collectors.toList());
+
+        Page<List<AccountObject>> accounts = accountDomain.getByOrgId(orgId, pageable);
+
+        response.setHeader("Content-Range", "pages " + accounts.getPage() + "/" + accounts.getTotal());
+
+        return accounts.getContent().stream().map(this::toAccount).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -59,6 +74,7 @@ public class AccountController {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         AccountObject accountObject = toAccountObject(request);
         accountObject.setCreatedAccountId(currentAccountId);
+
         return toAccount(accountDomain.createAccount(accountObject));
     }
 
