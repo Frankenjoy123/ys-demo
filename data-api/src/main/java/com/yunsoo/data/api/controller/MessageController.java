@@ -84,6 +84,16 @@ public class MessageController {
         return new ResponseEntity<List<MessageObject>>(messageObjectList, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/count/on", method = RequestMethod.GET)
+    public int getNewMessagesByMessageId(
+            @RequestParam(value = "org_id", required = false) String orgId,
+            @RequestParam(value = "type_code_in", required = false) List<String> typeCodeIn,
+            @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+            @RequestParam(value = "post_show_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime postShowTime) {
+        int countMessage = messageService.countMessage(typeCodeIn, statusCodeIn, orgId, postShowTime);
+        return countMessage;
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Long> createMessages(@RequestBody MessageObject messageObject) {

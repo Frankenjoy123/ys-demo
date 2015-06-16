@@ -13,6 +13,8 @@ import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.QueryStringBuilder;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -88,6 +91,24 @@ public class MessageController {
         return messageObjects.stream().map(this::toMessage).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/count/on", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'message:read')")
+    public int getNewMessagesByMessageId(
+            @RequestParam(value = "org_id", required = false) String orgId,
+            @RequestParam(value = "type_code_in", required = false) List<String> typeCodeIn,
+            @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+            @RequestParam(value = "post_show_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime postShowTime) {
+
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("type_code_in", typeCodeIn)
+                .append("status_code_in", statusCodeIn)
+                .append("post_show_time", postShowTime)
+                .build();
+
+        int countMessage = dataAPIClient.get("message/count/on" + query, int.class);
+        return countMessage;
+    }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
