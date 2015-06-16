@@ -22,7 +22,15 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
 
     @Query("select sum(o.quantity) from #{#entityName} o where " +
             "(:orgId is null or o.orgId = :orgId) " +
-            "and (:productBaseId is null or o.productBaseId = :productBaseId) ")
+            "and (:productBaseId is null or o.productBaseId = :productBaseId)")
     Long sumQuantity(@Param("orgId") String orgId,
                      @Param("productBaseId") String productBaseId);
+
+    @Query("select sum(o.quantity) from #{#entityName} o where " +
+            "(:orgId is null or o.orgId = :orgId) " +
+            "and (:productBaseId is null or o.productBaseId = :productBaseId) " +
+            "and (o.statusCode in :statusCodeIn)")
+    Long sumQuantity(@Param("orgId") String orgId,
+                     @Param("productBaseId") String productBaseId,
+                     @Param("statusCodeIn") List<String> statusCodeIn);
 }

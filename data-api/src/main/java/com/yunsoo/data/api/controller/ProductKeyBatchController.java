@@ -88,10 +88,15 @@ public class ProductKeyBatchController {
     @RequestMapping(value = "sum/quantity", method = RequestMethod.GET)
     public Long sumQuantity(
             @RequestParam(value = "org_id", required = false) String orgId,
-            @RequestParam(value = "product_base_id", required = false) String productBaseId) {
-        Long sum = productKeyBatchRepository.sumQuantity(orgId, productBaseId);
-
-        return sum;
+            @RequestParam(value = "product_base_id", required = false) String productBaseId,
+            @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
+        Long sum;
+        if (statusCodeIn != null && statusCodeIn.size() > 0) {
+            sum = productKeyBatchRepository.sumQuantity(orgId, productBaseId, statusCodeIn);
+        } else {
+            sum = productKeyBatchRepository.sumQuantity(orgId, productBaseId);
+        }
+        return sum == null ? 0L : sum;
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

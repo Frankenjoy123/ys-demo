@@ -19,4 +19,13 @@ public interface AccountRepository extends FindOneAndSaveRepository<AccountEntit
     Page<AccountEntity> findByOrgId(String orgId, Pageable pageable);
 
     List<AccountEntity> findByOrgIdAndIdentifier(String orgId, String identifier);
+
+
+    Long count();
+
+    Long countByOrgId(String orgId);
+
+    Long countByStatusCodeIn(List<String> statusCodeIn);
+
+    Long countByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodeIn);
 }

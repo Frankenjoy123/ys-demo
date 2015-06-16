@@ -100,10 +100,11 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    @RequestMapping(value = "/{userId}", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#user, 'authenticated')")
-    public void updateUser(
-            @RequestBody User user) throws Exception {
+    public void updateUser(@PathVariable(value = "userId") String userId,
+                           @RequestBody User user) throws Exception {
+        user.setId(userId);
         dataAPIClient.patch("user", user);
     }
 

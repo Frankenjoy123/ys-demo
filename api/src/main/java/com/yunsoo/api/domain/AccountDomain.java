@@ -62,6 +62,14 @@ public class AccountDomain {
         });
     }
 
+    public Long count(String orgId, List<String> statusCodeIn) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("status_code_in", statusCodeIn)
+                .build();
+        return dataAPIClient.get("account/count/id" + query, Long.class);
+    }
+
     public AccountObject createAccount(AccountObject accountObject) {
         accountObject.setId(null);
         accountObject.setCreatedDateTime(DateTime.now());
