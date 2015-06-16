@@ -7,6 +7,7 @@ import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,6 +52,14 @@ public class AccountDomain {
     public List<AccountObject> getByOrgId(String orgId) {
         AccountObject[] accountObjects = dataAPIClient.get("account?org_id={0}", AccountObject[].class, orgId);
         return Arrays.asList(accountObjects);
+    }
+
+    public Long count(String orgId, List<String> statusCodeIn) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("status_code_in", statusCodeIn)
+                .build();
+        return dataAPIClient.get("account/count/id" + query, Long.class);
     }
 
     public AccountObject createAccount(AccountObject accountObject) {

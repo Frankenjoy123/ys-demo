@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by  : KB
- * Created on  : 3/13/2015
+ * Created by  : Lijian
+ * Created on  : 6/15/2015
  * Descriptions:
  */
 @RestController
@@ -46,6 +46,24 @@ public class AccountController {
                 : accountRepository.findByOrgIdAndIdentifier(orgId, identifier);
 
         return entities.stream().map(this::toAccountObject).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "count/id", method = RequestMethod.GET)
+    public Long count(@RequestParam(value = "org_id", required = false) String orgId,
+                      @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
+        if (orgId == null) {
+            if (statusCodeIn == null) {
+                return accountRepository.count();
+            } else {
+                return accountRepository.countByStatusCodeIn(statusCodeIn);
+            }
+        } else {
+            if (statusCodeIn == null) {
+                return accountRepository.countByOrgId(orgId);
+            } else {
+                return accountRepository.countByOrgIdAndStatusCodeIn(orgId, statusCodeIn);
+            }
+        }
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -100,6 +118,7 @@ public class AccountController {
             entity.setPassword(accountObject.getPassword());
             entity.setHashSalt(accountObject.getHashSalt());
         }
+        entity.setModifiedAccountId(accountObject.getModifiedAccountId());
         entity.setModifiedDatetime(accountObject.getModifiedDatetime() == null
                 ? DateTime.now() : accountObject.getModifiedDatetime());
 

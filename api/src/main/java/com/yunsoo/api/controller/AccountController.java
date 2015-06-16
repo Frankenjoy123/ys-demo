@@ -52,6 +52,17 @@ public class AccountController {
         return accountDomain.getByOrgId(orgId).stream().map(this::toAccount).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "count/id", method = RequestMethod.GET)
+    public Long count(@RequestParam(value = "org_id", required = false) String orgId,
+                      @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
+        if (orgId == null) {
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
+
+        Long count = accountDomain.count(orgId, statusCodeIn);
+        return count == null ? 0L : count;
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#request.orgId, 'filterByOrg', 'account:create')")
