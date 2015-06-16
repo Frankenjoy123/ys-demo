@@ -12,6 +12,18 @@ public class LookupCodes {
     private LookupCodes() {
     }
 
+    public static class ApplicationStatus {
+        private ApplicationStatus() {
+        }
+
+        public static final String CREATED = "created";
+        public static final String ACTIVE = "active";
+        public static final String UPDATABLE = "updatable";
+        public static final String FORCEUPDATABLE = "force updatable";
+        public static final String INACTIVE = "inactive";
+    }
+
+
     public static class ProductKeyBatchStatus {
         private ProductKeyBatchStatus() {
         }

@@ -4,6 +4,7 @@ import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
 import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
 import com.yunsoo.api.rabbit.object.Constants;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -42,16 +44,26 @@ public class UserFollowingController {
         if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
 
-        try {
-            List<UserFollowing> userFollowingList = dataAPIClient.get("/user/following/who/{0}?index={1}&size={2}", new ParameterizedTypeReference<List<UserFollowing>>() {
-            }, id, index, size);
-            if (userFollowingList == null || userFollowingList.size() == 0) {
-                throw new NotFoundException(40401, "User following list not found for userid = " + id);
+
+        List<UserFollowing> userFollowingList = dataAPIClient.get("/user/following/who/{0}?index={1}&size={2}", new ParameterizedTypeReference<List<UserFollowing>>() {
+        }, id, index, size);
+
+        //fill organization Name
+        HashMap<String, String> orgMap = new HashMap<>();
+        for (UserFollowing userFollowing : userFollowingList) {
+            if (!orgMap.containsKey(userFollowing.getOrganizationId())) {
+                OrganizationObject object = dataAPIClient.get("organization/{id}", OrganizationObject.class, userFollowing.getOrganizationId());
+                if (object != null) {
+                    orgMap.put(userFollowing.getOrganizationId(), object.getName());
+                    userFollowing.setOrganizationName(object.getName());
+                } else {
+                    userFollowing.setOrganizationName(orgMap.get(userFollowing.getOrganizationName()));
+                }
             }
-            return userFollowingList;
-        } catch (NotFoundException ex) {
-            throw new NotFoundException(40401, "User following list not found for useid = " + id);
         }
+
+        return userFollowingList;
+
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

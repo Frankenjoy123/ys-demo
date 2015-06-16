@@ -18,6 +18,8 @@ public class UserLikedProduct {
     private String userId;
     @JsonProperty("base_product_id")
     private String baseProductId;
+    @JsonProperty("product_name")
+    private String productName;
     @JsonProperty("active")
     private Boolean active;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
@@ -51,6 +53,14 @@ public class UserLikedProduct {
 
     public void setBaseProductId(String baseProductId) {
         this.baseProductId = baseProductId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public Boolean getActive() {

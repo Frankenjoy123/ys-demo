@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,6 +79,21 @@ public class ProductDomain {
         ProductBase productBase = convertFromProductBaseObject(productBaseObject, lookupDomain.getAllProductKeyTypes(null));
 //        productBase.setThumbnailURL(yunsooYamlConfig.getDataapi_productbase_picture_basepath() + "id" + productBase.getId() + ".jpg");
         return productBase;
+    }
+
+    //获取基本产品信息 - ProductBase
+    public HashMap<String, String> getProductBaseById(List<String> productBaseIdList) {
+        HashMap<String, String> productHashMap = new HashMap<>();
+
+        for (String productBaseId : productBaseIdList) {
+            if (!productHashMap.containsKey(productBaseId)) {
+                ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
+                if (productBaseObject != null) {
+                    productHashMap.put(productBaseId, productBaseObject.getName());
+                }
+            }
+        }
+        return productHashMap;
     }
 
     public List<ProductBase> getAllProductBaseByOrgId(int orgId) {

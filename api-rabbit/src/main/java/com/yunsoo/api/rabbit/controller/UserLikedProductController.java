@@ -4,6 +4,7 @@ import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserLikedProductDomain;
 import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
 import com.yunsoo.api.rabbit.object.Constants;
+import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -35,45 +37,46 @@ public class UserLikedProductController {
     private UserDomain userDomain;
     @Autowired
     private UserLikedProductDomain userLikedProductDomain;
-    //    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
     private static final Logger LOGGER = LoggerFactory.getLogger(UserLikedProductController.class);
 
     @RequestMapping(value = "/who/{userid}", method = RequestMethod.GET)
-//    @PreAuthorize("hasPermission(#usercollection, 'usercollection:read')")
     @PreAuthorize("hasPermission(#userid, 'UserLikedProduct', 'usercollection:read')")
     public List<UserLikedProduct> getUserCollectionById(@PathVariable(value = "userid") String userid) {
         if (userid == null || userid.isEmpty()) {
             throw new BadRequestException("UserId不应为空！");
         }
-        try {
-            List<UserLikedProduct> userLikedProductList = dataAPIClient.get("/user/collection/userid/{userid}", new ParameterizedTypeReference<List<UserLikedProduct>>() {
-            }, userid);
-            if (userLikedProductList == null || userLikedProductList.size() == 0) {
-                throw new NotFoundException(40401, "UserLikedProductList not found for userid = " + userid);
+
+        List<UserLikedProduct> userLikedProductList = dataAPIClient.get("/user/collection/userid/{userid}", new ParameterizedTypeReference<List<UserLikedProduct>>() {
+        }, userid);
+
+        //fill product name
+        HashMap<String, String> productHashMap = new HashMap<>();
+        for (UserLikedProduct userLikedProduct : userLikedProductList) {
+            if (!productHashMap.containsKey(userLikedProduct.getBaseProductId())) {
+                ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, userLikedProduct.getBaseProductId());
+                if (productBaseObject != null) {
+                    productHashMap.put(userLikedProduct.getBaseProductId(), productBaseObject.getName());
+                    userLikedProduct.setProductName(productBaseObject.getName());
+                }
+            } else {
+                userLikedProduct.setProductName(productHashMap.get(userLikedProduct.getProductName()));
             }
-            return userLikedProductList;
-        } catch (NotFoundException ex) {
-            throw new NotFoundException(40401, "UserLikedProductList not found for useid = " + userid);
         }
+//            if (userLikedProductList == null || userLikedProductList.size() == 0) {
+//                throw new NotFoundException(40401, "UserLikedProductList not found for userid = " + userid);
+//            }
+        return userLikedProductList;
+
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasPermission(#usercollection, 'usercollection:create')")
     @PreAuthorize("hasPermission(#userLikedProduct, 'authenticated')")
     public long createUserLikedProduct(@RequestBody UserLikedProduct userLikedProduct) throws Exception {
         if (userLikedProduct == null) {
             throw new BadRequestException("UserLikedProduct 不能为空！");
         }
         return userLikedProductDomain.ensureUserLikedProduct(userLikedProduct);
-//
-//        UserLikedProduct exsitingUserLikedProduct = dataAPIClient.get("/user/collection/userid/{userid}/product/{pid}", UserLikedProduct.class, userLikedProduct.getUserId(), userLikedProduct.getBaseProductId());
-//        if (exsitingUserLikedProduct != null) {
-//            return new ResponseEntity<Long>(exsitingUserLikedProduct.getId(), HttpStatus.OK);
-//        } else {
-//            long id = dataAPIClient.post("/user/collection", userLikedProduct, long.class);
-//            return new ResponseEntity<Long>(id, HttpStatus.OK);
-//        }
     }
 
     @RequestMapping(value = "", method = RequestMethod.DELETE)

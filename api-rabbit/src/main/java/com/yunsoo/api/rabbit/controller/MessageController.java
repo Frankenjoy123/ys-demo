@@ -32,7 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/message")
 public class MessageController {
-
+    @Autowired
     private RestClient dataAPIClient;
     //    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
@@ -94,10 +94,7 @@ public class MessageController {
                                              @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
         if (userId == null || userId.isEmpty()) throw new BadRequestException("UserId不能为空！");
         if (orgId == null || orgId.isEmpty()) throw new BadRequestException("OrgId不能为空！");
-//        if (lastReadMessageId == null || lastReadMessageId < 0) throw new BadRequestException("lastReadMessageId不能小于0！");
-//        if (!userDomain.validateToken(token, userId)) {
-//            throw new UnauthorizedException("不能读取其他用户的收藏信息！");
-//        }
+
         try {
             List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&orgid={1}&lastreadmessageid={2}", new ParameterizedTypeReference<List<Message>>() {
             }, userId, orgId, lastReadMessageId);
