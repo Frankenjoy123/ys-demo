@@ -31,4 +31,7 @@ public interface MessageDao {
     public List<MessageModel> getMessagesByFilter(String type, String status, String orgId, Boolean ignoreExpireDate, DateTime postShowtime, int pageIndex, int pageSize);
 
     public List<MessageModel> getUnreadMessages(String orgId, Long lastReadMessageId);
+
+    public int countMessage(List<String> typeList, List<String> statusList, String orgId, DateTime postShowtime);
+
 }
