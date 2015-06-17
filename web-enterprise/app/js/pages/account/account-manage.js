@@ -31,6 +31,30 @@
             $scope.password = '';
             $scope.passwordConfirm = '';
 
+            $scope.dashBoardRead = '';
+            $scope.productKeyRead = '';
+            $scope.productKeyMng = '';
+            $scope.packageRead = '';
+            $scope.packageMng = '';
+            $scope.logisticsRead = '';
+            $scope.logisticsMng = '';
+            $scope.tieMaRead = '';
+            $scope.saoMaRead = '';
+            $scope.monMaRead = '';
+            $scope.placeMaRead = '';
+            $scope.productRead = '';
+            $scope.productMng = '';
+            $scope.msgRead = '';
+            $scope.deviceRead = '';
+            $scope.deviceMng = '';
+            $scope.accountRead = '';
+            $scope.accountMng = '';
+            $scope.passwordRead = '';
+
+            $scope.authAccount = function(){
+
+            };
+
             $scope.accountTable = new $scope.utils.DataTable({
                 sortable: {
                     target: '#sort-bar',
@@ -48,6 +72,125 @@
             });
 
             $timeout(function () {
+
+                !function ($) {
+                    "use strict";
+
+                    var allFormEl,
+                        formElement = function (el) {
+                            if (el.data('nifty-check')) {
+                                return;
+                            } else {
+                                el.data('nifty-check', true);
+                                if (el.text().trim().length) {
+                                    el.addClass("form-text");
+                                } else {
+                                    el.removeClass("form-text");
+                                }
+                            }
+
+
+                            var input = el.find('input')[0],
+                                groupName = input.name,
+                                $groupInput = function () {
+                                    if (input.type == 'radio' && groupName) {
+                                        return $('.form-radio').not(el).find('input').filter('input[name=' + groupName + ']').parent();
+                                    } else {
+                                        return false;
+                                    }
+                                }(),
+                                changed = function () {
+                                    if (input.type == 'radio' && $groupInput.length) {
+                                        $groupInput.each(function () {
+                                            var $gi = $(this);
+                                            if ($gi.hasClass('active')) $gi.trigger('nifty.ch.unchecked');
+                                            $gi.removeClass('active');
+                                        });
+                                    }
+
+
+                                    if (input.checked) {
+                                        el.addClass('active').trigger('nifty.ch.checked');
+                                    } else {
+                                        el.removeClass('active').trigger('nifty.ch.unchecked');
+                                    }
+                                };
+
+                            if (input.checked) {
+                                el.addClass('active');
+                            } else {
+                                el.removeClass('active');
+                            }
+
+                            $(input).on('change', changed);
+                        },
+                        methods = {
+                            isChecked: function () {
+                                return this[0].checked;
+                            },
+                            toggle: function () {
+                                this[0].checked = !this[0].checked;
+                                this.trigger('change');
+                                return null;
+                            },
+                            toggleOn: function () {
+                                if (!this[0].checked) {
+                                    this[0].checked = true;
+                                    this.trigger('change');
+                                }
+                                return null;
+                            },
+                            toggleOff: function () {
+                                if (this[0].checked && this[0].type == 'checkbox') {
+                                    this[0].checked = false;
+                                    this.trigger('change');
+                                }
+                                return null;
+                            }
+                        };
+
+                    $.fn.niftyCheck = function (method) {
+                        var chk = false;
+                        this.each(function () {
+                            if (methods[method]) {
+                                chk = methods[method].apply($(this).find('input'), Array.prototype.slice.call(arguments, 1));
+                            } else if (typeof method === 'object' || !method) {
+                                formElement($(this));
+                            }
+                            ;
+                        });
+                        return chk;
+                    };
+
+                    nifty.document.ready(function () {
+                        allFormEl = $('.form-checkbox, .form-radio');
+                        if (allFormEl.length) allFormEl.niftyCheck();
+                    });
+
+                    nifty.document.on('change', '.btn-file :file', function () {
+                        var input = $(this),
+                            numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                            label = input.val().replace(/\\/g, '/').replace(/.*\//, ''),
+                            size = function () {
+                                try {
+                                    return input[0].files[0].size;
+                                } catch (err) {
+                                    return 'Nan';
+                                }
+                            }(),
+                            fileSize = function () {
+                                if (size == 'Nan') {
+                                    return "Unknown";
+                                }
+                                var rSize = Math.floor(Math.log(size) / Math.log(1024));
+                                return ( size / Math.pow(1024, rSize) ).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][rSize];
+                            }();
+
+
+                        input.trigger('fileselect', [numFiles, label, fileSize]);
+                    });
+                }(jQuery);
+
                 $('#accountForm').bootstrapValidator({
                     message: '输入不合法',
                     feedbackIcons: {
@@ -129,6 +272,7 @@
                     // Remove the has-success class
                     $parent.removeClass('has-success');
                 });
+
             }, 0);
 
             $scope.createAccount = function () {
