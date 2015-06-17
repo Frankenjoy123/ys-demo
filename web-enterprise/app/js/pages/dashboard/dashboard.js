@@ -20,7 +20,7 @@
             $('#maChart01').circliful();
             $('#maChart02').circliful();
             $('#maChart03').circliful();
-
+            $('#maChart04').circliful();
         }, 0);
 
     }]);
