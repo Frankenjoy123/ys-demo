@@ -67,7 +67,7 @@ public class AccountDomain {
                 .append("org_id", orgId)
                 .append("status_code_in", statusCodeIn)
                 .build();
-        return dataAPIClient.get("account/count/id" + query, Long.class);
+        return dataAPIClient.get("account/count" + query, Long.class);
     }
 
     public AccountObject createAccount(AccountObject accountObject) {

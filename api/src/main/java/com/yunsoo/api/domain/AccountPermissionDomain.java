@@ -1,74 +1,36 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.dto.PermissionAction;
-import com.yunsoo.api.dto.PermissionResource;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.common.data.object.AccountPermissionObject;
 import com.yunsoo.common.data.object.AccountPermissionPolicyObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.RestErrorResultException;
-import org.apache.http.annotation.Obsolete;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Created by:   Lijian
- * Created on:   2015/4/14
+ * Created by  : Lijian
+ * Created on  : 2015/6/17
  * Descriptions:
  */
-@Component
-public class PermissionDomain {
+public class AccountPermissionDomain {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PermissionDomain.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountPermissionDomain.class);
 
     @Autowired
     private RestClient dataAPIClient;
 
+    @Autowired
+    private PermissionDomain permissionDomain;
 
-    public Map<String, PermissionPolicyObject> getPermissionPolicies() {
-        Map<String, PermissionPolicyObject> permissionPolicies = new HashMap<>();
-        List<PermissionPolicyObject> permissionPolicyObjects = dataAPIClient.get("permission/policy",
-                new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
-                });
-        permissionPolicyObjects.forEach(o -> {
-            if (o == null) {
-                return;
-            }
-            if (o.getPermissions() == null) {
-                o.setPermissions(new ArrayList<>());
-            }
-            String pCode = o.getCode();
-            if (permissionPolicies.containsKey(pCode)) {
-                permissionPolicies.get(pCode).getPermissions().addAll(o.getPermissions());
-            } else {
-                permissionPolicies.put(pCode, o);
-            }
-        });
 
-        return permissionPolicies;
-    }
-
-    public List<PermissionResource> getAllActivePermissionResources() {
-        return dataAPIClient.get("permission/resource", new ParameterizedTypeReference<List<PermissionResource>>() {
-        });
-    }
-
-    public List<PermissionAction> getAllActivePermissionActions() {
-        return dataAPIClient.get("permission/action", new ParameterizedTypeReference<List<PermissionAction>>() {
-        });
-    }
-
-    @Obsolete
     public List<TPermission> getAccountPermissionsByAccountId(String accountId) {
         List<TPermission> permissions = new ArrayList<>();
         try {
@@ -76,7 +38,7 @@ public class PermissionDomain {
                     dataAPIClient.get("accountpermission/permission/{accountId}", AccountPermissionObject[].class, accountId);
             AccountPermissionPolicyObject[] permissionPolicyObjects =
                     dataAPIClient.get("accountpermission/permissionpolicy/{accountId}", AccountPermissionPolicyObject[].class, accountId);
-            Map<String, PermissionPolicyObject> permissionPolicies = getPermissionPolicies();
+            Map<String, PermissionPolicyObject> permissionPolicies = permissionDomain.getPermissionPolicies();
             for (AccountPermissionObject p : permissionObjects) {
                 TPermission permission = new TPermission();
                 permission.setOrgId(p.getOrgId());
@@ -102,7 +64,7 @@ public class PermissionDomain {
         return permissions;
     }
 
-    @Obsolete
+
     public boolean hasPermission(String accountId, TPermission permission) {
         List<TPermission> permissions = getAccountPermissionsByAccountId(accountId);
         if (permissions != null && permissions.size() > 0) {

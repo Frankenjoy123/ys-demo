@@ -67,7 +67,7 @@ public class AccountController {
         return accounts.getContent().stream().map(this::toAccount).collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "count/id", method = RequestMethod.GET)
+    @RequestMapping(value = "count", method = RequestMethod.GET)
     public Long count(@RequestParam(value = "org_id", required = false) String orgId,
                       @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
         if (orgId == null) {
