@@ -41,25 +41,31 @@ public class UserLikedProductController {
 
     @RequestMapping(value = "/who/{userid}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#userid, 'UserLikedProduct', 'usercollection:read')")
-    public List<UserLikedProduct> getUserCollectionById(@PathVariable(value = "userid") String userid) {
-        if (userid == null || userid.isEmpty()) {
-            throw new BadRequestException("UserId不应为空！");
-        }
+    public List<UserLikedProduct> getUserCollectionById(@PathVariable(value = "userid") String userid,
+                                                        @RequestParam(value = "index") Integer index,
+                                                        @RequestParam(value = "size") Integer size) {
+//        if (userid == null || userid.isEmpty()) {
+//            throw new BadRequestException("UserId不应为空！");
+//        }
+        if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
+        if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
 
-        List<UserLikedProduct> userLikedProductList = dataAPIClient.get("/user/collection/userid/{userid}", new ParameterizedTypeReference<List<UserLikedProduct>>() {
-        }, userid);
+        List<UserLikedProduct> userLikedProductList = dataAPIClient.get("/user/collection/userid/{0}?index={1}&size={2}", new ParameterizedTypeReference<List<UserLikedProduct>>() {
+        }, userid, index, size);
 
         //fill product name
-        HashMap<String, String> productHashMap = new HashMap<>();
+        HashMap<String, ProductBaseObject> productHashMap = new HashMap<>();
         for (UserLikedProduct userLikedProduct : userLikedProductList) {
             if (!productHashMap.containsKey(userLikedProduct.getBaseProductId())) {
                 ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, userLikedProduct.getBaseProductId());
                 if (productBaseObject != null) {
-                    productHashMap.put(userLikedProduct.getBaseProductId(), productBaseObject.getName());
+                    productHashMap.put(userLikedProduct.getBaseProductId(), productBaseObject);
                     userLikedProduct.setProductName(productBaseObject.getName());
+                    userLikedProduct.setComment(productBaseObject.getComment());
                 }
             } else {
-                userLikedProduct.setProductName(productHashMap.get(userLikedProduct.getProductName()));
+                userLikedProduct.setProductName(productHashMap.get(userLikedProduct.getBaseProductId()).getName());
+                userLikedProduct.setComment(productHashMap.get(userLikedProduct.getBaseProductId()).getComment());
             }
         }
 //            if (userLikedProductList == null || userLikedProductList.size() == 0) {

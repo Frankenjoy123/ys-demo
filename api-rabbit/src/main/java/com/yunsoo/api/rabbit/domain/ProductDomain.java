@@ -82,18 +82,20 @@ public class ProductDomain {
     }
 
     //获取基本产品信息 - ProductBase
-    public HashMap<String, String> getProductBaseById(List<String> productBaseIdList) {
+    public void fillProductName(List<Product> productList) {
+        //fill product name
         HashMap<String, String> productHashMap = new HashMap<>();
-
-        for (String productBaseId : productBaseIdList) {
-            if (!productHashMap.containsKey(productBaseId)) {
-                ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
+        for (Product product : productList) {
+            if (!productHashMap.containsKey(product.getProductBaseId())) {
+                ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, product.getProductBaseId());
                 if (productBaseObject != null) {
-                    productHashMap.put(productBaseId, productBaseObject.getName());
+                    productHashMap.put(product.getProductBaseId(), productBaseObject.getName());
+                    product.setProductName(productBaseObject.getName());
                 }
+            } else {
+                product.setProductName(productHashMap.get(product.getProductName()));
             }
         }
-        return productHashMap;
     }
 
     public List<ProductBase> getAllProductBaseByOrgId(int orgId) {

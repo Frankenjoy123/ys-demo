@@ -21,6 +21,8 @@ public class Product {
     private ProductCategory productCategory;
     @JsonProperty("product_base_id")
     private String ProductBaseId;
+    @JsonProperty("product_name")
+    private String productName;
     @JsonProperty("org_id")
     private String orgId;
     @JsonProperty("barcode")
@@ -65,6 +67,14 @@ public class Product {
 
     public void setProductBaseId(String productBaseId) {
         ProductBaseId = productBaseId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public String getOrgId() {

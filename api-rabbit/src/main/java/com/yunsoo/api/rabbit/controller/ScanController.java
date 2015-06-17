@@ -12,6 +12,7 @@ import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.api.rabbit.object.ValidationResult;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.OrganizationObject;
+import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ScanRecordObject;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -158,7 +160,7 @@ public class ScanController {
         OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, scanResult.getProduct().getOrgId());
         scanResult.setManufacturer(Organization.fromOrganizationObject(organizationObject));
 
-        //7, set validation result by our validation strategy.
+        //6, set validation result by our validation strategy.
         scanResult.setValidationResult(scanRecordList.size() == 0 ? ValidationResult.Real : ValidationResult.Uncertain);
 
         return scanResult;
@@ -190,6 +192,7 @@ public class ScanController {
 
         ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?userId={userId}&pageIndex={pageIndex}&pageSize={pageSize}", ScanRecord[].class, userId, pageIndex, pageSize);
         List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
+        this.fillProductInfor(scanRecordList);
         return scanRecordList;
     }
 
@@ -228,6 +231,7 @@ public class ScanController {
         ScanRecord[] scanRecords = dataAPIClient.get("scan/filter?userId={userId}&Id={Id}&backward={backward}&pageIndex={pageIndex}&pageSize={pageSize}",
                 ScanRecord[].class, userId, Id, isbackward, pageIndex, pageSize);
         List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
+        this.fillProductInfor(scanRecordList);
         return scanRecordList;
     }
 
@@ -304,4 +308,21 @@ public class ScanController {
         return dataAPIClient.post("scan", scanRecord, long.class);
     }
 
+    private void fillProductInfor(List<ScanRecord> scanRecordList) {
+        //fill product name
+        HashMap<String, ProductBaseObject> productHashMap = new HashMap<>();
+        for (ScanRecord scanRecord : scanRecordList) {
+            if (!productHashMap.containsKey(scanRecord.getBaseProductId())) {
+                ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, scanRecord.getBaseProductId());
+                if (productBaseObject != null) {
+                    productHashMap.put(scanRecord.getBaseProductId(), productBaseObject);
+                    scanRecord.setProductName(productBaseObject.getName());
+                    scanRecord.setProductComment(productBaseObject.getComment());
+                }
+            } else {
+                scanRecord.setProductName(productHashMap.get(scanRecord.getBaseProductId()).getName());
+                scanRecord.setProductComment(productHashMap.get(scanRecord.getBaseProductId()).getComment());
+            }
+        }
+    }
 }

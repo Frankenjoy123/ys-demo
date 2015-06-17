@@ -22,6 +22,10 @@ public class ScanRecord implements Comparator<ScanRecord> {
     private String productKey;
     @JsonProperty("base_product_id")
     private String baseProductId;
+    @JsonProperty("product_name")
+    private String productName;
+    @JsonProperty("product_comment")
+    private String productComment;
     @JsonProperty("app_id")
     private String appId;
     @JsonProperty("device_id")
@@ -60,6 +64,22 @@ public class ScanRecord implements Comparator<ScanRecord> {
 
     public void setBaseProductId(String baseProductId) {
         this.baseProductId = baseProductId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getProductComment() {
+        return productComment;
+    }
+
+    public void setProductComment(String productComment) {
+        this.productComment = productComment;
     }
 
     public String getAppId() {
