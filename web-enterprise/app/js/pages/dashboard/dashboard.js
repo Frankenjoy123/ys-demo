@@ -9,11 +9,19 @@
         };
     }]);
 
-    app.controller("DashboardCtrl", ["$scope", "dashboardService", function ($scope, dashboardService) {
+    app.controller("DashboardCtrl", ["$scope", "dashboardService", "$timeout", function ($scope, dashboardService, $timeout) {
         $scope.productKeyQuantitySum = 0;
         //get quantity sum of product key batches
         dashboardService.getProductKeyQuantitySum(function (data) {
             $scope.productKeyQuantitySum = data;
         })
+
+        $timeout(function () {
+            $('#maChart01').circliful();
+            $('#maChart02').circliful();
+            $('#maChart03').circliful();
+
+        }, 0);
+
     }]);
 })();
