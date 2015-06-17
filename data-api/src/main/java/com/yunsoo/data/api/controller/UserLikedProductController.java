@@ -1,6 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.UserLikedProductObject;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.UserLikedProductEntity;
 import com.yunsoo.data.service.repository.UserLikedProductRepository;
@@ -8,6 +9,7 @@ import com.yunsoo.data.service.service.contract.UserLikedProduct;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +18,7 @@ import java.util.List;
 
 /**
  * Created by Zhe on 2015/4/3.
- *  *  * * ErrorCode
+ * *  * * ErrorCode
  * 40401    :   UserLikedProduct not found!
  */
 
@@ -27,8 +29,13 @@ public class UserLikedProductController {
     private UserLikedProductRepository userLikedProductRepository;
 
     @RequestMapping(value = "/userid/{id}", method = RequestMethod.GET)
-    public List<UserLikedProductObject> getUserCollectionByUserId(@PathVariable(value = "id") String id) {
-        return this.FromUserLikedProductList(UserLikedProduct.FromEntityList(userLikedProductRepository.findByUserIdAndActive(id, true))); //add active filter
+    public List<UserLikedProductObject> getUserCollectionByUserId(@PathVariable(value = "id") String id,
+                                                                  @RequestParam(value = "index") Integer index,
+                                                                  @RequestParam(value = "size") Integer size) {
+        if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
+        if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
+
+        return this.FromUserLikedProductList(UserLikedProduct.FromEntityList(userLikedProductRepository.findByUserIdAndActive(id, true, new PageRequest(index, size)))); //add active filter
     }
 
     @RequestMapping(value = "/userid/{id}/product/{pid}", method = RequestMethod.GET)

@@ -49,15 +49,17 @@ public class UserFollowingController {
         }, id, index, size);
 
         //fill organization Name
-        HashMap<String, String> orgMap = new HashMap<>();
+        HashMap<String, OrganizationObject> orgMap = new HashMap<>();
         for (UserFollowing userFollowing : userFollowingList) {
             if (!orgMap.containsKey(userFollowing.getOrganizationId())) {
                 OrganizationObject object = dataAPIClient.get("organization/{id}", OrganizationObject.class, userFollowing.getOrganizationId());
                 if (object != null) {
-                    orgMap.put(userFollowing.getOrganizationId(), object.getName());
+                    orgMap.put(userFollowing.getOrganizationId(), object);
                     userFollowing.setOrganizationName(object.getName());
+                    userFollowing.setOrganizationDescription(object.getDescription());
                 } else {
-                    userFollowing.setOrganizationName(orgMap.get(userFollowing.getOrganizationName()));
+                    userFollowing.setOrganizationName(orgMap.get(userFollowing.getOrganizationId()).getName());
+                    userFollowing.setOrganizationDescription(orgMap.get(userFollowing.getOrganizationId()).getDescription());
                 }
             }
         }

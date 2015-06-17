@@ -43,7 +43,6 @@ public class UserFollowingController {
     public List<UserFollowingObject> getFollowingOrgsByUserId(@PathVariable(value = "id") String id,
                                                         @RequestParam(value = "index") Integer index,
                                                         @RequestParam(value = "size") Integer size) {
-        if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
         if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
 

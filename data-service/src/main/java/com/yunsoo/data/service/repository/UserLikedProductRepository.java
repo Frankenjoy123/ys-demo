@@ -1,8 +1,9 @@
 package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.UserLikedProductEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 
 /**
  * Created by Zhe on 2015/4/3.
@@ -13,6 +14,8 @@ public interface UserLikedProductRepository extends JpaRepository<UserLikedProdu
     Iterable<UserLikedProductEntity> findByUserId(String userId);
 
     Iterable<UserLikedProductEntity> findByUserIdAndActive(String userId, Boolean active);
+
+    Page<UserLikedProductEntity> findByUserIdAndActive(String userId, Boolean active, Pageable pageable);
 
     Iterable<UserLikedProductEntity> findByUserIdAndBaseProductId(String userId, String baseProductId);
 
