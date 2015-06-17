@@ -1,5 +1,7 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/4/14
@@ -7,7 +9,10 @@ package com.yunsoo.common.data.object;
  */
 public class PermissionObject {
 
+    @JsonProperty("resource_code")
     private String resourceCode;
+
+    @JsonProperty("action_code")
     private String actionCode;
 
 

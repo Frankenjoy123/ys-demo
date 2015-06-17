@@ -26,11 +26,17 @@ public class LookupServiceWrap {
         return toLookupObject(item);
     }
 
-    public List<LookupObject> getAll(LookupType lookupType, Boolean activeOnly) {
-        List<LookupItem> productKeyTypes = activeOnly != null && activeOnly
-                ? lookupService.getAllActive(lookupType)
-                : lookupService.getAll(lookupType);
+    public List<LookupObject> getAll(LookupType lookupType, Boolean active) {
+        List<LookupItem> productKeyTypes = active == null
+                ? lookupService.getAll(lookupType)
+                : lookupService.getByActive(lookupType, active);
         return productKeyTypes.stream().map(this::toLookupObject).collect(Collectors.toList());
+    }
+
+    public LookupObject save(LookupType lookupType, LookupObject object) {
+        LookupItem item = toLookupItem(object);
+        LookupItem savedItem = lookupService.save(lookupType, item);
+        return toLookupObject(savedItem);
     }
 
     private LookupObject toLookupObject(LookupItem item) {
@@ -43,5 +49,17 @@ public class LookupServiceWrap {
         object.setDescription(item.getDescription());
         object.setActive(item.isActive());
         return object;
+    }
+
+    private LookupItem toLookupItem(LookupObject object) {
+        if (object == null) {
+            return null;
+        }
+        LookupItem item = new LookupItem();
+        item.setCode(object.getCode());
+        item.setName(object.getName());
+        item.setDescription(object.getDescription());
+        item.setActive(object.isActive());
+        return item;
     }
 }

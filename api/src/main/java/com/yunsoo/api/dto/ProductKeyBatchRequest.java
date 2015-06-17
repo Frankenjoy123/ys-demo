@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ProductKeyBatchRequest {
 
-    @Range(min = 1, max = 100000, message = "单次申请数量必须大于1并且不超过100000")
+    @Range(min = 1, max = 1000000, message = "单次申请数量必须大于1并且不超过1000000")
     @JsonProperty("quantity")
     private int quantity;
 

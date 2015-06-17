@@ -76,7 +76,7 @@ public class PermissionDomain {
             if (o.getPermissions() == null) {
                 o.setPermissions(new ArrayList<>());
             }
-            String pCode = o.getPolicyCode();
+            String pCode = o.getCode();
             if (permissionPolicies.containsKey(pCode)) {
                 permissionPolicies.get(pCode).getPermissions().addAll(o.getPermissions());
             } else {

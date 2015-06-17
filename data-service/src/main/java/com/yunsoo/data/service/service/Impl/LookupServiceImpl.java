@@ -46,11 +46,11 @@ public class LookupServiceImpl implements LookupService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<LookupItem> getAllActive(LookupType lookupType) {
+    public List<LookupItem> getByActive(LookupType lookupType, Boolean active) {
         Assert.notNull(lookupType, "lookupType must not be null");
 
         LookupRepository repo = findRepositoryFor(lookupType.getRepositoryType());
-        Iterable<AbstractLookupEntity> entities = repo.findByActive(true);
+        Iterable<AbstractLookupEntity> entities = repo.findByActive(active);
         return StreamSupport.stream(entities.spliterator(), false).map(LookupItem::new).collect(Collectors.toList());
     }
 
@@ -62,7 +62,7 @@ public class LookupServiceImpl implements LookupService {
 
         LookupRepository repo = findRepositoryFor(lookupType.getRepositoryType());
         AbstractLookupEntity entity = lookupItem.toEntity(lookupType.getEntityType());
-        entity = repo.save(entity); //TODO:issue, saving is not successfully
+        entity = repo.save(entity);
         return new LookupItem(entity);
     }
 
