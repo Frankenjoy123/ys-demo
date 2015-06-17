@@ -19,6 +19,8 @@ public class UserFollowing {
     private String organizationId;
     @JsonProperty("organization_name")
     private String organizationName;
+    @JsonProperty("organization_Desc")
+    private String organizationDescription;
     @JsonProperty("last_read_message_id")
     private Long lastReadMessageId;
     @JsonProperty("is_following")
@@ -60,6 +62,14 @@ public class UserFollowing {
 
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
+    }
+
+    public String getOrganizationDescription() {
+        return organizationDescription;
+    }
+
+    public void setOrganizationDescription(String organizationDescription) {
+        this.organizationDescription = organizationDescription;
     }
 
     public Long getLastReadMessageId() {
