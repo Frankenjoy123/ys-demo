@@ -101,7 +101,8 @@ public class UserController {
 
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.PATCH)
-    @PreAuthorize("hasPermission(#user, 'authenticated')")
+//    @PreAuthorize("hasPermission(#user, 'authenticated')")
+    @PreAuthorize("hasPermission(#userId, 'User', 'user:update')")
     public void updateUser(@PathVariable(value = "userId") String userId,
                            @RequestBody User user) throws Exception {
         user.setId(userId);

@@ -79,7 +79,7 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResult handleNoHandlerFound(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.NOT_FOUND, "no handler found");
-        LOGGER.warn("[from: " + FROM + ", status: 404, message: no handler found]", ex);
+        LOGGER.warn("[from: " + FROM + ", status: 404, message: " + ex.getMessage() + "]");
         return appendTraceInfo(result, ex);
     }
 
@@ -89,7 +89,6 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResult handleServerError(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.INTERNAL_SERVER_ERROR, ex.getMessage());
-        ;
         LOGGER.error("[from: " + FROM + ", status: 500, message: " + ex.getMessage() + "]", ex);
         return appendTraceInfo(result, ex);
     }

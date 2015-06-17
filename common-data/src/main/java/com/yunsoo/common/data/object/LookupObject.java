@@ -22,7 +22,7 @@ public class LookupObject {
     private String description;
 
     @JsonProperty("active")
-    private boolean active;
+    private Boolean active;
 
 
     public String getName() {
@@ -49,11 +49,11 @@ public class LookupObject {
         this.description = description;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
