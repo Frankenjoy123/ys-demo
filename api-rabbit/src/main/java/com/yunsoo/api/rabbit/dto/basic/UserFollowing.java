@@ -19,7 +19,7 @@ public class UserFollowing {
     private String organizationId;
     @JsonProperty("organization_name")
     private String organizationName;
-    @JsonProperty("organization_Desc")
+    @JsonProperty("organization_desc")
     private String organizationDescription;
     @JsonProperty("last_read_message_id")
     private Long lastReadMessageId;
