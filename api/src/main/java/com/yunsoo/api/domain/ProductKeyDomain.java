@@ -80,8 +80,8 @@ public class ProductKeyDomain {
     public ProductKeyBatch getProductKeyBatchById(String id) {
         return toProductKeyBatch(
                 dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id),
-                lookupDomain.getAllProductKeyTypes(),
-                lookupDomain.getAllProductKeyBatchStatuses());
+                lookupDomain.getProductKeyTypes(),
+                lookupDomain.getProductKeyBatchStatuses());
     }
 
     public Page<List<ProductKeyBatch>> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Pageable pageable) {
@@ -99,8 +99,8 @@ public class ProductKeyDomain {
         Page<List<ProductKeyBatchObject>> objectsPage = dataAPIClient.getPaged("productkeybatch" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
         });
 
-        List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes();
-        List<ProductKeyBatchStatus> productKeyBatchStatuses = lookupDomain.getAllProductKeyBatchStatuses();
+        List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
+        List<ProductKeyBatchStatus> productKeyBatchStatuses = lookupDomain.getProductKeyBatchStatuses();
         return new Page<>(objectsPage.getContent().stream()
                 .map(i -> toProductKeyBatch(i, productKeyTypes, productKeyBatchStatuses))
                 .collect(Collectors.toList()), objectsPage.getPage(), objectsPage.getTotal());
@@ -157,7 +157,7 @@ public class ProductKeyDomain {
             LOGGER.error("ProductKeyBatchMassage posting to sqs failed [exceptionMessage: {}]", ex.getMessage());
         }
 
-        return toProductKeyBatch(newBatchObj, lookupDomain.getAllProductKeyTypes(), lookupDomain.getAllProductKeyBatchStatuses());
+        return toProductKeyBatch(newBatchObj, lookupDomain.getProductKeyTypes(), lookupDomain.getProductKeyBatchStatuses());
     }
 
     public byte[] getProductKeysByBatchId(String id) {
@@ -186,7 +186,7 @@ public class ProductKeyDomain {
     }
 
     public boolean validateProductKeyTypeCodes(List<String> productKeyTypeCodes) {
-        List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes();
+        List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
         return productKeyTypeCodes != null
                 && productKeyTypeCodes.size() > 0
                 && productKeyTypeCodes.stream().allMatch(c -> productKeyTypes.stream().anyMatch(t -> t.getCode().equals(c)));

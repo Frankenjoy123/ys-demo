@@ -1,9 +1,9 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.Product;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductCategory;
+import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
@@ -86,7 +86,7 @@ public class ProductDomain {
         if (productBaseObject == null) {
             return null;
         }
-        ProductBase productBase = fromProductBaseObject(productBaseObject, lookupDomain.getAllProductKeyTypes());
+        ProductBase productBase = fromProductBaseObject(productBaseObject, lookupDomain.getProductKeyTypes());
 //        productBase.setThumbnailURL(yunsooYamlConfig.getDataapi_productbase_picture_basepath() + "id" + productBase.getId() + ".jpg");
         return productBase;
     }
@@ -96,7 +96,7 @@ public class ProductDomain {
         if (objects == null) {
             return null;
         }
-        List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes();
+        List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
         return Arrays.stream(objects).map(p -> fromProductBaseObject(p, productKeyTypes)).collect((Collectors.toList()));
     }
 

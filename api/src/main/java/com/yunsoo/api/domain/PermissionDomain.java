@@ -4,6 +4,7 @@ import com.yunsoo.api.dto.PermissionAction;
 import com.yunsoo.api.dto.PermissionResource;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,13 +53,25 @@ public class PermissionDomain {
         return permissionPolicies;
     }
 
-    public List<PermissionResource> getAllActivePermissionResources() {
-        return dataAPIClient.get("permission/resource", new ParameterizedTypeReference<List<PermissionResource>>() {
+    //PermissionResource
+    public List<PermissionResource> getPermissionResources() {
+        return getPermissionResources(null);
+    }
+
+    public List<PermissionResource> getPermissionResources(Boolean active) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("active", active).build();
+        return dataAPIClient.get("permission/resource" + query, new ParameterizedTypeReference<List<PermissionResource>>() {
         });
     }
 
-    public List<PermissionAction> getAllActivePermissionActions() {
-        return dataAPIClient.get("permission/action", new ParameterizedTypeReference<List<PermissionAction>>() {
+    //PermissionAction
+    public List<PermissionAction> getPermissionActions() {
+        return getPermissionActions(null);
+    }
+
+    public List<PermissionAction> getPermissionActions(Boolean active) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("active", active).build();
+        return dataAPIClient.get("permission/action" + query, new ParameterizedTypeReference<List<PermissionAction>>() {
         });
     }
 

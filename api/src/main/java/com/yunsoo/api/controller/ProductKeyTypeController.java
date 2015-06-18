@@ -23,7 +23,7 @@ public class ProductKeyTypeController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyType> getAllActive() {
-        return lookDomain.getAllProductKeyTypes(true);
+        return lookDomain.getProductKeyTypes(true);
     }
 
 }
