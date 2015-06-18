@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.DeviceDomain;
-import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.Device;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
@@ -38,7 +38,7 @@ public class DeviceController {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceController.class);
 
     @Autowired
-    private PermissionDomain permissionDomain;
+    private AccountPermissionDomain accountPermissionDomain;
 
     @Autowired
     private DeviceDomain deviceDomain;
@@ -85,7 +85,7 @@ public class DeviceController {
         if (deviceCurrent == null) {
             throw new NotFoundException("device not found by [id: " + id + "]");
         }
-        if (!permissionDomain.hasPermission(accountId, new TPermission(deviceCurrent.getOrgId(), "device", "update"))) {
+        if (!accountPermissionDomain.hasPermission(accountId, new TPermission(deviceCurrent.getOrgId(), "device", "update"))) {
             throw new ForbiddenException();
         }
 

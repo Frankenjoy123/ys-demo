@@ -9,6 +9,7 @@ import com.yunsoo.common.web.exception.RestErrorResultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
  * Created on  : 2015/6/17
  * Descriptions:
  */
+@Component
 public class AccountPermissionDomain {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountPermissionDomain.class);
@@ -38,7 +40,7 @@ public class AccountPermissionDomain {
                     dataAPIClient.get("accountpermission/permission/{accountId}", AccountPermissionObject[].class, accountId);
             AccountPermissionPolicyObject[] permissionPolicyObjects =
                     dataAPIClient.get("accountpermission/permissionpolicy/{accountId}", AccountPermissionPolicyObject[].class, accountId);
-            Map<String, PermissionPolicyObject> permissionPolicies = permissionDomain.getPermissionPolicies();
+            Map<String, PermissionPolicyObject> permissionPolicies = permissionDomain.getPermissionPolicyMap();
             for (AccountPermissionObject p : permissionObjects) {
                 TPermission permission = new TPermission();
                 permission.setOrgId(p.getOrgId());
