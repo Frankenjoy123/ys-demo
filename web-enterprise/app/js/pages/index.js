@@ -82,7 +82,7 @@
             });
     }]);
 
-    app.factory('rootService', ['$http', '$rootScope', function ($http) {
+    app.factory('rootService', ['$http', '$rootScope', function ($http, $rootScope) {
         return {
             initContext: function () {
                 var context = this;
@@ -98,6 +98,8 @@
                 $http.get('/api/organization/current').success(function (data) {
                     context.organization = data;
                     console.log('[get current organization]', data);
+
+                    $rootScope.$broadcast('context-organization-ready');
                 }).error(function (data, code) {
                     console.log('[get current organization]', 'failed', code);
                 });
@@ -148,6 +150,8 @@
                 });
                 sum.percentage = (sum.remain * 100 / sum.total) | 0;
                 console.log('[get productKeyCreditSum]: ', sum);
+
+                $scope.$broadcast('productKeyCreditSum-ready', sum);
             });
 
 
