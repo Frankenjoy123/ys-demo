@@ -1,12 +1,12 @@
 $(document).ready(function () {
 
-    var productKey = '0gRIJTEiSTmo_3v48BkuEB';
+    var productKey = 'okl-xPnHS-eRwx_mdfrTyh';
     var appId = '2k4d3xp24wpxxcf4myt';
 
     var postObject = {
         key: productKey,
-        deviceCode: '00000-00000-00000-00000',
-        appId: appId,
+        device_code: '00000-00000-00000-00000',
+        app_id: appId,
         location: '未知地址',
         latitude: "",
         longitude: ""
