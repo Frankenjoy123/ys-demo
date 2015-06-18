@@ -63,7 +63,7 @@ public class PermissionController {
         }
         Permission permission = new Permission();
         permission.setResourceCode(permissionObject.getResourceCode());
-        permission.setActionCode(permission.getActionCode());
+        permission.setActionCode(permissionObject.getActionCode());
         return permission;
     }
 

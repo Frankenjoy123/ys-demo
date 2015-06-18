@@ -60,7 +60,7 @@ public class ProductBaseController {
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'ProductBase:read')")
+    @PostAuthorize("hasPermission(returnObject, 'productbase:read')")
     public ProductBase get(@PathVariable(value = "id") String id) {
         if (id == null || id.isEmpty()) {
             throw new BadRequestException("ProductBaseId不应为空！");
@@ -73,7 +73,7 @@ public class ProductBaseController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'ProductBase:read')")
+    @PreAuthorize("hasPermission(#orgId, 'productbase:read')")
     public List<ProductBase> getAllForCurrentOrg(@RequestParam(value = "org_id", required = false) String orgId) {
         if (orgId == null || orgId.isEmpty()) {
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId(); //fetch from AuthContext
@@ -84,7 +84,7 @@ public class ProductBaseController {
     //create
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'ProductBase:create')")
+    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:create')")
     public String create(@RequestBody ProductBase productBase) {
         ProductBaseObject p = new ProductBaseObject();
         //BeanUtils.copyProperties(productBase, p);

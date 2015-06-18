@@ -18,6 +18,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -54,7 +55,8 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler({
             MethodArgumentNotValidException.class,
             MissingServletRequestParameterException.class,
-            HttpMediaTypeNotSupportedException.class})
+            HttpMediaTypeNotSupportedException.class,
+            ServletRequestBindingException.class})
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResult handleMissingRequestParameterException(HttpServletRequest req, Exception ex) {
