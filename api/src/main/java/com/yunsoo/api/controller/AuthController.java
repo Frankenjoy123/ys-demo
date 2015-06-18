@@ -2,9 +2,9 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountDomain;
+import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.AccountTokenDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
-import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.AccountLoginRequest;
 import com.yunsoo.api.dto.AccountLoginResponse;
 import com.yunsoo.api.dto.Token;
@@ -45,7 +45,7 @@ public class AuthController {
     private AccountTokenDomain accountTokenDomain;
 
     @Autowired
-    private PermissionDomain permissionDomain;
+    private AccountPermissionDomain accountPermissionDomain;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -227,7 +227,7 @@ public class AuthController {
             throw new NotFoundException("account not found by [id: " + accountId + "]");
         }
 
-        if (!permissionDomain.hasPermission(currentAccountId, new TPermission(accountObject.getOrgId(), "logintoken", "create"))) {
+        if (!accountPermissionDomain.hasPermission(currentAccountId, new TPermission(accountObject.getOrgId(), "logintoken", "create"))) {
             throw new ForbiddenException();
         }
 

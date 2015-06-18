@@ -1,17 +1,13 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.LookupDomain;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.api.dto.ProductStatus;
-import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -27,7 +23,7 @@ public class ProductStatusController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductStatus> getAllActive() {
-        return lookDomain.getAllProductStatuses(true);
+        return lookDomain.getProductStatuses(true);
     }
 
 //    @RequestMapping(value = "search", method = RequestMethod.GET)

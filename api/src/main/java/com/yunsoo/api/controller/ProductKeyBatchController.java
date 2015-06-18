@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
-import com.yunsoo.api.domain.PermissionDomain;
+import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductBase;
@@ -53,7 +53,7 @@ public class ProductKeyBatchController {
     private ProductKeyDomain productKeyDomain;
 
     @Autowired
-    private PermissionDomain permissionDomain;
+    private AccountPermissionDomain accountPermissionDomain;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -65,7 +65,7 @@ public class ProductKeyBatchController {
         if (batch == null) {
             throw new NotFoundException("product batch");
         }
-        if (!permissionDomain.hasPermission(accountId, new TPermission(batch.getOrgId(), "productkey", "read"))) {
+        if (!accountPermissionDomain.hasPermission(accountId, new TPermission(batch.getOrgId(), "productkey", "read"))) {
             throw new ForbiddenException();
         }
         return batch;
@@ -114,7 +114,7 @@ public class ProductKeyBatchController {
 
         String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        if (!permissionDomain.hasPermission(accountId, new TPermission(orgId, "productkey", "create"))) {
+        if (!accountPermissionDomain.hasPermission(accountId, new TPermission(orgId, "productkey", "create"))) {
             throw new ForbiddenException();
         }
         appId = (appId == null) ? "unknown" : appId;

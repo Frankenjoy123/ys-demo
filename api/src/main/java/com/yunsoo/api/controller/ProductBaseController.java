@@ -1,6 +1,6 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.PermissionDomain;
+import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductBaseRequest;
@@ -10,7 +10,10 @@ import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.*;
+import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.ForbiddenException;
+import com.yunsoo.common.web.exception.InternalServerErrorException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -49,13 +52,15 @@ public class ProductBaseController {
 
     @Autowired
     private ProductDomain productDomain;
+
     @Autowired
-    private PermissionDomain permissionDomain;
+    private AccountPermissionDomain accountPermissionDomain;
+
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'ProductBase:read')")
+    @PostAuthorize("hasPermission(returnObject, 'productbase:read')")
     public ProductBase get(@PathVariable(value = "id") String id) {
         if (id == null || id.isEmpty()) {
             throw new BadRequestException("ProductBaseId不应为空！");
@@ -68,7 +73,7 @@ public class ProductBaseController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'ProductBase:read')")
+    @PreAuthorize("hasPermission(#orgId, 'productbase:read')")
     public List<ProductBase> getAllForCurrentOrg(@RequestParam(value = "org_id", required = false) String orgId) {
         if (orgId == null || orgId.isEmpty()) {
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId(); //fetch from AuthContext
@@ -79,7 +84,7 @@ public class ProductBaseController {
     //create
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'ProductBase:create')")
+    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:create')")
     public String create(@RequestBody ProductBase productBase) {
         ProductBaseObject p = new ProductBaseObject();
         //BeanUtils.copyProperties(productBase, p);
@@ -194,7 +199,7 @@ public class ProductBaseController {
         tPermission.setOrgId(productBase.getOrgId());
         tPermission.setResourceCode("Productbase");
         tPermission.setActionCode("delete");
-        if (!permissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
+        if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
             throw new ForbiddenException("没有权限删此产品记录！");
         }
         productBase.setStatusCode(LookupCodes.ProductBaseStatus.DELETED);  //just mark as inactive

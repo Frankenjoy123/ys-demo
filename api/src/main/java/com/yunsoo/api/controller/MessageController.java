@@ -1,8 +1,8 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
+import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.MessageDomain;
-import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.Message;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
@@ -55,8 +55,9 @@ public class MessageController {
 
     @Autowired
     private MessageDomain messageDomain;
+
     @Autowired
-    private PermissionDomain permissionDomain;
+    private AccountPermissionDomain accountPermissionDomain;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -140,7 +141,7 @@ public class MessageController {
         tPermission.setOrgId(message.getOrgId());
         tPermission.setResourceCode("message");
         tPermission.setActionCode("delete");
-        if (!permissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
+        if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
             throw new ForbiddenException("没有权限删去此信息！");
         }
         message.setStatus(LookupCodes.MessageStatus.DELETED); //set status as deleted

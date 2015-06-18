@@ -20,7 +20,6 @@ import java.util.stream.StreamSupport;
  * Descriptions:
  */
 @RestController
-@RequestMapping("/accountpermission")
 public class AccountPermissionController {
 
     @Autowired
@@ -29,7 +28,7 @@ public class AccountPermissionController {
     @Autowired
     private AccountPermissionPolicyRepository accountPermissionPolicyRepository;
 
-    @RequestMapping(value = "permission/{accountId}", method = RequestMethod.GET)
+    @RequestMapping(value = "accountpermission/{accountId}", method = RequestMethod.GET)
     public List<AccountPermissionObject> getPermissionsByAccountId(@PathVariable(value = "accountId") String accountId) {
         return StreamSupport.stream(accountPermissionRepository.findByAccountId(accountId).spliterator(), false)
                 .map(pe -> {
@@ -42,7 +41,7 @@ public class AccountPermissionController {
                 }).collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "permissionpolicy/{accountId}", method = RequestMethod.GET)
+    @RequestMapping(value = "accountpermissionpolicy/{accountId}", method = RequestMethod.GET)
     public List<AccountPermissionPolicyObject> getPermissionPoliciesByAccountId(@PathVariable(value = "accountId") String accountId) {
         return StreamSupport.stream(accountPermissionPolicyRepository.findByAccountId(accountId).spliterator(), false)
                 .map(ppe -> {

@@ -1,16 +1,14 @@
-package com.yunsoo.common.data.object;
+package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yunsoo.common.data.object.AccountPermissionPolicyObject;
 
 /**
- * Created by:   Lijian
- * Created on:   2015/4/13
+ * Created by  : Lijian
+ * Created on  : 2015/6/18
  * Descriptions:
  */
-public class AccountPermissionPolicyObject {
-
-    @JsonProperty("account_id")
-    private String accountId;
+public class AccountPermissionPolicy {
 
     @JsonProperty("org_id")
     private String orgId;
@@ -18,14 +16,6 @@ public class AccountPermissionPolicyObject {
     @JsonProperty("policy_code")
     private String policyCode;
 
-
-    public String getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
 
     public String getOrgId() {
         return orgId;
@@ -41,5 +31,13 @@ public class AccountPermissionPolicyObject {
 
     public void setPolicyCode(String policyCode) {
         this.policyCode = policyCode;
+    }
+
+    public AccountPermissionPolicy() {
+    }
+
+    public AccountPermissionPolicy(AccountPermissionPolicyObject object) {
+        this.orgId = object.getOrgId();
+        this.policyCode = object.getPolicyCode();
     }
 }
