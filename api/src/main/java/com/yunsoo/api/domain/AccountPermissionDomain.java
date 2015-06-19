@@ -1,8 +1,7 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.dto.AccountPermission;
-import com.yunsoo.api.dto.AccountPermissionPolicy;
 import com.yunsoo.api.object.TPermission;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountPermissionObject;
 import com.yunsoo.common.data.object.AccountPermissionPolicyObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Created by  : Lijian
@@ -36,23 +34,47 @@ public class AccountPermissionDomain {
     @Autowired
     private PermissionDomain permissionDomain;
 
-    public List<AccountPermission> getAccountPermissions(String accountId) {
-        List<AccountPermissionObject> permissionObjects =
-                dataAPIClient.get("accountpermission/{accountId}", new ParameterizedTypeReference<List<AccountPermissionObject>>() {
-                }, accountId);
-        return permissionObjects.stream().map(AccountPermission::new).collect(Collectors.toList());
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
+
+    public List<AccountPermissionObject> getAccountPermissions(String accountId) {
+        return dataAPIClient.get("accountpermission/{accountId}", new ParameterizedTypeReference<List<AccountPermissionObject>>() {
+        }, accountId);
     }
 
-    public List<AccountPermissionPolicy> getAccountPermissionPolicies(String accountId) {
-        List<AccountPermissionPolicyObject> permissionObjects =
-                dataAPIClient.get("accountpermissionpolicy/{accountId}", new ParameterizedTypeReference<List<AccountPermissionPolicyObject>>() {
-                }, accountId);
-        return permissionObjects.stream().map(AccountPermissionPolicy::new).collect(Collectors.toList());
+    public List<AccountPermissionPolicyObject> getAccountPermissionPolicies(String accountId) {
+        return dataAPIClient.get("accountpermissionpolicy/{accountId}", new ParameterizedTypeReference<List<AccountPermissionPolicyObject>>() {
+        }, accountId);
     }
 
+//    public List<AccountPermission> getAllAccountPermissions(String accountId) {
+//        List<AccountPermissionObject> permissions = getAllAccountPermissionObjects(accountId);
+//
+//    }
+
+
+    public List<AccountPermissionObject> getAllAccountPermissions(String accountId) {
+        List<AccountPermissionObject> permissions = new ArrayList<>();
+        List<AccountPermissionObject> accountPermissions = getAccountPermissions(accountId);
+        List<AccountPermissionPolicyObject> accountPermissionPolicies = getAccountPermissionPolicies(accountId);
+        Map<String, PermissionPolicyObject> permissionPolicyMap = permissionDomain.getPermissionPolicyMap();
+        permissions.addAll(accountPermissions);
+        accountPermissionPolicies.stream().filter(pp -> permissionPolicyMap.containsKey(pp.getPolicyCode())).forEach(pp -> {
+            permissionPolicyMap.get(pp.getPolicyCode()).getPermissions().forEach(po -> {
+                AccountPermissionObject object = new AccountPermissionObject();
+                object.setAccountId(pp.getAccountId());
+                object.setOrgId(pp.getOrgId());
+                object.setResourceCode(po.getResourceCode());
+                object.setActionCode(po.getActionCode());
+                permissions.add(object);
+            });
+        });
+        return permissions;
+    }
 
     public boolean hasPermission(String accountId, TPermission permission) {
-        List<TPermission> permissions = getAllAccountPermissions(accountId);
+        List<AccountPermissionObject> permissions = getAllAccountPermissions(accountId);
         if (permissions != null && permissions.size() > 0) {
             String orgId = permission.getOrgId();
             String resourceCode = permission.getResourceCode();
@@ -60,13 +82,13 @@ public class AccountPermissionDomain {
             if (resourceCode == null || actionCode == null) {
                 return true; //anonymous
             }
-            for (TPermission p : permissions) {
-                boolean isOrgIdMatched = orgId == null || wildcardMatch(p.getOrgId(), orgId);
+            for (AccountPermissionObject po : permissions) {
+                boolean isOrgIdMatched = orgId == null || wildcardMatch(po.getOrgId(), orgId);
                 if (!isOrgIdMatched) {
                     continue; //try next permission;
                 }
-                boolean isResourceMatched = wildcardMatch(p.getResourceCode(), resourceCode);
-                boolean isActionMatched = wildcardMatch(p.getActionCode(), actionCode);
+                boolean isResourceMatched = wildcardMatch(po.getResourceCode(), resourceCode);
+                boolean isActionMatched = wildcardMatch(po.getActionCode(), actionCode);
                 if (!isResourceMatched || !isActionMatched) {
                     continue; //try next permission;
                 }
@@ -84,22 +106,11 @@ public class AccountPermissionDomain {
         }
     }
 
-
-    private List<TPermission> getAllAccountPermissions(String accountId) {
-        List<TPermission> permissions = new ArrayList<>();
-        List<AccountPermission> accountPermissions = getAccountPermissions(accountId);
-        List<AccountPermissionPolicy> accountPermissionPolicies = getAccountPermissionPolicies(accountId);
-        Map<String, PermissionPolicyObject> permissionPolicyMap = permissionDomain.getPermissionPolicyMap();
-        accountPermissions.stream().forEach(p -> {
-            permissions.add(new TPermission(p.getOrgId(), p.getResourceCode(), p.getActionCode()));
-        });
-        accountPermissionPolicies.stream().filter(pp -> permissionPolicyMap.containsKey(pp.getPolicyCode())).forEach(pp -> {
-            permissionPolicyMap.get(pp.getPolicyCode()).getPermissions().forEach(po -> {
-                permissions.add(new TPermission(pp.getOrgId(), po.getResourceCode(), po.getActionCode()));
-            });
-        });
-        return permissions;
+    public void checkPermission(TPermission permission) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        this.checkPermission(currentAccountId, permission);
     }
+
 
     /**
      * @param expression String with wildcard *, example: *, product*
