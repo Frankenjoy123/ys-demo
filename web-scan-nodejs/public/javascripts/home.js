@@ -1,6 +1,8 @@
 $(document).ready(function () {
 
-    var productKey = 'okl-xPnHS-eRwx_mdfrTyh';
+    var productKey = $('#key').text().trim();
+    console.log('productKey: ' + productKey);
+
     var appId = '2k4d3xp24wpxxcf4myt';
 
     var postObject = {
