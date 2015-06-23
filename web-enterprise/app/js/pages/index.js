@@ -76,6 +76,10 @@
                 templateUrl: 'pages/echarts/pie-map.html',
                 controller: 'pieMapCtrl'
             })
+            .when('/group', {
+                templateUrl: 'pages/group/group.html',
+                controller: 'groupCtrl'
+            })
             .otherwise({
                 templateUrl: 'pages/dashboard/dashboard.html',
                 controller: 'DashboardCtrl'
