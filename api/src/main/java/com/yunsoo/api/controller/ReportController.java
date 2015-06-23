@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 
@@ -31,11 +28,11 @@ public class ReportController {
     private RestClient dataAPIClient;
     private String folder = "report";
 
-    @RequestMapping(value = "/productlist", method = RequestMethod.GET)
-    public ResponseEntity get(@RequestParam(value = "type", required = true) String type,
-                              @RequestParam(value = "period", required = true) String period) {
+    @RequestMapping(value = "myorganization/{type}/{period}", method = RequestMethod.GET)
+    public ResponseEntity get(@PathVariable(value = "type") String type,
+                              @PathVariable(value = "period") String period) {
         String currentOrgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        String theFilePath = folder + "/organization/" + currentOrgId + "/" + type + "-" + period;
+        String theFilePath = folder + "/organization/" + currentOrgId + "/" + type + "/" + period;
         try {
             FileObject fileObject = dataAPIClient.get("file?path={0}", FileObject.class, theFilePath);
             if (fileObject.getLength() > 0) {
