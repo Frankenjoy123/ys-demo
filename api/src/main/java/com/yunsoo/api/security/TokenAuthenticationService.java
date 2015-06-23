@@ -2,8 +2,10 @@ package com.yunsoo.api.security;
 
 import com.yunsoo.api.dto.Token;
 import com.yunsoo.api.object.TAccount;
+import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +40,10 @@ public class TokenAuthenticationService {
 
 
     public AccountAuthentication getAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AccountAuthentication)) {
+            throw new UnauthorizedException();
+        }
         return (AccountAuthentication) SecurityContextHolder.getContext().getAuthentication();
     }
 
