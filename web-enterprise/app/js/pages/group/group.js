@@ -18,6 +18,10 @@
     'dataFilterService',
     function ($scope, $timeout, groupService, dataFilterService) {
 
+      $timeout(function () {
+        $('#demo-cs-multiselect').chosen({width:'100%'});
+      }, 0);
+
       $scope.groupPermission = {
         dashBoardRead: '',
         productKeyRead: '',
