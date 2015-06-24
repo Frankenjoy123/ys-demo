@@ -15,7 +15,6 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -37,15 +36,7 @@ public class GroupControllerTest {
 
     @Before
     public void before() {
-        String baseURL = "http://localhost:" + port;
-        dataAPIClient = new RestClient(baseURL, new RestResponseErrorHandler());
-    }
-
-    @Test
-    public void test_getById() {
-        System.out.println(dataAPIClient.getBaseURL());
-        GroupObject groupObject = dataAPIClient.get("group/{id}", GroupObject.class, "2kedf9gcf52wnfyb0iu");
-        Assert.notNull(groupObject.getId());
+        dataAPIClient = new RestClient("http://localhost:" + port, new RestResponseErrorHandler());
     }
 
     @Test

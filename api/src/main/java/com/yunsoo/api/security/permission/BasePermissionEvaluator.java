@@ -45,9 +45,11 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 currentPermission.setOrgId(((Device) targetDomainObject).getOrgId());
             } else if (targetDomainObject instanceof ProductKeyOrder) {
                 currentPermission.setOrgId(((ProductKeyOrder) targetDomainObject).getOrgId());
+            } else if (targetDomainObject instanceof Group) {
+                currentPermission.setOrgId(((Group) targetDomainObject).getOrgId());
             }
 
-            if (currentPermission.getOrgId() == null || currentPermission.getOrgId().trim().isEmpty()) {
+            if (StringUtils.isEmpty(currentPermission.getOrgId())) {
                 currentPermission.setOrgId(account.getOrgId());  //by default, just set the account's orgId
             }
 

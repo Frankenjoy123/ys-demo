@@ -1,4 +1,4 @@
-package com.yunsoo.common.data.object;
+package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -13,12 +13,11 @@ import org.joda.time.DateTime;
  * Created on  : 2015/6/24
  * Descriptions:
  */
-public class GroupObject {
+public class Group {
 
     @JsonProperty("id")
     private String id;
 
-    @NotEmpty(message = "org_id must not be null or empty")
     @JsonProperty("org_id")
     private String orgId;
 
@@ -29,7 +28,6 @@ public class GroupObject {
     @JsonProperty("description")
     private String description;
 
-    @NotEmpty(message = "created_account_id must not be null or empty")
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -110,4 +108,5 @@ public class GroupObject {
     public void setModifiedDatetime(DateTime modifiedDatetime) {
         this.modifiedDatetime = modifiedDatetime;
     }
+
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class GroupController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public GroupObject create(@RequestBody GroupObject object) {
+    public GroupObject create(@RequestBody @Valid GroupObject object) {
         GroupEntity entity = toGroupEntity(object);
         entity.setId(null);
         if (entity.getCreatedDateTime() == null) {
@@ -51,7 +52,7 @@ public class GroupController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public GroupObject patchUpdate(@PathVariable("id") String id, @RequestBody GroupObject object) {
+    public void patchUpdate(@PathVariable("id") String id, @RequestBody GroupObject object) {
         GroupEntity entity = getGroupEntityById(id);
         if (object.getName() != null) {
             entity.setName(object.getName());
@@ -61,8 +62,7 @@ public class GroupController {
         }
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDatetime(object.getModifiedDatetime() == null ? DateTime.now() : object.getModifiedDatetime());
-        GroupEntity savedEntity = groupRepository.save(entity);
-        return toGroupObject(savedEntity);
+        groupRepository.save(entity);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
