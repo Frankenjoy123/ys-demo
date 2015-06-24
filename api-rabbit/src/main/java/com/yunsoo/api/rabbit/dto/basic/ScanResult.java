@@ -14,8 +14,12 @@ public class ScanResult {
     private String Key;
     @JsonProperty("product")
     private Product product;
+    @JsonProperty("liked_product")
+    private Boolean liked_product;
     @JsonProperty("manufacturer")
     private Organization manufacturer;
+    @JsonProperty("followed_org")
+    private Boolean followed_org;
     @JsonProperty("scan_record_list")
     private List<ScanRecord> scanRecordList;
     @JsonProperty("logistics_list")
@@ -49,6 +53,22 @@ public class ScanResult {
 
     public void setManufacturer(Organization manufacturer) {
         this.manufacturer = manufacturer;
+    }
+
+    public Boolean getLiked_product() {
+        return liked_product;
+    }
+
+    public void setLiked_product(Boolean liked_product) {
+        this.liked_product = liked_product;
+    }
+
+    public Boolean getFollowed_org() {
+        return followed_org;
+    }
+
+    public void setFollowed_org(Boolean followed_org) {
+        this.followed_org = followed_org;
     }
 
     public List<ScanRecord> getScanRecordList() {

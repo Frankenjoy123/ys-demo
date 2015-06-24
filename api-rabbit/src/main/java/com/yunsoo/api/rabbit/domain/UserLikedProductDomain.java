@@ -6,8 +6,6 @@ import com.yunsoo.common.web.exception.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,5 +40,10 @@ public class UserLikedProductDomain {
             long id = dataAPIClient.post("/user/collection", userLikedProduct, long.class);
             return id;
         }
+    }
+
+    public UserLikedProduct getUserLikedProduct(String userid, String productid) {
+        UserLikedProduct userLikedProduct = dataAPIClient.get("/user/collection/who/{id}/product/{pid}", UserLikedProduct.class, userid, productid);
+        return userLikedProduct;
     }
 }
