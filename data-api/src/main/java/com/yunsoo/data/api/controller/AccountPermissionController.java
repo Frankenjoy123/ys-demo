@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Created by:   Lijian
@@ -30,7 +29,7 @@ public class AccountPermissionController {
 
     @RequestMapping(value = "accountpermission/{accountId}", method = RequestMethod.GET)
     public List<AccountPermissionObject> getPermissionsByAccountId(@PathVariable(value = "accountId") String accountId) {
-        return StreamSupport.stream(accountPermissionRepository.findByAccountId(accountId).spliterator(), false)
+        return accountPermissionRepository.findByAccountId(accountId).stream()
                 .map(pe -> {
                     AccountPermissionObject p = new AccountPermissionObject();
                     p.setAccountId(pe.getAccountId());
@@ -43,7 +42,7 @@ public class AccountPermissionController {
 
     @RequestMapping(value = "accountpermissionpolicy/{accountId}", method = RequestMethod.GET)
     public List<AccountPermissionPolicyObject> getPermissionPoliciesByAccountId(@PathVariable(value = "accountId") String accountId) {
-        return StreamSupport.stream(accountPermissionPolicyRepository.findByAccountId(accountId).spliterator(), false)
+        return accountPermissionPolicyRepository.findByAccountId(accountId).stream()
                 .map(ppe -> {
                     AccountPermissionPolicyObject pp = new AccountPermissionPolicyObject();
                     pp.setAccountId(ppe.getAccountId());
