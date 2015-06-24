@@ -1,8 +1,8 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.common.data.object.AccountPermissionObject;
-import com.yunsoo.data.service.entity.AccountPermissionEntity;
-import com.yunsoo.data.service.repository.AccountPermissionRepository;
+import com.yunsoo.common.data.object.GroupPermissionObject;
+import com.yunsoo.data.service.entity.GroupPermissionEntity;
+import com.yunsoo.data.service.repository.GroupPermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,31 +13,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by:   Lijian
- * Created on:   2015/4/13
+ * Created by  : Lijian
+ * Created on  : 2015/6/24
  * Descriptions:
  */
 @RestController
-@RequestMapping("/accountpermission")
-public class AccountPermissionController {
+@RequestMapping("/grouppermission")
+public class GroupPermissionController {
 
     @Autowired
-    private AccountPermissionRepository accountPermissionRepository;
-
+    private GroupPermissionRepository groupPermissionRepository;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<AccountPermissionObject> getPermissionsByAccountId(@RequestParam(value = "account_id") String accountId) {
-        return accountPermissionRepository.findByAccountId(accountId).stream()
-                .map(this::toAccountPermissionObject).collect(Collectors.toList());
+    public List<GroupPermissionObject> getPermissionsByAccountId(@RequestParam(value = "group_id") String groupId) {
+        return groupPermissionRepository.findByGroupId(groupId).stream()
+                .map(this::toGroupPermissionObject).collect(Collectors.toList());
     }
 
-
-    private AccountPermissionObject toAccountPermissionObject(AccountPermissionEntity entity) {
+    GroupPermissionObject toGroupPermissionObject(GroupPermissionEntity entity) {
         if (entity == null) {
             return null;
         }
-        AccountPermissionObject object = new AccountPermissionObject();
-        object.setAccountId(entity.getAccountId());
+        GroupPermissionObject object = new GroupPermissionObject();
+        object.setGroupId(entity.getGroupId());
         object.setOrgId(entity.getOrgId());
         object.setResourceCode(entity.getResourceCode());
         object.setActionCode(entity.getActionCode());
