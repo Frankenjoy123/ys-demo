@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 /**
@@ -14,15 +15,15 @@ import org.joda.time.DateTime;
  */
 public class AccountGroupObject {
 
-    @JsonProperty("id")
-    private String id;
-
+    @NotEmpty(message = "account_id must not be null or empty")
     @JsonProperty("account_id")
     private String accountId;
 
+    @NotEmpty(message = "group_id must not be null or empty")
     @JsonProperty("group_id")
     private String groupId;
 
+    @NotEmpty(message = "created_account_id must not be null or empty")
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -31,14 +32,6 @@ public class AccountGroupObject {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getAccountId() {
         return accountId;
