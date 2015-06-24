@@ -75,6 +75,12 @@ public class UserLikedProductController {
 
     }
 
+    @RequestMapping(value = "/who/{id}/product/{pid}", method = RequestMethod.GET)
+    public UserLikedProduct getUserLikedProduct(@PathVariable(value = "id") String id, @PathVariable(value = "pid") String pid) {
+        UserLikedProduct userLikedProduct = dataAPIClient.get("/user/collection/who/{id}/product/{pid}", UserLikedProduct.class, id, pid);
+        return userLikedProduct;
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#userLikedProduct, 'authenticated')")

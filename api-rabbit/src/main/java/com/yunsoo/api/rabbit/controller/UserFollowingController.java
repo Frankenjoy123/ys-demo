@@ -68,6 +68,13 @@ public class UserFollowingController {
 
     }
 
+    @RequestMapping(value = "/who/{id}/org/{orgid}", method = RequestMethod.GET)
+    public UserFollowing getFollowingRecord(@PathVariable(value = "id") String id,
+                                            @PathVariable(value = "orgid") String orgId) {
+        UserFollowing userFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class, id, orgId);
+        return userFollowing;
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")

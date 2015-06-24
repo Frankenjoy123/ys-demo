@@ -36,13 +36,13 @@ public class PermissionController {
     private LookupServiceWrap lookupServiceWrap;
 
 
-    @RequestMapping(value = "/policy", method = RequestMethod.GET)
+    @RequestMapping(value = "policy", method = RequestMethod.GET)
     public List<PermissionPolicyObject> getAllPolicies() {
         List<PermissionPolicyEntity> entities = permissionPolicyRepository.findAll();
         return toPermissionPolicyObjectList(entities);
     }
 
-    @RequestMapping(value = "/policy/{code}", method = RequestMethod.GET)
+    @RequestMapping(value = "policy/{code}", method = RequestMethod.GET)
     public PermissionPolicyObject getPolicyByCode(@PathVariable(value = "code") String code) {
         List<PermissionPolicyEntity> entities = permissionPolicyRepository.findByCode(code);
         List<PermissionPolicyObject> pps = toPermissionPolicyObjectList(entities);
@@ -52,7 +52,7 @@ public class PermissionController {
         return pps.get(0);
     }
 
-    @RequestMapping(value = "/policy/{code}", method = RequestMethod.POST)
+    @RequestMapping(value = "policy/{code}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public PermissionPolicyObject create(@PathVariable(value = "code") String code,
                                          @RequestBody @Valid PermissionPolicyObject permissionPolicyObject) {
@@ -67,7 +67,7 @@ public class PermissionController {
         return toPermissionPolicyObjectList(savedEntities).get(0);
     }
 
-    @RequestMapping(value = "/policy/{code}", method = RequestMethod.PUT)
+    @RequestMapping(value = "policy/{code}", method = RequestMethod.PUT)
     public PermissionPolicyObject update(@PathVariable(value = "code") String code,
                                          @RequestBody @Valid PermissionPolicyObject permissionPolicyObject) {
 
@@ -81,7 +81,7 @@ public class PermissionController {
         return toPermissionPolicyObjectList(savedEntities).get(0);
     }
 
-    @RequestMapping(value = "/policy/{code}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "policy/{code}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "code") String code) {
         List<PermissionPolicyEntity> currentEntities = permissionPolicyRepository.findByCode(code);
@@ -94,12 +94,12 @@ public class PermissionController {
 
     //resource
 
-    @RequestMapping(value = "/resource", method = RequestMethod.GET)
+    @RequestMapping(value = "resource", method = RequestMethod.GET)
     public List<LookupObject> getAllResource(@RequestParam(value = "active", required = false) Boolean active) {
         return lookupServiceWrap.getAll(LookupType.PermissionResource, active);
     }
 
-    @RequestMapping(value = "/resource", method = RequestMethod.PUT)
+    @RequestMapping(value = "resource", method = RequestMethod.PUT)
     public LookupObject createResource(@RequestBody LookupObject resource) {
         if (resource.getCode() == null) {
             throw new BadRequestException("code must not be null");
@@ -112,7 +112,7 @@ public class PermissionController {
 
     //action
 
-    @RequestMapping(value = "/action", method = RequestMethod.GET)
+    @RequestMapping(value = "action", method = RequestMethod.GET)
     public List<LookupObject> getAllAction(@RequestParam(value = "active", required = false) Boolean active) {
         return lookupServiceWrap.getAll(LookupType.PermissionAction, active);
     }

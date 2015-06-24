@@ -1,10 +1,7 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.biz.ValidateProduct;
-import com.yunsoo.api.rabbit.domain.LogisticsDomain;
-import com.yunsoo.api.rabbit.domain.ProductDomain;
-import com.yunsoo.api.rabbit.domain.UserDomain;
-import com.yunsoo.api.rabbit.domain.UserFollowDomain;
+import com.yunsoo.api.rabbit.domain.*;
 import com.yunsoo.api.rabbit.dto.LogisticsPath;
 import com.yunsoo.api.rabbit.dto.basic.*;
 import com.yunsoo.api.rabbit.object.Constants;
@@ -57,6 +54,8 @@ public class ScanController {
     @Autowired
     private ProductDomain productDomain;
     @Autowired
+    private UserLikedProductDomain userLikedProductDomain;
+    @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
@@ -96,30 +95,40 @@ public class ScanController {
         }
         scanResult.setProduct(currentExistProduct);
 
-        //3, retrieve scan records
+        //3, set if user liked this product
+        UserLikedProduct userLikedProduct = this.userLikedProductDomain.getUserLikedProduct(currentUser.getId(), currentExistProduct.getProductBaseId());
+        if (userLikedProduct != null) {
+            scanResult.setLiked_product(userLikedProduct.getActive());
+        }
+
+        //4, retrieve scan records
         List<ScanRecord> scanRecordList = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}",
                 new ParameterizedTypeReference<List<ScanRecord>>() {
                 }, scanRequestBody.getKey(), 20);  //hard code as top 20 (desc order by created time )
         scanResult.setScanRecordList(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
-        //4, retrieve logistics information
+        //5, retrieve logistics information
         scanResult.setLogisticsList(getLogisticsInfo(scanRequestBody.getKey()));
 
-        //5, get company information.
+        //6, get company information.
         OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, scanResult.getProduct().getOrgId());
         scanResult.setManufacturer(Organization.fromOrganizationObject(organizationObject));
 
-        //6，ensure user following the company
+        //7，ensure user following the company, and set the followed status in result.
         UserFollowing userFollowing = new UserFollowing();
         userFollowing.setUserId(currentUser.getId());
         userFollowing.setOrganizationId(organizationObject.getId());
         userFollowDomain.ensureFollow(userFollowing, false);
+        UserFollowing userFollowingResult = userFollowDomain.getUserFollowing(currentUser.getId(), organizationObject.getId());
+        if (userFollowingResult != null) {
+            scanResult.setFollowed_org(userFollowingResult.getIsFollowing());
+        }
 
-        //7, set validation result by our validation strategy.
+        //8, set validation result by our validation strategy.
         scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), currentUser, scanRecordList));
 
-        //8, save scan Record
+        //9, save scan Record
         long scanSave = SaveScanRecord(currentUser, currentExistProduct, scanRequestBody);
         return scanResult;
     }

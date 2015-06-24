@@ -39,12 +39,12 @@ public class AccountPermissionDomain {
 
 
     public List<AccountPermissionObject> getAccountPermissions(String accountId) {
-        return dataAPIClient.get("accountpermission/{accountId}", new ParameterizedTypeReference<List<AccountPermissionObject>>() {
+        return dataAPIClient.get("accountpermission?account_id={accountId}", new ParameterizedTypeReference<List<AccountPermissionObject>>() {
         }, accountId);
     }
 
     public List<AccountPermissionPolicyObject> getAccountPermissionPolicies(String accountId) {
-        return dataAPIClient.get("accountpermissionpolicy/{accountId}", new ParameterizedTypeReference<List<AccountPermissionPolicyObject>>() {
+        return dataAPIClient.get("accountpermissionpolicy?account_id={accountId}", new ParameterizedTypeReference<List<AccountPermissionPolicyObject>>() {
         }, accountId);
     }
 

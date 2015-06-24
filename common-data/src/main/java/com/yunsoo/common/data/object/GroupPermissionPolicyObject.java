@@ -8,23 +8,20 @@ import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
- * Created by:   Lijian
- * Created on:   2015/4/13
+ * Created by  : Lijian
+ * Created on  : 2015/6/24
  * Descriptions:
  */
-public class AccountPermissionObject {
+public class GroupPermissionPolicyObject {
 
-    @JsonProperty("account_id")
-    private String accountId;
+    @JsonProperty("group_id")
+    private String groupId;
 
     @JsonProperty("org_id")
     private String orgId;
 
-    @JsonProperty("resource_code")
-    private String resourceCode;
-
-    @JsonProperty("action_code")
-    private String actionCode;
+    @JsonProperty("policy_code")
+    private String policyCode;
 
     @JsonProperty("created_account_id")
     private String createdAccountId;
@@ -35,12 +32,12 @@ public class AccountPermissionObject {
     private DateTime createdDatetime;
 
 
-    public String getAccountId() {
-        return accountId;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     public String getOrgId() {
@@ -51,20 +48,12 @@ public class AccountPermissionObject {
         this.orgId = orgId;
     }
 
-    public String getResourceCode() {
-        return resourceCode;
+    public String getPolicyCode() {
+        return policyCode;
     }
 
-    public void setResourceCode(String resourceCode) {
-        this.resourceCode = resourceCode;
-    }
-
-    public String getActionCode() {
-        return actionCode;
-    }
-
-    public void setActionCode(String actionCode) {
-        this.actionCode = actionCode;
+    public void setPolicyCode(String policyCode) {
+        this.policyCode = policyCode;
     }
 
     public String getCreatedAccountId() {

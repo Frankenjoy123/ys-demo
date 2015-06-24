@@ -38,7 +38,7 @@ public class UserLikedProductController {
         return this.FromUserLikedProductList(UserLikedProduct.FromEntityList(userLikedProductRepository.findByUserIdAndActive(id, true, new PageRequest(index, size)))); //add active filter
     }
 
-    @RequestMapping(value = "/userid/{id}/product/{pid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/who/{id}/product/{pid}", method = RequestMethod.GET)
     public UserLikedProductObject getUserLikedProduct(@PathVariable(value = "id") String id, @PathVariable(value = "pid") String pid) {
         List<UserLikedProduct> result = UserLikedProduct.FromEntityList(userLikedProductRepository.findByUserIdAndBaseProductId(id, pid));
         if (result.isEmpty()) {

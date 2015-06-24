@@ -1,46 +1,61 @@
-package com.yunsoo.common.data.object;
+package com.yunsoo.data.service.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import javax.persistence.*;
+
 /**
- * Created by:   Lijian
- * Created on:   2015/4/13
+ * Created by  : Lijian
+ * Created on  : 2015/6/23
  * Descriptions:
  */
-public class AccountPermissionObject {
 
-    @JsonProperty("account_id")
-    private String accountId;
+@Entity
+@Table(name = "group_permission")
+public class GroupPermissionEntity {
 
-    @JsonProperty("org_id")
+    @Id
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
+    @Column(name = "id")
+    private String id;
+
+    @Column(name = "group_id")
+    private String groupId;
+
+    @Column(name = "org_id")
     private String orgId;
 
-    @JsonProperty("resource_code")
+    @Column(name = "resource_code")
     private String resourceCode;
 
-    @JsonProperty("action_code")
+    @Column(name = "action_code")
     private String actionCode;
 
-    @JsonProperty("created_account_id")
+    @Column(name = "created_account_id")
     private String createdAccountId;
 
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("created_datetime")
+    @Column(name = "created_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDatetime;
 
 
-    public String getAccountId() {
-        return accountId;
+    public String getId() {
+        return id;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     public String getOrgId() {
