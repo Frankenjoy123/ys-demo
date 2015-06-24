@@ -40,18 +40,18 @@
         trSpace = $('<tr></tr>').append(tdSpace);
         $("#detailItems").append(tr).append(trSpace);
 
-        if (data.details != null) {
+        if (data != null && data.details != null) {
             var details = data.details;
-            if (details != null) {
-                for (var detail in details) {
-                    var td1 = $('<td></td>').css("width", "30%").css("word-break","break-all").html(details[detail].key);
-                    var td2 = $('<td></td>').css("width", "70%").css("word-break","break-all").html(details[detail].value);
-                    var tr = $('<tr></tr>').append(td1).append(td2);
-                    var tdSpace = $('<td></td>').css('height', '10px');
-                    var trSpace = $('<tr></tr>').append(tdSpace);
+            for (var index = 0; index < details.length; index++) {
+                var item = details[index];
 
-                    $("#detailItems").append(tr).append(trSpace);
-                }
+                var td1 = $('<td></td>').css("width", "30%").css("word-break","break-all").html(item.name);
+                var td2 = $('<td></td>').css("width", "70%").css("word-break","break-all").html(item.value);
+                var tr = $('<tr></tr>').append(td1).append(td2);
+                var tdSpace = $('<td></td>').css('height', '10px');
+                var trSpace = $('<tr></tr>').append(tdSpace);
+
+                $("#detailItems").append(tr).append(trSpace);
             }
         }
 

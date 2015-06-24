@@ -1,9 +1,13 @@
 <div id="page-title">
-    <h1 class="page-header text-overflow">产品编辑</h1>
+    <h1 class="page-header text-overflow">产品创建</h1>
 </div>
 
 <div id="page-content">
     <style type="text/css">
+        .hasError {
+            border-color: #a94442;
+        }
+
         .deviceWrap {
             background-image: url(img/emulator/iphone-6-portrait.png);
             background-position: 50% 0%;
@@ -32,9 +36,7 @@
             font-size: 13px;
             height: 667px;
             line-height: 13px;
-            margin-bottom: 0px;
-            margin-left: 122px;
-            margin-top: 0px;
+            margin: 0 auto;
             padding-bottom: 44px;
             padding-top: 20px;
             position: relative;
@@ -117,84 +119,96 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="panel">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">产品编辑</h3>
-                        </div>
-
-                        <!--Horizontal Form-->
-                        <!--===================================================-->
-                        <div class="form-horizontal" id="createProduct">
-                            <div class="panel-body">
+                        <div class="panel-body">
+                            <!--Horizontal Form-->
+                            <!--===================================================-->
+                            <form name="productForm" class="form-horizontal"
+                                  ng-submit="submit(productForm.$valid)" novalidate>
                                 <div class="form-group">
                                     <label class="col-sm-3" for="productName">产品名</label>
 
-                                    <div class="col-sm-9">
+                                    <div class="col-sm-9 has-feedback"
+                                         ng-class="{ 'has-error' : productForm.productName.$invalid && !productForm.productName.$pristine, 'has-success' : productForm.productName.$valid && !productForm.productName.$pristine}">
                                         <input type="text" placeholder="产品名" id="productName"
-                                               class="form-control" ng-model="productName" name="productName">
+                                               class="form-control" ng-model="product.productName" name="productName"
+                                               novalidate required>
+                                         <span class="glyphicon glyphicon-ok form-control-feedback"
+                                               ng-show="productForm.productName.$dirty && productForm.productName.$valid"></span>
+                                        <span class="glyphicon glyphicon-remove form-control-feedback"
+                                              ng-show="productForm.productName.$dirty && productForm.productName.$invalid"></span>
+
+                                        <p ng-show="productForm.productName.$invalid && !productForm.productName.$pristine"
+                                           class="help-block">请输入产品名</p>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3" for="barCode">BARCODE</label>
 
-                                    <div class="col-sm-9">
+                                    <div class="col-sm-9 has-feedback"
+                                         ng-class="{ 'has-error' : productForm.barCode.$invalid && !productForm.barCode.$pristine, 'has-success' : productForm.barCode.$valid && !productForm.barCode.$pristine}">
                                         <input type="text" placeholder="BARCODE" id="barCode"
-                                               class="form-control" ng-model="barCode" name="barCode">
+                                               class="form-control" ng-model="product.barCode" name="barCode" novalidate
+                                               required>
+                                        <span class="glyphicon glyphicon-ok form-control-feedback"
+                                              ng-show="productForm.barCode.$dirty && productForm.barCode.$valid"></span>
+                                        <span class="glyphicon glyphicon-remove form-control-feedback"
+                                              ng-show="productForm.barCode.$dirty && productForm.barCode.$invalid"></span>
+
+                                        <p ng-show="productForm.barCode.$invalid && !productForm.barCode.$pristine"
+                                           class="help-block">请输入产品BARCODE</p>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3">产品码类型</label>
 
-                                    <!--<div class="col-sm-3">-->
-                                    <!--&lt;!&ndash; Inline Checkboxes &ndash;&gt;-->
-                                    <!--<input type="checkbox" ng-model="keyTypePubInput" ng-true-value="true"-->
-                                    <!--ng-false-value="false"/>二维码-->
-                                    <!--</div>-->
-                                    <!--<div class="col-sm-3">-->
-                                    <!--<input type="checkbox" ng-model="keyTypePriInput" ng-true-value="true"-->
-                                    <!--ng-false-value="false"/>隐藏二维码-->
-                                    <!--</div>-->
-                                    <!--<div class="col-sm-3">-->
-                                    <!--<input type="checkbox" ng-model="keyTypeRFIDInput" ng-true-value="true"-->
-                                    <!--ng-false-value="false"/>RFID标签-->
-                                    <!--</div>-->
                                     <div class="col-sm-3">
                                         <label class="form-checkbox form-icon form-primary form-text">
-                                            <input type="checkbox" ng-model="keyTypePubInput" ng-true-value="true"
+                                            <input type="checkbox" ng-model="product.keyTypePubInput"
+                                                   ng-true-value="true"
                                                    ng-false-value="false"/>二维码
                                         </label>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="form-checkbox form-icon form-success form-text">
-                                            <input type="checkbox" ng-model="keyTypePriInput" ng-true-value="true"
+                                            <input type="checkbox" ng-model="product.keyTypePriInput"
+                                                   ng-true-value="true"
                                                    ng-false-value="false"/>
                                             隐藏二维码</label>
                                     </div>
                                     <div class="col-sm-3">
                                         <label class="form-checkbox form-icon form-purple form-text">
-                                            <input type="checkbox" ng-model="keyTypeRFIDInput" ng-true-value="true"
+                                            <input type="checkbox" ng-model="product.keyTypeRFIDInput"
+                                                   ng-true-value="true"
                                                    ng-false-value="false"/>
                                             RFID标签</label>
                                     </div>
                                 </div>
-
                                 <div class="form-group">
                                     <label class="col-sm-3" for="expireDate">产品过期时间</label>
 
-                                    <div class="col-sm-9">
+                                    <div class="col-sm-9 has-feedback"
+                                         ng-class="{ 'has-error' : productForm.greaterthan.$invalid && !productForm.greaterthan.$pristine, 'has-success' : productForm.greaterthan.$valid && !productForm.greaterthan.$pristine}">
                                         <input type="number" name="greaterthan" placeholder="请输入大于1的正整数" id="expireDate"
-                                               class="form-control" ng-model="expireDate">
+                                               class="form-control" ng-model="product.expireDate" novalidate
+                                               required min="1">
+                                        <span class="glyphicon glyphicon-ok form-control-feedback"
+                                              ng-show="productForm.greaterthan.$dirty && productForm.greaterthan.$valid"></span>
+                                        <span class="glyphicon glyphicon-remove form-control-feedback"
+                                              ng-show="productForm.greaterthan.$dirty && productForm.greaterthan.$invalid"></span>
+
+                                        <p ng-show="productForm.greaterthan.$invalid && !productForm.greaterthan.$pristine"
+                                           class="help-block">请输入大于1的正整数</p>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3" for="expireDateUnit">产品过期单位</label>
 
                                     <div class="col-sm-9">
-                                        <select id="expireDateUnit" class="form-control" ng-model="expireDateUnit">
-                                            <option>年</option>
-                                            <option>月</option>
-                                            <option>周</option>
-                                            <option>天</option>
-                                            <option>小时</option>
+                                        <select id="expireDateUnit" class="form-control"
+                                                ng-model="product.expireDateUnit">
+                                            <option value="{{item.key}}"
+                                                    ng-repeat="item in product.expireDateUnitValue">{{item.value}}
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
@@ -202,18 +216,24 @@
                                     <label class="col-sm-3">产品详细信息</label>
 
                                     <div class="col-sm-9">
-                                        <div ng-repeat="data in productInfos" class="form-inline"
+                                        <div ng-repeat="data in product.productInfos" class="form-inline"
                                              style="margin-top: 5px">
-                                            <input type="text" ng-model="data.key" style="width:30%"
-                                                   class="form-control"
-                                                   name="productInfoKey"/>
-                                            <input type="text" ng-model="data.value" style="width:69%"
-                                                   class="form-control"
-                                                   name="productInfoName"/>
+                                            <ng-form name="productInfosForm">
+                                                <input type="text" ng-model="data.key" style="width:30%"
+                                                       class="form-control"
+                                                       name="productInfoKey" required novalidate
+                                                       ng-class="{'hasError':productInfosForm.productInfoKey.$invalid && !productInfosForm.productInfoKey.$pristine}"/>
+                                                <input type="text" ng-model="data.value" style="width:69%"
+                                                       class="form-control"
+                                                       name="productInfoName" required novalidate
+                                                       ng-class="{'hasError':productInfosForm.productInfoName.$invalid && !productInfosForm.productInfoName.$pristine}"/>
+                                            </ng-form>
                                         </div>
                                         <div>
-                                            <a ng-click="addProductInfo()"><i class="fa fa-plus-square-o"></i></a>
-                                            <a ng-click="subProductInfo()"><i class="fa fa-minus-square-o"></i></a>
+                                            <a ng-click="product.addProductInfo()"><i
+                                                    class="fa fa-plus-square-o"></i></a>
+                                            <a ng-click="product.subProductInfo()"><i
+                                                    class="fa fa-minus-square-o"></i></a>
                                         </div>
                                     </div>
                                 </div>
@@ -222,38 +242,58 @@
 
                                     <div class="col-sm-9">
                                         <div style="margin-top: 5px" class="form-inline">
-                                            <input type="text" ng-model="hotline" style="width:49%" class="form-control"
-                                                   placeholder="热线电话"/>
-                                            <input type="text" ng-model="support" style="width:50%" class="form-control"
-                                                   placeholder="技术支持"/>
+                                            <input type="text" ng-model="product.hotline" style="width:49%"
+                                                   class="form-control" name="hotline"
+                                                   placeholder="热线电话" required novalidate
+                                                   ng-class="{'hasError':productForm.hotline.$invalid && !productForm.hotline.$pristine}"/>
+                                            <input type="text" ng-model="product.support" style="width:50%"
+                                                   class="form-control" name="email"
+                                                   placeholder="技术支持URL" required novalidate
+                                                   ng-class="{'hasError':productForm.email.$invalid && !productForm.email.$pristine}"/>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 ">在线商城</label>
 
-                                    <div class="col-sm-9">
-                                        <div style="margin-top: 5px" class="form-inline">
-                                            <input type="text" ng-model="taobao" style="width:49%" class="form-control"
-                                                   placeholder="淘宝商城"/>
-                                            <input type="text" ng-model="tmall" style="width:50%" class="form-control"
-                                                   placeholder="天猫商城"/>
-                                        </div>
+                                    <div class="col-sm-offset-3 form-inline" style="margin-top: 5px"
+                                         ng-repeat="data in product.productCommerce">
+                                        <ng-form name="productCommerceForm">
+                                            <input type="text" ng-model="data.title" style="width:49%"
+                                                   name="productCommerceTitle"
+                                                   class="form-control" placeholder="在线商城名" required novalidate
+                                                   ng-class="{'hasError':productCommerceForm.productCommerceTitle.$invalid && !productCommerceForm.productCommerceTitle.$pristine}"/>
+                                            <input type="text" ng-model="data.url" style="width:50%"
+                                                   class="form-control" name="productCommerceURL"
+                                                   placeholder="在线商城URL" required novalidate
+                                                   ng-class="{'hasError':productCommerceForm.productCommerceURL.$invalid && !productCommerceForm.productCommerceURL.$pristine}"/>
+                                        </ng-form>
+                                    </div>
+                                    <div class="col-sm-offset-3">
+                                        <a ng-click="product.addProductCommerce()"><i
+                                                class="fa fa-plus-square-o"></i></a>
+                                        <a ng-click="product.subProductCommerce()"><i class="fa fa-minus-square-o"></i></a>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3">实体店列表</label>
 
                                     <div class="col-sm-offset-3 form-inline" style="margin-top: 5px"
-                                         ng-repeat="data in productAddress">
-                                        <input type="text" ng-model="data.address" style="width:49%"
-                                               class="form-control" placeholder="地址"/>
-                                        <input type="text" ng-model="data.tel" style="width:50%" class="form-control"
-                                               placeholder="电话"/>
+                                         ng-repeat="data in product.productAddress">
+                                        <ng-form name="productAddressForm">
+                                            <input type="text" ng-model="data.address" style="width:49%"
+                                                   name="productAddressKey"
+                                                   class="form-control" placeholder="地址" required novalidate
+                                                   ng-class="{'hasError':productAddressForm.productAddressKey.$invalid && !productAddressForm.productAddressKey.$pristine}"/>
+                                            <input type="text" ng-model="data.tel" style="width:50%"
+                                                   class="form-control" name="productAddressValue"
+                                                   placeholder="电话" required novalidate
+                                                   ng-class="{'hasError':productAddressForm.productAddressValue.$invalid && !productAddressForm.productAddressValue.$pristine}"/>
+                                        </ng-form>
                                     </div>
                                     <div class="col-sm-offset-3">
-                                        <a ng-click="addProAddress()"><i class="fa fa-plus-square-o"></i></a>
-                                        <a ng-click="subProAddress()"><i class="fa fa-minus-square-o"></i></a>
+                                        <a ng-click="product.addProAddress()"><i class="fa fa-plus-square-o"></i></a>
+                                        <a ng-click="product.subProAddress()"><i class="fa fa-minus-square-o"></i></a>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -261,14 +301,15 @@
 
                                     <div class="col-sm-9">
                                         <textarea placeholder="产品备注" id="comment" rows="5"
-                                                  class="form-control" ng-model="comment"></textarea>
+                                                  class="form-control" ng-model="product.comment"></textarea>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3">产品图片</label>
 
                                     <div class="col-sm-9" id="divImgWrap">
-                                        <img id="imgProductbase" style="width:422px;height:211px">
+                                        <img id="imgProductbase"
+                                             style="min-width:422px;min-height:211px;width:100%;height:100%">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -287,14 +328,13 @@
                                                 class="fa fa-tablet fa-fw"></i>&nbsp;&nbsp;预览
                                         </button>
                                         &nbsp;&nbsp;
-                                        <button class="btn btn-primary" type="button" ng-click="submit()"
+                                        <button class="btn btn-primary" type="submit" ng-disabled="productForm.$invalid"
                                                 ><i class="fa fa-send fa-fw"></i>&nbsp;&nbsp;提交
                                         </button>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
-
                         <!--===================================================-->
                         <!--End Horizontal Form-->
 
