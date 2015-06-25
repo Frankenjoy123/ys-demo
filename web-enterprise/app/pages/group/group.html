@@ -13,9 +13,6 @@
 <!-- Main content -->
 <div id="page-content">
     <div ng-show="groupTable.data" class="panel panel-bordered-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">账号组管理</h3>
-        </div>
 
         <!-- Modal -->
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -30,28 +27,48 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <form class="form-horizontal" id="groupForm">
-                                    <div class="form-group" id="divGroupName">
+                                <form class="form-horizontal" id="groupForm" novalidate name="groupForm"
+                                      ng-submit="submit(groupForm.$valid)">
+                                    <div class="form-group has-feedback" id="divGroupName"
+                                         ng-class="{ 'has-error' : groupForm.groupName.$invalid && !groupForm.groupName.$pristine, 'has-success' : groupForm.groupName.$valid && !groupForm.groupName.$pristine}">
                                         <label for="groupName" class="col-md-3 control-label">账号组名</label>
 
                                         <div class="col-md-9">
                                             <input type="text" id="groupName" placeholder="账号组名"
                                                    name="groupName"
-                                                   class="form-control" ng-model="groupName"/>
+                                                   class="form-control" ng-model="group.name" novalidate required/>
+                                            <span class="glyphicon glyphicon-ok form-control-feedback"
+                                                  ng-show="groupForm.groupName.$dirty && groupForm.groupName.$valid"></span>
+                                            <span class="glyphicon glyphicon-remove form-control-feedback"
+                                                  ng-show="groupForm.groupName.$dirty && groupForm.groupName.$invalid"></span>
+
+                                            <p ng-show="groupForm.groupName.$invalid && !groupForm.groupName.$pristine"
+                                               class="help-block">请输入账号组名</p>
                                         </div>
                                     </div>
-                                    <div class="form-group" id="divGroupDesc">
+                                    <div class="form-group has-feedback" id="divGroupDesc"
+                                         ng-class="{ 'has-error' : groupForm.groupDesc.$invalid && !groupForm.groupDesc.$pristine, 'has-success' : groupForm.groupDesc.$valid && !groupForm.groupDesc.$pristine}">
                                         <label for="groupDesc" class="col-md-3 control-label">账号组描述</label>
 
                                         <div class="col-md-9">
                                              <textarea placeholder="账号组描述，不超过200字符" id="groupDesc" rows="4"
-                                                       class="form-control" ng-model="groupDesc"></textarea>
+                                                       class="form-control" ng-model="group.description"
+                                                       name="groupDesc" ng-maxlength="200" novalidate
+                                                       required></textarea>
+                                             <span class="glyphicon glyphicon-ok form-control-feedback"
+                                                   ng-show="groupForm.groupDesc.$dirty && groupForm.groupDesc.$valid"></span>
+                                            <span class="glyphicon glyphicon-remove form-control-feedback"
+                                                  ng-show="groupForm.groupDesc.$dirty && groupForm.groupDesc.$invalid"></span>
+
+                                            <p ng-show="groupForm.groupDesc.$invalid && !groupForm.groupDesc.$pristine"
+                                               class="help-block">请输入账号组描述</p>
                                         </div>
                                     </div>
                                     <div class="form-group text-center">
-                                        <button type="button" class="btn btn-primary btn-labeled fa fa-group"
-                                                ng-click="createGroup()">创建新组
+                                        <button type="submit" class="btn btn-primary btn-labeled fa fa-group"
+                                                ng-disabled="groupForm.$invalid">创建新组
                                         </button>
+                                        &nbsp;<i class="fa fa-spinner fa-lg" ng-show="spinnerShow"></i>
                                     </div>
                                 </form>
                             </div>
@@ -317,8 +334,7 @@
 
         <div class="animated slideInRight">
             <div class="col-sm-12 pull-left" style="padding: 20px 20px;">
-                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" data-toggle="modal"
-                        data-target="#myModal">创建新组
+                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" ng-click="showGroupModal()">创建新组
                 </button>
             </div>
 
@@ -327,11 +343,11 @@
                     <thead id="sort-bar">
                     <tr>
                         <th>#</th>
-                        <th data-sort-field="identifier">账号组名</th>
-                        <th data-sort-field="identifier">账号组描述</th>
-                        <th data-sort-field="identifier">账号组策略</th>
-                        <th data-sort-field="statusCode">创建者</th>
-                        <th data-sort-field="createdDateTime">创建时间</th>
+                        <th>账号组名</th>
+                        <th>账号组描述</th>
+                        <th>账号组策略</th>
+                        <th>创建者</th>
+                        <th>创建时间</th>
                         <th class="col-xs-2">操作</th>
                     </tr>
                     </thead>
@@ -341,18 +357,15 @@
                             <span>{{$index + 1}}</span>
                         </td>
                         <td>
-                            <span>{{a.identifier}}</span>
+                            <span>{{a.name}}</span>
                         </td>
                         <td>
-                            <span>{{a.last_name + a.first_name}}</span>
+                            <span>{{a.description}}</span>
                         </td>
                         <td>
-                        <span ng-show="a.status_code == 'available'"><span
-                                class="label label-success">可用</span></span>
-                           <span ng-show="a.status_code == 'created'"><span
-                                   class="label label-info">创建</span></span>
+                            获取中...
                         <td>
-                            <span>{{utils.formatDateString(a.created_datetime)}}</span>
+                            <span>{{a.created_account_id}}</span>
                         </td>
                         <td>
                             <span>{{utils.formatDateString(a.created_datetime)}}</span>
