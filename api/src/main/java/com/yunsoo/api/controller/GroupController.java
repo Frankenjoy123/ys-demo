@@ -1,7 +1,11 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.GroupDomain;
+import com.yunsoo.api.domain.GroupPermissionDomain;
+import com.yunsoo.api.dto.Account;
 import com.yunsoo.api.dto.Group;
+import com.yunsoo.api.dto.GroupPermission;
+import com.yunsoo.api.dto.GroupPermissionPolicy;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.GroupObject;
@@ -30,17 +34,17 @@ public class GroupController {
     private GroupDomain groupDomain;
 
     @Autowired
+    private GroupPermissionDomain groupPermissionDomain;
+
+    @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
 
     @PostAuthorize("hasPermission(returnObject, 'group:read')")
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Group getById(@PathVariable("id") String id) {
-        GroupObject groupObject = groupDomain.getById(id);
-        if (groupObject == null) {
-            throw new NotFoundException("group not found");
-        }
-        return toGroup(groupObject);
+        GroupObject groupObject = findGroupById(id);
+        return new Group(groupObject);
     }
 
     @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'group:read')")
@@ -49,7 +53,7 @@ public class GroupController {
         if (orgId == null) {
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         }
-        return groupDomain.getByOrgId(orgId).stream().map(this::toGroup).collect(Collectors.toList());
+        return groupDomain.getByOrgId(orgId).stream().map(Group::new).collect(Collectors.toList());
     }
 
 
@@ -57,7 +61,7 @@ public class GroupController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public Group create(@RequestBody @Valid Group group) {
-        GroupObject groupObject = toGroupObject(group);
+        GroupObject groupObject = group.toGroupObject();
         TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
 
         groupObject.setId(null);
@@ -69,53 +73,75 @@ public class GroupController {
         groupObject.setModifiedAccountId(null);
         groupObject.setModifiedDatetime(null);
         groupObject = groupDomain.create(groupObject);
-        return toGroup(groupObject);
+        return new Group(groupObject);
     }
 
     @PreAuthorize("hasPermission(#group, 'group:modify')")
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void patchUpdate(@PathVariable("id") String id, @RequestBody Group group) {
-        //todo
-
+        GroupObject groupObject = findGroupById(id);
+        if (group.getName() != null) {
+            groupObject.setName(group.getName());
+        }
+        if (group.getDescription() != null) {
+            groupObject.setDescription(group.getDescription());
+        }
+        groupObject.setModifiedAccountId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+        groupObject.setModifiedDatetime(DateTime.now());
+        groupDomain.patchUpdate(groupObject);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") String id) {
-        //todo
-
+        groupDomain.deleteGroupAndAllRelatedById(id);
     }
 
-    private Group toGroup(GroupObject object) {
-        if (object == null) {
-            return null;
+
+    //accounts
+
+    @RequestMapping(value = "{id}/account", method = RequestMethod.GET)
+    public List<Account> getAccounts(@PathVariable("id") String groupId) {
+        GroupObject groupObject = groupDomain.getById(groupId);
+        if (groupObject == null) {
+            throw new NotFoundException("group not found");
         }
-        Group group = new Group();
-        group.setId(object.getId());
-        group.setOrgId(object.getOrgId());
-        group.setName(object.getName());
-        group.setDescription(object.getDescription());
-        group.setCreatedAccountId(object.getCreatedAccountId());
-        group.setCreatedDateTime(object.getCreatedDateTime());
-        group.setModifiedAccountId(object.getModifiedAccountId());
-        group.setModifiedDatetime(object.getModifiedDatetime());
-        return group;
+        return groupDomain.getAccounts(groupObject).stream().map(Account::new).collect(Collectors.toList());
     }
 
-    private GroupObject toGroupObject(Group group) {
-        if (group == null) {
-            return null;
+    //permissions
+
+    @RequestMapping(value = "{group_id}/permission/group", method = RequestMethod.GET)
+    public List<GroupPermission> getPermissionsByAccountId(@PathVariable(value = "group_id") String groupId) {
+        return groupPermissionDomain.getGroupPermissions(groupId)
+                .stream()
+                .map(GroupPermission::new)
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "{group_id}/permission/policy", method = RequestMethod.GET)
+    public List<GroupPermissionPolicy> getPermissionPoliciesByAccountId(@PathVariable(value = "group_id") String groupId) {
+        return groupPermissionDomain.getGroupPermissionPolicies(groupId)
+                .stream()
+                .map(GroupPermissionPolicy::new)
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "{group_id}/permission", method = RequestMethod.GET)
+    public List<GroupPermission> getByAccountId(@PathVariable("group_id") String groupId) {
+        return groupPermissionDomain.getAllGroupPermissions(groupId)
+                .stream()
+                .map(GroupPermission::new)
+                .collect(Collectors.toList());
+    }
+
+
+    private GroupObject findGroupById(String id) {
+        GroupObject groupObject = groupDomain.getById(id);
+        if (groupObject == null) {
+            throw new NotFoundException("group not found");
         }
-        GroupObject object = new GroupObject();
-        object.setId(group.getId());
-        object.setOrgId(group.getOrgId());
-        object.setName(group.getName());
-        object.setDescription(group.getDescription());
-        object.setCreatedAccountId(group.getCreatedAccountId());
-        object.setCreatedDateTime(group.getCreatedDateTime());
-        object.setModifiedAccountId(group.getModifiedAccountId());
-        object.setModifiedDatetime(group.getModifiedDatetime());
-        return object;
+        return groupObject;
     }
 
 }

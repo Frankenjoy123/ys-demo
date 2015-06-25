@@ -7,8 +7,6 @@ import com.yunsoo.common.data.object.AccountPermissionPolicyObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.ForbiddenException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -25,8 +23,6 @@ import java.util.regex.Pattern;
  */
 @Component
 public class AccountPermissionDomain {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountPermissionDomain.class);
 
     @Autowired
     private RestClient dataAPIClient;
@@ -48,12 +44,6 @@ public class AccountPermissionDomain {
         }, accountId);
     }
 
-//    public List<AccountPermission> getAllAccountPermissions(String accountId) {
-//        List<AccountPermissionObject> permissions = getAllAccountPermissionObjects(accountId);
-//
-//    }
-
-
     public List<AccountPermissionObject> getAllAccountPermissions(String accountId) {
         List<AccountPermissionObject> permissions = new ArrayList<>();
         List<AccountPermissionObject> accountPermissions = getAccountPermissions(accountId);
@@ -67,6 +57,8 @@ public class AccountPermissionDomain {
                 object.setOrgId(pp.getOrgId());
                 object.setResourceCode(po.getResourceCode());
                 object.setActionCode(po.getActionCode());
+                object.setCreatedAccountId(pp.getCreatedAccountId());
+                object.setCreatedDatetime(pp.getCreatedDatetime());
                 permissions.add(object);
             });
         });

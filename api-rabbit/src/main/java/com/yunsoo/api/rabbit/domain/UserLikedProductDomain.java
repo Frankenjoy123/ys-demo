@@ -23,7 +23,7 @@ public class UserLikedProductDomain {
             throw new BadRequestException("UserLikedProduct 不能为空！");
         }
 
-        UserLikedProduct exsitingUserLikedProduct = dataAPIClient.get("/user/collection/userid/{userid}/product/{pid}", UserLikedProduct.class, userLikedProduct.getUserId(), userLikedProduct.getBaseProductId());
+        UserLikedProduct exsitingUserLikedProduct = dataAPIClient.get("/user/collection/who/{userid}/product/{pid}", UserLikedProduct.class, userLikedProduct.getUserId(), userLikedProduct.getBaseProductId());
         if (exsitingUserLikedProduct != null) {
             if (exsitingUserLikedProduct.getActive()) {
                 //just return existing ID

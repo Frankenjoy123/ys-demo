@@ -1,9 +1,9 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountDomain;
-import com.yunsoo.api.dto.Account;
-import com.yunsoo.api.dto.AccountRequest;
-import com.yunsoo.api.dto.AccountUpdatePasswordRequest;
+import com.yunsoo.api.domain.AccountPermissionDomain;
+import com.yunsoo.api.dto.*;
+import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.web.client.Page;
@@ -35,6 +35,9 @@ public class AccountController {
     private AccountDomain accountDomain;
 
     @Autowired
+    private AccountPermissionDomain accountPermissionDomain;
+
+    @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -42,11 +45,8 @@ public class AccountController {
         if ("current".equals(accountId)) { //get current Account
             accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         }
-        AccountObject accountObject = accountDomain.getById(accountId);
-        if (accountObject == null) {
-            throw new NotFoundException("Account not found by [id: " + accountId + "]");
-        }
-        return toAccount(accountObject);
+        AccountObject accountObject = findAccountById(accountId);
+        return new Account(accountObject);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -64,7 +64,7 @@ public class AccountController {
 
         response.setHeader("Content-Range", "pages " + accounts.getPage() + "/" + accounts.getTotal());
 
-        return accounts.getContent().stream().map(this::toAccount).collect(Collectors.toList());
+        return accounts.getContent().stream().map(Account::new).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "count", method = RequestMethod.GET)
@@ -86,7 +86,7 @@ public class AccountController {
         AccountObject accountObject = toAccountObject(request);
         accountObject.setCreatedAccountId(currentAccountId);
 
-        return toAccount(accountDomain.createAccount(accountObject));
+        return new Account(accountDomain.createAccount(accountObject));
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
@@ -99,16 +99,12 @@ public class AccountController {
         //todo
     }
 
-    @RequestMapping(value = "/current/password", method = RequestMethod.POST)
+    @RequestMapping(value = "current/password", method = RequestMethod.POST)
     public void updatePassword(@RequestBody AccountUpdatePasswordRequest accountPassword) {
 
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
-        AccountObject accountObject = accountDomain.getById(currentAccountId);
-
-        if (accountObject == null) {
-            throw new NotFoundException("Account not found");
-        }
+        AccountObject accountObject = findAccountById(currentAccountId);
 
         String rawOldPassword = accountPassword.getOldPassword();
         String rawNewPassword = accountPassword.getNewPassword();
@@ -123,24 +119,77 @@ public class AccountController {
     }
 
 
-    private Account toAccount(AccountObject accountObject) {
-        if (accountObject == null) {
-            return null;
+    //groups
+
+    @RequestMapping(value = "{id}/group", method = RequestMethod.GET)
+    public List<Group> getGroups(@PathVariable("id") String accountId) {
+        if ("current".equals(accountId)) { //get current Account
+            accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         }
-        Account account = new Account();
-        account.setId(accountObject.getId());
-        account.setOrgId(accountObject.getOrgId());
-        account.setIdentifier(accountObject.getIdentifier());
-        account.setStatusCode(accountObject.getStatusCode());
-        account.setEmail(accountObject.getEmail());
-        account.setFirstName(accountObject.getFirstName());
-        account.setLastName(accountObject.getLastName());
-        account.setPhone(accountObject.getPhone());
-        account.setModifiedAccountId(accountObject.getModifiedAccountId());
-        account.setModifiedDatetime(accountObject.getModifiedDatetime());
-        account.setCreatedAccountId(accountObject.getCreatedAccountId());
-        account.setCreatedDateTime(accountObject.getCreatedDateTime());
-        return account;
+        AccountObject accountObject = findAccountById(accountId);
+        return accountDomain.getGroups(accountObject).stream().map(Group::new).collect(Collectors.toList());
+    }
+
+
+    //permissions
+
+    @RequestMapping(value = "{account_id}/permission/account", method = RequestMethod.GET)
+    public List<AccountPermission> getPermissionsByAccountId(@PathVariable(value = "account_id") String accountId) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        if ("current".equals(accountId)) { //get current Account
+            accountId = currentAccountId;
+        }
+        checkAccountPermissionRead(currentAccountId, accountId);
+        return accountPermissionDomain.getAccountPermissions(accountId)
+                .stream()
+                .map(AccountPermission::new)
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "{account_id}/permission/policy", method = RequestMethod.GET)
+    public List<AccountPermissionPolicy> getPermissionPoliciesByAccountId(@PathVariable(value = "account_id") String accountId) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        if ("current".equals(accountId)) { //get current Account
+            accountId = currentAccountId;
+        }
+        checkAccountPermissionRead(currentAccountId, accountId);
+        return accountPermissionDomain.getAccountPermissionPolicies(accountId)
+                .stream()
+                .map(AccountPermissionPolicy::new)
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "{account_id}/permission", method = RequestMethod.GET)
+    public List<AccountPermission> getByAccountId(@PathVariable("account_id") String accountId) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        if ("current".equals(accountId)) { //get current Account
+            accountId = currentAccountId;
+        }
+        checkAccountPermissionRead(currentAccountId, accountId);
+        return accountPermissionDomain.getAllAccountPermissions(accountId)
+                .stream()
+                .map(AccountPermission::new)
+                .collect(Collectors.toList());
+    }
+
+    private void checkAccountPermissionRead(String currentAccountId, String accountId) {
+        if (!currentAccountId.equals(accountId)) {
+            //check permission
+            AccountObject accountObject = accountDomain.getById(accountId);
+            if (accountObject == null) {
+                throw new NotFoundException("account not found by id [" + accountId + "]");
+            }
+            accountPermissionDomain.checkPermission(new TPermission(accountObject.getOrgId(), "accountpermission", "read"));
+        }
+    }
+
+
+    private AccountObject findAccountById(String accountId) {
+        AccountObject accountObject = accountDomain.getById(accountId);
+        if (accountObject == null) {
+            throw new NotFoundException("account not found");
+        }
+        return accountObject;
     }
 
     private AccountObject toAccountObject(AccountRequest request) {

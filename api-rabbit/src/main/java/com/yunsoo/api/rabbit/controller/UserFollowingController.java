@@ -69,9 +69,13 @@ public class UserFollowingController {
     }
 
     @RequestMapping(value = "/who/{id}/org/{orgid}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#id, 'UserFollowing', 'userfollowing:read')")
     public UserFollowing getFollowingRecord(@PathVariable(value = "id") String id,
                                             @PathVariable(value = "orgid") String orgId) {
         UserFollowing userFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class, id, orgId);
+        if (userFollowing == null) {
+            throw new NotFoundException("找不到用户Follow的公司信息");
+        }
         return userFollowing;
     }
 

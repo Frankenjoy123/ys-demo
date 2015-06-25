@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.AccountObject;
 import org.joda.time.DateTime;
 
 /**
@@ -148,5 +149,24 @@ public class Account {
 
     public void setModifiedDatetime(DateTime modifiedDatetime) {
         this.modifiedDatetime = modifiedDatetime;
+    }
+
+
+    public Account() {
+    }
+
+    public Account(AccountObject accountObject) {
+        this.setId(accountObject.getId());
+        this.setOrgId(accountObject.getOrgId());
+        this.setIdentifier(accountObject.getIdentifier());
+        this.setStatusCode(accountObject.getStatusCode());
+        this.setEmail(accountObject.getEmail());
+        this.setFirstName(accountObject.getFirstName());
+        this.setLastName(accountObject.getLastName());
+        this.setPhone(accountObject.getPhone());
+        this.setCreatedAccountId(accountObject.getCreatedAccountId());
+        this.setCreatedDateTime(accountObject.getCreatedDateTime());
+        this.setModifiedAccountId(accountObject.getModifiedAccountId());
+        this.setModifiedDatetime(accountObject.getModifiedDatetime());
     }
 }
