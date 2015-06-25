@@ -99,6 +99,8 @@ public class ScanController {
         UserLikedProduct userLikedProduct = this.userLikedProductDomain.getUserLikedProduct(currentUser.getId(), currentExistProduct.getProductBaseId());
         if (userLikedProduct != null) {
             scanResult.setLiked_product(userLikedProduct.getActive());
+        } else {
+            scanResult.setLiked_product(false);
         }
 
         //4, retrieve scan records
@@ -123,6 +125,8 @@ public class ScanController {
         UserFollowing userFollowingResult = userFollowDomain.getUserFollowing(currentUser.getId(), organizationObject.getId());
         if (userFollowingResult != null) {
             scanResult.setFollowed_org(userFollowingResult.getIsFollowing());
+        } else {
+            scanResult.setFollowed_org(false);
         }
 
         //8, set validation result by our validation strategy.
