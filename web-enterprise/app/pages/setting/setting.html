@@ -1,7 +1,7 @@
 <!--Page Title-->
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <div id="page-title">
-    <h1 class="page-header text-overflow">密码</h1>
+    <h1 class="page-header text-overflow">修改密码</h1>
 </div>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <!--End page title-->
@@ -26,35 +26,32 @@
         <div class="panel panel-primary">
             <div id="updatePassword" class="form-horizontal">
                 <div class="panel-body">
-                    <h4 class="mar-btm text-thin">修改密码</h4>
-                    <hr>
-
                     <div class="form-group">
-                        <label class="col-lg-3 control-label">当前密码：</label>
+                        <label class="col-md-3 col-md-offset-1 control-label">当前密码：</label>
 
-                        <div class="col-lg-7">
+                        <div class="col-md-4">
                             <input type="password" class="form-control" name="oldPassword" placeholder="当前密码" ng-model="originalPassword">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-3 control-label">修改密码：</label>
+                        <label class="col-md-3 col-md-offset-1 control-label">修改密码：</label>
 
-                        <div class="col-lg-7">
+                        <div class="col-md-4">
                             <input type="password" class="form-control" name="curPassword" placeholder="修改密码" ng-model="currentPassword">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-lg-3 control-label">确认密码：</label>
+                        <label class="col-md-3 col-md-offset-1 control-label">确认密码：</label>
 
-                        <div class="col-lg-7">
+                        <div class="col-md-4">
                             <input type="password" class="form-control" name="confirmPassword"
                                    placeholder="确认密码" ng-model="confirmPassword">
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="row">
-                            <div class="col-xs-1 col-xs-offset-5">
-                                <button type="submit" class="btn btn-primary" ng-click="submit();">提交</button>
+                            <div class="col-md-1 col-md-offset-5">
+                                <button type="submit" class="btn btn-primary btn-labeled fa fa-send" ng-click="submit();">提交</button>
                             </div>
                         </div>
                     </div>

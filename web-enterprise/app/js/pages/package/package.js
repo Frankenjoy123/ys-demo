@@ -45,6 +45,8 @@
             /*headers:{"Content-Type":"multipart/form-data; charset=utf-8"}*/
         });
 
+        $scope.showDesc = false;
+
         //set AccessToken http header
         var accessToken = $scope.utils.auth.getAccessToken();
         accessToken && (uploader.headers[$scope.YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
