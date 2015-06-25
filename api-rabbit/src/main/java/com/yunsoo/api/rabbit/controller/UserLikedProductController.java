@@ -104,7 +104,7 @@ public class UserLikedProductController {
         if (userLikedProduct == null) {
             throw new BadRequestException("userLikedProduct不能为空！");
         }
-        UserLikedProduct productToDelete = dataAPIClient.get("/user/collection/userid/{id}/product/{pid}", UserLikedProduct.class,
+        UserLikedProduct productToDelete = dataAPIClient.get("/user/collection/who/{id}/product/{pid}", UserLikedProduct.class,
                 userLikedProduct.getUserId(), userLikedProduct.getBaseProductId());
         if (productToDelete == null) {
             throw new NotFoundException(40401, "UserLikedProduct not found!");
