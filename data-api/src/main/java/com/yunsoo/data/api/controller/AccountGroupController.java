@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * Descriptions:
  */
 @RestController
-@RequestMapping("accountgroup")
+@RequestMapping("/accountgroup")
 public class AccountGroupController {
 
     @Autowired

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.GroupObject;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
@@ -107,6 +108,37 @@ public class Group {
 
     public void setModifiedDatetime(DateTime modifiedDatetime) {
         this.modifiedDatetime = modifiedDatetime;
+    }
+
+
+    public Group() {
+
+    }
+
+    public Group(GroupObject object) {
+        if (object != null) {
+            this.setId(object.getId());
+            this.setOrgId(object.getOrgId());
+            this.setName(object.getName());
+            this.setDescription(object.getDescription());
+            this.setCreatedAccountId(object.getCreatedAccountId());
+            this.setCreatedDateTime(object.getCreatedDateTime());
+            this.setModifiedAccountId(object.getModifiedAccountId());
+            this.setModifiedDatetime(object.getModifiedDatetime());
+        }
+    }
+
+    public GroupObject toGroupObject() {
+        GroupObject object = new GroupObject();
+        object.setId(this.getId());
+        object.setOrgId(this.getOrgId());
+        object.setName(this.getName());
+        object.setDescription(this.getDescription());
+        object.setCreatedAccountId(this.getCreatedAccountId());
+        object.setCreatedDateTime(this.getCreatedDateTime());
+        object.setModifiedAccountId(this.getModifiedAccountId());
+        object.setModifiedDatetime(this.getModifiedDatetime());
+        return object;
     }
 
 }
