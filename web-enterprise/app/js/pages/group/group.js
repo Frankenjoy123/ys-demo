@@ -12,6 +12,11 @@
         $http.post("/api/group", group).success(fnSuccess).error(fnError);
 
         return this;
+      },
+      deleteGroup: function (groupId, fnSuccess, fnError) {
+        $http.delete('/api/group/' + groupId).success(fnSuccess);
+
+        return this;
       }
     };
   }]);
@@ -55,6 +60,14 @@
         accountRead: '',
         accountMng: '',
         passwordRead: ''
+      };
+
+      $scope.deleteGroup = function(id){
+        groupService.deleteGroup(id, function (data, status) {
+          $scope.utils.alert('info', '账号组删除成功');
+
+          setTimeout("location.reload();", 1500);
+        });
       };
 
       $scope.submit = function (isValid) {
