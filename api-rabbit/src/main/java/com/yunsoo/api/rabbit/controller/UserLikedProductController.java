@@ -76,8 +76,13 @@ public class UserLikedProductController {
     }
 
     @RequestMapping(value = "/who/{id}/product/{pid}", method = RequestMethod.GET)
-    public UserLikedProduct getUserLikedProduct(@PathVariable(value = "id") String id, @PathVariable(value = "pid") String pid) {
+    @PreAuthorize("hasPermission(#id, 'UserLikedProduct', 'usercollection:read')")
+    public UserLikedProduct getUserLikedProduct(@PathVariable(value = "id") String id,
+                                                @PathVariable(value = "pid") String pid) {
         UserLikedProduct userLikedProduct = dataAPIClient.get("/user/collection/who/{id}/product/{pid}", UserLikedProduct.class, id, pid);
+        if (userLikedProduct == null) {
+            throw new NotFoundException("找不到用户收藏的产品！");
+        }
         return userLikedProduct;
     }
 
