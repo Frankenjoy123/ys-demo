@@ -30,7 +30,9 @@
                     <td>{{m.title}}</td>
                     <td>{{m.body}}</td>
                     <td>{{formatMessageType(m.type)}}</td>
-                    <td>{{formatMessageStatus(m.status)}}</td>
+                    <td>
+                        <span class="label" ng-class="{'label-success':m.status == 'created','label-info':(m.status == 'approved' || m.status == 'deleted')}">{{formatMessageStatus(m.status)}}</span>
+                    </td>
                     <td>{{utils.formatDateString(m.created_datetime)}}</td>
                     <td>{{utils.formatDateString(m.expired_datetime)}}</td>
                 </tr>

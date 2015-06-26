@@ -62,7 +62,7 @@
         passwordRead: ''
       };
 
-      $scope.deleteGroup = function(id){
+      $scope.deleteGroup = function (id) {
         groupService.deleteGroup(id, function (data, status) {
           $scope.utils.alert('info', '账号组删除成功');
 
@@ -70,37 +70,7 @@
         });
       };
 
-      $scope.submit = function (isValid) {
-        if (!isValid) {
-          $scope.utils.alert('info', '页面验证有错误，请返回检查');
-          return;
-        }
-
-        $scope.spinnerShow = true;
-
-        groupService.createGroup(group, function (data) {
-
-          $scope.spinnerShow = false;
-          $('#myModal').modal('hide');
-          $scope.utils.alert('info', '账号组创建成功');
-
-          setTimeout("location.reload();", 1500);
-        }, function (error) {
-          $.niftyNoty({
-            type: 'purple',
-            icon: 'fa fa-check',
-            message: "账号组创建失败",
-            container: 'floating',
-            timer: 3000
-          });
-        });
-      };
-
-      $scope.showGroupModal = function () {
-        $('#myModal').modal({backdrop: 'static', keyboard: false});
-      };
-
-      $scope.groupTable = new $scope.utils.DataTable({
+      var groupDatatable = {
         sortable: {
           target: '#sort-bar',
           sort: 'createdDateTime,desc'
@@ -114,7 +84,43 @@
             callback({data: data, headers: headers});
           });
         }
-      });
+      };
+
+      $scope.submit = function (isValid) {
+        if (!isValid) {
+          $scope.utils.alert('info', '页面验证有错误，请返回检查');
+          return;
+        }
+
+        $scope.spinnerShow = true;
+
+        groupService.createGroup(group, function (data) {
+
+          $scope.spinnerShow = false;
+
+          $('#myModal').modal('hide');
+
+          $scope.utils.alert('info', '账号组创建成功');
+
+          $scope.groupTable = new $scope.utils.DataTable(groupDatatable);
+        }, function (error) {
+          $.niftyNoty({
+            type: 'purple',
+            icon: 'fa fa-check',
+            message: "账号组创建失败",
+            container: 'floating',
+            timer: 3000
+          });
+        });
+      };
+
+      $scope.showGroupModal = function () {
+        $('#myModal').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
+          $(this).removeData("bs.modal");
+        });
+      };
+
+      $scope.groupTable = new $scope.utils.DataTable(groupDatatable);
 
     }]);
 })();
