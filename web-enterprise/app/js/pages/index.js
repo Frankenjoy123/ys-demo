@@ -122,15 +122,11 @@
       $scope.utils = utils;
 
       //context
-      $scope.context = {
-        getAccessToken: function () {
-          var accessToken = $.cookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN);
-          return typeof accessToken === 'string' ? accessToken : null;
-        }
-      };
+      $scope.context = {};
+      window._debug && (window._debug.context = $scope.context); //debug only
 
-      //check authentication
-      if (!$scope.context.getAccessToken()) {
+      //check auth
+      if (!utils.auth.getAuth()) {
         //redirect back to login page
         window.location.href = 'login.html';
       }

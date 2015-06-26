@@ -48,15 +48,14 @@
         $scope.showDesc = false;
 
         //set AccessToken http header
-        var accessToken = $scope.context.getAccessToken();
+        var accessToken = $scope.utils.auth.getAccessToken();
         accessToken && (uploader.headers[$scope.YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
 
         uploader.filters.push({
             name: 'customFilter',
             fn: function (item /*{File|FileLikeObject}*/, options) {
                 return this.queue.length < 10;
-            },
-            name: ''
+            }
         });
         // CALLBACKS
 

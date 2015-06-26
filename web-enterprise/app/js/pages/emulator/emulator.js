@@ -20,7 +20,7 @@
     });
 
     //set AccessToken http header
-    var accessToken = $scope.context.getAccessToken();
+    var accessToken = $scope.utils.auth.getAccessToken();
     accessToken && (uploader.headers[$scope.YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
 
     $scope.fileInput = '';
@@ -66,7 +66,7 @@
     $scope.preview = function () {
 
       var dataPreview = {};
-      dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo-mobile?access_token=" + $scope.context.getAccessToken();
+      dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo-mobile?access_token=" + $scope.utils.auth.getAccessToken();
       dataPreview.proImgUrl = $scope.fileInput;
       dataPreview.barcode = product.barCode;
       dataPreview.name = product.productName;
@@ -204,7 +204,7 @@
               reader.onload = function (e) {
                 imgProductbase.attr('src', this.result);
                 $scope.fileInput = this.result;
-              }
+              };
 
               uploader.queue = uploader.queue.slice(uploader.queue.length - 1, uploader.queue.length);
             }

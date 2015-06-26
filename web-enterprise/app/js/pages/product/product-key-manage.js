@@ -102,7 +102,7 @@
             newProductKeyBatches: [],
             download: function (batchId) {
                 if (batchId) {
-                    var accessToken = $scope.context.getAccessToken();
+                    var accessToken = $scope.utils.auth.getAccessToken();
                     var auth = accessToken ? $scope.YUNSOO_CONFIG.PARAMETER_ACCESS_TOKEN + '=' + accessToken : '';
                     productKeyManageService.downloadProductKeys(this, batchId, auth);
                 }
