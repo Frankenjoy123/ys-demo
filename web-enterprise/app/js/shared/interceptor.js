@@ -1,7 +1,4 @@
 (function () {
-    var HEADER_CSRF_TOKEN = "CSRF-TOKEN";
-    var E_CSRF_TOKEN = "SESSION-CSRF-TOKEN";
-
     function startAjax(otherSettings) {
         //$("body").append('<div class="ajax-loading-wrap"><div class="ajax-loading"></div></div>');
     }
@@ -35,36 +32,6 @@
         return root + url;
     }
 
-    function csrfSafeMethod(method) {
-        // these HTTP methods do not require CSRF protection
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-
-    function sameOrigin(url) {
-        // test that a given url is a same-origin URL
-        // url could be relative or scheme relative or absolute
-        var host = document.location.host; // host + port
-        var protocol = document.location.protocol;
-        var sr_origin = '//' + host;
-        var origin = protocol + sr_origin;
-        // Allow absolute or scheme relative URLs to same origin
-        return (url === origin || url.slice(0, origin.length + 1) === origin + '/') ||
-            (url === sr_origin || url.slice(0, sr_origin.length + 1) === sr_origin + '/') ||
-                // or any other URL that isn't scheme relative or absolute i.e relative.
-            !(/^(\/\/|http:|https:).*/.test(url));
-    }
-
-    function getCsrfToken() {
-        return $(E_CSRF_TOKEN).val();
-    }
-
-    function addCsrfHeader(jqXHR, ajaxOptions) {
-        // add request header of Ajax CSRF Token for POST requests
-        if (!csrfSafeMethod(ajaxOptions.type) && sameOrigin(ajaxOptions.url)) {
-            jqXHR.setRequestHeader(HEADER_CSRF_TOKEN, getCsrfToken());
-        }
-    }
-
     angular.module("interceptor", ['YUNSOO_CONFIG', 'utils'])
         .factory('interceptorTrack', ["$q", "$templateCache", 'YUNSOO_CONFIG', 'utils', function ($q, $templateCache, YUNSOO_CONFIG, utils) {
             return {
@@ -83,10 +50,6 @@
                         //access token
                         var accessToken = utils.auth.getAccessToken();
                         (typeof accessToken === 'string') && (config.headers[YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
-
-                        if (!csrfSafeMethod(config.method) && sameOrigin(config.url)) {
-                            config.headers[HEADER_CSRF_TOKEN] = getCsrfToken();
-                        }
 
                         return config;
                     }

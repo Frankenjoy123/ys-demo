@@ -167,7 +167,7 @@ public class AuthController {
 
         //create account token
         //permanent token
-        AccountTokenObject accountToken = accountTokenDomain.create(accountId, appId, deviceId);
+        AccountTokenObject accountToken = accountTokenDomain.create(accountId, appId, deviceId, null);
         Token permanentToken = new Token(accountToken.getPermanentToken(), accountToken.getPermanentTokenExpiresDateTime());
         //access token
         Token accessToken = tokenAuthenticationService.generateAccessToken(accountId, orgId);
