@@ -15,6 +15,17 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" ng-repeat="data in monDays" ng-class="{'active':currDay == data}"><a
+                                    href="" aria-controls="home" role="tab"
+                                    data-toggle="tab" ng-click="getData(data)">{{data}}</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-12">
                         <div id="pieMap" style="height:400px"></div>
                     </div>
                 </div>

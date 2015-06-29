@@ -1,80 +1,114 @@
 (function () {
-    var app = angular.module('root');
+  var app = angular.module('root');
 
-    app.factory("pieMapService", ["$http", function ($http) {
-        return {
-            getDevices: function (dataTable, orgId, fnSuccess) {
-                var url = '/api/device/org/' + orgId + '?';
-                url += dataTable.toString();
-                $http.get(url).success(fnSuccess);
+  app.factory("pieMapService", ["$http", function ($http) {
+    return {
+      getScanCount: function (peirod, fnSuccess, fnError) {
+        var url = '/api/report/myorganization/product_scan_count/' + peirod;
+        $http.get(url).success(fnSuccess).error(fnError);
 
-                return this;
-            }
-        };
-    }]);
+        return this;
+      }
+    };
+  }]);
 
-    app.controller("pieMapCtrl", ["$scope", "pieMapService", "$timeout", function ($scope, pieMapService, $timeout) {
+  app.controller("pieMapCtrl", ["$scope", "pieMapService", "$timeout", function ($scope, pieMapService, $timeout) {
 
-        $timeout(function () {
+    var date = new Date();
+    $scope.monDays = [];
+    $scope.currDay = date.getCurrDay();
 
-            var pieMap = echarts.init($('#pieMap')[0]);
+    pieMapService.getScanCount(date.getDateStr(), getScanCount, function () {
+      $scope.utils.alert('info', date.getDateStr() + '该日数据不存在');
+      var data = {};
+      data.data = [];
+      data.dimensions = {};
+      data.dimensions.values = [];
+      getScanCount(data);
+    });
 
-            var option = {
-                title : {
-                    text: '产品扫码统计',
-                    x:'center'
-                },
-                tooltip : {
-                    trigger: 'item',
-                    formatter: "{a} <br/>{b} : {c} ({d}%)"
-                },
-                legend: {
-                    orient : 'vertical',
-                    x : 'left',
-                    data:['小儿护脑退热贴','大闸蟹','菲律宾凤梨','蜜炼琵琶膏','远红外风湿骨痛贴']
-                },
-                toolbox: {
-                    show : true,
-                    feature : {
-                        mark : {show: true},
-                        dataView : {show: true, readOnly: false},
-                        magicType : {
-                            show: true,
-                            type: ['pie', 'funnel'],
-                            option: {
-                                funnel: {
-                                    x: '25%',
-                                    width: '50%',
-                                    funnelAlign: 'left',
-                                    max: 1548
-                                }
-                            }
-                        },
-                        restore : {show: true},
-                        saveAsImage : {show: true}
-                    }
-                },
-                calculable : true,
-                series : [
-                    {
-                        name:'扫码统计',
-                        type:'pie',
-                        radius : '55%',
-                        center: ['50%', '60%'],
-                        data:[
-                            {value:335, name:'小儿护脑退热贴'},
-                            {value:310, name:'大闸蟹'},
-                            {value:234, name:'菲律宾凤梨'},
-                            {value:135, name:'蜜炼琵琶膏'},
-                            {value:1548, name:'远红外风湿骨痛贴'}
-                        ]
-                    }
-                ]
-            };
+    $scope.getData = function (data) {
+      pieMapService.getScanCount(date.getDateStr(data), getScanCount, function () {
+        $scope.utils.alert('info', date.getDateStr(data) + '该日数据不存在');
+        var data1 = {};
+        data1.data = [];
+        data1.dimensions = {};
+        data1.dimensions.values = [];
+        getScanCount(data1);
+      });
+    };
 
-            pieMap.setOption(option);
+    for (var i = 1; i <= date.getCurrentMonthMaxDay(); i++) {
 
-        }, 0);
+      var day = 0;
 
-    }]);
+      if (i < 10)
+        day = '0' + i;
+      else
+        day = i;
+
+      $scope.monDays.push(day);
+    }
+
+    function getScanCount(data) {
+
+      var pieMap = echarts.init($('#pieMap')[0]);
+
+      var dataShow = [];
+      for (var i = 0; i < data.data.length; i++) {
+        dataShow.push({value: data.data[i], name: data.dimensions.values[i]});
+      }
+
+      var option = {
+        title: {
+          text: '产品扫码统计',
+          x: 'center'
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+          orient: 'vertical',
+          x: 'left',
+          data: data.dimensions.values
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            mark: {show: true},
+            dataView: {show: true, readOnly: false},
+            magicType: {
+              show: true,
+              type: ['pie', 'funnel'],
+              option: {
+                funnel: {
+                  x: '25%',
+                  width: '50%',
+                  funnelAlign: 'left',
+                  max: 1548
+                }
+              }
+            },
+            restore: {show: true},
+            saveAsImage: {show: true}
+          }
+        },
+        calculable: true,
+        series: [
+          {
+            name: '扫码统计',
+            type: 'pie',
+            radius: '55%',
+            center: ['50%', '60%'],
+            data: dataShow
+          }
+        ]
+      };
+
+      pieMap.setOption(option);
+
+    };
+
+  }]);
 })();

@@ -548,7 +548,16 @@
       return d;
     };
 
-    Date.prototype.getDateStr = function(day) {
+    Date.prototype.getCurrMonth = function () {
+      var date = this;
+      var mon = date.getMonth() + 1;
+      if (mon < 10) {
+        mon = "0" + mon;
+      }
+      return mon;
+    };
+
+    Date.prototype.getDateStr = function (day) {
 
       var date = this;
       var xYear = date.getYear();
