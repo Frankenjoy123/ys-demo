@@ -107,6 +107,10 @@
         }).error(function (data, code) {
           console.log('[get current organization]', 'failed', code);
         });
+      },
+      refreshAccessToken: function (permanentToken, fnSuccess) {
+        //refresh access token
+        permanentToken && $http.get('/api/auth/accesstoken?permanent_token=' + permanentToken).success(fnSuccess);
       }
     };
   }]);
@@ -126,7 +130,19 @@
       window._debug && (window._debug.context = $scope.context); //debug only
 
       //check auth
-      if (!utils.auth.getAuth()) {
+      var auth = utils.auth.getAuth();
+      if (auth && utils.auth.getPermanentToken()) {
+        //refresh access token before expires
+        setTimeout(function refresh() {
+          rootService.refreshAccessToken(utils.auth.getPermanentToken(), function (data) {
+            console.log('[access token]', 'refreshed successfully');
+            utils.auth.setAccessToken(data.token, DateTime.now().addSeconds(data.expires_in).valueOf());
+            if (data.expires_in > 60) {
+              setTimeout(refresh, (data.expires_in - 30/*seconds*/) * 1000);
+            }
+          });
+        }, new DateTime(auth.accessToken.expires).addSeconds(-30) - DateTime.now());
+      } else {
         //redirect back to login page
         window.location.href = 'login.html';
       }
