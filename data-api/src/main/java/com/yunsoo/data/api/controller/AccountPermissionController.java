@@ -4,10 +4,8 @@ import com.yunsoo.common.data.object.AccountPermissionObject;
 import com.yunsoo.data.service.entity.AccountPermissionEntity;
 import com.yunsoo.data.service.repository.AccountPermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +27,19 @@ public class AccountPermissionController {
     public List<AccountPermissionObject> getPermissionsByAccountId(@RequestParam(value = "account_id") String accountId) {
         return accountPermissionRepository.findByAccountId(accountId).stream()
                 .map(this::toAccountPermissionObject).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public AccountPermissionObject create(@RequestBody AccountPermissionObject accountPermissionObject) {
+        //todo
+        return null;
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@RequestBody AccountPermissionObject accountPermissionObject) {
+        //todo
     }
 
 
