@@ -364,8 +364,8 @@
           }
           if (this.totalPages === '*') {
             //this.totalPages = this.data.length === this.size ? this.page + 2 : this.page + 1;
-              this.totalPages = Math.ceil(this.data.length / this.size);
-              this.data = this.data.slice((this.page) * this.size, (this.page + 1) * this.size);
+            this.totalPages = Math.ceil(this.data.length / this.size);
+            this.data = this.data.slice((this.page) * this.size, (this.page + 1) * this.size);
           }
         }
       };
@@ -523,5 +523,49 @@
 
     return Auth;
   })(); //Auth end
+
+  var DateHelp = (function () {
+
+    Date.prototype.getCurrentMonthMaxDay = function () {
+      var date = this;
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      if (m == 2) {
+        return y % 4 == 0 ? 29 : 28;
+      } else if (m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12) {
+        return 31;
+      } else {
+        return 30;
+      }
+    };
+
+    Date.prototype.getCurrDay = function () {
+      var date = this;
+      var d = date.getDate();
+      if (d < 10) {
+        d = "0" + d;
+      }
+      return d;
+    };
+
+    Date.prototype.getDateStr = function(day) {
+
+      var date = this;
+      var xYear = date.getYear();
+      xYear = xYear + 1900;
+
+      var xMonth = date.getMonth() + 1;
+      if (xMonth < 10) {
+        xMonth = "0" + xMonth;
+      }
+
+      var xDay = date.getCurrDay();
+      if (day != undefined) {
+        xDay = day;
+      }
+
+      return xYear + xMonth + xDay;
+    };
+  })();
 
 })();
