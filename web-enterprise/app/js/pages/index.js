@@ -111,6 +111,10 @@
       refreshAccessToken: function (permanentToken, fnSuccess) {
         //refresh access token
         permanentToken && $http.get('/api/auth/accesstoken?permanent_token=' + permanentToken).success(fnSuccess);
+      },
+      getCurrentAccountPolicies: function (fnSuccess, fnError) {
+        var url = '/api/account/current/permission';
+        $http.get(url).success(fnSuccess).error(fnError);
       }
     };
   }]);
@@ -170,15 +174,56 @@
         $scope.$broadcast('productKeyCreditSum-ready', sum);
       });
 
+      rootService.getCurrentAccountPolicies(function (data) {
+        $scope.currAccountPolicies = data;
+        $scope.$broadcast('accountPolicies-ready', data);
+      });
+
+      var hasAccess = $scope.hasAccess = function (data, path, type) {
+        return true;
+      };
+
+      $scope.$on('$routeChangeSuccess', function (angularEvent, current, previous) {
+        var path = current.$$route ? current.$$route.originalPath : '/dashboard';
+
+        if ($scope.currAccountPolicies) {
+          if (!hasAccess($scope.currAccountPolicies, '/dashboard', 'read')) {
+            $('#liDashBoard').attr('style', "display:none");
+            if (path == '/dashboard') {
+              window.location.href = '403.html';
+            }
+          }
+
+          //$('#liProductKey').attr('style', "display:none");
+          //$('#liPackageManage').attr('style', "display:none");
+          //$('#liLogistics').attr('style', "display:none");
+          //$('#liAllCharts').attr('style', "display:none");
+          //$('#liAllSettings').attr('style', "display:none");
+          //$('#liProductBase').attr('style', "display:none");
+          //$('#liMessage').attr('style', "display:none");
+          //$('#liDevice').attr('style', "display:none");
+          //$('#liAccount').attr('style', "display:none");
+          //$('#liGroup').attr('style', "display:none");
+          //$('#liPassword').attr('style', "display:none");
+        }
+        else {
+          $scope.$on('accountPolicies-ready', function (data) {
+
+
+          });
+        }
+      });
 
       //show welcome message
       $timeout(function () {
         $scope.utils.notification('info', '欢迎登陆云溯管理平台');
       }, 3000);
 
+
       console.log('[root controller end]');
     }
-  ]);//end of controller
+  ])
+  ;//end of controller
 
   app.directive('scrollTop', function () {
     return {

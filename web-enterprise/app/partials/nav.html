@@ -33,7 +33,7 @@
                 <ul id="mainnav-menu" class="list-group">
 
                     <!--Menu list item-->
-                    <li>
+                    <li id="liDashBoard">
                         <a href="#/dashboard">
                             <i class="fa fa-fw fa-dashboard "></i>
                             <span class="menu-title"><strong>仪表台</strong></span>
@@ -41,7 +41,7 @@
                     </li>
 
                     <!--Menu list item-->
-                    <li>
+                    <li id="liProductKey">
                         <a href="#/product-key-manage">
                             <i class="fa fa-fw fa-tags"></i>
                             <span class="menu-title"><strong>产品码</strong></span>
@@ -49,7 +49,7 @@
                     </li>
 
                     <!--Menu list item-->
-                    <li>
+                    <li id="liPackageManage">
                         <a href="#/package-manage">
                             <i class="fa fa-fw fa-gift"></i>
                             <span class="menu-title"><strong>包装</strong></span>
@@ -57,14 +57,14 @@
                     </li>
 
                     <!--Menu list item-->
-                    <li>
+                    <li id="liLogistics">
                         <a href="#/logistics">
                             <i class="fa fa-fw fa-truck"></i>
                             <span class="menu-title"><strong>物流</strong></span>
                         </a>
                     </li>
 
-                    <li data-menu-group="echarts">
+                    <li data-menu-group="echarts" id="liAllCharts">
                         <a href="">
                             <i class="fa fa-fw fa-bar-chart"></i>
                             <span class="menu-title"><strong>图表</strong></span>
@@ -72,15 +72,15 @@
                         </a>
                         <!--Submenu-->
                         <ul class="collapse" data-menu-group="echarts">
-                            <li><a href="#/echarts-bar">产品贴码统计</a></li>
-                            <li><a href="#/pie-map">产品扫码统计</a></li>
-                            <li><a href="#/stacked-bar">产品扫码月统计</a></li>
-                            <li><a href="#/mix-map">产品地域统计</a></li>
+                            <li id="liEcharts"><a href="#/echarts-bar">产品贴码统计</a></li>
+                            <li id="liPieMap"><a href="#/pie-map">产品扫码统计</a></li>
+                            <li id="liStackedBar"><a href="#/stacked-bar">产品扫码月统计</a></li>
+                            <li id="liMixMap"><a href="#/mix-map">产品地域统计</a></li>
                         </ul>
                     </li>
 
                     <!--Menu list item-->
-                    <li data-menu-group="setting">
+                    <li data-menu-group="setting" id="liAllSettings">
                         <a href="">
                             <i class="fa fa-fw fa-cogs"></i>
                             <span class="menu-title"><strong>设置</strong></span>
@@ -88,12 +88,12 @@
                         </a>
                         <!--Submenu-->
                         <ul class="collapse" data-menu-group="setting">
-                            <li><a href="#/product-base-manage">产品</a></li>
-                            <li><a href="#/message">消息</a></li>
-                            <li><a href="#/device">设备</a></li>
-                            <li><a href="#/account">账号</a></li>
-                            <li><a href="#/group">账号组</a></li>
-                            <li><a href="#/setting">密码</a></li>
+                            <li id="liProductBase"><a href="#/product-base-manage">产品</a></li>
+                            <li id="liMessage"><a href="#/message">消息</a></li>
+                            <li id="liDevice"><a href="#/device">设备</a></li>
+                            <li id="liAccount"><a href="#/account">账号</a></li>
+                            <li id="liGroup"><a href="#/group">账号组</a></li>
+                            <li id="liPassword"><a href="#/setting">密码</a></li>
                         </ul>
                     </li>
 
