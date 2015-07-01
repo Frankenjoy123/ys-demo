@@ -26,12 +26,12 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-7">
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist">
                             <li role="presentation" ng-repeat="data in mons" ng-class="{'active':selMon == data}"><a
                                     href="" aria-controls="home" role="tab"
-                                    data-toggle="tab" ng-click="setMon(data)">{{data}}</a></li>
+                                    data-toggle="tab" ng-click="setMon(data)">{{monsShow[data]}}</a></li>
                         </ul>
                     </div>
                 </div>
