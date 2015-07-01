@@ -14,16 +14,40 @@
         <div class="panel-body">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-3">
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" ng-repeat="data in monDays" ng-class="{'active':currDay == data}"><a
+                            <li role="presentation" ng-repeat="data in years" ng-class="{'active':selYear == data}"><a
                                     href="" aria-controls="home" role="tab"
-                                    data-toggle="tab" ng-click="getData(data)">{{data}}</a></li>
+                                    data-toggle="tab" ng-click="setYear(data)">{{data}}</a></li>
                         </ul>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" ng-repeat="data in mons" ng-class="{'active':selMon == data}"><a
+                                    href="" aria-controls="home" role="tab"
+                                    data-toggle="tab" ng-click="setMon(data)">{{data}}</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" ng-repeat="data in days" ng-class="{'active':selDay == data}"><a
+                                    href="" aria-controls="home" role="tab"
+                                    data-toggle="tab" ng-click="setDay(data)">{{data}}</a></li>
+                        </ul>
+                    </div>
+                </div>
+
                 <br>
+
                 <div class="row">
                     <div class="col-md-12">
                         <div id="pieMap" style="height:400px"></div>

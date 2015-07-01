@@ -526,10 +526,10 @@
 
   var DateHelp = (function () {
 
-    Date.prototype.getCurrentMonthMaxDay = function () {
+    Date.prototype.getMonthMaxDay = function (year, mon) {
       var date = this;
-      var y = date.getFullYear();
-      var m = date.getMonth() + 1;
+      var y = year - 0;
+      var m = mon - 0;
       if (m == 2) {
         return y % 4 == 0 ? 29 : 28;
       } else if (m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12) {
@@ -537,6 +537,13 @@
       } else {
         return 30;
       }
+    };
+
+    Date.prototype.getCurrYear = function () {
+      var date = this;
+      var year = date.getYear();
+
+      return year + 1900 + '';
     };
 
     Date.prototype.getCurrDay = function () {
@@ -557,19 +564,21 @@
       return mon;
     };
 
-    Date.prototype.getDateStr = function (day) {
+    Date.prototype.getDateStr = function (year, mon, day) {
 
       var date = this;
-      var xYear = date.getYear();
-      xYear = xYear + 1900;
+      var xYear = date.getCurrYear();
+      if (year != undefined && year != '') {
+        xYear = year;
+      }
 
-      var xMonth = date.getMonth() + 1;
-      if (xMonth < 10) {
-        xMonth = "0" + xMonth;
+      var xMonth = date.getCurrMonth();
+      if (mon != undefined && mon != '') {
+        xMonth = mon;
       }
 
       var xDay = date.getCurrDay();
-      if (day != undefined) {
+      if (day != undefined && day != '') {
         xDay = day;
       }
 

@@ -15,60 +15,104 @@
   app.controller("stackedBarCtrl", ["$scope", "stackedBarService", "$timeout", function ($scope, stackedBarService, $timeout) {
 
     var date = new Date();
-    $scope.monDays = [];
-    $scope.currDay = date.getCurrDay();
+    $scope.days = [];
+    $scope.mons = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+    $scope.years = [];
+
+    $scope.selYear = date.getCurrYear();
+    $scope.selMon = date.getCurrMonth();
+    $scope.selDay = date.getCurrDay();
+
+    $scope.setYear = function (data) {
+      $scope.selYear = data;
+
+      initDays();
+      getData($scope.selYear, $scope.selMon, $scope.selDay);
+    };
+
+    $scope.setMon = function (data) {
+      $scope.selMon = data;
+
+      initDays();
+      getData($scope.selYear, $scope.selMon, $scope.selDay);
+    };
+
+    $scope.setDay = function (data) {
+      $scope.selDay = data;
+
+      initDays();
+      getData($scope.selYear, $scope.selMon, $scope.selDay);
+    };
+
+    var initDays = function () {
+
+      $scope.days = [];
+
+      for (var i = 1; i <= date.getMonthMaxDay($scope.selYear, $scope.selMon); i++) {
+        if (i < 10)
+          $scope.days.push('0' + i);
+        else
+          $scope.days.push('' + i);
+      }
+
+      return initDays;
+    };
+
+    initDays();
+
+    for (var j = date.getFullYear() - 2; j <= date.getFullYear() + 2; j++) {
+      $scope.years.push('' + j);
+    }
 
     stackedBarService.getScanCount(date.getDateStr(), getScanCount, function () {
-      $scope.utils.alert('info', date.getDateStr() + '该日数据不存在');
+      //$scope.utils.alert('info', date.getDateStr() + '该日数据不存在');
       var data = {};
       data.data = [];
       data.dimensions = {};
       data.dimensions.values = [];
+      data.dimensions.values.push([]);
+      data.dimensions.values.push([]);
       getScanCount(data);
     });
 
-    $scope.getData = function (data) {
-      stackedBarService.getScanCount(date.getDateStr(data), getScanCount, function () {
-        $scope.utils.alert('info', date.getDateStr(data) + '该日数据不存在');
+    function getData(year, mon, day) {
+      stackedBarService.getScanCount(date.getDateStr(year, mon, day), getScanCount, function () {
+        //$scope.utils.alert('info', date.getDateStr(year, mon, day) + '该日数据不存在');
         var data1 = {};
         data1.data = [];
         data1.dimensions = {};
         data1.dimensions.values = [];
+        data1.dimensions.values.push([]);
+        data1.dimensions.values.push([]);
         getScanCount(data1);
       });
     };
-
-    for (var i = 1; i <= date.getCurrentMonthMaxDay(); i++) {
-
-      var day = 0;
-
-      if (i < 10)
-        day = '0' + i;
-      else
-        day = i;
-
-      $scope.monDays.push(day);
-    }
 
     function getScanCount(data) {
 
       var stackedBar = echarts.init($('#stackedBar')[0]);
 
       var dataShow = [];
-      for (var i = 0; i < data.data.length; i++) {
 
-        for (var j = 0; j < data.data[i].length; j++) {
-          if (data.data[i][j] == null)
-            data.data[i][j] = 0;
+      if (data.data.length == 0) {
+        dataShow.push({});
+      }
+      else {
+        for (var i = 0; i < data.data.length; i++) {
+
+          for (var j = 0; j < data.data[i].length; j++) {
+            if (data.data[i][j] == null)
+              data.data[i][j] = 0;
+          }
+
+          dataShow.push({
+            name: data.dimensions.values[0][i],
+            type: 'bar',
+            stack: '总量',
+            itemStyle: {normal: {label: {show: true, position: 'insideRight'}}},
+            data: data.data[i]
+          });
         }
-
-        dataShow.push({
-          name: data.dimensions.values[0][i],
-          type: 'bar',
-          stack: '总量',
-          itemStyle: {normal: {label: {show: true, position: 'insideRight'}}},
-          data: data.data[i]
-        });
       }
 
       var option = {

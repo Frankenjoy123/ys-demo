@@ -15,8 +15,54 @@
   app.controller("echartsBarCtrl", ["$scope", "echartsBarService", "$timeout", function ($scope, echartsBarService, $timeout) {
 
     var date = new Date();
-    $scope.monDays = [];
-    $scope.currDay = date.getCurrDay();
+    $scope.days = [];
+    $scope.mons = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+    $scope.years = [];
+
+    $scope.selYear = date.getCurrYear();
+    $scope.selMon = date.getCurrMonth();
+    $scope.selDay = date.getCurrDay();
+
+    $scope.setYear = function (data) {
+      $scope.selYear = data;
+
+      initDays();
+      getData($scope.selYear, $scope.selMon, $scope.selDay);
+    };
+
+    $scope.setMon = function (data) {
+      $scope.selMon = data;
+
+      initDays();
+      getData($scope.selYear, $scope.selMon, $scope.selDay);
+    };
+
+    $scope.setDay = function (data) {
+      $scope.selDay = data;
+
+      initDays();
+      getData($scope.selYear, $scope.selMon, $scope.selDay);
+    };
+
+    var initDays = function () {
+
+      $scope.days = [];
+
+      for (var i = 1; i <= date.getMonthMaxDay($scope.selYear, $scope.selMon); i++) {
+        if (i < 10)
+          $scope.days.push('0' + i);
+        else
+          $scope.days.push('' + i);
+      }
+
+      return initDays;
+    };
+
+    initDays();
+
+    for (var j = date.getFullYear() - 2; j <= date.getFullYear() + 2; j++) {
+      $scope.years.push('' + j);
+    }
 
     var getQRCode = function (data) {
 
@@ -68,7 +114,7 @@
     };
 
     echartsBarService.getQRCode(date.getDateStr(), getQRCode, function () {
-      $scope.utils.alert('info', date.getDateStr() + '该日数据不存在');
+      //$scope.utils.alert('info', date.getDateStr() + '该日数据不存在');
       var data = {};
       data.data = [];
       data.dimensions = {};
@@ -76,9 +122,9 @@
       getQRCode(data);
     });
 
-    $scope.getData = function (data) {
-      echartsBarService.getQRCode(date.getDateStr(data), getQRCode, function () {
-        $scope.utils.alert('info', date.getDateStr(data) + '该日数据不存在');
+    function getData(year, mon, day) {
+      echartsBarService.getQRCode(date.getDateStr(year, mon, day), getQRCode, function () {
+        //$scope.utils.alert('info', date.getDateStr(year, mon, day) + '该日数据不存在');
         var data1 = {};
         data1.data = [];
         data1.dimensions = {};
@@ -86,18 +132,6 @@
         getQRCode(data1);
       });
     };
-
-    for (var i = 1; i <= date.getCurrentMonthMaxDay(); i++) {
-
-      var day = 0;
-
-      if (i < 10)
-        day = '0' + i;
-      else
-        day = i;
-
-      $scope.monDays.push(day);
-    }
 
   }]);
 })();
