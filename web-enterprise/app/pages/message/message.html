@@ -12,17 +12,73 @@
 <div id="page-content">
     <div ng-show="messageTable" class="panel panel-bordered-primary">
         <div class="animated slideInRight">
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">消息创建</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-horizontal" id="msgForm">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <input type="text" class="form-control" name="title" placeholder="消息标题"
+                                                       ng-model="message.title">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <input type="text" class="form-control" name="link" placeholder="链接"
+                                                       ng-model="message.link">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                  <textarea placeholder="消息正文" rows="6"
+                                                            class="form-control" ng-model="message.body"
+                                                            name="body"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center">
+                                            <button type="button" class="btn btn-primary btn-labeled fa fa-comment" ng-click="submit()">
+                                                创建新消息
+                                            </button>
+                                            &nbsp;<i class="fa fa-spinner fa-lg" ng-show="spinnerShow"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 pull-left" style="padding: 20px 20px;">
+                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" ng-click="showModal()">创建新消息
+                </button>
+            </div>
+
             <div class="panel-body"> <!--panel-collapse collapse in-->
                 <table class="table table-hover">
                     <thead id="sort-bar">
                     <tr>
-                        <th class="col-xs-1">#</th>
-                        <th data-sort-field="title" class="col-xs-2">名称</th>
+                        <th class="col-md-1">#</th>
+                        <th class="col-md-2">名称</th>
                         <th>内容</th>
-                        <th data-sort-field="type" class="col-xs-1">类型</th>
-                        <th data-sort-field="status" class="col-xs-1">状态</th>
-                        <th data-sort-field="created_datetime" class="col-xs-2">创建时间</th>
-                        <th data-sort-field="expired_datetime" class="col-xs-2">过期时间</th>
+                        <th class="col-md-1">类型</th>
+                        <th class="col-md-1">状态</th>
+                        <th class="col-md-2">创建时间</th>
+                        <th class="col-md-2">过期时间</th>
                     </tr>
                     </thead>
                     <tbody>
