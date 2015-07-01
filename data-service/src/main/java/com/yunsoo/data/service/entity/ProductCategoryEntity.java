@@ -1,34 +1,39 @@
-package com.yunsoo.common.data.object;
+package com.yunsoo.data.service.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.*;
 
 /**
- * Created by  : Zhe
- * Created on  : 2015/3/13
+ * Created by  : Lijian
+ * Created on  : 2015/7/1
  * Descriptions:
  */
-public class ProductCategoryObject {
+@Entity
+@Table(name = "product_category")
+public class ProductCategoryEntity {
 
-    @JsonProperty("id")
-    private int id;
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
+    private Integer id;
 
-    @JsonProperty("name")
+    @Column(name = "name")
     private String name;
 
-    @JsonProperty("description")
+    @Column(name = "description")
     private String description;
 
-    @JsonProperty("parent_id")
-    private int parentId;
+    @Column(name = "parent_id")
+    private Integer parentId;
 
-    @JsonProperty("active")
+    @Column(name = "active")
     private boolean active;
 
-    public int getId() {
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -48,11 +53,11 @@ public class ProductCategoryObject {
         this.description = description;
     }
 
-    public int getParentId() {
+    public Integer getParentId() {
         return parentId;
     }
 
-    public void setParentId(int parentId) {
+    public void setParentId(Integer parentId) {
         this.parentId = parentId;
     }
 

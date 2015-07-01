@@ -2,14 +2,13 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.data.service.service.ProductCategoryService;
-import com.yunsoo.data.service.service.contract.ProductCategory;
-import org.springframework.beans.BeanUtils;
+import com.yunsoo.data.service.entity.ProductCategoryEntity;
+import com.yunsoo.data.service.repository.ProductCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Zhe
@@ -21,57 +20,38 @@ import java.util.List;
 public class ProductCategoryController {
 
     @Autowired
-    private final ProductCategoryService productCategoryService;
+    private ProductCategoryRepository productCategoryRepository;
 
-    @Autowired
-    ProductCategoryController(ProductCategoryService productCategoryService) {
-        this.productCategoryService = productCategoryService;
-    }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductCategoryObject getById(@PathVariable(value = "id") Integer id) {
-        ProductCategory pc = productCategoryService.getById(id);
-        if (pc == null) {
-            throw new NotFoundException("product category not found with id: " + id);
+        ProductCategoryEntity entity = productCategoryRepository.findOne(id);
+        if (entity == null) {
+            throw new NotFoundException("product category not found by [id: " + id + "]");
         }
-        return this.FromProductCategory(pc);
+        return toProductCategoryObject(entity);
     }
 
-    @RequestMapping(value = "/rootlevel", method = RequestMethod.GET)
-    public List<ProductCategoryObject> getRootProductCategories() {
-        return this.FromProductCategoryList(productCategoryService.getRootProductCategories());
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<ProductCategoryObject> getRootProductCategories(
+            @RequestParam(value = "parent_id", required = false) Integer parentId) {
+        List<ProductCategoryEntity> entities = parentId == null
+                ? productCategoryRepository.findAll()
+                : productCategoryRepository.findByParentId(parentId);
+        return entities.stream().map(this::toProductCategoryObject).collect(Collectors.toList());
     }
 
-    private ProductCategoryObject FromProductCategory(ProductCategory productCategory) {
-        ProductCategoryObject productCategoryObject = new ProductCategoryObject();
-        BeanUtils.copyProperties(productCategory, productCategoryObject);
-        return productCategoryObject;
-    }
-
-    private ProductCategory ToProductCategory(ProductCategoryObject productCategoryObject) {
-        ProductCategory productCategory = new ProductCategory();
-        BeanUtils.copyProperties(productCategoryObject, productCategory);
-        return productCategory;
-    }
-
-    private List<ProductCategoryObject> FromProductCategoryList(List<ProductCategory> productCategoryList) {
-        if (productCategoryList == null) return null;
-
-        List<ProductCategoryObject> productCategoryObjectList = new ArrayList<>();
-        for (ProductCategory productCategory : productCategoryList) {
-            productCategoryObjectList.add(this.FromProductCategory(productCategory));
+    private ProductCategoryObject toProductCategoryObject(ProductCategoryEntity entity) {
+        if (entity == null) {
+            return null;
         }
-        return productCategoryObjectList;
-    }
-
-    private List<ProductCategory> ToProductCategoryList(List<ProductCategoryObject> productCategoryObjectList) {
-        if (productCategoryObjectList == null) return null;
-
-        List<ProductCategory> productCategoryList = new ArrayList<>();
-        for (ProductCategoryObject productCategoryObject : productCategoryObjectList) {
-            productCategoryList.add(this.ToProductCategory(productCategoryObject));
-        }
-        return productCategoryList;
+        ProductCategoryObject object = new ProductCategoryObject();
+        object.setId(entity.getId());
+        object.setName(entity.getName());
+        object.setDescription(entity.getDescription());
+        object.setParentId(entity.getParentId());
+        object.setActive(entity.isActive());
+        return object;
     }
 
 }
