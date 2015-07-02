@@ -2,7 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountPermissionDomain;
-import com.yunsoo.api.domain.ProductDomain;
+import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductKeyBatch;
@@ -47,7 +47,7 @@ public class ProductKeyBatchController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductKeyBatchController.class);
 
     @Autowired
-    private ProductDomain productDomain;
+    private ProductBaseDomain productBaseDomain;
 
     @Autowired
     private ProductKeyDomain productKeyDomain;
@@ -123,7 +123,7 @@ public class ProductKeyBatchController {
         ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
         if (productBaseId != null) {
             //create corresponding product according to the productBaseId
-            ProductBase productBase = productDomain.getProductBaseById(productBaseId);
+            ProductBase productBase = productBaseDomain.getProductBaseById(productBaseId);
             if (productBase == null) {
                 throw new BadRequestException("productBaseId invalid");
             }

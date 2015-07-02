@@ -8,6 +8,7 @@ import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +30,7 @@ public class PermissionDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-
+    @Cacheable(value = "permission", key = "'permissionpolicymap'")
     public Map<String, PermissionPolicyObject> getPermissionPolicyMap() {
         Map<String, PermissionPolicyObject> permissionPolicies = new HashMap<>();
         List<PermissionPolicyObject> permissionPolicyObjects = dataAPIClient.get("permission/policy",

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -112,8 +113,8 @@ public class ProductBaseController {
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductBaseObject> getByFilter(
-            @RequestParam(value = "orgId", required = false) String orgId,
-            @RequestParam(value = "categoryId", required = false) Integer categoryId) {
+            @RequestParam(value = "org_id", required = false) String orgId,
+            @RequestParam(value = "category_id", required = false) Integer categoryId) {
         return productBaseService.getByFilter(orgId, categoryId, LookupCodes.ProductBaseStatus.CUSTOMER_INVISIBLE_STATUS).stream()
                 .map(p -> {
                     ProductBaseObject o = new ProductBaseObject();

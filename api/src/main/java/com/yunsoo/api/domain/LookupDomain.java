@@ -6,6 +6,7 @@ import com.yunsoo.api.dto.ProductStatus;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
@@ -24,10 +25,13 @@ public class LookupDomain {
 
 
     //ProductKeyType
+
+    @Cacheable("lookup.productkeytype")
     public List<ProductKeyType> getProductKeyTypes() {
         return getProductKeyTypes(null);
     }
 
+    @Cacheable("lookup.productkeytype")
     public List<ProductKeyType> getProductKeyTypes(Boolean active) {
         return dataAPIClient.get("productkeytype" + formatActive(active), new ParameterizedTypeReference<List<ProductKeyType>>() {
         });
@@ -35,10 +39,13 @@ public class LookupDomain {
 
 
     //ProductKeyBatchStatus
+
+    @Cacheable("lookup.productkeybatchstatus")
     public List<ProductKeyBatchStatus> getProductKeyBatchStatuses() {
         return getProductKeyBatchStatuses(null);
     }
 
+    @Cacheable("lookup.productkeybatchstatus")
     public List<ProductKeyBatchStatus> getProductKeyBatchStatuses(Boolean active) {
         return dataAPIClient.get("productkeybatchstatus" + formatActive(active), new ParameterizedTypeReference<List<ProductKeyBatchStatus>>() {
         });
@@ -46,10 +53,13 @@ public class LookupDomain {
 
 
     //ProductStatus
+
+    @Cacheable("lookup.productstatus")
     public List<ProductStatus> getProductStatuses() {
         return getProductStatuses(null);
     }
 
+    @Cacheable("lookup.productstatus")
     public List<ProductStatus> getProductStatuses(Boolean active) {
         return dataAPIClient.get("productstatus" + formatActive(active), new ParameterizedTypeReference<List<ProductStatus>>() {
         });
