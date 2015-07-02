@@ -138,16 +138,17 @@ public class GroupController {
     }
 
     //create group permission
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "{group_id}/permission", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public GroupPermission createGroupPermission(@RequestBody @Valid GroupPermission groupPermission) {
+    public GroupPermission createGroupPermission(@PathVariable(value = "group_id") String groupId,
+                                                 @RequestBody @Valid GroupPermission groupPermission) {
         GroupPermissionObject groupPermissionObject = groupPermission.toGroupPermissionObject();
         TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
-
-        groupPermissionObject.setId(null);
-        if (groupPermissionObject.getOrgId() == null) {
-            groupPermissionObject.setOrgId(currentAccount.getOrgId());
-        }
+        groupPermissionObject.setGroupId(groupId);
+//        groupPermissionObject.setId(null);
+//        if (groupPermissionObject.getOrgId() == null) {
+//            groupPermissionObject.setOrgId(currentAccount.getOrgId());
+//        }
         groupPermissionObject.setCreatedAccountId(currentAccount.getId());
         groupPermissionObject.setCreatedDatetime(DateTime.now());
         groupPermissionObject = groupPermissionDomain.createGroupPermission(groupPermissionObject);
@@ -155,16 +156,17 @@ public class GroupController {
     }
 
     //create group permission policy
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "{group_id}/permissionpolicy", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public GroupPermissionPolicy createGroupPermissionPolicy(@RequestBody @Valid GroupPermissionPolicy groupPermissionPolicy) {
+    public GroupPermissionPolicy createGroupPermissionPolicy(@PathVariable(value = "group_id") String groupId,
+                                                             @RequestBody @Valid GroupPermissionPolicy groupPermissionPolicy) {
         GroupPermissionPolicyObject groupPermissionPolicyObject = groupPermissionPolicy.toGroupPermissionPolicyObject();
         TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
-
-        groupPermissionPolicyObject.setId(null);
-        if (groupPermissionPolicyObject.getOrgId() == null) {
-            groupPermissionPolicyObject.setOrgId(currentAccount.getOrgId());
-        }
+        groupPermissionPolicy.setGroupId(groupId);
+//        groupPermissionPolicyObject.setId(null);
+//        if (groupPermissionPolicyObject.getOrgId() == null) {
+//            groupPermissionPolicyObject.setOrgId(currentAccount.getOrgId());
+//        }
         groupPermissionPolicyObject.setCreatedAccountId(currentAccount.getId());
         groupPermissionPolicyObject.setCreatedDatetime(DateTime.now());
         groupPermissionPolicyObject = groupPermissionDomain.createGroupPermissionPolicy(groupPermissionPolicyObject);
@@ -172,16 +174,18 @@ public class GroupController {
     }
 
     //delete group permission
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{group_id}/permission/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteGroupPermission(@PathVariable("id") String id) {
+    public void deleteGroupPermission(@PathVariable(value = "group_id") String groupId,
+                                      @PathVariable("id") String id) {
         groupPermissionDomain.deleteGroupPermission(id);
     }
 
     //delete group permission policy
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{group_id}/permissionpolicy/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteGroupPermissionPolicy(@PathVariable("id") String id) {
+    public void deleteGroupPermissionPolicy(@PathVariable(value = "group_id") String groupId,
+                                            @PathVariable("id") String id) {
         groupPermissionDomain.deleteGroupPermissionPolicy(id);
     }
 
