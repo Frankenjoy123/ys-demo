@@ -124,7 +124,7 @@ public class ProductKeyBatchController {
         if (productBaseId != null) {
             //create corresponding product according to the productBaseId
             ProductBase productBase = productBaseDomain.getProductBaseById(productBaseId);
-            if (productBase == null) {
+            if (productBase == null || !orgId.equals(productBase.getOrgId())) { //check orgId of productBase is the same
                 throw new BadRequestException("productBaseId invalid");
             }
             if (productKeyTypeCodes == null) {
