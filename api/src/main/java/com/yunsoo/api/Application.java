@@ -2,7 +2,6 @@ package com.yunsoo.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,7 +11,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import javax.servlet.Filter;
 
 //@EnableElastiCache(@CacheClusterConfig(name = "test-data-api"))
-@EnableCaching
+//@EnableCaching
 @ComponentScan(basePackages = "com.yunsoo")
 @SpringBootApplication
 public class Application {

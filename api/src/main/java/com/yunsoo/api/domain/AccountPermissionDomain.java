@@ -1,7 +1,6 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.object.TPermission;
-import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountPermissionObject;
 import com.yunsoo.common.data.object.AccountPermissionPolicyObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
@@ -29,9 +28,6 @@ public class AccountPermissionDomain {
 
     @Autowired
     private PermissionDomain permissionDomain;
-
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
 
     public List<AccountPermissionObject> getAccountPermissions(String accountId) {
@@ -96,11 +92,6 @@ public class AccountPermissionDomain {
         if (!hasPermission(accountId, permission)) {
             throw new ForbiddenException();
         }
-    }
-
-    public void checkPermission(TPermission permission) {
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-        this.checkPermission(currentAccountId, permission);
     }
 
 
