@@ -3,11 +3,10 @@ package com.yunsoo.data.api.controller;
 import com.yunsoo.common.data.object.AccountPermissionPolicyObject;
 import com.yunsoo.data.service.entity.AccountPermissionPolicyEntity;
 import com.yunsoo.data.service.repository.AccountPermissionPolicyRepository;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,11 +29,29 @@ public class AccountPermissionPolicyController {
                 .map(this::toAccountPermissionPolicyObject).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public AccountPermissionPolicyObject create(@RequestBody AccountPermissionPolicyObject accountPermissionPolicyObject) {
+        AccountPermissionPolicyEntity entity = toAccountPermissionPolicyEntity(accountPermissionPolicyObject);
+        if (entity.getCreatedDatetime() == null) {
+            entity.setCreatedDatetime(DateTime.now());
+        }
+        entity.setId(null);
+        return toAccountPermissionPolicyObject(accountPermissionPolicyRepository.save(entity));
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") String id) {
+        accountPermissionPolicyRepository.delete(id);
+    }
+
     private AccountPermissionPolicyObject toAccountPermissionPolicyObject(AccountPermissionPolicyEntity entity) {
         if (entity == null) {
             return null;
         }
         AccountPermissionPolicyObject object = new AccountPermissionPolicyObject();
+        object.setId(entity.getId());
         object.setAccountId(entity.getAccountId());
         object.setOrgId(entity.getOrgId());
         object.setPolicyCode(entity.getPolicyCode());
@@ -42,5 +59,20 @@ public class AccountPermissionPolicyController {
         object.setCreatedDatetime(entity.getCreatedDatetime());
         return object;
     }
+
+    private AccountPermissionPolicyEntity toAccountPermissionPolicyEntity(AccountPermissionPolicyObject object) {
+        if (object == null) {
+            return null;
+        }
+        AccountPermissionPolicyEntity entity = new AccountPermissionPolicyEntity();
+        entity.setId(object.getId());
+        entity.setAccountId(object.getAccountId());
+        entity.setOrgId(object.getOrgId());
+        entity.setPolicyCode(object.getPolicyCode());
+        entity.setCreatedAccountId(object.getCreatedAccountId());
+        entity.setCreatedDatetime(object.getCreatedDatetime());
+        return entity;
+    }
+
 
 }

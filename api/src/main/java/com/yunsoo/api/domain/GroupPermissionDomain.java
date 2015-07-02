@@ -36,6 +36,21 @@ public class GroupPermissionDomain {
         }, groupId);
     }
 
+    public GroupPermissionObject createGroupPermission(GroupPermissionObject groupPermissionObject) {
+        return dataAPIClient.post("grouppermission", groupPermissionObject, GroupPermissionObject.class);
+    }
+
+    public GroupPermissionPolicyObject createGroupPermissionPolicy(GroupPermissionPolicyObject groupPermissionPolicyObject) {
+        return dataAPIClient.post("grouppermissionpolicy", groupPermissionPolicyObject, GroupPermissionPolicyObject.class);
+    }
+
+    public void deleteGroupPermission(String id) {
+        dataAPIClient.delete("grouppermission?id={id}",id);
+    }
+
+    public void deleteGroupPermissionPolicy(String id) {
+        dataAPIClient.delete("grouppermissionpolicy?id={id}",id);
+    }
 
     public List<GroupPermissionObject> getAllGroupPermissions(String groupId) {
         List<GroupPermissionObject> permissions = new ArrayList<>();

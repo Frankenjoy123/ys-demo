@@ -3,11 +3,10 @@ package com.yunsoo.data.api.controller;
 import com.yunsoo.common.data.object.GroupPermissionPolicyObject;
 import com.yunsoo.data.service.entity.GroupPermissionPolicyEntity;
 import com.yunsoo.data.service.repository.GroupPermissionPolicyRepository;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,16 +29,48 @@ public class GroupPermissionPolicyController {
                 .map(this::toGroupPermissionPolicyObject).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public GroupPermissionPolicyObject create(@RequestBody GroupPermissionPolicyObject groupPermissionPolicyObject) {
+        GroupPermissionPolicyEntity entity = toGroupPermissionPolicyEntity(groupPermissionPolicyObject);
+        if (entity.getCreatedDatetime() == null) {
+            entity.setCreatedDatetime(DateTime.now());
+        }
+        entity.setId(null);
+        return toGroupPermissionPolicyObject(groupPermissionPolicyRepository.save(entity));
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") String id) {
+        groupPermissionPolicyRepository.delete(id);
+    }
+
     GroupPermissionPolicyObject toGroupPermissionPolicyObject(GroupPermissionPolicyEntity entity) {
         if (entity == null) {
             return null;
         }
         GroupPermissionPolicyObject object = new GroupPermissionPolicyObject();
+        object.setId(entity.getId());
         object.setGroupId(entity.getGroupId());
         object.setOrgId(entity.getOrgId());
         object.setPolicyCode(entity.getPolicyCode());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDatetime(entity.getCreatedDatetime());
         return object;
+    }
+
+    GroupPermissionPolicyEntity toGroupPermissionPolicyEntity(GroupPermissionPolicyObject object) {
+        if (object == null) {
+            return null;
+        }
+        GroupPermissionPolicyEntity entity = new GroupPermissionPolicyEntity();
+        entity.setId(object.getId());
+        entity.setGroupId(entity.getGroupId());
+        entity.setOrgId(entity.getOrgId());
+        entity.setPolicyCode(entity.getPolicyCode());
+        entity.setCreatedAccountId(entity.getCreatedAccountId());
+        entity.setCreatedDatetime(entity.getCreatedDatetime());
+        return entity;
     }
 }

@@ -14,6 +14,9 @@ import org.joda.time.DateTime;
  */
 public class AccountPermissionObject {
 
+    @JsonProperty("id")
+    private String id;
+
     @JsonProperty("account_id")
     private String accountId;
 
@@ -34,6 +37,13 @@ public class AccountPermissionObject {
     @JsonProperty("created_datetime")
     private DateTime createdDatetime;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getAccountId() {
         return accountId;

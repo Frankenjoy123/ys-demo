@@ -1,7 +1,12 @@
 package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.GroupPermissionObject;
+import org.joda.time.DateTime;
 
 /**
  * Created by  : Lijian
@@ -9,6 +14,11 @@ import com.yunsoo.common.data.object.GroupPermissionObject;
  * Descriptions:
  */
 public class GroupPermission {
+    @JsonProperty("id")
+    private String id;
+
+    @JsonProperty("group_id")
+    private String groupId;
 
     @JsonProperty("org_id")
     private String orgId;
@@ -19,6 +29,30 @@ public class GroupPermission {
     @JsonProperty("action_code")
     private String actionCode;
 
+    @JsonProperty("created_account_id")
+    private String createdAccountId;
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
+    private DateTime createdDateTime;
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
 
     public String getOrgId() {
         return orgId;
@@ -44,12 +78,48 @@ public class GroupPermission {
         this.actionCode = actionCode;
     }
 
+    public String getCreatedAccountId() {
+        return createdAccountId;
+    }
+
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
+    }
+
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+
+
     public GroupPermission() {
     }
 
     public GroupPermission(GroupPermissionObject object) {
-        this.orgId = object.getOrgId();
-        this.resourceCode = object.getResourceCode();
-        this.actionCode = object.getActionCode();
+        if (object != null) {
+            this.setId(object.getId());
+            this.setGroupId(object.getGroupId());
+            this.setOrgId(object.getOrgId());
+            this.setResourceCode(object.getResourceCode());
+            this.setActionCode(object.getActionCode());
+            this.setCreatedAccountId(object.getCreatedAccountId());
+            this.setCreatedDateTime(object.getCreatedDatetime());
+        }
+    }
+
+    public GroupPermissionObject toGroupPermissionObject() {
+        GroupPermissionObject object = new GroupPermissionObject();
+        object.setId(this.getId());
+        object.setGroupId(this.getGroupId());
+        object.setOrgId(this.getOrgId());
+        object.setResourceCode(this.getResourceCode());
+        object.setActionCode(this.getActionCode());
+        object.setCreatedAccountId(this.getCreatedAccountId());
+        object.setCreatedDatetime(this.getCreatedDateTime());
+        return object;
     }
 }

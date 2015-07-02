@@ -9,6 +9,8 @@ import com.yunsoo.common.data.object.AccountPermissionObject;
  * Descriptions:
  */
 public class AccountPermission {
+    @JsonProperty("id")
+    private String id;
 
     @JsonProperty("org_id")
     private String orgId;
@@ -19,6 +21,13 @@ public class AccountPermission {
     @JsonProperty("action_code")
     private String actionCode;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getOrgId() {
         return orgId;
@@ -48,6 +57,7 @@ public class AccountPermission {
     }
 
     public AccountPermission(AccountPermissionObject object) {
+        this.id = object.getId();
         this.orgId = object.getOrgId();
         this.resourceCode = object.getResourceCode();
         this.actionCode = object.getActionCode();

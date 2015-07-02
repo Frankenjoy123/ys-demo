@@ -14,6 +14,9 @@ import org.joda.time.DateTime;
  */
 public class GroupPermissionPolicyObject {
 
+    @JsonProperty("id")
+    private String id;
+
     @JsonProperty("group_id")
     private String groupId;
 
@@ -31,6 +34,13 @@ public class GroupPermissionPolicyObject {
     @JsonProperty("created_datetime")
     private DateTime createdDatetime;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getGroupId() {
         return groupId;
