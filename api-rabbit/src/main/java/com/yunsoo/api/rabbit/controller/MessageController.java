@@ -98,9 +98,6 @@ public class MessageController {
         try {
             List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&orgid={1}&lastreadmessageid={2}", new ParameterizedTypeReference<List<Message>>() {
             }, userId, orgId, lastReadMessageId);
-            if (messageList == null || messageList.size() == 0) {
-                throw new NotFoundException("Message not found!");
-            }
             return messageList;
         } catch (NotFoundException ex) {
             throw new NotFoundException(40401, "Message not found for userid = " + userId + ". orgId = " + orgId + ". lastReadMessageId = " + lastReadMessageId);
