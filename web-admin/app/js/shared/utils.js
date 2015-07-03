@@ -358,7 +358,9 @@
                         this.totalPages = match[2] === '*' ? '*' : +match[2];
                     }
                     if (this.totalPages === '*') {
-                        this.totalPages = this.data.length === this.size ? this.page + 2 : this.page + 1;
+                        //this.totalPages = this.data.length === this.size ? this.page + 2 : this.page + 1;
+                        this.totalPages = Math.ceil(this.data.length / this.size);
+                        this.data = this.data.slice((this.page) * this.size, (this.page + 1) * this.size);
                     }
                 }
             };
