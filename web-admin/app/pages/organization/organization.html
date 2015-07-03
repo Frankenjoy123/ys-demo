@@ -26,66 +26,49 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <form class="form-horizontal" id="accountForm">
-                                    <div class="form-group" id="divAccountIdentifier">
-                                        <label for="accountIdentifier" class="col-md-3 control-label">账号标识</label>
+                                <div class="form-horizontal" id="orgForm">
+                                    <div class="form-group">
+                                        <label for="name" class="col-md-3 control-label">组织名称</label>
 
                                         <div class="col-md-9">
-                                            <input type="text" id="accountIdentifier" placeholder="账号标识"
-                                                   name="accountIdentifier"
-                                                   class="form-control" ng-model="accountIdentifier"/>
+                                            <input type="text" id="name" placeholder="组织名称"
+                                                   name="name"
+                                                   class="form-control" ng-model="orgObj.name"/>
                                         </div>
                                     </div>
-                                    <div class="form-group" id="divLastName">
-                                        <label for="lastName" class="col-md-3 control-label">姓</label>
+                                    <div class="form-group">
+                                        <label for="type_code" class="col-md-3 control-label">组织类型</label>
 
                                         <div class="col-md-9">
-                                            <input type="text" id="lastName" placeholder="姓" name="lastName"
-                                                   class="form-control" ng-model="lastName"/>
+                                            <input type="text" id="type_code" placeholder="组织类型"
+                                                   name="type_code"
+                                                   class="form-control" ng-model="orgObj.type_code"/>
                                         </div>
                                     </div>
-                                    <div class="form-group" id="divFirstName">
-                                        <label for="firstName" class="col-md-3 control-label">名</label>
+                                    <div class="form-group">
+                                        <label for="description" class="col-md-3 control-label">组织描述</label>
 
                                         <div class="col-md-9">
-                                            <input type="text" id="firstName" placeholder="名" name="firstName"
-                                                   class="form-control" ng-model="firstName"/></div>
+                                            <input type="text" id="description" placeholder="组织描述"
+                                                   name="description"
+                                                   class="form-control" ng-model="orgObj.description"/>
+                                        </div>
                                     </div>
-                                    <div class="form-group" id="divEmail">
-                                        <label for="email" class="col-md-3 control-label">邮箱</label>
+                                    <div class="form-group">
+                                        <label for="details" class="col-md-3 control-label">组织详情</label>
 
                                         <div class="col-md-9">
-                                            <input type="text" id="email" placeholder="邮箱" name="email"
-                                                   class="form-control" ng-model="email"/></div>
-                                    </div>
-                                    <div class="form-group" id="divPhone">
-                                        <label for="phone" class="col-md-3 control-label">电话</label>
-
-                                        <div class="col-md-9">
-                                            <input type="text" id="phone" placeholder="电话" name="phone"
-                                                   class="form-control" ng-model="phone"/></div>
-                                    </div>
-                                    <div class="form-group" id="divPassword">
-                                        <label for="password" class="col-md-3 control-label">账号密码</label>
-
-                                        <div class="col-md-9">
-                                            <input type="password" id="password" placeholder="账号密码" name="password"
-                                                   class="form-control" ng-model="password"/></div>
-                                    </div>
-                                    <div class="form-group" id="divPasswordConfirm">
-                                        <label for="passwordConfirm" class="col-md-3 control-label">密码确认</label>
-
-                                        <div class="col-md-9">
-                                            <input type="password" id="passwordConfirm" placeholder="密码确认"
-                                                   name="passwordConfirm"
-                                                   class="form-control" ng-model="passwordConfirm"/></div>
+                                         <textarea placeholder="组织详情" id="details" rows="4"
+                                                   class="form-control" ng-model="orgObj.details"
+                                                   name="details"></textarea></div>
                                     </div>
                                     <div class="form-group text-center">
                                         <button type="button" class="btn btn-primary btn-labeled fa fa-user"
-                                                ng-click="createAccount()">创建新账号
+                                                ng-click="createOrganization()">创建新组织
                                         </button>
+                                        &nbsp;<i class="fa fa-spinner fa-lg" ng-show="spinnerShow"></i>
                                     </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -97,9 +80,8 @@
         </div>
 
         <div class="animated slideInRight">
-            <div class="col-sm-12 pull-left" style="padding: 20px 20px;">
-                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" data-toggle="modal"
-                        data-target="#myModal">创建新组织
+            <div class="col-md-12 pull-left" style="padding: 20px 20px;">
+                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" ng-click="showModal()">创建新组织
                 </button>
             </div>
 
