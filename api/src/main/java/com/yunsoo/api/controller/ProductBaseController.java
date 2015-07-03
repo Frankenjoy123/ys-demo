@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountPermissionDomain;
-import com.yunsoo.api.domain.ProductDomain;
+import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductBaseRequest;
 import com.yunsoo.api.object.TPermission;
@@ -51,7 +51,7 @@ public class ProductBaseController {
     private RestClient dataAPIClient;
 
     @Autowired
-    private ProductDomain productDomain;
+    private ProductBaseDomain productBaseDomain;
 
     @Autowired
     private AccountPermissionDomain accountPermissionDomain;
@@ -65,7 +65,7 @@ public class ProductBaseController {
         if (id == null || id.isEmpty()) {
             throw new BadRequestException("ProductBaseId不应为空！");
         }
-        ProductBase productBase = productDomain.getProductBaseById(id);
+        ProductBase productBase = productBaseDomain.getProductBaseById(id);
         if (productBase == null) {
             throw new NotFoundException(40401, "找不到产品");
         }
@@ -78,7 +78,7 @@ public class ProductBaseController {
         if (orgId == null || orgId.isEmpty()) {
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId(); //fetch from AuthContext
         }
-        return productDomain.getAllProductBaseByOrgId(orgId);
+        return productBaseDomain.getAllProductBaseByOrgId(orgId);
     }
 
     //create
@@ -178,7 +178,7 @@ public class ProductBaseController {
 
     //patch update
     @RequestMapping(value = "", method = RequestMethod.PATCH)
-    @PreAuthorize("hasPermission(#productBase, 'ProductBase:update')")
+    @PreAuthorize("hasPermission(#productBase, 'productbase:modify')")
     public void update(@RequestBody ProductBase productBase) throws Exception {
         //patch update, we don't provide functions like update with set null properties.
         ProductBaseObject p = new ProductBaseObject();
@@ -190,7 +190,7 @@ public class ProductBaseController {
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "id") String id) {
-        ProductBase productBase = productDomain.getProductBaseById(id);
+        ProductBase productBase = productBaseDomain.getProductBaseById(id);
         if (productBase == null) {
             return;  //when the product base is not exist!
         }

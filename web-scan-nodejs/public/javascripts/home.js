@@ -24,9 +24,14 @@ $(document).ready(function () {
     },
     dataType: 'jsonp',
     success: function (dataStr) {
-      postObject.longitude = dataStr.content.point.x;
-      postObject.latitude = dataStr.content.point.y;
-      postObject.location = "Address:" + dataStr.content.address + ";Country:中国;State:" + dataStr.content.address_detail.province + ";City:" + dataStr.content.address_detail.city + ";";
+
+      try {
+        postObject.longitude = dataStr.content.point.x;
+        postObject.latitude = dataStr.content.point.y;
+        postObject.location = "Address:" + dataStr.content.address + ";Country:中国;State:" + dataStr.content.address_detail.province + ";City:" + dataStr.content.address_detail.city + ";";
+      }
+      catch (e) {
+      }
 
       getData();
     },

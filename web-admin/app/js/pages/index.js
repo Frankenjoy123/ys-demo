@@ -16,6 +16,10 @@
                 templateUrl: 'pages/dashboard/dashboard.html',
                 controller: 'DashboardCtrl'
             })
+            .when('/organization', {
+                templateUrl: 'pages/organization/organization.html',
+                controller: 'orgCtrl'
+            })
             .when('/account', {
                 templateUrl: 'pages/account/account-manage.html',
                 controller: 'AccountManageCtrl'

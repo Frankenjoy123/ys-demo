@@ -10,9 +10,10 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.Filter;
 
+//@EnableElastiCache(@CacheClusterConfig(name = "test-data-api"))
+//@EnableCaching
 @ComponentScan(basePackages = "com.yunsoo")
 @SpringBootApplication
-//@Import(StatelessAuthenticationSecurityConfig.class)
 public class Application {
 
     public static void main(String[] args) {
