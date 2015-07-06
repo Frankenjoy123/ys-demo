@@ -23,10 +23,10 @@
                             aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">批量申请产品码</h4>
                 </div>
-                <div class="modal-body" style="height:250px;width:800px">
+                <div class="modal-body">
                     <form role="form" id="createForm">
                         <div class="row">
-                            <div class="form-group col-xs-4">
+                            <div class="form-group col-md-6">
                                 <select name="productType"
                                         class="form-control"
                                         ng-model="creationPanel.model.productBaseId"
@@ -38,28 +38,33 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="form-group col-xs-4 animated slideInRight"
+                            <div class="form-group col-md-6 animated slideInRight"
                                  ng-show="creationPanel.selectedProductBase">
                                 <label>产品码类型：<span class="inline">{{formatProductKeyTypes(creationPanel.selectedProductBase.productKeyTypes)}}</span></label>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="form-group col-xs-4">
-                                <select name="quantity" class="form-control"
-                                        ng-model="creationPanel.model.quantity">
-                                    <option value="0">请选择数量</option>
-                                    <option value="100">100</option>
-                                    <option value="1000">1,000</option>
-                                    <option value="2000">2,000</option>
-                                    <option value="5000">5,000</option>
-                                    <option value="10000">10,000</option>
-                                    <option value="20000">20,000</option>
-                                    <option value="50000">50,000</option>
-                                    <option value="100000">100,000</option>
-                                    <option value="100000">200,000</option>
-                                </select>
+                            <div class="form-group col-md-6 text-center animated slideInRight" ng-show="creationPanel.selectedProductBase">
+                                <!--<select name="quantity" class="form-control"-->
+                                        <!--ng-model="creationPanel.model.quantity">-->
+                                    <!--<option value="0">请选择数量</option>-->
+                                    <!--<option value="100">100</option>-->
+                                    <!--<option value="1000">1,000</option>-->
+                                    <!--<option value="2000">2,000</option>-->
+                                    <!--<option value="5000">5,000</option>-->
+                                    <!--<option value="10000">10,000</option>-->
+                                    <!--<option value="20000">20,000</option>-->
+                                    <!--<option value="50000">50,000</option>-->
+                                    <!--<option value="100000">100,000</option>-->
+                                    <!--<option value="100000">200,000</option>-->
+                                <!--</select>-->
+                                <b id="rangeResult" style="color:#579ddb;font-size:18px;"></b>
+                                <br>
+                                <div id="rangeNum"></div>
+                                <br>
+                                <div id="rangeKey"></div>
                             </div>
-                            <div class="form-group col-xs-4 animated slideInRight"
+                            <div class="form-group col-md-6 animated slideInRight"
                                  ng-show="creationPanel.selectedProductBase">
                                 <div class="progress-group">
                                     <span class="progress-text">可用额度</span>
@@ -75,10 +80,11 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-12">
-                                <button type="submit" class="btn btn-primary btn-labeled fa fa-barcode" ng-click="creationPanel.create()" data-dismiss="modal">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-primary btn-labeled fa fa-barcode" ng-click="creationPanel.create()">
                                     创建
                                 </button>
+                                &nbsp;<i class="fa fa-spinner fa-lg" ng-show="spinnerShow"></i>
                             </div>
                         </div>
                     </form>
@@ -209,8 +215,7 @@
 
     <div ng-show="listPanel" class="panel panel-bordered-primary">
         <div class="col-sm-12 pull-left" style="padding: 20px 20px;">
-            <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" data-toggle="modal"
-                    data-target="#myModal">产品码申请
+            <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" ng-click="showModal()">产品码申请
             </button>
         </div>
 
