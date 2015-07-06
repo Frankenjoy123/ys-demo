@@ -50,7 +50,7 @@
 
     .irs-slider {
         position: absolute; display: block;
-        cursor: default;
+        cursor: pointer;
         z-index: 1;
     }
         .irs-slider.single {
@@ -69,18 +69,18 @@
     .irs-min {
         position: absolute; display: block;
         left: 0;
-        cursor: default;
+        cursor: pointer;
     }
     .irs-max {
         position: absolute; display: block;
         right: 0;
-        cursor: default;
+        cursor: pointer;
     }
 
     .irs-from, .irs-to, .irs-single {
         position: absolute; display: block;
         top: 0; left: 0;
-        cursor: default;
+        cursor: pointer;
         white-space: nowrap;
     }
 
@@ -115,7 +115,7 @@
     position: absolute; display: block;
     top: 0; left: -1%;
     width: 102%; height: 100%;
-    cursor: default;
+    cursor: pointer;
     background: rgba(0,0,0,0.0);
     z-index: 2;
 }
