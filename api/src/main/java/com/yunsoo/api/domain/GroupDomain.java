@@ -58,6 +58,24 @@ public class GroupDomain {
 
     }
 
+    public AccountGroupObject createAccountGroup(AccountGroupObject accountGroupObject) {
+        return dataAPIClient.post("accountgroup", accountGroupObject, AccountGroupObject.class);
+    }
+
+    public List<AccountGroupObject> getAccountGroupByGroupid(String groupId) {
+        List<AccountGroupObject> accountGroupObjects = dataAPIClient.get("accountgroup?group_id={groupId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
+        }, groupId);
+        if (accountGroupObjects.size() == 0) {
+            return new ArrayList<>();
+        }
+        return accountGroupObjects;
+    }
+
+    public void deleteAccountGroup(String groupId, String accountId) {
+        dataAPIClient.delete("accountgroup?group_id={group_id}&account_id={account_id}",groupId, accountId);
+    }
+
+
     public List<AccountObject> getAccounts(GroupObject groupObject) {
         List<AccountGroupObject> accountGroupObjects = dataAPIClient.get("accountgroup?group_id={groupId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
         }, groupObject.getId());
