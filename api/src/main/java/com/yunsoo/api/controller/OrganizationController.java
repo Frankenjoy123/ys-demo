@@ -8,6 +8,7 @@ import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,8 +90,14 @@ public class OrganizationController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @PreAuthorize("hasPermission(#organization.id, 'filterByOrg', 'organization:create')")
     public Organization create(@RequestBody Organization organization) {
+
+        String createdBy = tokenAuthenticationService.getAuthentication().getDetails().getId();
+
         OrganizationObject object = toOrganizationObject(organization);
         object.setId(null);
+        object.setCreatedAccountId(createdBy);
+        object.setCreatedDateTime(DateTime.now());
+
         OrganizationObject newObject = dataAPIClient.post("organization", object, OrganizationObject.class);
         return fromOrganizationObject(newObject);
     }
