@@ -246,7 +246,7 @@ public class AccountController {
             if (accountObject == null) {
                 throw new NotFoundException("account not found by id [" + accountId + "]");
             }
-            accountPermissionDomain.checkPermission(new TPermission(accountObject.getOrgId(), "accountpermission", "read"));
+            accountPermissionDomain.checkPermission(currentAccountId, new TPermission(accountObject.getOrgId(), "accountpermission", "read"));
         }
     }
 

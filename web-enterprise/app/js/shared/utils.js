@@ -60,6 +60,8 @@
 
       auth: new Auth(),
 
+      DateHelp: DateHelp,
+
       DataTable: DataTable
 
     };
@@ -75,6 +77,16 @@
         pageable: '=dtPageable'
       },
       templateUrl: 'partials/widgets/pageable.html'
+    };
+  });
+
+  utils.directive('echartDate', function () {
+    return {
+      restrict: 'A',
+      scope: {
+        dataTable: '=echartDate'
+      },
+      templateUrl: 'partials/widgets/echart-date.html'
     };
   });
 
@@ -526,10 +538,27 @@
 
   var DateHelp = (function () {
 
-    Date.prototype.getMonthMaxDay = function (year, mon) {
-      var date = this;
-      var y = year - 0;
-      var m = mon - 0;
+    function DateHelp(getData) {
+      this.date = new Date();
+      this.days = [];
+      this.years = [];
+
+      this.selYear = getCurrYear.apply(this);
+      this.selMon = getCurrMonth.apply(this);
+      this.selDay = getCurrDay.apply(this);
+
+      for (var i = this.date.getFullYear() - 2; i <= this.date.getFullYear() + 2; i++) {
+        this.years.push('' + i);
+      }
+
+      initDays.apply(this);
+
+      this.getData = getData;
+    }
+
+    function getMonthMaxDay() {
+      var y = this.selYear - 0;
+      var m = this.selMon - 0;
       if (m == 2) {
         return y % 4 == 0 ? 29 : 28;
       } else if (m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12) {
@@ -539,51 +568,97 @@
       }
     };
 
-    Date.prototype.getCurrYear = function () {
-      var date = this;
-      var year = date.getYear();
+    function getCurrYear() {
+      var year = this.date.getYear();
 
       return year + 1900 + '';
     };
 
-    Date.prototype.getCurrDay = function () {
-      var date = this;
-      var d = date.getDate();
+    function getCurrDay() {
+      var d = this.date.getDate();
       if (d < 10) {
         d = "0" + d;
       }
       return d;
     };
 
-    Date.prototype.getCurrMonth = function () {
-      var date = this;
-      var mon = date.getMonth() + 1;
+    function getCurrMonth() {
+      var mon = this.date.getMonth() + 1;
       if (mon < 10) {
         mon = "0" + mon;
       }
       return mon;
     };
 
-    Date.prototype.getDateStr = function (year, mon, day) {
-
-      var date = this;
-      var xYear = date.getCurrYear();
+    DateHelp.prototype.getDateStr = function (year, mon, day) {
+      var xYear = getCurrYear.apply(this);
       if (year != undefined && year != '') {
         xYear = year;
       }
 
-      var xMonth = date.getCurrMonth();
+      var xMonth = getCurrMonth.apply(this);
       if (mon != undefined && mon != '') {
         xMonth = mon;
       }
 
-      var xDay = date.getCurrDay();
+      var xDay = getCurrDay.apply(this);
       if (day != undefined && day != '') {
         xDay = day;
       }
 
       return xYear + xMonth + xDay;
     };
+
+    DateHelp.prototype.mons = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+    DateHelp.prototype.monsShow = {
+      '01': '一月',
+      '02': '二月',
+      '03': '三月',
+      '04': '四月',
+      '05': '五月',
+      '06': '六月',
+      '07': '七月',
+      '08': '八月',
+      '09': '九月',
+      '10': '十月',
+      '11': '十一月',
+      '12': '十二月'
+    };
+
+    DateHelp.prototype.setYear = function (data) {
+      this.selYear = data;
+
+      initDays.apply(this);
+      this.getData(this.selYear, this.selMon, this.selDay);
+    };
+
+    DateHelp.prototype.setMon = function (data) {
+      this.selMon = data;
+
+      initDays.apply(this);
+      this.getData(this.selYear, this.selMon, this.selDay);
+    };
+
+    DateHelp.prototype.setDay = function (data) {
+      this.selDay = data;
+
+      initDays.apply(this);
+      this.getData(this.selYear, this.selMon, this.selDay);
+    };
+
+    function initDays() {
+      this.days = [];
+
+      for (var i = 1; i <= getMonthMaxDay.apply(this); i++) {
+        if (i < 10)
+          this.days.push('0' + i);
+        else
+          this.days.push('' + i);
+      }
+    };
+
+    return DateHelp;
+
   })();
 
 })();

@@ -5,6 +5,8 @@ import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.ProductStatus;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -20,19 +22,22 @@ import java.util.List;
 @Component
 public class LookupDomain {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(LookupDomain.class);
+
     @Autowired
     private RestClient dataAPIClient;
 
 
     //ProductKeyType
 
-    @Cacheable("lookup.productkeytype")
+    @Cacheable(value = "api-domain", key = "'lookup.productkeytype.all'")
     public List<ProductKeyType> getProductKeyTypes() {
         return getProductKeyTypes(null);
     }
 
-    @Cacheable("lookup.productkeytype")
+    @Cacheable(value = "api-domain", key = "'lookup.productkeytype.all'")
     public List<ProductKeyType> getProductKeyTypes(Boolean active) {
+        LOGGER.debug("cache missed [name: lookup.productkeytype]");
         return dataAPIClient.get("productkeytype" + formatActive(active), new ParameterizedTypeReference<List<ProductKeyType>>() {
         });
     }
@@ -47,6 +52,7 @@ public class LookupDomain {
 
     @Cacheable("lookup.productkeybatchstatus")
     public List<ProductKeyBatchStatus> getProductKeyBatchStatuses(Boolean active) {
+        LOGGER.debug("cache missed [name: lookup.productkeybatchstatus]");
         return dataAPIClient.get("productkeybatchstatus" + formatActive(active), new ParameterizedTypeReference<List<ProductKeyBatchStatus>>() {
         });
     }
@@ -61,6 +67,7 @@ public class LookupDomain {
 
     @Cacheable("lookup.productstatus")
     public List<ProductStatus> getProductStatuses(Boolean active) {
+        LOGGER.debug("cache missed [name: lookup.productstatus]");
         return dataAPIClient.get("productstatus" + formatActive(active), new ParameterizedTypeReference<List<ProductStatus>>() {
         });
     }

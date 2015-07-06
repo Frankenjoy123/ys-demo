@@ -1,0 +1,32 @@
+<div class="row">
+    <div class="col-md-3">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" ng-repeat="data in dataTable.years" ng-class="{'active':dataTable.selYear == data}"><a
+                    href="" aria-controls="home" role="tab"
+                    data-toggle="tab" ng-click="dataTable.setYear(data)">{{data}}</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" ng-repeat="data in dataTable.mons" ng-class="{'active':dataTable.selMon == data}"><a
+                    href="" aria-controls="home" role="tab"
+                    data-toggle="tab" ng-click="dataTable.setMon(data)">{{dataTable.monsShow[data]}}</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" ng-repeat="data in dataTable.days" ng-class="{'active':dataTable.selDay == data}"><a
+                    href="" aria-controls="home" role="tab"
+                    data-toggle="tab" ng-click="dataTable.setDay(data)">{{data}}</a></li>
+        </ul>
+    </div>
+</div>

@@ -9,7 +9,6 @@ import com.yunsoo.api.dto.PermissionResource;
 import com.yunsoo.common.data.object.PermissionObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,10 +34,7 @@ public class PermissionController {
     @RequestMapping(value = "/policy", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(null, 'permissionpolicy:read')")
     public List<PermissionPolicy> getAllPolicies() {
-        List<PermissionPolicyObject> permissionPolicyObjects = dataAPIClient.get("permission/policy",
-                new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
-                });
-        return permissionPolicyObjects.stream().map(this::toPermissionPolicy).collect(Collectors.toList());
+        return permissionDomain.getPermissionPolicies().stream().map(this::toPermissionPolicy).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/policy/{code}", method = RequestMethod.GET)
