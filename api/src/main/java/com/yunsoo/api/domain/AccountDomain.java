@@ -122,6 +122,25 @@ public class AccountDomain {
         return allGroups.stream().filter(g -> groupIds.contains(g.getId())).collect(Collectors.toList());
     }
 
+    public AccountGroupObject getAccountGroupByAccountIdAndGroupId(String accountId, String groupId) {
+        if (StringUtils.isEmpty(accountId) || StringUtils.isEmpty(groupId)) {
+            return null;
+        }
+        try {
+            return dataAPIClient.get("accountgroup?account_id={0}&group_id={1}", AccountGroupObject.class, accountId, groupId);
+        } catch (NotFoundException ex) {
+            return null;
+        }
+    }
+
+    public List<AccountGroupObject> getAccountGroupsByAccountId(String accountId) {
+        List<AccountGroupObject> accountGroupObjects = dataAPIClient.get("accountgroup?account_id={accountId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
+        }, accountId);
+        if (accountGroupObjects.size() == 0) {
+            return new ArrayList<>();
+        }
+        return accountGroupObjects;
+    }
 
     private String hashPassword(String rawPassword, String hashSalt) {
         return HashUtils.sha1HexString(rawPassword + hashSalt);

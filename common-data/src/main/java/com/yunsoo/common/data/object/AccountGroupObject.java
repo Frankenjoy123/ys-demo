@@ -15,6 +15,9 @@ import org.joda.time.DateTime;
  */
 public class AccountGroupObject {
 
+    @JsonProperty("id")
+    private String id;
+
     @NotEmpty(message = "account_id must not be null or empty")
     @JsonProperty("account_id")
     private String accountId;
@@ -32,6 +35,13 @@ public class AccountGroupObject {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getAccountId() {
         return accountId;
