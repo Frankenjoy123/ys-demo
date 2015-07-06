@@ -245,7 +245,18 @@
               var selectNum = (data.from - 0) * (rangeKey[$("#rangeKey").data("from")] - 0);
               var remainNum = $scope.creationPanel.selectedProductBase.credit.remain;
 
-              $("#rangeResult").html(quantityFormat(selectNum > remainNum ? remainNum : selectNum, 3, ','));
+              if(selectNum > remainNum)
+              {
+                $("#btnSubmit").attr("disabled","disabled");
+                $("#rangeResult").attr('style','color:#d9534f');
+              }
+              else
+              {
+                $("#btnSubmit").removeAttr("disabled");
+                $("#rangeResult").attr('style','color:#579ddb');
+              }
+
+              $("#rangeResult").html(quantityFormat(selectNum, 3, ','));
             }
           }
       );
@@ -261,7 +272,18 @@
           var selectNum = ($("#rangeNum").data("from") - 0) * (rangeKey[$("#rangeKey").data("from")] - 0);
           var remainNum = $scope.creationPanel.selectedProductBase.credit.remain;
 
-          $("#rangeResult").html(quantityFormat(selectNum > remainNum ? remainNum : selectNum, 3, ','));
+          if(selectNum > remainNum)
+          {
+            $("#btnSubmit").attr("disabled","disabled");
+            $("#rangeResult").attr('style','color:#d9534f');
+          }
+          else
+          {
+            $("#btnSubmit").removeAttr("disabled");
+            $("#rangeResult").attr('style','color:#579ddb');
+          }
+
+          $("#rangeResult").html(quantityFormat(selectNum, 3, ','));
         }
       });
     }
