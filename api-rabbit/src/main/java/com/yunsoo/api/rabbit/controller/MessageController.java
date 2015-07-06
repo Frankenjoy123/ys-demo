@@ -95,6 +95,7 @@ public class MessageController {
         if (userId == null || userId.isEmpty()) throw new BadRequestException("UserId不能为空！");
         if (orgId == null || orgId.isEmpty()) throw new BadRequestException("OrgId不能为空！");
 
+        //fix 404 issue
         try {
             List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&orgid={1}&lastreadmessageid={2}", new ParameterizedTypeReference<List<Message>>() {
             }, userId, orgId, lastReadMessageId);
