@@ -30,12 +30,12 @@ public class LookupDomain {
 
     //ProductKeyType
 
-    @Cacheable("lookup.productkeytype")
+    @Cacheable(value = "api-domain", key = "'lookup.productkeytype.all'")
     public List<ProductKeyType> getProductKeyTypes() {
         return getProductKeyTypes(null);
     }
 
-    @Cacheable("lookup.productkeytype")
+    @Cacheable(value = "api-domain", key = "'lookup.productkeytype.all'")
     public List<ProductKeyType> getProductKeyTypes(Boolean active) {
         LOGGER.debug("cache missed [name: lookup.productkeytype]");
         return dataAPIClient.get("productkeytype" + formatActive(active), new ParameterizedTypeReference<List<ProductKeyType>>() {

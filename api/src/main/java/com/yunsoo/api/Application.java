@@ -10,8 +10,6 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.Filter;
 
-//@EnableElastiCache(@CacheClusterConfig(name = "test-data-api"))
-//@EnableCaching
 @ComponentScan(basePackages = "com.yunsoo")
 @SpringBootApplication
 public class Application {
