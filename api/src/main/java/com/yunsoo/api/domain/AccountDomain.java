@@ -134,12 +134,8 @@ public class AccountDomain {
     }
 
     public List<AccountGroupObject> getAccountGroupsByAccountId(String accountId) {
-        List<AccountGroupObject> accountGroupObjects = dataAPIClient.get("accountgroup?account_id={accountId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
+        return dataAPIClient.get("accountgroup?account_id={accountId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
         }, accountId);
-        if (accountGroupObjects.size() == 0) {
-            return new ArrayList<>();
-        }
-        return accountGroupObjects;
     }
 
     private String hashPassword(String rawPassword, String hashSalt) {

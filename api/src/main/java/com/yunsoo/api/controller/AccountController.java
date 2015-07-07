@@ -129,8 +129,8 @@ public class AccountController {
 
     //groups
 
-    @RequestMapping(value = "{id}/group", method = RequestMethod.GET)
-    public List<Group> getGroups(@PathVariable("id") String accountId) {
+    @RequestMapping(value = "{account_id}/group", method = RequestMethod.GET)
+    public List<Group> getGroups(@PathVariable("account_id") String accountId) {
         if ("current".equals(accountId)) { //get current Account
             accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         }
@@ -139,63 +139,58 @@ public class AccountController {
     }
 
     //create account group under the account
-    @RequestMapping(value = "{account_id}/account", method = RequestMethod.POST)
+    @RequestMapping(value = "{account_id}/group", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public List<String> createAccountGroup(@PathVariable(value = "account_id") String accountId,
-                                           @RequestBody @Valid List<String> groupId) {
-        List<String> accountGroupId = new ArrayList<>();
-        for (String gid:groupId) {
+                                           @RequestBody @Valid List<String> groupIds) {
+        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        for (String gid : groupIds) {
             AccountGroupObject accountGroupObject = new AccountGroupObject();
-            TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
             accountGroupObject.setAccountId(accountId);
             accountGroupObject.setGroupId(gid);
             accountGroupObject.setCreatedAccountId(currentAccount.getId());
             accountGroupObject.setCreatedDateTime(DateTime.now());
-            accountGroupObject = groupDomain.createAccountGroup(accountGroupObject);
-            accountGroupId.add(accountGroupObject.getId());
+            groupDomain.createAccountGroup(accountGroupObject);
         }
-        return accountGroupId;
+        return groupIds;
     }
 
     //delete account group under the account
-    @RequestMapping(value = "{account_id}/account", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{account_id}/group", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAccountGroup(@PathVariable(value = "account_id") String accountId,
-                                   @RequestBody @Valid List<String> groupId) {
-        for (String gid:groupId){
-            groupDomain.deleteAccountGroup(gid,accountId);
+                                   @RequestBody @Valid List<String> groupIds) {
+        for (String gid : groupIds) {
+            groupDomain.deleteAccountGroup(gid, accountId);
         }
     }
 
     //update account group under the account
-    @RequestMapping(value = "{account_id}/account", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "{account_id}/group", method = RequestMethod.PUT)
     public void updateAccountGroup(@PathVariable(value = "account_id") String accountId,
-                                   @RequestBody @Valid List<String> groupId) {
+                                   @RequestBody @Valid List<String> groupIds) {
         List<AccountGroupObject> accountGroupObjects = accountDomain.getAccountGroupsByAccountId(accountId);
-        List<String>originalGroupId = new ArrayList<String>() ;
+        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        List<String> originalGroupId = new ArrayList<>();
         if (accountGroupObjects == null) {
             throw new NotFoundException("account group not found");
         }
-        for (AccountGroupObject ago: accountGroupObjects){
+        for (AccountGroupObject ago : accountGroupObjects) {
             // ago not in group ids
-            if(groupId.contains(ago.getGroupId())) {
+            if (!groupIds.contains(ago.getGroupId())) {
                 groupDomain.deleteAccountGroup(ago.getGroupId(), ago.getAccountId());
             }
             originalGroupId.add(ago.getGroupId());
         }
-        for (String gid:groupId) {
-            // gid not in accountGroupObjects
-            if(originalGroupId.contains(gid)) {
-                AccountGroupObject accountGroupObject = new AccountGroupObject();
-                TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
-                accountGroupObject.setAccountId(accountId);
-                accountGroupObject.setGroupId(gid);
-                accountGroupObject.setCreatedAccountId(currentAccount.getId());
-                accountGroupObject.setCreatedDateTime(DateTime.now());
-                groupDomain.createAccountGroup(accountGroupObject);
-            }
-        }
+        // gid not in accountGroupObjects
+        groupIds.stream().filter(gid -> !originalGroupId.contains(gid)).forEach(gid -> {
+            AccountGroupObject accountGroupObject = new AccountGroupObject();
+            accountGroupObject.setAccountId(accountId);
+            accountGroupObject.setGroupId(gid);
+            accountGroupObject.setCreatedAccountId(currentAccount.getId());
+            accountGroupObject.setCreatedDateTime(DateTime.now());
+            groupDomain.createAccountGroup(accountGroupObject);
+        });
     }
 
     //permissions
