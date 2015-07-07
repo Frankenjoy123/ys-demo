@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -121,60 +120,55 @@ public class GroupController {
     @RequestMapping(value = "{group_id}/account", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public List<String> createAccountGroup(@PathVariable(value = "group_id") String groupId,
-                                           @RequestBody List<String> accountId) {
-        List<String> accountGroupId = new ArrayList<>();
-        for (String aid:accountId) {
+                                           @RequestBody List<String> accountIds) {
+        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        for (String aid : accountIds) {
             AccountGroupObject accountGroupObject = new AccountGroupObject();
-            TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
             accountGroupObject.setAccountId(aid);
             accountGroupObject.setGroupId(groupId);
             accountGroupObject.setCreatedAccountId(currentAccount.getId());
             accountGroupObject.setCreatedDateTime(DateTime.now());
             accountGroupObject = groupDomain.createAccountGroup(accountGroupObject);
-            accountGroupId.add(accountGroupObject.getId());
         }
-        return accountGroupId;
+        return accountIds;
     }
 
     //delete account group under the group
     @RequestMapping(value = "{group_id}/account", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAccountGroup(@PathVariable(value = "group_id") String groupId,
-                                           @RequestBody List<String> accountId) {
-        for (String aid:accountId){
-            groupDomain.deleteAccountGroup(groupId,aid);
+                                   @RequestBody List<String> accountIds) {
+        for (String aid : accountIds) {
+            groupDomain.deleteAccountGroup(groupId, aid);
         }
     }
 
     //update account group under the group
     @RequestMapping(value = "{group_id}/account", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateAccountGroup(@PathVariable(value = "group_id") String groupId,
-                                           @RequestBody List<String> accountIds) {
+                                   @RequestBody List<String> accountIds) {
         List<AccountGroupObject> accountGroupObjects = groupDomain.getAccountGroupByGroupid(groupId);
-        List<String>originalAccountId = new ArrayList<String>() ;
+        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        List<String> originalAccountId = new ArrayList<>();
         if (accountGroupObjects == null) {
             throw new NotFoundException("account group not found");
         }
-        for (AccountGroupObject ago: accountGroupObjects){
+        for (AccountGroupObject ago : accountGroupObjects) {
             // ago not in accountIds
-            if(!accountIds.contains(ago.getAccountId())) {
+            if (!accountIds.contains(ago.getAccountId())) {
                 groupDomain.deleteAccountGroup(groupId, ago.getAccountId());
                 originalAccountId.add(ago.getAccountId());
             }
         }
-        for (String aid:accountIds) {
-            //aid not in accountGroupObjects
-            if(!originalAccountId.contains(aid)) {
-                AccountGroupObject accountGroupObject = new AccountGroupObject();
-                TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
-                accountGroupObject.setAccountId(aid);
-                accountGroupObject.setGroupId(groupId);
-                accountGroupObject.setCreatedAccountId(currentAccount.getId());
-                accountGroupObject.setCreatedDateTime(DateTime.now());
-                groupDomain.createAccountGroup(accountGroupObject);
-            }
-        }
+        //aid not in accountGroupObjects
+        accountIds.stream().filter(aid -> !originalAccountId.contains(aid)).forEach(aid -> {
+            AccountGroupObject accountGroupObject = new AccountGroupObject();
+            accountGroupObject.setAccountId(aid);
+            accountGroupObject.setGroupId(groupId);
+            accountGroupObject.setCreatedAccountId(currentAccount.getId());
+            accountGroupObject.setCreatedDateTime(DateTime.now());
+            groupDomain.createAccountGroup(accountGroupObject);
+        });
     }
 
     //permissions
