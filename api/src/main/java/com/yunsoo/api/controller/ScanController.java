@@ -11,7 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,9 +41,9 @@ public class ScanController {
 
 
     //仅仅能够访问属于特定组织的Key
-    @RequestMapping(value = "/{orgid}/{key}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{org_id}/{key}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'scan:read')")
-    public ScanResultWeb getDetailForWebByKey(@PathVariable(value = "orgid") String orgid,
+    public ScanResultWeb getDetailForWebByKey(@PathVariable(value = "org_id") String orgId,
                                               @PathVariable(value = "key") String key) {
 
         if (key == null || key.isEmpty()) {
@@ -57,7 +60,7 @@ public class ScanController {
             scanResult.setResultCode(0);
             scanResult.setMessage(String.format("该码 %s 不存在！", key));  //no such key in our Yunsoo Platform.
         } else {
-            if (currentExistProduct.getOrgId() == orgid) {
+            if (orgId.equals(currentExistProduct.getOrgId())) {
                 scanResult.setProduct(currentExistProduct);
                 //retrieve scan records
                 ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}", ScanRecord[].class, key, Integer.MAX_VALUE);
@@ -71,7 +74,7 @@ public class ScanController {
                 scanResult.setMessage("查询成功！");
             } else {
                 scanResult.setResultCode(2); //无权查看别人的码
-                scanResult.setMessage(String.format("无权查看，该码不属于贵公司！", key));
+                scanResult.setMessage("无权查看，该码不属于贵公司！");
             }
         }
         return scanResult;
@@ -88,7 +91,7 @@ public class ScanController {
             return null;
         }
 
-        List<Logistics> logisticsList = new ArrayList<Logistics>();
+        List<Logistics> logisticsList = new ArrayList<>();
         for (LogisticsPath path : logisticsPaths) {
             Logistics logistics = new Logistics();
             logistics.setOrgId(path.getStartCheckPointObject().getOrgId());
