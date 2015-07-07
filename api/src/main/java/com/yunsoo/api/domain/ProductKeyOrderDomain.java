@@ -3,7 +3,6 @@ package com.yunsoo.api.domain;
 import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.api.dto.ProductKeyOrder;
 import com.yunsoo.common.data.object.ProductKeyOrderObject;
-import com.yunsoo.common.data.object.ProductKeyTransactionObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
@@ -43,10 +42,28 @@ public class ProductKeyOrderDomain {
         return toProductKeyOrder(orderObject);
     }
 
+    /**
+     * get orders that not expired and with active status.
+     *
+     * @param orgId
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
     public List<ProductKeyOrder> getAvailableOrdersByOrgId(String orgId, Integer pageIndex, Integer pageSize) {
         return getOrdersByFilter(orgId, true, null, DateTime.now(), null, pageIndex, pageSize);
     }
 
+    /**
+     * @param orgId
+     * @param active
+     * @param remainGE
+     * @param expireDateTimeGE
+     * @param productBaseId    if you only want to get the orders with null productBaseId, just passing throw *
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
     public List<ProductKeyOrder> getOrdersByFilter(String orgId, Boolean active, Long remainGE, DateTime expireDateTimeGE, String productBaseId, Integer pageIndex, Integer pageSize) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
@@ -80,7 +97,11 @@ public class ProductKeyOrderDomain {
             if (o != null) {
                 String pId = o.getProductBaseId();
                 ProductKeyCredit c;
-                long quantityInTransaction = getQuantityInTransaction(o.getId());
+                long quantityInTransaction = productKeyTransactionDomain.getQuantityInTransaction(o.getId());
+                long orderRemain = o.getRemain() - quantityInTransaction;
+                if (orderRemain < 0) {
+                    orderRemain = 0; //ignore negative
+                }
                 if (creditMap.containsKey(pId)) {
                     c = creditMap.get(pId);
                 } else {
@@ -89,27 +110,11 @@ public class ProductKeyOrderDomain {
                     credits.add(c);
                 }
                 c.setTotal(c.getTotal() + o.getTotal());
-                c.setRemain(c.getRemain() + o.getRemain() - quantityInTransaction);
+                c.setRemain(c.getRemain() + orderRemain);
             }
         });
 
         return credits;
-    }
-
-    private long getQuantityInTransaction(String orderId) {
-        long quantity = 0L;
-        List<ProductKeyTransactionObject> transactions = productKeyTransactionDomain.getCreatedTransactionByOrderId(orderId);
-        if (transactions == null || transactions.size() == 0) {
-            return quantity;
-        }
-        for (ProductKeyTransactionObject transaction : transactions) {
-            for (ProductKeyTransactionObject.Detail detail : transaction.getDetails()) {
-                if (detail.getQuantity() != null) {
-                    quantity += detail.getQuantity();
-                }
-            }
-        }
-        return quantity;
     }
 
 
