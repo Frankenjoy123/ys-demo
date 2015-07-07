@@ -30,9 +30,30 @@ public class ProductKeyTransactionDomain {
 
     public List<ProductKeyTransactionObject> getCreatedTransactionByOrderId(String orderId) {
         String statusCode = LookupCodes.ProductKeyTransactionStatus.CREATED;
-
-        return dataAPIClient.get("productKeyTransaction?order_id={0}&status_code={1}", new ParameterizedTypeReference<List<ProductKeyTransactionObject>>() {
+        return dataAPIClient.get("productkeytransaction?order_id={0}&status_code={1}", new ParameterizedTypeReference<List<ProductKeyTransactionObject>>() {
         }, orderId, statusCode);
+    }
+
+    /**
+     * get the quantity that has not been committed to the order
+     *
+     * @param orderId orderId
+     * @return sum of quantity
+     */
+    public long getQuantityInTransaction(String orderId) {
+        long quantity = 0L;
+        List<ProductKeyTransactionObject> transactions = getCreatedTransactionByOrderId(orderId);
+        if (transactions == null || transactions.size() == 0) {
+            return quantity;
+        }
+        for (ProductKeyTransactionObject transaction : transactions) {
+            for (ProductKeyTransactionObject.Detail detail : transaction.getDetails()) {
+                if (detail.getQuantity() != null) {
+                    quantity += detail.getQuantity();
+                }
+            }
+        }
+        return quantity;
     }
 
 
@@ -46,15 +67,28 @@ public class ProductKeyTransactionDomain {
         //get available orders
         List<ProductKeyOrder> orders = productKeyOrderDomain.getOrdersByFilter(orgId, true, null, DateTime.now(), productBaseId == null ? "*" : productBaseId, null, null);
 
-        //sort orders by expire datetime asc
+        //sort orders by expire datetime asc(null last), productBaseId null last
         orders.sort((o1, o2) -> {
             DateTime exp1 = o1.getExpireDateTime();
             DateTime exp2 = o2.getExpireDateTime();
+            int result;
             if (exp1 == null || exp2 == null) {
-                return exp1 == null ? (exp2 == null ? 0 : 1) : -1;
+                //datetime null last
+                result = exp1 == null ? (exp2 == null ? 0 : 1) : -1;
             } else {
-                return Long.compare(exp1.getMillis(), exp2.getMillis());
+                //datetime asc
+                result = Long.compare(exp1.getMillis(), exp2.getMillis());
             }
+            if (result == 0) {
+                //productBaseId null last
+                String productBaseId1 = o1.getProductBaseId();
+                String productBaseId2 = o2.getProductBaseId();
+                result = productBaseId1 == null
+                        ? (productBaseId2 == null ? 0 : 1)
+                        : (productBaseId2 == null ? -1 : 0);
+
+            }
+            return result;
         });
 
         //try purchase
@@ -62,16 +96,20 @@ public class ProductKeyTransactionDomain {
         long quantityLeft = quantity;
         for (ProductKeyOrder o : orders) {
             Long remain = o.getRemain();
+            remain -= getQuantityInTransaction(o.getId()); //subtract quantity in transaction which has not been commited
             if (quantityLeft > 0
                     && remain != null && remain > 0
                     && (o.getProductBaseId() == null || o.getProductBaseId().equals(productBaseId))) {
                 ProductKeyTransactionObject.Detail detail = new ProductKeyTransactionObject.Detail();
                 detail.setOrderId(o.getId());
                 detail.setStatusCode(LookupCodes.ProductKeyTransactionStatus.CREATED);
-                long decrease = quantityLeft <= remain ? quantityLeft : remain;
-                detail.setQuantity(decrease);
-                quantityLeft -= decrease;
+                long spend = quantityLeft <= remain ? quantityLeft : remain;
+                detail.setQuantity(spend);
+                quantityLeft -= spend;
                 details.add(detail);
+            }
+            if (quantityLeft <= 0) {
+                break;
             }
         }
         if (quantityLeft > 0) {
@@ -86,11 +124,14 @@ public class ProductKeyTransactionDomain {
         request.setDetails(details);
 
         //create transaction
-        ProductKeyTransactionObject transactionObject = dataAPIClient.post("productKeyTransaction", request, ProductKeyTransactionObject.class);
+        ProductKeyTransactionObject transactionObject = dataAPIClient.post("productkeytransaction", request, ProductKeyTransactionObject.class);
 
         return transactionObject.getId();
     }
 
+    public void commit(String transactionId) {
+
+    }
 
     public void rollback(String transactionId) {
 

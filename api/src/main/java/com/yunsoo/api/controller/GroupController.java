@@ -174,7 +174,7 @@ public class GroupController {
     //permissions
 
     @RequestMapping(value = "{group_id}/permission", method = RequestMethod.GET)
-    public List<GroupPermission> getPermissionsByAccountId(@PathVariable(value = "group_id") String groupId) {
+    public List<GroupPermission> getPermissionsByGroupId(@PathVariable(value = "group_id") String groupId) {
         return groupPermissionDomain.getGroupPermissions(groupId)
                 .stream()
                 .map(GroupPermission::new)
@@ -182,7 +182,7 @@ public class GroupController {
     }
 
     @RequestMapping(value = "{group_id}/permissionpolicy", method = RequestMethod.GET)
-    public List<GroupPermissionPolicy> getPermissionPoliciesByAccountId(@PathVariable(value = "group_id") String groupId) {
+    public List<GroupPermissionPolicy> getPermissionPoliciesByGroupId(@PathVariable(value = "group_id") String groupId) {
         return groupPermissionDomain.getGroupPermissionPolicies(groupId)
                 .stream()
                 .map(GroupPermissionPolicy::new)
@@ -190,7 +190,7 @@ public class GroupController {
     }
 
     @RequestMapping(value = "{group_id}/allpermission", method = RequestMethod.GET)
-    public List<GroupPermission> getByAccountId(@PathVariable("group_id") String groupId) {
+    public List<GroupPermission> getAllPermissionByGroupId(@PathVariable("group_id") String groupId) {
         return groupPermissionDomain.getAllGroupPermissions(groupId)
                 .stream()
                 .map(GroupPermission::new)
