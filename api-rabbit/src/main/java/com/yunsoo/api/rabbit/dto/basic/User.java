@@ -1,25 +1,48 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.joda.time.DateTime;
+
 /**
  * Created by Zhe on 2015/3/3.
  */
 public class User {
-
+    @JsonProperty("id")
     private String id;
+    @JsonProperty("address")
     private String address;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("cellular")
     private String cellular;
+    @JsonProperty("device_code")
     private String deviceCode;
+    @JsonProperty("thumbnail")
     private String thumbnail;
+    @JsonProperty("thumbnail_data")
     private byte[] thumbnailData;
+    @JsonProperty("thumbnail_name")
     private String thumbnailName;
+    @JsonProperty("thumbnail_suffix")
     private String thumbnailSuffix;
+    @JsonProperty("thumbnail_content_type")
     private String thumbnailContentType;
+    @JsonProperty("thumbnail_content_length")
     private Long thumbnailContentLength;
+    @JsonProperty("ys_creadit")
     private Integer ysCreadit;
+    @JsonProperty("level")
     private Integer level;
+    @JsonProperty("status")
     private String status;
-    private String createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
+    private DateTime createdDateTime;
 
     public String getId() {
         return id;
@@ -133,11 +156,11 @@ public class User {
         this.status = status;
     }
 
-    public String getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 }

@@ -22,4 +22,14 @@ public class HashUtilsTest {
 
     }
 
+    @Test
+    public void generatePassword() {
+        String rawPassword = "123456";
+        String hashSalt = RandomUtils.generateString(8);
+        String password = HashUtils.sha1HexString(rawPassword + hashSalt);
+        System.out.println("rawPassword:\t" + rawPassword);
+        System.out.println("hashSalt:   \t" + hashSalt);
+        System.out.println("password:   \t" + password);
+    }
+
 }

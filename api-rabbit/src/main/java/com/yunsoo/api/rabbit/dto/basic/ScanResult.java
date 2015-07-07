@@ -1,5 +1,6 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yunsoo.api.rabbit.object.ValidationResult;
 
 import java.util.List;
@@ -9,14 +10,25 @@ import java.util.List;
  * Created by Zhe on 2015/2/27.
  */
 public class ScanResult {
-
+    @JsonProperty("key")
     private String Key;
+    @JsonProperty("product")
     private Product product;
+    @JsonProperty("liked_product")
+    private Boolean liked_product;
+    @JsonProperty("manufacturer")
     private Organization manufacturer;
+    @JsonProperty("followed_org")
+    private Boolean followed_org;
+    @JsonProperty("scan_record_list")
     private List<ScanRecord> scanRecordList;
+    @JsonProperty("logistics_list")
     private List<Logistics> logisticsList;
+    @JsonProperty("validation_result")
     private ValidationResult validationResult;
+    @JsonProperty("scan_counter")
     private int scanCounter;
+    @JsonProperty("user_id")
     private String userId;
 
     public String getKey() {
@@ -43,12 +55,28 @@ public class ScanResult {
         this.manufacturer = manufacturer;
     }
 
-    public List<ScanRecord> getScanRecord() {
+    public Boolean getLiked_product() {
+        return liked_product;
+    }
+
+    public void setLiked_product(Boolean liked_product) {
+        this.liked_product = liked_product;
+    }
+
+    public Boolean getFollowed_org() {
+        return followed_org;
+    }
+
+    public void setFollowed_org(Boolean followed_org) {
+        this.followed_org = followed_org;
+    }
+
+    public List<ScanRecord> getScanRecordList() {
         return scanRecordList;
     }
 
-    public void setScanRecord(List<ScanRecord> ScanRecordList) {
-        this.scanRecordList = ScanRecordList;
+    public void setScanRecordList(List<ScanRecord> scanRecordList) {
+        this.scanRecordList = scanRecordList;
     }
 
     public List<Logistics> getLogisticsList() {

@@ -1,38 +1,46 @@
 package com.yunsoo.data.service.entity;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
- * Created by Zhe on 2015/5/8.
+ * Created by  : Zhe
+ * Created on  : 2015/5/8
+ * Descriptions:
  */
 @Entity
 @Table(name = "device")
 public class DeviceEntity {
 
     @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
     private String id;
 
-    @Column(name = "device_name")
-    private String deviceName;
-
-    @Column(name = "device_os")
-    private String deviceOs;
-
     @Column(name = "org_id")
     private String orgId;
+
+    @Column(name = "login_account_id")
+    private String loginAccountId;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "os")
+    private String os;
 
     @Column(name = "status_code")
     private String statusCode;
 
     @Column(name = "check_point_id")
     private String checkPointId;
+
+    @Column(name = "comments")
+    private String comments;
 
     @Column(name = "created_account_id")
     private String createdAccountId;
@@ -48,6 +56,7 @@ public class DeviceEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modifiedDatetime;
 
+
     public String getId() {
         return id;
     }
@@ -56,28 +65,36 @@ public class DeviceEntity {
         this.id = id;
     }
 
-    public String getDeviceName() {
-        return deviceName;
-    }
-
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
-    }
-
-    public String getDeviceOs() {
-        return deviceOs;
-    }
-
-    public void setDeviceOs(String deviceOs) {
-        this.deviceOs = deviceOs;
-    }
-
     public String getOrgId() {
         return orgId;
     }
 
     public void setOrgId(String orgId) {
         this.orgId = orgId;
+    }
+
+    public String getLoginAccountId() {
+        return loginAccountId;
+    }
+
+    public void setLoginAccountId(String loginAccountId) {
+        this.loginAccountId = loginAccountId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getOs() {
+        return os;
+    }
+
+    public void setOs(String os) {
+        this.os = os;
     }
 
     public String getStatusCode() {
@@ -94,6 +111,14 @@ public class DeviceEntity {
 
     public void setCheckPointId(String checkPointId) {
         this.checkPointId = checkPointId;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public String getCreatedAccountId() {

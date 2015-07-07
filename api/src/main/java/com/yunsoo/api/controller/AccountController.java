@@ -1,19 +1,30 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountDomain;
-import com.yunsoo.api.dto.AccountRequest;
-import com.yunsoo.api.dto.AccountUpdatePasswordRequest;
-import com.yunsoo.api.dto.basic.Account;
+import com.yunsoo.api.domain.AccountPermissionDomain;
+import com.yunsoo.api.domain.GroupDomain;
+import com.yunsoo.api.dto.*;
+import com.yunsoo.api.object.TAccount;
+import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.AccountObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,27 +40,50 @@ public class AccountController {
     private AccountDomain accountDomain;
 
     @Autowired
+    private GroupDomain groupDomain;
+
+    @Autowired
+    private AccountPermissionDomain accountPermissionDomain;
+
+    @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Account getById(@PathVariable("id") String accountId) {
-        AccountObject accountObject;
         if ("current".equals(accountId)) { //get current Account
             accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         }
-        accountObject = accountDomain.getById(accountId);
-        if (accountObject == null) {
-            throw new NotFoundException("Account not found by [id: " + accountId + "]");
-        }
-        return toAccount(accountObject);
+        AccountObject accountObject = findAccountById(accountId);
+        return new Account(accountObject);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId) {
+    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'account:read')")
+    public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                     @PageableDefault(page = 0, size = 20)
+                                     @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
+                                     Pageable pageable,
+                                     HttpServletResponse response) {
         if (orgId == null) {
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         }
-        return accountDomain.getByOrgId(orgId).stream().map(this::toAccount).collect(Collectors.toList());
+
+        Page<List<AccountObject>> accounts = accountDomain.getByOrgId(orgId, pageable);
+
+        response.setHeader("Content-Range", "pages " + accounts.getPage() + "/" + accounts.getTotal());
+
+        return accounts.getContent().stream().map(Account::new).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "count", method = RequestMethod.GET)
+    public Long count(@RequestParam(value = "org_id", required = false) String orgId,
+                      @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
+        if (orgId == null) {
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
+
+        Long count = accountDomain.count(orgId, statusCodeIn);
+        return count == null ? 0L : count;
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -59,7 +93,8 @@ public class AccountController {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         AccountObject accountObject = toAccountObject(request);
         accountObject.setCreatedAccountId(currentAccountId);
-        return toAccount(accountDomain.createAccount(accountObject));
+
+        return new Account(accountDomain.createAccount(accountObject));
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
@@ -72,23 +107,19 @@ public class AccountController {
         //todo
     }
 
-    @RequestMapping(value = "/current/password", method = RequestMethod.POST)
+    @RequestMapping(value = "current/password", method = RequestMethod.POST)
     public void updatePassword(@RequestBody AccountUpdatePasswordRequest accountPassword) {
 
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
-        AccountObject accountObject = accountDomain.getById(currentAccountId);
-
-        if (accountObject == null) {
-            throw new NotFoundException("Account not found");
-        }
+        AccountObject accountObject = findAccountById(currentAccountId);
 
         String rawOldPassword = accountPassword.getOldPassword();
         String rawNewPassword = accountPassword.getNewPassword();
         String password = accountObject.getPassword();
         String hashSalt = accountObject.getHashSalt();
 
-        if (!accountDomain.validPassword(rawOldPassword, hashSalt, password)) {
+        if (!accountDomain.validatePassword(rawOldPassword, hashSalt, password)) {
             throw new UnprocessableEntityException("当前密码不匹配");
         }
 
@@ -96,24 +127,148 @@ public class AccountController {
     }
 
 
-    private Account toAccount(AccountObject accountObject) {
-        if (accountObject == null) {
-            return null;
+    //groups
+
+    @RequestMapping(value = "{account_id}/group", method = RequestMethod.GET)
+    public List<Group> getGroups(@PathVariable("account_id") String accountId) {
+        if ("current".equals(accountId)) { //get current Account
+            accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         }
-        Account account = new Account();
-        account.setId(accountObject.getId());
-        account.setOrgId(accountObject.getOrgId());
-        account.setIdentifier(accountObject.getIdentifier());
-        account.setStatusCode(accountObject.getStatusCode());
-        account.setEmail(accountObject.getEmail());
-        account.setFirstName(accountObject.getFirstName());
-        account.setLastName(accountObject.getLastName());
-        account.setPhone(accountObject.getPhone());
-        account.setModifiedAccountId(accountObject.getModifiedAccountId());
-        account.setModifiedDatetime(accountObject.getModifiedDatetime());
-        account.setCreatedAccountId(accountObject.getCreatedAccountId());
-        account.setCreatedDateTime(accountObject.getCreatedDateTime());
-        return account;
+        AccountObject accountObject = findAccountById(accountId);
+        return accountDomain.getGroups(accountObject).stream().map(Group::new).collect(Collectors.toList());
+    }
+
+    //create account group under the account
+    @RequestMapping(value = "{account_id}/group", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<String> createAccountGroup(@PathVariable(value = "account_id") String accountId,
+                                           @RequestBody @Valid List<String> groupIds) {
+        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        for (String gid : groupIds) {
+            AccountGroupObject accountGroupObject = new AccountGroupObject();
+            accountGroupObject.setAccountId(accountId);
+            accountGroupObject.setGroupId(gid);
+            accountGroupObject.setCreatedAccountId(currentAccount.getId());
+            accountGroupObject.setCreatedDateTime(DateTime.now());
+            groupDomain.createAccountGroup(accountGroupObject);
+        }
+        return groupIds;
+    }
+
+    //delete account group under the account
+    @RequestMapping(value = "{account_id}/group", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAccountGroup(@PathVariable(value = "account_id") String accountId,
+                                   @RequestBody @Valid List<String> groupIds) {
+        for (String gid : groupIds) {
+            groupDomain.deleteAccountGroup(gid, accountId);
+        }
+    }
+
+    //update account group under the account
+    @RequestMapping(value = "{account_id}/group", method = RequestMethod.PUT)
+    public void updateAccountGroup(@PathVariable(value = "account_id") String accountId,
+                                   @RequestBody @Valid List<String> groupIds) {
+        List<AccountGroupObject> accountGroupObjects = accountDomain.getAccountGroupsByAccountId(accountId);
+        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        List<String> originalGroupId = new ArrayList<>();
+        if (accountGroupObjects == null) {
+            throw new NotFoundException("account group not found");
+        }
+        for (AccountGroupObject ago : accountGroupObjects) {
+            // ago not in group ids
+            if (!groupIds.contains(ago.getGroupId())) {
+                groupDomain.deleteAccountGroup(ago.getGroupId(), ago.getAccountId());
+            }
+            originalGroupId.add(ago.getGroupId());
+        }
+        // gid not in accountGroupObjects
+        groupIds.stream().filter(gid -> !originalGroupId.contains(gid)).forEach(gid -> {
+            AccountGroupObject accountGroupObject = new AccountGroupObject();
+            accountGroupObject.setAccountId(accountId);
+            accountGroupObject.setGroupId(gid);
+            accountGroupObject.setCreatedAccountId(currentAccount.getId());
+            accountGroupObject.setCreatedDateTime(DateTime.now());
+            groupDomain.createAccountGroup(accountGroupObject);
+        });
+    }
+
+    //permissions
+
+    /**
+     * get the permissions directly related to the account
+     *
+     * @param accountId
+     * @return
+     */
+    @RequestMapping(value = "{account_id}/permission", method = RequestMethod.GET)
+    public List<AccountPermission> getPermissionsByAccountId(@PathVariable(value = "account_id") String accountId) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        if ("current".equals(accountId)) { //get current Account
+            accountId = currentAccountId;
+        }
+        checkAccountPermissionRead(currentAccountId, accountId);
+        return accountPermissionDomain.getAccountPermissions(accountId)
+                .stream()
+                .map(AccountPermission::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * get the permission policies related to the account
+     * @param accountId
+     * @return
+     */
+    @RequestMapping(value = "{account_id}/permission/policy", method = RequestMethod.GET)
+    public List<AccountPermissionPolicy> getPermissionPoliciesByAccountId(@PathVariable(value = "account_id") String accountId) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        if ("current".equals(accountId)) { //get current Account
+            accountId = currentAccountId;
+        }
+        checkAccountPermissionRead(currentAccountId, accountId);
+        return accountPermissionDomain.getAccountPermissionPolicies(accountId)
+                .stream()
+                .map(AccountPermissionPolicy::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * get all the permissions related to the account, include group permissions and permission policies.
+     *
+     * @param accountId
+     * @return
+     */
+    @RequestMapping(value = "{account_id}/allpermission", method = RequestMethod.GET)
+    public List<AccountPermission> getAllPermissionByAccountId(@PathVariable("account_id") String accountId) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        if ("current".equals(accountId)) { //get current Account
+            accountId = currentAccountId;
+        }
+        checkAccountPermissionRead(currentAccountId, accountId);
+        return accountPermissionDomain.getAllAccountPermissions(accountId)
+                .stream()
+                .map(AccountPermission::new)
+                .collect(Collectors.toList());
+    }
+
+    private void checkAccountPermissionRead(String currentAccountId, String accountId) {
+        if (!currentAccountId.equals(accountId)) {
+            //check permission
+            AccountObject accountObject = accountDomain.getById(accountId);
+            if (accountObject == null) {
+                throw new NotFoundException("account not found by id [" + accountId + "]");
+            }
+            accountPermissionDomain.checkPermission(currentAccountId, new TPermission(accountObject.getOrgId(), "accountpermission", "read"));
+        }
+    }
+
+
+    private AccountObject findAccountById(String accountId) {
+        AccountObject accountObject = accountDomain.getById(accountId);
+        if (accountObject == null) {
+            throw new NotFoundException("account not found");
+        }
+        return accountObject;
     }
 
     private AccountObject toAccountObject(AccountRequest request) {

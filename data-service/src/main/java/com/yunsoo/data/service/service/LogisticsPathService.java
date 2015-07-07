@@ -5,14 +5,16 @@ import com.yunsoo.data.service.service.contract.LogisticsPath;
 import java.util.List;
 
 /**
- * Created by Jerry on 3/23/2015.
+ * Created by  : Jerry
+ * Created on  : 3/23/2015
+ * Descriptions:
  */
 public interface LogisticsPathService {
-    public List<LogisticsPath> get(String productKey);
+   List<LogisticsPath> getByProductKey(String productKey);
 
-    public void save(LogisticsPath logisticsPath);
+   void save(LogisticsPath logisticsPath);
 
-    public void save(List<LogisticsPath> logisticsPathList);
+   void save(List<LogisticsPath> logisticsPathList);
 
-    public void update(LogisticsPath logisticsPath);
+   void update(LogisticsPath logisticsPath);
 }

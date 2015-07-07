@@ -90,20 +90,22 @@ public class UserController {
         if (fileObject.getLength() > 0) {
             return ResponseEntity.ok()
                     .contentLength(fileObject.getLength())
-                    .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
+                    .contentType(MediaType.parseMediaType(fileObject.getContentType()))
                     .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
         } else {
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
+                    .contentType(MediaType.parseMediaType(fileObject.getContentType()))
                     .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
         }
     }
 
 
-    @RequestMapping(value = "", method = RequestMethod.PATCH)
-    @PreAuthorize("hasPermission(#user, 'authenticated')")
-    public void updateUser(
-            @RequestBody User user) throws Exception {
+    @RequestMapping(value = "/{userId}", method = RequestMethod.PATCH)
+//    @PreAuthorize("hasPermission(#user, 'authenticated')")
+    @PreAuthorize("hasPermission(#userId, 'User', 'user:update')")
+    public void updateUser(@PathVariable(value = "userId") String userId,
+                           @RequestBody User user) throws Exception {
+        user.setId(userId);
         dataAPIClient.patch("user", user);
     }
 

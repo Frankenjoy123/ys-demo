@@ -4,7 +4,7 @@
     <h1 class="page-header text-overflow">产品管理</h1>
 
     <!--Searchbox-->
-    <div class="searchbox" ng-include="'pages/search-box.html'"></div>
+    <!--<div class="searchbox" ng-include="'pages/search-box.html'"></div>-->
 </div>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <!--End page title-->
@@ -12,37 +12,41 @@
 <!--Page content-->
 <!--===================================================-->
 <div id="page-content">
-    <div class="panel panel-bordered-primary" >
-        <div class="panel-heading">
-            <h3 class="panel-title">产品列表</h3>
-        </div>
-        <div class="animated slideInRight" ng-show="productBases">
+    <div class="panel panel-bordered-primary">
+        <div class="animated slideInRight">
+            <div class="col-sm-12 pull-left" style="padding: 20px 20px;">
+                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus"><a href="#/emulator" style="color: white">创建产品</a></button>
+            </div>
             <div class="panel-body">
-                <table class="table table-hover table-vcenter">
+                <table class="table table-hover">
                     <thead>
                     <tr>
+                        <th>#</th>
                         <th>名称</th>
-                        <th>品类</th>
-                        <th>条码</th>
-                        <th>保质期</th>
-                        <th>产品码类型</th>
-                        <th>可用额度</th>
+                        <th class="col-xs-1">品类</th>
+                        <th class="col-xs-1">条码</th>
+                        <th class="col-xs-1">保质期</th>
+                        <th class="col-xs-2">产品码类型</th>
+                        <th class="col-xs-1">可用额度</th>
                         <th>备注</th>
-                        <th>创建时间</th>
+                        <th class="col-xs-2">创建时间</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="pb in productBases track by pb.id">
+                    <tr ng-repeat="pb in dataTable.pageable.data track by pb.id">
+                        <td>
+                            <span>{{$index + 1}}</span>
+                        </td>
                         <td>{{pb.name}}</td>
                         <td>{{pb.category ? pb.category.name : '未知'}}</td>
                         <td>{{pb.barcode}}</td>
-                        <td>{{pb.shelfLife + " " + SHELFLIFE_INTERVALS[pb.shelfLifeInterval]}}</td>
+                        <td>{{pb.shelf_life + " " + SHELFLIFE_INTERVALS[pb.shelf_life_interval]}}</td>
 
-                        <td>{{formatProductKeyTypes(pb.productKeyTypes)}}</td>
+                        <td>{{formatProductKeyTypes(pb.product_key_types)}}</td>
                         <td>
                             <div class="progress-group"><span
                                     class="progress-number"><span
-                                    class="text-semibold">{{pb.credit.remain}}</span>/{{pb.credit.total}}</span>
+                                    class="text-semibold">{{pb.credit.remain}}</span>{{pb.credit ? '/'+pb.credit.total : ''}}</span>
 
                                 <div class="progress progress-md">
                                     <div class="progress-bar {{(pb.credit.percentage)<=10 ? 'progress-bar-danger':'progress-bar-primary' }}
@@ -51,11 +55,13 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{pb.comment}}</td>
-                        <td>{{utils.formatDateString(pb.createdDateTime)}}</td>
+                        <td>{{formatComments(pb.comments)}}</td>
+                        <td>{{utils.formatDateString(pb.created_datetime)}}</td>
                     </tr>
                     </tbody>
                 </table>
+                <div class="pull-right pagination" dt-pageable="dataTable.pageable">
+                </div>
             </div>
         </div>
     </div>

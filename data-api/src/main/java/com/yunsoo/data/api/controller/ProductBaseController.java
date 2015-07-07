@@ -62,7 +62,8 @@ public class ProductBaseController {
             }
 
             FileObject fileObject = new FileObject();
-            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+//            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+            fileObject.setContentType(s3Object.getObjectMetadata().getContentType());
             fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
             fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
             return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
@@ -108,11 +109,12 @@ public class ProductBaseController {
         }
     }
 
+
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductBaseObject> getByFilter(
-            @RequestParam(value = "orgId", required = false) String orgId,
-            @RequestParam(value = "categoryId", required = false) Integer categoryId) {
+            @RequestParam(value = "org_id", required = false) String orgId,
+            @RequestParam(value = "category_id", required = false) Integer categoryId) {
         return productBaseService.getByFilter(orgId, categoryId, LookupCodes.ProductBaseStatus.CUSTOMER_INVISIBLE_STATUS).stream()
                 .map(p -> {
                     ProductBaseObject o = new ProductBaseObject();

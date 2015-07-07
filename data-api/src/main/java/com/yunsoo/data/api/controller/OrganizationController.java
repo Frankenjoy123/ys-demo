@@ -11,10 +11,16 @@ import com.yunsoo.data.service.entity.OrganizationEntity;
 import com.yunsoo.data.service.repository.OrganizationRepository;
 import com.yunsoo.data.service.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by  : Chen Jerry
@@ -52,6 +58,19 @@ public class OrganizationController {
         return fromOrganizationEntity(organizationEntity);
     }
 
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public List<OrganizationObject> getByFilterPaged(Pageable pageable,
+            HttpServletResponse response) {
+        Page<OrganizationEntity> entities;
+        entities = organizationRepository.findAll(pageable);
+
+        response.setHeader("Content-Range", "pages " + entities.getNumber() + "/" + entities.getTotalPages());
+
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(this::fromOrganizationEntity)
+                .collect(Collectors.toList());
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public OrganizationObject create(@RequestBody OrganizationObject organizationObject) {
@@ -76,7 +95,8 @@ public class OrganizationController {
             }
 
             FileObject fileObject = new FileObject();
-            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+//            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
+            fileObject.setContentType(s3Object.getObjectMetadata().getContentType());
             fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
             fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
             return fileObject;

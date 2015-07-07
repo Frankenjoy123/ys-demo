@@ -1,14 +1,12 @@
 package com.yunsoo.data.service.dao.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import com.yunsoo.data.service.dao.ProductBaseDao;
 import com.yunsoo.data.service.dbmodel.ProductBaseModel;
 import com.yunsoo.data.service.util.SpringBeanUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.Map;
 
 @Repository("productBaseDao")
 @Transactional
@@ -97,6 +98,9 @@ public class ProductBaseDaoImpl implements ProductBaseDao {
                 }
             });
         }
+
+        c.addOrder(Order.desc("createdDateTime"));
+
         return c.list();
     }
 

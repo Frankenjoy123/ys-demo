@@ -1,7 +1,10 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
@@ -12,18 +15,34 @@ import org.joda.time.DateTime;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
+    @JsonProperty("product_key")
     private String productKey;
+    @JsonProperty("product_category")
     private ProductCategory productCategory;
+    @JsonProperty("product_base_id")
     private String ProductBaseId;
+    @JsonProperty("product_name")
+    private String productName;
+    @JsonProperty("org_id")
     private String orgId;
+    @JsonProperty("barcode")
     private String barcode;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("comment")
     private String comment;
+    @JsonProperty("shelf_life")
     private int shelfLife;
+    @JsonProperty("shelf_life_interval")
     private String shelfLifeInterval;
-    private String createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
+    private DateTime createdDateTime;
+    @JsonProperty("status_code")
     private String statusCode;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonProperty("manufacturing_datetime")
     private DateTime manufacturingDateTime;
 
     public String getProductKey() {
@@ -48,6 +67,14 @@ public class Product {
 
     public void setProductBaseId(String productBaseId) {
         ProductBaseId = productBaseId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public String getOrgId() {
@@ -98,11 +125,11 @@ public class Product {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
-    public String getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 

@@ -1,0 +1,395 @@
+<!--Page Title-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<div id="page-title">
+    <h1 class="page-header text-overflow">账号组管理</h1>
+</div>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End page title-->
+
+
+<!--Page content-->
+<!--===================================================-->
+
+<!-- Main content -->
+<div id="page-content">
+    <div ng-show="groupTable.data" class="panel panel-bordered-primary">
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">账号组创建</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form class="form-horizontal" id="groupForm" novalidate name="groupForm"
+                                      ng-submit="submit(groupForm.$valid)">
+                                    <div class="form-group has-feedback" id="divGroupName"
+                                         ng-class="{ 'has-error' : groupForm.groupName.$invalid && !groupForm.groupName.$pristine, 'has-success' : groupForm.groupName.$valid && !groupForm.groupName.$pristine}">
+                                        <label for="groupName" class="col-md-3 control-label">账号组名</label>
+
+                                        <div class="col-md-9">
+                                            <input type="text" id="groupName" placeholder="账号组名"
+                                                   name="groupName"
+                                                   class="form-control" ng-model="group.name" novalidate required/>
+                                            <span class="glyphicon glyphicon-ok form-control-feedback"
+                                                  ng-show="groupForm.groupName.$dirty && groupForm.groupName.$valid"></span>
+                                            <span class="glyphicon glyphicon-remove form-control-feedback"
+                                                  ng-show="groupForm.groupName.$dirty && groupForm.groupName.$invalid"></span>
+
+                                            <p ng-show="groupForm.groupName.$invalid && !groupForm.groupName.$pristine"
+                                               class="help-block">请输入账号组名</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group has-feedback" id="divGroupDesc"
+                                         ng-class="{ 'has-error' : groupForm.groupDesc.$invalid && !groupForm.groupDesc.$pristine, 'has-success' : groupForm.groupDesc.$valid && !groupForm.groupDesc.$pristine}">
+                                        <label for="groupDesc" class="col-md-3 control-label">账号组描述</label>
+
+                                        <div class="col-md-9">
+                                             <textarea placeholder="账号组描述，不超过200字符" id="groupDesc" rows="4"
+                                                       class="form-control" ng-model="group.description"
+                                                       name="groupDesc" ng-maxlength="200" novalidate
+                                                       required></textarea>
+                                             <span class="glyphicon glyphicon-ok form-control-feedback"
+                                                   ng-show="groupForm.groupDesc.$dirty && groupForm.groupDesc.$valid"></span>
+                                            <span class="glyphicon glyphicon-remove form-control-feedback"
+                                                  ng-show="groupForm.groupDesc.$dirty && groupForm.groupDesc.$invalid"></span>
+
+                                            <p ng-show="groupForm.groupDesc.$invalid && !groupForm.groupDesc.$pristine"
+                                               class="help-block">请输入账号组描述</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group text-center">
+                                        <button type="submit" class="btn btn-primary btn-labeled fa fa-group"
+                                                ng-disabled="groupForm.$invalid">创建新组
+                                        </button>
+                                        &nbsp;<i class="fa fa-spinner fa-lg" ng-show="spinnerShow"></i>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="treeMenuModal" tabindex="-1" role="dialog" aria-labelledby="treeMenuModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="treeMenuModalLabel">账号组授权</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-horizontal">
+                                    <div class="panel-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-2"><i class="fa fa-fw fa-dashboard "></i>&nbsp;<strong>仪表台</strong></label>
+
+                                            <div class="col-sm-10">
+                                                <label class="form-checkbox form-icon form-primary form-text"><input
+                                                        type="checkbox" ng-true-value="true"
+                                                        ng-false-value="false" ng-model="groupPermission.dashBoardRead">查看</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2"><i
+                                                    class="fa fa-fw fa-tags"></i>&nbsp;<strong>产品码</strong></label>
+
+                                            <div class="col-sm-10">
+                                                <label class="form-checkbox form-icon form-primary form-text"><input
+                                                        type="checkbox" ng-true-value="true"
+                                                        ng-false-value="false"
+                                                        ng-model="groupPermission.productKeyRead">查看</label>
+                                                <label class="form-checkbox form-icon form-success form-text"><input
+                                                        type="checkbox" ng-true-value="true"
+                                                        ng-false-value="false" ng-model="groupPermission.productKeyMng">管理</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2"><i
+                                                    class="fa fa-fw fa-gift"></i>&nbsp;<strong>包装</strong></label>
+
+                                            <div class="col-sm-10">
+                                                <label class="form-checkbox form-icon form-primary form-text"><input
+                                                        type="checkbox" ng-true-value="true"
+                                                        ng-false-value="false" ng-model="groupPermission.packageRead">查看</label>
+                                                <label class="form-checkbox form-icon form-success form-text"><input
+                                                        type="checkbox" ng-true-value="true"
+                                                        ng-false-value="false" ng-model="groupPermission.packageMng">管理</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2"><i
+                                                    class="fa fa-fw fa-truck"></i>&nbsp;<strong>物流</strong></label>
+
+                                            <div class="col-sm-10">
+                                                <label class="form-checkbox form-icon form-primary form-text"><input
+                                                        type="checkbox" ng-true-value="true"
+                                                        ng-false-value="false" ng-model="groupPermission.logisticsRead">查看</label>
+                                                <label class="form-checkbox form-icon form-success form-text"><input
+                                                        type="checkbox" ng-true-value="true"
+                                                        ng-false-value="false" ng-model="groupPermission.logisticsMng">管理</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2"><i class="fa fa-fw fa-bar-chart"></i>&nbsp;<strong>图表</strong></label>
+
+                                            <div class="col-sm-offset-2 form-inline" style="margin-top: 5px">
+                                                <div class="row">
+                                                    <label class="col-sm-4">产品贴码统计</label>
+
+                                                    <div class="col-sm-8">
+                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                                type="checkbox" ng-true-value="true"
+                                                                ng-false-value="false"
+                                                                ng-model="groupPermission.tieMaRead">查看</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-offset-2 form-inline" style="margin-top: 5px">
+                                                <div class="row">
+                                                    <label class="col-sm-4">产品扫码统计</label>
+
+                                                    <div class="col-sm-8">
+                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                                type="checkbox" ng-true-value="true"
+                                                                ng-false-value="false"
+                                                                ng-model="groupPermission.saoMaRead">查看</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-offset-2 form-inline" style="margin-top: 5px">
+                                                <div class="row">
+                                                    <label class="col-sm-4">产品扫码月统计</label>
+
+                                                    <div class="col-sm-8">
+                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                                type="checkbox" ng-true-value="true"
+                                                                ng-false-value="false"
+                                                                ng-model="groupPermission.monMaRead">查看</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-offset-2 form-inline" style="margin-top: 5px">
+                                                <div class="row">
+                                                    <label class="col-sm-4">产品地域统计</label>
+
+                                                    <div class="col-sm-8">
+                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                                type="checkbox" ng-true-value="true"
+                                                                ng-false-value="false"
+                                                                ng-model="groupPermission.placeMaRead">查看</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-sm-2"><i
+                                                    class="fa fa-fw fa-cogs"></i>&nbsp;<strong>设置</strong></label>
+
+                                            <div class="col-sm-offset-2 form-inline" style="margin-top: 5px">
+                                                <div class="row">
+                                                    <label class="col-sm-4">产品</label>
+
+                                                    <div class="col-sm-8">
+                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                                type="checkbox" ng-true-value="true"
+                                                                ng-false-value="false"
+                                                                ng-model="groupPermission.productRead">查看</label>
+                                                        <label class="form-checkbox form-icon form-success form-text"><input
+                                                                type="checkbox" ng-true-value="true"
+                                                                ng-false-value="false"
+                                                                ng-model="groupPermission.productMng">管理</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-offset-2 form-inline" style="margin-top: 5px">
+                                                <div class="row">
+                                                    <label class="col-sm-4">消息</label>
+
+                                                    <div class="col-sm-8">
+                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                                type="checkbox" ng-true-value="true"
+                                                                ng-false-value="false"
+                                                                ng-model="groupPermission.msgRead">查看</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-offset-2 form-inline" style="margin-top: 5px">
+                                                <div class="row">
+                                                    <label class="col-sm-4">设备</label>
+
+                                                    <div class="col-sm-8">
+                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                                type="checkbox" ng-true-value="true"
+                                                                ng-false-value="false"
+                                                                ng-model="groupPermission.deviceRead">查看</label>
+                                                        <label class="form-checkbox form-icon form-success form-text"><input
+                                                                type="checkbox" ng-true-value="true"
+                                                                ng-false-value="false"
+                                                                ng-model="groupPermission.deviceMng">管理</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-offset-2 form-inline" style="margin-top: 5px">
+                                                <div class="row">
+                                                    <label class="col-sm-4">账号</label>
+
+                                                    <div class="col-sm-8">
+                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                                type="checkbox" ng-true-value="true"
+                                                                ng-false-value="false"
+                                                                ng-model="groupPermission.accountRead">查看</label>
+                                                        <label class="form-checkbox form-icon form-success form-text"><input
+                                                                type="checkbox" ng-true-value="true"
+                                                                ng-false-value="false"
+                                                                ng-model="groupPermission.accountMng">管理</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-offset-2 form-inline" style="margin-top: 5px">
+                                                <div class="row">
+                                                    <label class="col-sm-4">密码</label>
+
+                                                    <div class="col-sm-8">
+                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                                type="checkbox" ng-true-value="true"
+                                                                ng-false-value="false"
+                                                                ng-model="groupPermission.passwordRead">查看</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 text-center">
+                                <button type="button" class="btn btn-primary btn-labeled fa fa-group"
+                                        ng-click="authGroup()">授权
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="addAccountsModal" tabindex="-1" role="dialog"
+             aria-labelledby="addAccountsModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="addAccountsModalLabel">添加账号到组</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" style="min-height: 200px">
+                            <div class="col-md-12">
+                                <label>按住Ctrl键多选</label>
+                                <select id="demo-cs-multiselect" data-placeholder="添加账号..." multiple>
+                                    <option value="United States">United States</option>
+                                    <option value="United Kingdom">United Kingdom</option>
+                                    <option value="Afghanistan">Afghanistan</option>
+                                    <option value="Aland Islands">Aland Islands</option>
+                                    <option value="Albania">Albania</option>
+                                    <option value="Algeria">Algeria</option>
+                                    <option value="American Samoa">American Samoa</option>
+                                    <option value="Andorra">Andorra</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <button type="button" class="btn btn-primary btn-labeled fa fa-group"
+                                    ng-click="addAccountsToGroup()">添加到组
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="animated slideInRight">
+            <div class="col-sm-12 pull-left" style="padding: 20px 20px;">
+                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" ng-click="showGroupModal()">创建新组
+                </button>
+            </div>
+
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead id="sort-bar">
+                    <tr>
+                        <th>#</th>
+                        <th>账号组名</th>
+                        <th>账号组描述</th>
+                        <th>账号组策略</th>
+                        <th>创建者</th>
+                        <th>创建时间</th>
+                        <th class="col-xs-2">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="a in groupTable.pageable.data">
+                        <td>
+                            <span>{{$index + 1}}</span>
+                        </td>
+                        <td>
+                            <span>{{a.name}}</span>
+                        </td>
+                        <td>
+                            <span>{{a.description}}</span>
+                        </td>
+                        <td>
+                            获取中...
+                        <td>
+                            <span>{{a.created_account_id}}</span>
+                        </td>
+                        <td>
+                            <span>{{utils.formatDateString(a.created_datetime)}}</span>
+                        </td>
+                        <td>
+                            <!-- Button trigger modal -->
+                            <div class="text-center">
+                                <button type="button" class="btn btn-success fa fa-user-secret" data-toggle="modal"
+                                        data-target="#treeMenuModal">
+                                </button>
+                                <button type="button" class="btn btn-info fa fa-user-plus" data-toggle="modal"
+                                        data-target="#addAccountsModal">
+                                </button>
+                                <button type="button" class="btn btn-danger fa fa-trash-o" ng-click="deleteGroup(a.id)">
+
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="pull-right pagination" dt-pageable="groupTable.pageable">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

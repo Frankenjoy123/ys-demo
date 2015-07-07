@@ -1,5 +1,7 @@
 package com.yunsoo.common.error;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/3/5
@@ -7,6 +9,7 @@ package com.yunsoo.common.error;
  */
 public class DebugErrorResult extends ErrorResult {
 
+    @JsonProperty("trace_info")
     private TraceInfo traceInfo;
 
     public DebugErrorResult() {

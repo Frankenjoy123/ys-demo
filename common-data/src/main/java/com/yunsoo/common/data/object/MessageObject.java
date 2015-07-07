@@ -1,23 +1,54 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.joda.time.DateTime;
+
 /**
- * Created by Zhe on 2015/3/9.
+ * Created by  : Zhe
+ * Created on  : 2015/3/9
+ * Descriptions:
  */
 public class MessageObject {
+    @JsonProperty("id")
     private Long Id;
+    @JsonProperty("title")
     private String title;
+    @JsonProperty("body")
     private String body;
+    @JsonProperty("digest")
     private String digest;
+    @JsonProperty("org_id")
     private String orgId;
-    private String createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
+    private DateTime createdDateTime;
+    @JsonProperty("created_by")
     private String createdBy; //associate to company's accountId
-    private String expiredDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("expired_datetime")
+    private DateTime expiredDateTime;
+    @JsonProperty("link")
     private String link;
+    @JsonProperty("type")
     private String type;
+    @JsonProperty("status")
     private String status;
-    private String lastUpatedDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("last_updated_datetime")
+    private DateTime lastUpdatedDateTime;
+    @JsonProperty("last_updated_by")
     private String lastUpdatedBy; //associate to company's accountId
-    private String postShowTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("post_show_time")
+    private DateTime postShowTime;
 
     public Long getId() {
         return Id;
@@ -59,11 +90,11 @@ public class MessageObject {
         this.orgId = orgId;
     }
 
-    public String getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 
@@ -75,11 +106,11 @@ public class MessageObject {
         this.createdBy = createdBy;
     }
 
-    public String getExpiredDateTime() {
+    public DateTime getExpiredDateTime() {
         return expiredDateTime;
     }
 
-    public void setExpiredDateTime(String expiredDateTime) {
+    public void setExpiredDateTime(DateTime expiredDateTime) {
         this.expiredDateTime = expiredDateTime;
     }
 
@@ -107,12 +138,12 @@ public class MessageObject {
         this.status = status;
     }
 
-    public String getLastUpatedDateTime() {
-        return lastUpatedDateTime;
+    public DateTime getLastUpdatedDateTime() {
+        return lastUpdatedDateTime;
     }
 
-    public void setLastUpatedDateTime(String lastUpatedDateTime) {
-        this.lastUpatedDateTime = lastUpatedDateTime;
+    public void setLastUpdatedDateTime(DateTime lastUpdatedDateTime) {
+        this.lastUpdatedDateTime = lastUpdatedDateTime;
     }
 
     public String getLastUpdatedBy() {
@@ -123,11 +154,12 @@ public class MessageObject {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    public String getPostShowTime() {
+    public DateTime getPostShowTime() {
         return postShowTime;
     }
 
-    public void setPostShowTime(String postShowTime) {
+    public void setPostShowTime(DateTime postShowTime) {
         this.postShowTime = postShowTime;
     }
+
 }

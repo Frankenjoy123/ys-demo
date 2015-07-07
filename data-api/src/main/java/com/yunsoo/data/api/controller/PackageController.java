@@ -1,14 +1,14 @@
 package com.yunsoo.data.api.controller;
 
-
 import com.yunsoo.common.data.object.PackageBoundObject;
+import com.yunsoo.common.data.object.PackageObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotAcceptableException;
-import com.yunsoo.data.api.dto.PackageDto;
 import com.yunsoo.data.service.service.ProductPackageService;
 import com.yunsoo.data.service.service.contract.PackageBoundContract;
 import com.yunsoo.data.service.service.contract.PackageContract;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
-//import org.apache.http.HttpStatus;
 
 /**
  * Created by Qiyong 2015/2/7.
@@ -79,10 +76,10 @@ public class PackageController {
     }
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
-    public PackageDto query(@PathVariable(value = "key") String key) {
+    public PackageObject query(@PathVariable(value = "key") String key) {
         PackageContract p = packageService.query(key);
-        PackageDto dto = new PackageDto(p);
-        return dto;
+        PackageObject packageObject = this.FromPackageContract(p); //new PackageDto(p);
+        return packageObject;
     }
 
     @RequestMapping(value = "/revoke/{key}", method = RequestMethod.DELETE)
@@ -109,6 +106,12 @@ public class PackageController {
             allKeys.addAll(allKeys.size(), itemKeys);
         }
         return allKeys;
+    }
+
+    private PackageObject FromPackageContract(PackageContract packageContract) {
+        PackageObject packageObject = new PackageObject();
+        BeanUtils.copyProperties(packageContract, packageObject);
+        return packageObject;
     }
 
 }

@@ -15,7 +15,7 @@ public interface LookupService {
 
     List<LookupItem> getAll(LookupType lookupType);
 
-    List<LookupItem> getAllActive(LookupType lookupType);
+    List<LookupItem> getByActive(LookupType lookupType, Boolean active);
 
     LookupItem save(LookupType lookupType, LookupItem lookupItem);
 

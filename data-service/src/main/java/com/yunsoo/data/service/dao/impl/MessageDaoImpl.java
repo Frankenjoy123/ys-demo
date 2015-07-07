@@ -147,6 +147,24 @@ public class MessageDaoImpl implements MessageDao {
     }
 
     @Override
+    public int countMessage(List<String> typeList, List<String> statusList, String orgId, DateTime postShowtime) {
+        Criteria c = readSessionFactory.getCurrentSession().createCriteria(MessageModel.class);
+        if (typeList != null) {
+            c.add(Restrictions.in("type", typeList));
+        }
+        if (statusList != null) {
+            c.add(Restrictions.in("status", statusList));
+        }
+        if (orgId != null) {
+            c.add(Restrictions.eq("orgId", orgId));
+        }
+        if (postShowtime != null) {
+            c.add(Restrictions.gt("postShowTime", postShowtime));
+        }
+        return c.list().size();
+    }
+
+    @Override
     public List<MessageModel> getUnreadMessages(String orgId, Long lastReadMessageId) {
         Criteria c = sessionFactory.getCurrentSession().createCriteria(MessageModel.class);
         if (lastReadMessageId != null) {

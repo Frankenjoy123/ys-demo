@@ -19,12 +19,12 @@ public class ForbiddenException extends RestErrorResultException {
         this(new ErrorResult(code, "Action forbidden"));
     }
 
-    public ForbiddenException(String actionName, String accountName) {
-        this(RestErrorResultCode.FORBIDDEN, actionName, accountName);
+    public ForbiddenException(String message) {
+        this(RestErrorResultCode.FORBIDDEN, message);
     }
 
-    public ForbiddenException(int code, String actionName, String accountName) {
-        this(new ErrorResult(code, "Action[" + actionName + "] is forbidden for account: " + accountName));
+    public ForbiddenException(int code, String message) {
+        this(new ErrorResult(code, message));
     }
 
     public ForbiddenException(ErrorResult errorResult) {

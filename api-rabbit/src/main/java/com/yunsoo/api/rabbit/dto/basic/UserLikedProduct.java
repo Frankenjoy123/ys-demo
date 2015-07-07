@@ -1,16 +1,36 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.joda.time.DateTime;
+
 /**
  * Created by Zhe on 2015/4/3.
  */
 public class UserLikedProduct {
 
+    @JsonProperty("id")
     private Long id;
+    @JsonProperty("user_id")
     private String userId;
+    @JsonProperty("base_product_id")
     private String baseProductId;
+    @JsonProperty("product_name")
+    private String productName;
+    @JsonProperty("comment")
+    private String comment;
+    @JsonProperty("active")
     private Boolean active;
-    private String createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
+    private DateTime createdDateTime;
+    @JsonProperty("location")
     private String location;
+    @JsonProperty("last_updated_datetime")
     private String lastUpdatedDateTime;
 
     public Long getId() {
@@ -37,6 +57,22 @@ public class UserLikedProduct {
         this.baseProductId = baseProductId;
     }
 
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     public Boolean getActive() {
         return active;
     }
@@ -45,11 +81,11 @@ public class UserLikedProduct {
         this.active = active;
     }
 
-    public String getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 

@@ -85,6 +85,11 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public int countMessage(List<String> typeList, List<String> statusList, String orgId, DateTime postShowtime) {
+        return messageDao.countMessage(typeList, statusList, orgId, postShowtime);
+    }
+
+    @Override
     @Transactional
     public List<Message> getMessagesByStatus(String status) {
         return Message.FromModelList(messageDao.getMessagesByStatus(status));

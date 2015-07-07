@@ -4,6 +4,7 @@ import com.yunsoo.common.error.DebugErrorResult;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.TraceInfo;
 import com.yunsoo.common.web.error.RestErrorResultCode;
+import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 public class GlobalControllerExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
+    private static final String FROM = "api";
 
     @Value("${yunsoo.debug}")
     private Boolean debug;
@@ -42,9 +45,9 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler(RestErrorResultException.class)
     @ResponseBody
     public ResponseEntity<ErrorResult> handleRestError(HttpServletRequest req, RestErrorResultException ex) {
-        ErrorResult result = ex.getErrorResult();
         HttpStatus status = ex.getHttpStatus();
-        LOGGER.info("[API: " + status + " " + result.toString() + "] " + ex.getMessage());
+        ErrorResult result = ex.getErrorResult();
+        LOGGER.info("[from: {}, status: {}, message: {}]", FROM, status, result);
         return new ResponseEntity<>(appendTraceInfo(result, ex), status);
     }
 
@@ -68,7 +71,7 @@ public class GlobalControllerExceptionHandler {
             message = ex.getMessage();
         }
         ErrorResult result = new ErrorResult(RestErrorResultCode.BAD_REQUEST, message);
-        LOGGER.warn("[API: 400 " + message + "]", ex);
+        LOGGER.warn("[from: {}, status: 400, message: {}]", FROM, message);
         return appendTraceInfo(result, ex);
     }
 
@@ -77,20 +80,38 @@ public class GlobalControllerExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResult handleUnauthorized(HttpServletRequest req, Exception ex) {
-        ErrorResult result = new ErrorResult(RestErrorResultCode.UNAUTHORIZED, "Unauthorized request.");
-        LOGGER.info("[API: 401 UNAUTHORIZED] " + ex.getMessage());
+        ErrorResult result = new ErrorResult(RestErrorResultCode.UNAUTHORIZED, "unauthorized request");
+        LOGGER.info("[from: {}, status: 401, message: {}]", FROM, ex.getMessage());
+        return appendTraceInfo(result, ex);
+    }
+
+    //403
+    @ExceptionHandler({ForbiddenException.class, AccessDeniedException.class})
+    @ResponseBody
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResult handleForbiddenException(HttpServletRequest req, Exception ex) {
+        ErrorResult result = new ErrorResult(RestErrorResultCode.FORBIDDEN, "forbidden request");
+        LOGGER.info("[from: {}, status: 403, message: {}]", FROM, ex.getMessage());
         return appendTraceInfo(result, ex);
     }
 
     //404
-    @ExceptionHandler({
-            NoHandlerFoundException.class,
-            HttpRequestMethodNotSupportedException.class})
+    @ExceptionHandler({NoHandlerFoundException.class})
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResult handleNoHandlerFound(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.NOT_FOUND, "no handler found");
-        LOGGER.warn("[API: 404 no handler found]", ex);
+        LOGGER.info("[from: {}, status: 404, message: {}]", FROM, ex.getMessage());
+        return appendTraceInfo(result, ex);
+    }
+
+    //405
+    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+    @ResponseBody
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    public ErrorResult handleMethodNotSupported(HttpServletRequest req, Exception ex) {
+        ErrorResult result = new ErrorResult(RestErrorResultCode.METHOD_NOT_ALLOWED, "method not allowed");
+        LOGGER.info("[from: {}, status: 405, message: {}]", FROM, ex.getMessage());
         return appendTraceInfo(result, ex);
     }
 
@@ -99,8 +120,8 @@ public class GlobalControllerExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResult handleServerError(HttpServletRequest req, Exception ex) {
-        ErrorResult result = new ErrorResult(RestErrorResultCode.INTERNAL_SERVER_ERROR, "服务器错误");
-        LOGGER.error("[API: 500 unknown]", ex);
+        ErrorResult result = new ErrorResult(RestErrorResultCode.INTERNAL_SERVER_ERROR, "server error");
+        LOGGER.error("[from: " + FROM + ", status: 500, message: " + ex.getMessage() + "]", ex);
         return appendTraceInfo(result, ex);
     }
 

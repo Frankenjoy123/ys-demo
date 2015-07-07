@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +45,7 @@ public class ProductDomain {
 
         product.setStatusCode(productObject.getProductStatusCode());
         product.setManufacturingDateTime(productObject.getManufacturingDateTime());
-        product.setCreatedDateTime(productObject.getCreatedDateTime().toString());
+        product.setCreatedDateTime(productObject.getCreatedDateTime());
 
         //fill with ProductBase information.
         String productBaseId = productObject.getProductBaseId();
@@ -78,6 +79,23 @@ public class ProductDomain {
         ProductBase productBase = convertFromProductBaseObject(productBaseObject, lookupDomain.getAllProductKeyTypes(null));
 //        productBase.setThumbnailURL(yunsooYamlConfig.getDataapi_productbase_picture_basepath() + "id" + productBase.getId() + ".jpg");
         return productBase;
+    }
+
+    //获取基本产品信息 - ProductBase
+    public void fillProductName(List<Product> productList) {
+        //fill product name
+        HashMap<String, String> productHashMap = new HashMap<>();
+        for (Product product : productList) {
+            if (!productHashMap.containsKey(product.getProductBaseId())) {
+                ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, product.getProductBaseId());
+                if (productBaseObject != null) {
+                    productHashMap.put(product.getProductBaseId(), productBaseObject.getName());
+                    product.setProductName(productBaseObject.getName());
+                }
+            } else {
+                product.setProductName(productHashMap.get(product.getProductName()));
+            }
+        }
     }
 
     public List<ProductBase> getAllProductBaseByOrgId(int orgId) {

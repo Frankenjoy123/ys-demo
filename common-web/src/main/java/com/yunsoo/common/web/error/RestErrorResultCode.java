@@ -23,11 +23,17 @@ public final class RestErrorResultCode {
     public final static int NOT_FOUND = 40400;
     //add more...
 
-    //404
+    //405
+    public final static int METHOD_NOT_ALLOWED = 40500;
+    //add more...
+
+    //406
     public final static int NOT_ACCEPTABLE = 40600;
     //add more...
 
+    //409
     public final static int CONFLICT = 40900;
+    //add more...
 
     //422
     public final static int UNPROCESSABLE_ENTITY = 42200;

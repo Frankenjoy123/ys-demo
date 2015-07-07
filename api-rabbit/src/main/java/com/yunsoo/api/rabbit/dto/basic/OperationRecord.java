@@ -1,15 +1,31 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.joda.time.DateTime;
+
 /**
  * Created by Zhe on 2015/4/8.
  */
 public class OperationRecord {
+    @JsonProperty("id")
     private Long id;
+    @JsonProperty("digest")
     private String digest;
+    @JsonProperty("result")
     private String result;
+    @JsonProperty("account_id")
     private Long accountId;
+    @JsonProperty("operation_type")
     private int operationType;
-    private String createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
+    private DateTime createdDateTime;
+    @JsonProperty("location")
     private String location;
 
     public Long getId() {
@@ -52,11 +68,11 @@ public class OperationRecord {
         this.operationType = operationType;
     }
 
-    public String getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 

@@ -1,6 +1,7 @@
 package com.yunsoo.common.error;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by:   Lijian
@@ -12,8 +13,10 @@ public class ErrorResult {
 
     public final static ErrorResult UNKNOWN = new ErrorResult(ErrorResultCode.UNKNOWN, "Unknown Error");
 
-
+    @JsonProperty("code")
     private int code;
+
+    @JsonProperty("message")
     private String message;
 
     public ErrorResult() {

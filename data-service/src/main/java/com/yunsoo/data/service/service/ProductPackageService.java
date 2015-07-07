@@ -11,9 +11,9 @@ import java.util.List;
  * Descriptions:
  */
 public interface ProductPackageService {
-    public PackageContract query(String key);
-    public boolean bind(PackageBoundContract data);
-    public boolean batchBind(PackageBoundContract[] dataArray);
-    public boolean revoke(String key);
-    public List<String> loadAllKeys(String key);
+    PackageContract query(String key);
+    boolean bind(PackageBoundContract data);
+    boolean batchBind(PackageBoundContract[] dataArray);
+    boolean revoke(String key);
+    List<String> loadAllKeys(String key);
 }

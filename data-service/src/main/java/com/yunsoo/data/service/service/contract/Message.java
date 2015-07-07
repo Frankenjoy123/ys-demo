@@ -17,7 +17,7 @@ import java.util.List;
  */
 @JsonAutoDetect
 public class Message {
-    private long Id;
+    private Long Id;
     private String title;
     private String body;
     private String digest;
@@ -40,11 +40,11 @@ public class Message {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime postShowTime;
 
-    public long getId() {
+    public Long getId() {
         return Id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         Id = id;
     }
 

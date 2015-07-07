@@ -4,6 +4,10 @@ import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -12,7 +16,21 @@ import org.springframework.data.domain.Pageable;
  */
 public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<ProductKeyBatchEntity, String> {
 
-    Page<ProductKeyBatchEntity> findByOrgIdOrderByCreatedDateTimeDesc(String orgId, Pageable pageable);
+    Page<ProductKeyBatchEntity> findByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodes, Pageable pageable);
 
-    Page<ProductKeyBatchEntity> findByOrgIdAndProductBaseIdOrderByCreatedDateTimeDesc(String orgId, String productBaseId, Pageable pageable);
+    Page<ProductKeyBatchEntity> findByOrgIdAndProductBaseIdAndStatusCodeIn(String orgId, String productBaseId, List<String> statusCodes, Pageable pageable);
+
+    @Query("select sum(o.quantity) from #{#entityName} o where " +
+            "(:orgId is null or o.orgId = :orgId) " +
+            "and (:productBaseId is null or o.productBaseId = :productBaseId)")
+    Long sumQuantity(@Param("orgId") String orgId,
+                     @Param("productBaseId") String productBaseId);
+
+    @Query("select sum(o.quantity) from #{#entityName} o where " +
+            "(:orgId is null or o.orgId = :orgId) " +
+            "and (:productBaseId is null or o.productBaseId = :productBaseId) " +
+            "and (o.statusCode in :statusCodeIn)")
+    Long sumQuantity(@Param("orgId") String orgId,
+                     @Param("productBaseId") String productBaseId,
+                     @Param("statusCodeIn") List<String> statusCodeIn);
 }

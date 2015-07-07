@@ -1,139 +1,157 @@
 (function () {
-    var app = angular.module('root');
+  var app = angular.module('root');
 
-    app.filter('startFrom', function () {
-        return function (input, start) {
-            if (!input || !input.length) {
-                return;
-            }
-
-            return input.slice(start - 1);
-        };
-    });
-
-    app.factory("messageService", ["$http", function ($http) {
-        return {
-            getInfo: function (org_id, pageIndex, fnSuccess, fnError) {
-                $http.get("/api/message?orgid=" + org_id + "&&pageIndex=" + pageIndex)
-                    .success(function (data) {
-                        fnSuccess(data);
-                    });
-            }
-        };
-    }]);
-
-    app.controller("messageCtrl", ["$scope", "$timeout", "messageService", function ($scope, $timeout, messageService) {
-
-        var AngularDataTable = function (data) {
-
-            var adt = {
-                data: data,
-                filteredData: {},
-                pageSize: 10,
-                pages: pages,
-                sortColumn: '',
-                sortDescending: true,
-                isShowHisSec: isShowHisSec,
-                goToFirstPage: goToFirstPage,
-                gotoLastPage: gotoLastPage,
-                goToPage: goToPage,
-                currentPage: currentPage,
-                next: next,
-                previous: previous,
-                onFirstPage: onFirstPage,
-                onLastPage: onLastPage,
-                sort: sort,
-                resetPaging: resetPaging
-            };
-            return adt;
-
-            function isShowHisSec() {
-                return data.length > 0 ? 1 : 0;
-            }
-
-            function goToFirstPage() {
-                if (!this.onFirstPage()) {
-                    $scope.currentPage = 0;
-                    getMessageInfo($scope.currentPage);
-                }
-            }
-
-            function gotoLastPage() {
-                if (!this.onLastPage()) {
-                    $scope.currentPage = Math.ceil($scope.totalCounts / this.pageSize) - 1;
-                    getMessageInfo($scope.currentPage);
-                }
-            }
-
-            function goToPage(page) {
-                $scope.currentPage = page;
-                getMessageInfo($scope.currentPage);
-            }
-
-            function currentPage() {
-                return $scope.currentPage;
-            }
-
-            function pages() {
-                var p = [];
-                for (var i = Math.max(0, $scope.currentPage - 4); i <= $scope.currentPage; i++) {
-                    p.push(i);
-                }
-                return p;
-            }
-
-            function next() {
-                if (!this.onLastPage()) {
-                    $scope.currentPage += 1;
-                    getMessageInfo($scope.currentPage);
-                }
-            }
-
-            function previous() {
-                if (!this.onFirstPage()) {
-                    $scope.currentPage -= 1;
-                    getMessageInfo($scope.currentPage);
-                }
-
-            }
-
-            function onFirstPage() {
-                return $scope.currentPage === 0;
-            }
-
-            function onLastPage() {
-                return data.length < this.pageSize;
-            }
-
-            function sort(column) {
-                this.resetPaging();
-                if (this.sortColumn === column) {
-                    this.sortDescending = !this.sortDescending;
-                } else {
-                    this.sortColumn = column;
-                    this.sortDescending = false;
-                }
-            }
-
-            function resetPaging() {
-                this.currentPage = 0;
-            }
-        };
-
-        $scope.currentPage = 0;
-        $scope.totalCounts = 0;
-        $scope.itemIndex = 0;
-
-        function getMessageInfo(currentPage) {
-            messageService.getInfo($scope.context.account.org_id, currentPage, function (data) {
-                $scope.data = data;
-                $scope.dataTable = new AngularDataTable($scope.data);
-            });
+  app.factory('messageService', ['$http', function ($http) {
+    return {
+      getMessages: function (dataTable, orgId, fnSuccess) {
+        var url = '/api/message?';
+        if (orgId) {
+          url += 'org_id=' + orgId + '&';
         }
+        url += dataTable.toString();
+        $http.get(url).success(fnSuccess);
+      },
+      createMessage: function (message, fnSuccess, fnError) {
+        $http.post("/api/message", message).success(fnSuccess).error(fnError);
+      }
+    };
+  }]);
 
-        $timeout(function () {
-            getMessageInfo(0);
-        }, 1000);
+  app.controller('MessageCtrl', ['$scope', '$timeout', 'messageService', function ($scope, $timeout, messageService) {
 
-    }]);
+    $scope.spinnerShow = false;
+
+    var message = $scope.message = {
+      title: '',
+      body: '',
+      type: 'business',
+      org_id: '',
+      link: ''
+    };
+
+    if ($scope.context.organization) {
+      $scope.message.org_id = $scope.context.organization.id;
+      initMsgTable($scope.message.org_id)
+    }
+    else {
+      $scope.$on('context-organization-ready', function (event) {
+        $scope.message.org_id = $scope.context.organization.id;
+        initMsgTable($scope.message.org_id)
+      });
+    }
+
+    var messageTypes = {
+      business: '商家信息',
+      platform: '云溯平台信息'
+    };
+    var messageStatuses = {
+      created: '已创建',
+      approved: '通过审核',
+      deleted: '已删除'
+    };
+
+    function initMsgTable(orgId) {
+      $scope.messageTable = new $scope.utils.DataTable({
+        sortable: {
+          target: '#sort-bar',
+          sort: 'createdDateTime,desc'
+        },
+        pageable: {
+          page: 0,
+          size: 200
+        },
+        flush: function (callback) {
+          messageService.getMessages(this, orgId, function (data, status, headers) {
+            callback({data: data, headers: headers});
+          });
+        }
+      });
+    };
+
+    $scope.formatMessageType = function (typeCode) {
+      return messageTypes[typeCode] || typeCode;
+    };
+
+    $scope.formatMessageStatus = function (statusCode) {
+      return messageStatuses[statusCode] || statusCode;
+    };
+
+    //init  validator
+    $timeout(function () {
+      $('#msgForm').bootstrapValidator({
+        message: '非法输入',
+        feedbackIcons: {
+          valid: 'fa fa-check-circle fa-lg text-success',
+          invalid: 'fa fa-times-circle fa-lg',
+          validating: 'fa fa-refresh'
+        },
+        fields: {
+          title: {
+            validators: {
+              notEmpty: {
+                message: '消息标题不能为空'
+              }
+            }
+          },
+          body: {
+            validators: {
+              notEmpty: {
+                message: '消息正文不能为空'
+              }
+            }
+          },
+          link: {
+            validators: {
+              notEmpty: {
+                message: '链接不能为空'
+              }
+            }
+          }
+        }
+      }).on('success.field.bv', function (e, data) {
+        e.preventDefault();
+        //login on validation success
+      });
+
+    }, 0); //end of $timeout
+
+    $scope.submit = function () {
+
+      if (message.title == '') {
+        $scope.utils.alert('info', '消息标题不能为空');
+        return;
+      }
+
+      if (message.body == '') {
+        $scope.utils.alert('info', '消息正文不能为空');
+        return;
+      }
+
+      if (message.link == '') {
+        $scope.utils.alert('info', '链接不能为空');
+        return;
+      }
+
+      $scope.spinnerShow = true;
+
+      messageService.createMessage(message, function () {
+
+        $scope.spinnerShow = false;
+
+        $('#myModal').modal('hide');
+
+        if ($scope.message.org_id != '')
+          initMsgTable($scope.message.org_id);
+
+        $scope.utils.alert('info', '创建消息成功');
+      });
+    };
+
+    $scope.showModal = function () {
+      $('#myModal').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
+        $(this).removeData("bs.modal");
+      });
+    };
+
+  }]);
 })();

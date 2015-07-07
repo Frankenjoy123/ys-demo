@@ -27,22 +27,22 @@ public class LogisticsDomain {
     public List<LogisticsPath> getLogisticsPathsOrderByStartDate(String key) {
         List<LogisticsPath> logisticsPaths = new ArrayList<LogisticsPath>();
 
-        LogisticsPathObject[] logisticsPathObjects = dataAPIClient.get("logisticspath/key/{key}", LogisticsPathObject[].class, key);
+        LogisticsPathObject[] logisticsPathObjects = dataAPIClient.get("logisticspath/{key}", LogisticsPathObject[].class, key);
         if (logisticsPathObjects == null || logisticsPathObjects.length == 0)
             throw new NotFoundException("Logistics path not found key=" + key);
 
         List<LogisticsPathObject> logisticsPathObjectsList = Arrays.asList(logisticsPathObjects);
         for (LogisticsPathObject path : logisticsPathObjectsList) {
             LogisticsPath logisticsPath = new LogisticsPath();
-            logisticsPath.setDesc(path.getDesc());
-            logisticsPath.setEndDate(path.getEndDate());
+            logisticsPath.setDesc(path.getDescription());
+            logisticsPath.setEndDate(path.getEndDateTime());
             logisticsPath.setOperator(path.getOperator());
             logisticsPath.setProductKey(path.getProductKey());
-            logisticsPath.setStartDate(path.getStartDate());
+            logisticsPath.setStartDate(path.getStartDateTime());
 
-            if (path.getAction_id() != null) {
+            if (path.getActionId() != null) {
                 try {
-                    LogisticsCheckActionObject actionObject = dataAPIClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, path.getAction_id());
+                    LogisticsCheckActionObject actionObject = dataAPIClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, path.getActionId());
                     logisticsPath.setActionObject(actionObject);
                 } catch (Exception ex) {
                     logisticsPath.setActionObject(null);

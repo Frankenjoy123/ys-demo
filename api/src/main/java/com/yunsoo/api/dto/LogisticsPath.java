@@ -1,8 +1,8 @@
 package com.yunsoo.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.api.controller.MessageController;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
@@ -11,66 +11,46 @@ import com.yunsoo.common.data.object.OrganizationObject;
 import org.joda.time.DateTime;
 
 /**
- * Created by Jerry on 3/16/2015.
+ * Created by  : Jerry
+ * Created on  : 3/16/2015
+ * Descriptions:
  */
 public class LogisticsPath {
+
+    @JsonProperty("product_key")
     private String productKey;
 
+    @JsonProperty("action")
     private LogisticsCheckActionObject actionObject;
 
+    @JsonProperty("start_point")
     private LogisticsCheckPointObject startCheckPointObject;
-    private OrganizationObject startCheckPointOrgObject;
 
+    @JsonProperty("end_point")
     private LogisticsCheckPointObject endCheckPointObject;
 
+    @JsonProperty("organization")
+    private OrganizationObject startCheckPointOrgObject;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    private DateTime startDate;
-    private String desc;
+    @JsonProperty("start_datetime")
+    private DateTime startDateTime;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    private DateTime endDate;
+    @JsonProperty("end_datetime")
+    private DateTime endDateTime;
+
+    @JsonProperty("operator")
     private String operator;
 
-    public void setActionObject(LogisticsCheckActionObject actionObject)
-    {
-        this.actionObject = actionObject;
-    }
+    @JsonProperty("device_id")
+    private String deviceId;
 
-    public LogisticsCheckActionObject getActionObject()
-    {
-        return actionObject;
-    }
+    @JsonProperty("description")
+    private String description;
 
-    public void setStartCheckPointObject(LogisticsCheckPointObject startCheckPointObject)
-    {
-        this.startCheckPointObject = startCheckPointObject;
-    }
-
-    public LogisticsCheckPointObject getStartCheckPointObject()
-    {
-        return startCheckPointObject;
-    }
-
-    public void setEndCheckPointObject(LogisticsCheckPointObject endCheckPointObject)
-    {
-        this.endCheckPointObject = endCheckPointObject;
-    }
-
-    public LogisticsCheckPointObject getEndCheckPointObject()
-    {
-        return endCheckPointObject;
-    }
-
-    public void setStartCheckPointOrgObject(OrganizationObject startCheckPointOrgObject)
-    {
-        this.startCheckPointOrgObject = startCheckPointOrgObject;
-    }
-
-    public OrganizationObject getStartCheckPointOrgObject()
-    {
-        return startCheckPointOrgObject;
-    }
 
     public String getProductKey() {
         return productKey;
@@ -80,20 +60,52 @@ public class LogisticsPath {
         this.productKey = productKey;
     }
 
-    public DateTime getStartDate() {
-        return startDate;
+    public LogisticsCheckActionObject getActionObject() {
+        return actionObject;
     }
 
-    public void setStartDate(DateTime startDate) {
-        this.startDate = startDate;
+    public void setActionObject(LogisticsCheckActionObject actionObject) {
+        this.actionObject = actionObject;
     }
 
-    public DateTime getEndDate() {
-        return endDate;
+    public LogisticsCheckPointObject getStartCheckPointObject() {
+        return startCheckPointObject;
     }
 
-    public void setEndDate(DateTime endDate) {
-        this.endDate = endDate;
+    public void setStartCheckPointObject(LogisticsCheckPointObject startCheckPointObject) {
+        this.startCheckPointObject = startCheckPointObject;
+    }
+
+    public LogisticsCheckPointObject getEndCheckPointObject() {
+        return endCheckPointObject;
+    }
+
+    public void setEndCheckPointObject(LogisticsCheckPointObject endCheckPointObject) {
+        this.endCheckPointObject = endCheckPointObject;
+    }
+
+    public OrganizationObject getStartCheckPointOrgObject() {
+        return startCheckPointOrgObject;
+    }
+
+    public void setStartCheckPointOrgObject(OrganizationObject startCheckPointOrgObject) {
+        this.startCheckPointOrgObject = startCheckPointOrgObject;
+    }
+
+    public DateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(DateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public DateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(DateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     public String getOperator() {
@@ -104,11 +116,19 @@ public class LogisticsPath {
         this.operator = operator;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.ProductFileDomain;
-import com.yunsoo.api.dto.basic.Package;
+import com.yunsoo.api.dto.Package;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.PackageBoundObject;
 import com.yunsoo.common.data.object.ProductFileObject;
@@ -48,7 +48,7 @@ public class PackageController {
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
-    public com.yunsoo.api.dto.basic.Package getDetailByKey(@PathVariable(value = "key") String key) {
+    public Package getDetailByKey(@PathVariable(value = "key") String key) {
 
         Package productPackage;
         productPackage = dataAPIClient.get("package/{key}", Package.class, key);

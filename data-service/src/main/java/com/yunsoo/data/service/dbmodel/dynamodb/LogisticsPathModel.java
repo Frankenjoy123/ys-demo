@@ -4,18 +4,21 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import org.joda.time.DateTime;
 
 /**
- * Created by Jerry on 3/23/2015.
+ * Created by  : Jerry
+ * Created on  : 3/23/2015
+ * Descriptions:
  */
 @DynamoDBTable(tableName = "logistics_path")
 public class LogisticsPathModel {
     private String productKey;
-    private Integer action_id;
+    private String actionId;
     private String startCheckPoint;
-    private Long startDate;
+    private Long startDateTimeValue;
     private String endCheckPoint;
-    private Long endDate;
+    private Long endDateTimeValue;
     private String operator;
-    private String desc;
+    private String deviceId;
+    private String description;
 
     @DynamoDBHashKey(attributeName = "key")
     public String getProductKey() {
@@ -26,22 +29,13 @@ public class LogisticsPathModel {
         this.productKey = productKey;
     }
 
-    @DynamoDBRangeKey(attributeName = "start_dt")
-    public Long getStartDateValue() {
-        return startDate;
-    }
-
-    public void setStartDateValue(Long startDate) {
-        this.startDate = startDate;
-    }
-
     @DynamoDBAttribute(attributeName = "action_id")
-    public Integer getAction_id() {
-        return action_id;
+    public String getActionId() {
+        return actionId;
     }
 
-    public void setAction_id(Integer action_id) {
-        this.action_id = action_id;
+    public void setActionId(String actionId) {
+        this.actionId = actionId;
     }
 
     @DynamoDBAttribute(attributeName = "start_point")
@@ -51,6 +45,26 @@ public class LogisticsPathModel {
 
     public void setStartCheckPoint(String startCheckPoint) {
         this.startCheckPoint = startCheckPoint;
+    }
+
+    @DynamoDBIgnore
+    public DateTime getStartDateTime() {
+        return startDateTimeValue != null ? new DateTime(startDateTimeValue) : null;
+    }
+
+    public void setStartDateTime(DateTime startDateTime) {
+        if (startDateTime != null) {
+            this.startDateTimeValue = startDateTime.getMillis();
+        }
+    }
+
+    @DynamoDBRangeKey(attributeName = "start_dt")
+    public Long getStartDateTimeValue() {
+        return startDateTimeValue;
+    }
+
+    public void setStartDateTimeValue(Long startDateTimeValue) {
+        this.startDateTimeValue = startDateTimeValue;
     }
 
     @DynamoDBAttribute(attributeName = "end_point")
@@ -63,34 +77,23 @@ public class LogisticsPathModel {
     }
 
     @DynamoDBIgnore
-    public DateTime getStartDate() {
-        return startDate != null ? new DateTime(startDate) : null;
+    public DateTime getEndDateTime() {
+        return endDateTimeValue != null ? new DateTime(endDateTimeValue) : null;
     }
 
-    public void setStartDate(DateTime startDate) {
-        if (startDate != null) {
-            this.startDate = startDate.getMillis();
-        }
-    }
-
-    @DynamoDBIgnore
-    public DateTime getEndDate() {
-        return endDate != null ? new DateTime(endDate) : null;
-    }
-
-    public void setEndDate(DateTime endDate) {
-        if (endDate != null) {
-            this.endDate = endDate.getMillis();
+    public void setEndDateTime(DateTime endDateTime) {
+        if (endDateTime != null) {
+            this.endDateTimeValue = endDateTime.getMillis();
         }
     }
 
     @DynamoDBAttribute(attributeName = "end_dt")
-    public Long getEndDateValue() {
-        return endDate;
+    public Long getEndDateTimeValue() {
+        return endDateTimeValue;
     }
 
-    public void setEndDateValue(Long endDate) {
-        this.endDate = endDate;
+    public void setEndDateTimeValue(Long endDateTimeValue) {
+        this.endDateTimeValue = endDateTimeValue;
     }
 
     @DynamoDBAttribute(attributeName = "operator")
@@ -102,12 +105,22 @@ public class LogisticsPathModel {
         this.operator = operator;
     }
 
-    @DynamoDBAttribute(attributeName = "description")
-    public String getDesc() {
-        return desc;
+    @DynamoDBAttribute(attributeName = "device_id")
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
+
+    @DynamoDBAttribute(attributeName = "desc")
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 }

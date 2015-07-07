@@ -1,5 +1,9 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -9,25 +13,34 @@ import java.util.List;
  */
 public class PermissionPolicyObject {
 
-    private String policyCode;
-    private String policyName;
+    @JsonProperty("code")
+    private String code;
+
+    @NotNull(message = "policy name must not be null")
+    @JsonProperty("name")
+    private String name;
+
+    @JsonProperty("description")
     private String description;
+
+    @NotEmpty(message = "permissions must not be null or empty")
+    @JsonProperty("permissions")
     private List<PermissionObject> permissions;
 
-    public String getPolicyCode() {
-        return policyCode;
+    public String getCode() {
+        return code;
     }
 
-    public void setPolicyCode(String policyCode) {
-        this.policyCode = policyCode;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public String getPolicyName() {
-        return policyName;
+    public String getName() {
+        return name;
     }
 
-    public void setPolicyName(String policyName) {
-        this.policyName = policyName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {

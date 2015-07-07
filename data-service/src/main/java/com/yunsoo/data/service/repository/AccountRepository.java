@@ -2,6 +2,8 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.AccountEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -14,5 +16,16 @@ public interface AccountRepository extends FindOneAndSaveRepository<AccountEntit
 
     List<AccountEntity> findByOrgId(String orgId);
 
+    Page<AccountEntity> findByOrgId(String orgId, Pageable pageable);
+
     List<AccountEntity> findByOrgIdAndIdentifier(String orgId, String identifier);
+
+
+    Long count();
+
+    Long countByOrgId(String orgId);
+
+    Long countByStatusCodeIn(List<String> statusCodeIn);
+
+    Long countByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodeIn);
 }

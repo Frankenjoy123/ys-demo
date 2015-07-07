@@ -1,7 +1,6 @@
 package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yunsoo.api.dto.basic.Token;
 
 /**
  * Created by  : Lijian
@@ -16,6 +15,13 @@ public class AccountLoginResponse {
     @JsonProperty("access_token")
     private Token accessToken;
 
+    public AccountLoginResponse() {
+    }
+
+    public AccountLoginResponse(Token permanentToken, Token accessToken) {
+        this.permanentToken = permanentToken;
+        this.accessToken = accessToken;
+    }
 
     public Token getPermanentToken() {
         return permanentToken;

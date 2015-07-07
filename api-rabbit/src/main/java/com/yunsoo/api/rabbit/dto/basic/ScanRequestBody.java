@@ -1,19 +1,27 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yunsoo.common.web.exception.BadRequestException;
 
 /**
  * Created by Zhe on 2015/3/24.
  */
 public class ScanRequestBody {
-
+    @JsonProperty("key")
     private String Key;
-    private String userId;
+    //    @JsonProperty("user_id")
+//    private String userId;
+    @JsonProperty("device_code")
     private String deviceCode;
+    @JsonProperty("app_id")
     private String appId;
+    @JsonProperty("latitude")
     private Double latitude;
+    @JsonProperty("longitude")
     private Double longitude;
+    @JsonProperty("location")
     private String location;
+    @JsonProperty("detail")
     private String detail;
 
     public String getKey() {
@@ -22,14 +30,6 @@ public class ScanRequestBody {
 
     public void setKey(String key) {
         Key = key;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getDeviceCode() {
@@ -84,8 +84,8 @@ public class ScanRequestBody {
         if (this.getKey() == null || this.getKey().isEmpty()) {
             throw new BadRequestException("Key不能为空！");
         }
-        if (userId == null && (deviceCode == null || deviceCode.isEmpty())) {
-            throw new BadRequestException("至少需要指定一个参数： userId或deviceCode！");
+        if (deviceCode == null || deviceCode.isEmpty()) {
+            throw new BadRequestException("需要指定device_code！");
         }
         return true;
     }

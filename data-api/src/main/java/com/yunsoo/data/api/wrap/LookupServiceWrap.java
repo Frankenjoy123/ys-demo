@@ -23,6 +23,23 @@ public class LookupServiceWrap {
 
     public LookupObject getByCode(LookupType lookupType, String code) {
         LookupItem item = lookupService.getByCode(lookupType, code);
+        return toLookupObject(item);
+    }
+
+    public List<LookupObject> getAll(LookupType lookupType, Boolean active) {
+        List<LookupItem> productKeyTypes = active == null
+                ? lookupService.getAll(lookupType)
+                : lookupService.getByActive(lookupType, active);
+        return productKeyTypes.stream().map(this::toLookupObject).collect(Collectors.toList());
+    }
+
+    public LookupObject save(LookupType lookupType, LookupObject object) {
+        LookupItem item = toLookupItem(object);
+        LookupItem savedItem = lookupService.save(lookupType, item);
+        return toLookupObject(savedItem);
+    }
+
+    private LookupObject toLookupObject(LookupItem item) {
         if (item == null) {
             return null;
         }
@@ -34,17 +51,15 @@ public class LookupServiceWrap {
         return object;
     }
 
-    public List<LookupObject> getAll(LookupType lookupType, Boolean activeOnly) {
-        List<LookupItem> productKeyTypes = activeOnly != null && activeOnly
-                ? lookupService.getAllActive(lookupType)
-                : lookupService.getAll(lookupType);
-        return productKeyTypes.stream().map(p -> {
-            LookupObject object = new LookupObject();
-            object.setCode(p.getCode());
-            object.setName(p.getName());
-            object.setDescription(p.getDescription());
-            object.setActive(p.isActive());
-            return object;
-        }).collect(Collectors.toList());
+    private LookupItem toLookupItem(LookupObject object) {
+        if (object == null) {
+            return null;
+        }
+        LookupItem item = new LookupItem();
+        item.setCode(object.getCode());
+        item.setName(object.getName());
+        item.setDescription(object.getDescription());
+        item.setActive(object.isActive());
+        return item;
     }
 }

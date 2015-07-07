@@ -1,22 +1,32 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.OrganizationDomain;
-import com.yunsoo.api.dto.basic.Organization;
+import com.yunsoo.api.dto.Organization;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.OrganizationObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Zhe
@@ -33,14 +43,20 @@ public class OrganizationController {
     @Autowired
     private OrganizationDomain organizationDomain;
 
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationController.class);
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
-    public Organization getOrganizationById(@PathVariable(value = "id") String id) {
-        OrganizationObject object = organizationDomain.getOrganizationById(id);
+    public Organization getById(@PathVariable(value = "id") String orgId) {
+        if ("current".equals(orgId)) { //get current Organization
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
+        OrganizationObject object = organizationDomain.getOrganizationById(orgId);
         if (object == null) {
-            throw new NotFoundException("organization not found by [id: " + id + "]");
+            throw new NotFoundException("organization not found by [id: " + orgId + "]");
         }
         return fromOrganizationObject(object);
     }
@@ -55,11 +71,33 @@ public class OrganizationController {
         return fromOrganizationObject(object);
     }
 
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
+    public List<Organization> getAll(@PageableDefault(page = 0, size = 20)
+                                     @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
+                                     Pageable pageable,
+                                     HttpServletResponse response) {
+        Page<List<OrganizationObject>> object = organizationDomain.getOrganizationList(pageable);
+        if (object == null) {
+            throw new NotFoundException("Organization list not found");
+        }
+
+        response.setHeader("Content-Range", "pages " + object.getPage() + "/" + object.getTotal());
+
+        return object.getContent().stream().map(this::fromOrganizationObject).collect(Collectors.toList());
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @PreAuthorize("hasPermission(#organization.id, 'filterByOrg', 'organization:create')")
     public Organization create(@RequestBody Organization organization) {
+
+        String createdBy = tokenAuthenticationService.getAuthentication().getDetails().getId();
+
         OrganizationObject object = toOrganizationObject(organization);
         object.setId(null);
+        object.setCreatedAccountId(createdBy);
+        object.setCreatedDateTime(DateTime.now());
+
         OrganizationObject newObject = dataAPIClient.post("organization", object, OrganizationObject.class);
         return fromOrganizationObject(newObject);
     }
@@ -74,11 +112,11 @@ public class OrganizationController {
             if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())
-                        .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
+                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
                         .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             } else {
                 return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(fileObject.getSuffix()))
+                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
                         .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
             }
         } catch (NotFoundException ex) {

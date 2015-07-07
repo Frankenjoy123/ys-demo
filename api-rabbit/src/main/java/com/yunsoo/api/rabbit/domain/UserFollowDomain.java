@@ -18,6 +18,10 @@ public class UserFollowDomain {
     private RestClient dataAPIClient;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserFollowDomain.class);
 
+//    public long ensureFollow(UserFollowing userFollowing, Boolean forceFollow) {
+//        return this.ensureFollow(userFollowing, forceFollow, false);
+//    }
+
     public long ensureFollow(UserFollowing userFollowing, Boolean forceFollow) {
         if (userFollowing == null) {
             throw new BadRequestException("UserFollowing 不能为空！");
@@ -37,5 +41,10 @@ public class UserFollowDomain {
             Long id = dataAPIClient.post("/user/following", userFollowing, long.class);
             return id;
         }
+    }
+
+    public UserFollowing getUserFollowing(String userId, String orgId) {
+        UserFollowing userFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class, userId, orgId);
+        return userFollowing;
     }
 }

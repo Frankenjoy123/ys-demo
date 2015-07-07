@@ -1,5 +1,7 @@
 package com.yunsoo.api.object;
 
+import com.yunsoo.common.data.object.AccountPermissionObject;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/4/14
@@ -19,6 +21,12 @@ public class TPermission {
         this.orgId = orgId;
         this.resourceCode = resourceCode;
         this.actionCode = actionCode;
+    }
+
+    public TPermission(AccountPermissionObject object) {
+        this.orgId = object.getOrgId();
+        this.resourceCode = object.getResourceCode();
+        this.actionCode = object.getActionCode();
     }
 
     public String getOrgId() {

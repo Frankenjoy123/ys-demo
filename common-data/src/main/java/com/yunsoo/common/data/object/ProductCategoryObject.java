@@ -1,21 +1,35 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
- * Created by Zhe on 2015/3/13.
+ * Created by  : Zhe
+ * Created on  : 2015/3/13
+ * Descriptions:
  */
 public class ProductCategoryObject {
-    private int Id;
+
+    @JsonProperty("id")
+    private Integer id;
+
+    @JsonProperty("name")
     private String name;
+
+    @JsonProperty("description")
     private String description;
-    private int parentId;
+
+    @JsonProperty("parent_id")
+    private Integer parentId;
+
+    @JsonProperty("active")
     private boolean active;
 
-    public int getId() {
-        return Id;
+    public Integer getId() {
+        return id;
     }
 
-    public void setId(int id) {
-        Id = id;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -34,11 +48,11 @@ public class ProductCategoryObject {
         this.description = description;
     }
 
-    public int getParentId() {
+    public Integer getParentId() {
         return parentId;
     }
 
-    public void setParentId(int parentId) {
+    public void setParentId(Integer parentId) {
         this.parentId = parentId;
     }
 
@@ -49,4 +63,5 @@ public class ProductCategoryObject {
     public void setActive(boolean active) {
         this.active = active;
     }
+
 }

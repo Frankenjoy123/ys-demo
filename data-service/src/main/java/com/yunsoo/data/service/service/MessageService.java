@@ -26,6 +26,8 @@ public interface MessageService {
 
     public boolean delete(Long messageId);
 
+    public int countMessage(List<String> typeList, List<String> statusList, String orgId, DateTime postShowtime);
+
     public List<Message> getMessagesByStatus(String status);
 
     public List<Message> getMessagesByType(String typeId);

@@ -1,13 +1,20 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by Zhe on 2015/2/27.
  */
 public class ProductCategory {
+    @JsonProperty("id")
     private int Id;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("description")
     private String description;
+    @JsonProperty("parent_id")
     private int parentId;
+    @JsonProperty("active")
     private boolean active;
 
     public int getId() {

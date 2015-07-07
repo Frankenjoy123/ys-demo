@@ -1,5 +1,6 @@
 package com.yunsoo.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
@@ -14,17 +15,40 @@ import java.util.List;
  * Descriptions:
  */
 public class ProductKeyBatch {
+
+    @JsonProperty("id")
     private String id;
+
+    @JsonProperty("quantity")
     private Integer quantity;
+
+    @JsonProperty("status_code")
     private String statusCode;
+
+    @JsonProperty("status")
+    private ProductKeyBatchStatus status;
+
+    @JsonProperty("product_key_type_codes")
     private List<String> productKeyTypeCodes;
+
+    @JsonProperty("product_key_types")
     private List<ProductKeyType> productKeyTypes;
+
+    @JsonProperty("product_base_id")
     private String productBaseId;
+
+    @JsonProperty("org_id")
     private String orgId;
+
+    @JsonProperty("created_app_id")
     private String createdAppId;
+
+    @JsonProperty("created_account_id")
     private String createdAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
 
@@ -50,6 +74,14 @@ public class ProductKeyBatch {
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public ProductKeyBatchStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ProductKeyBatchStatus status) {
+        this.status = status;
     }
 
     public List<String> getProductKeyTypeCodes() {

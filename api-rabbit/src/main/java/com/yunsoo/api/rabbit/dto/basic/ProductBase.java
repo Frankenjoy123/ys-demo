@@ -1,5 +1,6 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
@@ -14,25 +15,37 @@ import java.util.List;
  * Descriptions:
  */
 public class ProductBase {
-
+    @JsonProperty("id")
     private String id;
+    @JsonProperty("category")
     private ProductCategory category;
+    @JsonProperty("org_id")
     private String orgId;
+    @JsonProperty("barcode")
     private String barcode;
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("comment")
     private String comment;
+    @JsonProperty("shelf_life")
     private Integer shelfLife;
+    @JsonProperty("shelf_life_interval")
     private String shelfLifeInterval;
+    @JsonProperty("product_Key_type_codes")
     private List<String> productKeyTypeCodes;
+    @JsonProperty("child_product_count")
     private Integer childProductCount;
+    @JsonProperty("status")
     private String status;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
-
+    @JsonProperty("thumbnail_url")
     private String thumbnailURL;
 
     public String getId() {

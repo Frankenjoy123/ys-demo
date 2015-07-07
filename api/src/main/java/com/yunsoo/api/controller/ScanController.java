@@ -2,8 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.LogisticsDomain;
 import com.yunsoo.api.domain.ProductDomain;
-import com.yunsoo.api.dto.LogisticsPath;
-import com.yunsoo.api.dto.basic.*;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -67,7 +66,7 @@ public class ScanController {
                 scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
                 //retrieve logistics information
-                scanResult.setLogisticses(getLogisticsInfo(key));
+                scanResult.setLogisticsList(getLogisticsInfo(key));
                 scanResult.setResultCode(1); //产品码存在
                 scanResult.setMessage("查询成功！");
             } else {
@@ -82,7 +81,7 @@ public class ScanController {
     private List<Logistics> getLogisticsInfo(String key) {
         List<LogisticsPath> logisticsPaths;
         try {
-            logisticsPaths = logisticsDomain.getLogisticsPathsOrderByStartDate(key);
+            logisticsPaths = logisticsDomain.getLogisticsPathsOrderByStartDateTime(key);
         } catch (NotFoundException ex) {
             //to do: log
             LOGGER.warn("物流信息找不到 - Key = " + key);
@@ -96,7 +95,7 @@ public class ScanController {
             logistics.setOrgName(path.getStartCheckPointOrgObject().getName());
             logistics.setMessage(path.getActionObject().getName());
             logistics.setLocation(path.getStartCheckPointObject().getName());
-            logistics.setDateTime(DateTimeUtils.toString(path.getStartDate()));
+            logistics.setDateTime(DateTimeUtils.toString(path.getStartDateTime()));
             logisticsList.add(logistics);
         }
         return logisticsList;

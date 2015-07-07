@@ -46,7 +46,7 @@ public class LogisticsPathController {
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
     public List<LogisticsPath> get(@PathVariable(value = "key") String key) {
-        return logisticsDomain.getLogisticsPathsOrderByStartDate(key);
+        return logisticsDomain.getLogisticsPathsOrderByStartDateTime(key);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -96,10 +96,10 @@ public class LogisticsPathController {
             }
             reader.close();
 
-            logisticsBatchPathObject.setProductKey(allKeys);
+            logisticsBatchPathObject.setProductKeys(allKeys);
 
             //从上传的文件中获取以下信息
-            logisticsBatchPathObject.setAction_id(1);
+            logisticsBatchPathObject.setActionId("1");
             logisticsBatchPathObject.setStartCheckPoint("1");
 
             dataAPIClient.post("/logisticspath/batchcreate", logisticsBatchPathObject, Long.class);

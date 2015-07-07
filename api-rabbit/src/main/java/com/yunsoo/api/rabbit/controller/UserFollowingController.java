@@ -2,8 +2,9 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
-import com.yunsoo.api.rabbit.dto.basic.Message;
 import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
+import com.yunsoo.api.rabbit.object.Constants;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -30,7 +32,7 @@ public class UserFollowingController {
     private UserDomain userDomain;
     @Autowired
     private UserFollowDomain userFollowDomain;
-    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
+    //    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
     private static final Logger LOGGER = LoggerFactory.getLogger(UserLikedProductController.class);
 
     @RequestMapping(value = "/who/{id}", method = RequestMethod.GET)
@@ -42,16 +44,39 @@ public class UserFollowingController {
         if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
 
-        try {
-            List<UserFollowing> userFollowingList = dataAPIClient.get("/user/following/who/{0}?index={1}&size={2}", new ParameterizedTypeReference<List<UserFollowing>>() {
-            }, id, index, size);
-            if (userFollowingList == null || userFollowingList.size() == 0) {
-                throw new NotFoundException(40401, "User following list not found for userid = " + id);
+
+        List<UserFollowing> userFollowingList = dataAPIClient.get("/user/following/who/{0}?index={1}&size={2}", new ParameterizedTypeReference<List<UserFollowing>>() {
+        }, id, index, size);
+
+        //fill organization Name
+        HashMap<String, OrganizationObject> orgMap = new HashMap<>();
+        for (UserFollowing userFollowing : userFollowingList) {
+            if (!orgMap.containsKey(userFollowing.getOrganizationId())) {
+                OrganizationObject object = dataAPIClient.get("organization/{id}", OrganizationObject.class, userFollowing.getOrganizationId());
+                if (object != null) {
+                    orgMap.put(userFollowing.getOrganizationId(), object);
+                    userFollowing.setOrganizationName(object.getName());
+                    userFollowing.setOrganizationDescription(object.getDescription());
+                } else {
+                    userFollowing.setOrganizationName(orgMap.get(userFollowing.getOrganizationId()).getName());
+                    userFollowing.setOrganizationDescription(orgMap.get(userFollowing.getOrganizationId()).getDescription());
+                }
             }
-            return userFollowingList;
-        } catch (NotFoundException ex) {
-            throw new NotFoundException(40401, "User following list not found for useid = " + id);
         }
+
+        return userFollowingList;
+
+    }
+
+    @RequestMapping(value = "/who/{id}/org/{orgid}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#id, 'UserFollowing', 'userfollowing:read')")
+    public UserFollowing getFollowingRecord(@PathVariable(value = "id") String id,
+                                            @PathVariable(value = "orgid") String orgId) {
+        UserFollowing userFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class, id, orgId);
+        if (userFollowing == null) {
+            throw new NotFoundException("找不到用户Follow的公司信息");
+        }
+        return userFollowing;
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -72,7 +97,7 @@ public class UserFollowingController {
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
 //    @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
-    public void userUnfollowOrg(@RequestHeader(AUTH_HEADER_NAME) String token, @RequestBody UserFollowing userFollowing) {
+    public void userUnfollowOrg(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @RequestBody UserFollowing userFollowing) {
         if (userFollowing == null) throw new BadRequestException("userFollowing 不能为空！");
 
         UserFollowing existingUserFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class,

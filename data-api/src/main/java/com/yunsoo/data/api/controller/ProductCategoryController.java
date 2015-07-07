@@ -1,12 +1,14 @@
 package com.yunsoo.data.api.controller;
 
+import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.data.service.service.ProductCategoryService;
-import com.yunsoo.data.service.service.contract.ProductCategory;
+import com.yunsoo.data.service.entity.ProductCategoryEntity;
+import com.yunsoo.data.service.repository.ProductCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Zhe
@@ -18,35 +20,38 @@ import java.util.List;
 public class ProductCategoryController {
 
     @Autowired
-    private final ProductCategoryService productCategoryService;
+    private ProductCategoryRepository productCategoryRepository;
 
-    @Autowired
-    ProductCategoryController(ProductCategoryService productCategoryService) {
-        this.productCategoryService = productCategoryService;
-    }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ProductCategory getById(@PathVariable(value = "id") Integer id) {
-        ProductCategory pc = productCategoryService.getById(id);
-        if (pc == null) {
-            throw new NotFoundException("product category not found with id: " + id);
+    public ProductCategoryObject getById(@PathVariable(value = "id") Integer id) {
+        ProductCategoryEntity entity = productCategoryRepository.findOne(id);
+        if (entity == null) {
+            throw new NotFoundException("product category not found by [id: " + id + "]");
         }
-        return pc;
+        return toProductCategoryObject(entity);
     }
 
-//    @RequestMapping(value = "/{productCategoryId}", method = RequestMethod.GET)
-//    public @ResponseBody ProductCategoryModel getProductCategory(@RequestParam(value = "productCategoryId", required = true) Integer productCategoryId) {
-//        return this.productCategoryService.getById(productCategoryId);
-//    }
-
-    @RequestMapping(value = "/rootlevel", method = RequestMethod.GET)
-    public List<ProductCategory> getRootProductCategories() {
-        return productCategoryService.getRootProductCategories();
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<ProductCategoryObject> getRootProductCategories(
+            @RequestParam(value = "parent_id", required = false) Integer parentId) {
+        List<ProductCategoryEntity> entities = parentId == null
+                ? productCategoryRepository.findAll()
+                : productCategoryRepository.findByParentId(parentId);
+        return entities.stream().map(this::toProductCategoryObject).collect(Collectors.toList());
     }
 
-    private void validateUser(String userId) {
-//        this.accountRepository.findByUsername(userId).orElseThrow(
-//                () -> new UserNotFoundException(userId));
+    private ProductCategoryObject toProductCategoryObject(ProductCategoryEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        ProductCategoryObject object = new ProductCategoryObject();
+        object.setId(entity.getId());
+        object.setName(entity.getName());
+        object.setDescription(entity.getDescription());
+        object.setParentId(entity.getParentId());
+        object.setActive(entity.isActive());
+        return object;
     }
 
 }

@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title></title>
+    <link href="./images/favicon.ico" rel="icon" type="image/ico"/>
+    <link href="./stylesheets/bootstrap.min.css" rel="stylesheet"/>
+    <link href="./stylesheets/home_page.min.css" rel="stylesheet"/>
+    <script src="./javascripts/zepto.min.js" type="text/javascript"/>
+</head>
+<body>
+<div id="loading" class="loading"><p>努力加载中...</p>
+
+    <p>请耐心等待...</p></div>
+
+<div class="container" id="divBody" style="display:none">
+
+    <div class="box-group">
+
+        <div class="panel box box-primary ">
+            <div class="row">
+                <div id="divScanValidKey" style="display:none" width="100%">
+                    <img id="imgProduct" src="" width="100%"/>
+
+                    <div class="float-img animationDiv">
+                        <img id="imgManufacture" src="" width="60px" height="60px" class="img-circle"/>
+                    </div>
+
+                    <div id="divShare" class="bshare-custom icon-medium share-action">
+                        <a title="分享到网易微博" class="bshare-neteasemb" href="javascript:void(0);"></a>
+                        <a title="分享到新浪微博" class="bshare-sinaminiblog" href="javascript:void(0);"></a>
+                        <a title="分享到腾讯微博" class="bshare-qqmb" href="javascript:void(0);"></a>
+                    </div>
+                </div>
+                <div id="divScanInValidKey" class="col-xs-12 col-md-12" align="center"
+                     style="display:none; position:relative;top:50px;">
+                    <img id="img44" src="" class="img-circle" width="200px" height="200px"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel box box-primary" style="position:relative;top:-30px;">
+            <div class="row">
+                <div id="divScanResultValidKey" class="col-xs-12 col-md-12" style="display:none" align="center">
+                    <div>
+                        <img id="imgProStatus" src="" class="img-rounded" height="90px" width="90px"/>
+                    </div>
+                    <br/>
+
+                    <div>
+                        <span id="proStatus" align="center"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel box box-primary">
+            <div class="row">
+                <div id="divScanDetailsValidKey" style="display:none; position:relative; top:-30px;"
+                     class="col-xs-12 col-md-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active" id="li_tab_a_1" style="width: 33.3%;text-align: center"><a id="tab_a_1"
+                                                                                                          data-toggle="tab">基本信息</a>
+                            </li>
+                            <li id="li_tab_a_2" style="width: 33.3%;text-align: center"><a id="tab_a_2"
+                                                                                           data-toggle="tab">扫描信息</a>
+                            </li>
+                            <li id="li_tab_a_3" style="width: 33.3%;text-align: center"><a id="tab_a_3"
+                                                                                           data-toggle="tab">物流跟踪</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="tabContent">
+                            <div class="tab-pane active" id="tab_1">
+                                <div class="panel box box-primary">
+                                    <table class="table table-condensed" style="margin-top:20px">
+                                        <tr>
+                                            <td colspan="2">
+                                                <table id="detailItems" class="table table-condensed">
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane" id="tab_2">
+                                <div class="panel box box-primary">
+                                    <ul class="timeline" id="scanRecords">
+                                        <li>
+                                            <div style="text-align: center">
+                                                <div class="timeline-body">
+                                                    <p>您是第一次扫描！</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane" id="tab_3">
+                                <div class="panel box box-primary">
+                                    <ul class="timeline" id="divLogistics">
+                                        <li>
+                                            <div style="text-align: center">
+                                                <div class="timeline-body">
+                                                    <p>您没有物流信息！</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="divScanDetailsInValidKey" class="col-xs-12 col-md-12" align="center"
+                     style="display:none;background-color:#47ABEF;position:relative;top:100px;">
+                    <h3><p class="">云溯科技提醒</p>
+
+                        <p class="">无效的云溯产品码！</p></h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="divFooterValidKey" class="row">
+        <div class="col-xs-12 col-md-12 item-action">
+            <div class="pull-left contact"><a id="contactPhone" href="" style="color:white">客服热线</a></div>
+            <div class="pull-right buy"><a id="buyStore" href="" style="color:white">购买产品</a></div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript" charset="utf-8"
+        src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script>
+<script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+
+</body>
+</html>

@@ -12,7 +12,6 @@ import javax.servlet.Filter;
 
 @ComponentScan(basePackages = "com.yunsoo")
 @SpringBootApplication
-//@Import(StatelessAuthenticationSecurityConfig.class)
 public class Application {
 
     public static void main(String[] args) {

@@ -4,7 +4,7 @@
     <h1 class="page-header text-overflow">仪表台</h1>
 
     <!--Searchbox-->
-    <div class="searchbox" ng-include="'pages/search-box.html'"></div>
+    <!--<div class="searchbox" ng-include="'pages/search-box.html'"></div>-->
 </div>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <!--End page title-->
@@ -27,61 +27,65 @@
 
         <!--Tile with progress bar - (New Order)-->
         <!--===================================================-->
-        <div class="col-md-8 col-lg-4">
-            <div class="panel panel-purple panel-colorful">
-                <div class="pad-all media">
-                    <div class="media-left">
+        <div class="col-md-4 col-lg-4">
+            <a href="#/echarts-bar">
+                <div class="panel panel-purple panel-colorful">
+                    <div class="pad-all media">
+                        <div class="media-left">
 										<span class="icon-wrap icon-wrap-xs">
 											<i class="fa fa-qrcode fa-fw fa-2x"></i>
 										</span>
+                        </div>
+                        <div class="media-body">
+                            <p class="h3 text-thin media-heading">{{productKeyQuantitySum}}</p>
+                            <small class="text-uppercase">贴码量</small>
+                        </div>
                     </div>
-                    <div class="media-body">
-                        <p class="h3 text-thin media-heading">100,500,345</p>
-                        <small class="text-uppercase">贴码量</small>
+                    <div class="progress progress-xs progress-dark-base mar-no">
+                        <div style="width: 75%" class="progress-bar progress-bar-light" aria-valuemax="100"
+                             aria-valuemin="0" aria-valuenow="75" role="progressbar"></div>
+                    </div>
+                    <div class="pad-all text-right">
+                        <small><span class="text-semibold"><i class="fa fa-shopping-cart fa-fw"></i>本月使用 {{productKeyQuantitySum}}</span>
+                        </small>
                     </div>
                 </div>
-                <div class="progress progress-xs progress-dark-base mar-no">
-                    <div style="width: 75%" class="progress-bar progress-bar-light" aria-valuemax="100"
-                         aria-valuemin="0" aria-valuenow="75" role="progressbar"></div>
-                </div>
-                <div class="pad-all text-right">
-                    <small><span class="text-semibold"><i class="fa fa-shopping-cart fa-fw"></i>本月使用 954,000</span>
-                    </small>
-                </div>
-            </div>
+            </a>
         </div>
         <!--===================================================-->
         <!--End Tile with progress bar - (New Order)-->
         <!--Tile with progress bar - (Visit Today)-->
         <!--===================================================-->
-        <div class="col-md-8 col-lg-4">
-            <div class="panel panel-success panel-colorful">
-                <div class="pad-all media">
-                    <div class="media-left">
+        <div class="col-md-4 col-lg-4">
+            <a href="#/stacked-bar">
+                <div class="panel panel-success panel-colorful">
+                    <div class="pad-all media">
+                        <div class="media-left">
 										<span class="icon-wrap icon-wrap-xs">
 											<i class="fa fa-users fa-2x"></i>
 										</span>
+                        </div>
+                        <div class="media-body">
+                            <p class="h3 text-thin media-heading">314,675</p>
+                            <small class="text-uppercase">消费次数</small>
+                        </div>
                     </div>
-                    <div class="media-body">
-                        <p class="h3 text-thin media-heading">314,675</p>
-                        <small class="text-uppercase">消费次数</small>
+                    <div class="progress progress-xs progress-dark-base mar-no">
+                        <div style="width: 30%" class="progress-bar progress-bar-light" aria-valuemax="100"
+                             aria-valuemin="0" aria-valuenow="30" role="progressbar"></div>
+                    </div>
+                    <div class="pad-all text-right">
+                        <small>比昨天高出<span class="text-semibold"> 30%</span></small>
                     </div>
                 </div>
-                <div class="progress progress-xs progress-dark-base mar-no">
-                    <div style="width: 30%" class="progress-bar progress-bar-light" aria-valuemax="100"
-                         aria-valuemin="0" aria-valuenow="30" role="progressbar"></div>
-                </div>
-                <div class="pad-all text-right">
-                    <small>比昨天高出<span class="text-semibold"> 30%</span></small>
-                </div>
-            </div>
+            </a>
         </div>
         <!--===================================================-->
         <!--End Tile with progress bar - (Visit Today)-->
 
         <!--Tile with progress bar - (Comments)-->
         <!--===================================================-->
-        <div class="col-md-8 col-lg-4">
+        <div class="col-md-4 col-lg-4">
             <div class="panel panel-mint panel-colorful">
                 <div class="pad-all media">
                     <div class="media-left">
@@ -108,6 +112,47 @@
         <!--End Tile with progress bar - (Comments)-->
 
 
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <!--Primary Panel-->
+            <!--===================================================-->
+            <div class="panel panel-default">
+                <div class="pane-body">
+                    <div class="row">
+                        <div class="col-md-1 col-md-offset-1">
+                            <div id="maChart01" data-dimension="120" data-text="13" data-width="3"
+                                 data-percent="16" data-fgcolor="#61a9dc" data-bgcolor="#eee" data-fontsize="22">
+                            </div>
+
+                            <a class="btn btn-default" href="#/product-base-manage">待审核产品详情</a>
+                        </div>
+                        <div class="col-md-1 col-md-offset-2">
+                            <div id="maChart02" data-dimension="120" data-text="0" data-width="3"
+                                 data-percent="0" data-fgcolor="#fc8675" data-bgcolor="#eee" data-fontsize="22"></div>
+
+                            <a class="btn btn-default" href="#/message">待审核消息详情</a>
+                        </div>
+                        <div class="col-md-1 col-md-offset-2">
+                            <div id="maChart03" data-dimension="120" data-text="7" data-width="3"
+                                 data-percent="70" data-fgcolor="#65cea7" data-bgcolor="#eee" data-fontsize="22"></div>
+
+                            <a class="btn btn-default" href="#/device">待审核设备详情</a>
+                        </div>
+                        <div class="col-md-1 col-md-offset-2">
+                            <div id="maChart04" data-dimension="120" data-text="0%" data-width="3"
+                                 data-percent="0" data-fgcolor="#986291" data-bgcolor="#eee" data-fontsize="22"></div>
+
+                            <a class="btn btn-default" href="#/product-base-manage">查看剩余额度详情</a>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+            </div>
+            <!--===================================================-->
+            <!--End Primary Panel-->
+        </div>
     </div>
 
     <div class="row demo-nifty-panel">

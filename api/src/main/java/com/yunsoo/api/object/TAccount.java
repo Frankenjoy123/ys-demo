@@ -1,5 +1,6 @@
 package com.yunsoo.api.object;
 
+import org.joda.time.DateTime;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Set;
@@ -11,15 +12,12 @@ import java.util.Set;
 public class TAccount implements UserDetails {
     private String id;
     private String orgId;
-    private TAccountStatusEnum status = TAccountStatusEnum.UNDEFINED;
+    private DateTime expires;
     private Set<TAccountAuthority> authorities;
 
     public TAccount() {
     }
 
-    public TAccount(TAccountStatusEnum status) {
-        this.setStatus(status.value());
-    }
 
     @Override
     public Set<TAccountAuthority> getAuthorities() {
@@ -37,41 +35,26 @@ public class TAccount implements UserDetails {
     }
 
 
-    public boolean isDefined() {
-        return !(status == TAccountStatusEnum.UNDEFINED);
-    }
-
-    public boolean isAnonymous() {
-        return !(status == TAccountStatusEnum.ANONYMOUS);
-    }
-
-    public boolean isCredentialsInvalid() {
-        return status == TAccountStatusEnum.INVALID_TOKEN;
-    }
-
-    public boolean isTokenExpired() {
-        return status == TAccountStatusEnum.TOKEN_EXPIRED;
-    }
-
     @Override
     public boolean isAccountNonExpired() {
-        return !(status == TAccountStatusEnum.EXPIRED);
+        return expires.isAfterNow();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return !(status == TAccountStatusEnum.LOCKED);
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return !(status == TAccountStatusEnum.TOKEN_EXPIRED);
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return status == TAccountStatusEnum.ENABLED;
+        return true;
     }
+
 
     public String getId() {
         return id;
@@ -89,12 +72,12 @@ public class TAccount implements UserDetails {
         this.orgId = orgId;
     }
 
-    public TAccountStatusEnum getStatus() {
-        return status;
+    public DateTime getExpires() {
+        return expires;
     }
 
-    public void setStatus(int status) {
-        this.status = TAccountStatusEnum.valueOf(status);
+    public void setExpires(DateTime expires) {
+        this.expires = expires;
     }
 
 }

@@ -1,10 +1,8 @@
 package com.yunsoo.api.security;
 
 import com.yunsoo.api.object.TAccount;
-import com.yunsoo.api.object.TAccountStatusEnum;
 import com.yunsoo.common.util.HashUtils;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,56 +12,64 @@ import java.util.Arrays;
 
 
 /**
- * Created by  : Zhe
- * Created on  : 2015/3/5
+ * Created by  : Lijian
+ * Created on  : 2015/6/10
  * Descriptions:
  */
 public final class TokenHandler {
 
     private static final String SPLITTER = ",";
-    private static final String SALT = "LEmrmtPfWc1txs9uC9A7PevSVSbBbQL0"; //todo: make it dynamic
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenHandler.class);
 
-    public TAccount parseAccessToken(String token) {
+    private byte[] hashSalt;
+
+
+    public TokenHandler(String hashSalt) {
+        this.hashSalt = hashSalt.getBytes(StandardCharsets.UTF_8);
+    }
+
+
+    public TAccount parseToken(String token) {
         String src = decodeToken(token);
         if (src == null) {
-            //token invalid
             LOGGER.error("AccessToken invalid [token: {}]", token);
             return null;
-            //return new TAccount(TAccountStatusEnum.INVALID_TOKEN);
         }
         final String[] parts = src.split(SPLITTER);
-        if (parts.length != 3) {
+        if (parts.length < 2) {
             LOGGER.error("AccessToken invalid [token: {}]", token);
             return null;
-            //return new TAccount(TAccountStatusEnum.INVALID_TOKEN);
         }
-        String accountId = parts[0];
-        String orgId = parts[1];
-        DateTime expires = new DateTime(Long.parseLong(parts[2]));
+        DateTime expires = new DateTime(Long.parseLong(parts[0]));
+        String accountId = parts[1];
+        String orgId = parts.length >= 3 ? parts[2] : null; //orgId is nullable
 
         if (expires.isBeforeNow()) {
             LOGGER.error("AccessToken expired [token: {}, expires: {}]", token, expires.toString());
             return null;
-            //return new TAccount(TAccountStatusEnum.TOKEN_EXPIRED);
         }
-        TAccount account = new TAccount(TAccountStatusEnum.ENABLED);
+
+        TAccount account = new TAccount();
+        account.setExpires(expires);
         account.setId(accountId);
         account.setOrgId(orgId);
         return account;
     }
 
-    public String createAccessToken(String accountId, String orgId, DateTime expires) {
-        return encodeToken(accountId + SPLITTER + orgId + SPLITTER + expires.getMillis());
+    public String createToken(DateTime expires, String accountId, String orgId) {
+        return encodeToken(expires.getMillis() + SPLITTER + accountId + SPLITTER + orgId);
+    }
+
+    public String createToken(DateTime expires, String accountId) {
+        return encodeToken(expires.getMillis() + SPLITTER + accountId);
     }
 
 
     private String encodeToken(String src) {
         byte[] srcBytes = src.getBytes(StandardCharsets.UTF_8);
-        byte[] saltBytes = SALT.getBytes(StandardCharsets.UTF_8);
 
-        byte[] hash = HashUtils.sha256(concat(srcBytes, saltBytes)); //hash
+        byte[] hash = HashUtils.sha256(concat(srcBytes, hashSalt)); //hash
 
         return encode(concat(new byte[]{(byte) hash.length}, hash, srcBytes));
     }
@@ -80,12 +86,11 @@ public final class TokenHandler {
             }
             byte[] hash = Arrays.copyOfRange(bytes, 1, hashLength + 1);
             byte[] srcBytes = Arrays.copyOfRange(bytes, hashLength + 1, bytes.length);
-            byte[] saltBytes = SALT.getBytes(StandardCharsets.UTF_8);
-            byte[] checkHash = HashUtils.sha256(concat(srcBytes, saltBytes));
+            byte[] checkHash = HashUtils.sha256(concat(srcBytes, hashSalt));
             if (!compare(hash, checkHash)) {
                 return null;
             }
-            return StringUtils.newStringUtf8(srcBytes);
+            return new String(srcBytes, StandardCharsets.UTF_8);
         } catch (RuntimeException ex) {
             return null;
         }

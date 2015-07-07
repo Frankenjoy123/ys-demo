@@ -1,30 +1,61 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 /**
- * Created by Zhe on 2015/5/11.
+ * Created by  : Zhe
+ * Created on  : 2015/5/11
+ * Descriptions:
  */
 public class DeviceObject {
 
+    @NotEmpty(message = "id must not be null or empty")
+    @JsonProperty("id")
     private String id;
-    private String deviceName;
-    private String deviceOs;
+
+    @JsonProperty("org_id")
     private String orgId;
+
+    @JsonProperty("login_account_id")
+    private String loginAccountId;
+
+    @JsonProperty("name")
+    private String name;
+
+    @JsonProperty("os")
+    private String os;
+
+    @JsonProperty("status_code")
     private String statusCode;
+
+    @JsonProperty("comments")
+    private String comments;
+
+    @JsonProperty("check_point_id")
     private String checkPointId;
+
+    @JsonProperty("created_account_id")
     private String createdAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
+
+    @JsonProperty("modified_account_id")
     private String modifiedAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("modified_datetime")
     private DateTime modifiedDatetime;
+
 
     public String getId() {
         return id;
@@ -32,22 +63,6 @@ public class DeviceObject {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getDeviceName() {
-        return deviceName;
-    }
-
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
-    }
-
-    public String getDeviceOs() {
-        return deviceOs;
-    }
-
-    public void setDeviceOs(String deviceOs) {
-        this.deviceOs = deviceOs;
     }
 
     public String getOrgId() {
@@ -58,12 +73,44 @@ public class DeviceObject {
         this.orgId = orgId;
     }
 
+    public String getLoginAccountId() {
+        return loginAccountId;
+    }
+
+    public void setLoginAccountId(String loginAccountId) {
+        this.loginAccountId = loginAccountId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getOs() {
+        return os;
+    }
+
+    public void setOs(String os) {
+        this.os = os;
+    }
+
     public String getStatusCode() {
         return statusCode;
     }
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public String getCheckPointId() {

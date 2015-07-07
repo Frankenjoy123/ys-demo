@@ -1,21 +1,16 @@
 package com.yunsoo.api.security.permission;
 
-import com.yunsoo.api.domain.PermissionDomain;
-import com.yunsoo.api.dto.ProductKeyOrder;
-import com.yunsoo.api.dto.basic.Device;
-import com.yunsoo.api.dto.basic.Message;
-import com.yunsoo.api.dto.basic.Organization;
-import com.yunsoo.api.dto.basic.ProductBase;
+import com.yunsoo.api.domain.AccountPermissionDomain;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
 import com.yunsoo.common.data.object.LogisticsCheckPointObject;
-import com.yunsoo.common.web.exception.ForbiddenException;
-import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 
@@ -27,14 +22,13 @@ import java.io.Serializable;
 public class BasePermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
-    private PermissionDomain permissionDomain;
+    private AccountPermissionDomain accountPermissionDomain;
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         boolean hasPermission = false;
         if (authentication != null && permission instanceof String) {
             TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
-            this.checkAccount(account);
 
             TPermission currentPermission = this.getPermission((String) permission);
             if (targetDomainObject instanceof Message) {
@@ -51,13 +45,15 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 currentPermission.setOrgId(((Device) targetDomainObject).getOrgId());
             } else if (targetDomainObject instanceof ProductKeyOrder) {
                 currentPermission.setOrgId(((ProductKeyOrder) targetDomainObject).getOrgId());
+            } else if (targetDomainObject instanceof Group) {
+                currentPermission.setOrgId(((Group) targetDomainObject).getOrgId());
             }
 
-            if (currentPermission.getOrgId() == null || currentPermission.getOrgId().trim().isEmpty()) {
+            if (StringUtils.isEmpty(currentPermission.getOrgId())) {
                 currentPermission.setOrgId(account.getOrgId());  //by default, just set the account's orgId
             }
 
-            hasPermission = permissionDomain.hasPermission(account.getId(), currentPermission);
+            hasPermission = accountPermissionDomain.hasPermission(account.getId(), currentPermission);
         }
         return hasPermission;
     }
@@ -69,13 +65,13 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         if (authentication != null && permission instanceof String) {
 
             TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
-            this.checkAccount(account);
 
             TPermission currentPermission = this.getPermission((String) permission);
             //check if user trying to take action on it's own orgId's resource
             if (targetType.compareToIgnoreCase("filterByOrg") == 0) {
 //                hasPermission = account.getOrgId().equals(targetId) ? true : false;
-                currentPermission.setOrgId(targetId.toString());
+                String orgId = targetId == null ? null : targetId.toString();
+                currentPermission.setOrgId(StringUtils.hasText(orgId) ? orgId : account.getOrgId());
             }
 //            else if (targetType.compareToIgnoreCase("UserLikedProduct") == 0) {
 //                hasPermission = account.getId().equals(targetId) ? true : false;
@@ -87,7 +83,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             else {
                 currentPermission.setOrgId(account.getOrgId());
             }
-            hasPermission = permissionDomain.hasPermission(account.getId(), currentPermission);
+            hasPermission = accountPermissionDomain.hasPermission(account.getId(), currentPermission);
         }
         return hasPermission;
     }
@@ -103,19 +99,4 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         return currentPermission;
     }
 
-    private void checkAccount(TAccount account) {
-        if (!account.isAnonymous()) {
-            throw new ForbiddenException(40301, "Action", "Anonymous user is denied!");
-        } else if (!account.isAccountNonExpired()) {
-            throw new UnauthorizedException(40101, "Account is expired");
-        } else if (!account.isAccountNonLocked()) {
-            throw new UnauthorizedException(40102, "Account is locked!");
-        } else if (account.isCredentialsInvalid()) {
-            throw new UnauthorizedException(40103, "Account token is invalid!");
-        } else if (account.isTokenExpired()) {
-            throw new UnauthorizedException(40104, "Account token is expired!");
-        } else if (!account.isEnabled()) {
-            throw new UnauthorizedException(40105, "Account is disabled!");
-        }
-    }
 }

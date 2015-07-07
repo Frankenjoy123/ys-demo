@@ -1,13 +1,11 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.dto.basic.ProductFile;
+import com.yunsoo.api.dto.ProductFile;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductFileObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -79,7 +77,7 @@ public class ProductFileController {
         productFile.setFileType(productFileObject.getFileType());
         productFile.setOrgId(productFileObject.getOrgId());
         productFile.setCreateBy(productFileObject.getCreateBy());
-        productFile.setCreateDate(productFileObject.getCreateDate());
+        productFile.setCreateDateTime(productFileObject.getCreateDate());
         productFile.setFilePath(productFileObject.getFilePath());
         productFile.setStatus(productFileObject.getStatus());
 

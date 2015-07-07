@@ -1,0 +1,64 @@
+<!--Page Title-->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<div id="page-title">
+    <h1 class="page-header text-overflow">用户管理</h1>
+</div>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--End page title-->
+
+
+<!--Page content-->
+<!--===================================================-->
+
+<!-- Main content -->
+<div id="page-content">
+    <div ng-show="accountTable.data" class="panel panel-bordered-primary">
+        <div class="panel-body">
+            <table class="table table-hover">
+                <thead>
+                <tr role="row">
+                    <th>#</th>
+                    <th>账号ID</th>
+                    <th>账号名</th>
+                    <th>账号标识</th>
+                    <th>状态</th>
+                    <th>邮箱</th>
+                    <th>电话</th>
+                    <th>创建时间</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="a in accountTable.data">
+                    <td>
+                        <span>{{$index + 1}}</span>
+                    </td>
+                    <td>
+                        <span>{{a.id}}</span>
+                    </td>
+                    <td>
+                        <span>{{a.last_name + a.first_name}}</span>
+                    </td>
+                    <td>
+                        <span>{{a.identifier}}</span>
+                    </td>
+                    <td>
+                        <span ng-show="a.status_code == 'available'"><span
+                                class="label label-success">正常</span></span>
+                    <td>
+                        <span>{{a.email}}</span>
+                    </td>
+                    <td>
+                        <span>{{a.phone}}</span>
+                    </td>
+                    <td>
+                        <span>{{utils.formatDateString(a.created_datetime)}}</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="pull-right pagination" dt-pageable="accountTable.pageable">
+            </div>
+        </div>
+    </div>
+
+</div>

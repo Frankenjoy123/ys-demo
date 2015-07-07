@@ -7,24 +7,29 @@
 <!--End page title-->
 
 
-<!--Breadcrumb-->
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<!--<ol class="breadcrumb">-->
-<!--<li><a href="#">首页</a></li>-->
-<!--<li><a href="#/product-base-manage">产品</a></li>-->
-<!--<li class="active"><a href="#/product-base-manage">产品管理</a></li>-->
-<!--</ol>-->
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<!--End breadcrumb-->
-
-
 <!--Page content-->
 <!--===================================================-->
 
 <!-- Main content -->
 <div id="page-content">
     <section class="content" uploader="uploader" filters="queueLimit, customFilter">
-        <div class="panel panel-primary">
+
+        <div class="panel panel-bordered-primary">
+            <div class="panel-heading" ng-click="showDesc = !showDesc">
+                <h3 class="panel-title">使用说明 <i class="fa fa-hand-o-down" ng-show="!showDesc"></i> <i
+                        class="fa fa-hand-o-right" ng-show="showDesc"></i></h3>
+            </div>
+            <div class="panel-body" ng-show="showDesc">
+                <ul class="list-unstyled">
+                    <li>
+                        <button class="btn btn-icon btn-circle icon-lg fa fa-thumbs-up"></button>
+                        请使用云溯PDA生成物流文件并上传
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="panel panel-bordered-primary">
             <div class="panel-body">
            <span class="btn btn-primary fileinput-button " ng-class="{disabled: disabled}">
                     <i class="glyphicon glyphicon-plus"></i>
@@ -96,13 +101,14 @@
             </div>
         </div>
 
-        <div class="panel panel-primary" ng-show="isShowHisSec">
+        <div class="panel panel-bordered-primary" ng-show="isShowHisSec">
             <div class="panel-body table-responsive">
                 <div class="dataTables_wrapper form-inline" role="grid">
                     <div class="col-xs-12">
                         <table id="packageHisFileTable" class="table table-hover dataTable">
                             <thead>
                             <tr role="row">
+                                <th>#</th>
                                 <th>文件名称</th>
                                 <th>产品类型</th>
                                 <th>上传状态</th>
@@ -113,13 +119,16 @@
                             <tbody
                                     ng-repeat="da in dataTable.filteredData = (dataTable.data | filter:dataTable.filter)">
                             <tr>
-                                <td>{{da.fileName}}</td>
+                                <td>
+                                    <span>{{$index + 1}}</span>
+                                </td>
+                                <td>{{da.file_name}}</td>
                                 <td>识别中...</td>
                                 <td><span ng-show="da.status == 1"><span
                                         class="label label-success">成功</span></span>
                                     <span ng-hide="da.status == 1"><span class="label label-danger">失败</span></span>
                                 </td>
-                                <td>{{utils.formatDateString(da.createDate)}}</td>
+                                <td>{{utils.formatDateString(da.create_datetime)}}</td>
                             </tr>
                             </tbody>
                         </table>

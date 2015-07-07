@@ -1,5 +1,7 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,10 +12,17 @@ import java.util.stream.Collectors;
  */
 public class LookupObject {
 
+    @JsonProperty("code")
     private String code;
+
+    @JsonProperty("name")
     private String name;
+
+    @JsonProperty("description")
     private String description;
-    private boolean active;
+
+    @JsonProperty("active")
+    private Boolean active;
 
 
     public String getName() {
@@ -40,11 +49,11 @@ public class LookupObject {
         this.description = description;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
@@ -65,6 +74,21 @@ public class LookupObject {
                 && this.getCode() != null
                 && this.getClass().equals(obj.getClass())
                 && this.getCode().equals(((LookupObject) obj).getCode()));
+    }
+
+    public static <T extends LookupObject> T fromCode(List<T> lookup, String code) {
+        if (lookup == null) {
+            throw new IllegalArgumentException("lookup is null");
+        }
+        if (code == null) {
+            return null;
+        }
+        for (T item : lookup) {
+            if (code.equals(item.getCode())) {
+                return item;
+            }
+        }
+        return null;
     }
 
     public static <T extends LookupObject> List<T> fromCodeList(List<T> lookup, List<String> codeList) {

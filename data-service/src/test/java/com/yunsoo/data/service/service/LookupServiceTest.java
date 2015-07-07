@@ -1,7 +1,6 @@
 package com.yunsoo.data.service.service;
 
 import com.yunsoo.data.service.config.JPAConfig;
-import com.yunsoo.data.service.entity.PermissionActionEntity;
 import com.yunsoo.data.service.repository.PermissionActionRepository;
 import com.yunsoo.data.service.service.contract.LookupItem;
 import org.junit.Test;
@@ -41,7 +40,7 @@ public class LookupServiceTest {
         item.setActive(false);
 
         System.out.println(lookupService.getAll(lookupType));
-        System.out.println(lookupService.getAllActive(lookupType));
+        System.out.println(lookupService.getByActive(lookupType, true));
         System.out.println(lookupService.getByCode(lookupType, code));
 
 //

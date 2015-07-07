@@ -1,15 +1,13 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.ProductDomain;
-import com.yunsoo.api.dto.basic.Product;
+import com.yunsoo.api.dto.Product;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -27,7 +25,7 @@ public class ProductController {
     public Product get(@PathVariable(value = "key") String key) {
         Product product = productDomain.getProductByKey(key);
         if (product == null) {
-            throw new NotFoundException("product");
+            throw new NotFoundException("product not found");
         }
         return product;
     }

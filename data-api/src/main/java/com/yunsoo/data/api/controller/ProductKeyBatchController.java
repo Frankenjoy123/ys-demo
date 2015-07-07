@@ -2,16 +2,26 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
+import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
 import com.yunsoo.data.service.service.ProductKeyBatchService;
 import com.yunsoo.data.service.service.contract.ProductKeyBatch;
 import com.yunsoo.data.service.service.contract.ProductKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by:   Lijian
@@ -27,6 +37,9 @@ public class ProductKeyBatchController {
 
     @Autowired
     private ProductKeyBatchService productKeyBatchService;
+
+    @Autowired
+    private ProductKeyBatchRepository productKeyBatchRepository;
 
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -48,29 +61,46 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductKeyBatchObject> getByFilter(@RequestParam(value = "orgId") String orgId,
-                                                   @RequestParam(value = "productBaseId", required = false) String productBaseId,
-                                                   @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
-                                                   @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        if (pageIndex == null || pageIndex < 0) {
-            pageIndex = 0;
-        }
-        if (pageSize == null || pageSize > 1000) {
-            pageSize = 1000;
-        }
+    public List<ProductKeyBatchObject> getByFilterPaged(
+            @RequestParam(value = "org_id") String orgId,
+            @RequestParam(value = "product_base_id", required = false) String productBaseId,
+            @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+            @PageableDefault(size = 1000)
+            Pageable pageable,
+            HttpServletResponse response) {
+        Page<ProductKeyBatchEntity> entityPage;
+
         if (productBaseId == null) {
-            return productKeyBatchService.getByFilterPaged(orgId, pageIndex, pageSize).stream()
-                    .map(this::toProductKeyBatchObject)
-                    .collect(Collectors.toList());
+            entityPage = productKeyBatchRepository.findByOrgIdAndStatusCodeIn(orgId, statusCodeIn, pageable);
+
         } else {
             String pId = productBaseId.toLowerCase().equals("null") ? null : productBaseId;
-            return productKeyBatchService.getByFilterPaged(orgId, pId, pageIndex, pageSize).stream()
-                    .map(this::toProductKeyBatchObject)
-                    .collect(Collectors.toList());
+            entityPage = productKeyBatchRepository.findByOrgIdAndProductBaseIdAndStatusCodeIn(orgId, pId, statusCodeIn, pageable);
         }
+
+        response.setHeader("Content-Range", "pages " + entityPage.getNumber() + "/" + entityPage.getTotalPages());
+
+        return StreamSupport.stream(entityPage.spliterator(), false)
+                .map(this::toProductKeyBatchObject)
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "sum/quantity", method = RequestMethod.GET)
+    public Long sumQuantity(
+            @RequestParam(value = "org_id", required = false) String orgId,
+            @RequestParam(value = "product_base_id", required = false) String productBaseId,
+            @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
+        Long sum;
+        if (statusCodeIn != null && statusCodeIn.size() > 0) {
+            sum = productKeyBatchRepository.sumQuantity(orgId, productBaseId, statusCodeIn);
+        } else {
+            sum = productKeyBatchRepository.sumQuantity(orgId, productBaseId);
+        }
+        return sum == null ? 0L : sum;
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public ProductKeyBatchObject create(@RequestBody ProductKeyBatchObject batchObj) {
         ProductKeyBatch batch = toProductKeyBatch(batchObj);
         batch.setId(null);
@@ -113,6 +143,26 @@ public class ProductKeyBatchController {
         batchObj.setCreatedAccountId(batch.getCreatedAccountId());
         batchObj.setCreatedDateTime(batch.getCreatedDateTime());
         batchObj.setProductKeyTypeCodes(batch.getProductKeyTypeCodes());
+        return batchObj;
+    }
+
+    private ProductKeyBatchObject toProductKeyBatchObject(ProductKeyBatchEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
+        batchObj.setId(entity.getId());
+        batchObj.setQuantity(entity.getQuantity());
+        batchObj.setStatusCode(entity.getStatusCode());
+        batchObj.setOrgId(entity.getOrgId());
+        batchObj.setProductBaseId(entity.getProductBaseId());
+        batchObj.setCreatedAppId(entity.getCreatedAppId());
+        batchObj.setCreatedAccountId(entity.getCreatedAccountId());
+        batchObj.setCreatedDateTime(entity.getCreatedDateTime());
+        String codes = entity.getProductKeyTypeCodes();
+        if (codes != null) {
+            batchObj.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
+        }
         return batchObj;
     }
 

@@ -1,18 +1,17 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.AccountPermissionObject;
-import com.yunsoo.common.data.object.AccountPermissionPolicyObject;
-import com.yunsoo.data.service.repository.AccountPermissionPolicyRepository;
+import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.data.service.entity.AccountPermissionEntity;
 import com.yunsoo.data.service.repository.AccountPermissionRepository;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Created by:   Lijian
@@ -26,32 +25,60 @@ public class AccountPermissionController {
     @Autowired
     private AccountPermissionRepository accountPermissionRepository;
 
-    @Autowired
-    private AccountPermissionPolicyRepository accountPermissionPolicyRepository;
 
-    @RequestMapping(value = "permission/{accountId}", method = RequestMethod.GET)
-    public List<AccountPermissionObject> getPermissionsByAccountId(@PathVariable(value = "accountId") String accountId) {
-        return StreamSupport.stream(accountPermissionRepository.findByAccountId(accountId).spliterator(), false)
-                .map(pe -> {
-                    AccountPermissionObject p = new AccountPermissionObject();
-                    p.setAccountId(pe.getAccountId());
-                    p.setOrgId(pe.getOrgId());
-                    p.setResourceCode(pe.getResourceCode());
-                    p.setActionCode(pe.getActionCode());
-                    return p;
-                }).collect(Collectors.toList());
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<AccountPermissionObject> getPermissionsByAccountId(@RequestParam(value = "account_id") String accountId) {
+        return accountPermissionRepository.findByAccountId(accountId).stream()
+                .map(this::toAccountPermissionObject).collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "permissionpolicy/{accountId}", method = RequestMethod.GET)
-    public List<AccountPermissionPolicyObject> getPermissionPoliciesByAccountId(@PathVariable(value = "accountId") String accountId) {
-        return StreamSupport.stream(accountPermissionPolicyRepository.findByAccountId(accountId).spliterator(), false)
-                .map(ppe -> {
-                    AccountPermissionPolicyObject pp = new AccountPermissionPolicyObject();
-                    pp.setAccountId(ppe.getAccountId());
-                    pp.setOrgId(ppe.getOrgId());
-                    pp.setPolicyCode(ppe.getPolicyCode());
-                    return pp;
-                }).collect(Collectors.toList());
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public AccountPermissionObject create(@RequestBody AccountPermissionObject accountPermissionObject) {
+        AccountPermissionEntity entity = toAccountPermissionEntity(accountPermissionObject);
+        if (entity.getCreatedDatetime() == null) {
+            entity.setCreatedDatetime(DateTime.now());
+        }
+        entity.setId(null);
+        return toAccountPermissionObject(accountPermissionRepository.save(entity));
     }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") String id) {
+        accountPermissionRepository.delete(id);
+    }
+
+
+    private AccountPermissionObject toAccountPermissionObject(AccountPermissionEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        AccountPermissionObject object = new AccountPermissionObject();
+        object.setId(entity.getId());
+        object.setAccountId(entity.getAccountId());
+        object.setOrgId(entity.getOrgId());
+        object.setResourceCode(entity.getResourceCode());
+        object.setActionCode(entity.getActionCode());
+        object.setCreatedAccountId(entity.getCreatedAccountId());
+        object.setCreatedDatetime(entity.getCreatedDatetime());
+        return object;
+    }
+
+    private AccountPermissionEntity toAccountPermissionEntity(AccountPermissionObject object) {
+        if (object == null) {
+            return null;
+        }
+        AccountPermissionEntity entity = new AccountPermissionEntity();
+        entity.setId(object.getId());
+        entity.setAccountId(object.getAccountId());
+        entity.setOrgId(object.getOrgId());
+        entity.setResourceCode(object.getResourceCode());
+        entity.setActionCode(object.getActionCode());
+        entity.setCreatedAccountId(object.getCreatedAccountId());
+        entity.setCreatedDatetime(object.getCreatedDatetime());
+        return entity;
+    }
+
 
 }

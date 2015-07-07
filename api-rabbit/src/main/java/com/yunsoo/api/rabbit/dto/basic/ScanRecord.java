@@ -2,7 +2,12 @@ package com.yunsoo.api.rabbit.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.yunsoo.common.util.DateTimeUtils;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.joda.time.DateTime;
 
 import java.util.Comparator;
 
@@ -11,15 +16,29 @@ import java.util.Comparator;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ScanRecord implements Comparator<ScanRecord> {
-
+    @JsonProperty("id")
     private Long Id;
+    @JsonProperty("product_key")
     private String productKey;
+    @JsonProperty("base_product_id")
     private String baseProductId;
+    @JsonProperty("product_name")
+    private String productName;
+    @JsonProperty("product_comment")
+    private String productComment;
+    @JsonProperty("app_id")
     private String appId;
+    @JsonProperty("device_id")
     private String deviceId;
+    @JsonProperty("user_id")
     private String userId;
+    @JsonProperty("detail")
     private String detail;
-    private String createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
+    private DateTime createdDateTime;
+    @JsonProperty("location")
     private String location;
 
     public Long getId() {
@@ -45,6 +64,22 @@ public class ScanRecord implements Comparator<ScanRecord> {
 
     public void setBaseProductId(String baseProductId) {
         this.baseProductId = baseProductId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getProductComment() {
+        return productComment;
+    }
+
+    public void setProductComment(String productComment) {
+        this.productComment = productComment;
     }
 
     public String getAppId() {
@@ -79,11 +114,11 @@ public class ScanRecord implements Comparator<ScanRecord> {
         this.detail = detail;
     }
 
-    public String getCreatedDateTime() {
+    public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(String createdDateTime) {
+    public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 
@@ -137,11 +172,9 @@ public class ScanRecord implements Comparator<ScanRecord> {
      */
     @Override
     public int compare(ScanRecord o1, ScanRecord o2) {
-        if (DateTimeUtils.parse(o1.getCreatedDateTime()) == DateTimeUtils.parse(o2.getCreatedDateTime())) {
-            return 0;
-        }
-        return DateTimeUtils.parse(o1.getCreatedDateTime()).isBefore(DateTimeUtils.parse(o2.getCreatedDateTime())) ? -1 : 1;
-
+        Long o1Tick = o1.getCreatedDateTime() == null ? 0L : o1.getCreatedDateTime().getMillis();
+        Long o2Tick = o2.getCreatedDateTime() == null ? 0L : o2.getCreatedDateTime().getMillis();
+        return Long.compare(o1Tick, o2Tick);
     }
 
 

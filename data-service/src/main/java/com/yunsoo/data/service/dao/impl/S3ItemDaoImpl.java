@@ -1,15 +1,18 @@
 package com.yunsoo.data.service.dao.impl;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.data.service.dao.S3ItemDao;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -24,30 +27,6 @@ public class S3ItemDaoImpl implements S3ItemDao {
 
     @Autowired
     AmazonS3Client amazonS3Client;
-//
-//    @Override
-//    public void putFolderItem(String bucketName, String folderName) {
-//
-//        // create meta-data for your folder and set content-length to 0
-//        ObjectMetadata metadata = new ObjectMetadata();
-//        metadata.setContentLength(0);
-//        // create empty content
-//        InputStream emptyContent = new ByteArrayInputStream(new byte[0]);
-//        // create a PutObjectRequest passing the folder name suffixed by /
-//        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName,
-//                folderName + SUFFIX, emptyContent, metadata);
-//        // send request to S3 to create folder
-//        amazonS3Client.putObject(putObjectRequest);
-//    }
-//
-//    // upload file to folder and set CannedAccessControlList
-//    @Override
-//    public void putFileItem(String bucketName, String folderName, String fileName, File file, CannedAccessControlList cannedAccessControlList) {
-//
-//        String newFileName = folderName + SUFFIX + fileName;
-//        amazonS3Client.putObject(new PutObjectRequest(bucketName, newFileName, file)
-//                .withCannedAcl(cannedAccessControlList));
-//    }
 
     @Override
     public void putItem(String bucketName, String key, InputStream inputStream, ObjectMetadata objectMetadata) {
@@ -64,6 +43,11 @@ public class S3ItemDaoImpl implements S3ItemDao {
     @Override
     public S3Object getItem(String bucketName, String key) {
         return amazonS3Client.getObject(new GetObjectRequest(bucketName, key));
+    }
+
+    @Override
+    public URL generatePresignedUrl(String bucketName, String key, DateTime expiration, HttpMethod method) {
+        return amazonS3Client.generatePresignedUrl(bucketName, key, expiration.toDate(), method);
     }
 
     @Override

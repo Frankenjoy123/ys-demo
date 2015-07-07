@@ -5,9 +5,10 @@ import com.yunsoo.api.rabbit.dto.basic.Product;
 import com.yunsoo.api.rabbit.dto.basic.ScanRecord;
 import com.yunsoo.api.rabbit.dto.basic.User;
 import com.yunsoo.api.rabbit.object.ValidationResult;
-import com.yunsoo.common.util.DateTimeUtils;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 验真伪，告知当前扫描的商家产品详细信息。
@@ -15,7 +16,7 @@ import java.util.*;
  */
 public class ValidateProduct {
 
-    public static Comparator<ScanRecord> comparator = (s1, s2) -> DateTimeUtils.parse(s1.getCreatedDateTime()).compareTo(DateTimeUtils.parse(s2.getCreatedDateTime()));
+    public static Comparator<ScanRecord> comparator = (s1, s2) -> s1.getCreatedDateTime().compareTo(s2.getCreatedDateTime());
 
     public static ValidationResult validateProduct(Product product) {
         return ValidationResult.Real;
