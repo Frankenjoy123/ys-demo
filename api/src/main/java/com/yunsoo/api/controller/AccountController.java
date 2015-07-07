@@ -195,7 +195,13 @@ public class AccountController {
 
     //permissions
 
-    @RequestMapping(value = "{account_id}/permission/account", method = RequestMethod.GET)
+    /**
+     * get the permissions directly related to the account
+     *
+     * @param accountId
+     * @return
+     */
+    @RequestMapping(value = "{account_id}/permission", method = RequestMethod.GET)
     public List<AccountPermission> getPermissionsByAccountId(@PathVariable(value = "account_id") String accountId) {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         if ("current".equals(accountId)) { //get current Account
@@ -208,6 +214,11 @@ public class AccountController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * get the permission policies related to the account
+     * @param accountId
+     * @return
+     */
     @RequestMapping(value = "{account_id}/permission/policy", method = RequestMethod.GET)
     public List<AccountPermissionPolicy> getPermissionPoliciesByAccountId(@PathVariable(value = "account_id") String accountId) {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
@@ -221,8 +232,14 @@ public class AccountController {
                 .collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "{account_id}/permission", method = RequestMethod.GET)
-    public List<AccountPermission> getByAccountId(@PathVariable("account_id") String accountId) {
+    /**
+     * get all the permissions related to the account, include group permissions and permission policies.
+     *
+     * @param accountId
+     * @return
+     */
+    @RequestMapping(value = "{account_id}/allpermission", method = RequestMethod.GET)
+    public List<AccountPermission> getAllPermissionByAccountId(@PathVariable("account_id") String accountId) {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         if ("current".equals(accountId)) { //get current Account
             accountId = currentAccountId;
