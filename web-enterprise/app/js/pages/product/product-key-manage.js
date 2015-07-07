@@ -42,14 +42,6 @@
 
     $scope.cache || ($scope.cache = {});
 
-
-
-    $timeout(function () {
-      $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-      })
-    }, 0);
-
     $scope.creationPanel = {
       model: {
         productBaseId: 0,
@@ -84,7 +76,7 @@
           console.log(error, data);
           var message = (error.message || '').substring(0, 100);
           $scope.spinnerShow = false;
-          $scope.utils.alert('danger', message);
+          $scope.utils.alert('danger', message, '#myModal .modal-dialog', false);
         });
       },
       productBaseIdChanged: function (productBaseId) {
@@ -240,8 +232,7 @@
 
       var rangeKey = {
         "个": "1", "十": "10", "百": "100",
-        "千": "1000", "万": "10000", "十万": "100000",
-        "百万": "1000000", "千万": "10000000", "亿": "100000000"
+        "千": "1000", "万": "10000", "十万": "100000"
       };
 
       $("#rangeNum").ionRangeSlider({
@@ -273,8 +264,7 @@
         grid: true,
         values: [
           "个", "十", "百",
-          "千", "万", "十万",
-          "百万", "千万", "亿"
+          "千", "万", "十万"
         ],
         onChange: function (data) {
           var selectNum = ($("#rangeNum").data("from") - 0) * (rangeKey[$("#rangeKey").data("from")] - 0);

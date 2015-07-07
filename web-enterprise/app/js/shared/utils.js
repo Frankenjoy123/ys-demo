@@ -38,10 +38,11 @@
        * @param message string
        * @param container string ["floating", "page"] | "jQuery selector"
        */
-      alert: function (type, message, container) {
+      alert: function (type, message, container, isFocus) {
         $.niftyNoty && $.niftyNoty({
           type: type,
           container: container || 'page',
+          focus: (isFocus === undefined || isFocus === true) ? true : false,
           message: message,
           timer: 3000
         });
