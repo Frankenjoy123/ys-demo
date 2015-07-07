@@ -32,7 +32,8 @@
           var percent = Math.round((unVerifiedMessages / allMessages) * 100);
 
           $('#maChart02').empty();
-          $('#maChart02').data('text', unVerifiedMessages + '/' + allMessages);
+          //$('#maChart02').data('text', unVerifiedMessages + '/' + allMessages);
+          $('#maChart02').data('text', unVerifiedMessages);
           $('#maChart02').data('percent', percent);
           $('#maChart02').circliful();
         });
@@ -41,7 +42,7 @@
 
     function showProductKeyCreditSum(data) {
       $('#maChart04').empty();
-      $('#maChart04').data('text', data.percentage + '%');
+      $('#maChart04').data('text', data.remain);
       $('#maChart04').data('percent', data.percentage);
       $('#maChart04').circliful();
     }

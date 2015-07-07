@@ -27,7 +27,7 @@
 
         <!--Tile with progress bar - (New Order)-->
         <!--===================================================-->
-        <div class="col-md-8 col-lg-4">
+        <div class="col-md-4 col-lg-4">
             <a href="#/echarts-bar">
                 <div class="panel panel-purple panel-colorful">
                     <div class="pad-all media">
@@ -56,7 +56,7 @@
         <!--End Tile with progress bar - (New Order)-->
         <!--Tile with progress bar - (Visit Today)-->
         <!--===================================================-->
-        <div class="col-md-8 col-lg-4">
+        <div class="col-md-4 col-lg-4">
             <a href="#/stacked-bar">
                 <div class="panel panel-success panel-colorful">
                     <div class="pad-all media">
@@ -85,7 +85,7 @@
 
         <!--Tile with progress bar - (Comments)-->
         <!--===================================================-->
-        <div class="col-md-8 col-lg-4">
+        <div class="col-md-4 col-lg-4">
             <div class="panel panel-mint panel-colorful">
                 <div class="pad-all media">
                     <div class="media-left">
@@ -120,24 +120,34 @@
             <!--===================================================-->
             <div class="panel panel-default">
                 <div class="pane-body">
-                    <form class="form-inline text-center" style="padding-left: 10%">
-                        <div class="form-group" style="width: 24%">
-                            <div id="maChart01" data-dimension="120" data-text="16%" data-info="待审核产品" data-width="3"
-                                 data-percent="16" data-fgcolor="#61a9dc" data-bgcolor="#eee"></div>
+                    <div class="row">
+                        <div class="col-md-1 col-md-offset-1">
+                            <div id="maChart01" data-dimension="120" data-text="13" data-width="3"
+                                 data-percent="16" data-fgcolor="#61a9dc" data-bgcolor="#eee" data-fontsize="22">
+                            </div>
+
+                            <a class="btn btn-default" href="#/product-base-manage">待审核产品详情</a>
                         </div>
-                        <div class="form-group" style="width: 24%">
-                            <div id="maChart02" data-dimension="120" data-text="0" data-info="待审核消息" data-width="3"
-                                 data-percent="0" data-fgcolor="#fc8675" data-bgcolor="#eee"></div>
+                        <div class="col-md-1 col-md-offset-2">
+                            <div id="maChart02" data-dimension="120" data-text="0" data-width="3"
+                                 data-percent="0" data-fgcolor="#fc8675" data-bgcolor="#eee" data-fontsize="22"></div>
+
+                            <a class="btn btn-default" href="#/message">待审核消息详情</a>
                         </div>
-                        <div class="form-group" style="width: 24%">
-                            <div id="maChart03" data-dimension="120" data-text="70%" data-info="待审核设备" data-width="3"
-                                 data-percent="70" data-fgcolor="#65cea7" data-bgcolor="#eee"></div>
+                        <div class="col-md-1 col-md-offset-2">
+                            <div id="maChart03" data-dimension="120" data-text="7" data-width="3"
+                                 data-percent="70" data-fgcolor="#65cea7" data-bgcolor="#eee" data-fontsize="22"></div>
+
+                            <a class="btn btn-default" href="#/device">待审核设备详情</a>
                         </div>
-                        <div class="form-group" style="width: 24%">
-                            <div id="maChart04" data-dimension="120" data-text="0%" data-info="总可用额度" data-width="3"
-                                 data-percent="0" data-fgcolor="#986291" data-bgcolor="#eee"></div>
+                        <div class="col-md-1 col-md-offset-2">
+                            <div id="maChart04" data-dimension="120" data-text="0%" data-width="3"
+                                 data-percent="0" data-fgcolor="#986291" data-bgcolor="#eee" data-fontsize="22"></div>
+
+                            <a class="btn btn-default" href="#/product-base-manage">查看剩余额度详情</a>
                         </div>
-                    </form>
+                    </div>
+                    <br>
                 </div>
             </div>
             <!--===================================================-->
