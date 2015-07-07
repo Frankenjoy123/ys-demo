@@ -155,8 +155,7 @@
     }
 
     $scope.cancelDeviceAuth = function () {
-
-
+      $scope.utils.alert('info', '设备取消授权正在开发中');
     };
 
   }]);

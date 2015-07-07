@@ -44,24 +44,27 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="form-group col-md-6 text-center animated slideInRight" ng-show="creationPanel.selectedProductBase">
+                            <div class="form-group col-md-6 text-center animated slideInRight"
+                                 ng-show="creationPanel.selectedProductBase">
                                 <!--<select name="quantity" class="form-control"-->
-                                        <!--ng-model="creationPanel.model.quantity">-->
-                                    <!--<option value="0">请选择数量</option>-->
-                                    <!--<option value="100">100</option>-->
-                                    <!--<option value="1000">1,000</option>-->
-                                    <!--<option value="2000">2,000</option>-->
-                                    <!--<option value="5000">5,000</option>-->
-                                    <!--<option value="10000">10,000</option>-->
-                                    <!--<option value="20000">20,000</option>-->
-                                    <!--<option value="50000">50,000</option>-->
-                                    <!--<option value="100000">100,000</option>-->
-                                    <!--<option value="100000">200,000</option>-->
+                                <!--ng-model="creationPanel.model.quantity">-->
+                                <!--<option value="0">请选择数量</option>-->
+                                <!--<option value="100">100</option>-->
+                                <!--<option value="1000">1,000</option>-->
+                                <!--<option value="2000">2,000</option>-->
+                                <!--<option value="5000">5,000</option>-->
+                                <!--<option value="10000">10,000</option>-->
+                                <!--<option value="20000">20,000</option>-->
+                                <!--<option value="50000">50,000</option>-->
+                                <!--<option value="100000">100,000</option>-->
+                                <!--<option value="100000">200,000</option>-->
                                 <!--</select>-->
                                 <b id="rangeResult" style="color:#579ddb;font-size:18px;"></b>
                                 <br>
+
                                 <div id="rangeNum"></div>
                                 <br>
+
                                 <div id="rangeKey"></div>
                             </div>
                             <div class="form-group col-md-6 animated slideInRight"
@@ -81,7 +84,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                <button id="btnSubmit" type="submit" class="btn btn-primary btn-labeled fa fa-barcode" ng-click="creationPanel.create()">
+                                <button id="btnSubmit" type="submit" class="btn btn-primary btn-labeled fa fa-barcode"
+                                        ng-click="creationPanel.create()">
                                     创建
                                 </button>
                                 &nbsp;<i class="fa fa-spinner fa-lg" ng-show="spinnerShow"></i>
@@ -189,7 +193,20 @@
                         <td>{{$index + 1}}</td>
                         <td>{{b.quantity}}</td>
                         <td>
-                            {{formatProductKeyTypes(b.product_key_types)}}
+                            <!--{{formatProductKeyTypes(b.product_key_types)}}-->
+                            <span ng-repeat="type in b.product_key_types">
+
+                            <span ng-show="type.code == 'qr_public'" class="btn-hover-info add-tooltip"
+                                  data-placement="right" data-toggle="tooltip" data-original-title="二维码"
+                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"
+                                                                           style="color:#5cb85c"></i></span>
+                            <span ng-show="type.code == 'qr_secure'" class="btn-hover-info add-tooltip"
+                                  data-placement="right" data-toggle="tooltip" data-original-title="隐藏二维码"
+                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"></i></span>
+                            <span ng-show="type.code == 'rfid'" class="btn-hover-info add-tooltip"
+                                  data-placement="right" data-toggle="tooltip" data-original-title="RFID标签"
+                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-rss fa-lg"></i></span>
+                        </span>
                         </td>
                         <td>{{productBaseMap[b.product_base_id].name}}</td>
                         <td>
@@ -237,7 +254,20 @@
                     <td>{{$index + 1}}</td>
                     <td>{{b.quantity}}</td>
                     <td>
-                        {{formatProductKeyTypes(b.product_key_types)}}
+                        <!--{{formatProductKeyTypes(b.product_key_types)}}-->
+                        <span ng-repeat="type in b.product_key_types">
+
+                            <span ng-show="type.code == 'qr_public'" class="btn-hover-info add-tooltip"
+                                  data-placement="right" data-toggle="tooltip" data-original-title="二维码"
+                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"
+                                                                           style="color:#5cb85c"></i></span>
+                            <span ng-show="type.code == 'qr_secure'" class="btn-hover-info add-tooltip"
+                                  data-placement="right" data-toggle="tooltip" data-original-title="隐藏二维码"
+                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"></i></span>
+                            <span ng-show="type.code == 'rfid'" class="btn-hover-info add-tooltip"
+                                  data-placement="right" data-toggle="tooltip" data-original-title="RFID标签"
+                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-rss fa-lg"></i></span>
+                        </span>
                     </td>
                     <td>{{productBaseMap[b.product_base_id].name}}</td>
                     <td>

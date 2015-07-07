@@ -38,9 +38,17 @@
     };
   }]);
 
-  app.controller("ProductKeyManageCtrl", ["$scope", "productKeyManageService", function ($scope, productKeyManageService) {
+  app.controller("ProductKeyManageCtrl", ["$scope", "productKeyManageService", "$timeout", function ($scope, productKeyManageService, $timeout) {
 
     $scope.cache || ($scope.cache = {});
+
+
+
+    $timeout(function () {
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
+    }, 0);
 
     $scope.creationPanel = {
       model: {
