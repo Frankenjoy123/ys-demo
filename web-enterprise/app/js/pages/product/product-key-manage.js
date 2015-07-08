@@ -96,7 +96,7 @@
 
         $('#chartProKeyRemain').empty();
         $('#chartProKeyRemain').data('text', selectedProductBase.credit.remain);
-        $('#chartProKeyRemain').data('info', selectedProductBase.credit.total);
+        $('#chartProKeyRemain').data('info', '总额：' + selectedProductBase.credit.total);
         $('#chartProKeyRemain').data('percent', selectedProductBase.credit.percentage);
         $('#chartProKeyRemain').circliful();
 
@@ -258,13 +258,13 @@
               if (selectNum > remainNum) {
                 $("#btnSubmit").attr("disabled", "disabled");
                 $("#rangeResult").css('color', 'red');
+                $("#rangeResult").html(quantityFormat(selectNum, 3, ',') + '  余额不足');
               }
               else {
                 $("#btnSubmit").removeAttr("disabled");
-                $("#rangeResult").css('color', '#ed5565');
+                $("#rangeResult").css('color', '#515151');
+                $("#rangeResult").html(quantityFormat(selectNum, 3, ','));
               }
-
-              $("#rangeResult").html(quantityFormat(selectNum, 3, ','));
             }
           }
       );
@@ -282,13 +282,13 @@
           if (selectNum > remainNum) {
             $("#btnSubmit").attr("disabled", "disabled");
             $("#rangeResult").css('color', 'red');
+            $("#rangeResult").html(quantityFormat(selectNum, 3, ',') + '  余额不足');
           }
           else {
             $("#btnSubmit").removeAttr("disabled");
-            $("#rangeResult").css('color', '#ed5565');
+            $("#rangeResult").css('color', '#515151');
+            $("#rangeResult").html(quantityFormat(selectNum, 3, ','));
           }
-
-          $("#rangeResult").html(quantityFormat(selectNum, 3, ','));
         }
       });
     }
