@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.dto.PermissionInstance;
 import com.yunsoo.common.data.object.GroupPermissionObject;
 import com.yunsoo.common.data.object.GroupPermissionPolicyObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
