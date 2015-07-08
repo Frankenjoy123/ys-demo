@@ -3,6 +3,7 @@ package com.yunsoo.data.api.controller;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.AccountEntity;
 import com.yunsoo.data.service.repository.AccountRepository;
 import com.yunsoo.data.service.repository.OrganizationRepository;
@@ -10,7 +11,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,17 +53,16 @@ public class AccountController {
         return entities.stream().map(this::toAccountObject).collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "pageable", method = RequestMethod.GET)
+    @RequestMapping(value = "pageable", method = RequestMethod.GET) //todo: merge it to above getByFilter
     public List<AccountObject> getByFilter(@RequestParam("org_id") String orgId,
-                                           @PageableDefault(size = 1000)
                                            Pageable pageable,
                                            HttpServletResponse response) {
 
-        Page<AccountEntity> entities = accountRepository.findByOrgId(orgId,pageable);
-
-        response.setHeader("Content-Range", "pages " + entities.getNumber() + "/" + entities.getTotalPages());
-
-        return StreamSupport.stream(entities.spliterator(), false)
+        Page<AccountEntity> entityPage = accountRepository.findByOrgId(orgId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+        return StreamSupport.stream(entityPage.spliterator(), false)
                 .map(this::toAccountObject)
                 .collect(Collectors.toList());
     }

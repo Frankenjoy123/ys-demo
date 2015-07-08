@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.dto.PermissionInstance;
 import com.yunsoo.common.data.object.GroupPermissionObject;
 import com.yunsoo.common.data.object.GroupPermissionPolicyObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
@@ -44,30 +45,25 @@ public class GroupPermissionDomain {
         return dataAPIClient.post("grouppermissionpolicy", groupPermissionPolicyObject, GroupPermissionPolicyObject.class);
     }
 
-    public void deleteGroupPermission(String id) {
-        dataAPIClient.delete("grouppermission?id={id}",id);
+    public void deleteGroupPermission(String groupId) {
+        dataAPIClient.delete("grouppermission?group_id={groupid}", groupId);
     }
 
-    public void deleteGroupPermissionPolicy(String id) {
-        dataAPIClient.delete("grouppermissionpolicy?id={id}",id);
+    public void deleteGroupPermissionPolicy(String groupId) {
+        dataAPIClient.delete("grouppermissionpolicy?group_id={groupid}", groupId);
     }
 
-    public List<GroupPermissionObject> getAllGroupPermissions(String groupId) {
-        List<GroupPermissionObject> permissions = new ArrayList<>();
-        List<GroupPermissionObject> accountPermissions = getGroupPermissions(groupId);
-        List<GroupPermissionPolicyObject> accountPermissionPolicies = getGroupPermissionPolicies(groupId);
+    public List<PermissionInstance> getAllGroupPermissions(String groupId) {
+        List<PermissionInstance> permissions = new ArrayList<>();
+        List<GroupPermissionObject> groupPermissions = getGroupPermissions(groupId);
+        List<GroupPermissionPolicyObject> groupPermissionPolicies = getGroupPermissionPolicies(groupId);
         Map<String, PermissionPolicyObject> permissionPolicyMap = permissionDomain.getPermissionPolicyMap();
-        permissions.addAll(accountPermissions);
-        accountPermissionPolicies.stream().filter(pp -> permissionPolicyMap.containsKey(pp.getPolicyCode())).forEach(pp -> {
+        groupPermissions.forEach(p -> {
+            permissions.add(new PermissionInstance(p.getResourceCode(), p.getActionCode(), p.getOrgId()));
+        });
+        groupPermissionPolicies.stream().filter(pp -> permissionPolicyMap.containsKey(pp.getPolicyCode())).forEach(pp -> {
             permissionPolicyMap.get(pp.getPolicyCode()).getPermissions().forEach(po -> {
-                GroupPermissionObject object = new GroupPermissionObject();
-                object.setGroupId(pp.getGroupId());
-                object.setOrgId(pp.getOrgId());
-                object.setResourceCode(po.getResourceCode());
-                object.setActionCode(po.getActionCode());
-                object.setCreatedAccountId(pp.getCreatedAccountId());
-                object.setCreatedDatetime(pp.getCreatedDatetime());
-                permissions.add(object);
+                permissions.add(new PermissionInstance(po.getResourceCode(), po.getActionCode(), pp.getOrgId()));
             });
         });
         return permissions;

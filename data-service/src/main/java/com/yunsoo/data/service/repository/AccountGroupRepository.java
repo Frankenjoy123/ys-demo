@@ -25,4 +25,12 @@ public interface AccountGroupRepository extends Repository<AccountGroupEntity, S
 
     @Transactional
     void deleteByAccountIdAndGroupId(String accountId, String groupId);
+
+    @Transactional
+    void deleteByAccountId(String accountId);
+
+    @Transactional
+    void deleteByGroupId(String groupId);
+
+
 }

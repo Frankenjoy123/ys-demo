@@ -40,6 +40,12 @@ public class GroupPermissionPolicyController {
         return toGroupPermissionPolicyObject(groupPermissionPolicyRepository.save(entity));
     }
 
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteByGroupId(@RequestParam(value = "group_id") String groupId) {
+        groupPermissionPolicyRepository.deleteByGroupId(groupId);
+    }
+
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") String id) {

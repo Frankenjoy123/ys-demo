@@ -9,6 +9,7 @@ import com.yunsoo.common.data.object.AccountPermissionObject;
  * Descriptions:
  */
 public class AccountPermission {
+
     @JsonProperty("id")
     private String id;
 

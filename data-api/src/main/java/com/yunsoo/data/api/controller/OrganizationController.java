@@ -6,6 +6,7 @@ import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.entity.OrganizationEntity;
 import com.yunsoo.data.service.repository.OrganizationRepository;
@@ -58,15 +59,13 @@ public class OrganizationController {
         return fromOrganizationEntity(organizationEntity);
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<OrganizationObject> getByFilterPaged(Pageable pageable,
-            HttpServletResponse response) {
-        Page<OrganizationEntity> entities;
-        entities = organizationRepository.findAll(pageable);
-
-        response.setHeader("Content-Range", "pages " + entities.getNumber() + "/" + entities.getTotalPages());
-
-        return StreamSupport.stream(entities.spliterator(), false)
+    @RequestMapping(value = "/list", method = RequestMethod.GET) //todo: merge it to above GET method
+    public List<OrganizationObject> getByFilterPaged(Pageable pageable, HttpServletResponse response) {
+        Page<OrganizationEntity> entityPage = organizationRepository.findAll(pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+        return StreamSupport.stream(entityPage.spliterator(), false)
                 .map(this::fromOrganizationEntity)
                 .collect(Collectors.toList());
     }

@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.util.StringUtils;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by  : Zhe
@@ -61,7 +59,6 @@ public class DeviceController {
     public List<Device> getByFilterPaged(
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "login_account_id", required = false) String accountId,
-            @PageableDefault(page = 0, size = 20)
             @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
             Pageable pageable,
             HttpServletResponse response) {
@@ -70,11 +67,11 @@ public class DeviceController {
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         }
 
-        Page<List<DeviceObject>> devices = deviceDomain.getByFilterPaged(orgId, accountId, pageable);
-
-        response.setHeader("Content-Range", "pages " + devices.getPage() + "/" + devices.getTotal());
-
-        return devices.getContent().stream().map(this::toDevice).collect(Collectors.toList());
+        Page<DeviceObject> devicePage = deviceDomain.getByFilterPaged(orgId, accountId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", devicePage.toContentRange());
+        }
+        return devicePage.map(this::toDevice).getContent();
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)

@@ -84,7 +84,7 @@ public class ProductKeyDomain {
                 lookupDomain.getProductKeyBatchStatuses());
     }
 
-    public Page<List<ProductKeyBatch>> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Pageable pageable) {
+    public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Pageable pageable) {
         String[] statusCodes = new String[]{
                 LookupCodes.ProductKeyBatchStatus.CREATING,
                 LookupCodes.ProductKeyBatchStatus.AVAILABLE
@@ -96,14 +96,12 @@ public class ProductKeyDomain {
                 .append("status_code_in", statusCodes)
                 .append(pageable)
                 .build();
-        Page<List<ProductKeyBatchObject>> objectsPage = dataAPIClient.getPaged("productkeybatch" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
+        Page<ProductKeyBatchObject> objectsPage = dataAPIClient.getPaged("productkeybatch" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
         });
 
         List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
         List<ProductKeyBatchStatus> productKeyBatchStatuses = lookupDomain.getProductKeyBatchStatuses();
-        return new Page<>(objectsPage.getContent().stream()
-                .map(i -> toProductKeyBatch(i, productKeyTypes, productKeyBatchStatuses))
-                .collect(Collectors.toList()), objectsPage.getPage(), objectsPage.getTotal());
+        return objectsPage.map(i -> toProductKeyBatch(i, productKeyTypes, productKeyBatchStatuses));
     }
 
     public Long sumQuantity(String orgId, String productBaseId) {
