@@ -58,8 +58,8 @@ public class GroupDomain {
 
     public void deleteGroupAndAllRelatedById(String groupId) {
         dataAPIClient.delete("accountgroup?group_id={group_id}", groupId);
-        groupPermissionDomain.deleteGroupPermission(groupId);
-        groupPermissionDomain.deleteGroupPermissionPolicy(groupId);
+        groupPermissionDomain.deleteGroupPermissionByGroupId(groupId);
+        groupPermissionDomain.deleteGroupPermissionPolicyByGroupId(groupId);
         deleteGroup(groupId);
     }
 

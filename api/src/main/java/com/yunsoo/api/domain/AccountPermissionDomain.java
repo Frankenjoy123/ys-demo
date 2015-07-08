@@ -48,6 +48,30 @@ public class AccountPermissionDomain {
         }, accountId);
     }
 
+    public AccountPermissionObject createAccountPermission(AccountPermissionObject accountPermissionObject) {
+        return dataAPIClient.post("accountpermission", accountPermissionObject, AccountPermissionObject.class);
+    }
+
+    public AccountPermissionPolicyObject createAccountPermissionPolicy(AccountPermissionPolicyObject accountPermissionPolicyObject) {
+        return dataAPIClient.post("accountpermissionpolicy", accountPermissionPolicyObject, AccountPermissionPolicyObject.class);
+    }
+
+    public void deleteAccountPermissionByAccountId(String accountId) {
+        dataAPIClient.delete("accountpermission?account_id={accountid}", accountId);
+    }
+
+    public void deleteAccountPermissionPolicyByAccountId(String accountId) {
+        dataAPIClient.delete("accountpermissionpolicy?account_id={accountid}", accountId);
+    }
+
+    public void deleteAccountPermissionById(String id) {
+        dataAPIClient.delete("accountpermission/{id}", id);
+    }
+
+    public void deleteAccountPermissionPolicyById(String id) {
+        dataAPIClient.delete("accountpermissionpolicy/{id}", id);
+    }
+
     /**
      * get all the permissions related to the account, include group permissions and permission policies.
      *
