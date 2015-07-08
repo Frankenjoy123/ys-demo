@@ -3,10 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.AccountGroupDomain;
 import com.yunsoo.api.domain.GroupDomain;
 import com.yunsoo.api.domain.GroupPermissionDomain;
-import com.yunsoo.api.dto.Account;
-import com.yunsoo.api.dto.Group;
-import com.yunsoo.api.dto.GroupPermission;
-import com.yunsoo.api.dto.GroupPermissionPolicy;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountGroupObject;
@@ -193,11 +190,8 @@ public class GroupController {
     }
 
     @RequestMapping(value = "{group_id}/allpermission", method = RequestMethod.GET)
-    public List<GroupPermission> getAllPermissionByGroupId(@PathVariable("group_id") String groupId) {
-        return groupPermissionDomain.getAllGroupPermissions(groupId)
-                .stream()
-                .map(GroupPermission::new)
-                .collect(Collectors.toList());
+    public List<PermissionInstance> getAllPermissionByGroupId(@PathVariable("group_id") String groupId) {
+        return groupPermissionDomain.getAllGroupPermissions(groupId);
     }
 
     //create group permission

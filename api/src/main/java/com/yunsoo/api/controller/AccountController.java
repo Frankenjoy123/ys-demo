@@ -241,16 +241,13 @@ public class AccountController {
      * @return
      */
     @RequestMapping(value = "{account_id}/allpermission", method = RequestMethod.GET)
-    public List<AccountPermission> getAllPermissionByAccountId(@PathVariable("account_id") String accountId) {
+    public List<PermissionInstance> getAllPermissionByAccountId(@PathVariable("account_id") String accountId) {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         if ("current".equals(accountId)) { //get current Account
             accountId = currentAccountId;
         }
         checkAccountPermissionRead(currentAccountId, accountId);
-        return accountPermissionDomain.getAllAccountPermissions(accountId)
-                .stream()
-                .map(AccountPermission::new)
-                .collect(Collectors.toList());
+        return accountPermissionDomain.getAllAccountPermissions(accountId);
     }
 
     //create account permission

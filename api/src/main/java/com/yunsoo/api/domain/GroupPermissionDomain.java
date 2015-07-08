@@ -60,22 +60,17 @@ public class GroupPermissionDomain {
         dataAPIClient.delete("grouppermissionpolicy/{id}", id);
     }
 
-    public List<GroupPermissionObject> getAllGroupPermissions(String groupId) {
-        List<GroupPermissionObject> permissions = new ArrayList<>();
-        List<GroupPermissionObject> accountPermissions = getGroupPermissions(groupId);
-        List<GroupPermissionPolicyObject> accountPermissionPolicies = getGroupPermissionPolicies(groupId);
+    public List<PermissionInstance> getAllGroupPermissions(String groupId) {
+        List<PermissionInstance> permissions = new ArrayList<>();
+        List<GroupPermissionObject> groupPermissions = getGroupPermissions(groupId);
+        List<GroupPermissionPolicyObject> groupPermissionPolicies = getGroupPermissionPolicies(groupId);
         Map<String, PermissionPolicyObject> permissionPolicyMap = permissionDomain.getPermissionPolicyMap();
-        permissions.addAll(accountPermissions);
-        accountPermissionPolicies.stream().filter(pp -> permissionPolicyMap.containsKey(pp.getPolicyCode())).forEach(pp -> {
+        groupPermissions.forEach(p -> {
+            permissions.add(new PermissionInstance(p.getResourceCode(), p.getActionCode(), p.getOrgId()));
+        });
+        groupPermissionPolicies.stream().filter(pp -> permissionPolicyMap.containsKey(pp.getPolicyCode())).forEach(pp -> {
             permissionPolicyMap.get(pp.getPolicyCode()).getPermissions().forEach(po -> {
-                GroupPermissionObject object = new GroupPermissionObject();
-                object.setGroupId(pp.getGroupId());
-                object.setOrgId(pp.getOrgId());
-                object.setResourceCode(po.getResourceCode());
-                object.setActionCode(po.getActionCode());
-                object.setCreatedAccountId(pp.getCreatedAccountId());
-                object.setCreatedDatetime(pp.getCreatedDatetime());
-                permissions.add(object);
+                permissions.add(new PermissionInstance(po.getResourceCode(), po.getActionCode(), pp.getOrgId()));
             });
         });
         return permissions;

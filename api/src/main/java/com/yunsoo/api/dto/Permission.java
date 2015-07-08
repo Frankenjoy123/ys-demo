@@ -10,10 +10,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Permission {
 
     @JsonProperty("resource_code")
-    private String resourceCode;
+    protected String resourceCode;
 
     @JsonProperty("action_code")
-    private String actionCode;
+    protected String actionCode;
 
 
     public String getResourceCode() {
