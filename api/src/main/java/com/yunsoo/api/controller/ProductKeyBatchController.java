@@ -87,9 +87,11 @@ public class ProductKeyBatchController {
                                                   HttpServletResponse response) {
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
 
-        Page<List<ProductKeyBatch>> page = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, pageable);
-        response.setHeader("Content-Range", "pages " + page.getPage() + "/" + page.getTotal());
-        return page.getContent();
+        Page<ProductKeyBatch> productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", productKeyBatchPage.toContentRange());
+        }
+        return productKeyBatchPage.getContent();
     }
 
     @RequestMapping(value = "sum/quantity", method = RequestMethod.GET)

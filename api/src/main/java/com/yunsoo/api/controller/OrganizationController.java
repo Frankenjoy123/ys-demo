@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by  : Zhe
@@ -73,18 +71,14 @@ public class OrganizationController {
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
-    public List<Organization> getAll(@PageableDefault(page = 0, size = 20)
-                                     @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
+    public List<Organization> getAll(@SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                      Pageable pageable,
                                      HttpServletResponse response) {
-        Page<List<OrganizationObject>> object = organizationDomain.getOrganizationList(pageable);
-        if (object == null) {
-            throw new NotFoundException("Organization list not found");
+        Page<OrganizationObject> organizationPage = organizationDomain.getOrganizationList(pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", organizationPage.toContentRange());
         }
-
-        response.setHeader("Content-Range", "pages " + object.getPage() + "/" + object.getTotal());
-
-        return object.getContent().stream().map(this::fromOrganizationObject).collect(Collectors.toList());
+        return organizationPage.map(this::fromOrganizationObject).getContent();
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

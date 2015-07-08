@@ -2,6 +2,7 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
 import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
 import com.yunsoo.data.service.service.ProductKeyBatchService;
@@ -77,9 +78,9 @@ public class ProductKeyBatchController {
             String pId = productBaseId.toLowerCase().equals("null") ? null : productBaseId;
             entityPage = productKeyBatchRepository.findByOrgIdAndProductBaseIdAndStatusCodeIn(orgId, pId, statusCodeIn, pageable);
         }
-
-        response.setHeader("Content-Range", "pages " + entityPage.getNumber() + "/" + entityPage.getTotalPages());
-
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
         return StreamSupport.stream(entityPage.spliterator(), false)
                 .map(this::toProductKeyBatchObject)
                 .collect(Collectors.toList());

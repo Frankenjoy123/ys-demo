@@ -58,8 +58,7 @@ public class AccountDomain {
         return accountObjects[0];
     }
 
-    public Page<List<AccountObject>> getByOrgId(String orgId, Pageable pageable) {
-
+    public Page<AccountObject> getByOrgId(String orgId, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .append(pageable)

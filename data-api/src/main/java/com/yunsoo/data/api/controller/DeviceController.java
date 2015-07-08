@@ -2,13 +2,13 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.DeviceObject;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.DeviceEntity;
 import com.yunsoo.data.service.repository.DeviceRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -40,21 +40,20 @@ public class DeviceController {
     public List<DeviceObject> getByFilterPaged(
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "login_account_id", required = false) String accountId,
-            @PageableDefault(size = 1000)
             Pageable pageable,
             HttpServletResponse response) {
-        Page<DeviceEntity> entities;
+        Page<DeviceEntity> entityPage;
         if (StringUtils.hasText(accountId)) {
-            entities = deviceRepository.findByLoginAccountId(accountId, pageable);
+            entityPage = deviceRepository.findByLoginAccountId(accountId, pageable);
         } else if (StringUtils.hasText(orgId)) {
-            entities = deviceRepository.findByOrgId(orgId, pageable);
+            entityPage = deviceRepository.findByOrgId(orgId, pageable);
         } else {
-            entities = deviceRepository.findAll(pageable);
+            entityPage = deviceRepository.findAll(pageable);
         }
-
-        response.setHeader("Content-Range", "pages " + entities.getNumber() + "/" + entities.getTotalPages());
-
-        return StreamSupport.stream(entities.spliterator(), false)
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+        return StreamSupport.stream(entityPage.spliterator(), false)
                 .map(this::toDeviceObject)
                 .collect(Collectors.toList());
     }

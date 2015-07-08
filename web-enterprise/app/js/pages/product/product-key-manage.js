@@ -38,7 +38,7 @@
     };
   }]);
 
-  app.controller("ProductKeyManageCtrl", ["$scope", "productKeyManageService", function ($scope, productKeyManageService) {
+  app.controller("ProductKeyManageCtrl", ["$scope", "productKeyManageService", "$timeout", function ($scope, productKeyManageService, $timeout) {
 
     $scope.cache || ($scope.cache = {});
 
@@ -46,6 +46,10 @@
       model: {
         productBaseId: 0,
         quantity: 0
+      },
+      hideModal: function () {
+        $scope.spinnerShow = false;
+        $('#myModal').modal('hide');
       },
       create: function () {
         var model = this.model;
@@ -76,7 +80,7 @@
           console.log(error, data);
           var message = (error.message || '').substring(0, 100);
           $scope.spinnerShow = false;
-          $scope.utils.alert('danger', message);
+          $scope.utils.alert('danger', message, '#myModal .modal-dialog', false);
         });
       },
       productBaseIdChanged: function (productBaseId) {
@@ -89,6 +93,13 @@
           }
         });
         this.selectedProductBase = selectedProductBase;
+
+        $('#chartProKeyRemain').empty();
+        $('#chartProKeyRemain').data('text', selectedProductBase.credit.remain);
+        $('#chartProKeyRemain').data('info', selectedProductBase.credit.total);
+        $('#chartProKeyRemain').data('percent', selectedProductBase.credit.percentage);
+        $('#chartProKeyRemain').circliful();
+
       }
     };
 
@@ -232,8 +243,7 @@
 
       var rangeKey = {
         "个": "1", "十": "10", "百": "100",
-        "千": "1000", "万": "10000", "十万": "100000",
-        "百万": "1000000", "千万": "10000000", "亿": "100000000"
+        "千": "1000", "万": "10000", "十万": "100000"
       };
 
       $("#rangeNum").ionRangeSlider({
@@ -245,15 +255,13 @@
               var selectNum = (data.from - 0) * (rangeKey[$("#rangeKey").data("from")] - 0);
               var remainNum = $scope.creationPanel.selectedProductBase.credit.remain;
 
-              if(selectNum > remainNum)
-              {
-                $("#btnSubmit").attr("disabled","disabled");
-                $("#rangeResult").attr('style','color:#d9534f');
+              if (selectNum > remainNum) {
+                $("#btnSubmit").attr("disabled", "disabled");
+                $("#rangeResult").css('color', 'red');
               }
-              else
-              {
+              else {
                 $("#btnSubmit").removeAttr("disabled");
-                $("#rangeResult").attr('style','color:#579ddb');
+                $("#rangeResult").css('color', '#ed5565');
               }
 
               $("#rangeResult").html(quantityFormat(selectNum, 3, ','));
@@ -265,22 +273,19 @@
         grid: true,
         values: [
           "个", "十", "百",
-          "千", "万", "十万",
-          "百万", "千万", "亿"
+          "千", "万", "十万"
         ],
         onChange: function (data) {
           var selectNum = ($("#rangeNum").data("from") - 0) * (rangeKey[$("#rangeKey").data("from")] - 0);
           var remainNum = $scope.creationPanel.selectedProductBase.credit.remain;
 
-          if(selectNum > remainNum)
-          {
-            $("#btnSubmit").attr("disabled","disabled");
-            $("#rangeResult").attr('style','color:#d9534f');
+          if (selectNum > remainNum) {
+            $("#btnSubmit").attr("disabled", "disabled");
+            $("#rangeResult").css('color', 'red');
           }
-          else
-          {
+          else {
             $("#btnSubmit").removeAttr("disabled");
-            $("#rangeResult").attr('style','color:#579ddb');
+            $("#rangeResult").css('color', '#ed5565');
           }
 
           $("#rangeResult").html(quantityFormat(selectNum, 3, ','));

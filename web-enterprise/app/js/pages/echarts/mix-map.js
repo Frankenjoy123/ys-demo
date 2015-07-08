@@ -42,7 +42,7 @@
 
       var dataShow = [];
       for (var i = 0; i < data.data.length; i++) {
-        dataShow.push({name: data.dimensions.values[i], value: data.data[i]});
+        dataShow.push({name: data.dimensions.values[i].replace('市','').replace('省','').replace('自治区',''), value: data.data[i]});
       }
 
       var option = {

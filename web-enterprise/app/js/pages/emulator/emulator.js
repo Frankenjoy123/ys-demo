@@ -43,6 +43,7 @@
       keyTypeRFIDInput: '',
       hotline: '',
       support: '',
+      proPicPreview: false,
       addProductInfo: function () {
         this.productInfos.push({key: '', value: ''});
       },
@@ -202,6 +203,9 @@
               var reader = new FileReader();
               reader.readAsDataURL(file);
               reader.onload = function (e) {
+                product.proPicPreview = true;
+                $scope.$apply();
+
                 imgProductbase.attr('src', this.result);
                 $scope.fileInput = this.result;
               };

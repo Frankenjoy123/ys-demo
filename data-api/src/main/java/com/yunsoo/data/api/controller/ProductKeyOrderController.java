@@ -4,15 +4,18 @@ import com.yunsoo.common.data.object.ProductKeyOrderObject;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.ProductKeyOrderEntity;
 import com.yunsoo.data.service.repository.ProductKeyOrderRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,13 +47,14 @@ public class ProductKeyOrderController {
                                                    @RequestParam(value = "remain_ge", required = false) Long remainGE,
                                                    @RequestParam(value = "expire_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime expireDateTimeGE,
                                                    @RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                                   @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
-                                                   @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        PageRequest pageRequest = (pageIndex == null || pageSize == null) ? null : new PageRequest(pageIndex, pageSize);
+                                                   Pageable pageable,
+                                                   HttpServletResponse response) {
 
-        List<ProductKeyOrderEntity> entities = productKeyOrderRepository.query(orgId, active, remainGE, DateTimeUtils.toDBString(expireDateTimeGE), productBaseId, pageRequest);
-
-        return entities.stream().map(this::toOrgProductKeyOrderObject).collect(Collectors.toList());
+        Page<ProductKeyOrderEntity> entityPage = productKeyOrderRepository.query(orgId, active, remainGE, DateTimeUtils.toDBString(expireDateTimeGE), productBaseId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+        return entityPage.getContent().stream().map(this::toOrgProductKeyOrderObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
