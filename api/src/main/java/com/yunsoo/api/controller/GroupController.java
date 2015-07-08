@@ -225,7 +225,7 @@ public class GroupController {
                                                              @RequestBody @Valid GroupPermissionPolicy groupPermissionPolicy) {
         GroupPermissionPolicyObject groupPermissionPolicyObject = groupPermissionPolicy.toGroupPermissionPolicyObject();
         TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
-        groupPermissionPolicy.setGroupId(groupId);
+        groupPermissionPolicyObject.setGroupId(groupId);
 //        groupPermissionPolicyObject.setId(null);
 //        if (groupPermissionPolicyObject.getOrgId() == null) {
 //            groupPermissionPolicyObject.setOrgId(currentAccount.getOrgId());
@@ -241,7 +241,7 @@ public class GroupController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteGroupPermission(@PathVariable(value = "group_id") String groupId,
                                       @PathVariable("id") String id) {
-        groupPermissionDomain.deleteGroupPermission(id);
+        groupPermissionDomain.deleteGroupPermissionById(id);
     }
 
     //delete group permission policy
@@ -249,7 +249,7 @@ public class GroupController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteGroupPermissionPolicy(@PathVariable(value = "group_id") String groupId,
                                             @PathVariable("id") String id) {
-        groupPermissionDomain.deleteGroupPermissionPolicy(id);
+        groupPermissionDomain.deleteGroupPermissionPolicyById(id);
     }
 
     private GroupObject findGroupById(String id) {
