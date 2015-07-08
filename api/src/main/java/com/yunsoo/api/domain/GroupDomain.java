@@ -49,15 +49,15 @@ public class GroupDomain {
         dataAPIClient.patch("group/{id}", groupObject, groupObject.getId());
     }
 
-    public void deleteGroup(String id) {
-        dataAPIClient.delete("group?id={id}", id);
+    public void deleteGroupById(String id) {
+        dataAPIClient.delete("group/{id}", id);
     }
 
     public void deleteGroupAndAllRelatedById(String groupId) {
         dataAPIClient.delete("accountgroup?group_id={group_id}", groupId);
         groupPermissionDomain.deleteGroupPermissionByGroupId(groupId);
         groupPermissionDomain.deleteGroupPermissionPolicyByGroupId(groupId);
-        deleteGroup(groupId);
+        deleteGroupById(groupId);
     }
 
 
