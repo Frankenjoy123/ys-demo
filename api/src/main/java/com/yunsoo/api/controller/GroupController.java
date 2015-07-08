@@ -13,6 +13,7 @@ import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.GroupObject;
 import com.yunsoo.common.data.object.GroupPermissionObject;
 import com.yunsoo.common.data.object.GroupPermissionPolicyObject;
+import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +102,10 @@ public class GroupController {
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") String id) {
+        GroupObject groupObject = groupDomain.getById(id);
+        if (groupObject == null) {
+            throw new NotFoundException("group not found");
+        }
         groupDomain.deleteGroupAndAllRelatedById(id);
     }
 
@@ -122,7 +127,11 @@ public class GroupController {
     public List<String> createAccountGroup(@PathVariable(value = "group_id") String groupId,
                                            @RequestBody List<String> accountIds) {
         TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        List<String> existAccountIds = groupDomain.getAccountGroupByGroupid(groupId).stream().map(AccountGroupObject::getAccountId).collect(Collectors.toList());
         for (String aid : accountIds) {
+            if (existAccountIds.contains(aid)){
+                throw new ConflictException("account id: "+ aid + "group id: "+ groupId + "already exist.");
+            }
             AccountGroupObject accountGroupObject = new AccountGroupObject();
             accountGroupObject.setAccountId(aid);
             accountGroupObject.setGroupId(groupId);

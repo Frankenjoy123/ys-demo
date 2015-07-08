@@ -44,12 +44,12 @@ public class GroupPermissionDomain {
         return dataAPIClient.post("grouppermissionpolicy", groupPermissionPolicyObject, GroupPermissionPolicyObject.class);
     }
 
-    public void deleteGroupPermission(String id) {
-        dataAPIClient.delete("grouppermission?id={id}",id);
+    public void deleteGroupPermission(String groupId) {
+        dataAPIClient.delete("grouppermission?group_id={groupid}",groupId);
     }
 
-    public void deleteGroupPermissionPolicy(String id) {
-        dataAPIClient.delete("grouppermissionpolicy?id={id}",id);
+    public void deleteGroupPermissionPolicy(String groupId) {
+        dataAPIClient.delete("grouppermissionpolicy?group_id={groupid}",groupId);
     }
 
     public List<GroupPermissionObject> getAllGroupPermissions(String groupId) {

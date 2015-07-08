@@ -1,9 +1,8 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.DataAPIClient;
-import com.yunsoo.common.data.object.AccountGroupObject;
-import com.yunsoo.common.data.object.AccountObject;
-import com.yunsoo.common.data.object.GroupObject;
+import com.yunsoo.api.dto.Account;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -27,6 +26,10 @@ public class GroupDomain {
 
     @Autowired
     private AccountDomain accountDomain;
+
+    @Autowired
+    private GroupPermissionDomain groupPermissionDomain;
+
 
 
     public GroupObject getById(String groupId) {
@@ -53,9 +56,15 @@ public class GroupDomain {
         dataAPIClient.patch("group/{id}", groupObject, groupObject.getId());
     }
 
+    public void deleteGroup(String id) {
+        dataAPIClient.delete("group?id={id}",id);
+    }
+
     public void deleteGroupAndAllRelatedById(String groupId) {
-
-
+        dataAPIClient.delete("accountgroup?group_id={group_id}",groupId);
+        groupPermissionDomain.deleteGroupPermission(groupId);
+        groupPermissionDomain.deleteGroupPermissionPolicy(groupId);
+        deleteGroup(groupId);
     }
 
     public AccountGroupObject createAccountGroup(AccountGroupObject accountGroupObject) {
@@ -67,10 +76,14 @@ public class GroupDomain {
         }, groupId);
     }
 
+    public List<AccountGroupObject> getAccountGroupByAccountid(String accountId) {
+        return dataAPIClient.get("accountgroup?account_id={accountId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
+        }, accountId);
+    }
+
     public void deleteAccountGroup(String groupId, String accountId) {
         dataAPIClient.delete("accountgroup?group_id={group_id}&account_id={account_id}",groupId, accountId);
     }
-
 
     public List<AccountObject> getAccounts(GroupObject groupObject) {
         List<AccountGroupObject> accountGroupObjects = dataAPIClient.get("accountgroup?group_id={groupId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {

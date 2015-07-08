@@ -10,6 +10,7 @@ import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.joda.time.DateTime;
@@ -144,7 +145,11 @@ public class AccountController {
     public List<String> createAccountGroup(@PathVariable(value = "account_id") String accountId,
                                            @RequestBody @Valid List<String> groupIds) {
         TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        List<String> existGroupIds = groupDomain.getAccountGroupByAccountid(accountId).stream().map(AccountGroupObject::getGroupId).collect(Collectors.toList());
         for (String gid : groupIds) {
+            if (existGroupIds.contains(gid)) {
+                throw new ConflictException("account id: "+ accountId + "group id: "+ gid + "already exist.");
+            }
             AccountGroupObject accountGroupObject = new AccountGroupObject();
             accountGroupObject.setAccountId(accountId);
             accountGroupObject.setGroupId(gid);
