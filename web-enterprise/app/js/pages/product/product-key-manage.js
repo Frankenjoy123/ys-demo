@@ -47,6 +47,10 @@
         productBaseId: 0,
         quantity: 0
       },
+      hideModal: function () {
+        $scope.spinnerShow = false;
+        $('#myModal').modal('hide');
+      },
       create: function () {
         var model = this.model;
         console.log('[before productKeyBatch create]', model);
@@ -89,6 +93,13 @@
           }
         });
         this.selectedProductBase = selectedProductBase;
+
+        $('#chartProKeyRemain').empty();
+        $('#chartProKeyRemain').data('text', selectedProductBase.credit.remain);
+        $('#chartProKeyRemain').data('info', selectedProductBase.credit.total);
+        $('#chartProKeyRemain').data('percent', selectedProductBase.credit.percentage);
+        $('#chartProKeyRemain').circliful();
+
       }
     };
 
@@ -244,15 +255,13 @@
               var selectNum = (data.from - 0) * (rangeKey[$("#rangeKey").data("from")] - 0);
               var remainNum = $scope.creationPanel.selectedProductBase.credit.remain;
 
-              if(selectNum > remainNum)
-              {
-                $("#btnSubmit").attr("disabled","disabled");
-                $("#rangeResult").attr('style','color:#d9534f');
+              if (selectNum > remainNum) {
+                $("#btnSubmit").attr("disabled", "disabled");
+                $("#rangeResult").css('color', 'red');
               }
-              else
-              {
+              else {
                 $("#btnSubmit").removeAttr("disabled");
-                $("#rangeResult").attr('style','color:#579ddb');
+                $("#rangeResult").css('color', '#ed5565');
               }
 
               $("#rangeResult").html(quantityFormat(selectNum, 3, ','));
@@ -270,15 +279,13 @@
           var selectNum = ($("#rangeNum").data("from") - 0) * (rangeKey[$("#rangeKey").data("from")] - 0);
           var remainNum = $scope.creationPanel.selectedProductBase.credit.remain;
 
-          if(selectNum > remainNum)
-          {
-            $("#btnSubmit").attr("disabled","disabled");
-            $("#rangeResult").attr('style','color:#d9534f');
+          if (selectNum > remainNum) {
+            $("#btnSubmit").attr("disabled", "disabled");
+            $("#rangeResult").css('color', 'red');
           }
-          else
-          {
+          else {
             $("#btnSubmit").removeAttr("disabled");
-            $("#rangeResult").attr('style','color:#579ddb');
+            $("#rangeResult").css('color', '#ed5565');
           }
 
           $("#rangeResult").html(quantityFormat(selectNum, 3, ','));
