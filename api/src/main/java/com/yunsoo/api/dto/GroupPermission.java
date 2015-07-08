@@ -14,6 +14,7 @@ import org.joda.time.DateTime;
  * Descriptions:
  */
 public class GroupPermission {
+
     @JsonProperty("id")
     private String id;
 

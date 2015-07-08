@@ -3,14 +3,17 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.ProductKeyOrderDomain;
 import com.yunsoo.api.dto.ProductKeyOrder;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -46,14 +49,21 @@ public class ProductKeyOrderController {
                                              @RequestParam(value = "remain_ge", required = false) Long remainGE,
                                              @RequestParam(value = "expire_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime expireDateTimeGE,
                                              @RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                             @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
-                                             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+                                             Pageable pageable,
+                                             HttpServletResponse response) {
         if (orgId == null) {
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         }
-        return available != null && available
-                ? productKeyOrderDomain.getAvailableOrdersByOrgId(orgId, pageIndex, pageSize)
-                : productKeyOrderDomain.getOrdersByFilter(orgId, active, remainGE, expireDateTimeGE, productBaseId, pageIndex, pageSize);
+
+        Page<ProductKeyOrder> orderPage = available != null && available
+                ? productKeyOrderDomain.getAvailableOrdersByOrgId(orgId, pageable)
+                : productKeyOrderDomain.getOrdersByFilter(orgId, active, remainGE, expireDateTimeGE, productBaseId, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", orderPage.toContentRange());
+        }
+
+        return orderPage.getContent();
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

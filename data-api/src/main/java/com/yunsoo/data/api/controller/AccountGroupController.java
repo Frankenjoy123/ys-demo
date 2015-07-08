@@ -1,6 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.AccountGroupObject;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.data.service.entity.AccountGroupEntity;
 import com.yunsoo.data.service.repository.AccountGroupRepository;
 import org.joda.time.DateTime;
@@ -59,9 +60,21 @@ public class AccountGroupController {
 
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteByAccountIdAndGroupId(@RequestParam(value = "account_id") String accountId,
-                                            @RequestParam(value = "group_id") String groupId) {
-        accountGroupRepository.deleteByAccountIdAndGroupId(accountId, groupId);
+    public void deleteByAccountIdAndGroupId(@RequestParam(value = "account_id", required = false) String accountId,
+                                            @RequestParam(value = "group_id", required = false) String groupId) {
+        if (accountId == null) {
+            if (groupId == null) {
+                throw new BadRequestException("accountId and groupId should not be null neither");
+            } else {
+                accountGroupRepository.deleteByGroupId(groupId);
+            }
+        } else {
+            if (groupId == null) {
+                accountGroupRepository.deleteByAccountId(accountId);
+            } else {
+                accountGroupRepository.deleteByAccountIdAndGroupId(accountId, groupId);
+            }
+        }
     }
 
 

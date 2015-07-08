@@ -24,6 +24,18 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
         return new CaseInsensitiveAntPathMatcher();
     }
 
+//    @Bean
+//    public Filter logRequestFilter() {
+//        return new OncePerRequestFilter() {
+//            @Override
+//            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+//                System.out.println(request.getMethod() + " \t" + request.getRequestURI()
+//                        + (request.getQueryString() != null ? ("?" + request.getQueryString()) : ""));
+//                filterChain.doFilter(request, response); // always continue
+//            }
+//        };
+//    }
+
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         configurer.setPathMatcher(caseInsensitiveAntPathMatcher()); //make path case insensitive.
@@ -31,6 +43,8 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
 
     @Override
     protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(new PageableHandlerMethodArgumentResolver());
+        PageableHandlerMethodArgumentResolver pageableHandlerMethodArgumentResolver = new PageableHandlerMethodArgumentResolver();
+        pageableHandlerMethodArgumentResolver.setFallbackPageable(null);
+        argumentResolvers.add(pageableHandlerMethodArgumentResolver);
     }
 }

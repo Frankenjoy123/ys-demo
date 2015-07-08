@@ -39,15 +39,11 @@ public class OrganizationDomain {
         }
     }
 
-    public Page<List<OrganizationObject>> getOrganizationList(Pageable pageable) {
-        try {
-            String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                    .append(pageable)
-                    .build();
-            return dataAPIClient.getPaged("organization/list?" + query, new ParameterizedTypeReference<List<OrganizationObject>>() {
-            });
-        } catch (NotFoundException ex) {
-            return null;
-        }
+    public Page<OrganizationObject> getOrganizationList(Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append(pageable)
+                .build();
+        return dataAPIClient.getPaged("organization/list" + query, new ParameterizedTypeReference<List<OrganizationObject>>() {
+        });
     }
 }

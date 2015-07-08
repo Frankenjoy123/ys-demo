@@ -1,6 +1,8 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.dto.PermissionInstance;
 import com.yunsoo.api.object.TPermission;
+import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.AccountPermissionObject;
 import com.yunsoo.common.data.object.AccountPermissionPolicyObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
@@ -29,6 +31,12 @@ public class AccountPermissionDomain {
     @Autowired
     private PermissionDomain permissionDomain;
 
+    @Autowired
+    private AccountGroupDomain accountGroupDomain;
+
+    @Autowired
+    private GroupPermissionDomain groupPermissionDomain;
+
 
     public List<AccountPermissionObject> getAccountPermissions(String accountId) {
         return dataAPIClient.get("accountpermission?account_id={accountId}", new ParameterizedTypeReference<List<AccountPermissionObject>>() {
@@ -40,29 +48,60 @@ public class AccountPermissionDomain {
         }, accountId);
     }
 
-    public List<AccountPermissionObject> getAllAccountPermissions(String accountId) {
-        List<AccountPermissionObject> permissions = new ArrayList<>();
+    public AccountPermissionObject createAccountPermission(AccountPermissionObject accountPermissionObject) {
+        return dataAPIClient.post("accountpermission", accountPermissionObject, AccountPermissionObject.class);
+    }
+
+    public AccountPermissionPolicyObject createAccountPermissionPolicy(AccountPermissionPolicyObject accountPermissionPolicyObject) {
+        return dataAPIClient.post("accountpermissionpolicy", accountPermissionPolicyObject, AccountPermissionPolicyObject.class);
+    }
+
+    public void deleteAccountPermissionByAccountId(String accountId) {
+        dataAPIClient.delete("accountpermission?account_id={accountId}", accountId);
+    }
+
+    public void deleteAccountPermissionPolicyByAccountId(String accountId) {
+        dataAPIClient.delete("accountpermissionpolicy?account_id={accountId}", accountId);
+    }
+
+    public void deleteAccountPermissionById(String id) {
+        dataAPIClient.delete("accountpermission/{id}", id);
+    }
+
+    public void deleteAccountPermissionPolicyById(String id) {
+        dataAPIClient.delete("accountpermissionpolicy/{id}", id);
+    }
+
+    /**
+     * get all the permissions related to the account, include group permissions and permission policies.
+     *
+     * @param accountId accountId
+     * @return permissions
+     */
+    public List<PermissionInstance> getAllAccountPermissions(String accountId) {
+        List<PermissionInstance> permissions = new ArrayList<>();
         List<AccountPermissionObject> accountPermissions = getAccountPermissions(accountId);
         List<AccountPermissionPolicyObject> accountPermissionPolicies = getAccountPermissionPolicies(accountId);
         Map<String, PermissionPolicyObject> permissionPolicyMap = permissionDomain.getPermissionPolicyMap();
-        permissions.addAll(accountPermissions);
+        accountPermissions.forEach(p -> {
+            permissions.add(new PermissionInstance(p.getResourceCode(), p.getActionCode(), p.getOrgId()));
+        });
         accountPermissionPolicies.stream().filter(pp -> permissionPolicyMap.containsKey(pp.getPolicyCode())).forEach(pp -> {
             permissionPolicyMap.get(pp.getPolicyCode()).getPermissions().forEach(po -> {
-                AccountPermissionObject object = new AccountPermissionObject();
-                object.setAccountId(pp.getAccountId());
-                object.setOrgId(pp.getOrgId());
-                object.setResourceCode(po.getResourceCode());
-                object.setActionCode(po.getActionCode());
-                object.setCreatedAccountId(pp.getCreatedAccountId());
-                object.setCreatedDatetime(pp.getCreatedDatetime());
-                permissions.add(object);
+                permissions.add(new PermissionInstance(po.getResourceCode(), po.getActionCode(), pp.getOrgId()));
             });
+        });
+
+        //permissions from group
+        List<AccountGroupObject> accountGroupObjects = accountGroupDomain.getAccountGroupByAccountId(accountId);
+        accountGroupObjects.forEach(g -> {
+            permissions.addAll(groupPermissionDomain.getAllGroupPermissions(g.getGroupId()));
         });
         return permissions;
     }
 
     public boolean hasPermission(String accountId, TPermission permission) {
-        List<AccountPermissionObject> permissions = getAllAccountPermissions(accountId);
+        List<PermissionInstance> permissions = getAllAccountPermissions(accountId);
         if (permissions != null && permissions.size() > 0) {
             String orgId = permission.getOrgId();
             String resourceCode = permission.getResourceCode();
@@ -70,13 +109,13 @@ public class AccountPermissionDomain {
             if (resourceCode == null || actionCode == null) {
                 return true; //anonymous
             }
-            for (AccountPermissionObject po : permissions) {
-                boolean isOrgIdMatched = orgId == null || wildcardMatch(po.getOrgId(), orgId);
+            for (PermissionInstance pi : permissions) {
+                boolean isOrgIdMatched = orgId == null || wildcardMatch(pi.getOrgId(), orgId);
                 if (!isOrgIdMatched) {
                     continue; //try next permission;
                 }
-                boolean isResourceMatched = wildcardMatch(po.getResourceCode(), resourceCode);
-                boolean isActionMatched = wildcardMatch(po.getActionCode(), actionCode);
+                boolean isResourceMatched = wildcardMatch(pi.getResourceCode(), resourceCode);
+                boolean isActionMatched = wildcardMatch(pi.getActionCode(), actionCode);
                 if (!isResourceMatched || !isActionMatched) {
                     continue; //try next permission;
                 }

@@ -35,7 +35,7 @@ public class DeviceDomain {
         }
     }
 
-    public Page<List<DeviceObject>> getByFilterPaged(String orgId, String loginAccountId, Pageable pageable) {
+    public Page<DeviceObject> getByFilterPaged(String orgId, String loginAccountId, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .append("login_account_id", loginAccountId)

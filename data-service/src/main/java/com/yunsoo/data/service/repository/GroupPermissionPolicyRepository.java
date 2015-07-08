@@ -2,6 +2,7 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.GroupPermissionPolicyEntity;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,4 +14,7 @@ import java.util.List;
 public interface GroupPermissionPolicyRepository extends CrudRepository<GroupPermissionPolicyEntity, String> {
 
     List<GroupPermissionPolicyEntity> findByGroupId(String groupId);
+
+    @Transactional
+    void deleteByGroupId(String groupId);
 }

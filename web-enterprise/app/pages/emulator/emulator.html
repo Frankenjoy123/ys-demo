@@ -304,7 +304,7 @@
                                                   class="form-control" ng-model="product.comment"></textarea>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" ng-show="product.proPicPreview">
                                     <label class="col-sm-3">产品图片</label>
 
                                     <div class="col-sm-9" id="divImgWrap">
@@ -317,7 +317,7 @@
                                         <!--<input class="input-file" id="fileInput" type="file" nv-file-select=""-->
                                         <!--uploader="uploader" class="form-control">-->
                                                                             <span class="pull-left btn btn-default btn-file">
-                                        选择图片...<input type="file" id="fileInput" nv-file-select=""
+                                        选择产品图片...<input type="file" id="fileInput" nv-file-select=""
                                                       uploader="uploader">
 											</span>
                                     </div>

@@ -36,6 +36,8 @@
           $('#maChart02').data('text', unVerifiedMessages);
           $('#maChart02').data('percent', percent);
           $('#maChart02').circliful();
+
+          $('#maChart02 .circle-info-half').css('padding-top','5px');
         });
       });
     }
@@ -45,6 +47,8 @@
       $('#maChart04').data('text', data.remain);
       $('#maChart04').data('percent', data.percentage);
       $('#maChart04').circliful();
+
+      $('#maChart04 .circle-info-half').css('padding-top','5px');
     }
 
     $scope.$on('$routeChangeSuccess', function (angularEvent, current, previous) {
@@ -55,6 +59,11 @@
         $('#maChart02').circliful();
         $('#maChart03').circliful();
         $('#maChart04').circliful();
+
+        $('#maChart01 .circle-info-half').css('padding-top','5px');
+        $('#maChart02 .circle-info-half').css('padding-top','5px');
+        $('#maChart03 .circle-info-half').css('padding-top','5px');
+        $('#maChart04 .circle-info-half').css('padding-top','5px');
 
         if ($scope.context.organization) {
           showMessages();

@@ -3,19 +3,20 @@ package com.yunsoo.api.domain;
 import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.api.dto.ProductKeyOrder;
 import com.yunsoo.common.data.object.ProductKeyOrderObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by  : Lijian
@@ -46,12 +47,11 @@ public class ProductKeyOrderDomain {
      * get orders that not expired and with active status.
      *
      * @param orgId
-     * @param pageIndex
-     * @param pageSize
+     * @param pageable
      * @return
      */
-    public List<ProductKeyOrder> getAvailableOrdersByOrgId(String orgId, Integer pageIndex, Integer pageSize) {
-        return getOrdersByFilter(orgId, true, null, DateTime.now(), null, pageIndex, pageSize);
+    public Page<ProductKeyOrder> getAvailableOrdersByOrgId(String orgId, Pageable pageable) {
+        return getOrdersByFilter(orgId, true, null, DateTime.now(), null, pageable);
     }
 
     /**
@@ -60,25 +60,23 @@ public class ProductKeyOrderDomain {
      * @param remainGE
      * @param expireDateTimeGE
      * @param productBaseId    if you only want to get the orders with null productBaseId, just passing throw *
-     * @param pageIndex
-     * @param pageSize
+     * @param pageable
      * @return
      */
-    public List<ProductKeyOrder> getOrdersByFilter(String orgId, Boolean active, Long remainGE, DateTime expireDateTimeGE, String productBaseId, Integer pageIndex, Integer pageSize) {
+    public Page<ProductKeyOrder> getOrdersByFilter(String orgId, Boolean active, Long remainGE, DateTime expireDateTimeGE, String productBaseId, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .append("active", active)
                 .append("remain_ge", remainGE)
                 .append("expire_datetime_ge", expireDateTimeGE)
                 .append("product_base_id", productBaseId)
-                .append("pageIndex", pageIndex)
-                .append("pageSize", pageSize)
+                .append(pageable)
                 .build();
 
-        List<ProductKeyOrderObject> orderObjects = dataAPIClient.get("productKeyOrder" + query, new ParameterizedTypeReference<List<ProductKeyOrderObject>>() {
+        Page<ProductKeyOrderObject> orderObjects = dataAPIClient.getPaged("productKeyOrder" + query, new ParameterizedTypeReference<List<ProductKeyOrderObject>>() {
         });
 
-        return orderObjects.stream().map(this::toProductKeyOrder).collect(Collectors.toList());
+        return orderObjects.map(this::toProductKeyOrder);
     }
 
     public ProductKeyOrder create(ProductKeyOrder order) {
@@ -91,7 +89,7 @@ public class ProductKeyOrderDomain {
         List<ProductKeyCredit> credits = new ArrayList<>();
         Map<String, ProductKeyCredit> creditMap = new HashMap<>();
         // search orders by [active = true and expire_datetime >= now], including remain is 0
-        List<ProductKeyOrder> orders = getOrdersByFilter(orgId, true, null, DateTime.now(), productBaseId, null, null);
+        List<ProductKeyOrder> orders = getOrdersByFilter(orgId, true, null, DateTime.now(), productBaseId, null).getContent();
 
         orders.forEach(o -> {
             if (o != null) {
