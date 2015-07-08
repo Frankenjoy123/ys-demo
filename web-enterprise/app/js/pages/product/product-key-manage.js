@@ -97,7 +97,12 @@
         $('#chartProKeyRemain').empty();
         $('#chartProKeyRemain').data('text', selectedProductBase.credit.remain);
         $('#chartProKeyRemain').data('info', '总额：' + selectedProductBase.credit.total);
-        $('#chartProKeyRemain').data('percent', selectedProductBase.credit.percentage);
+        if ((selectedProductBase.credit.remain / selectedProductBase.credit.total) < 0.01) {
+          $('#chartProKeyRemain').data('percent', 1);
+        }
+        else {
+          $('#chartProKeyRemain').data('percent', selectedProductBase.credit.percentage);
+        }
         $('#chartProKeyRemain').circliful();
 
       }
