@@ -2,6 +2,7 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.ProductKeyOrderEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,7 +24,7 @@ public interface ProductKeyOrderRepository extends FindOneAndSaveRepository<Prod
             "and (:remainGE is null or o.remain >= :remainGE) " +
             "and (:expireDateTimeGE is null or o.expireDateTime is null or o.expireDateTime >= :expireDateTimeGE)" +
             "and (:productBaseId is null or o.productBaseId is null or o.productBaseId = :productBaseId)")
-    List<ProductKeyOrderEntity> query(@Param("orgId") String orgId,
+    Page<ProductKeyOrderEntity> query(@Param("orgId") String orgId,
                                       @Param("active") Boolean active,
                                       @Param("remainGE") Long remainGE,
                                       @Param("expireDateTimeGE") String expireDateTimeGE,

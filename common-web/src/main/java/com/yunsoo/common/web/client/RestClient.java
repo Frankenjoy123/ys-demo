@@ -1,5 +1,6 @@
 package com.yunsoo.common.web.client;
 
+import com.yunsoo.common.web.util.PageableUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -73,23 +74,17 @@ public class RestClient {
         return result.getBody();
     }
 
-    public <T> Page<T> getPaged(String url, ParameterizedTypeReference<T> responseType, Object... uriVariables) {
-        ResponseEntity<T> result = restTemplate.exchange(createURL(url), HttpMethod.GET, null, responseType, uriVariables);
-        T resultContent = result.getBody();
-        int page = 0;
-        int total = 1;
+    public <T> Page<T> getPaged(String url, ParameterizedTypeReference<List<T>> responseType, Object... uriVariables) {
+        ResponseEntity<List<T>> result = restTemplate.exchange(createURL(url), HttpMethod.GET, null, responseType, uriVariables);
+        List<T> resultContent = result.getBody();
+        Integer page = 0;
+        Integer total = null;
         List<String> pagesValue = result.getHeaders().get("Content-Range");
         if (pagesValue != null && pagesValue.size() == 1) {
-            String[] pagesArray = pagesValue.get(0).replace("pages ", "").split("/");
-            try {
-                page = Integer.parseInt(pagesArray[0]);
-                total = Integer.parseInt(pagesArray[1]);
-            } catch (NumberFormatException ex) {
-                page = 0;
-                total = 1;
-            }
+            Integer[] pagesArray = PageableUtils.parsePages(pagesValue.get(0));
+            page = pagesArray[0];
+            total = pagesArray[1];
         }
-
         return new Page<>(resultContent, page, total);
     }
 

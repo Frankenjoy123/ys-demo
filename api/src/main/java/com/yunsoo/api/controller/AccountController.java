@@ -16,7 +16,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -60,7 +59,6 @@ public class AccountController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'account:read')")
     public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
-                                     @PageableDefault(page = 0, size = 20)
                                      @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                      Pageable pageable,
                                      HttpServletResponse response) {
@@ -68,11 +66,11 @@ public class AccountController {
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         }
 
-        Page<List<AccountObject>> accounts = accountDomain.getByOrgId(orgId, pageable);
-
-        response.setHeader("Content-Range", "pages " + accounts.getPage() + "/" + accounts.getTotal());
-
-        return accounts.getContent().stream().map(Account::new).collect(Collectors.toList());
+        Page<AccountObject> accountPage = accountDomain.getByOrgId(orgId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", accountPage.toContentRange());
+        }
+        return accountPage.map(Account::new).getContent();
     }
 
     @RequestMapping(value = "count", method = RequestMethod.GET)
@@ -216,6 +214,7 @@ public class AccountController {
 
     /**
      * get the permission policies related to the account
+     *
      * @param accountId
      * @return
      */
