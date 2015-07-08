@@ -1,9 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.AccountObject;
-import com.yunsoo.common.data.object.GroupObject;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.Page;
@@ -18,9 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by  : Zhe
@@ -32,9 +28,6 @@ public class AccountDomain {
 
     @Autowired
     private RestClient dataAPIClient;
-
-    @Autowired
-    private GroupDomain groupDomain;
 
 
     public AccountObject getById(String accountId) {
@@ -108,34 +101,6 @@ public class AccountDomain {
         return rawPassword != null && hashSalt != null && hashPassword(rawPassword, hashSalt).equals(password);
     }
 
-
-    //group
-    public List<GroupObject> getGroups(AccountObject accountObject) {
-        List<AccountGroupObject> accountGroupObjects = dataAPIClient.get("accountgroup?account_id={accountId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
-        }, accountObject.getId());
-        if (accountGroupObjects.size() == 0) {
-            return new ArrayList<>();
-        }
-        List<GroupObject> allGroups = groupDomain.getByOrgId(accountObject.getOrgId());
-        List<String> groupIds = accountGroupObjects.stream().map(AccountGroupObject::getGroupId).collect(Collectors.toList());
-        return allGroups.stream().filter(g -> groupIds.contains(g.getId())).collect(Collectors.toList());
-    }
-
-    public AccountGroupObject getAccountGroupByAccountIdAndGroupId(String accountId, String groupId) {
-        if (StringUtils.isEmpty(accountId) || StringUtils.isEmpty(groupId)) {
-            return null;
-        }
-        try {
-            return dataAPIClient.get("accountgroup?account_id={0}&group_id={1}", AccountGroupObject.class, accountId, groupId);
-        } catch (NotFoundException ex) {
-            return null;
-        }
-    }
-
-    public List<AccountGroupObject> getAccountGroupsByAccountId(String accountId) {
-        return dataAPIClient.get("accountgroup?account_id={accountId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
-        }, accountId);
-    }
 
     private String hashPassword(String rawPassword, String hashSalt) {
         return HashUtils.sha1HexString(rawPassword + hashSalt);

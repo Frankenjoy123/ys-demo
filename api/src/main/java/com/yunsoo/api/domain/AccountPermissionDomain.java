@@ -40,6 +40,12 @@ public class AccountPermissionDomain {
         }, accountId);
     }
 
+    /**
+     * get all the permissions related to the account, include group permissions and permission policies.
+     *
+     * @param accountId accountId
+     * @return permissions
+     */
     public List<AccountPermissionObject> getAllAccountPermissions(String accountId) {
         List<AccountPermissionObject> permissions = new ArrayList<>();
         List<AccountPermissionObject> accountPermissions = getAccountPermissions(accountId);

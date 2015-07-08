@@ -1,6 +1,6 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.AccountDomain;
+import com.yunsoo.api.domain.AccountGroupDomain;
 import com.yunsoo.api.domain.GroupDomain;
 import com.yunsoo.api.domain.GroupPermissionDomain;
 import com.yunsoo.api.dto.Account;
@@ -40,7 +40,7 @@ public class GroupController {
     private GroupDomain groupDomain;
 
     @Autowired
-    private AccountDomain accountDomain;
+    private AccountGroupDomain accountGroupDomain;
 
     @Autowired
     private GroupPermissionDomain groupPermissionDomain;
@@ -114,28 +114,26 @@ public class GroupController {
         if (groupObject == null) {
             throw new NotFoundException("group not found");
         }
-        return groupDomain.getAccounts(groupObject).stream().map(Account::new).collect(Collectors.toList());
+        return accountGroupDomain.getAccounts(groupObject).stream().map(Account::new).collect(Collectors.toList());
     }
 
     //create account group under the group
     @RequestMapping(value = "{group_id}/account", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public List<String> createAccountGroup(@PathVariable(value = "group_id") String groupId,
-                                           @RequestBody List<String> accountIds) {
+    public String createAccountGroup(@PathVariable(value = "group_id") String groupId,
+                                     @RequestBody String accountId) {
         TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
-        List<String> existAccountIds = groupDomain.getAccountGroupByGroupid(groupId).stream().map(AccountGroupObject::getAccountId).collect(Collectors.toList());
-        for (String aid : accountIds) {
-            if (existAccountIds.contains(aid)) {
-                throw new ConflictException("account id: " + aid + "group id: " + groupId + "already exist.");
-            }
-            AccountGroupObject accountGroupObject = new AccountGroupObject();
-            accountGroupObject.setAccountId(aid);
-            accountGroupObject.setGroupId(groupId);
-            accountGroupObject.setCreatedAccountId(currentAccount.getId());
-            accountGroupObject.setCreatedDateTime(DateTime.now());
-            accountGroupObject = groupDomain.createAccountGroup(accountGroupObject);
+        AccountGroupObject exists = accountGroupDomain.getAccountGroupByAccountIdAndGroupId(accountId, groupId);
+        if (exists != null) {
+            throw new ConflictException("account id: " + accountId + "group id: " + groupId + "already exist.");
         }
-        return accountIds;
+        AccountGroupObject accountGroupObject = new AccountGroupObject();
+        accountGroupObject.setAccountId(accountId);
+        accountGroupObject.setGroupId(groupId);
+        accountGroupObject.setCreatedAccountId(currentAccount.getId());
+        accountGroupObject.setCreatedDateTime(DateTime.now());
+        accountGroupDomain.createAccountGroup(accountGroupObject);
+        return accountId;
     }
 
     //delete account group under the group
@@ -144,7 +142,7 @@ public class GroupController {
     public void deleteAccountGroup(@PathVariable(value = "group_id") String groupId,
                                    @RequestBody List<String> accountIds) {
         for (String aid : accountIds) {
-            groupDomain.deleteAccountGroup(groupId, aid);
+            accountGroupDomain.deleteAccountGroup(groupId, aid);
         }
     }
 
@@ -152,7 +150,7 @@ public class GroupController {
     @RequestMapping(value = "{group_id}/account", method = RequestMethod.PUT)
     public void updateAccountGroup(@PathVariable(value = "group_id") String groupId,
                                    @RequestBody List<String> accountIds) {
-        List<AccountGroupObject> accountGroupObjects = groupDomain.getAccountGroupByGroupid(groupId);
+        List<AccountGroupObject> accountGroupObjects = accountGroupDomain.getAccountGroupByGroupId(groupId);
         TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
         List<String> originalAccountId = new ArrayList<>();
         if (accountGroupObjects == null) {
@@ -161,7 +159,7 @@ public class GroupController {
         for (AccountGroupObject ago : accountGroupObjects) {
             // ago not in accountIds
             if (!accountIds.contains(ago.getAccountId())) {
-                groupDomain.deleteAccountGroup(groupId, ago.getAccountId());
+                accountGroupDomain.deleteAccountGroup(groupId, ago.getAccountId());
                 originalAccountId.add(ago.getAccountId());
             }
         }
@@ -172,7 +170,7 @@ public class GroupController {
             accountGroupObject.setGroupId(groupId);
             accountGroupObject.setCreatedAccountId(currentAccount.getId());
             accountGroupObject.setCreatedDateTime(DateTime.now());
-            groupDomain.createAccountGroup(accountGroupObject);
+            accountGroupDomain.createAccountGroup(accountGroupObject);
         });
     }
 

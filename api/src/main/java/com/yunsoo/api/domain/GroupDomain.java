@@ -1,17 +1,14 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.DataAPIClient;
-import com.yunsoo.api.dto.Account;
-import com.yunsoo.common.data.object.*;
+import com.yunsoo.common.data.object.GroupObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by  : Lijian
@@ -29,7 +26,6 @@ public class GroupDomain {
 
     @Autowired
     private GroupPermissionDomain groupPermissionDomain;
-
 
 
     public GroupObject getById(String groupId) {
@@ -57,43 +53,16 @@ public class GroupDomain {
     }
 
     public void deleteGroup(String id) {
-        dataAPIClient.delete("group?id={id}",id);
+        dataAPIClient.delete("group?id={id}", id);
     }
 
     public void deleteGroupAndAllRelatedById(String groupId) {
-        dataAPIClient.delete("accountgroup?group_id={group_id}",groupId);
+        dataAPIClient.delete("accountgroup?group_id={group_id}", groupId);
         groupPermissionDomain.deleteGroupPermission(groupId);
         groupPermissionDomain.deleteGroupPermissionPolicy(groupId);
         deleteGroup(groupId);
     }
 
-    public AccountGroupObject createAccountGroup(AccountGroupObject accountGroupObject) {
-        return dataAPIClient.post("accountgroup", accountGroupObject, AccountGroupObject.class);
-    }
 
-    public List<AccountGroupObject> getAccountGroupByGroupid(String groupId) {
-        return dataAPIClient.get("accountgroup?group_id={groupId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
-        }, groupId);
-    }
-
-    public List<AccountGroupObject> getAccountGroupByAccountid(String accountId) {
-        return dataAPIClient.get("accountgroup?account_id={accountId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
-        }, accountId);
-    }
-
-    public void deleteAccountGroup(String groupId, String accountId) {
-        dataAPIClient.delete("accountgroup?group_id={group_id}&account_id={account_id}",groupId, accountId);
-    }
-
-    public List<AccountObject> getAccounts(GroupObject groupObject) {
-        List<AccountGroupObject> accountGroupObjects = dataAPIClient.get("accountgroup?group_id={groupId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
-        }, groupObject.getId());
-        if (accountGroupObjects.size() == 0) {
-            return new ArrayList<>();
-        }
-        List<String> accountIds = accountGroupObjects.stream().map(AccountGroupObject::getAccountId).collect(Collectors.toList());
-        List<AccountObject> allAccounts = accountDomain.getByOrgId(groupObject.getOrgId(), null).getContent();
-        return allAccounts.stream().filter(a -> accountIds.contains(a.getId())).collect(Collectors.toList());
-    }
 
 }
