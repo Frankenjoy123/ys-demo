@@ -22,9 +22,6 @@ public class GroupDomain {
     private DataAPIClient dataAPIClient;
 
     @Autowired
-    private AccountDomain accountDomain;
-
-    @Autowired
     private GroupPermissionDomain groupPermissionDomain;
 
 
@@ -62,7 +59,6 @@ public class GroupDomain {
         groupPermissionDomain.deleteGroupPermissionPolicyByGroupId(groupId);
         deleteGroup(groupId);
     }
-
 
 
 }
