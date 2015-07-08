@@ -22,9 +22,6 @@ public class GroupDomain {
     private DataAPIClient dataAPIClient;
 
     @Autowired
-    private AccountDomain accountDomain;
-
-    @Autowired
     private GroupPermissionDomain groupPermissionDomain;
 
 
@@ -52,17 +49,16 @@ public class GroupDomain {
         dataAPIClient.patch("group/{id}", groupObject, groupObject.getId());
     }
 
-    public void deleteGroup(String id) {
-        dataAPIClient.delete("group?id={id}", id);
+    public void deleteGroupById(String id) {
+        dataAPIClient.delete("group/{id}", id);
     }
 
     public void deleteGroupAndAllRelatedById(String groupId) {
         dataAPIClient.delete("accountgroup?group_id={group_id}", groupId);
-        groupPermissionDomain.deleteGroupPermission(groupId);
-        groupPermissionDomain.deleteGroupPermissionPolicy(groupId);
-        deleteGroup(groupId);
+        groupPermissionDomain.deleteGroupPermissionByGroupId(groupId);
+        groupPermissionDomain.deleteGroupPermissionPolicyByGroupId(groupId);
+        deleteGroupById(groupId);
     }
-
 
 
 }

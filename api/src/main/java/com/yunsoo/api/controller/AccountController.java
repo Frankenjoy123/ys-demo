@@ -9,6 +9,8 @@ import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.AccountObject;
+import com.yunsoo.common.data.object.AccountPermissionObject;
+import com.yunsoo.common.data.object.AccountPermissionPolicyObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -246,6 +248,50 @@ public class AccountController {
         }
         checkAccountPermissionRead(currentAccountId, accountId);
         return accountPermissionDomain.getAllAccountPermissions(accountId);
+    }
+
+    //create account permission
+    @RequestMapping(value = "{account_id}/permission", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public AccountPermission createAccountPermission(@PathVariable(value = "account_id") String accountId,
+                                                     @RequestBody @Valid AccountPermission accountPermission) {
+        AccountPermissionObject accountPermissionObject = accountPermission.toAccountPermissionObject();
+        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        accountPermissionObject.setAccountId(accountId);
+        accountPermissionObject.setCreatedAccountId(currentAccount.getId());
+        accountPermissionObject.setCreatedDatetime(DateTime.now());
+        accountPermissionObject = accountPermissionDomain.createAccountPermission(accountPermissionObject);
+        return new AccountPermission(accountPermissionObject);
+    }
+
+    //create group permission policy
+    @RequestMapping(value = "{account_id}/permissionpolicy", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public AccountPermissionPolicy createAccountPermissionPolicy(@PathVariable(value = "account_id") String accountId,
+                                                                 @RequestBody @Valid AccountPermissionPolicy accountPermissionPolicy) {
+        AccountPermissionPolicyObject accountPermissionPolicyObject = accountPermissionPolicy.toAccountPermissionPolicyObject();
+        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        accountPermissionPolicyObject.setAccountId(accountId);
+        accountPermissionPolicyObject.setCreatedAccountId(currentAccount.getId());
+        accountPermissionPolicyObject.setCreatedDatetime(DateTime.now());
+        accountPermissionPolicyObject = accountPermissionDomain.createAccountPermissionPolicy(accountPermissionPolicyObject);
+        return new AccountPermissionPolicy(accountPermissionPolicyObject);
+    }
+
+    //delete account permission
+    @RequestMapping(value = "{account_id}/permission/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAccountPermission(@PathVariable(value = "account_id") String accountId,
+                                        @PathVariable("id") String id) {
+        accountPermissionDomain.deleteAccountPermissionById(id);
+    }
+
+    //delete account permission policy
+    @RequestMapping(value = "{account_id}/permissionpolicy/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAccountPermissionPolicy(@PathVariable(value = "account_id") String accountId,
+                                              @PathVariable("id") String id) {
+        accountPermissionDomain.deleteAccountPermissionPolicyById(id);
     }
 
     private void checkAccountPermissionRead(String currentAccountId, String accountId) {
