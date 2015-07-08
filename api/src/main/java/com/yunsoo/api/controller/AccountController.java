@@ -146,7 +146,7 @@ public class AccountController {
         List<String> existGroupIds = groupDomain.getAccountGroupByAccountid(accountId).stream().map(AccountGroupObject::getGroupId).collect(Collectors.toList());
         for (String gid : groupIds) {
             if (existGroupIds.contains(gid)) {
-                throw new ConflictException("account id: "+ accountId + "group id: "+ gid + "already exist.");
+                throw new ConflictException("account id: " + accountId + "group id: " + gid + "already exist.");
             }
             AccountGroupObject accountGroupObject = new AccountGroupObject();
             accountGroupObject.setAccountId(accountId);
