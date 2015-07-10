@@ -142,7 +142,7 @@
             console.log('[access token]', 'refreshed successfully');
             utils.auth.setAccessToken(data.token, DateTime.now().addSeconds(data.expires_in).valueOf());
             if (data.expires_in > 60) {
-              setTimeout(refresh, (data.expires_in - 30/*seconds*/) * 1000);
+              setTimeout(refresh, (data.expires_in / 1.2 /*seconds*/) * 1000);
             }
           });
         }, new DateTime(auth.accessToken.expires).addSeconds(-30) - DateTime.now());
