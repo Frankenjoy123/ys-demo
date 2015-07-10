@@ -12,15 +12,13 @@
 
 <!-- Main content -->
 <div id="page-content">
-    <div ng-show="accountTable.data" class="panel panel-bordered-primary">
+    <div ng-show="account.accountTable.data" class="panel panel-bordered-primary">
         <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        <div class="modal fade" id="createAccountModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
              aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title" id="myModalLabel">账号创建</h4>
                     </div>
                     <div class="modal-body">
@@ -33,7 +31,7 @@
                                         <div class="col-md-9">
                                             <input type="text" id="accountIdentifier" placeholder="账号标识"
                                                    name="accountIdentifier"
-                                                   class="form-control" ng-model="accountIdentifier"/>
+                                                   class="form-control" ng-model="account.create.accountIdentifier"/>
                                         </div>
                                     </div>
                                     <div class="form-group" id="divLastName">
@@ -41,7 +39,7 @@
 
                                         <div class="col-md-9">
                                             <input type="text" id="lastName" placeholder="姓" name="lastName"
-                                                   class="form-control" ng-model="lastName"/>
+                                                   class="form-control" ng-model="account.create.lastName"/>
                                         </div>
                                     </div>
                                     <div class="form-group" id="divFirstName">
@@ -49,28 +47,28 @@
 
                                         <div class="col-md-9">
                                             <input type="text" id="firstName" placeholder="名" name="firstName"
-                                                   class="form-control" ng-model="firstName"/></div>
+                                                   class="form-control" ng-model="account.create.firstName"/></div>
                                     </div>
                                     <div class="form-group" id="divEmail">
                                         <label for="email" class="col-md-3 control-label">邮箱</label>
 
                                         <div class="col-md-9">
                                             <input type="text" id="email" placeholder="邮箱" name="email"
-                                                   class="form-control" ng-model="email"/></div>
+                                                   class="form-control" ng-model="account.create.email"/></div>
                                     </div>
                                     <div class="form-group" id="divPhone">
                                         <label for="phone" class="col-md-3 control-label">电话</label>
 
                                         <div class="col-md-9">
                                             <input type="text" id="phone" placeholder="电话" name="phone"
-                                                   class="form-control" ng-model="phone"/></div>
+                                                   class="form-control" ng-model="account.create.phone"/></div>
                                     </div>
                                     <div class="form-group" id="divPassword">
                                         <label for="password" class="col-md-3 control-label">账号密码</label>
 
                                         <div class="col-md-9">
                                             <input type="password" id="password" placeholder="账号密码" name="password"
-                                                   class="form-control" ng-model="password"/></div>
+                                                   class="form-control" ng-model="account.create.password"/></div>
                                     </div>
                                     <div class="form-group" id="divPasswordConfirm">
                                         <label for="passwordConfirm" class="col-md-3 control-label">密码确认</label>
@@ -78,11 +76,16 @@
                                         <div class="col-md-9">
                                             <input type="password" id="passwordConfirm" placeholder="密码确认"
                                                    name="passwordConfirm"
-                                                   class="form-control" ng-model="passwordConfirm"/></div>
+                                                   class="form-control" ng-model="account.create.passwordConfirm"/></div>
                                     </div>
                                     <div class="form-group text-center">
                                         <button type="button" class="btn btn-primary btn-labeled fa fa-user"
-                                                ng-click="createAccount()">创建新账号
+                                                ng-click="account.create.createAccount()">创建
+                                        </button>
+                                        &nbsp;<i class="fa fa-spinner fa-lg" ng-show="account.spinnerShow"></i>
+                                        <button type="button" class="btn btn-info btn-labeled fa fa-close"
+                                                ng-click="account.create.hideCreateAccountModal()">
+                                            取消
                                         </button>
                                     </div>
                                 </form>
@@ -290,10 +293,47 @@
             </div>
         </div>
 
+        <!-- Modal -->
+        <div class="modal fade" id="addToGroupModal" tabindex="-1" role="dialog"
+             aria-labelledby="addAccountsModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="addAccountsModalLabel">添加到组</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row" style="min-height: 200px">
+                            <div class="col-md-12">
+                                <label class="label label-success">按住Ctrl键多选</label>
+                            </div>
+                            <div class="col-md-12">
+                                <br>
+                                <select id="selectGroup" data-placeholder="添加账号组..." multiple>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <button type="button" class="btn btn-primary btn-labeled fa fa-group"
+                                    ng-click="account.assignGroup.addAccountsToGroup()">添加
+                            </button>
+                            &nbsp;<i class="fa fa-spinner fa-lg" ng-show="account.spinnerShow"></i>
+                            <button type="button" class="btn btn-info btn-labeled fa fa-close"
+                                    ng-click="account.assignGroup.hideAddAccountsModal()">
+                                取消
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+
         <div class="animated slideInRight">
             <div class="col-sm-12 pull-left" style="padding: 20px 20px;">
-                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" data-toggle="modal"
-                        data-target="#myModal">创建新账号
+                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" ng-click="account.create.showCreateAccountModal()">创建账号
                 </button>
             </div>
 
@@ -312,7 +352,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="a in accountTable.pageable.data">
+                    <tr ng-repeat="a in account.accountTable.pageable.data">
                         <td>
                             <span>{{$index + 1}}</span>
                         </td>
@@ -337,16 +377,16 @@
                             <span>{{utils.formatDateString(a.created_datetime)}}</span>
                         </td>
                         <td>
-                            <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-primary btn-labeled fa fa-tasks" data-toggle="modal"
+                            <button type="button" class="btn btn-success fa fa-user-secret" data-toggle="modal"
                                     data-target="#treeMenuModal">
-                                授权
+                            </button>
+                            <button type="button" class="btn btn-info fa fa-users" ng-click="account.assignGroup.showAddToGroupModal(a.id)">
                             </button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
-                <div class="pull-right pagination" dt-pageable="accountTable.pageable">
+                <div class="pull-right pagination" dt-pageable="account.accountTable.pageable">
                 </div>
             </div>
         </div>
