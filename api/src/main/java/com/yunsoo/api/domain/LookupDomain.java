@@ -37,7 +37,7 @@ public class LookupDomain {
 
     @Cacheable(value = "api-domain", key = "'lookup.productkeytype.all'")
     public List<ProductKeyType> getProductKeyTypes(Boolean active) {
-        LOGGER.debug("cache missed [name: lookup.productkeytype]");
+        //LOGGER.debug("cache missed [name: lookup.productkeytype]");
         return dataAPIClient.get("productkeytype" + formatActive(active), new ParameterizedTypeReference<List<ProductKeyType>>() {
         });
     }
@@ -52,7 +52,7 @@ public class LookupDomain {
 
     @Cacheable("lookup.productkeybatchstatus")
     public List<ProductKeyBatchStatus> getProductKeyBatchStatuses(Boolean active) {
-        LOGGER.debug("cache missed [name: lookup.productkeybatchstatus]");
+        //LOGGER.debug("cache missed [name: lookup.productkeybatchstatus]");
         return dataAPIClient.get("productkeybatchstatus" + formatActive(active), new ParameterizedTypeReference<List<ProductKeyBatchStatus>>() {
         });
     }
@@ -67,7 +67,7 @@ public class LookupDomain {
 
     @Cacheable("lookup.productstatus")
     public List<ProductStatus> getProductStatuses(Boolean active) {
-        LOGGER.debug("cache missed [name: lookup.productstatus]");
+        //LOGGER.debug("cache missed [name: lookup.productstatus]");
         return dataAPIClient.get("productstatus" + formatActive(active), new ParameterizedTypeReference<List<ProductStatus>>() {
         });
     }

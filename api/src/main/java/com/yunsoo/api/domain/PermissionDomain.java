@@ -32,14 +32,14 @@ public class PermissionDomain {
 
     @Cacheable(value = "permission", key = "'policylist'")
     public List<PermissionPolicyObject> getPermissionPolicies() {
-        LOGGER.debug("cache missed [name: permission, key: 'policylist']");
+        //LOGGER.debug("cache missed [name: permission, key: 'policylist']");
         return dataAPIClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
         });
     }
 
     @Cacheable(value = "permission", key = "'policymap'")
     public Map<String, PermissionPolicyObject> getPermissionPolicyMap() {
-        LOGGER.debug("cache missed [name: permission, key: 'policymap']");
+        //LOGGER.debug("cache missed [name: permission, key: 'policymap']");
         Map<String, PermissionPolicyObject> permissionPolicies = new HashMap<>();
         this.getPermissionPolicies().forEach(o -> {
             if (o == null) {

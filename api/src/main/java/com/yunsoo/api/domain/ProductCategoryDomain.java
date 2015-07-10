@@ -29,14 +29,14 @@ public class ProductCategoryDomain {
 
     @Cacheable(value = "api-domain", key = "'ProductCategoryDomain.getProductCategories'")
     public List<ProductCategoryObject> getProductCategories() {
-        LOGGER.debug("cache missed [name: productcategory, key: 'list']");
+        //LOGGER.debug("cache missed [name: productcategory, key: 'list']");
         return dataAPIClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {
         });
     }
 
     @Cacheable(value = "api-domain", key = "'ProductCategoryDomain.getProductCategoryMap'")
     public Map<Integer, ProductCategoryObject> getProductCategoryMap() {
-        LOGGER.debug("cache missed [name: productcategory, key: 'map']");
+        //LOGGER.debug("cache missed [name: productcategory, key: 'map']");
         return getProductCategories().stream().collect(Collectors.toMap(ProductCategoryObject::getId, c -> c));
     }
 
