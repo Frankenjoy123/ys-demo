@@ -157,8 +157,8 @@ public class GroupController {
             // ago not in accountIds
             if (!accountIds.contains(ago.getAccountId())) {
                 accountGroupDomain.deleteAccountGroup(groupId, ago.getAccountId());
-                originalAccountId.add(ago.getAccountId());
             }
+            originalAccountId.add(ago.getAccountId());
         }
         //aid not in accountGroupObjects
         accountIds.stream().filter(aid -> !originalAccountId.contains(aid)).forEach(aid -> {
