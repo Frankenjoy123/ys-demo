@@ -44,6 +44,14 @@ public class PermissionController {
         return toPermissionPolicy(permissionPolicyObject);
     }
 
+    @RequestMapping(value = "/policy/page/enterprise", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(null, 'permissionpolicy:read')")
+    public List<PermissionPolicy> getPoliciesForPageEnterprise() {
+        return permissionDomain.getPermissionPolicies().stream()
+                .filter(p -> p.getCode().startsWith("page-enterprise-"))
+                .map(this::toPermissionPolicy)
+                .collect(Collectors.toList());
+    }
 
     @RequestMapping(value = "/resource", method = RequestMethod.GET)
     public List<PermissionResource> getResources(@RequestParam(value = "all", required = false) Boolean all) {
