@@ -1,6 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.dto.LogisticsAction;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -24,10 +25,18 @@ public class LogisticsActionController {
     @Autowired
     private RestClient dataAPIClient;
 
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#logisticsAction, 'logisticsaction:create')")
     public LogisticsAction create(@RequestBody LogisticsAction logisticsAction) {
+
+        if ("current".equals(logisticsAction.getOrgId())) { //get current Organization
+            String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+            logisticsAction.setOrgId(orgId);
+        }
 
         LogisticsCheckActionObject logisticsCheckActionObject = toLogisticsCheckActionObject(logisticsAction);
         LogisticsCheckActionObject newObject = dataAPIClient.post("logisticscheckaction", logisticsCheckActionObject, LogisticsCheckActionObject.class);
@@ -41,7 +50,7 @@ public class LogisticsActionController {
     public LogisticsAction get(@PathVariable(value = "id") Integer id) {
 
         LogisticsCheckActionObject logisticsCheckActionObject = dataAPIClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, id);
-        if(logisticsCheckActionObject == null)
+        if (logisticsCheckActionObject == null)
             throw new NotFoundException("Logistics action not found id=" + id);
 
         LogisticsAction returnAction = fromLogisticsCheckActionObject(logisticsCheckActionObject);
@@ -51,8 +60,12 @@ public class LogisticsActionController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'logisticsaction:read')")
     public List<LogisticsAction> get(@RequestParam(value = "orgId", required = true) String orgId,
-                                                @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
-                                                @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+                                     @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
+                                     @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+
+        if ("current".equals(orgId)) { //get current Organization
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
 
         LogisticsCheckActionObject[] objects =
                 dataAPIClient.get("logisticscheckaction?orgId={orgId}&&pageIndex={pageIndex}&&pageSize={pageSize}",
@@ -73,6 +86,11 @@ public class LogisticsActionController {
     @PreAuthorize("hasPermission(#logisticsAction, 'logisticsaction:update')")
     public void patch(@RequestBody LogisticsAction logisticsAction) {
 
+        if ("current".equals(logisticsAction.getOrgId())) { //get current Organization
+            String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+            logisticsAction.setOrgId(orgId);
+        }
+
         LogisticsCheckActionObject logisticsCheckActionObject = toLogisticsCheckActionObject(logisticsAction);
         dataAPIClient.patch("logisticscheckaction", logisticsCheckActionObject);
     }
@@ -84,8 +102,7 @@ public class LogisticsActionController {
         dataAPIClient.delete("logisticscheckaction/{id}", id);
     }
 
-    private LogisticsAction fromLogisticsCheckActionObject(LogisticsCheckActionObject logisticsCheckActionObject)
-    {
+    private LogisticsAction fromLogisticsCheckActionObject(LogisticsCheckActionObject logisticsCheckActionObject) {
         LogisticsAction logisticsAction = new LogisticsAction();
         logisticsAction.setId(logisticsCheckActionObject.getId());
         logisticsAction.setDescription(logisticsCheckActionObject.getDescription());
@@ -104,8 +121,7 @@ public class LogisticsActionController {
         return logisticsActions;
     }
 
-    private LogisticsCheckActionObject toLogisticsCheckActionObject(LogisticsAction logisticsAction)
-    {
+    private LogisticsCheckActionObject toLogisticsCheckActionObject(LogisticsAction logisticsAction) {
         LogisticsCheckActionObject logisticsCheckActionObject = new LogisticsCheckActionObject();
         logisticsCheckActionObject.setId(logisticsAction.getId());
         logisticsCheckActionObject.setDescription(logisticsAction.getDescription());

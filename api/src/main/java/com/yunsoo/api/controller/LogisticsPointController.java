@@ -1,6 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.dto.LogisticsPoint;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.LogisticsCheckPointObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -24,10 +25,18 @@ public class LogisticsPointController {
     @Autowired
     private RestClient dataAPIClient;
 
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#logisticsPoint, 'logisticspoint:create')")
     public LogisticsPoint create(@RequestBody LogisticsPoint logisticsPoint) {
+
+        if ("current".equals(logisticsPoint.getOrgId())) { //get current Organization
+            String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+            logisticsPoint.setOrgId(orgId);
+        }
 
         LogisticsCheckPointObject logisticsCheckPointObject = toLogisticsCheckPointObject(logisticsPoint);
         LogisticsCheckPointObject newObject = dataAPIClient.post("logisticscheckpoint", logisticsCheckPointObject, LogisticsCheckPointObject.class);
@@ -56,6 +65,10 @@ public class LogisticsPointController {
                                                 @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
+        if ("current".equals(orgId)) { //get current Organization
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
+
         LogisticsCheckPointObject[] objects =
                 dataAPIClient.get("logisticscheckpoint?orgId={orgId}&&pageIndex={pageIndex}&&pageSize={pageSize}",
                         LogisticsCheckPointObject[].class,
@@ -74,6 +87,11 @@ public class LogisticsPointController {
     @RequestMapping(value = "", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#logisticsPoint, 'logisticspoint:update')")
     public void patch(@RequestBody LogisticsPoint logisticsPoint) {
+
+        if ("current".equals(logisticsPoint.getOrgId())) { //get current Organization
+            String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+            logisticsPoint.setOrgId(orgId);
+        }
 
         LogisticsCheckPointObject logisticsCheckPointObject = toLogisticsCheckPointObject(logisticsPoint);
         dataAPIClient.patch("logisticscheckpoint", logisticsCheckPointObject);
