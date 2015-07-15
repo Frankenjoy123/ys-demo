@@ -50,6 +50,8 @@ public class AccountController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
+    //region account
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Account getById(@PathVariable("id") String accountId) {
         if ("current".equals(accountId)) { //get current Account
@@ -127,8 +129,9 @@ public class AccountController {
         accountDomain.updatePassword(currentAccountId, rawNewPassword);
     }
 
+    //endregion
 
-    //groups
+    //region group
 
     @RequestMapping(value = "{account_id}/group", method = RequestMethod.GET)
     public List<Group> getGroups(@PathVariable("account_id") String accountId) {
@@ -140,10 +143,10 @@ public class AccountController {
     }
 
     //create account group under the account
-    @RequestMapping(value = "{account_id}/group", method = RequestMethod.POST)
+    @RequestMapping(value = "{account_id}/group/{group_id}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public String createAccountGroup(@PathVariable(value = "account_id") String accountId,
-                                     @RequestBody String groupId) {
+                                     @PathVariable(value = "group_id") String groupId) {
         TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
         AccountGroupObject exists = accountGroupDomain.getAccountGroupByAccountIdAndGroupId(accountId, groupId);
         if (exists != null) {
@@ -159,10 +162,10 @@ public class AccountController {
     }
 
     //delete account group under the account
-    @RequestMapping(value = "{account_id}/group", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{account_id}/group/{group_id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAccountGroup(@PathVariable(value = "account_id") String accountId,
-                                   @RequestBody String groupId) {
+                                   @PathVariable(value = "group_id") String groupId) {
         accountGroupDomain.deleteAccountGroup(groupId, accountId);
     }
 
@@ -193,8 +196,9 @@ public class AccountController {
             accountGroupDomain.createAccountGroup(accountGroupObject);
         });
     }
+    //endregion
 
-    //permissions
+    //region accountpermission
 
     /**
      * get the permissions directly related to the account
@@ -202,7 +206,7 @@ public class AccountController {
      * @param accountId
      * @return
      */
-    @RequestMapping(value = "{account_id}/permission", method = RequestMethod.GET)
+    @RequestMapping(value = "{account_id}/accountpermission", method = RequestMethod.GET)
     public List<AccountPermission> getPermissionsByAccountId(@PathVariable(value = "account_id") String accountId) {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         if ("current".equals(accountId)) { //get current Account
@@ -215,43 +219,8 @@ public class AccountController {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * get the permission policies related to the account
-     *
-     * @param accountId
-     * @return
-     */
-    @RequestMapping(value = "{account_id}/permission/policy", method = RequestMethod.GET)
-    public List<AccountPermissionPolicy> getPermissionPoliciesByAccountId(@PathVariable(value = "account_id") String accountId) {
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-        if ("current".equals(accountId)) { //get current Account
-            accountId = currentAccountId;
-        }
-        checkAccountPermissionRead(currentAccountId, accountId);
-        return accountPermissionDomain.getAccountPermissionPolicies(accountId)
-                .stream()
-                .map(AccountPermissionPolicy::new)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * get all the permissions related to the account, include group permissions and permission policies.
-     *
-     * @param accountId
-     * @return
-     */
-    @RequestMapping(value = "{account_id}/allpermission", method = RequestMethod.GET)
-    public List<PermissionInstance> getAllPermissionByAccountId(@PathVariable("account_id") String accountId) {
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-        if ("current".equals(accountId)) { //get current Account
-            accountId = currentAccountId;
-        }
-        checkAccountPermissionRead(currentAccountId, accountId);
-        return accountPermissionDomain.getAllAccountPermissions(accountId);
-    }
-
     //create account permission
-    @RequestMapping(value = "{account_id}/permission", method = RequestMethod.POST)
+    @RequestMapping(value = "{account_id}/accountpermission", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public AccountPermission createAccountPermission(@PathVariable(value = "account_id") String accountId,
                                                      @RequestBody @Valid AccountPermission accountPermission) {
@@ -264,8 +233,38 @@ public class AccountController {
         return new AccountPermission(accountPermissionObject);
     }
 
-    //create group permission policy
-    @RequestMapping(value = "{account_id}/permissionpolicy", method = RequestMethod.POST)
+    //delete account permission
+    @RequestMapping(value = "{account_id}/accountpermission/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAccountPermission(@PathVariable(value = "account_id") String accountId,
+                                        @PathVariable("id") String id) {
+        accountPermissionDomain.deleteAccountPermissionById(id);
+    }
+    //endregion
+
+    //region accountpermissionpolicy
+
+    /**
+     * get the permission policies related to the account
+     *
+     * @param accountId
+     * @return
+     */
+    @RequestMapping(value = "{account_id}/accountpermissionpolicy", method = RequestMethod.GET)
+    public List<AccountPermissionPolicy> getPermissionPoliciesByAccountId(@PathVariable(value = "account_id") String accountId) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        if ("current".equals(accountId)) { //get current Account
+            accountId = currentAccountId;
+        }
+        checkAccountPermissionRead(currentAccountId, accountId);
+        return accountPermissionDomain.getAccountPermissionPolicies(accountId)
+                .stream()
+                .map(AccountPermissionPolicy::new)
+                .collect(Collectors.toList());
+    }
+
+    //create account permission policy
+    @RequestMapping(value = "{account_id}/accountpermissionpolicy", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public AccountPermissionPolicy createAccountPermissionPolicy(@PathVariable(value = "account_id") String accountId,
                                                                  @RequestBody @Valid AccountPermissionPolicy accountPermissionPolicy) {
@@ -278,21 +277,36 @@ public class AccountController {
         return new AccountPermissionPolicy(accountPermissionPolicyObject);
     }
 
-    //delete account permission
-    @RequestMapping(value = "{account_id}/permission/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAccountPermission(@PathVariable(value = "account_id") String accountId,
-                                        @PathVariable("id") String id) {
-        accountPermissionDomain.deleteAccountPermissionById(id);
-    }
-
     //delete account permission policy
-    @RequestMapping(value = "{account_id}/permissionpolicy/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{account_id}/accountpermissionpolicy/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAccountPermissionPolicy(@PathVariable(value = "account_id") String accountId,
                                               @PathVariable("id") String id) {
         accountPermissionDomain.deleteAccountPermissionPolicyById(id);
     }
+    //endregion
+
+    //region permission
+
+    /**
+     * get all the permissions related to the account, include group permissions and permission policies.
+     *
+     * @param accountId
+     * @return
+     */
+    @RequestMapping(value = "{account_id}/permission", method = RequestMethod.GET)
+    public List<PermissionInstance> getAllPermissionByAccountIdExtend(@PathVariable("account_id") String accountId) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        if ("current".equals(accountId)) { //get current Account
+            accountId = currentAccountId;
+        }
+        checkAccountPermissionRead(currentAccountId, accountId);
+        List<PermissionInstance> permissionInstances = accountPermissionDomain.getPermissionsByAccountId(accountId);
+        return accountPermissionDomain.extendPermissions(permissionInstances);
+    }
+
+    //endregion
+
 
     private void checkAccountPermissionRead(String currentAccountId, String accountId) {
         if (!currentAccountId.equals(accountId)) {
@@ -304,7 +318,6 @@ public class AccountController {
             accountPermissionDomain.checkPermission(currentAccountId, new TPermission(accountObject.getOrgId(), "accountpermission", "read"));
         }
     }
-
 
     private AccountObject findAccountById(String accountId) {
         AccountObject accountObject = accountDomain.getById(accountId);

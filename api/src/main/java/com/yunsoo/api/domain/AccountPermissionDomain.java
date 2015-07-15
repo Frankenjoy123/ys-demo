@@ -2,20 +2,19 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.api.dto.PermissionInstance;
 import com.yunsoo.api.object.TPermission;
-import com.yunsoo.common.data.object.AccountGroupObject;
-import com.yunsoo.common.data.object.AccountPermissionObject;
-import com.yunsoo.common.data.object.AccountPermissionPolicyObject;
-import com.yunsoo.common.data.object.PermissionPolicyObject;
+import com.yunsoo.api.util.WildcardMatcher;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Lijian
@@ -78,7 +77,7 @@ public class AccountPermissionDomain {
      * @param accountId accountId
      * @return permissions
      */
-    public List<PermissionInstance> getAllAccountPermissions(String accountId) {
+    public List<PermissionInstance> getPermissionsByAccountId(String accountId) {
         List<PermissionInstance> permissions = new ArrayList<>();
         List<AccountPermissionObject> accountPermissions = getAccountPermissions(accountId);
         List<AccountPermissionPolicyObject> accountPermissionPolicies = getAccountPermissionPolicies(accountId);
@@ -100,8 +99,30 @@ public class AccountPermissionDomain {
         return permissions;
     }
 
+    public List<PermissionInstance> extendPermissions(List<PermissionInstance> permissions) {
+        List<String> resources = permissionDomain.getPermissionResources(true).stream().map(LookupObject::getCode).collect(Collectors.toList());
+        List<PermissionInstance> result = new ArrayList<>();
+        permissions.forEach(p -> {
+            String resourceCode = p.getResourceCode();
+            String actionCode = p.getActionCode();
+            String orgId = p.getOrgId();
+            if (StringUtils.isEmpty(resourceCode) || StringUtils.isEmpty(actionCode)) {
+                return;
+            }
+            if (!resourceCode.equals("*") && resourceCode.contains("*")) {
+                filter(resourceCode, resources).forEach(r -> {
+                    result.add(new PermissionInstance(r, actionCode, orgId));
+                });
+            } else {
+                result.add(new PermissionInstance(resourceCode, actionCode, orgId));
+            }
+        });
+        return result;
+    }
+
+
     public boolean hasPermission(String accountId, TPermission permission) {
-        List<PermissionInstance> permissions = getAllAccountPermissions(accountId);
+        List<PermissionInstance> permissions = getPermissionsByAccountId(accountId);
         if (permissions != null && permissions.size() > 0) {
             String orgId = permission.getOrgId();
             String resourceCode = permission.getResourceCode();
@@ -110,19 +131,17 @@ public class AccountPermissionDomain {
                 return true; //anonymous
             }
             for (PermissionInstance pi : permissions) {
-                boolean isOrgIdMatched = orgId == null || wildcardMatch(pi.getOrgId(), orgId);
+                boolean isOrgIdMatched = (orgId == null || "*".equals(pi.getOrgId()) || orgId.equals(pi.getOrgId()));
                 if (!isOrgIdMatched) {
                     continue; //try next permission;
                 }
-                boolean isResourceMatched = wildcardMatch(pi.getResourceCode(), resourceCode);
-                boolean isActionMatched = wildcardMatch(pi.getActionCode(), actionCode);
+                boolean isResourceMatched = WildcardMatcher.match(pi.getResourceCode(), resourceCode);
+                boolean isActionMatched = WildcardMatcher.match(pi.getActionCode(), actionCode);
                 if (!isResourceMatched || !isActionMatched) {
                     continue; //try next permission;
                 }
-
                 return true; //matched
             }
-
         }
         return false;
     }
@@ -134,13 +153,12 @@ public class AccountPermissionDomain {
     }
 
 
-    /**
-     * @param expression String with wildcard *, example: *, product*
-     * @param target     String must not be null
-     * @return if is match
-     */
-    private boolean wildcardMatch(String expression, String target) {
-        return expression != null && Pattern.compile(expression.replace("*", "[\\w]*")).matcher(target).matches();
+    private List<String> filter(String expression, List<String> targets) {
+        return targets.stream().filter(i -> WildcardMatcher.match(expression, i)).collect(Collectors.toList());
+    }
+
+    private boolean anyMatch(String expression, List<String> targets) {
+        return targets.stream().anyMatch(i -> WildcardMatcher.match(expression, i));
     }
 
 }
