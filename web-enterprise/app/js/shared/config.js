@@ -10,7 +10,28 @@
 
           PARAMETER_ACCESS_TOKEN: 'access_token',
 
-          APP_ID: '2k2juhux4z5d6eceh4v'
+          APP_ID: '2k2juhux4z5d6eceh4v',
+
+          PAGE_ACCESS: {
+            RESOURCE: {
+              DASHBOARD: 'page-enterprise-dashboard',
+              PRODUCTKEY: 'page-enterprise-productkey',
+              PACKAGE: 'page-enterprise-package',
+              LOGISTICS: 'page-enterprise-logistics',
+              REPORT: 'page-enterprise-report-*',
+              PRODUCTBASE: 'page-enterprise-productbase',
+              MESSAGE: 'page-enterprise-message',
+              DEVICE: 'page-enterprise-device',
+              ACCOUNT: 'page-enterprise-account',
+              GROUP: 'page-enterprise-group',
+              PROFILE: 'page-enterprise-profile'
+            },
+            ACTION: {
+              READ: 'read',
+              MANAGE: 'manage',
+              ALL: '*'
+            }
+          }
         };
       });
 
