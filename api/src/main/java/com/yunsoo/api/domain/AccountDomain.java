@@ -72,7 +72,7 @@ public class AccountDomain {
     public AccountObject createAccount(AccountObject accountObject) {
         accountObject.setId(null);
         accountObject.setCreatedDateTime(DateTime.now());
-        accountObject.setStatusCode(LookupCodes.AccountStatus.CREATED);
+        accountObject.setStatusCode(LookupCodes.AccountStatus.AVAILABLE);
         String hashSalt = RandomUtils.generateString(8);
         String password = hashPassword(accountObject.getPassword(), hashSalt);
         accountObject.setHashSalt(hashSalt);
