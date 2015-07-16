@@ -5,6 +5,7 @@ import com.yunsoo.common.data.object.GroupPermissionObject;
 import com.yunsoo.common.data.object.GroupPermissionPolicyObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -32,33 +33,38 @@ public class GroupPermissionDomain {
         }, groupId);
     }
 
-    public List<GroupPermissionPolicyObject> getGroupPermissionPolicies(String groupId) {
-        return dataAPIClient.get("grouppermissionpolicy?group_id={groupId}", new ParameterizedTypeReference<List<GroupPermissionPolicyObject>>() {
-        }, groupId);
-    }
-
     public GroupPermissionObject createGroupPermission(GroupPermissionObject groupPermissionObject) {
         return dataAPIClient.post("grouppermission", groupPermissionObject, GroupPermissionObject.class);
-    }
-
-    public GroupPermissionPolicyObject createGroupPermissionPolicy(GroupPermissionPolicyObject groupPermissionPolicyObject) {
-        return dataAPIClient.post("grouppermissionpolicy", groupPermissionPolicyObject, GroupPermissionPolicyObject.class);
     }
 
     public void deleteGroupPermissionByGroupId(String groupId) {
         dataAPIClient.delete("grouppermission?group_id={groupId}", groupId);
     }
 
-    public void deleteGroupPermissionPolicyByGroupId(String groupId) {
-        dataAPIClient.delete("grouppermissionpolicy?group_id={groupId}", groupId);
-    }
-
     public void deleteGroupPermissionById(String id) {
         dataAPIClient.delete("grouppermission/{id}", id);
     }
 
-    public void deleteGroupPermissionPolicyById(String id) {
-        dataAPIClient.delete("grouppermissionpolicy/{id}", id);
+    public List<GroupPermissionPolicyObject> getGroupPermissionPolicies(String groupId) {
+        return dataAPIClient.get("grouppermissionpolicy?group_id={groupId}", new ParameterizedTypeReference<List<GroupPermissionPolicyObject>>() {
+        }, groupId);
+    }
+
+    public GroupPermissionPolicyObject createGroupPermissionPolicy(GroupPermissionPolicyObject groupPermissionPolicyObject) {
+        return dataAPIClient.post("grouppermissionpolicy", groupPermissionPolicyObject, GroupPermissionPolicyObject.class);
+    }
+
+    public void deleteGroupPermissionPolicyByGroupId(String groupId) {
+        deleteGroupPermissionPolicy(groupId, null, null);
+    }
+
+    public void deleteGroupPermissionPolicy(String groupId, String orgId, String policyCode) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("group_id", groupId)
+                .append("org_id", orgId)
+                .append("policy_code", policyCode)
+                .build();
+        dataAPIClient.delete("grouppermissionpolicy" + query);
     }
 
     public List<PermissionInstance> getAllGroupPermissions(String groupId) {

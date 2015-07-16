@@ -33,17 +33,31 @@ public class GroupPermissionPolicyController {
     @ResponseStatus(HttpStatus.CREATED)
     public GroupPermissionPolicyObject create(@RequestBody GroupPermissionPolicyObject groupPermissionPolicyObject) {
         GroupPermissionPolicyEntity entity = toGroupPermissionPolicyEntity(groupPermissionPolicyObject);
+        entity.setId(null);
         if (entity.getCreatedDatetime() == null) {
             entity.setCreatedDatetime(DateTime.now());
         }
-        entity.setId(null);
         return toGroupPermissionPolicyObject(groupPermissionPolicyRepository.save(entity));
     }
 
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteByGroupId(@RequestParam(value = "group_id") String groupId) {
-        groupPermissionPolicyRepository.deleteByGroupId(groupId);
+    public void deleteByGroupId(@RequestParam(value = "group_id") String groupId,
+                                @RequestParam(value = "org_id", required = false) String orgId,
+                                @RequestParam(value = "policy_code", required = false) String policyCode) {
+        if (orgId == null) {
+            if (policyCode == null) {
+                groupPermissionPolicyRepository.deleteByGroupId(groupId);
+            } else {
+                groupPermissionPolicyRepository.deleteByGroupIdAndPolicyCode(groupId, policyCode);
+            }
+        } else {
+            if (policyCode == null) {
+                groupPermissionPolicyRepository.deleteByGroupIdAndOrgId(groupId, orgId);
+            } else {
+                groupPermissionPolicyRepository.deleteByGroupIdAndOrgIdAndPolicyCode(groupId, orgId, policyCode);
+            }
+        }
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
@@ -72,11 +86,11 @@ public class GroupPermissionPolicyController {
         }
         GroupPermissionPolicyEntity entity = new GroupPermissionPolicyEntity();
         entity.setId(object.getId());
-        entity.setGroupId(entity.getGroupId());
-        entity.setOrgId(entity.getOrgId());
-        entity.setPolicyCode(entity.getPolicyCode());
-        entity.setCreatedAccountId(entity.getCreatedAccountId());
-        entity.setCreatedDatetime(entity.getCreatedDatetime());
+        entity.setGroupId(object.getGroupId());
+        entity.setOrgId(object.getOrgId());
+        entity.setPolicyCode(object.getPolicyCode());
+        entity.setCreatedAccountId(object.getCreatedAccountId());
+        entity.setCreatedDatetime(object.getCreatedDatetime());
         return entity;
     }
 }

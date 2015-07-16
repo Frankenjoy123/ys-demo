@@ -233,12 +233,14 @@ public class GroupController {
     }
 
     //delete group permission policy
-    @RequestMapping(value = "{group_id}/grouppermissionpolicy/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{group_id}/grouppermissionpolicy", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteGroupPermissionPolicy(@PathVariable(value = "group_id") String groupId,
-                                            @PathVariable("id") String id) {
+                                            @RequestParam(value = "org_id", required = false) String orgId,
+                                            @RequestParam(value = "policy_code") String policyCode) {
+        orgId = fixOrgId(orgId);
         findGroupById(groupId);
-        groupPermissionDomain.deleteGroupPermissionPolicyById(id);
+        groupPermissionDomain.deleteGroupPermissionPolicy(groupId, orgId, policyCode);
     }
 
     //endregion
@@ -249,6 +251,14 @@ public class GroupController {
         return groupPermissionDomain.getAllGroupPermissions(groupId);
     }
 
+    private String fixOrgId(String orgId) {
+        if (orgId == null || "current".equals(orgId)) {
+            //current orgId
+            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
+        return orgId;
+    }
+
 
     private GroupObject findGroupById(String id) {
         GroupObject groupObject = groupDomain.getById(id);
@@ -256,14 +266,6 @@ public class GroupController {
             throw new NotFoundException("group not found");
         }
         return groupObject;
-    }
-
-    private String fixOrgId(String orgId) {
-        if (orgId == null || "current".equals(orgId)) {
-            //current orgId
-            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        }
-        return orgId;
     }
 
 }
