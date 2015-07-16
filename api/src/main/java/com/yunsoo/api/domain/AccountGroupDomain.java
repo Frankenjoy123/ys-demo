@@ -53,8 +53,8 @@ public class AccountGroupDomain {
         return dataAPIClient.post("accountgroup", accountGroupObject, AccountGroupObject.class);
     }
 
-    public void deleteAccountGroup(String groupId, String accountId) {
-        dataAPIClient.delete("accountgroup?group_id={group_id}&account_id={account_id}", groupId, accountId);
+    public void deleteAccountGroupByAccountIdAndGroupId(String accountId, String groupId) {
+        dataAPIClient.delete("accountgroup?account_id={account_id}&group_id={group_id}", accountId, groupId);
     }
 
 

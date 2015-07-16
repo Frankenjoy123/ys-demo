@@ -4,7 +4,6 @@ import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.AccountGroupDomain;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.dto.*;
-import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountGroupObject;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -147,7 +145,7 @@ public class AccountController {
                                      @PathVariable(value = "group_id") String groupId) {
         accountId = fixAccountId(accountId); //auto fix current
         findAccountById(accountId);
-        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         AccountGroupObject exists = accountGroupDomain.getAccountGroupByAccountIdAndGroupId(accountId, groupId);
         if (exists != null) {
             throw new ConflictException("account id: " + accountId + "group id: " + groupId + "already exist.");
@@ -155,7 +153,7 @@ public class AccountController {
         AccountGroupObject accountGroupObject = new AccountGroupObject();
         accountGroupObject.setAccountId(accountId);
         accountGroupObject.setGroupId(groupId);
-        accountGroupObject.setCreatedAccountId(currentAccount.getId());
+        accountGroupObject.setCreatedAccountId(currentAccountId);
         accountGroupObject.setCreatedDateTime(DateTime.now());
         accountGroupDomain.createAccountGroup(accountGroupObject);
         return groupId;
@@ -168,36 +166,33 @@ public class AccountController {
                                    @PathVariable(value = "group_id") String groupId) {
         accountId = fixAccountId(accountId); //auto fix current
         findAccountById(accountId);
-        accountGroupDomain.deleteAccountGroup(groupId, accountId);
+        accountGroupDomain.deleteAccountGroupByAccountIdAndGroupId(accountId, groupId);
     }
 
     //update account group under the account
     @RequestMapping(value = "{account_id}/group", method = RequestMethod.PUT)
     public void updateAccountGroup(@PathVariable(value = "account_id") String accountId,
                                    @RequestBody @Valid List<String> groupIds) {
-        List<AccountGroupObject> accountGroupObjects = accountGroupDomain.getAccountGroupByAccountId(accountId);
-        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
-        List<String> originalGroupId = new ArrayList<>();
-        if (accountGroupObjects == null) {
-            throw new NotFoundException("account group not found");
-        }
-        for (AccountGroupObject ago : accountGroupObjects) {
-            // ago not in group ids
-            if (!groupIds.contains(ago.getGroupId())) {
-                accountGroupDomain.deleteAccountGroup(ago.getGroupId(), ago.getAccountId());
-            }
-            originalGroupId.add(ago.getGroupId());
-        }
-        // gid not in accountGroupObjects
-        groupIds.stream().filter(gid -> !originalGroupId.contains(gid)).forEach(gid -> {
+        findAccountById(accountId);
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        List<String> originalGroupIds = accountGroupDomain.getAccountGroupByAccountId(accountId).stream()
+                .map(AccountGroupObject::getGroupId)
+                .collect(Collectors.toList());
+        //delete original but not in the new groupId list
+        originalGroupIds.stream().filter(gId -> !groupIds.contains(gId)).forEach(gId -> {
+            accountGroupDomain.deleteAccountGroupByAccountIdAndGroupId(accountId, gId);
+        });
+        //add not in the original groupId list
+        groupIds.stream().filter(gId -> !originalGroupIds.contains(gId)).forEach(gId -> {
             AccountGroupObject accountGroupObject = new AccountGroupObject();
             accountGroupObject.setAccountId(accountId);
-            accountGroupObject.setGroupId(gid);
-            accountGroupObject.setCreatedAccountId(currentAccount.getId());
+            accountGroupObject.setGroupId(gId);
+            accountGroupObject.setCreatedAccountId(currentAccountId);
             accountGroupObject.setCreatedDateTime(DateTime.now());
             accountGroupDomain.createAccountGroup(accountGroupObject);
         });
     }
+
     //endregion
 
     //region accountpermission
@@ -246,6 +241,7 @@ public class AccountController {
         findAccountById(accountId);
         accountPermissionDomain.deleteAccountPermissionById(id);
     }
+
     //endregion
 
     //region accountpermissionpolicy
@@ -294,6 +290,7 @@ public class AccountController {
         findAccountById(accountId);
         accountPermissionDomain.deleteAccountPermissionPolicyById(id);
     }
+
     //endregion
 
     //region permission
@@ -305,13 +302,14 @@ public class AccountController {
      * @return
      */
     @RequestMapping(value = "{account_id}/permission", method = RequestMethod.GET)
-    public List<PermissionInstance> getAllPermissionByAccountIdExtend(@PathVariable("account_id") String accountId) {
+    public List<PermissionInstance> getAllPermissionByAccountIdExtend(@PathVariable("account_id") String accountId,
+                                                                      @RequestParam(value = "org_id", required = false) String orgId) {
+        accountId = fixAccountId(accountId); //auto fix current
+        orgId = fixOrgId(orgId);
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-        if ("current".equals(accountId)) { //get current Account
-            accountId = currentAccountId;
-        }
         checkAccountPermissionRead(currentAccountId, accountId);
         List<PermissionInstance> permissionInstances = accountPermissionDomain.getPermissionsByAccountId(accountId);
+        permissionInstances = accountPermissionDomain.filterPermissionsByOrgId(permissionInstances, orgId);
         return accountPermissionDomain.extendPermissions(permissionInstances);
     }
 

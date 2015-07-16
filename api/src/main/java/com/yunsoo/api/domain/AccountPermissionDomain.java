@@ -99,6 +99,11 @@ public class AccountPermissionDomain {
         return permissions;
     }
 
+    public List<PermissionInstance> filterPermissionsByOrgId(List<PermissionInstance> permissions, String orgId) {
+        //todo
+        return permissions;
+    }
+
     public List<PermissionInstance> extendPermissions(List<PermissionInstance> permissions) {
         List<String> resources = permissionDomain.getPermissionResources(true).stream().map(LookupObject::getCode).collect(Collectors.toList());
         List<PermissionInstance> result = new ArrayList<>();
