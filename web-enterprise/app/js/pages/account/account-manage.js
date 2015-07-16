@@ -31,10 +31,21 @@
 
         return this;
       },
-      authAccount: function (accountPolicyList, fnSuccess, fnError) {
-
+      authAccount: function (accountId, policy, fnSuccess, fnError) {
+        var url = '/api/account/' + accountId + '/accountpermissionpolicy';
+        $http.post(url, policy).success(fnSuccess).error(fnError);
 
         return this;
+      },
+      cancelAuthAccount: function (accountId, policyCode, fnSuccess, fnError) {
+        var url = '/api/account/' + accountId + '/accountpermissionpolicy' + '?policy_code=' + policyCode;
+        $http.delete(url).success(fnSuccess).error(fnError);
+
+        return this;
+      },
+      getAccountAllPermissions: function (accountId, fnSuccess, fnError) {
+        var url = '/api/account/' + accountId + '/permission';
+        $http.get(url).success(fnSuccess);
       }
     };
   }]);
@@ -235,7 +246,10 @@
             });
           },
           showCreateAccountModal: function () {
-            $('#createAccountModal').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
+            $('#createAccountModal').modal({
+              backdrop: 'static',
+              keyboard: false
+            }).on("hidden.bs.modal", function () {
               $(this).removeData("bs.modal");
             });
           },
@@ -245,116 +259,435 @@
           }
         },
         auth: {
-          authAccount: function () {
-            var accountPolicyList = [];
+          disableAll: false,
+          checkAllAccess: function (isCheck) {
+            accountPermission.dashBoardRead = isCheck;
 
+            accountPermission.productKeyRead = isCheck;
+            accountPermission.productKeyMng = isCheck;
+
+            accountPermission.packageRead = isCheck;
+            accountPermission.packageMng = isCheck;
+
+            accountPermission.logisticsRead = isCheck;
+            accountPermission.logisticsMng = isCheck;
+
+            accountPermission.reportRead = isCheck;
+
+            accountPermission.productRead = isCheck;
+            accountPermission.productMng = isCheck;
+
+            accountPermission.msgRead = isCheck;
+            accountPermission.msgMng = isCheck;
+
+            accountPermission.deviceRead = isCheck;
+            accountPermission.deviceMng = isCheck;
+
+            accountPermission.accountRead = isCheck;
+            accountPermission.accountMng = isCheck;
+
+            accountPermission.groupRead = isCheck;
+            accountPermission.groupMng = isCheck;
+
+            accountPermission.passwordRead = isCheck;
+          },
+          authDashBoardRead: function () {
             if (accountPermission.dashBoardRead) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.DASHBOARD + ':' + ACTION.READ
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.DASHBOARD + ':' + ACTION.READ, function () {
+                  }, function () {
+                  });
+            }
+          },
+          authProductKeyRead: function () {
             if (accountPermission.productKeyRead) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.PRODUCTKEY + ':' + ACTION.READ
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.PRODUCTKEY + ':' + ACTION.READ, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authProductKeyMng: function () {
             if (accountPermission.productKeyMng) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.PRODUCTKEY + ':' + ACTION.MANAGE
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.PRODUCTKEY + ':' + ACTION.MANAGE, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authPackageRead: function () {
             if (accountPermission.packageRead) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.PACKAGE + ':' + ACTION.READ
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.PACKAGE + ':' + ACTION.READ, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authPackageMng: function () {
             if (accountPermission.packageMng) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.PACKAGE + ':' + ACTION.MANAGE
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.PACKAGE + ':' + ACTION.MANAGE, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authLogisticsRead: function () {
             if (accountPermission.logisticsRead) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.LOGISTICS + ':' + ACTION.READ
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.LOGISTICS + ':' + ACTION.READ, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authLogisticsMng: function () {
             if (accountPermission.logisticsMng) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.LOGISTICS + ':' + ACTION.MANAGE
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.LOGISTICS + ':' + ACTION.MANAGE, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authReportRead: function () {
             if (accountPermission.reportRead) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.REPORT + ':' + ACTION.READ
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.REPORT + ':' + ACTION.READ, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authProductRead: function () {
             if (accountPermission.productRead) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.PRODUCTBASE + ':' + ACTION.READ
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.PRODUCTBASE + ':' + ACTION.READ, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authProductMng: function () {
             if (accountPermission.productMng) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.PRODUCTBASE + ':' + ACTION.MANAGE
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.PRODUCTBASE + ':' + ACTION.MANAGE
+                  , function () {
+                  }, function () {
+                  });
+            }
+          },
+          authMsgRead: function () {
             if (accountPermission.msgRead) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.MESSAGE + ':' + ACTION.READ
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.MESSAGE + ':' + ACTION.READ, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authMsgMng: function () {
             if (accountPermission.msgMng) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.MESSAGE + ':' + ACTION.MANAGE
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.MESSAGE + ':' + ACTION.MANAGE, function () {
+                  }, function () {
+                  });
+            }
+          },
+          authDeviceRead: function () {
             if (accountPermission.deviceRead) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.DEVICE + ':' + ACTION.READ
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.DEVICE + ':' + ACTION.READ, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authDeviceMng: function () {
             if (accountPermission.deviceMng) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.DEVICE + ':' + ACTION.MANAGE
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.DEVICE + ':' + ACTION.MANAGE, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authAccountRead: function () {
             if (accountPermission.accountRead) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.ACCOUNT + ':' + ACTION.READ
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.ACCOUNT + ':' + ACTION.READ, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authAccountMng: function () {
             if (accountPermission.accountMng) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.ACCOUNT + ':' + ACTION.MANAGE
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.ACCOUNT + ':' + ACTION.MANAGE, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authGroupRead: function () {
             if (accountPermission.groupRead) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.GROUP + ':' + ACTION.READ
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.GROUP + ':' + ACTION.READ, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authGroupMng: function () {
             if (accountPermission.groupMng) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.GROUP + ':' + ACTION.MANAGE
+              }, function () {
+              }, function () {
               });
             }
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.GROUP + ':' + ACTION.MANAGE, function () {
+                  }, function () {
+                  }
+              );
+            }
+          },
+          authPasswordRead: function () {
             if (accountPermission.passwordRead) {
-              accountPolicyList.push({
+              accountManageService.authAccount(account.selectAccount, {
                 policy_code: RESOURCE.PROFILE + ':' + ACTION.READ
+              }, function () {
+              }, function () {
               });
             }
-
-
+            else {
+              accountManageService.cancelAuthAccount(account.selectAccount,
+                  RESOURCE.PROFILE + ':' + ACTION.READ, function () {
+                  }, function () {
+                  }
+              );
+            }
           },
           showAuthAccountModal: function (accountId) {
 
             account.selectAccount = accountId;
 
-            $('#treeMenuModal').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
-              $(this).removeData("bs.modal");
+            account.auth.checkAllAccess(false);
+            account.auth.disableAll = false;
+
+            accountManageService.getAccountAllPermissions(accountId, function (data) {
+
+              for (var i = 0; i < data.length; i++) {
+                if (data[i].resource_code == '*' && (data[i].action_code == '*')) {
+                  account.auth.disableAll = true;
+                  account.auth.checkAllAccess(true);
+
+                  break;
+                }
+                else {
+                  if (data[i].resource_code == RESOURCE.DASHBOARD && (data[i].action_code == ACTION.READ)) {
+                    accountPermission.dashBoardRead = true;
+                  }
+
+                  if (data[i].resource_code == RESOURCE.PRODUCTKEY && (data[i].action_code == ACTION.READ)) {
+                    accountPermission.productKeyRead = true;
+                  }
+                  if (data[i].resource_code == RESOURCE.PRODUCTKEY && (data[i].action_code == ACTION.MANAGE)) {
+                    accountPermission.productKeyMng = true;
+                  }
+
+                  if (data[i].resource_code == RESOURCE.PACKAGE && (data[i].action_code == ACTION.READ)) {
+                    accountPermission.packageRead = true;
+                  }
+                  if (data[i].resource_code == RESOURCE.PACKAGE && (data[i].action_code == ACTION.MANAGE)) {
+                    accountPermission.packageMng = true;
+                  }
+
+                  if (data[i].resource_code == RESOURCE.LOGISTICS && (data[i].action_code == ACTION.READ)) {
+                    accountPermission.logisticsRead = true;
+                  }
+                  if (data[i].resource_code == RESOURCE.LOGISTICS && (data[i].action_code == ACTION.MANAGE)) {
+                    accountPermission.logisticsMng = true;
+                  }
+
+                  if (data[i].resource_code == RESOURCE.REPORT && (data[i].action_code == ACTION.READ)) {
+                    accountPermission.reportRead = true;
+                  }
+
+                  if (data[i].resource_code == RESOURCE.PRODUCTBASE && (data[i].action_code == ACTION.READ)) {
+                    accountPermission.productRead = true;
+                  }
+                  if (data[i].resource_code == RESOURCE.PRODUCTBASE && (data[i].action_code == ACTION.MANAGE)) {
+                    accountPermission.productMng = true;
+                  }
+
+                  if (data[i].resource_code == RESOURCE.MESSAGE && (data[i].action_code == ACTION.READ)) {
+                    accountPermission.msgRead = true;
+                  }
+                  if (data[i].resource_code == RESOURCE.MESSAGE && (data[i].action_code == ACTION.MANAGE)) {
+                    accountPermission.msgMng = true;
+                  }
+
+                  if (data[i].resource_code == RESOURCE.DEVICE && (data[i].action_code == ACTION.READ)) {
+                    accountPermission.deviceRead = true;
+                  }
+                  if (data[i].resource_code == RESOURCE.DEVICE && (data[i].action_code == ACTION.MANAGE)) {
+                    accountPermission.deviceMng = true;
+                  }
+
+                  if (data[i].resource_code == RESOURCE.ACCOUNT && (data[i].action_code == ACTION.READ)) {
+                    accountPermission.accountRead = true;
+                  }
+                  if (data[i].resource_code == RESOURCE.ACCOUNT && (data[i].action_code == ACTION.MANAGE)) {
+                    accountPermission.accountMng = true;
+                  }
+
+                  if (data[i].resource_code == RESOURCE.GROUP && (data[i].action_code == ACTION.READ)) {
+                    accountPermission.groupRead = true;
+                  }
+                  if (data[i].resource_code == RESOURCE.GROUP && (data[i].action_code == ACTION.MANAGE)) {
+                    accountPermission.groupMng = true;
+                  }
+
+                  if (data[i].resource_code == RESOURCE.PROFILE && (data[i].action_code == ACTION.READ)) {
+                    accountPermission.passwordRead = true;
+                  }
+                }
+              }
+
+              $('#treeMenuModal').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
+                $(this).removeData("bs.modal");
+              });
             });
           },
           hideAuthAccountModal: function () {
+            account.selectAccount = '';
+
             $('#treeMenuModal').modal('hide');
           }
         },
@@ -408,7 +741,8 @@
                 $(this).removeData("bs.modal");
               });
             });
-          },
+          }
+          ,
           hideAddAccountsModal: function () {
             account.spinnerShow = false;
             account.curSelectedGroups = [];
@@ -416,7 +750,8 @@
             $("#selectGroup").html("");
             $('#addToGroupModal').modal('hide');
 
-          },
+          }
+          ,
           addAccountsToGroup: function () {
             account.spinnerShow = true;
 
@@ -433,5 +768,8 @@
         }
       };
 
-    }]);
-})();
+    }
+  ])
+  ;
+})
+();

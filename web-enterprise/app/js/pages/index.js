@@ -80,6 +80,9 @@
           templateUrl: 'pages/group/group.html',
           controller: 'groupCtrl'
         })
+        .when('/no_access', {
+          templateUrl: '403.html'
+        })
         .otherwise({
           templateUrl: 'pages/dashboard/dashboard.html',
           controller: 'DashboardCtrl'
@@ -112,16 +115,19 @@
         //refresh access token
         permanentToken && $http.get('/api/auth/accesstoken?permanent_token=' + permanentToken).success(fnSuccess);
       },
-      getCurrentAccountPolicies: function (fnSuccess, fnError) {
+      getAccountAllPermissions: function (fnSuccess, fnError) {
         var url = '/api/account/current/permission';
         $http.get(url).success(fnSuccess).error(fnError);
       }
     };
   }]);
 
-  app.controller('rootCtrl', ['$scope', '$timeout', '$http', 'YUNSOO_CONFIG', 'utils', 'rootService', 'productBaseManageService',
-    function ($scope, $timeout, $http, YUNSOO_CONFIG, utils, rootService, productBaseManageService) {
+  app.controller('rootCtrl', ['$scope', '$timeout', '$http', 'YUNSOO_CONFIG', 'utils', 'rootService', 'productBaseManageService', '$location',
+    function ($scope, $timeout, $http, YUNSOO_CONFIG, utils, rootService, productBaseManageService, $location) {
       console.log('[root controller start]');
+
+      var RESOURCE = YUNSOO_CONFIG.PAGE_ACCESS.RESOURCE;
+      var ACTION = YUNSOO_CONFIG.PAGE_ACCESS.ACTION;
 
       //YUNSOO_CONFIG
       $scope.YUNSOO_CONFIG = YUNSOO_CONFIG;
@@ -174,42 +180,192 @@
         $scope.$broadcast('productKeyCreditSum-ready', sum);
       });
 
-      rootService.getCurrentAccountPolicies(function (data) {
-        $scope.currAccountPolicies = data;
-        $scope.$broadcast('accountPolicies-ready', data);
+      rootService.getAccountAllPermissions(function (data) {
+        $scope.currAccountAllPermissions = data;
+        $scope.$broadcast('accountPermissions-ready', data);
       });
 
-      var hasAccess = $scope.hasAccess = function (data, path, type) {
-        return true;
+      var hasAccess = $scope.hasAccess = function (resource, action) {
+
+        var data = $scope.currAccountAllPermissions;
+
+        if (data) {
+          for (var i = 0; i < data.length; i++) {
+            if (data[i].resource_code == '*' && (data[i].action_code == '*')) {
+              return true;
+            }
+            else {
+              if (data[i].resource_code == resource && (data[i].action_code == action)) {
+                return true;
+              }
+            }
+          }
+        }
+
+        return false;
       };
+
+      function ApplyAccess(path) {
+
+        var isShowSetting = false;
+
+        if (!hasAccess(RESOURCE.DASHBOARD, ACTION.READ)) {
+          $('#liDashBoard').attr('style', "display:none");
+          if (path == '/dashboard') {
+            $location.path('/no_access');
+          }
+        }
+
+        if (!hasAccess(RESOURCE.PRODUCTKEY, ACTION.READ) && !hasAccess(RESOURCE.PRODUCTKEY, ACTION.MANAGE)) {
+          $('#liProductKey').attr('style', "display:none");
+          if (path == '/product-key-manage') {
+            $location.path('/no_access');
+          }
+        }
+        else if (hasAccess(RESOURCE.PRODUCTKEY, ACTION.READ) && !hasAccess(RESOURCE.PRODUCTKEY, ACTION.MANAGE)) {
+          $scope.productKeyButtonShow = false;
+        }
+        else if (hasAccess(RESOURCE.PRODUCTKEY, ACTION.MANAGE)) {
+          $scope.productKeyButtonShow = true;
+        }
+
+        if (!hasAccess(RESOURCE.PACKAGE, ACTION.READ) && !hasAccess(RESOURCE.PACKAGE, ACTION.MANAGE)) {
+          $('#liPackageManage').attr('style', "display:none");
+          if (path == '/package-manage') {
+            $location.path('/no_access');
+          }
+        }
+        else if (hasAccess(RESOURCE.PACKAGE, ACTION.READ) && !hasAccess(RESOURCE.PACKAGE, ACTION.MANAGE)) {
+          $scope.packageButtonShow = false;
+        }
+        else if (hasAccess(RESOURCE.PACKAGE, ACTION.MANAGE)) {
+          $scope.packageButtonShow = true;
+        }
+
+        if (!hasAccess(RESOURCE.LOGISTICS, ACTION.READ) && !hasAccess(RESOURCE.LOGISTICS, ACTION.MANAGE)) {
+          $('#liLogistics').attr('style', "display:none");
+          if (path == '/logistics') {
+            $location.path('/no_access');
+          }
+        }
+        else if (hasAccess(RESOURCE.LOGISTICS, ACTION.READ) && !hasAccess(RESOURCE.LOGISTICS, ACTION.MANAGE)) {
+          $scope.logisticsButtonShow = false;
+        }
+        else if (hasAccess(RESOURCE.LOGISTICS, ACTION.MANAGE)) {
+          $scope.logisticsButtonShow = true;
+        }
+
+        if (!hasAccess(RESOURCE.REPORT, ACTION.READ)) {
+          $('#liAllCharts').attr('style', "display:none");
+          if (path == '/echarts-bar' || path == '/stacked-bar' || path == '/mix-map' || path == '/pie-map') {
+            $location.path('/no_access');
+          }
+        }
+
+        if (!hasAccess(RESOURCE.PRODUCTBASE, ACTION.READ) && !hasAccess(RESOURCE.PRODUCTBASE, ACTION.MANAGE)) {
+          $('#liProductBase').attr('style', "display:none");
+          if (path == '/product-base-manage' || path == '/emulator') {
+            $location.path('/no_access');
+          }
+        }
+        else if (hasAccess(RESOURCE.LOGISTICS, ACTION.READ) && !hasAccess(RESOURCE.LOGISTICS, ACTION.MANAGE)) {
+          $scope.productBaseButtonShow = false;
+        }
+        else if (hasAccess(RESOURCE.LOGISTICS, ACTION.MANAGE)) {
+          $scope.productBaseButtonShow = true;
+        }
+        else {
+          isShowSetting = true;
+        }
+
+        if (!hasAccess(RESOURCE.MESSAGE, ACTION.READ) && !hasAccess(RESOURCE.MESSAGE, ACTION.MANAGE)) {
+          $('#liMessage').attr('style', "display:none");
+          if (path == '/message') {
+            $location.path('/no_access');
+          }
+        }
+        else if (hasAccess(RESOURCE.MESSAGE, ACTION.READ) && !hasAccess(RESOURCE.MESSAGE, ACTION.MANAGE)) {
+          $scope.messageButtonShow = false;
+        }
+        else if (hasAccess(RESOURCE.MESSAGE, ACTION.MANAGE)) {
+          $scope.messageButtonShow = true;
+        }
+        else {
+          isShowSetting = true;
+        }
+
+        if (!hasAccess(RESOURCE.DEVICE, ACTION.READ) && !hasAccess(RESOURCE.DEVICE, ACTION.MANAGE)) {
+          $('#liDevice').attr('style', "display:none");
+          if (path == '/device') {
+            $location.path('/no_access');
+          }
+        }
+        else if (hasAccess(RESOURCE.DEVICE, ACTION.READ) && !hasAccess(RESOURCE.DEVICE, ACTION.MANAGE)) {
+          $scope.deviceButtonShow = false;
+        }
+        else if (hasAccess(RESOURCE.DEVICE, ACTION.MANAGE)) {
+          $scope.deviceButtonShow = true;
+        }
+        else {
+          isShowSetting = true;
+        }
+
+        if (!hasAccess(RESOURCE.ACCOUNT, ACTION.READ) && !hasAccess(RESOURCE.ACCOUNT, ACTION.MANAGE)) {
+          $('#liAccount').attr('style', "display:none");
+          if (path == '/account') {
+            $location.path('/no_access');
+          }
+        }
+        else if (hasAccess(RESOURCE.ACCOUNT, ACTION.READ) && !hasAccess(RESOURCE.ACCOUNT, ACTION.MANAGE)) {
+          $scope.accountButtonShow = false;
+        }
+        else if (hasAccess(RESOURCE.ACCOUNT, ACTION.MANAGE)) {
+          $scope.accountButtonShow = true;
+        }
+        else {
+          isShowSetting = true;
+        }
+
+        if (!hasAccess(RESOURCE.GROUP, ACTION.READ) && !hasAccess(RESOURCE.GROUP, ACTION.MANAGE)) {
+          $('#liGroup').attr('style', "display:none");
+          if (path == '/group') {
+            $location.path('/no_access');
+          }
+        }
+        else if (hasAccess(RESOURCE.GROUP, ACTION.READ) && !hasAccess(RESOURCE.GROUP, ACTION.MANAGE)) {
+          $scope.groupButtonShow = false;
+        }
+        else if (hasAccess(RESOURCE.GROUP, ACTION.MANAGE)) {
+          $scope.groupButtonShow = true;
+        }
+        else {
+          isShowSetting = true;
+        }
+
+        if (!hasAccess(RESOURCE.PROFILE, ACTION.READ)) {
+          $('#liPassword').attr('style', "display:none");
+          if (path == '/setting') {
+            $location.path('/no_access');
+          }
+        }
+        else {
+          isShowSetting = true;
+        }
+
+        if (!isShowSetting) {
+          $('#liAllSettings').attr('style', "display:none");
+        }
+      }
 
       $scope.$on('$routeChangeSuccess', function (angularEvent, current, previous) {
         var path = current.$$route ? current.$$route.originalPath : '/dashboard';
 
-        if ($scope.currAccountPolicies) {
-          if (!hasAccess($scope.currAccountPolicies, '/dashboard', 'read')) {
-            $('#liDashBoard').attr('style', "display:none");
-            if (path == '/dashboard') {
-              window.location.href = '403.html';
-            }
-          }
-
-          //$('#liProductKey').attr('style', "display:none");
-          //$('#liPackageManage').attr('style', "display:none");
-          //$('#liLogistics').attr('style', "display:none");
-          //$('#liAllCharts').attr('style', "display:none");
-          //$('#liAllSettings').attr('style', "display:none");
-          //$('#liProductBase').attr('style', "display:none");
-          //$('#liMessage').attr('style', "display:none");
-          //$('#liDevice').attr('style', "display:none");
-          //$('#liAccount').attr('style', "display:none");
-          //$('#liGroup').attr('style', "display:none");
-          //$('#liPassword').attr('style', "display:none");
+        if ($scope.currAccountAllPermissions) {
+          ApplyAccess(path);
         }
         else {
-          $scope.$on('accountPolicies-ready', function (data) {
-
-
+          $scope.$on('accountPermissions-ready', function (data) {
+            ApplyAccess(path);
           });
         }
       });

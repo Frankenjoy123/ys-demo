@@ -117,10 +117,12 @@
                                             <label class="col-md-2"><i class="fa fa-fw fa-dashboard "></i>&nbsp;<strong>仪表台</strong></label>
 
                                             <div class="col-md-10">
-                                                <label class="form-checkbox form-icon form-primary form-text"><input
+                                                <label class="form-checkbox form-icon form-primary form-text" ng-class="{ 'active' : accountPermission.dashBoardRead}"><input
                                                         type="checkbox" ng-true-value="true"
                                                         ng-false-value="false"
-                                                        ng-model="accountPermission.dashBoardRead">查看</label>
+                                                        ng-model="accountPermission.dashBoardRead"
+                                                        ng-click="account.auth.authDashBoardRead()"
+                                                        ng-disabled="account.auth.disableAll">查看</label>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -128,14 +130,18 @@
                                                     class="fa fa-fw fa-tags"></i>&nbsp;<strong>产品码</strong></label>
 
                                             <div class="col-md-10">
-                                                <label class="form-checkbox form-icon form-primary form-text"><input
+                                                <label class="form-checkbox form-icon form-primary form-text" ng-class="{ 'active' : accountPermission.productKeyRead}"><input
                                                         type="checkbox" ng-true-value="true"
                                                         ng-false-value="false"
-                                                        ng-model="accountPermission.productKeyRead">查看</label>
-                                                <label class="form-checkbox form-icon form-success form-text"><input
+                                                        ng-model="accountPermission.productKeyRead"
+                                                        ng-click="account.auth.authProductKeyRead()"
+                                                        ng-disabled="account.auth.disableAll">查看</label>
+                                                <label class="form-checkbox form-icon form-success form-text" ng-class="{ 'active' : accountPermission.productKeyMng}"><input
                                                         type="checkbox" ng-true-value="true"
                                                         ng-false-value="false"
-                                                        ng-model="accountPermission.productKeyMng">管理</label>
+                                                        ng-model="accountPermission.productKeyMng"
+                                                        ng-click="account.auth.authProductKeyMng()"
+                                                        ng-disabled="account.auth.disableAll">管理</label>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -143,12 +149,16 @@
                                                     class="fa fa-fw fa-gift"></i>&nbsp;<strong>包装</strong></label>
 
                                             <div class="col-md-10">
-                                                <label class="form-checkbox form-icon form-primary form-text"><input
+                                                <label class="form-checkbox form-icon form-primary form-text" ng-class="{ 'active' : accountPermission.packageRead}"><input
                                                         type="checkbox" ng-true-value="true"
-                                                        ng-false-value="false" ng-model="accountPermission.packageRead">查看</label>
-                                                <label class="form-checkbox form-icon form-success form-text"><input
+                                                        ng-false-value="false" ng-model="accountPermission.packageRead"
+                                                        ng-click="account.auth.authPackageRead()"
+                                                        ng-disabled="account.auth.disableAll">查看</label>
+                                                <label class="form-checkbox form-icon form-success form-text" ng-class="{ 'active' : accountPermission.packageMng}"><input
                                                         type="checkbox" ng-true-value="true"
-                                                        ng-false-value="false" ng-model="accountPermission.packageMng">管理</label>
+                                                        ng-false-value="false" ng-model="accountPermission.packageMng"
+                                                        ng-click="account.auth.authPackageMng()"
+                                                        ng-disabled="account.auth.disableAll">管理</label>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -156,43 +166,54 @@
                                                     class="fa fa-fw fa-truck"></i>&nbsp;<strong>物流</strong></label>
 
                                             <div class="col-md-10">
-                                                <label class="form-checkbox form-icon form-primary form-text"><input
+                                                <label class="form-checkbox form-icon form-primary form-text" ng-class="{ 'active' : accountPermission.logisticsRead}"><input
                                                         type="checkbox" ng-true-value="true"
                                                         ng-false-value="false"
-                                                        ng-model="accountPermission.logisticsRead">查看</label>
-                                                <label class="form-checkbox form-icon form-success form-text"><input
+                                                        ng-model="accountPermission.logisticsRead"
+                                                        ng-click="account.auth.authLogisticsRead()"
+                                                        ng-disabled="account.auth.disableAll">查看</label>
+                                                <label class="form-checkbox form-icon form-success form-text" ng-class="{ 'active' : accountPermission.logisticsMng}"><input
                                                         type="checkbox" ng-true-value="true"
                                                         ng-false-value="false"
-                                                        ng-model="accountPermission.logisticsMng">管理</label>
+                                                        ng-model="accountPermission.logisticsMng"
+                                                        ng-click="account.auth.authLogisticsMng()"
+                                                        ng-disabled="account.auth.disableAll">管理</label>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-md-2"><i class="fa fa-fw fa-bar-chart"></i>&nbsp;<strong>报表</strong></label>
 
                                             <div class="col-md-10">
-                                                <label class="form-checkbox form-icon form-primary form-text"><input
+                                                <label class="form-checkbox form-icon form-primary form-text" ng-class="{ 'active' : accountPermission.reportRead}"><input
                                                         type="checkbox" ng-true-value="true"
                                                         ng-false-value="false"
-                                                        ng-model="accountPermission.reportRead">查看</label>
+                                                        ng-model="accountPermission.reportRead"
+                                                        ng-click="account.auth.authReportRead()"
+                                                        ng-disabled="account.auth.disableAll">查看</label>
                                             </div>
                                         </div>
 
                                         <div class="form-group">
                                             <label class="col-md-2"><i
                                                     class="fa fa-fw fa-cogs"></i>&nbsp;<strong>设置</strong></label>
+
                                             <div class="col-md-offset-2 form-inline" style="margin-top: 6px">
                                                 <div class="row">
                                                     <label class="col-md-2">产品</label>
 
                                                     <div class="col-md-10">
-                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                        <label class="form-checkbox form-icon form-primary form-text" ng-class="{ 'active' : accountPermission.productRead}"><input
                                                                 type="checkbox" ng-true-value="true"
                                                                 ng-false-value="false"
-                                                                ng-model="accountPermission.productRead">查看</label>
-                                                        <label class="form-checkbox form-icon form-success form-text"><input
+                                                                ng-model="accountPermission.productRead"
+                                                                ng-click="account.auth.authProductRead()"
+                                                                ng-disabled="account.auth.disableAll">查看</label>
+                                                        <label class="form-checkbox form-icon form-success form-text" ng-class="{ 'active' : accountPermission.productMng}"><input
                                                                 type="checkbox" ng-true-value="true"
                                                                 ng-false-value="false"
-                                                                ng-model="accountPermission.productMng">管理</label>
+                                                                ng-model="accountPermission.productMng"
+                                                                ng-click="account.auth.authProductMng()"
+                                                                ng-disabled="account.auth.disableAll">管理</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -201,14 +222,18 @@
                                                     <label class="col-md-2">消息</label>
 
                                                     <div class="col-md-10">
-                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                        <label class="form-checkbox form-icon form-primary form-text" ng-class="{ 'active' : accountPermission.msgRead}"><input
                                                                 type="checkbox" ng-true-value="true"
                                                                 ng-false-value="false"
-                                                                ng-model="accountPermission.msgRead">查看</label>
-                                                        <label class="form-checkbox form-icon form-success form-text"><input
+                                                                ng-model="accountPermission.msgRead"
+                                                                ng-click="account.auth.authMsgRead()"
+                                                                ng-disabled="account.auth.disableAll">查看</label>
+                                                        <label class="form-checkbox form-icon form-success form-text" ng-class="{ 'active' : accountPermission.msgMng}"><input
                                                                 type="checkbox" ng-true-value="true"
                                                                 ng-false-value="false"
-                                                                ng-model="accountPermission.msgMng">管理</label>
+                                                                ng-model="accountPermission.msgMng"
+                                                                ng-click="account.auth.authMsgMng()"
+                                                                ng-disabled="account.auth.disableAll">管理</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -217,14 +242,18 @@
                                                     <label class="col-md-2">设备</label>
 
                                                     <div class="col-md-10">
-                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                        <label class="form-checkbox form-icon form-primary form-text" ng-class="{ 'active' : accountPermission.deviceRead}"><input
                                                                 type="checkbox" ng-true-value="true"
                                                                 ng-false-value="false"
-                                                                ng-model="accountPermission.deviceRead">查看</label>
-                                                        <label class="form-checkbox form-icon form-success form-text"><input
+                                                                ng-model="accountPermission.deviceRead"
+                                                                ng-click="account.auth.authDeviceRead()"
+                                                                ng-disabled="account.auth.disableAll">查看</label>
+                                                        <label class="form-checkbox form-icon form-success form-text" ng-class="{ 'active' : accountPermission.deviceMng}"><input
                                                                 type="checkbox" ng-true-value="true"
                                                                 ng-false-value="false"
-                                                                ng-model="accountPermission.deviceMng">管理</label>
+                                                                ng-model="accountPermission.deviceMng"
+                                                                ng-click="account.auth.authDeviceMng()"
+                                                                ng-disabled="account.auth.disableAll">管理</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -233,14 +262,18 @@
                                                     <label class="col-md-2">账号</label>
 
                                                     <div class="col-md-10">
-                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                        <label class="form-checkbox form-icon form-primary form-text" ng-class="{ 'active' : accountPermission.accountRead}"><input
                                                                 type="checkbox" ng-true-value="true"
                                                                 ng-false-value="false"
-                                                                ng-model="accountPermission.accountRead">查看</label>
-                                                        <label class="form-checkbox form-icon form-success form-text"><input
+                                                                ng-model="accountPermission.accountRead"
+                                                                ng-click="account.auth.authAccountRead()"
+                                                                ng-disabled="account.auth.disableAll">查看</label>
+                                                        <label class="form-checkbox form-icon form-success form-text" ng-class="{ 'active' : accountPermission.accountMng}"><input
                                                                 type="checkbox" ng-true-value="true"
                                                                 ng-false-value="false"
-                                                                ng-model="accountPermission.accountMng">管理</label>
+                                                                ng-model="accountPermission.accountMng"
+                                                                ng-click="account.auth.authAccountMng()"
+                                                                ng-disabled="account.auth.disableAll">管理</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -249,14 +282,18 @@
                                                     <label class="col-md-2">账号组</label>
 
                                                     <div class="col-md-10">
-                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                        <label class="form-checkbox form-icon form-primary form-text" ng-class="{ 'active' : accountPermission.groupRead}"><input
                                                                 type="checkbox" ng-true-value="true"
                                                                 ng-false-value="false"
-                                                                ng-model="accountPermission.groupRead">查看</label>
-                                                        <label class="form-checkbox form-icon form-success form-text"><input
+                                                                ng-model="accountPermission.groupRead"
+                                                                ng-click="account.auth.authGroupRead()"
+                                                                ng-disabled="account.auth.disableAll">查看</label>
+                                                        <label class="form-checkbox form-icon form-success form-text" ng-class="{ 'active' : accountPermission.groupMng}"><input
                                                                 type="checkbox" ng-true-value="true"
                                                                 ng-false-value="false"
-                                                                ng-model="accountPermission.groupMng">管理</label>
+                                                                ng-model="accountPermission.groupMng"
+                                                                ng-click="account.auth.authGroupMng()"
+                                                                ng-disabled="account.auth.disableAll">管理</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -265,10 +302,12 @@
                                                     <label class="col-md-2">密码</label>
 
                                                     <div class="col-md-10">
-                                                        <label class="form-checkbox form-icon form-primary form-text"><input
+                                                        <label class="form-checkbox form-icon form-primary form-text" ng-class="{ 'active' : accountPermission.passwordRead}"><input
                                                                 type="checkbox" ng-true-value="true"
                                                                 ng-false-value="false"
-                                                                ng-model="accountPermission.passwordRead">查看</label>
+                                                                ng-model="accountPermission.passwordRead"
+                                                                ng-click="account.auth.authPasswordRead()"
+                                                                ng-disabled="account.auth.disableAll">查看</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -277,10 +316,6 @@
                                 </div>
                             </div>
                             <div class="col-md-12 text-center">
-                                <button type="button" class="btn btn-primary btn-labeled fa fa-user"
-                                        ng-click="account.auth.authAccount()">授权
-                                </button>
-                                &nbsp;<i class="fa fa-spinner fa-lg" ng-show="account.spinnerShow"></i>
                                 <button type="button" class="btn btn-info btn-labeled fa fa-close"
                                         ng-click="account.auth.hideAuthAccountModal()">
                                     取消
@@ -334,7 +369,7 @@
         </div>
 
         <div class="animated slideInRight">
-            <div class="col-md-12 pull-left" style="padding: 20px 20px;">
+            <div class="col-md-12 pull-left" style="padding: 20px 20px;" ng-show="accountButtonShow">
                 <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus"
                         ng-click="account.create.showCreateAccountModal()">创建账号
                 </button>
@@ -351,7 +386,7 @@
                         <th data-sort-field="email">邮箱</th>
                         <th data-sort-field="phone">电话</th>
                         <th data-sort-field="createdDateTime">创建时间</th>
-                        <th class="col-xs-1">操作</th>
+                        <th class="col-xs-1" ng-show="accountButtonShow">操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -379,7 +414,7 @@
                         <td>
                             <span>{{utils.formatDateString(a.created_datetime)}}</span>
                         </td>
-                        <td>
+                        <td ng-show="accountButtonShow">
                             <button type="button" class="btn btn-success fa fa-user-secret"
                                     ng-click="account.auth.showAuthAccountModal(a.id)">
                             </button>
