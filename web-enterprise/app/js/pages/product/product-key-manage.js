@@ -42,7 +42,8 @@
 
     $scope.cache || ($scope.cache = {});
 
-    $scope.creationPanel = {
+    var creationPanel = $scope.creationPanel = {
+      disableSubmit: true,
       model: {
         productBaseId: 0,
         quantity: 0
@@ -92,6 +93,13 @@
             console.log('[selectedProductBase]', selectedProductBase);
           }
         });
+
+        if (selectedProductBase == null) {
+          creationPanel.disableSubmit = true;
+        }
+        else {
+          creationPanel.disableSubmit = false;
+        }
         this.selectedProductBase = selectedProductBase;
 
         $('#chartProKeyRemain').empty();
