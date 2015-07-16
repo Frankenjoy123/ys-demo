@@ -47,7 +47,6 @@ public class OrganizationController {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationController.class);
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
     public Organization getById(@PathVariable(value = "id") String orgId) {
         if ("current".equals(orgId)) { //get current Organization
             orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
@@ -60,7 +59,6 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
     public Organization getByFilter(@RequestParam(value = "name") String name) {
         OrganizationObject object = organizationDomain.getOrganizationByName(name);
         if (object == null) {
@@ -97,7 +95,6 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "/{id}/{imageKey}", method = RequestMethod.GET)
-//    @PreAuthorize("hasPermission(#id, 'filterByOrg', 'organization:read')")
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") String id,
             @PathVariable(value = "imageKey") String imageKey) {

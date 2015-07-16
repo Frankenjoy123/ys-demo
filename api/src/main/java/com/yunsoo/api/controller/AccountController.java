@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.AccountGroupDomain;
 import com.yunsoo.api.domain.AccountPermissionDomain;
+import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
@@ -44,6 +45,9 @@ public class AccountController {
 
     @Autowired
     private AccountPermissionDomain accountPermissionDomain;
+
+    @Autowired
+    private PermissionDomain permissionDomain;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -304,15 +308,15 @@ public class AccountController {
      * @return
      */
     @RequestMapping(value = "{account_id}/permission", method = RequestMethod.GET)
-    public List<PermissionInstance> getAllPermissionByAccountIdExtend(@PathVariable("account_id") String accountId,
-                                                                      @RequestParam(value = "org_id", required = false) String orgId) {
+    public List<PermissionInstance> getAllPermissionByAccountId(@PathVariable("account_id") String accountId,
+                                                                @RequestParam(value = "org_id", required = false) String orgId) {
         accountId = fixAccountId(accountId); //auto fix current
         orgId = fixOrgId(orgId);
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         checkAccountPermissionRead(currentAccountId, accountId);
         List<PermissionInstance> permissionInstances = accountPermissionDomain.getPermissionsByAccountId(accountId);
         permissionInstances = accountPermissionDomain.filterPermissionsByOrgId(permissionInstances, orgId);
-        return accountPermissionDomain.extendPermissions(permissionInstances);
+        return permissionDomain.extendPermissions(permissionInstances);
     }
 
     //endregion

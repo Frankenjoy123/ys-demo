@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.AccountGroupDomain;
 import com.yunsoo.api.domain.GroupDomain;
 import com.yunsoo.api.domain.GroupPermissionDomain;
+import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.security.TokenAuthenticationService;
@@ -40,6 +41,9 @@ public class GroupController {
 
     @Autowired
     private GroupPermissionDomain groupPermissionDomain;
+
+    @Autowired
+    private PermissionDomain permissionDomain;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -248,7 +252,7 @@ public class GroupController {
     @RequestMapping(value = "{group_id}/permission", method = RequestMethod.GET)
     public List<PermissionInstance> getAllPermissionByGroupId(@PathVariable("group_id") String groupId) {
         findGroupById(groupId);
-        return groupPermissionDomain.getAllGroupPermissions(groupId);
+        return permissionDomain.extendPermissions(groupPermissionDomain.getAllGroupPermissions(groupId));
     }
 
     private String fixOrgId(String orgId) {
