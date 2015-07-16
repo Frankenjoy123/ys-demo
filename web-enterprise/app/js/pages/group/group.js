@@ -44,8 +44,11 @@
     '$timeout',
     '$route',
     'groupService',
-    'dataFilterService',
-    function ($scope, $timeout, $route, groupService, dataFilterService) {
+    'YUNSOO_CONFIG',
+    function ($scope, $timeout, $route, groupService, YUNSOO_CONFIG) {
+
+      var RESOURCE = YUNSOO_CONFIG.PAGE_ACCESS.RESOURCE;
+      var ACTION = YUNSOO_CONFIG.PAGE_ACCESS.ACTION;
 
       var groupDatatable = {
         sortable: {
@@ -71,17 +74,17 @@
         packageMng: '',
         logisticsRead: '',
         logisticsMng: '',
-        tieMaRead: '',
-        saoMaRead: '',
-        monMaRead: '',
-        placeMaRead: '',
+        reportRead: '',
         productRead: '',
         productMng: '',
         msgRead: '',
+        msgMng: '',
         deviceRead: '',
         deviceMng: '',
         accountRead: '',
         accountMng: '',
+        groupRead: '',
+        groupMng: '',
         passwordRead: ''
       };
 
@@ -99,6 +102,120 @@
         groupTable: new $scope.utils.DataTable(groupDatatable),
         curOrgAccounts: '',
         selectAccounts: [],
+        auth: {
+          authGroup: function () {
+            var groupPolicyList = [];
+
+            if (groupPermission.dashBoardRead) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.DASHBOARD + ':' + ACTION.READ
+              });
+            }
+            if (groupPermission.productKeyRead) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.PRODUCTKEY + ':' + ACTION.READ
+              });
+            }
+            if (groupPermission.productKeyMng) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.PRODUCTKEY + ':' + ACTION.MANAGE
+              });
+            }
+            if (groupPermission.packageRead) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.PACKAGE + ':' + ACTION.READ
+              });
+            }
+            if (groupPermission.packageMng) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.PACKAGE + ':' + ACTION.MANAGE
+              });
+            }
+            if (groupPermission.logisticsRead) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.LOGISTICS + ':' + ACTION.READ
+              });
+            }
+            if (groupPermission.logisticsMng) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.LOGISTICS + ':' + ACTION.MANAGE
+              });
+            }
+            if (groupPermission.reportRead) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.REPORT + ':' + ACTION.READ
+              });
+            }
+            if (groupPermission.productRead) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.PRODUCTBASE + ':' + ACTION.READ
+              });
+            }
+            if (groupPermission.productMng) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.PRODUCTBASE + ':' + ACTION.MANAGE
+              });
+            }
+            if (groupPermission.msgRead) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.MESSAGE + ':' + ACTION.READ
+              });
+            }
+            if (groupPermission.msgMng) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.MESSAGE + ':' + ACTION.MANAGE
+              });
+            }
+            if (groupPermission.deviceRead) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.DEVICE + ':' + ACTION.READ
+              });
+            }
+            if (groupPermission.deviceMng) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.DEVICE + ':' + ACTION.MANAGE
+              });
+            }
+            if (groupPermission.accountRead) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.ACCOUNT + ':' + ACTION.READ
+              });
+            }
+            if (groupPermission.accountMng) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.ACCOUNT + ':' + ACTION.MANAGE
+              });
+            }
+            if (groupPermission.groupRead) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.GROUP + ':' + ACTION.READ
+              });
+            }
+            if (groupPermission.groupMng) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.GROUP + ':' + ACTION.MANAGE
+              });
+            }
+            if (groupPermission.passwordRead) {
+              groupPolicyList.push({
+                policy_code: RESOURCE.PROFILE + ':' + ACTION.READ
+              });
+            }
+
+
+          },
+          showAuthGroupModal: function (id) {
+
+            group.curSelectGroup = id;
+
+            $('#treeMenuModal').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
+              $(this).removeData("bs.modal");
+            });
+          },
+          hideAuthGroupModal: function () {
+            $('#treeMenuModal').modal('hide');
+          }
+        },
         showGroupModal: function () {
           $('#myModal').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
             $(this).removeData("bs.modal");

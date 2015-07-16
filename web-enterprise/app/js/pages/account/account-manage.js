@@ -30,6 +30,11 @@
         $http.put(url, groups).success(fnSuccess).error(fnError);
 
         return this;
+      },
+      authAccount: function (accountPolicyList, fnSuccess, fnError) {
+
+
+        return this;
       }
     };
   }]);
@@ -38,9 +43,13 @@
     '$scope',
     '$timeout',
     'accountManageService',
-    function ($scope, $timeout, accountManageService) {
+    'YUNSOO_CONFIG',
+    function ($scope, $timeout, accountManageService, YUNSOO_CONFIG) {
 
-      $scope.accountPermission = {
+      var RESOURCE = YUNSOO_CONFIG.PAGE_ACCESS.RESOURCE;
+      var ACTION = YUNSOO_CONFIG.PAGE_ACCESS.ACTION;
+
+      var accountPermission = $scope.accountPermission = {
         dashBoardRead: '',
         productKeyRead: '',
         productKeyMng: '',
@@ -48,17 +57,17 @@
         packageMng: '',
         logisticsRead: '',
         logisticsMng: '',
-        tieMaRead: '',
-        saoMaRead: '',
-        monMaRead: '',
-        placeMaRead: '',
+        reportRead: '',
         productRead: '',
         productMng: '',
         msgRead: '',
+        msgMng: '',
         deviceRead: '',
         deviceMng: '',
         accountRead: '',
         accountMng: '',
+        groupRead: '',
+        groupMng: '',
         passwordRead: ''
       };
 
@@ -237,6 +246,116 @@
         },
         auth: {
           authAccount: function () {
+            var accountPolicyList = [];
+
+            if (accountPermission.dashBoardRead) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.DASHBOARD + ':' + ACTION.READ
+              });
+            }
+            if (accountPermission.productKeyRead) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.PRODUCTKEY + ':' + ACTION.READ
+              });
+            }
+            if (accountPermission.productKeyMng) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.PRODUCTKEY + ':' + ACTION.MANAGE
+              });
+            }
+            if (accountPermission.packageRead) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.PACKAGE + ':' + ACTION.READ
+              });
+            }
+            if (accountPermission.packageMng) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.PACKAGE + ':' + ACTION.MANAGE
+              });
+            }
+            if (accountPermission.logisticsRead) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.LOGISTICS + ':' + ACTION.READ
+              });
+            }
+            if (accountPermission.logisticsMng) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.LOGISTICS + ':' + ACTION.MANAGE
+              });
+            }
+            if (accountPermission.reportRead) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.REPORT + ':' + ACTION.READ
+              });
+            }
+            if (accountPermission.productRead) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.PRODUCTBASE + ':' + ACTION.READ
+              });
+            }
+            if (accountPermission.productMng) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.PRODUCTBASE + ':' + ACTION.MANAGE
+              });
+            }
+            if (accountPermission.msgRead) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.MESSAGE + ':' + ACTION.READ
+              });
+            }
+            if (accountPermission.msgMng) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.MESSAGE + ':' + ACTION.MANAGE
+              });
+            }
+            if (accountPermission.deviceRead) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.DEVICE + ':' + ACTION.READ
+              });
+            }
+            if (accountPermission.deviceMng) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.DEVICE + ':' + ACTION.MANAGE
+              });
+            }
+            if (accountPermission.accountRead) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.ACCOUNT + ':' + ACTION.READ
+              });
+            }
+            if (accountPermission.accountMng) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.ACCOUNT + ':' + ACTION.MANAGE
+              });
+            }
+            if (accountPermission.groupRead) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.GROUP + ':' + ACTION.READ
+              });
+            }
+            if (accountPermission.groupMng) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.GROUP + ':' + ACTION.MANAGE
+              });
+            }
+            if (accountPermission.passwordRead) {
+              accountPolicyList.push({
+                policy_code: RESOURCE.PROFILE + ':' + ACTION.READ
+              });
+            }
+
+
+          },
+          showAuthAccountModal: function (accountId) {
+
+            account.selectAccount = accountId;
+
+            $('#treeMenuModal').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
+              $(this).removeData("bs.modal");
+            });
+          },
+          hideAuthAccountModal: function () {
+            $('#treeMenuModal').modal('hide');
           }
         },
         assignGroup: {

@@ -22,6 +22,36 @@
       $scope.productKeyQuantitySum = data;
     });
 
+    var Conversion = $scope.Conversion = function (num) {
+      if (isNaN(num)) {
+        return "这不是一个数字";
+      }
+      else {
+        if (num < 0) {
+          return "这是一个负数";
+        }
+        else if ((num >= 0) && (num < 10000)) {
+          return num + "";
+        }
+        else if ((10000 <= num) && (num < 100000000)) {
+          if (num % 10000 == 0) {
+            return num / 10000 + "万"
+          }
+          else {
+            return parseInt(num / 10000) + "万+";
+          }
+        }
+        else if (100000000 <= num) {
+          if (num % 100000000 == 0) {
+            return num / 100000000 + "亿"
+          }
+          else {
+            return parseInt(num / 100000000) + "亿+"
+          }
+        }
+      }
+    }
+
     function showMessages() {
       dashboardService.getUnVerifiedMessages('org_id=' + $scope.context.organization.id + '&status_code_in=created', function (data) {
         var unVerifiedMessages = data;
@@ -37,18 +67,18 @@
           $('#maChart02').data('percent', percent);
           $('#maChart02').circliful();
 
-          $('#maChart02 .circle-info-half').css('padding-top','5px');
+          $('#maChart02 .circle-info-half').css('padding-top', '5px');
         });
       });
     }
 
     function showProductKeyCreditSum(data) {
       $('#maChart04').empty();
-      $('#maChart04').data('text', data.remain);
+      $('#maChart04').data('text', Conversion(data.remain));
       $('#maChart04').data('percent', data.percentage);
       $('#maChart04').circliful();
 
-      $('#maChart04 .circle-info-half').css('padding-top','5px');
+      $('#maChart04 .circle-info-half').css('padding-top', '5px');
     }
 
     $scope.$on('$routeChangeSuccess', function (angularEvent, current, previous) {
@@ -60,10 +90,10 @@
         $('#maChart03').circliful();
         $('#maChart04').circliful();
 
-        $('#maChart01 .circle-info-half').css('padding-top','5px');
-        $('#maChart02 .circle-info-half').css('padding-top','5px');
-        $('#maChart03 .circle-info-half').css('padding-top','5px');
-        $('#maChart04 .circle-info-half').css('padding-top','5px');
+        $('#maChart01 .circle-info-half').css('padding-top', '5px');
+        $('#maChart02 .circle-info-half').css('padding-top', '5px');
+        $('#maChart03 .circle-info-half').css('padding-top', '5px');
+        $('#maChart04 .circle-info-half').css('padding-top', '5px');
 
         if ($scope.context.organization) {
           showMessages();

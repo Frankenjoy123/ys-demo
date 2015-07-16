@@ -118,17 +118,17 @@
     $scope.submit = function () {
 
       if (message.title == '') {
-        $scope.utils.alert('info', '消息标题不能为空');
+        $scope.utils.alert('info', '消息标题不能为空', '#myModal .modal-dialog', false);
         return;
       }
 
       if (message.body == '') {
-        $scope.utils.alert('info', '消息正文不能为空');
+        $scope.utils.alert('info', '消息正文不能为空', '#myModal .modal-dialog', false);
         return;
       }
 
       if (message.link == '') {
-        $scope.utils.alert('info', '链接不能为空');
+        $scope.utils.alert('info', '链接不能为空', '#myModal .modal-dialog', false);
         return;
       }
 
@@ -151,6 +151,10 @@
       $('#myModal').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
         $(this).removeData("bs.modal");
       });
+    };
+
+    $scope.hideModal = function () {
+      $('#myModal').modal('hide');
     };
 
   }]);
