@@ -33,17 +33,19 @@ public class AccountPermissionPolicyController {
     @ResponseStatus(HttpStatus.CREATED)
     public AccountPermissionPolicyObject create(@RequestBody AccountPermissionPolicyObject accountPermissionPolicyObject) {
         AccountPermissionPolicyEntity entity = toAccountPermissionPolicyEntity(accountPermissionPolicyObject);
+        entity.setId(null);
         if (entity.getCreatedDatetime() == null) {
             entity.setCreatedDatetime(DateTime.now());
         }
-        entity.setId(null);
         return toAccountPermissionPolicyObject(accountPermissionPolicyRepository.save(entity));
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") String id) {
-        accountPermissionPolicyRepository.delete(id);
+    public void delete(@RequestParam(value = "account_id") String accountId,
+                       @RequestParam(value = "org_id") String orgId,
+                       @RequestParam(value = "policy_code") String policyCode) {
+        accountPermissionPolicyRepository.deleteByAccountIdAndOrgIdAndPolicyCode(accountId, orgId, policyCode);
     }
 
     private AccountPermissionPolicyObject toAccountPermissionPolicyObject(AccountPermissionPolicyEntity entity) {

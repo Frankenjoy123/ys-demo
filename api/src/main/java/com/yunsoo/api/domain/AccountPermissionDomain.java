@@ -67,8 +67,9 @@ public class AccountPermissionDomain {
         dataAPIClient.delete("accountpermission/{id}", id);
     }
 
-    public void deleteAccountPermissionPolicyById(String id) {
-        dataAPIClient.delete("accountpermissionpolicy/{id}", id);
+    public void deleteAccountPermissionPolicy(String accountId, String orgId, String policyCode) {
+        dataAPIClient.delete("accountpermissionpolicy?account_id={accountId}&org_id={orgId}&policy_code={pCode}",
+                accountId, orgId, policyCode);
     }
 
     /**

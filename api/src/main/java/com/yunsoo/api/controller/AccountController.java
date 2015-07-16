@@ -273,8 +273,8 @@ public class AccountController {
         findAccountById(accountId);
         AccountPermissionPolicyObject accountPermissionPolicyObject = accountPermissionPolicy.toAccountPermissionPolicyObject();
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-        accountPermissionPolicyObject.setOrgId(fixOrgId(accountPermissionPolicyObject.getOrgId()));
         accountPermissionPolicyObject.setAccountId(accountId);
+        accountPermissionPolicyObject.setOrgId(fixOrgId(accountPermissionPolicyObject.getOrgId()));
         accountPermissionPolicyObject.setCreatedAccountId(currentAccountId);
         accountPermissionPolicyObject.setCreatedDatetime(DateTime.now());
         accountPermissionPolicyObject = accountPermissionDomain.createAccountPermissionPolicy(accountPermissionPolicyObject);
@@ -282,13 +282,15 @@ public class AccountController {
     }
 
     //delete account permission policy
-    @RequestMapping(value = "{account_id}/accountpermissionpolicy/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{account_id}/accountpermissionpolicy", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAccountPermissionPolicy(@PathVariable(value = "account_id") String accountId,
-                                              @PathVariable("id") String id) {
+                                              @RequestParam(value = "org_id", required = false) String orgId,
+                                              @RequestParam(value = "policy_code") String policyCode) {
         accountId = fixAccountId(accountId); //auto fix current
+        orgId = fixOrgId(orgId);
         findAccountById(accountId);
-        accountPermissionDomain.deleteAccountPermissionPolicyById(id);
+        accountPermissionDomain.deleteAccountPermissionPolicy(accountId, orgId, policyCode);
     }
 
     //endregion
