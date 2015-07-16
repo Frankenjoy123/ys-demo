@@ -192,7 +192,8 @@ public class AuthController {
         }
 
         AccountTokenObject accountToken = accountTokenDomain.getByPermanentToken(permanentToken);
-        if (accountToken == null || accountToken.getPermanentTokenExpiresDateTime().isBeforeNow()) {
+        if (accountToken == null
+                || (accountToken.getPermanentTokenExpiresDateTime() != null && accountToken.getPermanentTokenExpiresDateTime().isBeforeNow())) {
             throw new UnauthorizedException("permanent_token invalid");
         }
 
