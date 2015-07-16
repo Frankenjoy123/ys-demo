@@ -33,7 +33,7 @@ public class LogisticsPointController {
     @PreAuthorize("hasPermission(#logisticsPoint, 'logisticspoint:create')")
     public LogisticsPoint create(@RequestBody LogisticsPoint logisticsPoint) {
 
-        if ("current".equals(logisticsPoint.getOrgId())) { //get current Organization
+        if (logisticsPoint.getOrgId() == null || "current".equals(logisticsPoint.getOrgId())) { //get current Organization
             String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
             logisticsPoint.setOrgId(orgId);
         }
@@ -88,7 +88,7 @@ public class LogisticsPointController {
     @PreAuthorize("hasPermission(#logisticsPoint, 'logisticspoint:update')")
     public void patch(@RequestBody LogisticsPoint logisticsPoint) {
 
-        if ("current".equals(logisticsPoint.getOrgId())) { //get current Organization
+        if (logisticsPoint.getOrgId() == null || "current".equals(logisticsPoint.getOrgId())) { //get current Organization
             String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
             logisticsPoint.setOrgId(orgId);
         }

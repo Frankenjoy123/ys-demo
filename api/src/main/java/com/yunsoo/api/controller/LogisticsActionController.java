@@ -33,7 +33,7 @@ public class LogisticsActionController {
     @PreAuthorize("hasPermission(#logisticsAction, 'logisticsaction:create')")
     public LogisticsAction create(@RequestBody LogisticsAction logisticsAction) {
 
-        if ("current".equals(logisticsAction.getOrgId())) { //get current Organization
+        if (logisticsAction.getOrgId() == null || "current".equals(logisticsAction.getOrgId())) { //get current Organization
             String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
             logisticsAction.setOrgId(orgId);
         }
@@ -86,7 +86,7 @@ public class LogisticsActionController {
     @PreAuthorize("hasPermission(#logisticsAction, 'logisticsaction:update')")
     public void patch(@RequestBody LogisticsAction logisticsAction) {
 
-        if ("current".equals(logisticsAction.getOrgId())) { //get current Organization
+        if (logisticsAction.getOrgId() == null || "current".equals(logisticsAction.getOrgId())) { //get current Organization
             String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
             logisticsAction.setOrgId(orgId);
         }
