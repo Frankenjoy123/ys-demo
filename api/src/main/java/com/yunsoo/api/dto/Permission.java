@@ -1,6 +1,7 @@
 package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yunsoo.common.data.object.PermissionObject;
 
 /**
  * Created by  : Lijian
@@ -30,5 +31,21 @@ public class Permission {
 
     public void setActionCode(String actionCode) {
         this.actionCode = actionCode;
+    }
+
+
+    public Permission() {
+    }
+
+    public Permission(String resourceCode, String actionCode) {
+        this.resourceCode = resourceCode;
+        this.actionCode = actionCode;
+    }
+
+    public Permission(PermissionObject permissionObject) {
+        if (permissionObject != null) {
+            this.resourceCode = permissionObject.getResourceCode();
+            this.actionCode = permissionObject.getActionCode();
+        }
     }
 }

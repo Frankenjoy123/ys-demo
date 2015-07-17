@@ -2,6 +2,7 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.AccountPermissionPolicyEntity;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,4 +14,7 @@ import java.util.List;
 public interface AccountPermissionPolicyRepository extends CrudRepository<AccountPermissionPolicyEntity, String> {
 
     List<AccountPermissionPolicyEntity> findByAccountId(String accountId);
+
+    @Transactional
+    void deleteByAccountIdAndOrgIdAndPolicyCode(String accountId, String orgId, String policyCode);
 }

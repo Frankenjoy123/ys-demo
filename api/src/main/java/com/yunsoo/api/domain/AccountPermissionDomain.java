@@ -2,6 +2,7 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.api.dto.PermissionInstance;
 import com.yunsoo.api.object.TPermission;
+import com.yunsoo.api.util.WildcardMatcher;
 import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.AccountPermissionObject;
 import com.yunsoo.common.data.object.AccountPermissionPolicyObject;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Lijian
@@ -68,8 +69,9 @@ public class AccountPermissionDomain {
         dataAPIClient.delete("accountpermission/{id}", id);
     }
 
-    public void deleteAccountPermissionPolicyById(String id) {
-        dataAPIClient.delete("accountpermissionpolicy/{id}", id);
+    public void deleteAccountPermissionPolicy(String accountId, String orgId, String policyCode) {
+        dataAPIClient.delete("accountpermissionpolicy?account_id={accountId}&org_id={orgId}&policy_code={pCode}",
+                accountId, orgId, policyCode);
     }
 
     /**
@@ -78,7 +80,7 @@ public class AccountPermissionDomain {
      * @param accountId accountId
      * @return permissions
      */
-    public List<PermissionInstance> getAllAccountPermissions(String accountId) {
+    public List<PermissionInstance> getPermissionsByAccountId(String accountId) {
         List<PermissionInstance> permissions = new ArrayList<>();
         List<AccountPermissionObject> accountPermissions = getAccountPermissions(accountId);
         List<AccountPermissionPolicyObject> accountPermissionPolicies = getAccountPermissionPolicies(accountId);
@@ -100,8 +102,14 @@ public class AccountPermissionDomain {
         return permissions;
     }
 
+    public List<PermissionInstance> filterPermissionsByOrgId(List<PermissionInstance> permissions, String orgId) {
+        return permissions.stream()
+                .filter(p -> p.getOrgId() != null && (p.getOrgId().equals("*") || p.getOrgId().equals(orgId)))
+                .collect(Collectors.toList());
+    }
+
     public boolean hasPermission(String accountId, TPermission permission) {
-        List<PermissionInstance> permissions = getAllAccountPermissions(accountId);
+        List<PermissionInstance> permissions = getPermissionsByAccountId(accountId);
         if (permissions != null && permissions.size() > 0) {
             String orgId = permission.getOrgId();
             String resourceCode = permission.getResourceCode();
@@ -110,19 +118,17 @@ public class AccountPermissionDomain {
                 return true; //anonymous
             }
             for (PermissionInstance pi : permissions) {
-                boolean isOrgIdMatched = orgId == null || wildcardMatch(pi.getOrgId(), orgId);
+                boolean isOrgIdMatched = (orgId == null || "*".equals(pi.getOrgId()) || orgId.equals(pi.getOrgId()));
                 if (!isOrgIdMatched) {
                     continue; //try next permission;
                 }
-                boolean isResourceMatched = wildcardMatch(pi.getResourceCode(), resourceCode);
-                boolean isActionMatched = wildcardMatch(pi.getActionCode(), actionCode);
+                boolean isResourceMatched = WildcardMatcher.match(pi.getResourceCode(), resourceCode);
+                boolean isActionMatched = WildcardMatcher.match(pi.getActionCode(), actionCode);
                 if (!isResourceMatched || !isActionMatched) {
                     continue; //try next permission;
                 }
-
                 return true; //matched
             }
-
         }
         return false;
     }
@@ -134,13 +140,12 @@ public class AccountPermissionDomain {
     }
 
 
-    /**
-     * @param expression String with wildcard *, example: *, product*
-     * @param target     String must not be null
-     * @return if is match
-     */
-    private boolean wildcardMatch(String expression, String target) {
-        return expression != null && Pattern.compile(expression.replace("*", "[\\w]*")).matcher(target).matches();
-    }
+//    private List<String> filter(String expression, List<String> targets) {
+//        return targets.stream().filter(i -> WildcardMatcher.match(expression, i)).collect(Collectors.toList());
+//    }
+//
+//    private boolean anyMatch(String expression, List<String> targets) {
+//        return targets.stream().anyMatch(i -> WildcardMatcher.match(expression, i));
+//    }
 
 }

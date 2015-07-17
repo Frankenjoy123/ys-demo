@@ -10,15 +10,13 @@
 <!--===================================================-->
 
 <div id="page-content">
-    <div ng-show="deviceTable" class="panel panel-bordered-primary">
+    <div ng-show="device.deviceTable" class="panel panel-bordered-primary">
         <!-- Modal -->
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
              aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title" id="myModalLabel">设备授权</h4>
                     </div>
                     <div class="modal-body">
@@ -29,27 +27,63 @@
                                         <label for="selectAccount">授权账号</label>
 
                                         <select id="selectAccount"
-                                                class="form-control" ng-model="selectAccount" name="selectAccount">
-                                            <option ng-repeat="opt in curOrgAccounts" value="{{opt.id}}">
+                                                class="form-control" ng-model="device.selectAccount" name="selectAccount"
+                                                style="display: inline">
+                                            <option ng-repeat="opt in device.account.curOrgAccounts" value="{{opt.id}}">
                                                 {{opt.last_name}}{{opt.first_name}}
                                             </option>
                                         </select>
+
+                                        <div><i class="fa fa-user-plus" style="color:#579ddb"
+                                                ng-click="device.account.showCreateAccount = !device.account.showCreateAccount"></i>
+                                        </div>
+
+                                        <div class="form" ng-show="device.account.showCreateAccount" id="createForm">
+                                            <div class="form-group" id="divAccountIdentifier">
+                                                <input type="text" class="form-control"
+                                                       ng-model="device.account.accountIdentifier"
+                                                       placeholder="账号标识" name="accountIdentifier">
+                                            </div>
+                                            <div class="form-group" id="divAccountPassword">
+                                                <input type="password" class="form-control"
+                                                       ng-model="device.account.accountPassword"
+                                                       placeholder="账号密码" name="accountPassword">
+                                            </div>
+                                            <div class="form-group" id="divAccountPasswordConfirm">
+                                                <input type="password" class="form-control"
+                                                       ng-model="device.account.accountPasswordConfirm"
+                                                       placeholder="密码确认" name="accountPasswordConfirm">
+                                            </div>
+                                            <div class="form-group text-center">
+                                                <button type="button" class="btn btn-primary"
+                                                        ng-click="device.account.createAccount()" ng-disabled="device.account.createEnabled">创建
+                                                </button>
+                                                &nbsp;<i class="fa fa-spinner fa-lg" ng-show="device.account.spinnerShow"></i>
+                                                <button type="button" class="btn btn-info"
+                                                        ng-click="device.account.cancelAccount()">取消
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="form-group" id="divDeviceName">
                                         <label for="deviceName">设备名称</label>
 
                                         <input type="text" id="deviceName" placeholder="设备名称" name="deviceName"
-                                               class="form-control" ng-model="deviceName"/>
+                                               class="form-control" ng-model="device.deviceName"/>
                                     </div>
                                     <div class="form-group" id="divDeviceComment">
                                         <label for="deviceComment">设备备注</label>
 
                                           <textarea placeholder="设备备注，不超过20字符" id="deviceComment" rows="4"
-                                                    class="form-control" ng-model="deviceComment"></textarea>
+                                                    class="form-control" ng-model="device.deviceComment"></textarea>
                                     </div>
                                     <div class="form-group" style="text-align: center">
                                         <button type="button" class="btn btn-primary btn-labeled fa fa-barcode"
-                                                ng-click="deviceAuth()">生成授权码
+                                                ng-click="device.deviceAuth()">生成
+                                        </button>
+                                        <button type="button" class="btn btn-info btn-labeled fa fa-close"
+                                                ng-click="device.hideDeviceModal()">
+                                            取消
                                         </button>
                                     </div>
                                 </form>
@@ -73,9 +107,8 @@
         </div>
 
         <div class="animated slideInRight">
-            <div class="col-sm-12 pull-left" style="padding: 20px 20px;">
-                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" data-toggle="modal"
-                        data-target="#myModal">授权新设备
+            <div class="col-sm-12 pull-left" style="padding: 20px 20px;" ng-show="deviceButtonShow">
+                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" ng-click="device.showDeviceModal()">授权新设备
                 </button>
             </div>
 
@@ -89,11 +122,11 @@
                         <th data-sort-field="statusCode" class="col-xs-1">状态</th>
                         <th data-sort-field="createdAccountId" class="col-xs-2">授权用户</th>
                         <th data-sort-field="createdDateTime" class="col-xs-2">创建时间</th>
-                        <th class="col-xs-1">操作</th>
+                        <th class="col-xs-1" ng-show="deviceButtonShow">操作</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="m in deviceTable.pageable.data track by m.id" data-id="{{m.id}}">
+                    <tr ng-repeat="m in device.deviceTable.pageable.data track by m.id" data-id="{{m.id}}">
                         <td>{{$index + 1}}</td>
                         <td>{{m.name}}</td>
                         <td>{{m.os}}</td>
@@ -101,17 +134,17 @@
                                 class="label label-success">已授权</span></span></td>
                         <td>{{m.created_account_id}}</td>
                         <td>{{utils.formatDateString(m.created_datetime)}}</td>
-                        <td>
+                        <td ng-show="deviceButtonShow">
                             <!-- Button trigger modal -->
                             <button type="button" class="btn btn-primary btn-labeled fa fa-remove"
-                                    ng-click="cancelDeviceAuth()">
+                                    ng-click="device.cancelDeviceAuth()">
                                 取消授权
                             </button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
-                <div class="pull-right pagination" dt-pageable="deviceTable.pageable">
+                <div class="pull-right pagination" dt-pageable="device.deviceTable.pageable">
                 </div>
             </div>
         </div>

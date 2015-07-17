@@ -79,9 +79,24 @@ public class LogisticsPathController {
             LogisticsBatchPathObject logisticsBatchPathObject = new LogisticsBatchPathObject();
             List<String> allKeys = new ArrayList<String>();
 
+            String deviceCode = "";
+            String actionId = "";
+
             String line = null;
             while ((line = reader.readLine()) != null) {
                 if (StringUtils.isEmpty(line.replaceAll("\\r\\n", ""))) {
+                    continue;
+                }
+
+                if (line.replaceAll("\\r\\n", "").contains("DeviceCode")) {
+                    String[] code = line.split(":");
+                    deviceCode = code[1].trim();
+                    continue;
+                }
+
+                if (line.replaceAll("\\r\\n", "").contains("ActionId")) {
+                    String[] action = line.split(":");
+                    actionId = action[1].trim();
                     continue;
                 }
 
@@ -99,10 +114,10 @@ public class LogisticsPathController {
             logisticsBatchPathObject.setProductKeys(allKeys);
 
             //从上传的文件中获取以下信息
-            logisticsBatchPathObject.setActionId("1");
-            logisticsBatchPathObject.setStartCheckPoint("1");
+            logisticsBatchPathObject.setActionId(actionId);
+            logisticsBatchPathObject.setStartCheckPoint("0");
 
-            dataAPIClient.post("/logisticspath/batchcreate", logisticsBatchPathObject, Long.class);
+            dataAPIClient.post("/logisticspath/batch", logisticsBatchPathObject, Long.class);
 
             productFileObject.setStatus(1);
             productFileDomain.createProductFile(productFileObject);

@@ -558,15 +558,16 @@
     }
 
     function getMonthMaxDay() {
-      var y = this.selYear - 0;
-      var m = this.selMon - 0;
-      if (m == 2) {
-        return y % 4 == 0 ? 29 : 28;
-      } else if (m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12) {
-        return 31;
-      } else {
-        return 30;
+      var year = this.selYear - 0;
+      var month = this.selMon - 1;
+
+      var numDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+      // Update the number of days in Feb of leap year
+      if (year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0)) {
+        numDays[1] = 29;
       }
+
+      return numDays[month];
     };
 
     function getCurrYear() {

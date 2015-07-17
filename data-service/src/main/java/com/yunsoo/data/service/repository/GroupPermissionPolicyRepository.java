@@ -17,4 +17,14 @@ public interface GroupPermissionPolicyRepository extends CrudRepository<GroupPer
 
     @Transactional
     void deleteByGroupId(String groupId);
+
+    @Transactional
+    void deleteByGroupIdAndOrgId(String groupId, String orgId);
+
+    @Transactional
+    void deleteByGroupIdAndPolicyCode(String groupId, String policyCode);
+
+    @Transactional
+    void deleteByGroupIdAndOrgIdAndPolicyCode(String groupId, String orgId, String policyCode);
+
 }

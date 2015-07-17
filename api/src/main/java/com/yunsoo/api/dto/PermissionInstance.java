@@ -24,8 +24,7 @@ public class PermissionInstance extends Permission {
     }
 
     public PermissionInstance(String resourceCode, String actionCode, String orgId) {
-        this.resourceCode = resourceCode;
-        this.actionCode = actionCode;
+        super(resourceCode, actionCode);
         this.orgId = orgId;
     }
 }

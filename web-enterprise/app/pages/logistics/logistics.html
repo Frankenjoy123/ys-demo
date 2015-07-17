@@ -17,8 +17,9 @@
         <div class="panel panel-bordered-primary">
             <div class="panel-heading" ng-click="showDesc = !showDesc">
                 <h3 class="panel-title">使用说明
-                    <div class="pull-right" style="font-size:14px"><i class="fa fa-chevron-down" ng-show="showDesc"></i> <i
-                            class="fa fa-chevron-right" ng-show="!showDesc"></i></div>
+                    <span class="pull-right" style="font-size:14px"><i class="fa fa-chevron-down"
+                                                                       ng-show="showDesc"></i> <i
+                            class="fa fa-chevron-right" ng-show="!showDesc"></i></span>
                 </h3>
             </div>
             <div class="panel-body" ng-show="showDesc">
@@ -31,7 +32,7 @@
             </div>
         </div>
 
-        <div class="panel panel-bordered-primary">
+        <div class="panel panel-bordered-primary" ng-show="logisticsButtonShow">
             <div class="panel-body">
            <span class="btn btn-primary fileinput-button " ng-class="{disabled: disabled}">
                     <i class="glyphicon glyphicon-plus"></i>
