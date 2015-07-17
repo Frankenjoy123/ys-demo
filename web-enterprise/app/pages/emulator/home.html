@@ -44,7 +44,6 @@
             var details = data.details;
             for (var index = 0; index < details.length; index++) {
                 var item = details[index];
-
                 var td1 = $('<td></td>').css("width", "30%").css("word-break","break-all").html(item.key);
                 var td2 = $('<td></td>').css("width", "70%").css("word-break","break-all").html(item.value);
                 var tr = $('<tr></tr>').append(td1).append(td2);

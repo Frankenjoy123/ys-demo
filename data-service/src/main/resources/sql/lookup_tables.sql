@@ -49,40 +49,6 @@ VALUES
   ('deleted', '已删除', 'deleted', TRUE);
 
 
-#permission_resource_lkp
-DROP TABLE IF EXISTS permission_resource_lkp;
-CREATE TABLE permission_resource_lkp
-(
-  code        VARCHAR(100) PRIMARY KEY NOT NULL,
-  name        VARCHAR(100)             NOT NULL,
-  description VARCHAR(255),
-  active      BIT DEFAULT b'1'         NOT NULL
-);
-INSERT INTO permission_resource_lkp (code, name, description, active)
-VALUES
-  ('*', '全部', 'all', TRUE),
-  ('product', '产品', 'product', TRUE),
-  ('productkey', '产品码', 'productkey', TRUE);
-
-
-#permission_action_lkp
-DROP TABLE IF EXISTS permission_action_lkp;
-CREATE TABLE permission_action_lkp
-(
-  code        VARCHAR(20) PRIMARY KEY  NOT NULL,
-  name        VARCHAR(100)             NOT NULL,
-  description VARCHAR(255),
-  active      BIT DEFAULT b'1'         NOT NULL
-);
-INSERT INTO permission_action_lkp (code, name, description, active)
-VALUES
-  ('read', '读取', 'read', TRUE),
-  ('create', '创建', 'create', TRUE),
-  ('modify', '修改', 'modify', TRUE),
-  ('delete', '删除', 'delete', TRUE),
-  ('*', '完全控制', 'full control', TRUE);
-
-
 #org_status_lkp
 DROP TABLE IF EXISTS org_status_lkp;
 CREATE TABLE org_status_lkp
