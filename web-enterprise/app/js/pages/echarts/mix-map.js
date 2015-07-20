@@ -16,7 +16,7 @@
 
     var dataTable = $scope.dataTable = new $scope.utils.DateHelp(getData);
 
-    mixMapService.getLocationCount(dataTable.getDateStr(), getLocationCount, function () {
+    mixMapService.getLocationCount(dataTable.selTimes, getLocationCount, function () {
       //$scope.utils.alert('info', date.getDateStr() + '该日数据不存在');
       var data = {};
       data.data = [];
@@ -25,8 +25,8 @@
       getLocationCount(data);
     });
 
-    function getData(year, mon, day) {
-      mixMapService.getLocationCount(dataTable.getDateStr(year, mon, day), getLocationCount, function () {
+    function getData() {
+      mixMapService.getLocationCount(dataTable.selTimes, getLocationCount, function () {
         //$scope.utils.alert('info', date.getDateStr(year, mon, day) + '该日数据不存在');
         var data1 = {};
         data1.data = [];
