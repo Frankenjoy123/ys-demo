@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface ProductBaseVersionsRepository extends FindOneAndSaveRepository<ProductBaseVersionsEntity, String> {
 
-    List<ProductBaseVersionsEntity> findByproductBaseId(String productBaseId);
+    List<ProductBaseVersionsEntity> findByProductBaseId(String productBaseId);
 
     void delete(String id);
 
