@@ -6,6 +6,7 @@ CHANGE COLUMN status status_code VARCHAR(20) NOT NULL
 AFTER version,
 CHANGE COLUMN org_id org_id VARCHAR(20) NOT NULL
 AFTER status_code,
+CHANGE COLUMN category_id category_id VARCHAR(20) NOT NULL,
 ADD COLUMN description VARCHAR(255) NULL
 AFTER name,
 CHANGE COLUMN barcode barcode VARCHAR(30) NOT NULL

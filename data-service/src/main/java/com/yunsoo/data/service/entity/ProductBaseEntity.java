@@ -31,7 +31,7 @@ public class ProductBaseEntity {
     private String orgId;
 
     @Column(name = "category_id")
-    private Integer categoryId;
+    private String categoryId;
 
     @Column(name = "name")
     private String name;
@@ -101,11 +101,11 @@ public class ProductBaseEntity {
         this.orgId = orgId;
     }
 
-    public Integer getCategoryId() {
+    public String getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Integer categoryId) {
+    public void setCategoryId(String categoryId) {
         this.categoryId = categoryId;
     }
 
