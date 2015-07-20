@@ -4,17 +4,15 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Created by  : Lijian
  * Created on  : 2015/7/9
  * Descriptions:
  */
-//@Entity
-//@Table(name = "product_base_version")
+@Entity
+@Table(name = "product_base_version")
 public class ProductBaseVersionsEntity {
     @Id
     @GeneratedValue(generator = "idGenerator")
