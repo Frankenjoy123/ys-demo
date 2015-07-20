@@ -61,11 +61,11 @@ public class UserLikedProductController {
                 if (productBaseObject != null) {
                     productHashMap.put(userLikedProduct.getBaseProductId(), productBaseObject);
                     userLikedProduct.setProductName(productBaseObject.getName());
-                    userLikedProduct.setComment(productBaseObject.getComment());
+                    userLikedProduct.setComment(productBaseObject.getComments());
                 }
             } else {
                 userLikedProduct.setProductName(productHashMap.get(userLikedProduct.getBaseProductId()).getName());
-                userLikedProduct.setComment(productHashMap.get(userLikedProduct.getBaseProductId()).getComment());
+                userLikedProduct.setComment(productHashMap.get(userLikedProduct.getBaseProductId()).getComments());
             }
         }
 //            if (userLikedProductList == null || userLikedProductList.size() == 0) {

@@ -330,11 +330,11 @@ public class ScanController {
                 if (productBaseObject != null) {
                     productHashMap.put(scanRecord.getBaseProductId(), productBaseObject);
                     scanRecord.setProductName(productBaseObject.getName());
-                    scanRecord.setProductComment(productBaseObject.getComment());
+                    scanRecord.setProductComment(productBaseObject.getComments());
                 }
             } else {
                 scanRecord.setProductName(productHashMap.get(scanRecord.getBaseProductId()).getName());
-                scanRecord.setProductComment(productHashMap.get(scanRecord.getBaseProductId()).getComment());
+                scanRecord.setProductComment(productHashMap.get(scanRecord.getBaseProductId()).getComments());
             }
         }
     }

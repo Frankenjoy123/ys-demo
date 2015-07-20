@@ -97,10 +97,10 @@ public class ProductBaseController {
             p.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
 
         p.setBarcode(productBase.getBarcode());
-        p.setStatus(productBase.getStatusCode());
+        p.setStatusCode(productBase.getStatusCode());
         p.setCategoryId(productBase.getCategoryId());
         p.setChildProductCount(productBase.getChildProductCount());
-        p.setComment(productBase.getComments());
+        p.setComments(productBase.getComments());
         p.setCreatedDateTime(productBase.getCreatedDateTime());
         p.setId(productBase.getId());
         p.setModifiedDateTime(productBase.getModifiedDateTime());
@@ -126,10 +126,10 @@ public class ProductBaseController {
             p.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
 
         p.setBarcode(productBase.getBarcode());
-        p.setStatus(productBase.getStatusCode());
+        p.setStatusCode(productBase.getStatusCode());
         p.setCategoryId(productBase.getCategoryId());
         p.setChildProductCount(productBase.getChildProductCount());
-        p.setComment(productBase.getComments());
+        p.setComments(productBase.getComments());
         p.setCreatedDateTime(productBase.getCreatedDateTime());
         p.setId(productBase.getId());
         p.setModifiedDateTime(productBase.getModifiedDateTime());

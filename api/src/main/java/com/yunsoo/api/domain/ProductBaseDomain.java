@@ -39,14 +39,14 @@ public class ProductBaseDomain {
             return null;
         }
         List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
-        Map<Integer, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
+        Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
         return toProductBase(productBaseObject, productKeyTypes, productCategoryObjectMap);
     }
 
     public List<ProductBase> getAllProductBaseByOrgId(String orgId) {
         ProductBaseObject[] objects = dataAPIClient.get("productbase?org_id={id}", ProductBaseObject[].class, orgId);
         List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
-        Map<Integer, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
+        Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
         return Arrays.stream(objects)
                 .map(p -> toProductBase(p, productKeyTypes, productCategoryObjectMap))
                 .collect((Collectors.toList()));
@@ -54,13 +54,13 @@ public class ProductBaseDomain {
 
     private ProductBase toProductBase(ProductBaseObject productBaseObject,
                                       List<ProductKeyType> productKeyTypes,
-                                      Map<Integer, ProductCategoryObject> productCategoryObjectMap) {
+                                      Map<String, ProductCategoryObject> productCategoryObjectMap) {
         ProductBase productBase = new ProductBase();
         productBase.setId(productBaseObject.getId());
         productBase.setName(productBaseObject.getName());
         productBase.setBarcode(productBaseObject.getBarcode());
-        productBase.setStatusCode(productBaseObject.getStatus());
-        productBase.setComments(productBaseObject.getComment());
+        productBase.setStatusCode(productBaseObject.getStatusCode());
+        productBase.setComments(productBaseObject.getComments());
         productBase.setOrgId(productBaseObject.getOrgId());
         productBase.setShelfLife(productBaseObject.getShelfLife());
         productBase.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
