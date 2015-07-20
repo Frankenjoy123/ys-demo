@@ -24,7 +24,7 @@ public class ProductCategoryController {
 
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ProductCategoryObject getById(@PathVariable(value = "id") Integer id) {
+    public ProductCategoryObject getById(@PathVariable(value = "id") String id) {
         ProductCategoryEntity entity = productCategoryRepository.findOne(id);
         if (entity == null) {
             throw new NotFoundException("product category not found by [id: " + id + "]");
@@ -34,7 +34,7 @@ public class ProductCategoryController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductCategoryObject> getRootProductCategories(
-            @RequestParam(value = "parent_id", required = false) Integer parentId) {
+            @RequestParam(value = "parent_id", required = false) String parentId) {
         List<ProductCategoryEntity> entities = parentId == null
                 ? productCategoryRepository.findAll()
                 : productCategoryRepository.findByParentId(parentId);

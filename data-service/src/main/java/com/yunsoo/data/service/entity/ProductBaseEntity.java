@@ -1,68 +1,71 @@
-package com.yunsoo.common.data.object;
+package com.yunsoo.data.service.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import java.util.List;
+import javax.persistence.*;
 
 /**
- * Created by:   Zhe
- * Created on:   2015/3/13
+ * Created by  : Lijian
+ * Created on  : 2015/7/9
  * Descriptions:
  */
-public class ProductBaseObject {
+@Entity
+@Table(name = "product_base")
+public class ProductBaseEntity {
 
-    @JsonProperty("id")
+    @Id
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
+    @Column(name = "id")
     private String id;
 
-    @JsonProperty("version")
+    @Column(name = "version")
     private String version;
 
-    @JsonProperty("status_code")
+    @Column(name = "status_code")
     private String statusCode;
 
-    @JsonProperty("org_id")
+    @Column(name = "org_id")
     private String orgId;
 
-    @JsonProperty("category_id")
+    @Column(name = "category_id")
     private String categoryId;
 
-    @JsonProperty("name")
+    @Column(name = "name")
     private String name;
 
-    @JsonProperty("description")
+    @Column(name = "description")
     private String description;
 
-    @JsonProperty("barcode")
+    @Column(name = "barcode")
     private String barcode;
 
-    @JsonProperty("product_key_type_codes")
-    private List<String> productKeyTypeCodes;
+    @Column(name = "product_key_type_codes")
+    private String productKeyTypeCodes;
 
-    @JsonProperty("shelf_life")
+    @Column(name = "shelf_life")
     private Integer shelfLife;
 
-    @JsonProperty("shelf_life_interval")
+    @Column(name = "shelf_life_interval")
     private String shelfLifeInterval;
 
-    @JsonProperty("child_product_count")
+    @Column(name = "child_product_count")
     private Integer childProductCount;
 
-    @JsonProperty("comments")
+    @Column(name = "comments")
     private String comments;
 
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("created_datetime")
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
+    @Column(name = "created_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("modified_datetime")
+    @Column(name = "modified_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modifiedDateTime;
 
 
@@ -130,11 +133,11 @@ public class ProductBaseObject {
         this.barcode = barcode;
     }
 
-    public List<String> getProductKeyTypeCodes() {
+    public String getProductKeyTypeCodes() {
         return productKeyTypeCodes;
     }
 
-    public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
+    public void setProductKeyTypeCodes(String productKeyTypeCodes) {
         this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
@@ -170,6 +173,14 @@ public class ProductBaseObject {
         this.comments = comments;
     }
 
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
@@ -185,5 +196,4 @@ public class ProductBaseObject {
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
     }
-
 }

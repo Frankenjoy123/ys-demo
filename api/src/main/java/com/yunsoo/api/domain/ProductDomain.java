@@ -45,7 +45,7 @@ public class ProductDomain {
         ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         product.setProductBaseId(productBaseId);
         product.setBarcode(productBaseObject.getBarcode());
-        product.setComment(productBaseObject.getComment());
+        product.setComment(productBaseObject.getComments());
         product.setName(productBaseObject.getName());
         product.setOrgId(productBaseObject.getOrgId());
 

@@ -3,26 +3,32 @@ package com.yunsoo.api.rabbit.dto.basic;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Created by Zhe on 2015/2/27.
+ * Created by  : Zhe
+ * Created on  : 2015/2/27
+ * Descriptions:
  */
 public class ProductCategory {
     @JsonProperty("id")
-    private int Id;
+    private String id;
+
     @JsonProperty("name")
     private String name;
+
     @JsonProperty("description")
     private String description;
-    @JsonProperty("parent_id")
-    private int parentId;
-    @JsonProperty("active")
-    private boolean active;
 
-    public int getId() {
-        return Id;
+    @JsonProperty("parent_id")
+    private String parentId;
+
+    @JsonProperty("active")
+    private Boolean active;
+
+    public String getId() {
+        return id;
     }
 
-    public void setId(int id) {
-        Id = id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -41,19 +47,19 @@ public class ProductCategory {
         this.description = description;
     }
 
-    public int getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(int parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 }

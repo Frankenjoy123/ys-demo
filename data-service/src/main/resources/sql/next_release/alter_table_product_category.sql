@@ -1,0 +1,3 @@
+ALTER TABLE yunsoo2015DB.product_category
+CHANGE COLUMN id id VARCHAR(20) NOT NULL,
+CHANGE COLUMN parent_id parent_id VARCHAR(20) NULL;

@@ -52,7 +52,7 @@ public class ProductDomain {
         ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         product.setProductBaseId(productBaseId);
         product.setBarcode(productBaseObject.getBarcode());
-        product.setComment(productBaseObject.getComment());
+        product.setComment(productBaseObject.getComments());
         product.setName(productBaseObject.getName());
         product.setOrgId(productBaseObject.getOrgId());
 
@@ -63,7 +63,7 @@ public class ProductDomain {
         return product;
     }
 
-    public ProductCategory getProductCategoryById(Integer id) {
+    public ProductCategory getProductCategoryById(String id) {
         if (id == null) {
             return null;
         }
@@ -112,8 +112,8 @@ public class ProductDomain {
         productBase.setId(productBaseObject.getId());
         productBase.setName(productBaseObject.getName());
         productBase.setBarcode(productBaseObject.getBarcode());
-        productBase.setStatus(productBaseObject.getStatus());
-        productBase.setComment(productBaseObject.getComment());
+        productBase.setStatus(productBaseObject.getStatusCode());
+        productBase.setComment(productBaseObject.getComments());
         productBase.setOrgId(productBaseObject.getOrgId());
         productBase.setShelfLife(productBaseObject.getShelfLife());
         productBase.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());

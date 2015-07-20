@@ -35,12 +35,12 @@ public class ProductCategoryDomain {
     }
 
     @Cacheable(value = "api-domain", key = "'ProductCategoryDomain.getProductCategoryMap'")
-    public Map<Integer, ProductCategoryObject> getProductCategoryMap() {
+    public Map<String, ProductCategoryObject> getProductCategoryMap() {
         //LOGGER.debug("cache missed [name: productcategory, key: 'map']");
         return getProductCategories().stream().collect(Collectors.toMap(ProductCategoryObject::getId, c -> c));
     }
 
-    public ProductCategoryObject getById(Integer id) {
+    public ProductCategoryObject getById(String id) {
         if (id == null) {
             return null;
         }
@@ -51,7 +51,7 @@ public class ProductCategoryDomain {
         }
     }
 
-    public ProductCategoryObject getById(Integer id, Map<Integer, ProductCategoryObject> map) {
+    public ProductCategoryObject getById(String id, Map<String, ProductCategoryObject> map) {
         if (map != null && map.containsKey(id)) {
             return map.get(id);
         } else {

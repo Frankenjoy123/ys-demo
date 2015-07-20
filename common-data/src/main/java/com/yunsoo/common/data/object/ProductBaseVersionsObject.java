@@ -10,14 +10,17 @@ import org.joda.time.DateTime;
 import java.util.List;
 
 /**
- * Created by:   Zhe
- * Created on:   2015/3/13
+ * Created by  : Lijian
+ * Created on  : 2015/7/20
  * Descriptions:
  */
-public class ProductBaseObject {
+public class ProductBaseVersionsObject {
 
     @JsonProperty("id")
     private String id;
+
+    @JsonProperty("product_base_id")
+    private String productBaseId;
 
     @JsonProperty("version")
     private String version;
@@ -55,6 +58,9 @@ public class ProductBaseObject {
     @JsonProperty("comments")
     private String comments;
 
+    @JsonProperty("review_comments")
+    private String reviewComments;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
@@ -72,6 +78,14 @@ public class ProductBaseObject {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getProductBaseId() {
+        return productBaseId;
+    }
+
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
     public String getVersion() {
@@ -170,6 +184,14 @@ public class ProductBaseObject {
         this.comments = comments;
     }
 
+    public String getReviewComments() {
+        return reviewComments;
+    }
+
+    public void setReviewComments(String reviewComments) {
+        this.reviewComments = reviewComments;
+    }
+
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
@@ -185,5 +207,4 @@ public class ProductBaseObject {
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
     }
-
 }
