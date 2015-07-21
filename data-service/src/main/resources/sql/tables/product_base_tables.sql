@@ -45,4 +45,5 @@ CREATE TABLE product_base_versions
   modified_account_id    VARCHAR(20),
   modified_datetime      DATETIME
 );
+CREATE UNIQUE INDEX product_base_id_version ON product_base_versions (product_base_id, version);
 

@@ -29,21 +29,36 @@ public class ProductBaseVersionsController {
     @Autowired
     private ProductBaseRepository productBaseRepository;
 
+    @RequestMapping(value = "{product_base_id}/{version}", method = RequestMethod.GET)
+    public ProductBaseVersionsObject getByProductBaseIdAndVersion(
+            @PathVariable(value = "product_base_id") String productBaseId,
+            @PathVariable(value = "version") String version) {
+        List<ProductBaseVersionsEntity> entities = productBaseVersionsRepository.findByProductBaseIdAndVersion(productBaseId, version);
+        if (entities.size() == 0) {
+            throw new NotFoundException("product base not found on the specific version");
+        }
+        return toProductBaseVersionsObject(entities.get(0));
+    }
+
     //query
-    @RequestMapping(value = "{productBaseId}", method = RequestMethod.GET)
-    public List<ProductBaseVersionsObject> getByProductBaseIdAndVersoin(@PathVariable(value = "product_base_id") String productBaseId) {
+    @RequestMapping(value = "{product_base_id}", method = RequestMethod.GET)
+    public List<ProductBaseVersionsObject> getByProductBaseIdAndVersion(@PathVariable(value = "product_base_id") String productBaseId) {
         return productBaseVersionsRepository.findByProductBaseId(productBaseId).stream()
                 .map(this::toProductBaseVersionsObject)
                 .collect(Collectors.toList());
     }
 
     //create
-    @RequestMapping(value = "{productBaseId}", method = RequestMethod.POST)
+    @RequestMapping(value = "{product_base_id}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ProductBaseVersionsObject create(@PathVariable(value = "product_base_id") String productBaseId,
                                             @RequestBody @Valid ProductBaseVersionsObject productBaseVersionsObject) {
+        if (productBaseRepository.findOne(productBaseId) == null) {
+            throw new NotFoundException("product base not found by id");
+        }
         ProductBaseVersionsEntity entity = toProductBaseVersionsEntity(productBaseVersionsObject);
         entity.setId(null);
+        entity.setProductBaseId(productBaseId);
         if (entity.getCreatedDateTime() == null) {
             entity.setCreatedDateTime(DateTime.now());
         }
@@ -54,29 +69,33 @@ public class ProductBaseVersionsController {
     }
 
     //update
-    @RequestMapping(value = "{productBaseId}/{version}", method = RequestMethod.PUT)
-    public void updateByProductBaseIdAndVersoin(@PathVariable(value = "product_base_id") String productBaseId,
+    @RequestMapping(value = "{product_base_id}/{version}", method = RequestMethod.PUT)
+    public void updateByProductBaseIdAndVersion(@PathVariable(value = "product_base_id") String productBaseId,
                                                 @PathVariable(value = "version") String version,
                                                 @RequestBody ProductBaseVersionsObject productBaseVersionsObject) {
         List<ProductBaseVersionsEntity> productBaseVersionsEntities = productBaseVersionsRepository.findByProductBaseIdAndVersion(productBaseId, version);
         if (productBaseVersionsEntities.size() == 0) {
-            throw new NotFoundException("product base version object not found.");
+            throw new NotFoundException("product base not found on the specific version");
         }
+        ProductBaseVersionsEntity oldEntity = productBaseVersionsEntities.get(0);
         ProductBaseVersionsEntity entity = toProductBaseVersionsEntity(productBaseVersionsObject);
-        entity.setCreatedAccountId(productBaseVersionsEntities.get(0).getCreatedAccountId());
-        entity.setCreatedDateTime(productBaseVersionsEntities.get(0).getCreatedDateTime());
+        entity.setId(oldEntity.getId());
+        entity.setProductBaseId(productBaseId);
+        entity.setVersion(version);
+        entity.setOrgId(oldEntity.getOrgId());
+        entity.setCreatedAccountId(oldEntity.getCreatedAccountId());
+        entity.setCreatedDateTime(oldEntity.getCreatedDateTime());
         if (entity.getModifiedDateTime() == null) {
             entity.setModifiedDateTime(DateTime.now());
         }
         productBaseVersionsRepository.save(entity);
-
     }
 
     //delete
-    @RequestMapping(value = "", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{product_base_id}/{version}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteByProductBaseIdAndVersoin(@RequestParam(value = "product_base_id") String productBaseId,
-                                                @RequestParam(value = "version") String version) {
+    public void deleteByProductBaseIdAndVersion(@PathVariable(value = "product_base_id") String productBaseId,
+                                                @PathVariable(value = "version") String version) {
         productBaseVersionsRepository.deleteByProductBaseIdAndVersion(productBaseId, version);
     }
 
@@ -130,6 +149,7 @@ public class ProductBaseVersionsController {
         entity.setShelfLifeInterval(object.getShelfLifeInterval());
         entity.setChildProductCount(object.getChildProductCount());
         entity.setComments(object.getComments());
+        entity.setReviewComments(object.getReviewComments());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
