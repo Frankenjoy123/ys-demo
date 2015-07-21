@@ -3,13 +3,14 @@ package com.yunsoo.data.api.controller;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
-import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.config.AmazonSetting;
+import com.yunsoo.data.service.entity.ProductBaseEntity;
+import com.yunsoo.data.service.repository.ProductBaseRepository;
 import com.yunsoo.data.service.service.ProductBaseService;
 import com.yunsoo.data.service.service.contract.ProductBase;
 import org.joda.time.DateTime;
@@ -17,9 +18,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,21 +36,54 @@ import java.util.stream.Collectors;
 public class ProductBaseController {
 
     @Autowired
+    private ProductBaseRepository productBaseRepository;
+
+    @Autowired
     private ProductBaseService productBaseService;
+
     @Autowired
     private AmazonSetting amazonSetting;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductBaseObject getById(@PathVariable(value = "id") String id) {
-        ProductBase productBase = productBaseService.getById(id);
-        if (productBase == null) {
-            throw new NotFoundException("Product");
+        ProductBaseEntity entity = productBaseRepository.findOne(id);
+        if (entity == null || entity.isDeleted()) {
+            throw new NotFoundException("product base not found by [id:" + id + "]");
         }
-        ProductBaseObject productBaseObject = new ProductBaseObject();
-        BeanUtils.copyProperties(productBase, productBaseObject);
-        return productBaseObject;
+        return toProductBaseObject(entity);
     }
 
+    //query
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<ProductBaseObject> getByFilter(@RequestParam(value = "org_id") String orgId) {
+        return productBaseRepository.findByOrgId(orgId).stream()
+                .filter(p -> !p.isDeleted())
+                .map(this::toProductBaseObject)
+                .collect(Collectors.toList());
+    }
+
+    //create
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public String create(@RequestBody ProductBaseObject productBase) {
+        productBase.setCreatedDateTime(DateTime.now());
+        ProductBase p = new ProductBase();
+        BeanUtils.copyProperties(productBase, p);
+        return productBaseService.save(p);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable(value = "id") String id) {
+        ProductBaseEntity entity = productBaseRepository.findOne(id);
+        if (entity != null && !entity.isDeleted()) {
+            entity.setDeleted(true);
+            productBaseRepository.save(entity);
+        }
+    }
+
+
+    //todo
     @RequestMapping(value = "/{id}/{client}", method = RequestMethod.GET)
     public ResponseEntity getThumbnail(
             @PathVariable(value = "id") String id,
@@ -79,6 +115,7 @@ public class ProductBaseController {
         }
     }
 
+    //todo
     @RequestMapping(value = "/{id}/{key}/json", method = RequestMethod.GET)
     public ResponseEntity getNotes(
             @PathVariable(value = "id") String id,
@@ -110,29 +147,7 @@ public class ProductBaseController {
     }
 
 
-    //query
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductBaseObject> getByFilter(
-            @RequestParam(value = "org_id", required = false) String orgId,
-            @RequestParam(value = "category_id", required = false) Integer categoryId) {
-        return productBaseService.getByFilter(orgId, categoryId, LookupCodes.ProductBaseStatus.CUSTOMER_INVISIBLE_STATUS).stream()
-                .map(p -> {
-                    ProductBaseObject o = new ProductBaseObject();
-                    BeanUtils.copyProperties(p, o);
-                    return o;
-                }).collect(Collectors.toList());
-    }
-
-    //create
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public String create(@RequestBody ProductBaseObject productBase) {
-        productBase.setCreatedDateTime(DateTime.now());
-        ProductBase p = new ProductBase();
-        BeanUtils.copyProperties(productBase, p);
-        return productBaseService.save(p);
-    }
-
+    //todo
     //patch update, we don't provide functions like update with set null properties.
     @RequestMapping(value = "", method = RequestMethod.PATCH)
     public void patchUpdate(@RequestBody ProductBaseObject productBase) {
@@ -142,11 +157,52 @@ public class ProductBaseController {
         productBaseService.patchUpdate(p);
     }
 
-    //delete
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(value = "id") String id) {
-        productBaseService.deactivate(id);
+
+    private ProductBaseObject toProductBaseObject(ProductBaseEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        ProductBaseObject object = new ProductBaseObject();
+        object.setId(entity.getId());
+        object.setVersion(entity.getVersion());
+        object.setOrgId(entity.getOrgId());
+        object.setStatusCode(entity.getStatusCode());
+        object.setOrgId(entity.getOrgId());
+        object.setCategoryId(entity.getCategoryId());
+        object.setName(entity.getName());
+        object.setDescription(entity.getDescription());
+        object.setBarcode(entity.getBarcode());
+        object.setProductKeyTypeCodes(Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getProductKeyTypeCodes())));
+        object.setShelfLife(entity.getShelfLife());
+        object.setShelfLifeInterval(entity.getShelfLifeInterval());
+        object.setChildProductCount(entity.getChildProductCount());
+        object.setComments(entity.getComments());
+        object.setCreatedDateTime(entity.getCreatedDateTime());
+        object.setModifiedDateTime(entity.getModifiedDateTime());
+        return object;
     }
 
+    private ProductBaseEntity toProductBaseObject(ProductBaseObject object) {
+        if (object == null) {
+            return null;
+        }
+        ProductBaseEntity entity = new ProductBaseEntity();
+        entity.setId(object.getId());
+        entity.setVersion(object.getVersion());
+        entity.setOrgId(object.getOrgId());
+        entity.setStatusCode(object.getStatusCode());
+        entity.setOrgId(object.getOrgId());
+        entity.setCategoryId(object.getCategoryId());
+        entity.setName(object.getName());
+        entity.setDescription(object.getDescription());
+        entity.setBarcode(object.getBarcode());
+        entity.setProductKeyTypeCodes(StringUtils.collectionToCommaDelimitedString(object.getProductKeyTypeCodes()));
+        entity.setShelfLife(object.getShelfLife());
+        entity.setShelfLifeInterval(object.getShelfLifeInterval());
+        entity.setChildProductCount(object.getChildProductCount());
+        entity.setComments(object.getComments());
+        entity.setCreatedDateTime(object.getCreatedDateTime());
+        entity.setModifiedDateTime(object.getModifiedDateTime());
+        return entity;
+    }
 }

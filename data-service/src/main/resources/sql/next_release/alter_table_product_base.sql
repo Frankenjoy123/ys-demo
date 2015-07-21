@@ -18,5 +18,5 @@ CHANGE COLUMN shelf_life_interval shelf_life_interval VARCHAR(8) NULL,
 CHANGE COLUMN child_pt_count child_product_count INT(11) NULL,
 CHANGE COLUMN comment comments VARCHAR(500) NOT NULL
 AFTER child_product_count,
-ADD COLUMN is_deleted BIT NOT NULL DEFAULT 0
+ADD COLUMN deleted BIT NOT NULL DEFAULT 0
 AFTER comments;

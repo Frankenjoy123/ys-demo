@@ -57,8 +57,8 @@ public class ProductBaseEntity {
     @Column(name = "comments")
     private String comments;
 
-    @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    @Column(name = "deleted")
+    private boolean deleted;
 
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -173,12 +173,12 @@ public class ProductBaseEntity {
         this.comments = comments;
     }
 
-    public Boolean getIsDeleted() {
-        return isDeleted;
+    public boolean isDeleted() {
+        return deleted;
     }
 
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public DateTime getCreatedDateTime() {
