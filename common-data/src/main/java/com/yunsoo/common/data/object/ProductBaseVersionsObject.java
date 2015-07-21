@@ -23,7 +23,7 @@ public class ProductBaseVersionsObject {
     private String productBaseId;
 
     @JsonProperty("version")
-    private String version;
+    private Integer version;
 
     @JsonProperty("status_code")
     private String statusCode;
@@ -94,11 +94,11 @@ public class ProductBaseVersionsObject {
         this.productBaseId = productBaseId;
     }
 
-    public String getVersion() {
+    public Integer getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(Integer version) {
         this.version = version;
     }
 

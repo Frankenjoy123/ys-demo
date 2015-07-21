@@ -17,7 +17,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by haitao on 2015/7/20.
+ * Created by  : haitao
+ * Created on  : 2015/7/20
+ * Descriptions:
  */
 @RestController
 @RequestMapping("/productbaseversions")
@@ -32,7 +34,7 @@ public class ProductBaseVersionsController {
     @RequestMapping(value = "{product_base_id}/{version}", method = RequestMethod.GET)
     public ProductBaseVersionsObject getByProductBaseIdAndVersion(
             @PathVariable(value = "product_base_id") String productBaseId,
-            @PathVariable(value = "version") String version) {
+            @PathVariable(value = "version") Integer version) {
         List<ProductBaseVersionsEntity> entities = productBaseVersionsRepository.findByProductBaseIdAndVersion(productBaseId, version);
         if (entities.size() == 0) {
             throw new NotFoundException("product base not found on the specific version");
@@ -42,8 +44,8 @@ public class ProductBaseVersionsController {
 
     //query
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.GET)
-    public List<ProductBaseVersionsObject> getByProductBaseIdAndVersion(@PathVariable(value = "product_base_id") String productBaseId) {
-        return productBaseVersionsRepository.findByProductBaseId(productBaseId).stream()
+    public List<ProductBaseVersionsObject> getByProductBaseId(@PathVariable(value = "product_base_id") String productBaseId) {
+        return productBaseVersionsRepository.findByProductBaseIdOrderByVersion(productBaseId).stream()
                 .map(this::toProductBaseVersionsObject)
                 .collect(Collectors.toList());
     }
@@ -57,8 +59,11 @@ public class ProductBaseVersionsController {
             throw new NotFoundException("product base not found by id");
         }
         ProductBaseVersionsEntity entity = toProductBaseVersionsEntity(productBaseVersionsObject);
+        List<ProductBaseVersionsEntity> currentVersions = productBaseVersionsRepository.findByProductBaseIdOrderByVersion(productBaseId);
+        int latestVersion = currentVersions.size() == 0 ? 0 : currentVersions.get(currentVersions.size() - 1).getVersion();
         entity.setId(null);
         entity.setProductBaseId(productBaseId);
+        entity.setVersion(latestVersion + 1);
         if (entity.getCreatedDateTime() == null) {
             entity.setCreatedDateTime(DateTime.now());
         }
@@ -71,7 +76,7 @@ public class ProductBaseVersionsController {
     //update
     @RequestMapping(value = "{product_base_id}/{version}", method = RequestMethod.PUT)
     public void updateByProductBaseIdAndVersion(@PathVariable(value = "product_base_id") String productBaseId,
-                                                @PathVariable(value = "version") String version,
+                                                @PathVariable(value = "version") Integer version,
                                                 @RequestBody ProductBaseVersionsObject productBaseVersionsObject) {
         List<ProductBaseVersionsEntity> productBaseVersionsEntities = productBaseVersionsRepository.findByProductBaseIdAndVersion(productBaseId, version);
         if (productBaseVersionsEntities.size() == 0) {
@@ -82,7 +87,6 @@ public class ProductBaseVersionsController {
         entity.setId(oldEntity.getId());
         entity.setProductBaseId(productBaseId);
         entity.setVersion(version);
-        entity.setOrgId(oldEntity.getOrgId());
         entity.setCreatedAccountId(oldEntity.getCreatedAccountId());
         entity.setCreatedDateTime(oldEntity.getCreatedDateTime());
         if (entity.getModifiedDateTime() == null) {
@@ -95,7 +99,7 @@ public class ProductBaseVersionsController {
     @RequestMapping(value = "{product_base_id}/{version}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteByProductBaseIdAndVersion(@PathVariable(value = "product_base_id") String productBaseId,
-                                                @PathVariable(value = "version") String version) {
+                                                @PathVariable(value = "version") Integer version) {
         productBaseVersionsRepository.deleteByProductBaseIdAndVersion(productBaseId, version);
     }
 

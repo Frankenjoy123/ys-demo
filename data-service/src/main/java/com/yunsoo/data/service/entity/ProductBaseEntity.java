@@ -22,7 +22,7 @@ public class ProductBaseEntity {
     private String id;
 
     @Column(name = "version")
-    private String version;
+    private Integer version;
 
     @Column(name = "status_code")
     private String statusCode;
@@ -83,11 +83,11 @@ public class ProductBaseEntity {
         this.id = id;
     }
 
-    public String getVersion() {
+    public Integer getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(Integer version) {
         this.version = version;
     }
 

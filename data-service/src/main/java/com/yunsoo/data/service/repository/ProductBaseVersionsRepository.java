@@ -7,15 +7,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Created by haitao on 2015/7/20.
+ * Created by  : haitao
+ * Created on  : 2015/7/20
+ * Descriptions:
  */
 public interface ProductBaseVersionsRepository extends FindOneAndSaveRepository<ProductBaseVersionsEntity, String> {
 
-    List<ProductBaseVersionsEntity> findByProductBaseId(String productBaseId);
+    List<ProductBaseVersionsEntity> findByProductBaseIdOrderByVersion(String productBaseId);
 
-    List<ProductBaseVersionsEntity> findByProductBaseIdAndVersion(String productBaseId, String version);
+    List<ProductBaseVersionsEntity> findByProductBaseIdAndVersion(String productBaseId, Integer version);
 
     @Transactional
-    void deleteByProductBaseIdAndVersion(String productBaseId, String version);
+    void deleteByProductBaseIdAndVersion(String productBaseId, Integer version);
 
 }
