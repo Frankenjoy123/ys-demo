@@ -6,11 +6,12 @@ import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
 import java.util.List;
 
 /**
- * Created by haitao on 2015/7/20.
+ * Created by  : haitao
+ * Created on  : 2015/7/20
+ * Descriptions:
  */
 public interface ProductBaseRepository extends FindOneAndSaveRepository<ProductBaseEntity, String> {
 
-    List<ProductBaseEntity> findByVersion(String version);
+    List<ProductBaseEntity> findByOrgId(String orgId);
 
-    void delete(String id);
 }
