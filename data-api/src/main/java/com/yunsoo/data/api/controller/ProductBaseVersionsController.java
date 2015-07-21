@@ -1,5 +1,6 @@
 package com.yunsoo.data.api.controller;
 
+import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductBaseVersionsObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.ProductBaseVersionsEntity;
@@ -108,28 +109,30 @@ public class ProductBaseVersionsController {
             return null;
         }
         ProductBaseVersionsObject object = new ProductBaseVersionsObject();
-        object.setId(entity.getId());
         object.setProductBaseId(entity.getProductBaseId());
         object.setVersion(entity.getVersion());
         object.setStatusCode(entity.getStatusCode());
-        object.setOrgId(entity.getOrgId());
-        object.setCategoryId(entity.getCategoryId());
-        object.setName(entity.getName());
-        object.setDescription(entity.getDescription());
-        object.setBarcode(entity.getBarcode());
-        String codes = entity.getProductKeyTypeCodes();
-        if (codes != null) {
-            object.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
-        }
-        object.setShelfLife(entity.getShelfLife());
-        object.setShelfLifeInterval(entity.getShelfLifeInterval());
-        object.setChildProductCount(entity.getChildProductCount());
-        object.setComments(entity.getComments());
         object.setReviewComments(entity.getReviewComments());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
+
+        ProductBaseObject pbObject = new ProductBaseObject();
+        pbObject.setId(entity.getProductBaseId());
+        pbObject.setVersion(entity.getVersion());
+        pbObject.setOrgId(entity.getOrgId());
+        pbObject.setCategoryId(entity.getCategoryId());
+        pbObject.setName(entity.getName());
+        pbObject.setDescription(entity.getDescription());
+        pbObject.setBarcode(entity.getBarcode());
+        pbObject.setProductKeyTypeCodes(Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getProductKeyTypeCodes())));
+        pbObject.setShelfLife(entity.getShelfLife());
+        pbObject.setShelfLifeInterval(entity.getShelfLifeInterval());
+        pbObject.setChildProductCount(entity.getChildProductCount());
+        pbObject.setComments(entity.getComments());
+
+        object.setProductBase(pbObject);
         return object;
 
     }
@@ -139,25 +142,28 @@ public class ProductBaseVersionsController {
             return null;
         }
         ProductBaseVersionsEntity entity = new ProductBaseVersionsEntity();
-        entity.setId(object.getId());
         entity.setProductBaseId(object.getProductBaseId());
         entity.setVersion(object.getVersion());
         entity.setStatusCode(object.getStatusCode());
-        entity.setOrgId(object.getOrgId());
-        entity.setCategoryId(object.getCategoryId());
-        entity.setName(object.getName());
-        entity.setDescription(object.getDescription());
-        entity.setBarcode(object.getBarcode());
-        entity.setProductKeyTypeCodes(StringUtils.collectionToCommaDelimitedString(object.getProductKeyTypeCodes()));
-        entity.setShelfLife(object.getShelfLife());
-        entity.setShelfLifeInterval(object.getShelfLifeInterval());
-        entity.setChildProductCount(object.getChildProductCount());
-        entity.setComments(object.getComments());
         entity.setReviewComments(object.getReviewComments());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());
+
+        ProductBaseObject pbObject = object.getProductBase();
+        if (pbObject != null) {
+            entity.setOrgId(pbObject.getOrgId());
+            entity.setCategoryId(pbObject.getCategoryId());
+            entity.setName(pbObject.getName());
+            entity.setDescription(pbObject.getDescription());
+            entity.setBarcode(pbObject.getBarcode());
+            entity.setProductKeyTypeCodes(StringUtils.collectionToCommaDelimitedString(pbObject.getProductKeyTypeCodes()));
+            entity.setShelfLife(pbObject.getShelfLife());
+            entity.setShelfLifeInterval(pbObject.getShelfLifeInterval());
+            entity.setChildProductCount(pbObject.getChildProductCount());
+            entity.setComments(pbObject.getComments());
+        }
         return entity;
     }
 

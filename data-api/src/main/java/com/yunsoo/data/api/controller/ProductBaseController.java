@@ -170,7 +170,6 @@ public class ProductBaseController {
         object.setVersion(entity.getVersion());
         object.setOrgId(entity.getOrgId());
         object.setStatusCode(entity.getStatusCode());
-        object.setOrgId(entity.getOrgId());
         object.setCategoryId(entity.getCategoryId());
         object.setName(entity.getName());
         object.setDescription(entity.getDescription());
@@ -196,7 +195,6 @@ public class ProductBaseController {
         entity.setVersion(object.getVersion());
         entity.setOrgId(object.getOrgId());
         entity.setStatusCode(object.getStatusCode());
-        entity.setOrgId(object.getOrgId());
         entity.setCategoryId(object.getCategoryId());
         entity.setName(object.getName());
         entity.setDescription(object.getDescription());
