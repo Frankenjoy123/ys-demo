@@ -65,11 +65,16 @@ public class ProductBaseController {
     //create
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public String create(@RequestBody ProductBaseObject productBase) {
-        productBase.setCreatedDateTime(DateTime.now());
-        ProductBase p = new ProductBase();
-        BeanUtils.copyProperties(productBase, p);
-        return productBaseService.save(p);
+    public ProductBaseObject create(@RequestBody ProductBaseObject productBaseObject) {
+        ProductBaseEntity entity = toProductBaseEntity(productBaseObject);
+        entity.setId(null);
+        if (entity.getCreatedDateTime() == null) {
+            entity.setCreatedDateTime(DateTime.now());
+        }
+        entity.setModifiedAccountId(null);
+        entity.setModifiedDateTime(null);
+        ProductBaseEntity newEntity = productBaseRepository.save(entity);
+        return toProductBaseObject(newEntity);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
@@ -177,12 +182,14 @@ public class ProductBaseController {
         object.setShelfLifeInterval(entity.getShelfLifeInterval());
         object.setChildProductCount(entity.getChildProductCount());
         object.setComments(entity.getComments());
+        object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
+        object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
         return object;
     }
 
-    private ProductBaseEntity toProductBaseObject(ProductBaseObject object) {
+    private ProductBaseEntity toProductBaseEntity(ProductBaseObject object) {
         if (object == null) {
             return null;
         }
@@ -201,7 +208,9 @@ public class ProductBaseController {
         entity.setShelfLifeInterval(object.getShelfLifeInterval());
         entity.setChildProductCount(object.getChildProductCount());
         entity.setComments(object.getComments());
+        entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
+        entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());
         return entity;
     }

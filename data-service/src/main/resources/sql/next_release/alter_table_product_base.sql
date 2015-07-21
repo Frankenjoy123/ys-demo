@@ -19,4 +19,9 @@ CHANGE COLUMN child_pt_count child_product_count INT(11) NULL,
 CHANGE COLUMN comment comments VARCHAR(500) NOT NULL
 AFTER child_product_count,
 ADD COLUMN deleted BIT NOT NULL DEFAULT 0
-AFTER comments;
+AFTER comments,
+ADD COLUMN created_account_id VARCHAR(20) NOT NULL
+AFTER deleted,
+CHANGE COLUMN created_datetime created_datetime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN modified_account_id VARCHAR(20)
+AFTER created_datetime;

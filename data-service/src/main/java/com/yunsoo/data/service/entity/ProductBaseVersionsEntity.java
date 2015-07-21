@@ -62,9 +62,15 @@ public class ProductBaseVersionsEntity {
     @Column(name = "review_comments")
     private String reviewComments;
 
+    @Column(name = "created_account_id")
+    private String createdAccountId;
+
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
+
+    @Column(name = "modified_account_id")
+    private String modifiedAccountId;
 
     @Column(name = "modified_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -191,12 +197,28 @@ public class ProductBaseVersionsEntity {
         this.reviewComments = reviewComments;
     }
 
+    public String getCreatedAccountId() {
+        return createdAccountId;
+    }
+
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
+    }
+
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public String getModifiedAccountId() {
+        return modifiedAccountId;
+    }
+
+    public void setModifiedAccountId(String modifiedAccountId) {
+        this.modifiedAccountId = modifiedAccountId;
     }
 
     public DateTime getModifiedDateTime() {

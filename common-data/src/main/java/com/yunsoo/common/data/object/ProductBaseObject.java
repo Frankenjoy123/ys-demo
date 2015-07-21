@@ -55,10 +55,16 @@ public class ProductBaseObject {
     @JsonProperty("comments")
     private String comments;
 
+    @JsonProperty("created_account_id")
+    private String createdAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
+
+    @JsonProperty("modified_account_id")
+    private String modifiedAccountId;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -170,12 +176,28 @@ public class ProductBaseObject {
         this.comments = comments;
     }
 
+    public String getCreatedAccountId() {
+        return createdAccountId;
+    }
+
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
+    }
+
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public String getModifiedAccountId() {
+        return modifiedAccountId;
+    }
+
+    public void setModifiedAccountId(String modifiedAccountId) {
+        this.modifiedAccountId = modifiedAccountId;
     }
 
     public DateTime getModifiedDateTime() {
