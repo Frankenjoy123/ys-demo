@@ -2,6 +2,7 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.ProductBaseVersionsEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -12,6 +13,9 @@ public interface ProductBaseVersionsRepository extends FindOneAndSaveRepository<
 
     List<ProductBaseVersionsEntity> findByProductBaseId(String productBaseId);
 
-    void delete(String id);
+    List<ProductBaseVersionsEntity> findByProductBaseIdAndVersion(String productBaseId, String version);
+
+    @Transactional
+    void deleteByProductBaseIdAndVersion(String productBaseId, String version);
 
 }
