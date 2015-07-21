@@ -100,7 +100,7 @@ public class AccountController {
         }
         entity.setId(null);
         entity.setModifiedAccountId(null);
-        entity.setModifiedDatetime(null);
+        entity.setModifiedDateTime(null);
         return toAccountObject(accountRepository.save(entity));
     }
 
@@ -138,8 +138,8 @@ public class AccountController {
             entity.setHashSalt(accountObject.getHashSalt());
         }
         entity.setModifiedAccountId(accountObject.getModifiedAccountId());
-        entity.setModifiedDatetime(accountObject.getModifiedDatetime() == null
-                ? DateTime.now() : accountObject.getModifiedDatetime());
+        entity.setModifiedDateTime(accountObject.getModifiedDateTime() == null
+                ? DateTime.now() : accountObject.getModifiedDateTime());
 
         accountRepository.save(entity);
     }
@@ -162,7 +162,7 @@ public class AccountController {
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
-        object.setModifiedDatetime(entity.getModifiedDatetime());
+        object.setModifiedDateTime(entity.getModifiedDateTime());
         return object;
     }
 
@@ -184,7 +184,7 @@ public class AccountController {
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
-        entity.setModifiedDatetime(object.getModifiedDatetime());
+        entity.setModifiedDateTime(object.getModifiedDateTime());
         return entity;
     }
 
