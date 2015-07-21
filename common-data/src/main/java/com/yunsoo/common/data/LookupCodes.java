@@ -1,8 +1,5 @@
 package com.yunsoo.common.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by  : Lijian
  * Created on  : 2015/4/27
@@ -73,17 +70,20 @@ public class LookupCodes {
         }
 
         public static final String CREATED = "created";
-        public static final String DELETED = "deleted";
-        public static final String FROZEN = "frozen";
-        public static final String APPROVED = "approved";
-        public static final List<String> CUSTOMER_INVISIBLE_STATUS;
+        public static final String ACTIVATED = "activated";
+        public static final String DEACTIVATED = "deactivated";
+    }
 
-        static {
-            CUSTOMER_INVISIBLE_STATUS = new ArrayList<>();
-            CUSTOMER_INVISIBLE_STATUS.add(FROZEN);
-            CUSTOMER_INVISIBLE_STATUS.add(DELETED);
+    public static class ProductBaseVersionsStatus {
+
+        private ProductBaseVersionsStatus() {
         }
 
+        public static final String DRAFT = "draft";
+        public static final String SUBMITTED = "submitted";
+        public static final String REJECTED = "rejected";
+        public static final String ACTIVATED = "activated";
+        public static final String ARCHIVED = "archived";
     }
 
     public static class ProductKeyTransactionStatus {
@@ -92,7 +92,7 @@ public class LookupCodes {
 
         public static final String CREATED = "created";
         public static final String COMMITTED = "committed";
-        public static final String ROLLBACKED = "rollbacked";
+        public static final String ROLLBACK = "rollback";
     }
 
     public static class DeviceStatus {

@@ -4,11 +4,11 @@ import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
-import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -125,7 +125,7 @@ public class ProductKeyBatchController {
         ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
         if (productBaseId != null) {
             //create corresponding product according to the productBaseId
-            ProductBase productBase = productBaseDomain.getProductBaseById(productBaseId);
+            ProductBaseObject productBase = productBaseDomain.getProductBaseById(productBaseId);
             if (productBase == null || !orgId.equals(productBase.getOrgId())) { //check orgId of productBase is the same
                 throw new BadRequestException("productBaseId invalid");
             }

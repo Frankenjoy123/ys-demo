@@ -1,19 +1,13 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.dto.ProductBase;
-import com.yunsoo.api.dto.ProductCategory;
-import com.yunsoo.api.dto.ProductKeyType;
-import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
-import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by  : Lijian
@@ -33,45 +27,17 @@ public class ProductBaseDomain {
     private ProductCategoryDomain productCategoryDomain;
 
 
-    public ProductBase getProductBaseById(String productBaseId) {
-        ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
-        if (productBaseObject == null) {
+    public ProductBaseObject getProductBaseById(String productBaseId) {
+        try {
+            return dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
+        } catch (NotFoundException ignored) {
             return null;
         }
-        List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
-        Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
-        return toProductBase(productBaseObject, productKeyTypes, productCategoryObjectMap);
     }
 
-    public List<ProductBase> getAllProductBaseByOrgId(String orgId) {
-        ProductBaseObject[] objects = dataAPIClient.get("productbase?org_id={id}", ProductBaseObject[].class, orgId);
-        List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
-        Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
-        return Arrays.stream(objects)
-                .map(p -> toProductBase(p, productKeyTypes, productCategoryObjectMap))
-                .collect((Collectors.toList()));
+    public List<ProductBaseObject> getProductBaseByOrgId(String orgId) {
+        return dataAPIClient.get("productbase?org_id={orgId}", new ParameterizedTypeReference<List<ProductBaseObject>>() {
+        }, orgId);
     }
 
-    private ProductBase toProductBase(ProductBaseObject productBaseObject,
-                                      List<ProductKeyType> productKeyTypes,
-                                      Map<String, ProductCategoryObject> productCategoryObjectMap) {
-        ProductBase productBase = new ProductBase();
-        productBase.setId(productBaseObject.getId());
-        productBase.setName(productBaseObject.getName());
-        productBase.setBarcode(productBaseObject.getBarcode());
-        productBase.setStatusCode(productBaseObject.getStatusCode());
-        productBase.setComments(productBaseObject.getComments());
-        productBase.setOrgId(productBaseObject.getOrgId());
-        productBase.setShelfLife(productBaseObject.getShelfLife());
-        productBase.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
-        productBase.setCreatedDateTime(productBaseObject.getCreatedDateTime());
-        productBase.setModifiedDateTime(productBaseObject.getModifiedDateTime());
-        productBase.setCategoryId(productBaseObject.getCategoryId());
-        productBase.setCategory(new ProductCategory(productCategoryDomain.getById(productBaseObject.getCategoryId(), productCategoryObjectMap)));
-        if (productBaseObject.getProductKeyTypeCodes() != null) {
-            productBase.setProductKeyTypeCodes(productBaseObject.getProductKeyTypeCodes());
-            productBase.setProductKeyTypes(LookupObject.fromCodeList(productKeyTypes, productBaseObject.getProductKeyTypeCodes()));
-        }
-        return productBase;
-    }
 }

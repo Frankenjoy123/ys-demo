@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.ProductBaseObject;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -19,29 +20,29 @@ public class ProductBase {
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("category")
-    private ProductCategory category;
+    @JsonProperty("version")
+    private String version;
 
-    @JsonProperty("category_id")
-    private String categoryId;
+    @JsonProperty("status_code")
+    private String statusCode;
 
     @JsonProperty("org_id")
     private String orgId;
 
-    @JsonProperty("barcode")
-    private String barcode;
+    @JsonProperty("category_id")
+    private String categoryId;
+
+    @JsonProperty("category")
+    private ProductCategory category;
 
     @JsonProperty("name")
     private String name;
 
-    @JsonProperty("comments")
-    private String comments;
+    @JsonProperty("description")
+    private String description;
 
-    @JsonProperty("shelf_life")
-    private Integer shelfLife;
-
-    @JsonProperty("shelf_life_interval")
-    private String shelfLifeInterval;
+    @JsonProperty("barcode")
+    private String barcode;
 
     @JsonProperty("product_key_type_codes")
     private List<String> productKeyTypeCodes;
@@ -49,24 +50,34 @@ public class ProductBase {
     @JsonProperty("product_key_types")
     private List<ProductKeyType> productKeyTypes;
 
+    @JsonProperty("shelf_life")
+    private Integer shelfLife;
+
+    @JsonProperty("shelf_life_interval")
+    private String shelfLifeInterval;
+
     @JsonProperty("child_product_count")
     private Integer childProductCount;
 
-    @JsonProperty("status_code")
-    private String statusCode;
+    @JsonProperty("comments")
+    private String comments;
+
+    @JsonProperty("created_account_id")
+    private String createdAccountId;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
+    @JsonProperty("modified_account_id")
+    private String modifiedAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
 
-    @JsonProperty("thumbnail_url")
-    private String thumbnailURL;
 
     public String getId() {
         return id;
@@ -76,20 +87,20 @@ public class ProductBase {
         this.id = id;
     }
 
-    public ProductCategory getCategory() {
-        return category;
+    public String getVersion() {
+        return version;
     }
 
-    public void setCategory(ProductCategory category) {
-        this.category = category;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
-    public String getCategoryId() {
-        return categoryId;
+    public String getStatusCode() {
+        return statusCode;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
     public String getOrgId() {
@@ -100,12 +111,20 @@ public class ProductBase {
         this.orgId = orgId;
     }
 
-    public String getBarcode() {
-        return barcode;
+    public String getCategoryId() {
+        return categoryId;
     }
 
-    public void setBarcode(String barcode) {
-        this.barcode = barcode;
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public ProductCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(ProductCategory category) {
+        this.category = category;
     }
 
     public String getName() {
@@ -116,28 +135,20 @@ public class ProductBase {
         this.name = name;
     }
 
-    public String getComments() {
-        return comments;
+    public String getDescription() {
+        return description;
     }
 
-    public void setComments(String comments) {
-        this.comments = comments;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Integer getShelfLife() {
-        return shelfLife;
+    public String getBarcode() {
+        return barcode;
     }
 
-    public void setShelfLife(Integer shelfLife) {
-        this.shelfLife = shelfLife;
-    }
-
-    public String getShelfLifeInterval() {
-        return shelfLifeInterval;
-    }
-
-    public void setShelfLifeInterval(String shelfLifeInterval) {
-        this.shelfLifeInterval = shelfLifeInterval;
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 
     public List<String> getProductKeyTypeCodes() {
@@ -156,6 +167,22 @@ public class ProductBase {
         this.productKeyTypes = productKeyTypes;
     }
 
+    public Integer getShelfLife() {
+        return shelfLife;
+    }
+
+    public void setShelfLife(Integer shelfLife) {
+        this.shelfLife = shelfLife;
+    }
+
+    public String getShelfLifeInterval() {
+        return shelfLifeInterval;
+    }
+
+    public void setShelfLifeInterval(String shelfLifeInterval) {
+        this.shelfLifeInterval = shelfLifeInterval;
+    }
+
     public Integer getChildProductCount() {
         return childProductCount;
     }
@@ -164,20 +191,36 @@ public class ProductBase {
         this.childProductCount = childProductCount;
     }
 
-    public String getStatusCode() {
-        return statusCode;
+    public String getComments() {
+        return comments;
     }
 
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public String getCreatedAccountId() {
+        return createdAccountId;
+    }
+
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
     }
 
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(DateTime createdDate) {
-        this.createdDateTime = createdDate;
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    public String getModifiedAccountId() {
+        return modifiedAccountId;
+    }
+
+    public void setModifiedAccountId(String modifiedAccountId) {
+        this.modifiedAccountId = modifiedAccountId;
     }
 
     public DateTime getModifiedDateTime() {
@@ -188,11 +231,53 @@ public class ProductBase {
         this.modifiedDateTime = modifiedDateTime;
     }
 
-    public String getThumbnailURL() {
-        return this.thumbnailURL;
+
+    public ProductBase() {
     }
 
-    public void setThumbnailURL(String thumbnailURL) {
-        this.thumbnailURL = thumbnailURL;
+    public ProductBase(ProductBaseObject object) {
+        if (object != null) {
+            this.setId(object.getId());
+            this.setVersion(object.getVersion());
+            this.setOrgId(object.getOrgId());
+            this.setStatusCode(object.getStatusCode());
+            this.setOrgId(object.getOrgId());
+            this.setCategoryId(object.getCategoryId());
+            this.setName(object.getName());
+            this.setDescription(object.getDescription());
+            this.setBarcode(object.getBarcode());
+            this.setProductKeyTypeCodes(object.getProductKeyTypeCodes());
+            this.setShelfLife(object.getShelfLife());
+            this.setShelfLifeInterval(object.getShelfLifeInterval());
+            this.setChildProductCount(object.getChildProductCount());
+            this.setComments(object.getComments());
+            this.setCreatedAccountId(object.getCreatedAccountId());
+            this.setCreatedDateTime(object.getCreatedDateTime());
+            this.setModifiedAccountId(object.getModifiedAccountId());
+            this.setModifiedDateTime(object.getModifiedDateTime());
+        }
+    }
+
+    public ProductBaseObject toProductBaseObject() {
+        ProductBaseObject object = new ProductBaseObject();
+        object.setId(this.getId());
+        object.setVersion(this.getVersion());
+        object.setOrgId(this.getOrgId());
+        object.setStatusCode(this.getStatusCode());
+        object.setOrgId(this.getOrgId());
+        object.setCategoryId(this.getCategoryId());
+        object.setName(this.getName());
+        object.setDescription(this.getDescription());
+        object.setBarcode(this.getBarcode());
+        object.setProductKeyTypeCodes(this.getProductKeyTypeCodes());
+        object.setShelfLife(this.getShelfLife());
+        object.setShelfLifeInterval(this.getShelfLifeInterval());
+        object.setChildProductCount(this.getChildProductCount());
+        object.setComments(this.getComments());
+        object.setCreatedAccountId(this.getCreatedAccountId());
+        object.setCreatedDateTime(this.getCreatedDateTime());
+        object.setModifiedAccountId(this.getModifiedAccountId());
+        object.setModifiedDateTime(this.getModifiedDateTime());
+        return object;
     }
 }

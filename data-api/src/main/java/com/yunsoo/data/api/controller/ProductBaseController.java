@@ -12,9 +12,7 @@ import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.entity.ProductBaseEntity;
 import com.yunsoo.data.service.repository.ProductBaseRepository;
 import com.yunsoo.data.service.service.ProductBaseService;
-import com.yunsoo.data.service.service.contract.ProductBase;
 import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -151,16 +149,16 @@ public class ProductBaseController {
         }
     }
 
-
-    //todo
-    //patch update, we don't provide functions like update with set null properties.
-    @RequestMapping(value = "", method = RequestMethod.PATCH)
-    public void patchUpdate(@RequestBody ProductBaseObject productBase) {
-        productBase.setModifiedDateTime(DateTime.now());
-        ProductBase p = new ProductBase();
-        BeanUtils.copyProperties(productBase, p);
-        productBaseService.patchUpdate(p);
-    }
+//
+//    //todo
+//    //patch update, we don't provide functions like update with set null properties.
+//    @RequestMapping(value = "", method = RequestMethod.PATCH)
+//    public void patchUpdate(@RequestBody ProductBaseObject productBase) {
+//        productBase.setModifiedDateTime(DateTime.now());
+//        ProductBase p = new ProductBase();
+//        BeanUtils.copyProperties(productBase, p);
+//        productBaseService.patchUpdate(p);
+//    }
 
 
     private ProductBaseObject toProductBaseObject(ProductBaseEntity entity) {

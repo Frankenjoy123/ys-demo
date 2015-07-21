@@ -1,16 +1,20 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountPermissionDomain;
+import com.yunsoo.api.domain.LookupDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
+import com.yunsoo.api.domain.ProductCategoryDomain;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductBaseRequest;
+import com.yunsoo.api.dto.ProductCategory;
+import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
-import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.FileObject;
+import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -33,15 +37,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
  * Created on:   2015/3/20
  * Descriptions:
- * <p>
- * * ErrorCode
- * 40401    :   产品找不到
- * 40402    :   产品Thumbnail找不到
  */
 @RestController
 @RequestMapping(value = "/productbase")
@@ -57,28 +59,39 @@ public class ProductBaseController {
     private AccountPermissionDomain accountPermissionDomain;
 
     @Autowired
+    private ProductCategoryDomain productCategoryDomain;
+
+    @Autowired
+    private LookupDomain lookupDomain;
+
+    @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'productbase:read')")
-    public ProductBase get(@PathVariable(value = "id") String id) {
-        if (id == null || id.isEmpty()) {
-            throw new BadRequestException("ProductBaseId不应为空！");
+    public ProductBase getById(@PathVariable(value = "id") String id) {
+        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(id);
+        if (productBaseObject == null) {
+            throw new NotFoundException("product base not found");
         }
-        ProductBase productBase = productBaseDomain.getProductBaseById(id);
-        if (productBase == null) {
-            throw new NotFoundException(40401, "找不到产品");
-        }
+        ProductBase productBase = new ProductBase(productBaseObject);
+        productBase.setCategory(new ProductCategory(productCategoryDomain.getById(productBase.getCategoryId())));
+        productBase.setProductKeyTypes(LookupObject.fromCodeList(lookupDomain.getProductKeyTypes(), productBaseObject.getProductKeyTypeCodes()));
         return productBase;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'productbase:read')")
-    public List<ProductBase> getAllForCurrentOrg(@RequestParam(value = "org_id", required = false) String orgId) {
-        if (orgId == null || orgId.isEmpty()) {
-            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId(); //fetch from AuthContext
-        }
-        return productBaseDomain.getAllProductBaseByOrgId(orgId);
+    public List<ProductBase> getByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
+        fixOrgId(orgId);
+        Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
+        List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
+        return productBaseDomain.getProductBaseByOrgId(orgId).stream().map(p -> {
+            ProductBase pb = new ProductBase(p);
+            pb.setCategory(new ProductCategory(productCategoryDomain.getById(p.getCategoryId(), productCategoryObjectMap)));
+            pb.setProductKeyTypes(LookupObject.fromCodeList(productKeyTypes, p.getProductKeyTypeCodes()));
+            return pb;
+        }).collect(Collectors.toList());
     }
 
     //create
@@ -157,8 +170,8 @@ public class ProductBaseController {
     @RequestMapping(value = "withdetailfile/{id}/{filekey}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public void createDetailsThumbnail(MultipartHttpServletRequest request, HttpServletResponse response,
-                                @PathVariable(value = "id") String id,
-                                @PathVariable(value = "filekey") String filekey) {
+                                       @PathVariable(value = "id") String id,
+                                       @PathVariable(value = "filekey") String filekey) {
         try {
             Iterator<String> itr = request.getFileNames();
             MultipartFile file = request.getFile(itr.next());
@@ -190,22 +203,15 @@ public class ProductBaseController {
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "id") String id) {
-        ProductBase productBase = productBaseDomain.getProductBaseById(id);
-        if (productBase == null) {
-            return;  //when the product base is not exist!
-        }
+        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(id);
+        if (productBaseObject != null) {
+            TPermission tPermission = new TPermission(productBaseObject.getOrgId(), "productbase", "delete");
+            if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
+                throw new ForbiddenException();
+            }
 
-        TPermission tPermission = new TPermission();
-        tPermission.setOrgId(productBase.getOrgId());
-        tPermission.setResourceCode("Productbase");
-        tPermission.setActionCode("delete");
-        if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
-            throw new ForbiddenException("没有权限删此产品记录！");
+            dataAPIClient.delete("productbase/{id}", id);
         }
-        productBase.setStatusCode(LookupCodes.ProductBaseStatus.DELETED);  //just mark as inactive
-        ProductBaseObject p = new ProductBaseObject();
-        BeanUtils.copyProperties(productBase, p);
-        dataAPIClient.patch("productbase/", p);
     }
 
     @RequestMapping(value = "/{id}/{client}", method = RequestMethod.GET)
@@ -248,4 +254,11 @@ public class ProductBaseController {
         }
     }
 
+    private String fixOrgId(String orgId) {
+        if (orgId == null || "current".equals(orgId)) {
+            //current orgId
+            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
+        return orgId;
+    }
 }
