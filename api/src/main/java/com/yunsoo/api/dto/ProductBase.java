@@ -17,6 +17,9 @@ import java.util.List;
  */
 public class ProductBase {
 
+    @JsonProperty("product_base_details")
+    private ProductBaseDetails productBaseDetails;
+
     @JsonProperty("id")
     private String id;
 
@@ -279,5 +282,13 @@ public class ProductBase {
         object.setModifiedAccountId(this.getModifiedAccountId());
         object.setModifiedDateTime(this.getModifiedDateTime());
         return object;
+    }
+
+    public ProductBaseDetails getProductBaseDetails() {
+        return productBaseDetails;
+    }
+
+    public void setProductBaseDetails(ProductBaseDetails productBaseDetails) {
+        this.productBaseDetails = productBaseDetails;
     }
 }

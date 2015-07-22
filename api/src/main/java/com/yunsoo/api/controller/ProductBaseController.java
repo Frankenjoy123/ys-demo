@@ -69,7 +69,7 @@ public class ProductBaseController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'productbase:read')")
-    public ProductBase getById(@PathVariable(value = "id") String id) {
+    public ProductBase getById(@PathVariable(value = "id") String id) throws IOException {
         ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(id);
         if (productBaseObject == null) {
             throw new NotFoundException("product base not found");
@@ -77,13 +77,14 @@ public class ProductBaseController {
         ProductBase productBase = new ProductBase(productBaseObject);
         productBase.setCategory(new ProductCategory(productCategoryDomain.getById(productBase.getCategoryId())));
         productBase.setProductKeyTypes(LookupObject.fromCodeList(lookupDomain.getProductKeyTypes(), productBaseObject.getProductKeyTypeCodes()));
+        productBase.setProductBaseDetails(productBaseDomain.getProductBaseDetailByProductBaseIdAndVersion(id, productBaseObject.getVersion()));
         return productBase;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'productbase:read')")
     public List<ProductBase> getByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
-        fixOrgId(orgId);
+        orgId = fixOrgId(orgId);
         Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
         List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
         return productBaseDomain.getProductBaseByOrgId(orgId).stream().map(p -> {
@@ -92,6 +93,54 @@ public class ProductBaseController {
             pb.setProductKeyTypes(LookupObject.fromCodeList(productKeyTypes, p.getProductKeyTypeCodes()));
             return pb;
         }).collect(Collectors.toList());
+    }
+
+    //create image
+
+    @RequestMapping(value = "{product_base_id}/{version}/image/{imgdetail}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createImage(MultipartHttpServletRequest request, HttpServletResponse response,
+                            @PathVariable(value = "product_base_id") String productBaseId,
+                            @PathVariable(value = "version") Integer version,
+                            @PathVariable(value = "imgdetail") String imgDetail) {
+        try {
+            Iterator<String> itr = request.getFileNames();
+            MultipartFile file = request.getFile(itr.next());
+
+            FileObject fileObject = new FileObject();
+            fileObject.setData(file.getBytes());
+            fileObject.setLength(file.getSize());
+            fileObject.setContentType(file.getContentType());
+            fileObject.setS3Path("photo/coms/products/" + productBaseId + "/" + version.toString() + "/");
+
+            dataAPIClient.post("file/", fileObject, Long.class);
+
+        } catch (IOException ex) {
+            throw new InternalServerErrorException("图片上传出错！");
+        }
+    }
+
+    //query for image
+    @RequestMapping(value = "/{product_base_id}/{version}/image/{imgdetail}", method = RequestMethod.GET)
+    public ResponseEntity<?> getImage(
+            @PathVariable(value = "product_base_id") String productBaseId,
+            @PathVariable(value = "version") Integer version,
+            @PathVariable(value = "imgdetail") String imgDetail) {
+        try {
+            FileObject fileObject = dataAPIClient.get("productbaseversions/{product_base_id}/{version}/image/{imgdetail}", FileObject.class, productBaseId, version.toString(), imgDetail);
+            if (fileObject.getLength() > 0) {
+                return ResponseEntity.ok()
+                        .contentLength(fileObject.getLength())
+                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
+            } else {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
+            }
+        } catch (NotFoundException ex) {
+            throw new NotFoundException(40402, "找不到产品图片 product_base_id = " + productBaseId + "  version = " + version.toString());
+        }
     }
 
     //create
