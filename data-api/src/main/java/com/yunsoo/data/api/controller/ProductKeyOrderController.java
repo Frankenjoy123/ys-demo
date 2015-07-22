@@ -38,29 +38,30 @@ public class ProductKeyOrderController {
         if (entity == null) {
             throw new NotFoundException("ProductKeyOrder not found by [id: " + id + "]");
         }
-        return toOrgProductKeyOrderObject(entity);
+        return toProductKeyOrderObject(entity);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductKeyOrderObject> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
-                                                   @RequestParam(value = "active", required = false) Boolean active,
-                                                   @RequestParam(value = "remain_ge", required = false) Long remainGE,
-                                                   @RequestParam(value = "expire_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime expireDateTimeGE,
-                                                   @RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                                   Pageable pageable,
-                                                   HttpServletResponse response) {
+    public List<ProductKeyOrderObject> getByFilter(
+            @RequestParam(value = "org_id", required = false) String orgId,
+            @RequestParam(value = "active", required = false) Boolean active,
+            @RequestParam(value = "remain_ge", required = false) Long remainGE,
+            @RequestParam(value = "expire_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime expireDateTimeGE,
+            @RequestParam(value = "product_base_id", required = false) String productBaseId,
+            Pageable pageable,
+            HttpServletResponse response) {
 
         Page<ProductKeyOrderEntity> entityPage = productKeyOrderRepository.query(orgId, active, remainGE, DateTimeUtils.toDBString(expireDateTimeGE), productBaseId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
-        return entityPage.getContent().stream().map(this::toOrgProductKeyOrderObject).collect(Collectors.toList());
+        return entityPage.getContent().stream().map(this::toProductKeyOrderObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ProductKeyOrderObject create(@RequestBody ProductKeyOrderObject order) {
-        ProductKeyOrderEntity entity = toOrgProductKeyOrderEntity(order);
+        ProductKeyOrderEntity entity = toProductKeyOrderEntity(order);
         entity.setId(null);
         if (entity.getRemain() == null) {
             entity.setRemain(entity.getTotal());
@@ -72,18 +73,10 @@ public class ProductKeyOrderController {
             entity.setCreatedDateTime(DateTime.now());
         }
         ProductKeyOrderEntity newEntity = productKeyOrderRepository.save(entity);
-        return toOrgProductKeyOrderObject(newEntity);
+        return toProductKeyOrderObject(newEntity);
     }
 
-//    @RequestMapping(value = "/batch", method = RequestMethod.POST)
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public void batchCreate(@RequestBody Iterable<OrgOrder> orgOrders) {
-//        Iterable<OrgProductKeyOrderEntity> orgOrderEntities = orgProductKeyOrderRepository.save(OrgOrder.ToEntityList(orgOrders));
-////        return newEntity.getId();
-//    }
-
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    @ResponseStatus(HttpStatus.OK)
     public ProductKeyOrderObject patchUpdate(@PathVariable(value = "id") String id,
                                              @RequestBody ProductKeyOrderObject order) {
         ProductKeyOrderEntity entity = productKeyOrderRepository.findOne(id);
@@ -107,11 +100,10 @@ public class ProductKeyOrderController {
         }
 
         ProductKeyOrderEntity savedEntity = productKeyOrderRepository.save(entity);
-        return toOrgProductKeyOrderObject(savedEntity);
+        return toProductKeyOrderObject(savedEntity);
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
-    @ResponseStatus(HttpStatus.OK)
     public List<ProductKeyOrderObject> patchUpdateBatch(@RequestBody List<ProductKeyOrderObject> orders) {
         if (orders.size() == 0) {
             throw new BadRequestException("orders must not be empty");
@@ -145,13 +137,12 @@ public class ProductKeyOrderController {
             }
         }
 
-
         List<ProductKeyOrderEntity> savedEntities = productKeyOrderRepository.save(entities);
 
-        return savedEntities.stream().map(this::toOrgProductKeyOrderObject).collect(Collectors.toList());
+        return savedEntities.stream().map(this::toProductKeyOrderObject).collect(Collectors.toList());
     }
 
-    ProductKeyOrderObject toOrgProductKeyOrderObject(ProductKeyOrderEntity entity) {
+    ProductKeyOrderObject toProductKeyOrderObject(ProductKeyOrderEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -169,7 +160,7 @@ public class ProductKeyOrderController {
         return object;
     }
 
-    ProductKeyOrderEntity toOrgProductKeyOrderEntity(ProductKeyOrderObject object) {
+    ProductKeyOrderEntity toProductKeyOrderEntity(ProductKeyOrderObject object) {
         if (object == null) {
             return null;
         }

@@ -2,6 +2,7 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.ProductKeyTransactionDetailEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,7 +23,7 @@ public interface ProductKeyTransactionDetailRepository extends FindOneAndSaveRep
             "and (:productKeyBatchId is null or o.productKeyBatchId = :productKeyBatchId) " +
             "and (:orderId is null or o.orderId = :orderId) " +
             "and (:statusCode is null or o.statusCode = :statusCode)")
-    List<ProductKeyTransactionDetailEntity> query(@Param("orgId") String orgId,
+    Page<ProductKeyTransactionDetailEntity> query(@Param("orgId") String orgId,
                                                   @Param("productKeyBatchId") String productKeyBatchId,
                                                   @Param("orderId") String orderId,
                                                   @Param("statusCode") String statusCode,

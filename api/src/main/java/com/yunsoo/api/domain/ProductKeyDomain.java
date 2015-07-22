@@ -137,6 +137,10 @@ public class ProductKeyDomain {
         String transactionId = productKeyTransactionDomain.purchase(newBatchObj);
         LOGGER.info("ProductKeyBatch purchased [transactionId: {}]", transactionId);
 
+        //commit transaction
+        productKeyTransactionDomain.commit(transactionId);
+        LOGGER.info("ProductKeyTransaction committed [transactionId: {}]", transactionId);
+
         //update status to creating
         newBatchObj.setStatusCode(LookupCodes.ProductKeyBatchStatus.CREATING);
         dataAPIClient.patch("productkeybatch/{id}", newBatchObj, newBatchObj.getId());
