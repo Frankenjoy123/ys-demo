@@ -111,7 +111,7 @@ public class ProductBaseController {
             fileObject.setData(file.getBytes());
             fileObject.setLength(file.getSize());
             fileObject.setContentType(file.getContentType());
-            fileObject.setS3Path("photo/coms/products/" + productBaseId + "/" + version.toString() + "/");
+            fileObject.setS3Path("photo/coms/products/" + productBaseId + "/" + version.toString() + "/" + imgDetail);
 
             dataAPIClient.post("file/", fileObject, Long.class);
 
@@ -121,13 +121,21 @@ public class ProductBaseController {
     }
 
     //query for image
-    @RequestMapping(value = "/{product_base_id}/{version}/image/{imgdetail}", method = RequestMethod.GET)
+    @RequestMapping(value = "{product_base_id}/image", method = RequestMethod.GET)
     public ResponseEntity<?> getImage(
             @PathVariable(value = "product_base_id") String productBaseId,
-            @PathVariable(value = "version") Integer version,
-            @PathVariable(value = "imgdetail") String imgDetail) {
+            @RequestParam(value = "version", required = false) Integer version,
+            @RequestParam(value = "imgdetail") String imgDetail) {
+        Integer currenteVersion = new Integer(version);
+        if (version == null) {
+            ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
+            if (productBaseObject == null) {
+                throw new NotFoundException("product base not found");
+            }
+            currenteVersion = productBaseObject.getVersion();
+        }
         try {
-            FileObject fileObject = dataAPIClient.get("productbaseversions/{product_base_id}/{version}/image/{imgdetail}", FileObject.class, productBaseId, version.toString(), imgDetail);
+            FileObject fileObject = dataAPIClient.get("productbaseversions/{product_base_id}/{version}/image/{imgdetail}", FileObject.class, productBaseId, currenteVersion.toString(), imgDetail);
             if (fileObject.getLength() > 0) {
                 return ResponseEntity.ok()
                         .contentLength(fileObject.getLength())
