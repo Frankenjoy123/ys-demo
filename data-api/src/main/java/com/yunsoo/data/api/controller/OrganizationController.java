@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Created by  : Chen Jerry
@@ -42,32 +41,32 @@ public class OrganizationController {
     private AmazonSetting amazonSetting;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public OrganizationObject getOrganizationById(@PathVariable(value = "id") String id) {
+    public OrganizationObject getById(@PathVariable(value = "id") String id) {
         OrganizationEntity organizationEntity = organizationRepository.findOne(id);
         if (organizationEntity == null) {
             throw new NotFoundException("organization not found by [id: " + id + "]");
         }
-        return fromOrganizationEntity(organizationEntity);
+        return toOrganizationObject(organizationEntity);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public OrganizationObject getOrganizationByName(@RequestParam(value = "name") String name) {
-        OrganizationEntity organizationEntity = organizationRepository.findByName(name);
-        if (organizationEntity == null) {
-            throw new NotFoundException("organization not found by [name: " + name + "]");
+    public List<OrganizationObject> getByFilter(
+            @RequestParam(value = "name", required = false) String name,
+            Pageable pageable,
+            HttpServletResponse response) {
+        if (name != null) {
+            return organizationRepository.findByName(name).stream()
+                    .map(this::toOrganizationObject)
+                    .collect(Collectors.toList());
+        } else {
+            Page<OrganizationEntity> entityPage = organizationRepository.findAll(pageable);
+            if (pageable != null) {
+                response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+            }
+            return entityPage.getContent().stream()
+                    .map(this::toOrganizationObject)
+                    .collect(Collectors.toList());
         }
-        return fromOrganizationEntity(organizationEntity);
-    }
-
-    @RequestMapping(value = "/list", method = RequestMethod.GET) //todo: merge it to above GET method
-    public List<OrganizationObject> getByFilterPaged(Pageable pageable, HttpServletResponse response) {
-        Page<OrganizationEntity> entityPage = organizationRepository.findAll(pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
-        }
-        return StreamSupport.stream(entityPage.spliterator(), false)
-                .map(this::fromOrganizationEntity)
-                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -76,7 +75,7 @@ public class OrganizationController {
         OrganizationEntity entity = toOrganizationEntity(organizationObject);
         entity.setId(null);
         OrganizationEntity newEntity = organizationRepository.save(entity);
-        return fromOrganizationEntity(newEntity);
+        return toOrganizationObject(newEntity);
     }
 
 
@@ -106,7 +105,7 @@ public class OrganizationController {
         }
     }
 
-    private OrganizationObject fromOrganizationEntity(OrganizationEntity entity) {
+    private OrganizationObject toOrganizationObject(OrganizationEntity entity) {
         OrganizationObject object = new OrganizationObject();
         object.setId(entity.getId());
         object.setName(entity.getName());

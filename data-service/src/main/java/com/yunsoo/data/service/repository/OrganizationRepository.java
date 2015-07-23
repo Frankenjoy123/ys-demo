@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/4/17
@@ -12,7 +14,7 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface OrganizationRepository extends CrudRepository<OrganizationEntity, String> {
 
-    OrganizationEntity findByName(String name);
+    List<OrganizationEntity> findByName(String name);
 
     Page<OrganizationEntity> findAll(Pageable pageable);
 }

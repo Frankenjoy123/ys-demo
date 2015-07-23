@@ -5,6 +5,7 @@ import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
@@ -32,18 +33,22 @@ public class OrganizationDomain {
     }
 
     public OrganizationObject getOrganizationByName(String name) {
-        try {
-            return dataAPIClient.get("organization?name={name}", OrganizationObject.class, name);
-        } catch (NotFoundException ex) {
-            return null;
-        }
+        List<OrganizationObject> objects = dataAPIClient.get("organization?name={name}", new ParameterizedTypeReference<List<OrganizationObject>>() {
+        }, name);
+        return objects.size() == 0 ? null : objects.get(0);
     }
 
     public Page<OrganizationObject> getOrganizationList(Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("organization/list" + query, new ParameterizedTypeReference<List<OrganizationObject>>() {
+        return dataAPIClient.getPaged("organization" + query, new ParameterizedTypeReference<List<OrganizationObject>>() {
         });
+    }
+
+    public OrganizationObject createOrganization(OrganizationObject object) {
+        object.setId(null);
+        object.setCreatedDateTime(DateTime.now());
+        return dataAPIClient.post("organization", object, OrganizationObject.class);
     }
 }
