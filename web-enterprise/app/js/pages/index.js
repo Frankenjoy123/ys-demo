@@ -56,6 +56,10 @@
           templateUrl: 'pages/emulator/emulator.html',
           controller: 'emulatorCtrl'
         })
+        .when('/product-view', {
+          templateUrl: 'pages/emulator/product-view.html',
+          controller: 'productViewCtrl'
+        })
         .when('/device', {
           templateUrl: 'pages/device/device.html',
           controller: 'deviceCtrl'

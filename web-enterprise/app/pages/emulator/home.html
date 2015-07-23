@@ -55,6 +55,18 @@
         }
 
         $("#divMainBody").css('display', '');
+
+        if (parseInt(data.coords800400.w) > 0) {
+            var rx = 356 / data.coords800400.w;
+            var ry = 178 / data.coords800400.h;
+
+            $('#imgProduct').css({
+                width: Math.round(rx * data.bounds800400[0]) + 'px',
+                height: Math.round(ry * data.bounds800400[1]) + 'px',
+                marginLeft: '-' + Math.round(rx * data.coords800400.x) + 'px',
+                marginTop: '-' + Math.round(ry * data.coords800400.y) + 'px'
+            });
+        }
     }
 
     $(document).ready(function () {
@@ -113,7 +125,10 @@
         <div class="panel box box-primary ">
             <div class="row">
                 <div width="100%">
-                    <img id="imgProduct" src="" width="100%"/>
+
+                    <div style="width:356px;height:178px;overflow:hidden">
+                        <img id="imgProduct" src=""/>
+                    </div>
 
                     <div class="float-img animationDiv">
                         <img id="imgManufacture" src="" width="60px" height="60px" class="img-circle"/>

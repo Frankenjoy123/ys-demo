@@ -15,6 +15,13 @@
 
   app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", "FileUploader", "$location", "ProductDetailsVersion", function ($scope, emulatorService, $timeout, FileUploader, $location, ProductDetailsVersion) {
 
+    var jcropObj = null;
+    var bounds, boundx, boundy;
+
+    var bounds800400, coords800400;
+    var coords800400Result = {x: 0, y: 0, w: 0, h: 0};
+    var coords400Result = {x: 0, y: 0, w: 0, h: 0};
+
     var uploader = $scope.uploader = new FileUploader({
       url: ''
     });
@@ -44,6 +51,10 @@
       hotline: '',
       support: '',
       proPicPreview: false,
+      proPicPreviewUpload: false,
+      showButton800400: true,
+      showButton400: false,
+      imageWord: '选择图片',
       addProductInfo: function () {
         this.productInfos.push({key: '', value: ''});
       },
@@ -61,6 +72,110 @@
       },
       subProductCommerce: function () {
         this.productCommerce.pop();
+      },
+      initJcrop400: function () {
+        if (jcropObj != null) {
+          jcropObj.destroy();
+        }
+
+        $("#imgProductbase").Jcrop({
+              allowSelect: false,
+              aspectRatio: 1,
+              onChange: this.showPreview400,
+              onSelect: this.showPreview400,
+              setSelect: [0, 0, 130, 130]
+            },
+            function () {
+              jcropObj = this;
+
+              bounds = jcropObj.getBounds();
+              boundx = bounds[0];
+              boundy = bounds[1];
+            });
+      },
+      showPreview400: function (coords) {
+        $("#imgProductbase400").css('visibility', 'visible');
+
+        coords400Result.x = parseInt(($('#imgProductbase400')[0].naturalWidth / 422) * coords.x);
+        coords400Result.w = parseInt(($('#imgProductbase400')[0].naturalWidth / 422) * coords.w);
+        coords400Result.y = parseInt(($('#imgProductbase400')[0].naturalHeight / 211) * coords.y);
+        coords400Result.h = parseInt(($('#imgProductbase400')[0].naturalHeight / 211) * coords.h);
+
+        $('#showRealPix').html('W:' + coords400Result.w + ' H:' + coords400Result.h);
+
+        if (parseInt(coords.w) > 0) {
+          var rx = 130 / coords.w;
+          var ry = 130 / coords.h;
+
+          $('#imgProductbase400').css({
+            width: Math.round(rx * boundx) + 'px',
+            height: Math.round(ry * boundy) + 'px',
+            marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+            marginTop: '-' + Math.round(ry * coords.y) + 'px'
+          });
+        }
+      },
+      initJcrop800400: function () {
+        if (jcropObj != null) {
+          jcropObj.destroy();
+        }
+
+        $("#imgProductbase").Jcrop({
+              allowSelect: false,
+              aspectRatio: 2,
+              onChange: this.showPreview800400,
+              onSelect: this.showPreview800400,
+              setSelect: [0, 0, 260, 130]
+            },
+            function () {
+              jcropObj = this;
+
+              bounds = jcropObj.getBounds();
+              bounds800400 = bounds;
+              boundx = bounds[0];
+              boundy = bounds[1];
+            });
+      },
+      showPreview800400: function (coords) {
+        $("#imgProductbase800400").css('visibility', 'visible');
+
+        coords800400 = coords;
+
+        coords800400Result.x = parseInt(($('#imgProductbase800400')[0].naturalWidth / 422) * coords.x);
+        coords800400Result.w = parseInt(($('#imgProductbase800400')[0].naturalWidth / 422) * coords.w);
+        coords800400Result.y = parseInt(($('#imgProductbase800400')[0].naturalHeight / 211) * coords.y);
+        coords800400Result.h = parseInt(($('#imgProductbase800400')[0].naturalHeight / 211) * coords.h);
+
+        $('#showRealPix').html('W:' + coords800400Result.w + ' H:' + coords800400Result.h);
+
+        if (parseInt(coords.w) > 0) {
+          var rx = 260 / coords.w;
+          var ry = 130 / coords.h;
+
+          $('#imgProductbase800400').css({
+            width: Math.round(rx * boundx) + 'px',
+            height: Math.round(ry * boundy) + 'px',
+            marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+            marginTop: '-' + Math.round(ry * coords.y) + 'px'
+          });
+        }
+      },
+      comfirmSelect800400: function () {
+        this.showButton800400 = false;
+        this.showButton400 = true;
+
+        this.initJcrop400();
+      },
+      comfirmSelect400: function () {
+        this.showButton800400 = false;
+        this.showButton400 = false;
+
+        if (jcropObj != null) {
+          jcropObj.destroy();
+        }
+
+        this.proPicPreviewUpload = false;
+        this.imageWord = "重新选择";
       }
     };
 
@@ -68,7 +183,16 @@
 
       var dataPreview = {};
       dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo-mobile?access_token=" + $scope.utils.auth.getAccessToken();
-      dataPreview.proImgUrl = $scope.fileInput;
+
+      if ($scope.fileInput == '') {
+        dataPreview.proImgUrl = 'ysdefault.jpg';
+      }
+      else {
+        dataPreview.proImgUrl = $scope.fileInput;
+      }
+
+      dataPreview.bounds800400 = bounds800400;
+      dataPreview.coords800400 = coords800400;
       dataPreview.barcode = product.barCode;
       dataPreview.name = product.productName;
       dataPreview.details = product.productInfos;
@@ -193,6 +317,8 @@
       var divImgWrap = $("#divImgWrap");
       var fileInput = $("#fileInput");
       var imgProductbase = $("#imgProductbase");
+      var imgProductbase800400 = $("#imgProductbase800400");
+      var imgProductbase400 = $("#imgProductbase400");
 
       if (typeof FileReader === 'undefined') {
         divImgWrap.html("您的浏览器不支持图片预览");
@@ -204,9 +330,22 @@
               reader.readAsDataURL(file);
               reader.onload = function (e) {
                 product.proPicPreview = true;
+                product.proPicPreviewUpload = true;
+                product.showButton800400 = true;
+                product.showButton400 = false;
+
                 $scope.$apply();
 
-                imgProductbase.attr('src', this.result);
+                var oriImg = this.result;
+                imgProductbase.attr('src', oriImg);
+                imgProductbase800400.attr('src', oriImg);
+                imgProductbase400.attr('src', oriImg);
+
+                imgProductbase800400.css('visibility', 'hidden');
+                imgProductbase400.css('visibility', 'hidden');
+
+                product.initJcrop800400();
+
                 $scope.fileInput = this.result;
               };
 
@@ -214,55 +353,6 @@
             }
         );
       }
-
-      //$('#createProduct').bootstrapValidator({
-      //  message: '该字段不能为空',
-      //  feedbackIcons: {
-      //    valid: 'fa fa-check-circle fa-lg text-success',
-      //    invalid: 'fa fa-times-circle fa-lg',
-      //    validating: 'fa fa-refresh'
-      //  },
-      //  fields: {
-      //    barCode: {
-      //      validators: {
-      //        notEmpty: {
-      //          message: '请输入产品BarCode'
-      //        }
-      //      }
-      //    },
-      //    productName: {
-      //      validators: {
-      //        notEmpty: {
-      //          message: '请输入产品名'
-      //        }
-      //      }
-      //    },
-      //    greaterthan: {
-      //      validators: {
-      //        notEmpty: {
-      //          message: '请输入产品过期时间'
-      //        },
-      //        greaterThan: {
-      //          inclusive: false,
-      //          //If true, the input value must be greater than or equal to the comparison one.
-      //          //If false, the input value must be greater than the comparison one
-      //          value: 0,
-      //          message: '请输入大于1的正整数'
-      //        }
-      //      }
-      //    }
-      //  }
-      //}).on('success.field.bv', function (e, data) {
-      //  // $(e.target)  --> The field element
-      //  // data.bv      --> The BootstrapValidator instance
-      //  // data.field   --> The field name
-      //  // data.element --> The field element
-      //
-      //  var $parent = data.element.parents('.form-group');
-      //
-      //  // Remove the has-success class
-      //  $parent.removeClass('has-success');
-      //});
     }, 0);
 
   }]);
