@@ -55,6 +55,10 @@ public class ProductBaseObject {
     @JsonProperty("comments")
     private String comments;
 
+    @JsonProperty("deleted")
+    private Boolean deleted;
+
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -174,6 +178,14 @@ public class ProductBaseObject {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 
     public String getCreatedAccountId() {

@@ -65,6 +65,10 @@ public class ProductBase {
     @JsonProperty("comments")
     private String comments;
 
+    @JsonProperty("deleted")
+    private Boolean deleted;
+
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -202,6 +206,14 @@ public class ProductBase {
         this.comments = comments;
     }
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public String getCreatedAccountId() {
         return createdAccountId;
     }
@@ -254,6 +266,7 @@ public class ProductBase {
             this.setShelfLifeInterval(object.getShelfLifeInterval());
             this.setChildProductCount(object.getChildProductCount());
             this.setComments(object.getComments());
+            this.setDeleted(object.getDeleted());
             this.setCreatedAccountId(object.getCreatedAccountId());
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
@@ -277,6 +290,7 @@ public class ProductBase {
         object.setShelfLifeInterval(this.getShelfLifeInterval());
         object.setChildProductCount(this.getChildProductCount());
         object.setComments(this.getComments());
+        object.setDeleted(this.getDeleted());
         object.setCreatedAccountId(this.getCreatedAccountId());
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());
@@ -291,4 +305,5 @@ public class ProductBase {
     public void setProductBaseDetails(ProductBaseDetails productBaseDetails) {
         this.productBaseDetails = productBaseDetails;
     }
+
 }

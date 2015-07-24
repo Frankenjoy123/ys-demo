@@ -199,7 +199,7 @@ public class ProductBaseController {
         String currentVersionStatus = productBaseVersionsObjects.get(productBaseVersionsObjects.size() - 1).getStatusCode();
         Integer currentVersion = productBaseVersionsObjects.get(productBaseVersionsObjects.size() - 1).getVersion();
         Integer actualVersion = currentVersion;
-        if (currentVersionStatus == LookupCodes.ProductBaseVersionsStatus.SUBMITTED) {
+        if (LookupCodes.ProductBaseVersionsStatus.SUBMITTED.equals(currentVersionStatus)) {
             throw new UnprocessableEntityException("Sorry, you can't process current product version!");
         }
         productBaseObject.setId(productBaseId);
@@ -229,11 +229,11 @@ public class ProductBaseController {
         productBaseVersionsObject.setCreatedAccountId(currentAccountId);
         productBaseVersionsObject.setCreatedDateTime(DateTime.now());
 
-        if (currentVersionStatus == LookupCodes.ProductBaseVersionsStatus.ACTIVATED) {
+        if (LookupCodes.ProductBaseVersionsStatus.ACTIVATED.equals(currentVersionStatus)) {
             productBaseDomain.createProductBaseVersions(productBaseVersionsObject);
             actualVersion = currentVersion + 1;
         }
-        if (currentVersionStatus == LookupCodes.ProductBaseVersionsStatus.DRAFT || currentVersionStatus == LookupCodes.ProductBaseVersionsStatus.REJECTED) {
+        if (LookupCodes.ProductBaseVersionsStatus.DRAFT.equals(currentVersionStatus) || LookupCodes.ProductBaseVersionsStatus.REJECTED.equals(currentVersionStatus)) {
             productBaseVersionsObject.setModifiedAccountId(currentAccountId);
             productBaseVersionsObject.setModifiedDateTime(DateTime.now());
             productBaseDomain.patchUpdate(productBaseVersionsObject);
