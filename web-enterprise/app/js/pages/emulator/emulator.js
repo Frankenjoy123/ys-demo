@@ -13,7 +13,24 @@
     };
   }]);
 
-  app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", "FileUploader", "$location", "ProductDetailsVersion", function ($scope, emulatorService, $timeout, FileUploader, $location, ProductDetailsVersion) {
+  app.factory('emulatorDataService', function () {
+    var savedData = null;
+
+    function set(data) {
+      savedData = data;
+    }
+
+    function get() {
+      return savedData;
+    }
+
+    return {
+      set: set,
+      get: get
+    }
+  });
+
+  app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", "FileUploader", "$location", "ProductDetailsVersion", "emulatorDataService", function ($scope, emulatorService, $timeout, FileUploader, $location, ProductDetailsVersion, emulatorDataService) {
 
     var jcropObj = null;
     var bounds, boundx, boundy;
@@ -33,6 +50,7 @@
     $scope.fileInput = '';
 
     var product = $scope.product = {
+      productTitle: '产品创建',
       productInfos: [{key: '', value: ''}],
       productAddress: [{address: '', tel: ''}],
       productCommerce: [{title: '', url: ''}],
@@ -178,6 +196,10 @@
         this.imageWord = "重新选择";
       }
     };
+
+    if (emulatorDataService.get() != null) {
+      product.productTitle = emulatorDataService.get();
+    }
 
     $scope.preview = function () {
 

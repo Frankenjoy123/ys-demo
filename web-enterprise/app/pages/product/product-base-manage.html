@@ -15,7 +15,8 @@
     <div class="panel panel-bordered-primary">
         <div class="animated slideInRight">
             <div class="col-sm-12 pull-left" style="padding: 20px 20px;" ng-show="productBaseButtonShow">
-                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus"><a href="#/emulator" style="color: white">创建产品</a></button>
+                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" ng-click="productBase.showCreateProduct()">创建产品
+                </button>
             </div>
             <div class="panel-body">
                 <table class="table table-hover">
@@ -23,13 +24,13 @@
                     <tr>
                         <th>#</th>
                         <th>名称</th>
-                        <th class="col-xs-1">品类</th>
-                        <th class="col-xs-1">条码</th>
-                        <th class="col-xs-1">保质期</th>
-                        <th class="col-xs-2">产品码类型</th>
-                        <th class="col-xs-1">可用额度</th>
-                        <th>备注</th>
-                        <th class="col-xs-2">创建时间</th>
+                        <th>品类</th>
+                        <th>条码</th>
+                        <th class="col-md-1">保质期</th>
+                        <th class="col-md-1">产品码类型</th>
+                        <th class="col-md-1">可用额度</th>
+                        <th class="col-md-2">创建时间</th>
+                        <th class="col-md-1">操作</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -42,7 +43,21 @@
                         <td>{{pb.barcode}}</td>
                         <td>{{pb.shelf_life + " " + SHELFLIFE_INTERVALS[pb.shelf_life_interval]}}</td>
 
-                        <td>{{formatProductKeyTypes(pb.product_key_types)}}</td>
+                        <td>
+                        <span ng-repeat="type in pb.product_key_types">
+
+                            <span ng-show="type.code == 'qr_public'" class="btn-hover-info add-tooltip"
+                                  data-placement="bottom" data-toggle="tooltip" data-original-title="二维码"
+                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"
+                                                                           style="color:#5cb85c"></i></span>
+                            <span ng-show="type.code == 'qr_secure'" class="btn-hover-info add-tooltip"
+                                  data-placement="bottom" data-toggle="tooltip" data-original-title="隐藏二维码"
+                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"></i></span>
+                            <span ng-show="type.code == 'rfid'" class="btn-hover-info add-tooltip"
+                                  data-placement="bottom" data-toggle="tooltip" data-original-title="RFID标签"
+                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-rss fa-lg"></i></span>
+                        </span>
+                        </td>
                         <td>
                             <div class="progress-group"><span
                                     class="progress-number"><span
@@ -55,8 +70,15 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{formatComments(pb.comments)}}</td>
                         <td>{{utils.formatDateString(pb.created_datetime)}}</td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-info fa fa-edit"
+                                    ng-click="productBase.editProductBaseDetails(pb.id)">
+                            </button>
+                            <button type="button" class="btn btn-success fa fa-eye"
+                                    ng-click="productBase.showProductBaseDetails(pb.id)">
+                            </button>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
