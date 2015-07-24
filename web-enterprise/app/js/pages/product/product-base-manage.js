@@ -10,28 +10,57 @@
       getProductKeyCredits: function (fnSuccess) {
         $http.get('/api/productkeycredit').success(fnSuccess);
         return this;
+      },
+      getProDetails: function (proId, fnSuccess, fnError) {
+        $http.get("/api/productbase/" + proId).success(fnSuccess).error(fnError);
+
+        return this;
       }
     };
   }]);
 
   app.factory('productBaseDataService', function () {
-    var savedData = {};
+    var savedData = {
+      title: '',
+      currProId: '',
+      proDetails: null
+    };
 
-    function set(data) {
-      savedData = data;
+    function getDetails() {
+      return savedData.proDetails;
     }
 
-    function get() {
-      return savedData;
+    function setDetails(data) {
+      savedData.proDetails = data;
+    }
+
+    function getProId() {
+      return savedData.currProId;
+    }
+
+    function setProId(data) {
+      savedData.currProId = data;
+    }
+
+    function getTitle() {
+      return savedData.title;
+    }
+
+    function setTitle(data) {
+      savedData.title = data;
     }
 
     return {
-      set: set,
-      get: get
+      getDetails: getDetails,
+      setDetails: setDetails,
+      getProId: getProId,
+      setProId: setProId,
+      getTitle: getTitle,
+      setTitle: setTitle
     }
   });
 
-  app.controller('ProductBaseManageCtrl', ['$scope', 'productBaseManageService', 'productBaseDataService', '$location', "emulatorDataService", function ($scope, productBaseManageService, productBaseDataService, $location, emulatorDataService) {
+  app.controller('ProductBaseManageCtrl', ['$scope', 'productBaseManageService', 'productBaseDataService', '$location', function ($scope, productBaseManageService, productBaseDataService, $location) {
     $scope.SHELFLIFE_INTERVALS = {
       'year': '年',
       'month': '月',
@@ -122,18 +151,24 @@
 
     $scope.productBase = {
       showCreateProduct: function () {
-        emulatorDataService.set('产品创建');
-        productBaseDataService.set('');
+        productBaseDataService.setProId('');
+        productBaseDataService.setTitle('产品创建');
         $location.path('/emulator');
       },
       showProductBaseDetails: function (proId) {
-        productBaseDataService.set(proId);
+        productBaseDataService.setProId(proId);
         $location.path('/product-view');
       },
       editProductBaseDetails: function (proId) {
-        productBaseDataService.set(proId);
-        emulatorDataService.set('产品编辑');
-        $location.path('/emulator');
+        productBaseDataService.setProId(proId);
+        productBaseDataService.setTitle('产品编辑');
+
+        productBaseManageService.getProDetails(proId, function (data) {
+          productBaseDataService.setDetails(data);
+          $location.path('/emulator');
+        }, function () {
+          $scope.utils.alert('info', '获取产品信息失败');
+        });
       }
     };
   }]);

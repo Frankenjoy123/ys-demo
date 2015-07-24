@@ -128,17 +128,39 @@
                                     <div class="form-group">
                                         <label class="col-md-3 text-bold text-right">产品名</label>
 
-                                        <label class="col-md-9" ng-model="product.productName"></label>
+                                        <label class="col-md-9">{{product.productName}}</label>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-3 text-bold text-right">BARCODE</label>
 
-                                        <label class="col-md-9" ng-model="product.barCode"></label>
+                                        <label class="col-md-9">{{product.barCode}}</label>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-3 text-bold text-right">产品码类型</label>
 
-                                        <label class="col-md-9" ng-model="product.keyTypePubInput"></label>
+                                        <div class="col-md-9">
+
+                                          <span ng-repeat="type in product.productKeyTypeCodes">
+
+                            <span ng-show="type.code == 'qr_public'" class="btn-hover-info add-tooltip"
+                                  data-placement="bottom" data-toggle="tooltip" data-original-title="二维码"
+                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"
+                                                                           style="color:#5cb85c"></i></span>
+                            <span ng-show="type.code == 'qr_secure'" class="btn-hover-info add-tooltip"
+                                  data-placement="bottom" data-toggle="tooltip" data-original-title="隐藏二维码"
+                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"></i></span>
+                            <span ng-show="type.code == 'rfid'" class="btn-hover-info add-tooltip"
+                                  data-placement="bottom" data-toggle="tooltip" data-original-title="RFID标签"
+                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-rss fa-lg"></i></span>
+                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 text-bold text-right">产品状态</label>
+
+                                        <div class="col-md-9"><span class="label"
+                                                                    ng-class="{'label-success':(product.statusCode == 'created' || product.statusCode == 'activated'),'label-info':(product.statusCode == 'recalled' || product.statusCode == 'deleted')}">{{product.formatStatusCode(product.statusCode)}}</span>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-3 text-bold text-right">产品过期时间</label>
@@ -148,16 +170,16 @@
                                     <div class="form-group">
                                         <label class="col-md-3 text-bold text-right">产品过期单位</label>
 
-                                        <label class="col-md-9" ng-model="product.expireDateUnitValue"></label>
+                                        <label class="col-md-9" ng-model="product.expireDateUnit"></label>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-3 text-bold text-right">产品详细信息</label>
 
                                         <div class="col-md-9">
                                             <div ng-repeat="data in product.productInfos" class="row">
-                                                <label ng-model="data.key" class="col-md-3"></label>
+                                                <label class="col-md-3 text-bold text-right">{{data.name}}</label>
 
-                                                <label ng-model="data.value" class="col-md-9"></label>
+                                                <label class="col-md-9">{{data.value}}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -166,9 +188,14 @@
 
                                         <div class="col-md-9">
                                             <div class="row">
-                                                <label ng-model="product.hotline" class="col-md-6"></label>
+                                                <label class="col-md-3 text-bold text-right">热线电话</label>
 
-                                                <label ng-model="product.support" class="col-md-6"></label>
+                                                <label class="col-md-9">{{product.hotline}}</label>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 text-bold text-right">技术支持</label>
+
+                                                <label class="col-md-9">{{product.support}}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -179,9 +206,14 @@
                                              ng-repeat="data in product.productCommerce">
 
                                             <div class="row">
-                                                <label ng-model="data.title" class="col-md-6"></label>
+                                                <label class="col-md-3 text-bold text-right">商城名</label>
 
-                                                <label ng-model="data.url" class="col-md-6"></label>
+                                                <label class="col-md-9">{{data.title}}</label>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 text-bold text-right">商城URL</label>
+
+                                                <label class="col-md-9">{{data.url}}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -190,42 +222,64 @@
 
                                         <div class="col-md-9"
                                              ng-repeat="data in product.productAddress">
-                                            <div class="row">
-                                                <label ng-model="data.address" class="col-md-6"></label>
 
-                                                <label ng-model="data.tel" class="col-md-6"></label>
+                                            <div class="row">
+                                                <label class="col-md-3 text-bold text-right">实体店地址</label>
+
+                                                <label class="col-md-9">{{data.address}}</label>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 text-bold text-right">实体店电话</label>
+
+                                                <label class="col-md-9">{{data.tel}}</label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-md-3 text-bold text-right" for="comment">产品备注</label>
+                                        <label class="col-md-3 text-bold text-right">产品备注</label>
 
-                                        <div class="col-md-9">
-                                        <textarea placeholder="产品备注" id="comment" rows="5" readonly="true"
-                                                  class="form-control" ng-model="product.comment"></textarea>
-                                        </div>
+                                        <label class="col-md-9">{{product.comment}}</label>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-3 text-bold text-right">产品图片</label>
 
-                                        <div class="col-md-9" id="divImgWrap">
-                                            <img id="imgProductbase"
-                                                 style="min-width:422px;min-height:211px;width:100%;height:100%">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row text-center">
-                                            <button class="btn btn-primary btn-labeled fa fa-reply" type="button"
-                                                    ng-click="return()">返回
-                                            </button>
+                                        <div class="col-md-9">
+                                            <div class="row">
+                                                <div class="col-md-8"><span
+                                                        class="label label-info">800*400</span>
+                                                </div>
+
+                                                <div class="col-md-4"><span
+                                                        class="label label-info">400*400</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="row" style="margin-top: 5px">
+
+                                                <div class="col-md-8" id="divImg800400">
+                                                    <img id="imgProductbase800400" src=""
+                                                         width="260px" height="130px"/>
+                                                </div>
+
+                                                <div class="col-md-4" id="divImg400">
+                                                    <img id="imgProductbase400" src=""
+                                                         width="130px" height="130px"/>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <div class="row text-center">
+                                        <button class="btn btn-primary btn-labeled fa fa-reply" type="button"
+                                                ng-click="return()">返回
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <!--===================================================-->
-                            <!--End Horizontal Form-->
-
                         </div>
+                        <!--===================================================-->
+                        <!--End Horizontal Form-->
                     </div>
                     <div class="col-md-6">
                         <div class="deviceWrap">
@@ -241,4 +295,6 @@
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>

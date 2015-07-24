@@ -13,24 +13,7 @@
     };
   }]);
 
-  app.factory('emulatorDataService', function () {
-    var savedData = null;
-
-    function set(data) {
-      savedData = data;
-    }
-
-    function get() {
-      return savedData;
-    }
-
-    return {
-      set: set,
-      get: get
-    }
-  });
-
-  app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", "FileUploader", "$location", "ProductDetailsVersion", "emulatorDataService", function ($scope, emulatorService, $timeout, FileUploader, $location, ProductDetailsVersion, emulatorDataService) {
+  app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", "FileUploader", "$location", "ProductDetailsVersion", "productBaseDataService", function ($scope, emulatorService, $timeout, FileUploader, $location, ProductDetailsVersion, productBaseDataService) {
 
     var jcropObj = null;
     var bounds, boundx, boundy;
@@ -197,8 +180,44 @@
       }
     };
 
-    if (emulatorDataService.get() != null) {
-      product.productTitle = emulatorDataService.get();
+    if (productBaseDataService.getTitle() != '') {
+      product.productTitle = productBaseDataService.getTitle();
+    }
+
+    if (productBaseDataService.getDetails() != null) {
+      var data = productBaseDataService.getDetails();
+
+      product.productName = data.name;
+      product.barcode = data.barCode;
+      product.productKeyTypeCodes = data.product_key_type_codes;
+      product.expireDate = data.shelf_life;
+      product.expireDateUnit = data.shelf_life_interval;
+      product.comments = data.comment;
+
+      var details = data.product_base_details;
+      product.productInfos = [];
+      for (var proInfo in details.item) {
+        product.productInfos.push({name: details.item[proInfo].name, value: details.item[proInfo].value});
+      }
+
+      product.hotline = details.contact.hotline;
+      product.support = details.contact.support;
+
+      product.productCommerce = [];
+      for (var proCommerce in details.e_commerce) {
+        product.productCommerce.push({
+          title: details.e_commerce[proCommerce].title,
+          url: details.e_commerce[proCommerce].url
+        });
+      }
+
+      product.productAddress = [];
+      for (var proAddress in details.t_commerce) {
+        product.productAddress.push({
+          address: details.t_commerce[proAddress].address,
+          tel: details.t_commerce[proAddress].tel
+        });
+      }
     }
 
     $scope.preview = function () {
