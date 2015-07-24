@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.data.object.ProductBaseVersionsObject;
 import org.joda.time.DateTime;
 
 /**
@@ -116,5 +117,33 @@ public class ProductBaseVersions {
 
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
+    }
+
+    public ProductBaseVersions(ProductBaseVersionsObject object) {
+        if (object != null) {
+            this.setProductBase(object.getProductBase());
+            this.setProductBaseId(object.getProductBaseId());
+            this.setVersion(object.getVersion());
+            this.setStatusCode(object.getStatusCode());
+            this.setReviewComments(object.getReviewComments());
+            this.setCreatedAccountId(object.getCreatedAccountId());
+            this.setCreatedDateTime(object.getCreatedDateTime());
+            this.setModifiedAccountId(object.getModifiedAccountId());
+            this.setModifiedDateTime(object.getModifiedDateTime());
+        }
+    }
+
+    public ProductBaseVersionsObject toProductBaseVersionsObject() {
+        ProductBaseVersionsObject object = new ProductBaseVersionsObject();
+        object.setProductBase(this.getProductBase());
+        object.setProductBaseId(this.getProductBaseId());
+        object.setVersion(this.getVersion());
+        object.setStatusCode(this.getStatusCode());
+        object.setReviewComments(this.getReviewComments());
+        object.setCreatedAccountId(this.getCreatedAccountId());
+        object.setCreatedDateTime(this.getCreatedDateTime());
+        object.setModifiedAccountId(this.getModifiedAccountId());
+        object.setModifiedDateTime(this.getModifiedDateTime());
+        return object;
     }
 }

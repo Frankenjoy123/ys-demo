@@ -86,6 +86,15 @@ public class LookupCodes {
         public static final String ARCHIVED = "archived";
     }
 
+    public static class ProductBaseVersions {
+
+        private ProductBaseVersions() {
+        }
+
+        public static final Integer INITIALVERSION = 1;
+    }
+
+
     public static class ProductKeyTransactionStatus {
         private ProductKeyTransactionStatus() {
         }
