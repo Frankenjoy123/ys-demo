@@ -50,7 +50,7 @@ public class ProductBaseDomain {
             byte[] buf = fileObject.getData();
             return mapper.readValue(new ByteArrayInputStream(buf), ProductBaseDetails.class);
         } catch (NotFoundException ex) {
-            throw new NotFoundException(40402, "找不到产品详细信息");
+            throw new NotFoundException(40402, "Can't find prod detail");
         }
     }
 
@@ -62,6 +62,36 @@ public class ProductBaseDomain {
     public List<ProductBaseObject> getProductBaseByOrgId(String orgId) {
         return dataAPIClient.get("productbase?org_id={orgId}", new ParameterizedTypeReference<List<ProductBaseObject>>() {
         }, orgId);
+    }
+
+    public ProductBaseVersionsObject getProductBaseVersionsByProductBaseIdAndVersion(String productBaseId, Integer version) {
+        List<ProductBaseVersionsObject> productBaseVersionsObjects = dataAPIClient.get("productbaseversions?product_base_Id={product_base_Id}&version={version}", new ParameterizedTypeReference<List<ProductBaseVersionsObject>>() {
+        }, productBaseId, version);
+        if (productBaseVersionsObjects.size() == 0) {
+            return null;
+        }
+        return productBaseVersionsObjects.get(0);
+    }
+
+    public String createProductBase(ProductBaseObject productBaseObject) {
+        return dataAPIClient.post("productbase", productBaseObject, String.class);
+    }
+
+    public ProductBaseVersionsObject createProductBaseVersions(ProductBaseVersionsObject productBaseVersionsObject) {
+        return dataAPIClient.post("productbaseversions/{product_base_id}", productBaseVersionsObject, ProductBaseVersionsObject.class, productBaseVersionsObject.getProductBaseId());
+    }
+
+    public void patchUpdate(ProductBaseVersionsObject productBaseVersionsObject) {
+        dataAPIClient.patch("productbaseversions/{product_base_id}/{version}", productBaseVersionsObject, productBaseVersionsObject.getProductBaseId(), productBaseVersionsObject.getVersion());
+    }
+
+    public void deleteProductBase(String id) {
+        dataAPIClient.delete("productbase/{id}", id);
+    }
+
+    public void deleteProductBaseVersions(String productBaseId, Integer version) {
+        dataAPIClient.delete("productbaseversions/{product_base_id}/{version}", productBaseId, version);
+
     }
 
 }

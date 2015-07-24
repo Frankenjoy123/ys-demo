@@ -1,5 +1,7 @@
 package com.yunsoo.api.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.LookupDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
@@ -10,15 +12,14 @@ import com.yunsoo.api.dto.ProductCategory;
 import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
-import com.yunsoo.common.data.object.FileObject;
-import com.yunsoo.common.data.object.LookupObject;
-import com.yunsoo.common.data.object.ProductBaseObject;
-import com.yunsoo.common.data.object.ProductCategoryObject;
+import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import org.springframework.beans.BeanUtils;
+import com.yunsoo.common.web.exception.UnprocessableEntityException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/productbase")
 public class ProductBaseController {
+
+    private static ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private RestClient dataAPIClient;
@@ -151,36 +154,100 @@ public class ProductBaseController {
         }
     }
 
-    //create
+    //create product base
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:create')")
     public String create(@RequestBody ProductBase productBase) {
-        ProductBaseObject p = new ProductBaseObject();
-        //BeanUtils.copyProperties(productBase, p);
-
-        p.setName(productBase.getName());
+        ProductBaseObject productBaseObject = new ProductBaseObject();
+        productBaseObject.setName(productBase.getName());
+        productBaseObject.setVersion(LookupCodes.ProductBaseVersions.INITIALVERSION);
 
         if (StringUtils.hasText(productBase.getOrgId()))
-            p.setOrgId(productBase.getOrgId());
+            productBaseObject.setOrgId(productBase.getOrgId());
         else
-            p.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+            productBaseObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
 
-        p.setBarcode(productBase.getBarcode());
-        p.setStatusCode(productBase.getStatusCode());
-        p.setCategoryId(productBase.getCategoryId());
-        p.setChildProductCount(productBase.getChildProductCount());
-        p.setComments(productBase.getComments());
-        p.setCreatedDateTime(productBase.getCreatedDateTime());
-        p.setId(productBase.getId());
-        p.setModifiedDateTime(productBase.getModifiedDateTime());
-        p.setProductKeyTypeCodes(productBase.getProductKeyTypeCodes());
-        p.setShelfLife(productBase.getShelfLife());
-        p.setShelfLifeInterval(productBase.getShelfLifeInterval());
+        productBaseObject.setBarcode(productBase.getBarcode());
+        productBaseObject.setStatusCode(productBase.getStatusCode());
+        productBaseObject.setCategoryId(productBase.getCategoryId());
+        productBaseObject.setChildProductCount(productBase.getChildProductCount());
+        productBaseObject.setComments(productBase.getComments());
+        productBaseObject.setCreatedDateTime(productBase.getCreatedDateTime());
+        productBaseObject.setId(productBase.getId());
+        productBaseObject.setModifiedDateTime(productBase.getModifiedDateTime());
+        productBaseObject.setProductKeyTypeCodes(productBase.getProductKeyTypeCodes());
+        productBaseObject.setShelfLife(productBase.getShelfLife());
+        productBaseObject.setShelfLifeInterval(productBase.getShelfLifeInterval());
 
-        String id = dataAPIClient.post("productbase/", p, String.class);
+        String id = productBaseDomain.createProductBase(productBaseObject);
         return id;
     }
+
+    //update product base versions: created new product version or edit current product version detail
+    @RequestMapping(value = "{product_base_id}", method = RequestMethod.PATCH)
+    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:modify')")
+    public void updateProductBaseVersions(@PathVariable(value = "product_base_id") String productBaseId,
+                                          @RequestBody ProductBase productBase) throws JsonProcessingException {
+        ProductBaseObject productBaseObject = new ProductBaseObject();
+        ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
+        List<ProductBaseVersionsObject> productBaseVersionsObjects = productBaseDomain.getProductBaseVersionsByProductBaseId(productBaseId);
+        if (productBaseVersionsObjects.size() == 0) {
+            throw new NotFoundException("product base version not found");
+        }
+
+        String currentVersionStatus = productBaseVersionsObjects.get(productBaseVersionsObjects.size() - 1).getStatusCode();
+        Integer currentVersion = productBaseVersionsObjects.get(productBaseVersionsObjects.size() - 1).getVersion();
+        Integer actualVersion = currentVersion;
+        if (currentVersionStatus == LookupCodes.ProductBaseVersionsStatus.SUBMITTED) {
+            throw new UnprocessableEntityException("Sorry, you can't process current product version!");
+        }
+        productBaseObject.setId(productBaseId);
+        productBaseObject.setName(productBase.getName());
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        if (StringUtils.hasText(productBase.getOrgId()))
+            productBaseObject.setOrgId(productBase.getOrgId());
+        else
+            productBaseObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+
+        productBaseObject.setBarcode(productBase.getBarcode());
+        productBaseObject.setStatusCode(productBase.getStatusCode());
+        productBaseObject.setCategoryId(productBase.getCategoryId());
+        productBaseObject.setChildProductCount(productBase.getChildProductCount());
+        productBaseObject.setComments(productBase.getComments());
+        productBaseObject.setCreatedDateTime(productBase.getCreatedDateTime());
+        productBaseObject.setId(productBase.getId());
+        productBaseObject.setModifiedDateTime(productBase.getModifiedDateTime());
+        productBaseObject.setProductKeyTypeCodes(productBase.getProductKeyTypeCodes());
+        productBaseObject.setShelfLife(productBase.getShelfLife());
+        productBaseObject.setShelfLifeInterval(productBase.getShelfLifeInterval());
+
+        productBaseVersionsObject.setProductBase(productBaseObject);
+        productBaseVersionsObject.setProductBaseId(productBaseId);
+        productBaseVersionsObject.setVersion(currentVersion);
+        productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.SUBMITTED);
+        productBaseVersionsObject.setCreatedAccountId(currentAccountId);
+        productBaseVersionsObject.setCreatedDateTime(DateTime.now());
+
+        if (currentVersionStatus == LookupCodes.ProductBaseVersionsStatus.ACTIVATED) {
+            productBaseDomain.createProductBaseVersions(productBaseVersionsObject);
+            actualVersion = currentVersion + 1;
+        }
+        if (currentVersionStatus == LookupCodes.ProductBaseVersionsStatus.DRAFT || currentVersionStatus == LookupCodes.ProductBaseVersionsStatus.REJECTED) {
+            productBaseVersionsObject.setModifiedAccountId(currentAccountId);
+            productBaseVersionsObject.setModifiedDateTime(DateTime.now());
+            productBaseDomain.patchUpdate(productBaseVersionsObject);
+        }
+
+        FileObject fileObject = new FileObject();
+        byte[] buf = mapper.writeValueAsBytes(productBase.getProductBaseDetails());
+        fileObject.setData(buf);
+        fileObject.setContentType("application/octet-stream");
+        fileObject.setS3Path("photo/coms/products/" + productBaseId + "/" + actualVersion + "/notes.json");
+
+        dataAPIClient.post("file/", fileObject, Long.class);
+    }
+
 
     //create with details
     @RequestMapping(value = "/withdetail", method = RequestMethod.POST)
@@ -246,17 +313,7 @@ public class ProductBaseController {
         }
     }
 
-    //patch update
-    @RequestMapping(value = "", method = RequestMethod.PATCH)
-    @PreAuthorize("hasPermission(#productBase, 'productbase:modify')")
-    public void update(@RequestBody ProductBase productBase) throws Exception {
-        //patch update, we don't provide functions like update with set null properties.
-        ProductBaseObject p = new ProductBaseObject();
-        BeanUtils.copyProperties(productBase, p);
-        dataAPIClient.patch("productbase/", p);
-    }
-
-    //delete
+    //delete product base
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "id") String id) {
@@ -266,10 +323,18 @@ public class ProductBaseController {
             if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
                 throw new ForbiddenException();
             }
-
-            dataAPIClient.delete("productbase/{id}", id);
+            productBaseDomain.deleteProductBase(id);
         }
     }
+
+    //delete product base versions
+    @RequestMapping(value = "{product_base_id}/{version}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProductBaseVersions(@PathVariable(value = "product_base_id") String productBaseId,
+                                          @PathVariable(value = "version") Integer version) {
+        productBaseDomain.deleteProductBaseVersions(productBaseId, version);
+    }
+
 
     @RequestMapping(value = "/{id}/{client}", method = RequestMethod.GET)
     public ResponseEntity<?> getThumbnail(
