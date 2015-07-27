@@ -2,16 +2,20 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.entity.ProductBaseEntity;
 import com.yunsoo.data.service.repository.ProductBaseRepository;
 import com.yunsoo.data.service.service.ProductBaseService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,9 +49,16 @@ public class ProductBaseController {
 
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductBaseObject> getByFilter(@RequestParam(value = "org_id") String orgId) {
-        return productBaseRepository.findByOrgId(orgId).stream()
-                .filter(p -> !p.isDeleted())
+    public List<ProductBaseObject> getByFilter(@RequestParam(value = "org_id") String orgId,
+                                               Pageable pageable,
+                                               HttpServletResponse response) {
+        Page<ProductBaseEntity> entityPage = productBaseRepository.findByOrgIdAndDeleted(orgId, false, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+
+        return entityPage.getContent().stream()
                 .map(this::toProductBaseObject)
                 .collect(Collectors.toList());
     }
