@@ -32,21 +32,30 @@ public class PermissionDomain {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PermissionDomain.class);
 
+    private final String CACHENAME = "permission";
+
+    public PermissionDomain(){
+        LOGGER.debug("init PermissionDomain");
+    }
+
     @Autowired
     private RestClient dataAPIClient;
 
-    @Cacheable(value = "permission", key = "'policylist'")
+    @Cacheable(CACHENAME)
     public List<PermissionPolicyObject> getPermissionPolicies() {
-        //LOGGER.debug("cache missed [name: permission, key: 'policylist']");
+        LOGGER.debug("cache missed [name: permission, key: 'policylist']");
         return dataAPIClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
         });
     }
 
-    @Cacheable(value = "permission", key = "'policymap'")
+    @Cacheable(CACHENAME)
     public Map<String, PermissionPolicyObject> getPermissionPolicyMap() {
-        //LOGGER.debug("cache missed [name: permission, key: 'policymap']");
+        LOGGER.debug("cache missed [name: permission, key: 'policymap']");
         Map<String, PermissionPolicyObject> permissionPolicies = new HashMap<>();
-        this.getPermissionPolicies().forEach(o -> {
+        //avoid Spring AOP proxy not work for internal invoke
+        List<PermissionPolicyObject> policyList =  dataAPIClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
+        });
+        policyList.forEach(o -> {
             if (o == null) {
                 return;
             }

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * Created on  : 2015/6/17
  * Descriptions:
  */
-@Component
+@Component("accountPermissionDomain")
 public class AccountPermissionDomain {
 
     @Autowired

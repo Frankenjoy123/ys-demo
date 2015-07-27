@@ -24,20 +24,21 @@ public class LookupDomain {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LookupDomain.class);
 
+    private final String CACHENAME = "lookup";
     @Autowired
     private RestClient dataAPIClient;
 
 
     //ProductKeyType
 
-    @Cacheable(value = "api-domain", key = "'lookup.productkeytype.all'")
+    @Cacheable(CACHENAME)
     public List<ProductKeyType> getProductKeyTypes() {
         return getProductKeyTypes(null);
     }
 
-    @Cacheable(value = "api-domain", key = "'lookup.productkeytype.all'")
+    @Cacheable(CACHENAME)
     public List<ProductKeyType> getProductKeyTypes(Boolean active) {
-        //LOGGER.debug("cache missed [name: lookup.productkeytype]");
+        LOGGER.debug("cache missed [name: lookup.productkeytype]");
         return dataAPIClient.get("productkeytype" + formatActive(active), new ParameterizedTypeReference<List<ProductKeyType>>() {
         });
     }
@@ -45,14 +46,14 @@ public class LookupDomain {
 
     //ProductKeyBatchStatus
 
-    @Cacheable("lookup.productkeybatchstatus")
+    @Cacheable(CACHENAME)
     public List<ProductKeyBatchStatus> getProductKeyBatchStatuses() {
         return getProductKeyBatchStatuses(null);
     }
 
-    @Cacheable("lookup.productkeybatchstatus")
+    @Cacheable(CACHENAME)
     public List<ProductKeyBatchStatus> getProductKeyBatchStatuses(Boolean active) {
-        //LOGGER.debug("cache missed [name: lookup.productkeybatchstatus]");
+        LOGGER.debug("cache missed [name: lookup.productkeybatchstatus]");
         return dataAPIClient.get("productkeybatchstatus" + formatActive(active), new ParameterizedTypeReference<List<ProductKeyBatchStatus>>() {
         });
     }
@@ -60,14 +61,14 @@ public class LookupDomain {
 
     //ProductStatus
 
-    @Cacheable("lookup.productstatus")
+    @Cacheable(CACHENAME)
     public List<ProductStatus> getProductStatuses() {
         return getProductStatuses(null);
     }
 
-    @Cacheable("lookup.productstatus")
+    @Cacheable(CACHENAME)
     public List<ProductStatus> getProductStatuses(Boolean active) {
-        //LOGGER.debug("cache missed [name: lookup.productstatus]");
+        LOGGER.debug("cache missed [name: lookup.productstatus]");
         return dataAPIClient.get("productstatus" + formatActive(active), new ParameterizedTypeReference<List<ProductStatus>>() {
         });
     }
