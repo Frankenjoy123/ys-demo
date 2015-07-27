@@ -109,6 +109,8 @@
           callback({data: data, headers: headers});
 
           $timeout(function () {
+            $('#proBaseTable').removeClass('default breakpoint footable-loaded footable');
+
             $('#proBaseTable').footable().on('footable_row_expanded', function (e) {
               $('#proBaseTable tbody tr.footable-detail-show').not(e.row).each(function () {
                 $('#proBaseTable').data('footable').toggleDetail(this);
