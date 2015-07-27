@@ -56,7 +56,7 @@
 
         $("#divMainBody").css('display', '');
 
-        if (parseInt(data.coords800400.w) > 0) {
+        if (data.coords800400 && parseInt(data.coords800400.w) > 0) {
             var rx = 356 / data.coords800400.w;
             var ry = 178 / data.coords800400.h;
 

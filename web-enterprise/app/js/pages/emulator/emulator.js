@@ -188,7 +188,7 @@
       var data = productBaseDataService.getDetails();
 
       product.productName = data.name;
-      product.barcode = data.barCode;
+      product.barCode = data.barcode;
       product.productKeyTypeCodes = data.product_key_type_codes;
       product.expireDate = data.shelf_life;
       product.expireDateUnit = data.shelf_life_interval;

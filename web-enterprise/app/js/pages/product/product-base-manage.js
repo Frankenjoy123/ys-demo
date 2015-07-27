@@ -60,7 +60,7 @@
     }
   });
 
-  app.controller('ProductBaseManageCtrl', ['$scope', 'productBaseManageService', 'productBaseDataService', '$location', function ($scope, productBaseManageService, productBaseDataService, $location) {
+  app.controller('ProductBaseManageCtrl', ['$scope', 'productBaseManageService', 'productBaseDataService', '$location', "$timeout", function ($scope, productBaseManageService, productBaseDataService, $location, $timeout) {
     $scope.SHELFLIFE_INTERVALS = {
       'year': '年',
       'month': '月',
@@ -68,6 +68,11 @@
       'day': '天',
       'hour': '小时'
     };
+
+    var statusFormat = [{activated: '已激活', created: '未激活', deleted: '已删除', recalled: '已召回'}];
+    $scope.formatStatusCode = function (statusCode) {
+      return statusFormat[statusCode];
+    }
 
     $scope.formatProductKeyTypes = function (productKeyTypes) {
       var result = '';
@@ -102,6 +107,14 @@
             });
           }
           callback({data: data, headers: headers});
+
+          $timeout(function () {
+            $('#proBaseTable').footable().on('footable_row_expanded', function (e) {
+              $('#proBaseTable tbody tr.footable-detail-show').not(e.row).each(function () {
+                $('#proBaseTable').data('footable').toggleDetail(this);
+              });
+            });
+          }, 0);
         });
       }
     });
@@ -171,5 +184,7 @@
         });
       }
     };
+
+
   }]);
 })();
