@@ -13,8 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +48,25 @@ public class ProductBaseVersionsController {
         return productBaseVersionsRepository.findByProductBaseIdOrderByVersion(productBaseId).stream()
                 .map(this::toProductBaseVersionsObject)
                 .collect(Collectors.toList());
+    }
+
+    //query for multi-productbases
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public Map<String, List<ProductBaseVersionsObject>> getByFilter(@RequestParam(value = "product_base_ids") List<String> productBaseIds) {
+        Map<String, List<ProductBaseVersionsObject>> map = new HashMap<>();
+        if (productBaseIds.size() > 0) {
+            productBaseVersionsRepository.findByProductBaseIdIn(productBaseIds).forEach(e -> {
+                String id = e.getProductBaseId();
+                List<ProductBaseVersionsObject> list;
+                if (map.containsKey(id)) {
+                    list = map.get(id);
+                } else {
+                    map.put(id, list = new ArrayList<>());
+                }
+                list.add(toProductBaseVersionsObject(e));
+            });
+        }
+        return map;
     }
 
     //create
