@@ -1,5 +1,6 @@
 package com.yunsoo.api.security.permission;
 
+import com.yunsoo.api.AppContext;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TAccount;
@@ -21,8 +22,14 @@ import java.io.Serializable;
  */
 public class BasePermissionEvaluator implements PermissionEvaluator {
 
-    @Autowired
+    //@Autowired
     private AccountPermissionDomain accountPermissionDomain;
+
+    private AccountPermissionDomain getAccountPermissionDomain(){
+        if(accountPermissionDomain == null)
+            accountPermissionDomain = (AccountPermissionDomain)AppContext.getBean("accountPermissionDomain");
+        return accountPermissionDomain;
+    }
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
@@ -53,7 +60,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 currentPermission.setOrgId(account.getOrgId());  //by default, just set the account's orgId
             }
 
-            hasPermission = accountPermissionDomain.hasPermission(account.getId(), currentPermission);
+            hasPermission = getAccountPermissionDomain().hasPermission(account.getId(), currentPermission);
         }
         return hasPermission;
     }
@@ -83,7 +90,8 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
             else {
                 currentPermission.setOrgId(account.getOrgId());
             }
-            hasPermission = accountPermissionDomain.hasPermission(account.getId(), currentPermission);
+
+            hasPermission = getAccountPermissionDomain().hasPermission(account.getId(), currentPermission);
         }
         return hasPermission;
     }

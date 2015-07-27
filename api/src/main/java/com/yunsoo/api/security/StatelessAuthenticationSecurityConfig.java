@@ -21,7 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @EnableWebSecurity
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Order(1)
 public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -40,6 +39,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         http.exceptionHandling().authenticationEntryPoint(new TokenInvalidAuthenticationEntryPoint())
 //                .accessDeniedHandler(new AccessDeniedHandler() {
 //            @Override
