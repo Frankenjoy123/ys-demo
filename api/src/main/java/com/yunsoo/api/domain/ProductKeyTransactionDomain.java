@@ -135,11 +135,11 @@ public class ProductKeyTransactionDomain {
     }
 
     public void commit(String transactionId) {
-        dataAPIClient.post("productkeytransaction/{transactionId}/commit", null, ProductKeyTransactionObject.class);
+        dataAPIClient.post("productkeytransaction/{transactionId}/commit", null, ProductKeyTransactionObject.class, transactionId);
     }
 
     public void rollback(String transactionId) {
-        dataAPIClient.post("productkeytransaction/{transactionId}/rollback", null, ProductKeyTransactionObject.class);
+        dataAPIClient.post("productkeytransaction/{transactionId}/rollback", null, ProductKeyTransactionObject.class, transactionId);
     }
 
 }
