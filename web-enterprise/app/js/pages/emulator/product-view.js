@@ -22,11 +22,11 @@
       productName: '',
       expireDate: '',
       expireDateUnit: '',
-      comment: '',
+      comments: '',
       productKeyTypeCodes: [],
       hotline: '',
       support: '',
-      statusFormat: [{activated: '已激活', created: '未激活', deleted: '已删除', recalled: '已召回'}],
+      statusFormat: {activated: '已激活', created: '未激活', deleted: '已删除', recalled: '已召回'},
       formatStatusCode: function () {
         return this.statusFormat[this.statusCode];
       }
@@ -36,16 +36,18 @@
 
       product.productName = data.name;
       product.barCode = data.barcode;
-      product.productKeyTypeCodes = data.product_key_type_codes;
+
+      product.productKeyTypeCodes = data.product_key_types.slice(0);
+
       product.expireDate = data.shelf_life;
       product.expireDateUnit = data.shelf_life_interval;
       product.statusCode = data.status_code;
-      product.comments = data.comment;
+      product.comments = data.comments;
 
       if (data.product_base_details) {
         var details = data.product_base_details;
-        for (var proInfo in details.item) {
-          product.productInfos.push({name: details.item[proInfo].name, value: details.item[proInfo].value});
+        for (var proInfo in details.details) {
+          product.productInfos.push({name: details.details[proInfo].name, value: details.details[proInfo].value});
         }
 
         product.hotline = details.contact.hotline;
@@ -78,7 +80,7 @@
 
       dataPreview.barcode = product.barCode;
       dataPreview.name = product.productName;
-      dataPreview.details = product.productInfos;
+      dataPreview.details = product.productInfos.slice(0);
 
       $('#iphone-6-portrait')[0].contentWindow.refresh(dataPreview);
 

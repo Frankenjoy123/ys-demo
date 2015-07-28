@@ -23,7 +23,8 @@
     var savedData = {
       title: '',
       currProId: '',
-      proDetails: null
+      proDetails: null,
+      isCreateMode: true
     };
 
     function getDetails() {
@@ -50,13 +51,23 @@
       savedData.title = data;
     }
 
+    function getMode() {
+      return savedData.isCreateMode;
+    }
+
+    function setMode(data) {
+      savedData.isCreateMode = data;
+    }
+
     return {
       getDetails: getDetails,
       setDetails: setDetails,
       getProId: getProId,
       setProId: setProId,
       getTitle: getTitle,
-      setTitle: setTitle
+      setTitle: setTitle,
+      getMode: getMode,
+      setMode: setMode
     }
   });
 
@@ -184,6 +195,9 @@
         }, function () {
           $scope.utils.alert('info', '获取产品信息失败');
         });
+      },
+      deleteProductBaseDetails: function (proId) {
+
       }
     };
 

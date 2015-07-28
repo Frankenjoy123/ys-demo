@@ -28,9 +28,9 @@
                         <th>条码</th>
                         <th class="col-md-1">保质期</th>
                         <th class="col-md-1">产品码类型</th>
-                        <th class="col-md-1">可用额度</th>
+                        <th class="col-md-2">可用额度</th>
                         <th class="col-md-2">创建时间</th>
-                        <th class="col-md-1">操作</th>
+                        <th class="col-md-2">操作</th>
                         <th data-hide="all"></th>
                     </tr>
                     </thead>
@@ -72,6 +72,9 @@
                         <td class="text-center">
                             <button type="button" class="btn btn-info fa fa-edit"
                                     ng-click="productBase.editProductBaseDetails(pb.id)">
+                            </button>
+                            <button type="button" class="btn btn-danger fa fa-trash-o"
+                                    ng-click="productBase.deleteProductBaseDetails(pb.id)">
                             </button>
                             <button type="button" class="btn btn-success fa fa-eye"
                                     ng-click="productBase.showProductBaseDetails(pb.id)">
