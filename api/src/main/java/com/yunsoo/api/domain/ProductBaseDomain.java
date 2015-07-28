@@ -55,9 +55,9 @@ public class ProductBaseDomain {
         }
     }
 
-    public ProductBaseDetails getProductBaseDetailByProductBaseIdAndVersion(String productBaseId, Integer version) throws IOException {
+    public ProductBaseDetails getProductBaseDetailByProductBaseIdAndVersion(String productBaseId, String orgId, Integer version) throws IOException {
         try {
-            String path = "photo/coms/products/" + productBaseId + "/" + version + "/nodes.json";
+            String path = "organization/" + orgId + "/product_base/" + productBaseId + "/" + version + "/details.json";
             FileObject fileObject = dataAPIClient.get("file?path={0}", FileObject.class, path);
             byte[] buf = fileObject.getData();
             return mapper.readValue(new ByteArrayInputStream(buf), ProductBaseDetails.class);

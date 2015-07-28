@@ -79,7 +79,7 @@ public class ProductBaseController {
         ProductBase productBase = new ProductBase(productBaseObject);
         productBase.setCategory(new ProductCategory(productCategoryDomain.getById(productBase.getCategoryId())));
         productBase.setProductKeyTypes(LookupObject.fromCodeList(lookupDomain.getProductKeyTypes(), productBaseObject.getProductKeyTypeCodes()));
-        productBase.setProductBaseDetails(productBaseDomain.getProductBaseDetailByProductBaseIdAndVersion(id, productBaseObject.getVersion()));
+        productBase.setProductBaseDetails(productBaseDomain.getProductBaseDetailByProductBaseIdAndVersion(id, productBaseObject.getOrgId(), productBaseObject.getVersion()));
         return productBase;
     }
 
