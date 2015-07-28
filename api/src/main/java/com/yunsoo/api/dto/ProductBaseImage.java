@@ -6,16 +6,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by admin on 2015/7/27.
  */
 public class ProductBaseImage {
-    @JsonProperty("productBaseId")
+    @JsonProperty("product_base_id")
     private String productBaseId;
 
-    @JsonProperty("imageContent")
+    @JsonProperty("image_content")
     private String imageContent;
 
-    @JsonProperty("imageRect")
+    @JsonProperty("image_rect")
     private Image imageRect;
 
-    @JsonProperty("imageSquare")
+    @JsonProperty("image_square")
     private Image imageSquare;
 
     public String getProductBaseId() {

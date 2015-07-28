@@ -153,12 +153,12 @@ public class ProductBaseDomain {
             fileObject_rect_1.setData(outStream_rect_1.toByteArray());
             fileObject_rect_1.setContentType("image/png");
             fileObject_rect_1.setS3Path("organization/" + orgId + "/product_base/" + productBaseId + "/" + version + "/image-800x400.png");
-            dataAPIClient.post("file/", fileObject_rect_1, Long.class);
+            dataAPIClient.put("file/", fileObject_rect_1, Long.class);
 
             fileObject_rect_2.setData(outStream_rect_2.toByteArray());
             fileObject_rect_2.setContentType("image/png");
             fileObject_rect_2.setS3Path("organization/" + orgId + "/product_base/" + productBaseId + "/" + version + "/image-400x200.png");
-            dataAPIClient.post("file/", fileObject_rect_2, Long.class);
+            dataAPIClient.put("file/", fileObject_rect_2, Long.class);
             outStream_rect_1.close();
             outStream_rect_2.close();
             ByteArrayOutputStream outStream_square = new ByteArrayOutputStream();
@@ -169,7 +169,7 @@ public class ProductBaseDomain {
             fileObject_square.setData(outStream_square.toByteArray());
             fileObject_square.setContentType("application/octet-stream");
             fileObject_square.setS3Path("organization/" + orgId + "/product_base/" + productBaseId + "/" + version + "/image-400x400.png");
-            dataAPIClient.post("file/", fileObject_square, Long.class);
+            dataAPIClient.put("file/", fileObject_square, Long.class);
             outStream_square.close();
 
             inputStream.close();
