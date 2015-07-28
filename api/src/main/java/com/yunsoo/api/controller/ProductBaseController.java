@@ -6,14 +6,12 @@ import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.LookupDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductCategoryDomain;
-import com.yunsoo.api.dto.ProductBase;
-import com.yunsoo.api.dto.ProductBaseRequest;
-import com.yunsoo.api.dto.ProductCategory;
-import com.yunsoo.api.dto.ProductKeyType;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
@@ -22,6 +20,7 @@ import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,10 +35,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -86,16 +85,48 @@ public class ProductBaseController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'productbase:read')")
-    public List<ProductBase> getByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
+    public List<ProductBase> getByOrgId(@RequestParam(value = "org_id", required = false) String orgId,
+                                        Pageable pageable,
+                                        HttpServletResponse response) {
         orgId = fixOrgId(orgId);
         Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
         List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
-        return productBaseDomain.getProductBaseByOrgId(orgId).stream().map(p -> {
+        Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", productBasePage.toContentRange());
+        }
+
+        return productBasePage.map(p -> {
             ProductBase pb = new ProductBase(p);
             pb.setCategory(new ProductCategory(productCategoryDomain.getById(p.getCategoryId(), productCategoryObjectMap)));
             pb.setProductKeyTypes(LookupObject.fromCodeList(productKeyTypes, p.getProductKeyTypeCodes()));
             return pb;
-        }).collect(Collectors.toList());
+        }).getContent();
+    }
+
+    @RequestMapping(value = "productbaseversions", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'productbase:read')")
+    public List<ProductBase> getProductBaseVersionsByOrgId(@RequestParam(value = "org_id", required = false) String orgId,
+                                                           Pageable pageable,
+                                                           HttpServletResponse response) {
+        List<ProductBase> productBases = new ArrayList<ProductBase>();
+        orgId = fixOrgId(orgId);
+        Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", productBasePage.toContentRange());
+        }
+        List<String> productBaseIds = productBasePage.map(ProductBaseObject::getId).getContent();
+        Map<String, List<ProductBaseVersionsObject>> map = productBaseDomain.getProductBaseVersionsByProductBaseIds(productBaseIds);
+        Iterator it = map.values().iterator();
+        while (it.hasNext()) {
+            List<ProductBaseVersionsObject> productBaseVersionsObjects = (List<ProductBaseVersionsObject>) it.next();
+            Iterator<ProductBaseVersionsObject> iter = productBaseVersionsObjects.iterator();
+            while (iter.hasNext()) {
+                ProductBase productBase = new ProductBase(iter.next().getProductBase());
+                productBases.add(productBase);
+            }
+        }
+        return productBases;
     }
 
     //create image
@@ -122,6 +153,28 @@ public class ProductBaseController {
             throw new InternalServerErrorException("图片上传出错！");
         }
     }
+
+    //create product base image
+
+    @RequestMapping(value = "{product_base_id}/image", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createProductBaseImage(@RequestBody ProductBaseImage productBaseImage) {
+
+        String productBaseId = productBaseImage.getProductBaseId();
+        List<ProductBaseVersionsObject> productBaseVersionsObjects = productBaseDomain.getProductBaseVersionsByProductBaseId(productBaseId);
+        if (productBaseVersionsObjects.size() == 0) {
+            throw new NotFoundException("product base version not found");
+        }
+        String currentVersionStatus = productBaseVersionsObjects.get(productBaseVersionsObjects.size() - 1).getStatusCode();
+        Integer currentVersion = productBaseVersionsObjects.get(productBaseVersionsObjects.size() - 1).getVersion();
+        String orgId = productBaseVersionsObjects.get(productBaseVersionsObjects.size() - 1).getProductBase().getOrgId();
+
+        if (LookupCodes.ProductBaseVersionsStatus.ACTIVATED.equals(currentVersionStatus)) {
+            currentVersion = currentVersion + 1;
+        }
+        productBaseDomain.createProductBaseImage(productBaseImage, orgId, currentVersion);
+    }
+
 
     //query for image
     @RequestMapping(value = "{product_base_id}/image", method = RequestMethod.GET)
@@ -238,14 +291,7 @@ public class ProductBaseController {
             productBaseVersionsObject.setModifiedDateTime(DateTime.now());
             productBaseDomain.patchUpdate(productBaseVersionsObject);
         }
-
-        FileObject fileObject = new FileObject();
-        byte[] buf = mapper.writeValueAsBytes(productBase.getProductBaseDetails());
-        fileObject.setData(buf);
-        fileObject.setContentType("application/octet-stream");
-        fileObject.setS3Path("photo/coms/products/" + productBaseId + "/" + actualVersion + "/notes.json");
-
-        dataAPIClient.post("file/", fileObject, Long.class);
+        productBaseDomain.createProductBaseFile(productBase, productBaseId, productBaseObject.getOrgId(), actualVersion);
     }
 
 
