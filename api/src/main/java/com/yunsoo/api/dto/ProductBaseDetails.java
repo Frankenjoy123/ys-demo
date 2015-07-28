@@ -13,8 +13,8 @@ public class ProductBaseDetails {
     @JsonProperty("version")
     private String version;
 
-    @JsonProperty("item")
-    private List<Item> item;
+    @JsonProperty("details")
+    private List<Item> details;
 
     @JsonProperty("contact")
     private Contact contact;
@@ -34,32 +34,96 @@ public class ProductBaseDetails {
         this.version = version;
     }
 
-    public List<Item> getItem() {
-        return item;
+    public List<Item> getDetails() {
+        return details;
     }
 
-    public void setItem(List<Item> item) {
-        this.item = item;
+    public void setDetails(List<Item> details) {
+        this.details = details;
     }
 
     public static class Item {
         private String name;
         private String value;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
     }
 
     public static class Contact {
         private String hotline;
         private String support;
+
+        public String getHotline() {
+            return hotline;
+        }
+
+        public void setHotline(String hotline) {
+            this.hotline = hotline;
+        }
+
+        public String getSupport() {
+            return support;
+        }
+
+        public void setSupport(String support) {
+            this.support = support;
+        }
     }
 
     public static class ECommerce {
         private String title;
         private String url;
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
     }
 
     public static class TCommerce {
         private String name;
         private String address;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
     }
 
     public ProductBaseDetails() {
