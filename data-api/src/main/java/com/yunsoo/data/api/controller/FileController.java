@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -42,12 +43,26 @@ public class FileController {
             fileObject.setContentType(s3Object.getObjectMetadata().getContentType());
             fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
             fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
-            return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
+            return new ResponseEntity<>(fileObject, HttpStatus.OK);
 
         } catch (IOException ex) {
             throw new InternalServerErrorException("文件获取出错！");
         }
     }
+
+//    @RequestMapping(value = "s3", method = RequestMethod.GET)
+//    public ResponseEntity getS3FileByPath(@RequestParam(value = "path", required = true) String path) throws IOException {
+//        if (path.isEmpty()) {
+//            throw new BadRequestException("path must not be null or empty");
+//        }
+//        S3Object s3Object = fileService.getFile(amazonSetting.getS3_basebucket(), path);
+//        S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
+//        ObjectMetadata metadata = s3Object.getObjectMetadata();
+//        String contentType = metadata.getContentType();
+//        long contentLength = metadata.getContentLength();
+//
+//        return ResponseEntity.ok().contentLength(contentLength).contentType(MediaType.parseMediaType(contentType)).body(new InputStreamResource(s3ObjectInputStream));
+//    }
 
     //upload resource to S3 by full path
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -57,7 +72,7 @@ public class FileController {
         }
         try {
             fileObject.setContentType(fileObject.getContentType());
-            int result = fileService.uploadFile(amazonSetting.getS3_basebucket(), fileObject.getS3Path(), fileObject, true);
+            fileService.putFile(amazonSetting.getS3_basebucket(), fileObject.getS3Path(), fileObject, true);
 
         } catch (InternalServerErrorException e) {
             throw new InternalServerErrorException(e.getMessage());
