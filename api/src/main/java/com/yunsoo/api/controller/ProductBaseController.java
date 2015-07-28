@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -95,13 +96,27 @@ public class ProductBaseController {
         if (pageable != null) {
             response.setHeader("Content-Range", productBasePage.toContentRange());
         }
-
-        return productBasePage.map(p -> {
+        List<ProductBase> productBases = productBasePage.map(p -> {
             ProductBase pb = new ProductBase(p);
             pb.setCategory(new ProductCategory(productCategoryDomain.getById(p.getCategoryId(), productCategoryObjectMap)));
             pb.setProductKeyTypes(LookupObject.fromCodeList(productKeyTypes, p.getProductKeyTypeCodes()));
             return pb;
         }).getContent();
+
+        List<String> productBaseIds = productBases.stream().map(ProductBase::getId).collect(Collectors.toList());
+        Map<String, List<ProductBaseVersionsObject>> map = productBaseDomain.getProductBaseVersionsByProductBaseIds(productBaseIds);
+        for (ProductBase pb : productBases) {
+            List<ProductBaseVersionsObject> productBaseVersionsObjects = map.get(pb.getId());
+            if (productBaseVersionsObjects != null) {
+                List<ProductBaseVersions> productBaseVersions = new ArrayList<ProductBaseVersions>();
+                Iterator<ProductBaseVersionsObject> iter = productBaseVersionsObjects.iterator();
+                while (iter.hasNext()) {
+                    productBaseVersions.add(new ProductBaseVersions(iter.next()));
+                }
+                pb.setProductBaseVersions(productBaseVersions);
+            }
+        }
+        return productBases;
     }
 
     @RequestMapping(value = "productbaseversions", method = RequestMethod.GET)
@@ -211,10 +226,12 @@ public class ProductBaseController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:create')")
-    public String create(@RequestBody ProductBase productBase) {
+    public String create(@RequestBody ProductBase productBase) throws JsonProcessingException {
         ProductBaseObject productBaseObject = new ProductBaseObject();
+        ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
         productBaseObject.setName(productBase.getName());
         productBaseObject.setVersion(LookupCodes.ProductBaseVersions.INITIALVERSION);
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
         if (StringUtils.hasText(productBase.getOrgId()))
             productBaseObject.setOrgId(productBase.getOrgId());
@@ -222,6 +239,7 @@ public class ProductBaseController {
             productBaseObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
 
         productBaseObject.setBarcode(productBase.getBarcode());
+        productBaseObject.setVersion(LookupCodes.ProductBaseVersions.INITIALVERSION);
         productBaseObject.setStatusCode(productBase.getStatusCode());
         productBaseObject.setCategoryId(productBase.getCategoryId());
         productBaseObject.setChildProductCount(productBase.getChildProductCount());
@@ -234,6 +252,15 @@ public class ProductBaseController {
         productBaseObject.setShelfLifeInterval(productBase.getShelfLifeInterval());
 
         String id = productBaseDomain.createProductBase(productBaseObject);
+
+        productBaseVersionsObject.setProductBase(productBaseObject);
+        productBaseVersionsObject.setProductBaseId(id);
+        productBaseVersionsObject.setVersion(LookupCodes.ProductBaseVersions.INITIALVERSION);
+        productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.SUBMITTED);
+        productBaseVersionsObject.setCreatedAccountId(currentAccountId);
+        productBaseVersionsObject.setCreatedDateTime(DateTime.now());
+        productBaseDomain.createProductBaseVersions(productBaseVersionsObject);
+        productBaseDomain.createProductBaseFile(productBase, id, productBaseObject.getOrgId(), productBaseObject.getVersion());
         return id;
     }
 
