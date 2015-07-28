@@ -5,7 +5,7 @@ yunsoo:
         dynamodb:
             endpoint:
         s3:
-            basebucket: dev-yunsoo
+            bucket_name: dev-yunsoo
 
 AmazonSettings:
     s3_basebucket:  dev-yunsoo
@@ -37,5 +37,4 @@ jdbc:
 hibernate:
     dialect: org.hibernate.dialect.MySQL5Dialect
     show_sql: false
-    hbm2ddl_auto: none
     package_to_scan: com.yunsoo.data.service.dbmodel

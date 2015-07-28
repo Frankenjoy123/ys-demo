@@ -28,18 +28,21 @@ public class FileServiceImpl implements FileService {
     private S3ItemDao s3ItemDao;
 
     @Override
-    public S3Object getFile(String bucket, String key) {
+    public S3Object getFile(String bucketName, String key) {
         try {
-            return s3ItemDao.getItem(bucket, key);
+            if (!s3ItemDao.hasItem(bucketName, key)) {
+                return null;
+            }
+            return s3ItemDao.getItem(bucketName, key);
         } catch (AmazonS3Exception s3ex) {
             return null;
         }
     }
 
     @Override
-    public void putFile(String bucketName, String fullKey, FileObject fileObject, Boolean override) {
+    public void putFile(String bucketName, String key, FileObject fileObject, Boolean override) {
         if (fileObject == null) throw new RuntimeException("file must not be null");
-        if (!override && s3ItemDao.hasItem(bucketName, fullKey)) throw new RuntimeException("file already exits");
+        if (!override && s3ItemDao.hasItem(bucketName, key)) throw new RuntimeException("file already exits");
 
         InputStream inputStream = new ByteArrayInputStream(fileObject.getData());
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -50,7 +53,7 @@ public class FileServiceImpl implements FileService {
             objectMetadata.setContentLength(fileObject.getLength()); //set content-length
         }
 
-        s3ItemDao.putItem(bucketName, fullKey, inputStream, objectMetadata, CannedAccessControlList.BucketOwnerFullControl);
+        s3ItemDao.putItem(bucketName, key, inputStream, objectMetadata, CannedAccessControlList.BucketOwnerFullControl);
 
     }
 

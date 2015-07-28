@@ -7,8 +7,10 @@ package com.yunsoo.data.service.config;
  */
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.*;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 
@@ -36,7 +38,6 @@ public class HibernateConfig {
         Properties hibernateProperties = new Properties();
         hibernateProperties.put("hibernate.dialect", hibernateSetting.getDialect());
         hibernateProperties.put("hibernate.show_sql", hibernateSetting.getShow_sql());
-        hibernateProperties.put("hibernate.hbm2ddl.auto", hibernateSetting.getHbm2ddl_auto());
         lsfb.setHibernateProperties(hibernateProperties);
         lsfb.setDataSource(dataSource);
 

@@ -3,10 +3,8 @@ package com.yunsoo.data.api.controller;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
-import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.entity.ProductBaseEntity;
 import com.yunsoo.data.service.repository.ProductBaseRepository;
-import com.yunsoo.data.service.service.ProductBaseService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,11 +30,6 @@ public class ProductBaseController {
     @Autowired
     private ProductBaseRepository productBaseRepository;
 
-    @Autowired
-    private ProductBaseService productBaseService;
-
-    @Autowired
-    private AmazonSetting amazonSetting;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductBaseObject getById(@PathVariable(value = "id") String id) {
