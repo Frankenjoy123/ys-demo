@@ -98,8 +98,8 @@ public class ProductBaseDomain {
         return productBaseVersionsObjects.get(0);
     }
 
-    public String createProductBase(ProductBaseObject productBaseObject) {
-        return dataAPIClient.post("productbase", productBaseObject, String.class);
+    public ProductBaseObject createProductBase(ProductBaseObject productBaseObject) {
+        return dataAPIClient.post("productbase", productBaseObject, ProductBaseObject.class);
     }
 
     public ProductBaseVersionsObject createProductBaseVersions(ProductBaseVersionsObject productBaseVersionsObject) {

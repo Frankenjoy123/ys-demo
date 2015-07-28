@@ -240,18 +240,19 @@ public class ProductBaseController {
 
         productBaseObject.setBarcode(productBase.getBarcode());
         productBaseObject.setVersion(LookupCodes.ProductBaseVersions.INITIALVERSION);
-        productBaseObject.setStatusCode(productBase.getStatusCode());
+        productBaseObject.setStatusCode(LookupCodes.ProductBaseStatus.CREATED);
         productBaseObject.setCategoryId(productBase.getCategoryId());
         productBaseObject.setChildProductCount(productBase.getChildProductCount());
         productBaseObject.setComments(productBase.getComments());
-        productBaseObject.setCreatedDateTime(productBase.getCreatedDateTime());
+        productBaseObject.setCreatedAccountId(currentAccountId);
+        productBaseObject.setCreatedDateTime(DateTime.now());
         productBaseObject.setId(productBase.getId());
         productBaseObject.setModifiedDateTime(productBase.getModifiedDateTime());
         productBaseObject.setProductKeyTypeCodes(productBase.getProductKeyTypeCodes());
         productBaseObject.setShelfLife(productBase.getShelfLife());
         productBaseObject.setShelfLifeInterval(productBase.getShelfLifeInterval());
 
-        String id = productBaseDomain.createProductBase(productBaseObject);
+        String id = productBaseDomain.createProductBase(productBaseObject).getId();
 
         productBaseVersionsObject.setProductBase(productBaseObject);
         productBaseVersionsObject.setProductBaseId(id);
