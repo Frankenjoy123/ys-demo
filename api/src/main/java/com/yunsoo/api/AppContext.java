@@ -25,11 +25,15 @@ public class AppContext implements ApplicationContextAware {
     }
 
     public static Object getBean(String beanName) {
-        return appContext.getBean(beanName);
+        if(appContext != null)
+            return appContext.getBean(beanName);
+        return null;
     }
 
     public static boolean containsBean(String name) {
-        return appContext.containsBean(name);
+        if(appContext != null)
+            return appContext.containsBean(name);
+        return false;
     }
 
 }

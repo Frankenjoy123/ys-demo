@@ -1,6 +1,8 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.cache.annotation.ElastiCacheable;
 import com.yunsoo.api.client.DataAPIClient;
+import com.yunsoo.api.config.CacheConfiguration;
 import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
@@ -27,17 +29,19 @@ public class ProductCategoryDomain {
     @Autowired
     private DataAPIClient dataAPIClient;
 
-    @Cacheable(value = "api-domain", key = "'ProductCategoryDomain.getProductCategories'")
+
+    @ElastiCacheable
     public List<ProductCategoryObject> getProductCategories() {
-        //LOGGER.debug("cache missed [name: productcategory, key: 'list']");
+        LOGGER.debug("cache missed [name: productcategory, key: 'list']");
         return dataAPIClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {
         });
     }
 
-    @Cacheable(value = "api-domain", key = "'ProductCategoryDomain.getProductCategoryMap'")
+    @ElastiCacheable
     public Map<String, ProductCategoryObject> getProductCategoryMap() {
-        //LOGGER.debug("cache missed [name: productcategory, key: 'map']");
-        return getProductCategories().stream().collect(Collectors.toMap(ProductCategoryObject::getId, c -> c));
+        LOGGER.debug("cache missed [name: productcategory, key: 'map']");
+        List<ProductCategoryObject> categoryObjects =  dataAPIClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {});
+        return categoryObjects.stream().collect(Collectors.toMap(ProductCategoryObject::getId, c -> c));
     }
 
     public ProductCategoryObject getById(String id) {

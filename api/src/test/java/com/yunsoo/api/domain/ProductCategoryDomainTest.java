@@ -9,22 +9,21 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * Created by  : Lijian
- * Created on  : 2015/7/2
- * Descriptions:
+ * Created by yan on 7/27/2015.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {DomainConfiguration.class, CacheConfiguration.class})
-public class LookupDomainTest {
-
+public class ProductCategoryDomainTest {
     @Autowired
-    private LookupDomain lookupDomain;
+    public ProductCategoryDomain domain;
 
     @Test
-    public void test_getProductKeyTypes() {
-        lookupDomain.getProductKeyTypes();
-        lookupDomain.getProductKeyTypes();
-        lookupDomain.getProductKeyTypes(true);
-        lookupDomain.getProductKeyTypes(true);
+    public void test_getProductCategories(){
+        domain.getProductCategories();
+        domain.getProductCategories();
+        domain.getProductCategories();
+        domain.getProductCategoryMap();
+        domain.getProductCategoryMap();
+
     }
 }
