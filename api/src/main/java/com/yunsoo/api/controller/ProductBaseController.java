@@ -1,6 +1,5 @@
 package com.yunsoo.api.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.LookupDomain;
@@ -225,7 +224,7 @@ public class ProductBaseController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:create')")
-    public String create(@RequestBody ProductBase productBase) throws JsonProcessingException {
+    public String create(@RequestBody ProductBase productBase) {
         ProductBaseObject productBaseObject = new ProductBaseObject();
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
         productBaseObject.setName(productBase.getName());
@@ -268,7 +267,7 @@ public class ProductBaseController {
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:modify')")
     public void updateProductBaseVersions(@PathVariable(value = "product_base_id") String productBaseId,
-                                          @RequestBody ProductBase productBase) throws JsonProcessingException {
+                                          @RequestBody ProductBase productBase) {
         ProductBaseObject productBaseObject = new ProductBaseObject();
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
         List<ProductBaseVersionsObject> productBaseVersionsObjects = productBaseDomain.getProductBaseVersionsByProductBaseId(productBaseId);

@@ -67,7 +67,7 @@ public class ProductBaseDomain {
     }
 
     public List<ProductBaseVersionsObject> getProductBaseVersionsByProductBaseId(String productBaseId) {
-        return dataAPIClient.get("productbaseversions?product_base_Id={product_base_Id}", new ParameterizedTypeReference<List<ProductBaseVersionsObject>>() {
+        return dataAPIClient.get("productbaseversions/{product_base_Id}", new ParameterizedTypeReference<List<ProductBaseVersionsObject>>() {
         }, productBaseId);
     }
 
@@ -107,7 +107,7 @@ public class ProductBaseDomain {
     }
 
     public void patchUpdate(ProductBaseVersionsObject productBaseVersionsObject) {
-        dataAPIClient.patch("productbaseversions/{product_base_id}/{version}", productBaseVersionsObject, productBaseVersionsObject.getProductBaseId(), productBaseVersionsObject.getVersion());
+        dataAPIClient.put("productbaseversions/{product_base_id}/{version}", productBaseVersionsObject, productBaseVersionsObject.getProductBaseId(), productBaseVersionsObject.getVersion());
     }
 
     public void deleteProductBase(String id) {
@@ -119,16 +119,18 @@ public class ProductBaseDomain {
 
     }
 
-    public void createProductBaseFile(ProductBase productBase, String productBaseId, String orgId, Integer version) throws JsonProcessingException {
+    public void createProductBaseFile(ProductBase productBase, String productBaseId, String orgId, Integer version) {
+        try {
+            FileObject fileObject = new FileObject();
+            byte[] buf = mapper.writeValueAsBytes(productBase.getProductBaseDetails());
+            fileObject.setData(buf);
+            fileObject.setContentType("application/octet-stream");
+            fileObject.setS3Path("organization/" + orgId + "/product_base/" + productBaseId + "/" + version + "/details.json");
 
-        FileObject fileObject = new FileObject();
-        byte[] buf = mapper.writeValueAsBytes(productBase.getProductBaseDetails());
-        fileObject.setData(buf);
-        fileObject.setContentType("application/octet-stream");
-        fileObject.setS3Path("organization/" + orgId + "/product_base/" + productBaseId + "/" + version + "/details.json");
-
-        dataAPIClient.post("file/", fileObject, Long.class);
-
+            dataAPIClient.post("file/", fileObject, Long.class);
+        } catch (JsonProcessingException ex) {
+            throw new InternalServerErrorException("文件上传出错！");
+        }
     }
 
     public void createProductBaseImage(ProductBaseImage productBaseImage, String orgId, Integer version) {
