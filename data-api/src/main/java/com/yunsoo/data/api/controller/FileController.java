@@ -48,14 +48,22 @@ public class FileController {
             throw new BadRequestException("path must not be null or empty");
         }
         S3Object s3Object = fileService.getFile(s3BucketName, path);
+        if (s3Object == null) {
+            throw new NotFoundException("file not found");
+        }
         S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
         ObjectMetadata metadata = s3Object.getObjectMetadata();
         String contentType = metadata.getContentType();
         long contentLength = metadata.getContentLength();
 
-        return ResponseEntity.ok().contentLength(contentLength)
-                .contentType(MediaType.parseMediaType(contentType))
-                .body(new InputStreamResource(s3ObjectInputStream));
+        ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
+        if (contentType != null) {
+            bodyBuilder.contentType(MediaType.parseMediaType(contentType));
+        }
+        if (contentLength > 0) {
+            bodyBuilder.contentLength(contentLength);
+        }
+        return bodyBuilder.body(new InputStreamResource(s3ObjectInputStream));
     }
 
     @RequestMapping(value = "s3", method = RequestMethod.PUT)
@@ -65,8 +73,12 @@ public class FileController {
         long contentLength = request.getContentLengthLong();
         ServletInputStream inputStream = request.getInputStream();
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(contentType);
-        metadata.setContentLength(contentLength);
+        if (contentType != null) {
+            metadata.setContentType(contentType);
+        }
+        if (contentLength > 0) {
+            metadata.setContentLength(contentLength);
+        }
         s3ItemDao.putItem(s3BucketName, path, inputStream, metadata);
     }
 
