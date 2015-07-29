@@ -7,6 +7,7 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
  * Created on  : 2015/5/5
  * Descriptions:
  */
-public class ProductKeyTransactionObject {
+public class ProductKeyTransactionObject implements Serializable {
 
     @JsonProperty("id")
     private String id;

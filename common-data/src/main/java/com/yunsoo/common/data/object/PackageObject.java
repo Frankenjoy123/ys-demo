@@ -2,12 +2,13 @@ package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Zhe on 2015/6/3.
  */
-public class PackageObject {
+public class PackageObject implements Serializable {
     @JsonProperty("key")
     private String key;
     @JsonProperty("product_count")

@@ -2,14 +2,18 @@ package com.yunsoo.common.web.client;
 
 import com.yunsoo.common.web.util.PageableUtils;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.Assert;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseErrorHandler;
+import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -88,6 +92,19 @@ public class RestClient {
         return new Page<>(resultContent, page, total);
     }
 
+    public ResourceInputStream getResourceInputStream(String url, Object... uriVariables) {
+        RequestCallback requestCallback = request ->
+                request.getHeaders().set(HttpHeaders.ACCEPT, MediaType.ALL_VALUE);
+        ResponseExtractor<ResourceInputStream> responseExtractor = response -> {
+            HttpHeaders httpHeaders = response.getHeaders();
+            InputStream inputStream = response.getBody();
+            long contentLength = httpHeaders.getContentLength();
+            String contentType = httpHeaders.getContentType().toString();
+            return new ResourceInputStream(new ByteArrayInputStream(StreamUtils.copyToByteArray(inputStream)), contentLength, contentType);
+        };
+        return restTemplate.execute(createURL(url), HttpMethod.GET, requestCallback, responseExtractor, uriVariables);
+    }
+
     //POST
     public <T> T post(String url, Object request, Class<T> responseType, Object... uriVariables) {
         return restTemplate.postForObject(createURL(url), request, responseType, uriVariables);
@@ -102,6 +119,20 @@ public class RestClient {
     public void put(String url, Object request, Object... uriVariables) {
         restTemplate.put(createURL(url), request, uriVariables);
     }
+
+    public void put(String url, ResourceInputStream resourceInputStream, Object... uriVariables) {
+        RequestCallback requestCallback = request -> {
+            HttpHeaders httpHeaders = request.getHeaders();
+            //httpHeaders.set(HttpHeaders.ACCEPT, MediaType.ALL_VALUE);
+            httpHeaders.setContentLength(resourceInputStream.getContentLength());
+            httpHeaders.setContentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
+            OutputStream outputStream = request.getBody();
+            StreamUtils.copy(resourceInputStream, outputStream);
+        };
+        ResponseExtractor<?> responseExtractor = response -> null;
+        restTemplate.execute(createURL(url), HttpMethod.PUT, requestCallback, responseExtractor, uriVariables);
+    }
+
 
     //PATCH
     public void patch(String url, Object request, Object... uriVariables) {

@@ -17,6 +17,8 @@ public class CustomKeyGenerator implements KeyGenerator {
         keyName.append(method.getName());
         keyName.append(".");
         for(Object para : params){
+            if(para == null)
+                continue;
             keyName.append(para.toString());
             keyName.append(".");
         }

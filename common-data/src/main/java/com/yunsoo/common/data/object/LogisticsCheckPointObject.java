@@ -1,9 +1,11 @@
 package com.yunsoo.common.data.object;
 
+import java.io.Serializable;
+
 /**
  * Created by Jerry on 3/16/2015.
  */
-public class LogisticsCheckPointObject {
+public class LogisticsCheckPointObject implements Serializable {
     private String id;
     private String name;
     private String description;

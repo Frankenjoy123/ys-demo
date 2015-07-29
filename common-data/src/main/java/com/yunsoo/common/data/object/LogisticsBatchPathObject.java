@@ -7,6 +7,7 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
  * Created on  : 3/25/2015
  * Descriptions:
  */
-public class LogisticsBatchPathObject {
+public class LogisticsBatchPathObject implements Serializable {
 
     @JsonProperty("product_keys")
     private List<String> productKeys;

@@ -2,12 +2,14 @@ package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 /**
  * Created by  : Zhe
  * Created on  : 2015/3/13
  * Descriptions:
  */
-public class ProductCategoryObject {
+public class ProductCategoryObject implements Serializable {
 
     @JsonProperty("id")
     private String id;

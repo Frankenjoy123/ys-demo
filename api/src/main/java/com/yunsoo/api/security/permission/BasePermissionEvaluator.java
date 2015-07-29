@@ -26,7 +26,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
     private AccountPermissionDomain accountPermissionDomain;
 
     private AccountPermissionDomain getAccountPermissionDomain(){
-        if(accountPermissionDomain == null)
+        if(accountPermissionDomain == null && AppContext.getBean("accountPermissionDomain")!=null)
             accountPermissionDomain = (AccountPermissionDomain)AppContext.getBean("accountPermissionDomain");
         return accountPermissionDomain;
     }

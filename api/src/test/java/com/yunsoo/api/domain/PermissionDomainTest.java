@@ -26,6 +26,7 @@ public class PermissionDomainTest {
         permissionDomain.getPermissionPolicies();
         permissionDomain.getPermissionPolicies();
         permissionDomain.getPermissionPolicyMap();
+        permissionDomain.getPermissionPolicyMap();
     }
 //
 //    @Test

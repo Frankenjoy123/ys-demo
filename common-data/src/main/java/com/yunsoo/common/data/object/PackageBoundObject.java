@@ -6,12 +6,13 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Hope on 2015/2/7.
  */
-public class PackageBoundObject {
+public class PackageBoundObject implements Serializable {
     private Long operator;
     private String packageKey;
     private List<String> keys;
