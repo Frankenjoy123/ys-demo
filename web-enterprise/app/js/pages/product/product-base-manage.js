@@ -15,6 +15,11 @@
         $http.get("/api/productbase/" + proId).success(fnSuccess).error(fnError);
 
         return this;
+      },
+      deleteProWithDetail: function (proId, fnSuccess, fnError) {
+        $http.delete('/api/productbase/' + proId).success(fnSuccess).error(fnError);
+
+        return this;
       }
     };
   }]);
@@ -175,7 +180,9 @@
       });
     }
 
-    $scope.productBase = {
+    var productBase = $scope.productBase = {
+      curDeleteProId: '',
+      curDeleteProName: '',
       showCreateProduct: function () {
         productBaseDataService.setProId('');
         productBaseDataService.setTitle('产品创建');
@@ -196,8 +203,36 @@
           $scope.utils.alert('info', '获取产品信息失败');
         });
       },
-      deleteProductBaseDetails: function (proId) {
+      deleteProductBaseDetails: function () {
+        if (productBase.curDeleteProId != '') {
+          productBaseManageService.deleteProWithDetail(productBase.curDeleteProId, function (data) {
 
+            productBase.curDeleteProId = '';
+            productBase.curDeleteProName = '';
+
+            $('#deleteConfirmDialog').modal('hide');
+
+            $location.path('/product-base-manage');
+            $scope.utils.alert('info', '删除产品成功');
+
+          }, function () {
+            $scope.utils.alert('danger', '删除产品失败', '#deleteConfirmDialog .modal-dialog', false);
+          });
+        }
+      },
+      showDeleteProModal: function (id, name) {
+        productBase.curDeleteProId = id;
+        productBase.curDeleteProName = name;
+
+        $('#deleteConfirmDialog').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
+          $(this).removeData("bs.modal");
+        });
+      },
+      deleteProductBaseDetailsCancel: function () {
+        productBase.curDeleteProId = '';
+        productBase.curDeleteProName = '';
+
+        $('#deleteConfirmDialog').modal('hide');
       }
     };
 
