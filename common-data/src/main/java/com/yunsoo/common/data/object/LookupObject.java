@@ -2,6 +2,7 @@ package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
  * Created on:   2015/2/27
  * Descriptions:
  */
-public class LookupObject {
+public class LookupObject implements Serializable {
 
     @JsonProperty("code")
     private String code;

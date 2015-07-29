@@ -6,12 +6,14 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 /**
  * Created by  : Lijian
  * Created on  : 2015/4/20
  * Descriptions:
  */
-public class AccountTokenObject {
+public class AccountTokenObject implements Serializable {
 
     private String id;
     private String accountId;
