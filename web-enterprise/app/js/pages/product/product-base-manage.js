@@ -28,8 +28,10 @@
     var savedData = {
       title: '',
       currProId: '',
+      curProStatus: '',
       proDetails: null,
-      isCreateMode: true
+      isCreateMode: true,
+      proStatusShow: {wait: '待审核', active: '已激活', reject: '被拒绝', none: '未知'}
     };
 
     function getDetails() {
@@ -64,6 +66,18 @@
       savedData.isCreateMode = data;
     }
 
+    function getCurProStatus() {
+      return savedData.curProStatus;
+    }
+
+    function setCurProStatus(data) {
+      savedData.curProStatus = data;
+    }
+
+    function getProStatusShow() {
+      return savedData.proStatusShow;
+    }
+
     return {
       getDetails: getDetails,
       setDetails: setDetails,
@@ -72,7 +86,10 @@
       getTitle: getTitle,
       setTitle: setTitle,
       getMode: getMode,
-      setMode: setMode
+      setMode: setMode,
+      getCurProStatus: getCurProStatus,
+      setCurProStatus: setCurProStatus,
+      getProStatusShow: getProStatusShow
     }
   });
 
@@ -85,10 +102,15 @@
       'hour': '小时'
     };
 
-    var statusFormat = [{activated: '已激活', created: '未激活', deleted: '已删除', recalled: '已召回'}];
-    $scope.formatStatusCode = function (statusCode) {
-      return statusFormat[statusCode];
-    }
+    var proVersionStatus = {draft: '待提交', submitted: '待审核', rejected: '被拒绝', activated: '已激活', archived: '已归档'};
+
+    $scope.formatProStatusShow = function (statusCode) {
+      return productBaseDataService.getProStatusShow()[statusCode];
+    };
+
+    $scope.formatProVersionStatus = function (statusCode) {
+      return proVersionStatus[statusCode];
+    };
 
     $scope.formatProductKeyTypes = function (productKeyTypes) {
       var result = '';
@@ -115,6 +137,26 @@
       },
       flush: function (callback) {
         productBaseManageService.getProductBases(function (data, status, headers) {
+
+          for (var item in data) {
+
+            data[item].is_editable = true;
+            data[item].status_code_show = 'none';
+
+            if (data[item].product_base_versions) {
+              if (data[item].product_base_versions[data[item].product_base_versions.length - 1].status_code == 'submitted') {
+                data[item].status_code_show = 'wait';
+                data[item].is_editable = false;
+              }
+              else if (data[item].product_base_versions[data[item].product_base_versions.length - 1].status_code == 'rejected') {
+                data[item].status_code_show = 'reject';
+              }
+              else if (data[item].product_base_versions[data[item].product_base_versions.length - 1].status_code == 'activated') {
+                data[item].status_code_show = 'active';
+              }
+            }
+          }
+
           if ($scope.productKeyCredits) {
             setProductKeyCredits(data, $scope.productKeyCredits);
           } else {
@@ -188,8 +230,9 @@
         productBaseDataService.setTitle('产品创建');
         $location.path('/emulator');
       },
-      showProductBaseDetails: function (proId) {
+      showProductBaseDetails: function (proId, status) {
         productBaseDataService.setProId(proId);
+        productBaseDataService.setCurProStatus(status);
         $location.path('/product-view');
       },
       editProductBaseDetails: function (proId) {

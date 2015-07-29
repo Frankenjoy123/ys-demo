@@ -1,24 +1,24 @@
 (function () {
   var app = angular.module('root');
 
-  app.factory("productViewService", ["$http", "productBaseDataService", function ($http, productBaseDataService) {
+  app.factory("productViewService", ["$http", function ($http) {
     return {
-      getProDetails: function (fnSuccess, fnError) {
-        $http.get("/api/productbase/" + productBaseDataService.getProId()).success(fnSuccess).error(fnError);
+      getProDetails: function (proId, fnSuccess, fnError) {
+        $http.get("/api/productbase/" + proId).success(fnSuccess).error(fnError);
 
         return this;
       }
     };
   }]);
 
-  app.controller("productViewCtrl", ["$scope", "productViewService", "$location", function ($scope, productViewService, $location) {
+  app.controller("productViewCtrl", ["$scope", "productViewService", "$location", "productBaseDataService", function ($scope, productViewService, $location, productBaseDataService) {
 
     var product = $scope.product = {
       productInfos: [],//{name: '', value: ''}
       productAddress: [],//{address: '', tel: ''}
       productCommerce: [],//{title: '', url: ''}
       barCode: '',
-      statusCode: '',
+      statusCode: productBaseDataService.getCurProStatus(),
       productName: '',
       expireDate: '',
       expireDateUnit: '',
@@ -26,67 +26,66 @@
       productKeyTypeCodes: [],
       hotline: '',
       support: '',
-      statusFormat: {activated: '已激活', created: '未激活', deleted: '已删除', recalled: '已召回'},
       formatStatusCode: function () {
-        return this.statusFormat[this.statusCode];
+        return productBaseDataService.getProStatusShow()[productBaseDataService.getCurProStatus()];
       }
     };
 
-    productViewService.getProDetails(function (data) {
+    if (productBaseDataService.getProId() != '') {
+      productViewService.getProDetails(productBaseDataService.getProId(), function (data) {
 
-      product.productName = data.name;
-      product.barCode = data.barcode;
+        product.productName = data.name;
+        product.barCode = data.barcode;
 
-      product.productKeyTypeCodes = data.product_key_types.slice(0);
+        product.productKeyTypeCodes = data.product_key_types.slice(0);
 
-      product.expireDate = data.shelf_life;
-      product.expireDateUnit = data.shelf_life_interval;
-      product.statusCode = data.status_code;
-      product.comments = data.comments;
+        product.expireDate = data.shelf_life;
+        product.expireDateUnit = data.shelf_life_interval;
+        product.comments = data.comments;
 
-      if (data.product_base_details) {
-        var details = data.product_base_details;
-        for (var proInfo in details.details) {
-          product.productInfos.push({name: details.details[proInfo].name, value: details.details[proInfo].value});
+        if (data.product_base_details) {
+          var details = data.product_base_details;
+          for (var proInfo in details.details) {
+            product.productInfos.push({name: details.details[proInfo].name, value: details.details[proInfo].value});
+          }
+
+          product.hotline = details.contact.hotline;
+          product.support = details.contact.support;
+
+          for (var proCommerce in details.e_commerce) {
+            product.productCommerce.push({
+              title: details.e_commerce[proCommerce].title,
+              url: details.e_commerce[proCommerce].url
+            });
+          }
+
+          for (var proAddress in details.t_commerce) {
+            product.productAddress.push({
+              address: details.t_commerce[proAddress].address,
+              tel: details.t_commerce[proAddress].tel
+            });
+          }
         }
 
-        product.hotline = details.contact.hotline;
-        product.support = details.contact.support;
+        var dataPreview = {};
+        dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo-mobile?access_token=" + $scope.utils.auth.getAccessToken();
 
-        for (var proCommerce in details.e_commerce) {
-          product.productCommerce.push({
-            title: details.e_commerce[proCommerce].title,
-            url: details.e_commerce[proCommerce].url
-          });
-        }
+        //if ($scope.fileInput == '') {
+        dataPreview.proImgUrl = 'ysdefault.jpg';
+        //}
+        //else {
+        //  dataPreview.proImgUrl = $scope.fileInput;
+        //}
 
-        for (var proAddress in details.t_commerce) {
-          product.productAddress.push({
-            address: details.t_commerce[proAddress].address,
-            tel: details.t_commerce[proAddress].tel
-          });
-        }
-      }
+        dataPreview.barcode = product.barCode;
+        dataPreview.name = product.productName;
+        dataPreview.details = product.productInfos.slice(0);
 
-      var dataPreview = {};
-      dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo-mobile?access_token=" + $scope.utils.auth.getAccessToken();
+        $('#iphone-6-portrait')[0].contentWindow.refresh(dataPreview);
 
-      //if ($scope.fileInput == '') {
-      dataPreview.proImgUrl = 'ysdefault.jpg';
-      //}
-      //else {
-      //  dataPreview.proImgUrl = $scope.fileInput;
-      //}
-
-      dataPreview.barcode = product.barCode;
-      dataPreview.name = product.productName;
-      dataPreview.details = product.productInfos.slice(0);
-
-      $('#iphone-6-portrait')[0].contentWindow.refresh(dataPreview);
-
-    }, function () {
-    });
-
+      }, function () {
+      });
+    }
     $scope.return = function () {
       $location.path('/product-base-manage');
     }
