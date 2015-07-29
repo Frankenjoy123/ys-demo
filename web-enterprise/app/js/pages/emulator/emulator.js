@@ -11,7 +11,7 @@
         return this;
       },
       updateProWithDetail: function (proDetail, fnSuccess, fnError) {
-        $http.patch("/api/productbase", proDetail).success(fnSuccess).error(fnError);
+        $http.patch("/api/productbase/" + proDetail.id, proDetail).success(fnSuccess).error(fnError);
 
         return this;
       },
@@ -369,7 +369,7 @@
                 $location.path('/product-base-manage');
               }
             },
-            function (data, state) {
+            function () {
               $scope.utils.alert('info', '更新产品信息失败');
             });
       }
@@ -403,7 +403,7 @@
                 $scope.utils.alert('success', '创建产品信息成功');
               }
             },
-            function (data, state) {
+            function () {
               $scope.utils.alert('info', '创建产品信息失败');
             });
       }
