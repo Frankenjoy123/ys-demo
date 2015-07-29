@@ -171,8 +171,7 @@ public class ProductBaseController {
 
     //create product base image
 
-    @RequestMapping(value = "{product_base_id}/image", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "{product_base_id}/image", method = RequestMethod.PUT)
     public void createProductBaseImage(@RequestBody ProductBaseImage productBaseImage) {
 
         String productBaseId = productBaseImage.getProductBaseId();
