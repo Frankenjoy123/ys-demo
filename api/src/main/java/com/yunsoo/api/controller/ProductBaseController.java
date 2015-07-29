@@ -224,7 +224,7 @@ public class ProductBaseController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:create')")
-    public String create(@RequestBody ProductBase productBase) {
+    public ProductBase create(@RequestBody ProductBase productBase) {
         ProductBaseObject productBaseObject = new ProductBaseObject();
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
         productBaseObject.setName(productBase.getName());
@@ -260,7 +260,7 @@ public class ProductBaseController {
         productBaseVersionsObject.setCreatedDateTime(DateTime.now());
         productBaseDomain.createProductBaseVersions(productBaseVersionsObject);
         productBaseDomain.createProductBaseFile(productBase, id, productBaseObject.getOrgId(), productBaseObject.getVersion());
-        return id;
+        return new ProductBase(productBaseObject);
     }
 
     //update product base versions: created new product version or edit current product version detail
