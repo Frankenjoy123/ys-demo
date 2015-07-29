@@ -250,8 +250,8 @@ public class ProductBaseController {
         productBaseObject.setShelfLife(productBase.getShelfLife());
         productBaseObject.setShelfLifeInterval(productBase.getShelfLifeInterval());
 
-        String id = productBaseDomain.createProductBase(productBaseObject).getId();
-
+        ProductBaseObject newProductBaseObject = productBaseDomain.createProductBase(productBaseObject);
+        String id = newProductBaseObject.getId();
         productBaseVersionsObject.setProductBase(productBaseObject);
         productBaseVersionsObject.setProductBaseId(id);
         productBaseVersionsObject.setVersion(LookupCodes.ProductBaseVersions.INITIALVERSION);
@@ -260,7 +260,7 @@ public class ProductBaseController {
         productBaseVersionsObject.setCreatedDateTime(DateTime.now());
         productBaseDomain.createProductBaseVersions(productBaseVersionsObject);
         productBaseDomain.createProductBaseFile(productBase, id, productBaseObject.getOrgId(), productBaseObject.getVersion());
-        return new ProductBase(productBaseObject);
+        return new ProductBase(newProductBaseObject);
     }
 
     //update product base versions: created new product version or edit current product version detail
