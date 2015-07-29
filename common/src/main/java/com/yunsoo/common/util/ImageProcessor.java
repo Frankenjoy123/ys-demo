@@ -20,6 +20,13 @@ public class ImageProcessor {
 
     private BufferedImage bufferedImage;
 
+    public ImageProcessor() {
+    }
+
+    public ImageProcessor(BufferedImage bufferedImage) {
+        this.bufferedImage = bufferedImage;
+    }
+
     /**
      * @param inputStream InputStream
      * @return this
@@ -63,15 +70,13 @@ public class ImageProcessor {
     }
 
     public ImageProcessor crop(int x, int y, int width, int height) {
-        this.bufferedImage = this.bufferedImage.getSubimage(x, y, width, height);
-        return this;
+        return new ImageProcessor(this.bufferedImage.getSubimage(x, y, width, height));
     }
 
     public ImageProcessor resize(int width, int height) {
         Image image = this.bufferedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
         BufferedImage newBufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         newBufferedImage.getGraphics().drawImage(image, 0, 0, null);
-        this.bufferedImage = newBufferedImage;
-        return this;
+        return new ImageProcessor(newBufferedImage);
     }
 }

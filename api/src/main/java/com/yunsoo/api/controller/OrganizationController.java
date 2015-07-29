@@ -3,9 +3,9 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.Organization;
 import com.yunsoo.api.security.TokenAuthenticationService;
-import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
@@ -22,7 +22,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,25 +87,20 @@ public class OrganizationController {
         return new Organization(organizationDomain.createOrganization(object));
     }
 
-    @RequestMapping(value = "/{id}/{imageKey}", method = RequestMethod.GET)
-    public ResponseEntity<?> getThumbnail(
+    @RequestMapping(value = "{id}/logo/{imageName}", method = RequestMethod.GET)
+    public ResponseEntity<?> getLogo(
             @PathVariable(value = "id") String id,
-            @PathVariable(value = "imageKey") String imageKey) {
-        try {
-            FileObject fileObject = dataAPIClient.get("organization/{id}/{imageKey}", FileObject.class, id, imageKey);
-            if (fileObject.getLength() > 0) {
-                return ResponseEntity.ok()
-                        .contentLength(fileObject.getLength())
-                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
-            } else {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
-            }
-        } catch (NotFoundException ex) {
-            throw new NotFoundException(40402, "找不到组织图片 id = " + id + "  client = " + imageKey);
+            @PathVariable(value = "imageName") String imageName) {
+        ResourceInputStream resourceInputStream = organizationDomain.getLogoImage(id, imageName);
+        if (resourceInputStream == null) {
+            throw new NotFoundException("logo not found");
         }
+        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
+        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
+        if (resourceInputStream.getContentLength() > 0) {
+            builder.contentLength(resourceInputStream.getContentLength());
+        }
+        return builder.body(new InputStreamResource(resourceInputStream));
     }
 
     private String fixOrgId(String orgId) {
