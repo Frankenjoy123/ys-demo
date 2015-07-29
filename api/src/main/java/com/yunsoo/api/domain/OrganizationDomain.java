@@ -55,7 +55,7 @@ public class OrganizationDomain {
 
     public ResourceInputStream getLogoImage(String orgId, String imageName) {
         try {
-            return dataAPIClient.getFileStreamObject("file/s3?path=organization/{orgId}/logo/{imageName}", orgId, imageName);
+            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/logo/{imageName}", orgId, imageName);
         } catch (NotFoundException ex) {
             return null;
         }

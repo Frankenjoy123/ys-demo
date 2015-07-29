@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -91,7 +92,7 @@ public class RestClient {
         return new Page<>(resultContent, page, total);
     }
 
-    public ResourceInputStream getFileStreamObject(String url, Object... uriVariables) {
+    public ResourceInputStream getResourceInputStream(String url, Object... uriVariables) {
         RequestCallback requestCallback = request ->
                 request.getHeaders().set(HttpHeaders.ACCEPT, MediaType.ALL_VALUE);
         ResponseExtractor<ResourceInputStream> responseExtractor = response -> {
@@ -118,6 +119,20 @@ public class RestClient {
     public void put(String url, Object request, Object... uriVariables) {
         restTemplate.put(createURL(url), request, uriVariables);
     }
+
+    public void put(String url, ResourceInputStream resourceInputStream, Object... uriVariables) {
+        RequestCallback requestCallback = request -> {
+            HttpHeaders httpHeaders = request.getHeaders();
+            //httpHeaders.set(HttpHeaders.ACCEPT, MediaType.ALL_VALUE);
+            httpHeaders.setContentLength(resourceInputStream.getContentLength());
+            httpHeaders.setContentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
+            OutputStream outputStream = request.getBody();
+            StreamUtils.copy(resourceInputStream, outputStream);
+        };
+        ResponseExtractor<?> responseExtractor = response -> null;
+        restTemplate.execute(createURL(url), HttpMethod.PUT, requestCallback, responseExtractor, uriVariables);
+    }
+
 
     //PATCH
     public void patch(String url, Object request, Object... uriVariables) {
