@@ -2,14 +2,17 @@ package com.yunsoo.common.web.client;
 
 import com.yunsoo.common.web.util.PageableUtils;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.Assert;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseErrorHandler;
+import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -86,6 +89,19 @@ public class RestClient {
             total = pagesArray[1];
         }
         return new Page<>(resultContent, page, total);
+    }
+
+    public ResourceInputStream getFileStreamObject(String url, Object... uriVariables) {
+        RequestCallback requestCallback = request ->
+                request.getHeaders().set(HttpHeaders.ACCEPT, MediaType.ALL_VALUE);
+        ResponseExtractor<ResourceInputStream> responseExtractor = response -> {
+            HttpHeaders httpHeaders = response.getHeaders();
+            InputStream inputStream = response.getBody();
+            long contentLength = httpHeaders.getContentLength();
+            String contentType = httpHeaders.getContentType().toString();
+            return new ResourceInputStream(new ByteArrayInputStream(StreamUtils.copyToByteArray(inputStream)), contentLength, contentType);
+        };
+        return restTemplate.execute(createURL(url), HttpMethod.GET, requestCallback, responseExtractor, uriVariables);
     }
 
     //POST

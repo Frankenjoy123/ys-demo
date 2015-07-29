@@ -2,6 +2,7 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
@@ -50,5 +51,13 @@ public class OrganizationDomain {
         object.setId(null);
         object.setCreatedDateTime(DateTime.now());
         return dataAPIClient.post("organization", object, OrganizationObject.class);
+    }
+
+    public ResourceInputStream getLogoImage(String orgId, String imageName) {
+        try {
+            return dataAPIClient.getFileStreamObject("file/s3?path=organization/{orgId}/logo/{imageName}", orgId, imageName);
+        } catch (NotFoundException ex) {
+            return null;
+        }
     }
 }
