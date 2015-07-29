@@ -30,11 +30,10 @@ import java.util.List;
  * Created on  : 2015/6/30
  * Descriptions:
  */
-
-
-
-
+/*
 @Configuration
+@EnableElastiCache(value = {@CacheClusterConfig(name = "dev-cache", expiration = 3600)})
+@EnableContextRegion(region = "cn-north-1")
 public class CacheConfiguration {
 
     @Bean
@@ -42,25 +41,27 @@ public class CacheConfiguration {
         return new CustomKeyGenerator();
     }
 
-    @Configuration
-    @EnableCaching
-    @Profile("local")
-    protected static class LocalCacheConfiguration {
+}
 
-        @Bean
-        public  CacheManager cacheManager() {
-            return new ConcurrentMapCacheManager();
-        }
+*/
+
+@Configuration
+@EnableCaching
+public class CacheConfiguration extends CachingConfigurerSupport {
+
+    @Bean
+    @Override
+    public KeyGenerator keyGenerator(){
+        return new CustomKeyGenerator();
     }
 
-    @Configuration
-    @EnableElastiCache(value = {@CacheClusterConfig(name = "dev-cache", expiration = 3600)})
-    @EnableContextRegion(region = "cn-north-1")
-    @Profile("!local")
-    protected static class ElastiCacheConfiguration {
 
-
-
+    @Bean
+    @Override
+    public  CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager();
     }
+
+
 
 }
