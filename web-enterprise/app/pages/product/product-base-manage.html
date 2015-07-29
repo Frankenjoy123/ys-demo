@@ -12,17 +12,40 @@
 <!--Page content-->
 <!--===================================================-->
 <div id="page-content">
+
+    <div class="modal fade" id="deleteConfirmDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">删除产品</h4>
+                </div>
+                <div class="modal-body">
+                    <p>确定删除产品名为 <span class="label label-success">{{productBase.curDeleteProName}}</span> 吗？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" ng-click="productBase.deleteProductBaseDetailsCancel()">
+                        取消
+                    </button>
+                    <button type="button" class="btn btn-primary" ng-click="productBase.deleteProductBaseDetails()">确定
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
     <div class="panel panel-bordered-primary">
         <div class="animated slideInRight">
-            <div class="col-sm-12 pull-left" style="padding: 20px 20px;" ng-show="productBaseButtonShow">
-                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" ng-click="productBase.showCreateProduct()">创建产品
+            <div class="col-md-12 pull-left" style="padding: 20px 20px;" ng-show="productBaseButtonShow">
+                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus"
+                        ng-click="productBase.showCreateProduct()">创建产品
                 </button>
             </div>
             <div class="panel-body">
-                <table class="table table-hover">
+                <table class="table toggle-arrow-tiny" id="proBaseTable">
                     <thead>
                     <tr>
-                        <th>#</th>
                         <th>名称</th>
                         <th>品类</th>
                         <th>条码</th>
@@ -30,14 +53,12 @@
                         <th class="col-md-1">产品码类型</th>
                         <th class="col-md-1">可用额度</th>
                         <th class="col-md-2">创建时间</th>
-                        <th class="col-md-1">操作</th>
+                        <th class="col-md-2">操作</th>
+                        <th data-hide="all"></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="pb in dataTable.pageable.data track by pb.id">
-                        <td>
-                            <span>{{$index + 1}}</span>
-                        </td>
+                    <tr ng-repeat="pb in dataTable.pageable.data track by pb.id" id="pb.id">
                         <td>{{pb.name}}</td>
                         <td>{{pb.category ? pb.category.name : '未知'}}</td>
                         <td>{{pb.barcode}}</td>
@@ -75,9 +96,38 @@
                             <button type="button" class="btn btn-info fa fa-edit"
                                     ng-click="productBase.editProductBaseDetails(pb.id)">
                             </button>
+                            <button type="button" class="btn btn-danger fa fa-trash-o"
+                                    ng-click="productBase.showDeleteProModal(pb.id, pb.name)">
+                            </button>
                             <button type="button" class="btn btn-success fa fa-eye"
                                     ng-click="productBase.showProductBaseDetails(pb.id)">
                             </button>
+                        </td>
+                        <td>
+                            <div>
+                                <strong>版本:</strong>{{pb.id}}&nbsp;&nbsp;&nbsp;&nbsp;<strong>状态:</strong><span
+                                    class="label"
+                                    ng-class="{'label-success':(pb.statusCode == 'created' || pb.statusCode == 'activated'),'label-info':(pb.statusCode == 'recalled' || pb.statusCode == 'deleted')}">{{formatStatusCode(pb.statusCode)}}</span>&nbsp;&nbsp;&nbsp;&nbsp;<strong>操作:</strong>
+                                <a style="color:#5cb85c" ng-click="productBase.showProductBaseDetails(pb.id)"><i
+                                        class="fa fa-eye" style="cursor: pointer"></i></a>
+                                <a style="color:#5bc0de"
+                                   ng-click="productBase.editProductBaseDetails(pb.id)"><i class="fa fa-edit"
+                                                                                           style="cursor: pointer"></i></a>
+                            </div>
+                            <div>
+                                <strong>版本:</strong>{{pb.id}}&nbsp;&nbsp;&nbsp;&nbsp;<strong>状态:</strong><span
+                                    class="label"
+                                    ng-class="{'label-success':(pb.statusCode == 'created' || pb.statusCode == 'activated'),'label-info':(pb.statusCode == 'recalled' || pb.statusCode == 'deleted')}">{{formatStatusCode(pb.statusCode)}}</span>&nbsp;&nbsp;&nbsp;&nbsp;<strong>操作:</strong>
+                                <a style="color:#5cb85c" ng-click="productBase.showProductBaseDetails(pb.id)"><i
+                                        class="fa fa-eye" style="cursor: pointer"></i></a>
+                            </div>
+                            <div>
+                                <strong>版本:</strong>{{pb.id}}&nbsp;&nbsp;&nbsp;&nbsp;<strong>状态:</strong><span
+                                    class="label"
+                                    ng-class="{'label-success':(pb.statusCode == 'created' || pb.statusCode == 'activated'),'label-info':(pb.statusCode == 'recalled' || pb.statusCode == 'deleted')}">{{formatStatusCode(pb.statusCode)}}</span>&nbsp;&nbsp;&nbsp;&nbsp;<strong>操作:</strong>
+                                <a style="color:#5cb85c" ng-click="productBase.showProductBaseDetails(pb.id)"><i
+                                        class="fa fa-eye" style="cursor: pointer"></i></a>
+                            </div>
                         </td>
                     </tr>
                     </tbody>

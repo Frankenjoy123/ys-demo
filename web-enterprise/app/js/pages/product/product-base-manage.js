@@ -15,6 +15,11 @@
         $http.get("/api/productbase/" + proId).success(fnSuccess).error(fnError);
 
         return this;
+      },
+      deleteProWithDetail: function (proId, fnSuccess, fnError) {
+        $http.delete('/api/productbase/' + proId).success(fnSuccess).error(fnError);
+
+        return this;
       }
     };
   }]);
@@ -23,7 +28,8 @@
     var savedData = {
       title: '',
       currProId: '',
-      proDetails: null
+      proDetails: null,
+      isCreateMode: true
     };
 
     function getDetails() {
@@ -50,17 +56,27 @@
       savedData.title = data;
     }
 
+    function getMode() {
+      return savedData.isCreateMode;
+    }
+
+    function setMode(data) {
+      savedData.isCreateMode = data;
+    }
+
     return {
       getDetails: getDetails,
       setDetails: setDetails,
       getProId: getProId,
       setProId: setProId,
       getTitle: getTitle,
-      setTitle: setTitle
+      setTitle: setTitle,
+      getMode: getMode,
+      setMode: setMode
     }
   });
 
-  app.controller('ProductBaseManageCtrl', ['$scope', 'productBaseManageService', 'productBaseDataService', '$location', function ($scope, productBaseManageService, productBaseDataService, $location) {
+  app.controller('ProductBaseManageCtrl', ['$scope', 'productBaseManageService', 'productBaseDataService', '$location', "$timeout", function ($scope, productBaseManageService, productBaseDataService, $location, $timeout) {
     $scope.SHELFLIFE_INTERVALS = {
       'year': '年',
       'month': '月',
@@ -68,6 +84,11 @@
       'day': '天',
       'hour': '小时'
     };
+
+    var statusFormat = [{activated: '已激活', created: '未激活', deleted: '已删除', recalled: '已召回'}];
+    $scope.formatStatusCode = function (statusCode) {
+      return statusFormat[statusCode];
+    }
 
     $scope.formatProductKeyTypes = function (productKeyTypes) {
       var result = '';
@@ -102,6 +123,16 @@
             });
           }
           callback({data: data, headers: headers});
+
+          $timeout(function () {
+            $('#proBaseTable').removeClass('default breakpoint footable-loaded footable');
+
+            $('#proBaseTable').footable().on('footable_row_expanded', function (e) {
+              $('#proBaseTable tbody tr.footable-detail-show').not(e.row).each(function () {
+                $('#proBaseTable').data('footable').toggleDetail(this);
+              });
+            });
+          }, 0);
         });
       }
     });
@@ -149,7 +180,9 @@
       });
     }
 
-    $scope.productBase = {
+    var productBase = $scope.productBase = {
+      curDeleteProId: '',
+      curDeleteProName: '',
       showCreateProduct: function () {
         productBaseDataService.setProId('');
         productBaseDataService.setTitle('产品创建');
@@ -169,7 +202,40 @@
         }, function () {
           $scope.utils.alert('info', '获取产品信息失败');
         });
+      },
+      deleteProductBaseDetails: function () {
+        if (productBase.curDeleteProId != '') {
+          productBaseManageService.deleteProWithDetail(productBase.curDeleteProId, function (data) {
+
+            productBase.curDeleteProId = '';
+            productBase.curDeleteProName = '';
+
+            $('#deleteConfirmDialog').modal('hide');
+
+            $location.path('/product-base-manage');
+            $scope.utils.alert('info', '删除产品成功');
+
+          }, function () {
+            $scope.utils.alert('danger', '删除产品失败', '#deleteConfirmDialog .modal-dialog', false);
+          });
+        }
+      },
+      showDeleteProModal: function (id, name) {
+        productBase.curDeleteProId = id;
+        productBase.curDeleteProName = name;
+
+        $('#deleteConfirmDialog').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
+          $(this).removeData("bs.modal");
+        });
+      },
+      deleteProductBaseDetailsCancel: function () {
+        productBase.curDeleteProId = '';
+        productBase.curDeleteProName = '';
+
+        $('#deleteConfirmDialog').modal('hide');
       }
     };
+
+
   }]);
 })();

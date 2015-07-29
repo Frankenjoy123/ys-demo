@@ -12,7 +12,7 @@ import javax.persistence.*;
  * Descriptions:
  */
 @Entity
-@Table(name = "product_base_version")
+@Table(name = "product_base_versions")
 public class ProductBaseVersionsEntity {
     @Id
     @GeneratedValue(generator = "idGenerator")

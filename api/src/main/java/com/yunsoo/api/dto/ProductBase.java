@@ -20,6 +20,9 @@ public class ProductBase {
     @JsonProperty("product_base_details")
     private ProductBaseDetails productBaseDetails;
 
+    @JsonProperty("product_base_versions")
+    private List<ProductBaseVersions> productBaseVersions;
+
     @JsonProperty("id")
     private String id;
 
@@ -306,4 +309,11 @@ public class ProductBase {
         this.productBaseDetails = productBaseDetails;
     }
 
+    public List<ProductBaseVersions> getProductBaseVersions() {
+        return productBaseVersions;
+    }
+
+    public void setProductBaseVersions(List<ProductBaseVersions> productBaseVersions) {
+        this.productBaseVersions = productBaseVersions;
+    }
 }

@@ -6,14 +6,24 @@
   app.factory("emulatorService", ["$http", function ($http) {
     return {
       createProWithDetail: function (proDetail, fnSuccess, fnError) {
-        $http.post("/api/productbase/withdetail", proDetail).success(fnSuccess).error(fnError);
+        $http.post("/api/productbase", proDetail).success(fnSuccess).error(fnError);
+
+        return this;
+      },
+      updateProWithDetail: function (proDetail, fnSuccess, fnError) {
+        $http.patch("/api/productbase/" + proDetail.id, proDetail).success(fnSuccess).error(fnError);
+
+        return this;
+      },
+      putProWithDetailImage: function (proId, proDetailImage, fnSuccess, fnError) {
+        $http.put("/api/productbase/" + proId + '/image', proDetailImage).success(fnSuccess).error(fnError);
 
         return this;
       }
     };
   }]);
 
-  app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", "FileUploader", "$location", "ProductDetailsVersion", "productBaseDataService", function ($scope, emulatorService, $timeout, FileUploader, $location, ProductDetailsVersion, productBaseDataService) {
+  app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", "$location", "ProductDetailsVersion", "productBaseDataService", function ($scope, emulatorService, $timeout, $location, ProductDetailsVersion, productBaseDataService) {
 
     var jcropObj = null;
     var bounds, boundx, boundy;
@@ -21,20 +31,11 @@
     var bounds800400, coords800400;
     var coords800400Result = {x: 0, y: 0, w: 0, h: 0};
     var coords400Result = {x: 0, y: 0, w: 0, h: 0};
-
-    var uploader = $scope.uploader = new FileUploader({
-      url: ''
-    });
-
-    //set AccessToken http header
-    var accessToken = $scope.utils.auth.getAccessToken();
-    accessToken && (uploader.headers[$scope.YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken);
-
-    $scope.fileInput = '';
+    var fileInputContent = '';
 
     var product = $scope.product = {
       productTitle: '产品创建',
-      productInfos: [{key: '', value: ''}],
+      productInfos: [{name: '', value: ''}],
       productAddress: [{address: '', tel: ''}],
       productCommerce: [{title: '', url: ''}],
       barCode: '',
@@ -45,7 +46,7 @@
         value: '天'
       }, {key: 'hour', value: '时'}],
       expireDateUnit: '',
-      comment: '',
+      comments: '',
       keyTypePubInput: '',
       keyTypePriInput: '',
       keyTypeRFIDInput: '',
@@ -57,7 +58,7 @@
       showButton400: false,
       imageWord: '选择图片',
       addProductInfo: function () {
-        this.productInfos.push({key: '', value: ''});
+        this.productInfos.push({name: '', value: ''});
       },
       subProductInfo: function () {
         this.productInfos.pop();
@@ -184,40 +185,56 @@
       product.productTitle = productBaseDataService.getTitle();
     }
 
-    if (productBaseDataService.getDetails() != null) {
+    if (productBaseDataService.getProId() != '' && productBaseDataService.getDetails() != null) {
       var data = productBaseDataService.getDetails();
 
       product.productName = data.name;
-      product.barcode = data.barCode;
-      product.productKeyTypeCodes = data.product_key_type_codes;
-      product.expireDate = data.shelf_life;
+      product.barCode = data.barcode;
+      for (var type in data.product_key_types) {
+        if (data.product_key_types[type].code == 'qr_public') {
+          product.keyTypePubInput = 'true';
+        }
+        else if (data.product_key_types[type].code == 'qr_secure') {
+          product.keyTypePriInput = 'true';
+        }
+        else if (data.product_key_types[type].code == 'rfid') {
+          product.keyTypeRFIDInput = 'true';
+        }
+      }
+      product.expireDate = data.shelf_life - 0;
       product.expireDateUnit = data.shelf_life_interval;
-      product.comments = data.comment;
+      product.comments = data.comments;
 
-      var details = data.product_base_details;
-      product.productInfos = [];
-      for (var proInfo in details.item) {
-        product.productInfos.push({name: details.item[proInfo].name, value: details.item[proInfo].value});
+      if (data.product_base_details) {
+        var details = data.product_base_details;
+        product.productInfos = [];
+        for (var proInfo in details.details) {
+          product.productInfos.push({name: details.details[proInfo].name, value: details.details[proInfo].value});
+        }
+
+        product.hotline = details.contact.hotline;
+        product.support = details.contact.support;
+
+        product.productCommerce = [];
+        for (var proCommerce in details.e_commerce) {
+          product.productCommerce.push({
+            title: details.e_commerce[proCommerce].title,
+            url: details.e_commerce[proCommerce].url
+          });
+        }
+
+        product.productAddress = [];
+        for (var proAddress in details.t_commerce) {
+          product.productAddress.push({
+            address: details.t_commerce[proAddress].address,
+            tel: details.t_commerce[proAddress].tel
+          });
+        }
       }
 
-      product.hotline = details.contact.hotline;
-      product.support = details.contact.support;
-
-      product.productCommerce = [];
-      for (var proCommerce in details.e_commerce) {
-        product.productCommerce.push({
-          title: details.e_commerce[proCommerce].title,
-          url: details.e_commerce[proCommerce].url
-        });
-      }
-
-      product.productAddress = [];
-      for (var proAddress in details.t_commerce) {
-        product.productAddress.push({
-          address: details.t_commerce[proAddress].address,
-          tel: details.t_commerce[proAddress].tel
-        });
-      }
+      product.proPicPreview = true;
+      product.proPicPreviewUpload = false;
+      product.showButton800400 = false;
     }
 
     $scope.preview = function () {
@@ -225,11 +242,11 @@
       var dataPreview = {};
       dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo-mobile?access_token=" + $scope.utils.auth.getAccessToken();
 
-      if ($scope.fileInput == '') {
+      if (fileInputContent == '') {
         dataPreview.proImgUrl = 'ysdefault.jpg';
       }
       else {
-        dataPreview.proImgUrl = $scope.fileInput;
+        dataPreview.proImgUrl = fileInputContent;
       }
 
       dataPreview.bounds800400 = bounds800400;
@@ -242,15 +259,6 @@
     };
 
     $scope.submit = function (isValid) {
-      //if (product.barCode == '') {
-      //  $scope.utils.alert('info', '产品BarCode不能为空');
-      //  return;
-      //}
-      //
-      //if (product.productName == '') {
-      //  $scope.utils.alert('info', '产品名不能为空');
-      //  return;
-      //}
 
       if (!isValid) {
         $scope.utils.alert('info', '页面验证有错误，请返回检查');
@@ -266,14 +274,14 @@
         $scope.utils.alert('info', '请选择产品过期单位');
         return;
       }
-      //
-      //if (!(/(^[1-9]\d*$)/.test(product.expireDate))) {
-      //  $scope.utils.alert('info', '产品过期时间应为正整数');
-      //  return;
-      //}
 
-      if (uploader.queue.length == 0) {
-        $scope.utils.alert('info', '产品图片不能为空');
+      if ($('#imgProductbase800400').attr('src') == '') {
+        $scope.utils.alert('info', '图像800*400像素不能为空');
+        return;
+      }
+
+      if ($('#imgProductbase400').attr('src') == '') {
+        $scope.utils.alert('info', '图像400*400像素不能为空');
         return;
       }
 
@@ -282,7 +290,7 @@
       proWithDetails.category_id = 0;
       proWithDetails.barcode = product.barCode;
       proWithDetails.name = product.productName;
-      proWithDetails.comments = product.comment;
+      proWithDetails.comments = product.comments;
       proWithDetails.product_key_type_codes = [];
       if (product.keyTypePubInput)
         proWithDetails.product_key_type_codes.push("qr_public");
@@ -294,16 +302,14 @@
       proWithDetails.shelf_life = product.expireDate - 0;
       proWithDetails.shelf_life_interval = product.expireDateUnit;
 
-      proWithDetails.status_code = '待审核';
-
-      var proDetails = {};
+      var proDetails = proWithDetails.product_base_details = {};
       proDetails.version = ProductDetailsVersion;
 
       proDetails.details = [];
       for (var proInfo in product.productInfos) {
-        if (product.productInfos[proInfo].key != '' && product.productInfos[proInfo].value != '')
+        if (product.productInfos[proInfo].name != '' && product.productInfos[proInfo].value != '')
           proDetails.details.push({
-            name: product.productInfos[proInfo].key,
+            name: product.productInfos[proInfo].name,
             value: product.productInfos[proInfo].value
           });
       }
@@ -330,27 +336,76 @@
         }
       }
 
-      proWithDetails.details = JSON.stringify(proDetails);
+      if (productBaseDataService.getProId() != '' && productBaseDataService.getDetails() != null) {
+        proWithDetails.id = productBaseDataService.getProId();
+        emulatorService.updateProWithDetail(proWithDetails, function () {
 
-      try {
-        emulatorService.createProWithDetail(proWithDetails, function (data) {
-              if (data.id != null && data.id != '') {
-                uploader.queue[uploader.queue.length - 1].url = '/api/productbase/withdetailfile/' + data.id + "/full-mobile";
-                uploader.queue[uploader.queue.length - 1].headers[$scope.YUNSOO_CONFIG.HEADER_ACCESS_TOKEN] = accessToken;
+              if (fileInputContent != '') {
+                var detailImg = {};
+                detailImg.product_base_id = productBaseDataService.getProId();
+                detailImg.image_content = fileInputContent;
+                detailImg.image_rect = {};
+                detailImg.image_rect.initX = coords800400Result.x;
+                detailImg.image_rect.initY = coords800400Result.y;
+                detailImg.image_rect.width = coords800400Result.w;
+                detailImg.image_rect.height = coords800400Result.h;
 
-                uploader.uploadAll();
+                detailImg.image_square = {};
+                detailImg.image_square.initX = coords400Result.x;
+                detailImg.image_square.initY = coords400Result.y;
+                detailImg.image_square.width = coords400Result.w;
+                detailImg.image_square.height = coords400Result.h;
 
-                $scope.utils.alert('success', '创建产品成功');
-
+                emulatorService.putProWithDetailImage(data, detailImg, function () {
+                  $scope.utils.alert('success', '更新产品图片成功');
+                  $location.path('/product-base-manage');
+                }, function () {
+                  $scope.utils.alert('success', '更新产品图片失败');
+                  $location.path('/product-base-manage');
+                });
+              }
+              else {
+                $scope.utils.alert('success', '更新产品图片成功');
                 $location.path('/product-base-manage');
               }
             },
-            function (data, state) {
-              $scope.utils.alert('info', '创建产品失败');
+            function () {
+              $scope.utils.alert('info', '更新产品信息失败');
             });
       }
-      catch (ex) {
+      else {
+        emulatorService.createProWithDetail(proWithDetails, function (data) {
+              if (data != null && data != '') {
 
+                var detailImg = {};
+                detailImg.product_base_id = data.id;
+                detailImg.image_content = fileInputContent;
+                detailImg.image_rect = {};
+                detailImg.image_rect.initX = coords800400Result.x;
+                detailImg.image_rect.initY = coords800400Result.y;
+                detailImg.image_rect.width = coords800400Result.w;
+                detailImg.image_rect.height = coords800400Result.h;
+
+                detailImg.image_square = {};
+                detailImg.image_square.initX = coords400Result.x;
+                detailImg.image_square.initY = coords400Result.y;
+                detailImg.image_square.width = coords400Result.w;
+                detailImg.image_square.height = coords400Result.h;
+
+                emulatorService.putProWithDetailImage(data.id, detailImg, function () {
+                  $scope.utils.alert('success', '上传产品图片成功');
+                  $location.path('/product-base-manage');
+                }, function () {
+                  $scope.utils.alert('success', '上传产品图片失败');
+                  $location.path('/product-base-manage');
+                });
+
+                $scope.utils.alert('success', '创建产品信息成功');
+              }
+            },
+            function () {
+              $scope.utils.alert('info', '创建产品信息失败');
+            });
       }
     };
 
@@ -366,9 +421,8 @@
       } else {
         fileInput.change(function () {
 
-              var file = uploader.queue[uploader.queue.length - 1]._file;
               var reader = new FileReader();
-              reader.readAsDataURL(file);
+              reader.readAsDataURL(fileInput[0].files[0]);
               reader.onload = function (e) {
                 product.proPicPreview = true;
                 product.proPicPreviewUpload = true;
@@ -387,10 +441,8 @@
 
                 product.initJcrop800400();
 
-                $scope.fileInput = this.result;
+                fileInputContent = this.result;
               };
-
-              uploader.queue = uploader.queue.slice(uploader.queue.length - 1, uploader.queue.length);
             }
         );
       }

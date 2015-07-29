@@ -4,9 +4,11 @@ yunsoo:
         region: cn-north-1
         dynamodb:
             endpoint:
+        s3:
+            bucket_name: dev-yunsoo
 
 AmazonSettings:
-    s3_basebucket:  yunsudev
+    s3_basebucket:  dev-yunsoo
     s3_userbaseurl:  photo/users
     s3_productbaseurl: photo/coms/products
     s3_product_default_image_url: photo/coms/products/ysdefault
@@ -35,5 +37,4 @@ jdbc:
 hibernate:
     dialect: org.hibernate.dialect.MySQL5Dialect
     show_sql: false
-    hbm2ddl_auto: none
     package_to_scan: com.yunsoo.data.service.dbmodel

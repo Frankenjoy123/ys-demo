@@ -17,6 +17,8 @@ public interface ProductBaseVersionsRepository extends FindOneAndSaveRepository<
 
     List<ProductBaseVersionsEntity> findByProductBaseIdAndVersion(String productBaseId, Integer version);
 
+    List<ProductBaseVersionsEntity> findByProductBaseIdIn(List<String> productBaseIds);
+
     @Transactional
     void deleteByProductBaseIdAndVersion(String productBaseId, Integer version);
 

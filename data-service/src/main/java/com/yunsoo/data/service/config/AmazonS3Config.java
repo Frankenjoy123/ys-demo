@@ -18,10 +18,18 @@ public class AmazonS3Config {
     @Value("${yunsoo.aws.region}")
     private String region;
 
+    @Value("${yunsoo.aws.s3.bucket_name}")
+    private String s3BucketName;
+
     @Bean
     public AmazonS3Client amazonS3Client() {
-        AmazonS3Client amazonS3Client  = new AmazonS3Client();
+        AmazonS3Client amazonS3Client = new AmazonS3Client();
         amazonS3Client.setRegion(Region.getRegion(Regions.fromName(region)));
         return amazonS3Client;
+    }
+
+    @Bean
+    public String s3BucketName() {
+        return s3BucketName;
     }
 }

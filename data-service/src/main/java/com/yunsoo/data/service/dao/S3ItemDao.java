@@ -1,7 +1,6 @@
 package com.yunsoo.data.service.dao;
 
 import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
@@ -9,7 +8,6 @@ import org.joda.time.DateTime;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
 
 /**
  * Created by:   Zhe
@@ -29,8 +27,6 @@ public interface S3ItemDao {
     boolean hasItem(String bucketName, String key);
 
     void deleteItem(String bucketName, String key);
-
-    List<Bucket> getBuckets();
 
     <T> void putItem(String bucketName, String key, T item);
 
