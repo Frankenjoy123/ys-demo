@@ -6,6 +6,7 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ import java.util.List;
  * Created on:   2015/3/24
  * Descriptions:
  */
-public class ProductKeysObject {
+public class ProductKeysObject implements Serializable {
     private String batchId;
     private Integer quantity;
     @JsonSerialize(using = DateTimeJsonSerializer.class)

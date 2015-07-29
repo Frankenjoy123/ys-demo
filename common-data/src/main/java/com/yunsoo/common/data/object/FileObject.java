@@ -1,10 +1,12 @@
 package com.yunsoo.common.data.object;
 
+import java.io.Serializable;
+
 /**
  * FileObject represent File hosted in AWS S3.
  * Created by Zhe on 2015/3/2.
  */
-public class FileObject {
+public class FileObject implements Serializable {
     private byte[] data;
     private String name;
     private String suffix;

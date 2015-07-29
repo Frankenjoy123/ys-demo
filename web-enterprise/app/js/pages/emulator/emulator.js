@@ -378,7 +378,7 @@
               if (data != null && data != '') {
 
                 var detailImg = {};
-                detailImg.product_base_id = data;
+                detailImg.product_base_id = data.id;
                 detailImg.image_content = fileInputContent;
                 detailImg.image_rect = {};
                 detailImg.image_rect.initX = coords800400Result.x;
@@ -392,7 +392,7 @@
                 detailImg.image_square.width = coords400Result.w;
                 detailImg.image_square.height = coords400Result.h;
 
-                emulatorService.putProWithDetailImage(data, detailImg, function () {
+                emulatorService.putProWithDetailImage(data.id, detailImg, function () {
                   $scope.utils.alert('success', '上传产品图片成功');
                   $location.path('/product-base-manage');
                 }, function () {

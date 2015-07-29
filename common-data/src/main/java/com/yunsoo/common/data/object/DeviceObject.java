@@ -8,12 +8,14 @@ import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 /**
  * Created by  : Zhe
  * Created on  : 2015/5/11
  * Descriptions:
  */
-public class DeviceObject {
+public class DeviceObject implements Serializable {
 
     @NotEmpty(message = "id must not be null or empty")
     @JsonProperty("id")

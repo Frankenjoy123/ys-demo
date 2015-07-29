@@ -7,12 +7,14 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 /**
  * Created by  : Jerry
  * Created on  : 3/23/2015
  * Descriptions:
  */
-public class LogisticsPathObject {
+public class LogisticsPathObject implements Serializable {
 
     @JsonProperty("product_key")
     private String productKey;

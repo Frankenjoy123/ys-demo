@@ -7,10 +7,12 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 /**
  * Created by Zhe on 2015/6/12.
  */
-public class S3FileObject {
+public class S3FileObject implements Serializable {
     @JsonProperty("bucket_name")
     private String bucketName;
     private String key;

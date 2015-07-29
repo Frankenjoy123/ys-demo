@@ -6,12 +6,14 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/3/16
  * Descriptions:
  */
-public class ProductObject {
+public class ProductObject implements Serializable {
 
     private String productKey;
     private String productBaseId;

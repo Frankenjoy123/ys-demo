@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.cache.annotation.ElastiCacheable;
 import com.yunsoo.api.dto.ProductKeyBatchStatus;
 import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.ProductStatus;
@@ -24,51 +25,50 @@ public class LookupDomain {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LookupDomain.class);
 
-    private final String CACHENAME = "lookup";
+
     @Autowired
     private RestClient dataAPIClient;
 
-
-    //ProductKeyType
-
-    @Cacheable(CACHENAME)
+    @ElastiCacheable
     public List<ProductKeyType> getProductKeyTypes() {
-        return getProductKeyTypes(null);
+       // LOGGER.debug("cache missed [name: lookup.productkeytype]");
+        //could not invoke the cachable method to avoid cache proxy not work
+        //getProductKeyTypes(null);
+        return dataAPIClient.get("productkeytype" + formatActive(null), new ParameterizedTypeReference<List<ProductKeyType>>() {
+        });
     }
 
-    @Cacheable(CACHENAME)
+    @ElastiCacheable
     public List<ProductKeyType> getProductKeyTypes(Boolean active) {
-        LOGGER.debug("cache missed [name: lookup.productkeytype]");
+      //  LOGGER.debug("cache missed [name: lookup.productkeytype.active]");
         return dataAPIClient.get("productkeytype" + formatActive(active), new ParameterizedTypeReference<List<ProductKeyType>>() {
         });
     }
 
 
-    //ProductKeyBatchStatus
-
-    @Cacheable(CACHENAME)
+    @ElastiCacheable
     public List<ProductKeyBatchStatus> getProductKeyBatchStatuses() {
-        return getProductKeyBatchStatuses(null);
+        return dataAPIClient.get("productkeybatchstatus" + formatActive(null), new ParameterizedTypeReference<List<ProductKeyBatchStatus>>() {
+        });
     }
 
-    @Cacheable(CACHENAME)
+    @ElastiCacheable
     public List<ProductKeyBatchStatus> getProductKeyBatchStatuses(Boolean active) {
-        LOGGER.debug("cache missed [name: lookup.productkeybatchstatus]");
+    //    LOGGER.debug("cache missed [name: lookup.productkeybatchstatus]");
         return dataAPIClient.get("productkeybatchstatus" + formatActive(active), new ParameterizedTypeReference<List<ProductKeyBatchStatus>>() {
         });
     }
 
 
-    //ProductStatus
-
-    @Cacheable(CACHENAME)
+    @ElastiCacheable
     public List<ProductStatus> getProductStatuses() {
-        return getProductStatuses(null);
+        return dataAPIClient.get("productstatus" + formatActive(null), new ParameterizedTypeReference<List<ProductStatus>>() {
+        });
     }
 
-    @Cacheable(CACHENAME)
+    @ElastiCacheable
     public List<ProductStatus> getProductStatuses(Boolean active) {
-        LOGGER.debug("cache missed [name: lookup.productstatus]");
+    //    LOGGER.debug("cache missed [name: lookup.productstatus]");
         return dataAPIClient.get("productstatus" + formatActive(active), new ParameterizedTypeReference<List<ProductStatus>>() {
         });
     }

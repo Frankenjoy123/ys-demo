@@ -1,5 +1,6 @@
 package com.yunsoo.common.data.object;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  * Created on:   2015/4/8
  * Descriptions:
  */
-public class ProductKeyBatchDetailedObject extends ProductKeyBatchObject {
+public class ProductKeyBatchDetailedObject extends ProductKeyBatchObject implements Serializable {
 
     private List<List<String>> productKeys;
 

@@ -1,6 +1,5 @@
 package com.yunsoo.api.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.LookupDomain;
@@ -225,7 +224,7 @@ public class ProductBaseController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:create')")
-    public String create(@RequestBody ProductBase productBase) throws JsonProcessingException {
+    public ProductBase create(@RequestBody ProductBase productBase) {
         ProductBaseObject productBaseObject = new ProductBaseObject();
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
         productBaseObject.setName(productBase.getName());
@@ -251,8 +250,8 @@ public class ProductBaseController {
         productBaseObject.setShelfLife(productBase.getShelfLife());
         productBaseObject.setShelfLifeInterval(productBase.getShelfLifeInterval());
 
-        String id = productBaseDomain.createProductBase(productBaseObject).getId();
-
+        ProductBaseObject newProductBaseObject = productBaseDomain.createProductBase(productBaseObject);
+        String id = newProductBaseObject.getId();
         productBaseVersionsObject.setProductBase(productBaseObject);
         productBaseVersionsObject.setProductBaseId(id);
         productBaseVersionsObject.setVersion(LookupCodes.ProductBaseVersions.INITIALVERSION);
@@ -261,14 +260,14 @@ public class ProductBaseController {
         productBaseVersionsObject.setCreatedDateTime(DateTime.now());
         productBaseDomain.createProductBaseVersions(productBaseVersionsObject);
         productBaseDomain.createProductBaseFile(productBase, id, productBaseObject.getOrgId(), productBaseObject.getVersion());
-        return id;
+        return new ProductBase(newProductBaseObject);
     }
 
     //update product base versions: created new product version or edit current product version detail
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:modify')")
     public void updateProductBaseVersions(@PathVariable(value = "product_base_id") String productBaseId,
-                                          @RequestBody ProductBase productBase) throws JsonProcessingException {
+                                          @RequestBody ProductBase productBase) {
         ProductBaseObject productBaseObject = new ProductBaseObject();
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
         List<ProductBaseVersionsObject> productBaseVersionsObjects = productBaseDomain.getProductBaseVersionsByProductBaseId(productBaseId);
