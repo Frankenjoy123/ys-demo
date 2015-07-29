@@ -47,6 +47,7 @@
                     <thead>
                     <tr>
                         <th>名称</th>
+                        <th>状态</th>
                         <th>品类</th>
                         <th>条码</th>
                         <th class="col-md-1">保质期</th>
@@ -60,6 +61,9 @@
                     <tbody>
                     <tr ng-repeat="pb in dataTable.pageable.data track by pb.id" id="pb.id">
                         <td>{{pb.name}}</td>
+                        <td><span
+                                class="label {{pb.status_code_show == 'reject' ? 'label-danger' : (pb.status_code_show == 'active' ? 'label-success' : 'label-primary')}}">{{formatProStatusShow(pb.status_code_show)}}</span>
+                        </td>
                         <td>{{pb.category ? pb.category.name : '未知'}}</td>
                         <td>{{pb.barcode}}</td>
                         <td>{{pb.shelf_life + " " + SHELFLIFE_INTERVALS[pb.shelf_life_interval]}}</td>
@@ -93,41 +97,33 @@
                         </td>
                         <td>{{utils.formatDateString(pb.created_datetime)}}</td>
                         <td class="text-center">
-                            <button type="button" class="btn btn-info fa fa-edit"
+                            <button type="button" class="btn btn-info fa fa-edit" ng-show="pb.is_editable"
                                     ng-click="productBase.editProductBaseDetails(pb.id)">
                             </button>
                             <button type="button" class="btn btn-danger fa fa-trash-o"
                                     ng-click="productBase.showDeleteProModal(pb.id, pb.name)">
                             </button>
                             <button type="button" class="btn btn-success fa fa-eye"
-                                    ng-click="productBase.showProductBaseDetails(pb.id)">
+                                    ng-click="productBase.showProductBaseDetails(pb.id, pb.status_code_show)">
                             </button>
                         </td>
                         <td>
-                            <div>
-                                <strong>版本:</strong>{{pb.id}}&nbsp;&nbsp;&nbsp;&nbsp;<strong>状态:</strong><span
-                                    class="label"
-                                    ng-class="{'label-success':(pb.statusCode == 'created' || pb.statusCode == 'activated'),'label-info':(pb.statusCode == 'recalled' || pb.statusCode == 'deleted')}">{{formatStatusCode(pb.statusCode)}}</span>&nbsp;&nbsp;&nbsp;&nbsp;<strong>操作:</strong>
-                                <a style="color:#5cb85c" ng-click="productBase.showProductBaseDetails(pb.id)"><i
-                                        class="fa fa-eye" style="cursor: pointer"></i></a>
-                                <a style="color:#5bc0de"
-                                   ng-click="productBase.editProductBaseDetails(pb.id)"><i class="fa fa-edit"
-                                                                                           style="cursor: pointer"></i></a>
-                            </div>
-                            <div>
-                                <strong>版本:</strong>{{pb.id}}&nbsp;&nbsp;&nbsp;&nbsp;<strong>状态:</strong><span
-                                    class="label"
-                                    ng-class="{'label-success':(pb.statusCode == 'created' || pb.statusCode == 'activated'),'label-info':(pb.statusCode == 'recalled' || pb.statusCode == 'deleted')}">{{formatStatusCode(pb.statusCode)}}</span>&nbsp;&nbsp;&nbsp;&nbsp;<strong>操作:</strong>
-                                <a style="color:#5cb85c" ng-click="productBase.showProductBaseDetails(pb.id)"><i
-                                        class="fa fa-eye" style="cursor: pointer"></i></a>
-                            </div>
-                            <div>
-                                <strong>版本:</strong>{{pb.id}}&nbsp;&nbsp;&nbsp;&nbsp;<strong>状态:</strong><span
-                                    class="label"
-                                    ng-class="{'label-success':(pb.statusCode == 'created' || pb.statusCode == 'activated'),'label-info':(pb.statusCode == 'recalled' || pb.statusCode == 'deleted')}">{{formatStatusCode(pb.statusCode)}}</span>&nbsp;&nbsp;&nbsp;&nbsp;<strong>操作:</strong>
-                                <a style="color:#5cb85c" ng-click="productBase.showProductBaseDetails(pb.id)"><i
-                                        class="fa fa-eye" style="cursor: pointer"></i></a>
-                            </div>
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <td>修改时间</td>
+                                    <td>修改人</td>
+                                    <td>修改状态</td>
+                                </tr>
+                                <tr ng-repeat="ver in pb.product_base_versions">
+                                    <td>{{utils.formatDateString(ver.created_datetime)}}</td>
+                                    <td>{{ver.created_account_id}}</td>
+                                    <td><span
+                                            class="label {{ver.status_code == 'rejected' ? 'label-danger' : (ver.status_code == 'submitted' ? 'label-success' : 'label-info')}}">{{formatProVersionStatus(ver.status_code)}}</span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </td>
                     </tr>
                     </tbody>

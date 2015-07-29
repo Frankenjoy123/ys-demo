@@ -158,8 +158,10 @@
                                     <div class="form-group">
                                         <label class="col-md-3 text-bold text-right">产品状态</label>
 
-                                        <div class="col-md-9"><span class="label"
-                                                                    ng-class="{'label-success':(product.statusCode == 'created' || product.statusCode == 'activated'),'label-info':(product.statusCode == 'recalled' || product.statusCode == 'deleted')}">{{product.formatStatusCode(product.statusCode)}}</span>
+                                        <div class="col-md-9">
+                                            <span
+                                                    class="label {{product.statusCode == 'reject' ? 'label-danger' : (product.statusCode == 'active' ? 'label-success' : 'label-primary')}}">{{product.formatStatusCode()}}</span>
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="form-group">
