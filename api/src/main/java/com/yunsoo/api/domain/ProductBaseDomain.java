@@ -12,6 +12,7 @@ import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
@@ -145,7 +146,18 @@ public class ProductBaseDomain {
             ProductBaseImage.Image imageRect = productBaseImage.getImageRect();
             ProductBaseImage.Image imageSquare = productBaseImage.getImageSquare();
 
+            if (productBaseImage.getImageContent() != null) {
+                ByteArrayOutputStream outStream_raw = new ByteArrayOutputStream();
+                imageProcessor.write(outStream_raw, "png");
+                ResourceInputStream resourceInputStream_raw = new ResourceInputStream(inputStream, outStream_raw.size(), "image/png");
+                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-raw", resourceInputStream_raw, orgId, productBaseId, version);
+                outStream_raw.close();
+            }
+
             if ((imageRect.getHeight() != 0) && (imageRect.getWidth() != 0)) {
+                if (((imageRect.getInitX() + imageRect.getWidth()) > imageProcessor.getBufferedImage().getWidth()) || ((imageRect.getInitY() + imageRect.getHeight()) > imageProcessor.getBufferedImage().getHeight())) {
+                    throw new BadRequestException("Crop range should not exceed the picture region");
+                }
                 ByteArrayOutputStream outStream_rect_1 = new ByteArrayOutputStream();
                 ByteArrayOutputStream outStream_rect_2 = new ByteArrayOutputStream();
                 ImageProcessor imageProcessorRect = imageProcessor.crop(imageRect.getInitX(), imageRect.getInitY(), imageRect.getWidth(), imageRect.getHeight());
@@ -153,23 +165,25 @@ public class ProductBaseDomain {
                 imageProcessorRect.resize(400, 200).write(outStream_rect_2, "png");
 
                 InputStream inputStream_rect1 = new ByteArrayInputStream(outStream_rect_1.toByteArray());
-                ResourceInputStream resourceInputStream_rect1 = new ResourceInputStream(inputStream_rect1, outStream_rect_1.toByteArray().length, "image/png");
-                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-800x400.png", resourceInputStream_rect1, orgId, productBaseId, version);
+                ResourceInputStream resourceInputStream_rect1 = new ResourceInputStream(inputStream_rect1, outStream_rect_1.size(), "image/png");
+                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-800x400", resourceInputStream_rect1, orgId, productBaseId, version);
 
-                InputStream inputStream_rect2 = new ByteArrayInputStream(outStream_rect_1.toByteArray());
-                ResourceInputStream resourceInputStream_rect2 = new ResourceInputStream(inputStream_rect2, outStream_rect_2.toByteArray().length, "image/png");
-                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-400x200.png", resourceInputStream_rect2, orgId, productBaseId, version);
+                InputStream inputStream_rect2 = new ByteArrayInputStream(outStream_rect_2.toByteArray());
+                ResourceInputStream resourceInputStream_rect2 = new ResourceInputStream(inputStream_rect2, outStream_rect_2.size(), "image/png");
+                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-400x200", resourceInputStream_rect2, orgId, productBaseId, version);
                 outStream_rect_1.close();
                 outStream_rect_2.close();
-
             }
             if ((imageSquare.getHeight() != 0) && (imageSquare.getWidth() != 0)) {
+                if (((imageSquare.getInitX() + imageSquare.getWidth()) > imageProcessor.getBufferedImage().getWidth()) || ((imageSquare.getInitY() + imageSquare.getHeight()) > imageProcessor.getBufferedImage().getHeight())) {
+                    throw new BadRequestException("Crop range should not exceed the picture region");
+                }
                 ByteArrayOutputStream outStream_square = new ByteArrayOutputStream();
                 ImageProcessor imageProcessorSquare = imageProcessor.crop(imageSquare.getInitX(), imageSquare.getInitY(), imageSquare.getWidth(), imageSquare.getHeight());
                 imageProcessorSquare.resize(400, 400).write(outStream_square, "png");
                 InputStream inputStream_square = new ByteArrayInputStream(outStream_square.toByteArray());
-                ResourceInputStream resourceInputStream_square = new ResourceInputStream(inputStream_square, outStream_square.toByteArray().length, "image/png");
-                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-400x400.png", resourceInputStream_square, orgId, productBaseId, version);
+                ResourceInputStream resourceInputStream_square = new ResourceInputStream(inputStream_square, outStream_square.size(), "image/png");
+                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-400x400", resourceInputStream_square, orgId, productBaseId, version);
                 outStream_square.close();
             }
             inputStream.close();
