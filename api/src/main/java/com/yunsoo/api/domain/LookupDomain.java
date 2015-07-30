@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.cache.annotation.ElastiCacheable;
+import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
 import com.yunsoo.api.dto.ProductKeyBatchStatus;
 import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.api.dto.ProductStatus;
@@ -20,6 +20,7 @@ import java.util.List;
  * Created on:   2015/3/23
  * Descriptions:
  */
+@ElastiCacheConfig
 @Component
 public class LookupDomain {
 
@@ -29,7 +30,7 @@ public class LookupDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    @ElastiCacheable
+    @Cacheable
     public List<ProductKeyType> getProductKeyTypes() {
        // LOGGER.debug("cache missed [name: lookup.productkeytype]");
         //could not invoke the cachable method to avoid cache proxy not work
@@ -38,7 +39,7 @@ public class LookupDomain {
         });
     }
 
-    @ElastiCacheable
+    @Cacheable
     public List<ProductKeyType> getProductKeyTypes(Boolean active) {
       //  LOGGER.debug("cache missed [name: lookup.productkeytype.active]");
         return dataAPIClient.get("productkeytype" + formatActive(active), new ParameterizedTypeReference<List<ProductKeyType>>() {
@@ -46,13 +47,13 @@ public class LookupDomain {
     }
 
 
-    @ElastiCacheable
+    @Cacheable
     public List<ProductKeyBatchStatus> getProductKeyBatchStatuses() {
         return dataAPIClient.get("productkeybatchstatus" + formatActive(null), new ParameterizedTypeReference<List<ProductKeyBatchStatus>>() {
         });
     }
 
-    @ElastiCacheable
+    @Cacheable
     public List<ProductKeyBatchStatus> getProductKeyBatchStatuses(Boolean active) {
     //    LOGGER.debug("cache missed [name: lookup.productkeybatchstatus]");
         return dataAPIClient.get("productkeybatchstatus" + formatActive(active), new ParameterizedTypeReference<List<ProductKeyBatchStatus>>() {
@@ -60,13 +61,13 @@ public class LookupDomain {
     }
 
 
-    @ElastiCacheable
+    @Cacheable
     public List<ProductStatus> getProductStatuses() {
         return dataAPIClient.get("productstatus" + formatActive(null), new ParameterizedTypeReference<List<ProductStatus>>() {
         });
     }
 
-    @ElastiCacheable
+    @Cacheable
     public List<ProductStatus> getProductStatuses(Boolean active) {
     //    LOGGER.debug("cache missed [name: lookup.productstatus]");
         return dataAPIClient.get("productstatus" + formatActive(active), new ParameterizedTypeReference<List<ProductStatus>>() {

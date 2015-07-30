@@ -1,7 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.cache.annotation.ElastiCacheable;
-import com.yunsoo.api.cache.annotation.ElasticCacheEvict;
+import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.util.HashUtils;
@@ -16,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -29,12 +29,14 @@ import java.util.List;
  * Descriptions:
  */
 @Component
+@ElastiCacheConfig
 public class AccountDomain {
 
     @Autowired
     private RestClient dataAPIClient;
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountDomain.class);
-    @ElastiCacheable
+
+    @Cacheable
     public AccountObject getById(String accountId) {
         LOGGER.debug("missed cache: AccountDomain.getById");
         if (StringUtils.isEmpty(accountId)) {
@@ -58,7 +60,6 @@ public class AccountDomain {
     }
 
     public Page<AccountObject> getByOrgId(String orgId, Pageable pageable) {
-        LOGGER.debug("missed cache: AccountDomain.getByOrgId");
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .append(pageable)
@@ -88,8 +89,8 @@ public class AccountDomain {
         return dataAPIClient.post("account", accountObject, AccountObject.class);
     }
 
-  //  @ElasticCacheEvict(key="'AccountDomain.getById.'.concat(#accountId).concat('.')")
-    @CacheEvict(value = "dev-cache", key="'AccountDomain.getById.'.concat(#accountId).concat('.')")
+
+    @CacheEvict(key="#root.targetClass.getName().concat('.getById.').concat(#accountId).concat('.')")
     public void updatePassword(String accountId, String rawNewPassword) {
         if (!StringUtils.isEmpty(accountId)) {
             String hashSalt = RandomUtils.generateString(8);

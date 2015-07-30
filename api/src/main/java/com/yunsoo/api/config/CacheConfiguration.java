@@ -1,6 +1,7 @@
 package com.yunsoo.api.config;
 
 import com.yunsoo.api.cache.CustomKeyGenerator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -42,8 +43,8 @@ public class CacheConfiguration {
     }
 
 }
-
 */
+
 
 @Configuration
 @EnableCaching

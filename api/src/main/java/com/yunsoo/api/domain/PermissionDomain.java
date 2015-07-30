@@ -1,7 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.cache.annotation.ElastiCacheable;
-import com.yunsoo.api.config.CacheConfiguration;
+import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
 import com.yunsoo.api.dto.PermissionAction;
 import com.yunsoo.api.dto.PermissionInstance;
 import com.yunsoo.api.dto.PermissionResource;
@@ -29,6 +28,7 @@ import java.util.stream.Collectors;
  * Created on:   2015/4/14
  * Descriptions:
  */
+@ElastiCacheConfig
 @Component
 public class PermissionDomain {
 
@@ -41,14 +41,14 @@ public class PermissionDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    @ElastiCacheable
+    @Cacheable
     public List<PermissionPolicyObject> getPermissionPolicies() {
         LOGGER.debug("cache missed [name: permission, key: 'policylist']");
         return dataAPIClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
         });
     }
 
-    @ElastiCacheable
+    @Cacheable
     public Map<String, PermissionPolicyObject> getPermissionPolicyMap() {
         LOGGER.debug("cache missed [name: permission, key: 'policymap']");
         Map<String, PermissionPolicyObject> permissionPolicies = new HashMap<>();

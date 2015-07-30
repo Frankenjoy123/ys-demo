@@ -1,8 +1,7 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.cache.annotation.ElastiCacheable;
+import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
 import com.yunsoo.api.client.DataAPIClient;
-import com.yunsoo.api.config.CacheConfiguration;
 import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
@@ -21,6 +20,7 @@ import java.util.stream.Collectors;
  * Created on  : 2015/7/1
  * Descriptions:
  */
+@ElastiCacheConfig
 @Component
 public class ProductCategoryDomain {
 
@@ -30,14 +30,14 @@ public class ProductCategoryDomain {
     private DataAPIClient dataAPIClient;
 
 
-    @ElastiCacheable
+    @Cacheable
     public List<ProductCategoryObject> getProductCategories() {
         LOGGER.debug("cache missed [name: productcategory, key: 'list']");
         return dataAPIClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {
         });
     }
 
-    @ElastiCacheable
+    @Cacheable
     public Map<String, ProductCategoryObject> getProductCategoryMap() {
         LOGGER.debug("cache missed [name: productcategory, key: 'map']");
         List<ProductCategoryObject> categoryObjects =  dataAPIClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {});
