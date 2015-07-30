@@ -11,6 +11,7 @@ import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
@@ -186,6 +187,30 @@ public class ProductBaseController {
             currentVersion = currentVersion + 1;
         }
         productBaseDomain.createProductBaseImage(productBaseImage, orgId, currentVersion);
+    }
+
+    @RequestMapping(value = "{product_base_id}/image/{imageName}", method = RequestMethod.GET)
+    public ResponseEntity<?> getProductBaseImage(
+            @PathVariable(value = "product_base_id") String productBaseId,
+            @PathVariable(value = "imageName") String imageName) {
+        List<ProductBaseVersionsObject> productbaseVersionsObjects = productBaseDomain.getProductBaseVersionsByProductBaseId(productBaseId);
+        if (productbaseVersionsObjects.size() == 0) {
+            throw new NotFoundException("product base infornmation not found");
+        }
+        ProductBaseVersionsObject productBaseVersionsObject = productbaseVersionsObjects.get(productbaseVersionsObjects.size() - 1);
+        String orgId = productBaseVersionsObject.getProductBase().getOrgId();
+        Integer currentVersion = productBaseVersionsObject.getVersion();
+
+        ResourceInputStream resourceInputStream = productBaseDomain.getProductBaseImage(productBaseId, orgId, currentVersion, imageName);
+        if (resourceInputStream == null) {
+            throw new NotFoundException("image not found");
+        }
+        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
+        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
+        if (resourceInputStream.getContentLength() > 0) {
+            builder.contentLength(resourceInputStream.getContentLength());
+        }
+        return builder.body(new InputStreamResource(resourceInputStream));
     }
 
 
