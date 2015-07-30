@@ -69,16 +69,21 @@
           }
         }
 
-        product.img800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400.png?access_token=" + $scope.utils.auth.getAccessToken();
-        product.img400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400.png?access_token=" + $scope.utils.auth.getAccessToken();
+        product.img800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?access_token=" + $scope.utils.auth.getAccessToken();
+        product.img400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400?access_token=" + $scope.utils.auth.getAccessToken();
 
         var dataPreview = {};
         dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo/image-128x128?access_token=" + $scope.utils.auth.getAccessToken();
-        dataPreview.proImgUrl = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400.png?access_token=" + $scope.utils.auth.getAccessToken();
+        dataPreview.proImgUrl = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?access_token=" + $scope.utils.auth.getAccessToken();
 
         dataPreview.barcode = product.barCode;
         dataPreview.name = product.productName;
-        dataPreview.details = product.productInfos.slice(0);
+
+        if (product.productInfos) {
+          dataPreview.details = product.productInfos.slice(0);
+        }
+
+        dataPreview.isReadOnlyMode = true;
 
         $('#iphone-6-portrait')[0].contentWindow.refresh(dataPreview);
 

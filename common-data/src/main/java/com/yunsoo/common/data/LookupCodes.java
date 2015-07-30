@@ -1,5 +1,8 @@
 package com.yunsoo.common.data;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by  : Lijian
  * Created on  : 2015/4/27
@@ -84,16 +87,8 @@ public class LookupCodes {
         public static final String REJECTED = "rejected";
         public static final String ACTIVATED = "activated";
         public static final String ARCHIVED = "archived";
+        public static final List<String> EDITABLE_STATUS = Arrays.asList("draft", "rejected");
     }
-
-    public static class ProductBaseVersions {
-
-        private ProductBaseVersions() {
-        }
-
-        public static final Integer INITIALVERSION = 1;
-    }
-
 
     public static class ProductKeyTransactionStatus {
         private ProductKeyTransactionStatus() {

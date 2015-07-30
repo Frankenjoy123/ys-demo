@@ -79,4 +79,13 @@ public class ImageProcessor {
         newBufferedImage.getGraphics().drawImage(image, 0, 0, null);
         return new ImageProcessor(newBufferedImage);
     }
+
+    public int getWidth() {
+        return this.bufferedImage == null ? 0 : this.bufferedImage.getWidth();
+    }
+
+    public int getHeight() {
+        return this.bufferedImage == null ? 0 : this.bufferedImage.getHeight();
+    }
+
 }

@@ -1,6 +1,5 @@
 package com.yunsoo.api.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.LookupDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
@@ -9,15 +8,18 @@ import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.*;
+import com.yunsoo.common.data.object.LookupObject;
+import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.data.object.ProductBaseVersionsObject;
+import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.ForbiddenException;
-import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
@@ -28,13 +30,10 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
+import javax.validation.Valid;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -50,11 +49,6 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/productbase")
 public class ProductBaseController {
 
-    private static ObjectMapper mapper = new ObjectMapper();
-
-    @Autowired
-    private RestClient dataAPIClient;
-
     @Autowired
     private ProductBaseDomain productBaseDomain;
 
@@ -69,6 +63,10 @@ public class ProductBaseController {
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductBaseController.class);
+
+    //region product base
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'productbase:read')")
@@ -144,107 +142,6 @@ public class ProductBaseController {
         return productBases;
     }
 
-    //create image
-
-    @RequestMapping(value = "{product_base_id}/{version}/image/{imgdetail}", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createImage(MultipartHttpServletRequest request, HttpServletResponse response,
-                            @PathVariable(value = "product_base_id") String productBaseId,
-                            @PathVariable(value = "version") Integer version,
-                            @PathVariable(value = "imgdetail") String imgDetail) {
-        try {
-            Iterator<String> itr = request.getFileNames();
-            MultipartFile file = request.getFile(itr.next());
-
-            FileObject fileObject = new FileObject();
-            fileObject.setData(file.getBytes());
-            fileObject.setLength(file.getSize());
-            fileObject.setContentType(file.getContentType());
-            fileObject.setS3Path("photo/coms/products/" + productBaseId + "/" + version.toString() + "/" + imgDetail);
-
-            dataAPIClient.post("file/", fileObject, Long.class);
-
-        } catch (IOException ex) {
-            throw new InternalServerErrorException("图片上传出错！");
-        }
-    }
-
-    //create product base image
-
-    @RequestMapping(value = "{product_base_id}/image", method = RequestMethod.PUT)
-    public void createProductBaseImage(@RequestBody ProductBaseImage productBaseImage) {
-
-        String productBaseId = productBaseImage.getProductBaseId();
-        List<ProductBaseVersionsObject> productBaseVersionsObjects = productBaseDomain.getProductBaseVersionsByProductBaseId(productBaseId);
-        if (productBaseVersionsObjects.size() == 0) {
-            throw new NotFoundException("product base version not found");
-        }
-        String currentVersionStatus = productBaseVersionsObjects.get(productBaseVersionsObjects.size() - 1).getStatusCode();
-        Integer currentVersion = productBaseVersionsObjects.get(productBaseVersionsObjects.size() - 1).getVersion();
-        String orgId = productBaseVersionsObjects.get(productBaseVersionsObjects.size() - 1).getProductBase().getOrgId();
-
-        if (LookupCodes.ProductBaseVersionsStatus.ACTIVATED.equals(currentVersionStatus)) {
-            currentVersion = currentVersion + 1;
-        }
-        productBaseDomain.createProductBaseImage(productBaseImage, orgId, currentVersion);
-    }
-
-    @RequestMapping(value = "{product_base_id}/image/{imageName}", method = RequestMethod.GET)
-    public ResponseEntity<?> getProductBaseImage(
-            @PathVariable(value = "product_base_id") String productBaseId,
-            @PathVariable(value = "imageName") String imageName) {
-        List<ProductBaseVersionsObject> productbaseVersionsObjects = productBaseDomain.getProductBaseVersionsByProductBaseId(productBaseId);
-        if (productbaseVersionsObjects.size() == 0) {
-            throw new NotFoundException("product base infornmation not found");
-        }
-        ProductBaseVersionsObject productBaseVersionsObject = productbaseVersionsObjects.get(productbaseVersionsObjects.size() - 1);
-        String orgId = productBaseVersionsObject.getProductBase().getOrgId();
-        Integer currentVersion = productBaseVersionsObject.getVersion();
-
-        ResourceInputStream resourceInputStream = productBaseDomain.getProductBaseImage(productBaseId, orgId, currentVersion, imageName);
-        if (resourceInputStream == null) {
-            throw new NotFoundException("image not found");
-        }
-        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
-        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
-        if (resourceInputStream.getContentLength() > 0) {
-            builder.contentLength(resourceInputStream.getContentLength());
-        }
-        return builder.body(new InputStreamResource(resourceInputStream));
-    }
-
-
-    //query for image
-    @RequestMapping(value = "{product_base_id}/image", method = RequestMethod.GET)
-    public ResponseEntity<?> getImage(
-            @PathVariable(value = "product_base_id") String productBaseId,
-            @RequestParam(value = "version", required = false) Integer version,
-            @RequestParam(value = "imgdetail") String imgDetail) {
-        Integer currenteVersion = new Integer(version);
-        if (version == null) {
-            ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
-            if (productBaseObject == null) {
-                throw new NotFoundException("product base not found");
-            }
-            currenteVersion = productBaseObject.getVersion();
-        }
-        try {
-            FileObject fileObject = dataAPIClient.get("productbaseversions/{product_base_id}/{version}/image/{imgdetail}", FileObject.class, productBaseId, currenteVersion.toString(), imgDetail);
-            if (fileObject.getLength() > 0) {
-                return ResponseEntity.ok()
-                        .contentLength(fileObject.getLength())
-                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
-            } else {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
-            }
-        } catch (NotFoundException ex) {
-            throw new NotFoundException(40402, "找不到产品图片 product_base_id = " + productBaseId + "  version = " + version.toString());
-        }
-    }
-
     //create product base
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -253,7 +150,7 @@ public class ProductBaseController {
         ProductBaseObject productBaseObject = new ProductBaseObject();
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
         productBaseObject.setName(productBase.getName());
-        productBaseObject.setVersion(LookupCodes.ProductBaseVersions.INITIALVERSION);
+        productBaseObject.setVersion(1);
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
         if (StringUtils.hasText(productBase.getOrgId()))
@@ -262,7 +159,7 @@ public class ProductBaseController {
             productBaseObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
 
         productBaseObject.setBarcode(productBase.getBarcode());
-        productBaseObject.setVersion(LookupCodes.ProductBaseVersions.INITIALVERSION);
+        productBaseObject.setVersion(1);
         productBaseObject.setStatusCode(LookupCodes.ProductBaseStatus.CREATED);
         productBaseObject.setCategoryId(productBase.getCategoryId());
         productBaseObject.setChildProductCount(productBase.getChildProductCount());
@@ -279,7 +176,7 @@ public class ProductBaseController {
         String id = newProductBaseObject.getId();
         productBaseVersionsObject.setProductBase(productBaseObject);
         productBaseVersionsObject.setProductBaseId(id);
-        productBaseVersionsObject.setVersion(LookupCodes.ProductBaseVersions.INITIALVERSION);
+        productBaseVersionsObject.setVersion(1);
         productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.SUBMITTED);
         productBaseVersionsObject.setCreatedAccountId(currentAccountId);
         productBaseVersionsObject.setCreatedDateTime(DateTime.now());
@@ -345,82 +242,17 @@ public class ProductBaseController {
         productBaseDomain.createProductBaseFile(productBase, productBaseId, productBaseObject.getOrgId(), actualVersion);
     }
 
-
-    //create with details
-    @RequestMapping(value = "/withdetail", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public ProductBase createDetails(@RequestBody ProductBaseRequest productBase) {
-
-        ProductBaseObject p = new ProductBaseObject();
-        p.setName(productBase.getName());
-
-        if (StringUtils.hasText(productBase.getOrgId()))
-            p.setOrgId(productBase.getOrgId());
-        else
-            p.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
-
-        p.setBarcode(productBase.getBarcode());
-        p.setStatusCode(productBase.getStatusCode());
-        p.setCategoryId(productBase.getCategoryId());
-        p.setChildProductCount(productBase.getChildProductCount());
-        p.setComments(productBase.getComments());
-        p.setCreatedDateTime(productBase.getCreatedDateTime());
-        p.setId(productBase.getId());
-        p.setModifiedDateTime(productBase.getModifiedDateTime());
-        p.setProductKeyTypeCodes(productBase.getProductKeyTypeCodes());
-        p.setShelfLife(productBase.getShelfLife());
-        p.setShelfLifeInterval(productBase.getShelfLifeInterval());
-
-        String id = dataAPIClient.post("productbase/", p, String.class);
-
-        if (StringUtils.hasText(id)) {
-            FileObject fileObject = new FileObject();
-            fileObject.setData(productBase.getDetails().getBytes(StandardCharsets.UTF_8));
-            fileObject.setContentType("application/octet-stream");
-            fileObject.setS3Path("photo/coms/products/" + id + "/notes.json");
-
-            dataAPIClient.post("file/", fileObject, Long.class);
-        }
-
-        ProductBase productBase1 = new ProductBase();
-        productBase1.setId(id);
-
-        return productBase1;
-    }
-
-    @RequestMapping(value = "withdetailfile/{id}/{filekey}", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createDetailsThumbnail(MultipartHttpServletRequest request, HttpServletResponse response,
-                                       @PathVariable(value = "id") String id,
-                                       @PathVariable(value = "filekey") String filekey) {
-        try {
-            Iterator<String> itr = request.getFileNames();
-            MultipartFile file = request.getFile(itr.next());
-
-            FileObject fileObject = new FileObject();
-            fileObject.setData(file.getBytes());
-            fileObject.setLength(file.getSize());
-            fileObject.setContentType(file.getContentType());
-            fileObject.setS3Path("photo/coms/products/" + id + "/" + filekey);
-
-            dataAPIClient.post("file/", fileObject, Long.class);
-
-        } catch (IOException ex) {
-            throw new InternalServerErrorException("文件上传出错！");
-        }
-    }
-
     //delete product base
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "{product_base_id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(value = "id") String id) {
-        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(id);
+    public void delete(@PathVariable(value = "product_base_id") String productBaseId) {
+        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
         if (productBaseObject != null) {
             TPermission tPermission = new TPermission(productBaseObject.getOrgId(), "productbase", "delete");
             if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
                 throw new ForbiddenException();
             }
-            productBaseDomain.deleteProductBase(id);
+            productBaseDomain.deleteProductBase(productBaseId);
         }
     }
 
@@ -432,46 +264,61 @@ public class ProductBaseController {
         productBaseDomain.deleteProductBaseVersions(productBaseId, version);
     }
 
+    //endregion
 
-    @RequestMapping(value = "/{id}/{client}", method = RequestMethod.GET)
-    public ResponseEntity<?> getThumbnail(
-            @PathVariable(value = "id") String id,
-            @PathVariable(value = "client") String client) {
-        try {
-            FileObject fileObject = dataAPIClient.get("productbase/{id}/{client}", FileObject.class, id, client);
-            if (fileObject.getLength() > 0) {
-                return ResponseEntity.ok()
-                        .contentLength(fileObject.getLength())
-                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
-            } else {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
-            }
-        } catch (NotFoundException ex) {
-            throw new NotFoundException(40402, "找不到产品图片 id = " + id + "  client = " + client);
+
+    //region product base image
+
+    @RequestMapping(value = "{product_base_id}/image", method = RequestMethod.PUT)
+    public void putProductBaseImage(@PathVariable(value = "product_base_id") String productBaseId,
+                                    @RequestParam(value = "version", required = false) Integer version,
+                                    @RequestBody @Valid ImageRequest imageRequest) {
+        ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
+        String orgId = productBaseObject.getOrgId();
+        Integer currentVersion = productBaseObject.getVersion();
+        if (version == null || version < 1 || version > currentVersion + 1) {
+            version = currentVersion + 1;
         }
+        //check permission
+        //todo:
+
+        //find the edit version
+        ProductBaseVersionsObject productBaseVersionsObject = productBaseDomain.getProductBaseVersionsByProductBaseIdAndVersion(productBaseId, version);
+        if (productBaseVersionsObject == null || !LookupCodes.ProductBaseVersionsStatus.EDITABLE_STATUS.contains(productBaseVersionsObject.getStatusCode())) {
+            throw new UnprocessableEntityException("image can only be uploaded to the editable product base");
+        }
+
+        productBaseDomain.saveProductBaseImage(imageRequest, orgId, productBaseId, version);
+        LOGGER.info("image saved [orgId: {}, productBaseId:{}, version:{}]", orgId, productBaseId, version);
     }
 
-    @RequestMapping(value = "/{id}/{filekey}", method = RequestMethod.POST)
-    public void UpdateThumbnail(MultipartHttpServletRequest request, HttpServletResponse response,
-                                @PathVariable(value = "id") String id,
-                                @PathVariable(value = "filekey") String filekey) {
-        try {
-            Iterator<String> itr = request.getFileNames();
-            MultipartFile file = request.getFile(itr.next());
-
-            FileObject fileObject = new FileObject();
-            fileObject.setData(file.getBytes());
-            fileObject.setLength(file.getSize());
-            fileObject.setContentType(file.getContentType());
-
-            dataAPIClient.post("productbase/{id}/{filekey}", fileObject, id, filekey);
-        } catch (IOException ex) {
-            throw new InternalServerErrorException("文件获取出错！");
+    @RequestMapping(value = "{product_base_id}/image/{image_name}", method = RequestMethod.GET)
+    public ResponseEntity<?> getProductBaseImage(
+            @PathVariable(value = "product_base_id") String productBaseId,
+            @PathVariable(value = "image_name") String imageName,
+            @RequestParam(value = "version", required = false) Integer version) {
+        ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
+        String orgId = productBaseObject.getOrgId();
+        Integer currentVersion = productBaseObject.getVersion();
+        if (version == null || version < 1 || version > currentVersion + 1) {
+            version = currentVersion;
         }
+
+        ResourceInputStream resourceInputStream = productBaseDomain.getProductBaseImage(productBaseId, orgId, version, imageName);
+        if (resourceInputStream == null) {
+            throw new NotFoundException("image not found");
+        }
+        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
+        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
+        if (resourceInputStream.getContentLength() > 0) {
+            builder.contentLength(resourceInputStream.getContentLength());
+        }
+        return builder.body(new InputStreamResource(resourceInputStream));
     }
+
+
+    //endregion
+
 
     private String fixOrgId(String orgId) {
         if (orgId == null || "current".equals(orgId)) {
@@ -479,5 +326,13 @@ public class ProductBaseController {
             return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         }
         return orgId;
+    }
+
+    private ProductBaseObject findProductBaseById(String id) {
+        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(id);
+        if (productBaseObject == null) {
+            throw new NotFoundException("product base not found by [id: " + id + "]");
+        }
+        return productBaseObject;
     }
 }

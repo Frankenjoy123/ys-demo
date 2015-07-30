@@ -67,6 +67,15 @@
                 marginTop: '-' + Math.round(ry * data.coords800400.y) + 'px'
             });
         }
+
+        if (data.isReadOnlyMode) {
+            $('#imgProduct').attr('width', '356px');
+            $('#imgProduct').attr('height', '178px');
+        }
+        else {
+            $('#imgProduct').attr('width', '');
+            $('#imgProduct').attr('height', '');
+        }
     }
 
     $(document).ready(function () {
@@ -127,7 +136,7 @@
                 <div width="100%">
 
                     <div style="width:356px;height:178px;overflow:hidden">
-                        <img id="imgProduct" src=""/>
+                        <img id="imgProduct" src="" width="" height=""/>
                     </div>
 
                     <div class="float-img animationDiv">

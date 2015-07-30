@@ -52,9 +52,9 @@
                         <th>条码</th>
                         <th class="col-md-1">保质期</th>
                         <th class="col-md-1">产品码类型</th>
-                        <th class="col-md-1">可用额度</th>
-                        <th class="col-md-2">创建时间</th>
-                        <th class="col-md-2">操作</th>
+                        <th class="col-md-2">可用额度</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
                         <th data-hide="all"></th>
                     </tr>
                     </thead>
@@ -96,7 +96,7 @@
                             </div>
                         </td>
                         <td>{{utils.formatDateString(pb.created_datetime)}}</td>
-                        <td class="text-center">
+                        <td class="text-right">
                             <button type="button" class="btn btn-info fa fa-edit" ng-show="pb.is_editable"
                                     ng-click="productBase.editProductBaseDetails(pb.id)">
                             </button>

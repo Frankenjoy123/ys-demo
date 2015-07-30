@@ -39,6 +39,7 @@
     var fileInputContent = '';
 
     var product = $scope.product = {
+      spinnerShow: false,
       productTitle: '产品创建',
       productInfos: [{name: '', value: ''}],
       productAddress: [{address: '', tel: ''}],
@@ -238,12 +239,28 @@
           }
         }
 
-        product.imgSrc800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400.png?access_token=" + $scope.utils.auth.getAccessToken();
-        product.imgSrc400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400.png?access_token=" + $scope.utils.auth.getAccessToken();
+        product.imgSrc800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?access_token=" + $scope.utils.auth.getAccessToken();
+        product.imgSrc400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400?access_token=" + $scope.utils.auth.getAccessToken();
 
         product.proPicPreview = true;
         product.proPicPreviewUpload = false;
         product.showButton800400 = false;
+
+        var dataPreview = {};
+        dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo/image-128x128?access_token=" + $scope.utils.auth.getAccessToken();
+        dataPreview.proImgUrl = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?access_token=" + $scope.utils.auth.getAccessToken();
+
+        dataPreview.barcode = product.barCode;
+        dataPreview.name = product.productName;
+
+        if (product.productInfos) {
+          dataPreview.details = product.productInfos.slice(0);
+        }
+
+        dataPreview.isReadOnlyMode = true;
+
+        $('#iphone-6-portrait')[0].contentWindow.refresh(dataPreview);
+
       }, function () {
         $scope.utils.alert('info', '获取产品信息失败');
       });
@@ -254,8 +271,18 @@
       var dataPreview = {};
       dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo/image-128x128?access_token=" + $scope.utils.auth.getAccessToken();
 
+      dataPreview.isReadOnlyMode = false;
+
       if (fileInputContent == '') {
-        dataPreview.proImgUrl = 'ysdefault.jpg';
+
+        dataPreview.isReadOnlyMode = true;
+
+        if ($('#imgProductbase800400').attr('src') == '') {
+          dataPreview.proImgUrl = 'ysdefault.jpg';
+        }
+        else {
+          dataPreview.proImgUrl = $('#imgProductbase800400').attr('src');
+        }
       }
       else {
         dataPreview.proImgUrl = fileInputContent;
@@ -296,6 +323,8 @@
         $scope.utils.alert('info', '图像400*400像素不能为空');
         return;
       }
+
+      product.spinnerShow = true;
 
       var proWithDetails = {};
 
@@ -351,38 +380,34 @@
       if ($location.search()['proId'] != '') {
         proWithDetails.id = $location.search()['proId'];
         emulatorService.updateProWithDetail(proWithDetails, function () {
+              var detailImg = {};
+              detailImg.product_base_id = $location.search()['proId'];
+              detailImg.image_content = fileInputContent;
+              detailImg.image_rect = {};
+              detailImg.image_rect.initX = coords800400Result.x;
+              detailImg.image_rect.initY = coords800400Result.y;
+              detailImg.image_rect.width = coords800400Result.w;
+              detailImg.image_rect.height = coords800400Result.h;
 
-              if (fileInputContent != '') {
-                var detailImg = {};
-                detailImg.product_base_id = $location.search()['proId'];
-                detailImg.image_content = fileInputContent;
-                detailImg.image_rect = {};
-                detailImg.image_rect.initX = coords800400Result.x;
-                detailImg.image_rect.initY = coords800400Result.y;
-                detailImg.image_rect.width = coords800400Result.w;
-                detailImg.image_rect.height = coords800400Result.h;
+              detailImg.image_square = {};
+              detailImg.image_square.initX = coords400Result.x;
+              detailImg.image_square.initY = coords400Result.y;
+              detailImg.image_square.width = coords400Result.w;
+              detailImg.image_square.height = coords400Result.h;
 
-                detailImg.image_square = {};
-                detailImg.image_square.initX = coords400Result.x;
-                detailImg.image_square.initY = coords400Result.y;
-                detailImg.image_square.width = coords400Result.w;
-                detailImg.image_square.height = coords400Result.h;
-
-                emulatorService.putProWithDetailImage($location.search()['proId'], detailImg, function () {
-                  $scope.utils.alert('success', '更新产品图片成功');
-                  $location.path('/product-base-manage');
-                }, function () {
-                  $scope.utils.alert('success', '更新产品图片失败');
-                  $location.path('/product-base-manage');
-                });
-              }
-              else {
-                $scope.utils.alert('success', '更新产品图片成功');
+              emulatorService.putProWithDetailImage($location.search()['proId'], detailImg, function () {
+                $scope.utils.alert('success', '更新产品信息成功');
+                product.spinnerShow = false;
                 $location.path('/product-base-manage');
-              }
+              }, function () {
+                $scope.utils.alert('info', '更新产品信息成功，但更新产品图片失败');
+                product.spinnerShow = false;
+                $location.path('/product-base-manage');
+              });
             },
             function () {
               $scope.utils.alert('info', '更新产品信息失败');
+              product.spinnerShow = false;
             });
       }
       else {
@@ -405,18 +430,19 @@
                 detailImg.image_square.height = coords400Result.h;
 
                 emulatorService.putProWithDetailImage(data.id, detailImg, function () {
-                  $scope.utils.alert('success', '上传产品图片成功');
+                  $scope.utils.alert('success', '创建产品信息成功');
+                  product.spinnerShow = false;
                   $location.path('/product-base-manage');
                 }, function () {
-                  $scope.utils.alert('success', '上传产品图片失败');
+                  $scope.utils.alert('info', '创建产品信息成功，但上传产品图片失败');
+                  product.spinnerShow = false;
                   $location.path('/product-base-manage');
                 });
-
-                $scope.utils.alert('success', '创建产品信息成功');
               }
             },
             function () {
               $scope.utils.alert('info', '创建产品信息失败');
+              product.spinnerShow = false;
             });
       }
     };
