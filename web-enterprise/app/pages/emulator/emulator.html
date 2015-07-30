@@ -234,7 +234,8 @@
                                         <div class="col-md-9">
                                             <select id="expireDateUnit" class="form-control"
                                                     ng-model="product.expireDateUnit">
-                                                <option value="{{item.key}}" ng-selected="product.expireDateUnit == item.key"
+                                                <option value="{{item.key}}"
+                                                        ng-selected="product.expireDateUnit == item.key"
                                                         ng-repeat="item in product.expireDateUnitValue">{{item.value}}
                                                 </option>
                                             </select>
@@ -378,7 +379,7 @@
                                                  style="margin-top: 5px">
                                                 <div class="col-md-12">
                                                     <span class="pass-portrait-msg" id="showRealPix"></span>
-                                                    <img id="imgProductbase" width="422px" height="211px" src="{{product.imgSrc800400}}"/>
+                                                    <img id="imgProductbase" width="422px" height="211px" src=""/>
                                                 </div>
                                             </div>
 
@@ -405,7 +406,7 @@
                                                 </button>
                                                 &nbsp;&nbsp;
                                                 <!--<button class="btn btn-info btn-labeled fa fa-save" type="button"-->
-                                                        <!--ng-click="save()">保存-->
+                                                <!--ng-click="save()">保存-->
                                                 <!--</button>-->
                                                 <!--&nbsp;&nbsp;-->
                                                 <button class="btn btn-primary btn-labeled fa fa-send" type="submit"

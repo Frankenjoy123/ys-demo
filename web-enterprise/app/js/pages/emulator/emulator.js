@@ -238,12 +238,28 @@
           }
         }
 
-        product.imgSrc800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400.png?access_token=" + $scope.utils.auth.getAccessToken();
-        product.imgSrc400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400.png?access_token=" + $scope.utils.auth.getAccessToken();
+        product.imgSrc800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?access_token=" + $scope.utils.auth.getAccessToken();
+        product.imgSrc400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400?access_token=" + $scope.utils.auth.getAccessToken();
 
         product.proPicPreview = true;
         product.proPicPreviewUpload = false;
         product.showButton800400 = false;
+
+        var dataPreview = {};
+        dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo/image-128x128?access_token=" + $scope.utils.auth.getAccessToken();
+        dataPreview.proImgUrl = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?access_token=" + $scope.utils.auth.getAccessToken();
+
+        dataPreview.barcode = product.barCode;
+        dataPreview.name = product.productName;
+
+        if (product.productInfos) {
+          dataPreview.details = product.productInfos.slice(0);
+        }
+
+        dataPreview.isReadOnlyMode = true;
+
+        $('#iphone-6-portrait')[0].contentWindow.refresh(dataPreview);
+
       }, function () {
         $scope.utils.alert('info', '获取产品信息失败');
       });
@@ -254,8 +270,18 @@
       var dataPreview = {};
       dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo/image-128x128?access_token=" + $scope.utils.auth.getAccessToken();
 
+      dataPreview.isReadOnlyMode = false;
+
       if (fileInputContent == '') {
-        dataPreview.proImgUrl = 'ysdefault.jpg';
+
+        dataPreview.isReadOnlyMode = true;
+
+        if ($('#imgProductbase800400').attr('src') == '') {
+          dataPreview.proImgUrl = 'ysdefault.jpg';
+        }
+        else {
+          dataPreview.proImgUrl = $('#imgProductbase800400').attr('src');
+        }
       }
       else {
         dataPreview.proImgUrl = fileInputContent;
