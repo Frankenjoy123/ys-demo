@@ -26,13 +26,15 @@
       productKeyTypeCodes: [],
       hotline: '',
       support: '',
+      img800400: '',
+      img400400: '',
       formatStatusCode: function () {
-        return productBaseDataService.getProStatusShow()[productBaseDataService.getCurProStatus()];
+        return productBaseDataService.getProStatusShow()[$location.search()['proStatus']];
       }
     };
 
-    if (productBaseDataService.getProId() != '') {
-      productViewService.getProDetails(productBaseDataService.getProId(), function (data) {
+    if ($location.search()['proId'] != '') {
+      productViewService.getProDetails($location.search()['proId'], function (data) {
 
         product.productName = data.name;
         product.barCode = data.barcode;
@@ -67,15 +69,12 @@
           }
         }
 
-        var dataPreview = {};
-        dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo-mobile?access_token=" + $scope.utils.auth.getAccessToken();
+        product.img800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400.png?access_token=" + $scope.utils.auth.getAccessToken();
+        product.img400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400.png?access_token=" + $scope.utils.auth.getAccessToken();
 
-        //if ($scope.fileInput == '') {
-        dataPreview.proImgUrl = 'ysdefault.jpg';
-        //}
-        //else {
-        //  dataPreview.proImgUrl = $scope.fileInput;
-        //}
+        var dataPreview = {};
+        dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo/image-128x128?access_token=" + $scope.utils.auth.getAccessToken();
+        dataPreview.proImgUrl = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400.png?access_token=" + $scope.utils.auth.getAccessToken();
 
         dataPreview.barcode = product.barCode;
         dataPreview.name = product.productName;

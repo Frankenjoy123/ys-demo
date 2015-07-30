@@ -228,23 +228,17 @@
       showCreateProduct: function () {
         productBaseDataService.setProId('');
         productBaseDataService.setTitle('产品创建');
-        $location.path('/emulator');
+        $location.url('/emulator?title=产品创建&proId=');
       },
       showProductBaseDetails: function (proId, status) {
         productBaseDataService.setProId(proId);
         productBaseDataService.setCurProStatus(status);
-        $location.path('/product-view');
+        $location.url('/product-view?proId=' + proId + '&proStatus=' + status);
       },
       editProductBaseDetails: function (proId) {
         productBaseDataService.setProId(proId);
         productBaseDataService.setTitle('产品编辑');
-
-        productBaseManageService.getProDetails(proId, function (data) {
-          productBaseDataService.setDetails(data);
-          $location.path('/emulator');
-        }, function () {
-          $scope.utils.alert('info', '获取产品信息失败');
-        });
+        $location.url('/emulator?title=产品编辑&proId=' + proId);
       },
       deleteProductBaseDetails: function () {
         if (productBase.curDeleteProId != '') {

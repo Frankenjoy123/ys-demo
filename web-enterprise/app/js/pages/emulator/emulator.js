@@ -19,6 +19,11 @@
         $http.put("/api/productbase/" + proId + '/image', proDetailImage).success(fnSuccess).error(fnError);
 
         return this;
+      },
+      getProDetails: function (proId, fnSuccess, fnError) {
+        $http.get("/api/productbase/" + proId).success(fnSuccess).error(fnError);
+
+        return this;
       }
     };
   }]);
@@ -57,6 +62,8 @@
       showButton800400: true,
       showButton400: false,
       imageWord: '选择图片',
+      imgSrc800400: '',
+      imgSrc400400: '',
       addProductInfo: function () {
         this.productInfos.push({name: '', value: ''});
       },
@@ -181,66 +188,71 @@
       }
     };
 
-    if (productBaseDataService.getTitle() != '') {
-      product.productTitle = productBaseDataService.getTitle();
+    if ($location.search()['title'] != '') {
+      product.productTitle = $location.search()['title'];
     }
 
-    if (productBaseDataService.getProId() != '' && productBaseDataService.getDetails() != null) {
-      var data = productBaseDataService.getDetails();
-
-      product.productName = data.name;
-      product.barCode = data.barcode;
-      for (var type in data.product_key_types) {
-        if (data.product_key_types[type].code == 'qr_public') {
-          product.keyTypePubInput = 'true';
+    if ($location.search()['proId'] != '') {
+      emulatorService.getProDetails($location.search()['proId'], function (data) {
+        product.productName = data.name;
+        product.barCode = data.barcode;
+        for (var type in data.product_key_types) {
+          if (data.product_key_types[type].code == 'qr_public') {
+            product.keyTypePubInput = 'true';
+          }
+          else if (data.product_key_types[type].code == 'qr_secure') {
+            product.keyTypePriInput = 'true';
+          }
+          else if (data.product_key_types[type].code == 'rfid') {
+            product.keyTypeRFIDInput = 'true';
+          }
         }
-        else if (data.product_key_types[type].code == 'qr_secure') {
-          product.keyTypePriInput = 'true';
-        }
-        else if (data.product_key_types[type].code == 'rfid') {
-          product.keyTypeRFIDInput = 'true';
-        }
-      }
-      product.expireDate = data.shelf_life - 0;
-      product.expireDateUnit = data.shelf_life_interval;
-      product.comments = data.comments;
+        product.expireDate = data.shelf_life - 0;
+        product.expireDateUnit = data.shelf_life_interval;
+        product.comments = data.comments;
 
-      if (data.product_base_details) {
-        var details = data.product_base_details;
-        product.productInfos = [];
-        for (var proInfo in details.details) {
-          product.productInfos.push({name: details.details[proInfo].name, value: details.details[proInfo].value});
+        if (data.product_base_details) {
+          var details = data.product_base_details;
+          product.productInfos = [];
+          for (var proInfo in details.details) {
+            product.productInfos.push({name: details.details[proInfo].name, value: details.details[proInfo].value});
+          }
+
+          product.hotline = details.contact.hotline;
+          product.support = details.contact.support;
+
+          product.productCommerce = [];
+          for (var proCommerce in details.e_commerce) {
+            product.productCommerce.push({
+              title: details.e_commerce[proCommerce].title,
+              url: details.e_commerce[proCommerce].url
+            });
+          }
+
+          product.productAddress = [];
+          for (var proAddress in details.t_commerce) {
+            product.productAddress.push({
+              address: details.t_commerce[proAddress].address,
+              tel: details.t_commerce[proAddress].tel
+            });
+          }
         }
 
-        product.hotline = details.contact.hotline;
-        product.support = details.contact.support;
+        product.imgSrc800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400.png?access_token=" + $scope.utils.auth.getAccessToken();
+        product.imgSrc400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400.png?access_token=" + $scope.utils.auth.getAccessToken();
 
-        product.productCommerce = [];
-        for (var proCommerce in details.e_commerce) {
-          product.productCommerce.push({
-            title: details.e_commerce[proCommerce].title,
-            url: details.e_commerce[proCommerce].url
-          });
-        }
-
-        product.productAddress = [];
-        for (var proAddress in details.t_commerce) {
-          product.productAddress.push({
-            address: details.t_commerce[proAddress].address,
-            tel: details.t_commerce[proAddress].tel
-          });
-        }
-      }
-
-      product.proPicPreview = true;
-      product.proPicPreviewUpload = false;
-      product.showButton800400 = false;
+        product.proPicPreview = true;
+        product.proPicPreviewUpload = false;
+        product.showButton800400 = false;
+      }, function () {
+        $scope.utils.alert('info', '获取产品信息失败');
+      });
     }
 
     $scope.preview = function () {
 
       var dataPreview = {};
-      dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo-mobile?access_token=" + $scope.utils.auth.getAccessToken();
+      dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo/image-128x128?access_token=" + $scope.utils.auth.getAccessToken();
 
       if (fileInputContent == '') {
         dataPreview.proImgUrl = 'ysdefault.jpg';
@@ -336,13 +348,13 @@
         }
       }
 
-      if (productBaseDataService.getProId() != '' && productBaseDataService.getDetails() != null) {
-        proWithDetails.id = productBaseDataService.getProId();
+      if ($location.search()['proId'] != '') {
+        proWithDetails.id = $location.search()['proId'];
         emulatorService.updateProWithDetail(proWithDetails, function () {
 
               if (fileInputContent != '') {
                 var detailImg = {};
-                detailImg.product_base_id = productBaseDataService.getProId();
+                detailImg.product_base_id = $location.search()['proId'];
                 detailImg.image_content = fileInputContent;
                 detailImg.image_rect = {};
                 detailImg.image_rect.initX = coords800400Result.x;
@@ -356,7 +368,7 @@
                 detailImg.image_square.width = coords400Result.w;
                 detailImg.image_square.height = coords400Result.h;
 
-                emulatorService.putProWithDetailImage(data, detailImg, function () {
+                emulatorService.putProWithDetailImage($location.search()['proId'], detailImg, function () {
                   $scope.utils.alert('success', '更新产品图片成功');
                   $location.path('/product-base-manage');
                 }, function () {
