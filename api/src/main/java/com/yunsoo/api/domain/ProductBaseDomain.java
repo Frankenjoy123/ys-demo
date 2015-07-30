@@ -2,9 +2,9 @@ package com.yunsoo.api.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yunsoo.api.dto.ImageRequest;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductBaseDetails;
-import com.yunsoo.api.dto.ProductBaseImage;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductBaseVersionsObject;
@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -41,13 +40,6 @@ public class ProductBaseDomain {
 
     @Autowired
     private RestClient dataAPIClient;
-
-    @Autowired
-    private LookupDomain lookupDomain;
-
-    @Autowired
-    private ProductCategoryDomain productCategoryDomain;
-
 
     public ProductBaseObject getProductBaseById(String productBaseId) {
         try {
@@ -92,12 +84,11 @@ public class ProductBaseDomain {
     }
 
     public ProductBaseVersionsObject getProductBaseVersionsByProductBaseIdAndVersion(String productBaseId, Integer version) {
-        List<ProductBaseVersionsObject> productBaseVersionsObjects = dataAPIClient.get("productbaseversions?product_base_Id={product_base_Id}&version={version}", new ParameterizedTypeReference<List<ProductBaseVersionsObject>>() {
-        }, productBaseId, version);
-        if (productBaseVersionsObjects.size() == 0) {
+        try {
+            return dataAPIClient.get("productbaseversions/{product_base_Id}/{version}", ProductBaseVersionsObject.class, productBaseId, version);
+        } catch (NotFoundException ignored) {
             return null;
         }
-        return productBaseVersionsObjects.get(0);
     }
 
     public ProductBaseObject createProductBase(ProductBaseObject productBaseObject) {
@@ -135,69 +126,74 @@ public class ProductBaseDomain {
         }
     }
 
-    public void createProductBaseImage(ProductBaseImage productBaseImage, String orgId, Integer version) {
+    public void saveProductBaseImage(ImageRequest imageRequest, String orgId, String productBaseId, Integer version) {
         try {
-            String productBaseId = productBaseImage.getProductBaseId();
-            String imageContent = productBaseImage.getImageContent();
-            String imageBase64 = imageContent.substring(imageContent.indexOf(",") + 1);
-            InputStream inputStream = new ByteArrayInputStream(Base64.decodeBase64(imageBase64));
-            ImageProcessor imageProcessor = new ImageProcessor().read(inputStream);
+            String imageData = imageRequest.getData();
+            //data:image/png;base64,
+            int splitIndex = imageData.indexOf(",");
+            String metaHeader = imageData.substring(0, splitIndex);
+            String contentType = metaHeader.split(";")[0].split(":")[1];
+            String imageDataBase64 = imageData.substring(splitIndex + 1);
+            byte[] imageDataBytes = Base64.decodeBase64(imageDataBase64);
+            ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
+            int rawWidth = imageProcessor.getWidth();
+            int rawHeight = imageProcessor.getHeight();
 
-            ProductBaseImage.Image imageRect = productBaseImage.getImageRect();
-            ProductBaseImage.Image imageSquare = productBaseImage.getImageSquare();
+            //save raw image
+            dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-raw",
+                    new ResourceInputStream(new ByteArrayInputStream(imageDataBytes), imageDataBytes.length, contentType), orgId, productBaseId, version);
 
-            if (productBaseImage.getImageContent() != null) {
-                ByteArrayOutputStream outStream_raw = new ByteArrayOutputStream();
-                imageProcessor.write(outStream_raw, "png");
-                ResourceInputStream resourceInputStream_raw = new ResourceInputStream(inputStream, outStream_raw.size(), "image/png");
-                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-raw", resourceInputStream_raw, orgId, productBaseId, version);
-                outStream_raw.close();
-            }
-
-            if ((imageRect.getHeight() != 0) && (imageRect.getWidth() != 0)) {
-                if (((imageRect.getInitX() + imageRect.getWidth()) > imageProcessor.getBufferedImage().getWidth()) || ((imageRect.getInitY() + imageRect.getHeight()) > imageProcessor.getBufferedImage().getHeight())) {
-                    throw new BadRequestException("Crop range should not exceed the picture region");
+            //400x400
+            if (imageRequest.getRange1x1() != null) {
+                ImageRequest.Range range = imageRequest.getRange1x1();
+                if (!checkRange(range, rawWidth, rawHeight)) {
+                    throw new BadRequestException("crop range1x1 out of image range");
                 }
-                ByteArrayOutputStream outStream_rect_1 = new ByteArrayOutputStream();
-                ByteArrayOutputStream outStream_rect_2 = new ByteArrayOutputStream();
-                ImageProcessor imageProcessorRect = imageProcessor.crop(imageRect.getInitX(), imageRect.getInitY(), imageRect.getWidth(), imageRect.getHeight());
-                imageProcessorRect.resize(800, 400).write(outStream_rect_1, "png");
-                imageProcessorRect.resize(400, 200).write(outStream_rect_2, "png");
-
-                InputStream inputStream_rect1 = new ByteArrayInputStream(outStream_rect_1.toByteArray());
-                ResourceInputStream resourceInputStream_rect1 = new ResourceInputStream(inputStream_rect1, outStream_rect_1.size(), "image/png");
-                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-800x400", resourceInputStream_rect1, orgId, productBaseId, version);
-
-                InputStream inputStream_rect2 = new ByteArrayInputStream(outStream_rect_2.toByteArray());
-                ResourceInputStream resourceInputStream_rect2 = new ResourceInputStream(inputStream_rect2, outStream_rect_2.size(), "image/png");
-                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-400x200", resourceInputStream_rect2, orgId, productBaseId, version);
-                outStream_rect_1.close();
-                outStream_rect_2.close();
+                ImageProcessor imageProcessor1x1 = imageProcessor.crop(range.getX(), range.getY(), range.getWidth(), range.getHeight());
+                ByteArrayOutputStream image400x400OutputStream = new ByteArrayOutputStream();
+                imageProcessor1x1.resize(400, 400).write(image400x400OutputStream, "png");
             }
-            if ((imageSquare.getHeight() != 0) && (imageSquare.getWidth() != 0)) {
-                if (((imageSquare.getInitX() + imageSquare.getWidth()) > imageProcessor.getBufferedImage().getWidth()) || ((imageSquare.getInitY() + imageSquare.getHeight()) > imageProcessor.getBufferedImage().getHeight())) {
-                    throw new BadRequestException("Crop range should not exceed the picture region");
+
+            //800x400, 400x200
+            if (imageRequest.getRange2x1() != null) {
+                ImageRequest.Range range = imageRequest.getRange2x1();
+                if (!checkRange(range, rawWidth, rawHeight)) {
+                    throw new BadRequestException("crop range2x1 out of image range");
                 }
-                ByteArrayOutputStream outStream_square = new ByteArrayOutputStream();
-                ImageProcessor imageProcessorSquare = imageProcessor.crop(imageSquare.getInitX(), imageSquare.getInitY(), imageSquare.getWidth(), imageSquare.getHeight());
-                imageProcessorSquare.resize(400, 400).write(outStream_square, "png");
-                InputStream inputStream_square = new ByteArrayInputStream(outStream_square.toByteArray());
-                ResourceInputStream resourceInputStream_square = new ResourceInputStream(inputStream_square, outStream_square.size(), "image/png");
-                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-400x400", resourceInputStream_square, orgId, productBaseId, version);
-                outStream_square.close();
+                ImageProcessor imageProcessor2x1 = imageProcessor.crop(range.getX(), range.getY(), range.getWidth(), range.getHeight());
+                //800x400
+                ByteArrayOutputStream image800x400OutputStream = new ByteArrayOutputStream();
+                imageProcessor2x1.resize(800, 400).write(image800x400OutputStream, "png");
+                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-800x400",
+                        new ResourceInputStream(new ByteArrayInputStream(image800x400OutputStream.toByteArray()), image800x400OutputStream.size(), "image/png"),
+                        orgId, productBaseId, version);
+                //400x200
+                ByteArrayOutputStream image400x200OutputStream = new ByteArrayOutputStream();
+                imageProcessor2x1.resize(400, 200).write(image400x200OutputStream, "png");
+                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-400x200",
+                        new ResourceInputStream(new ByteArrayInputStream(image400x200OutputStream.toByteArray()), image400x200OutputStream.size(), "image/png"),
+                        orgId, productBaseId, version);
             }
-            inputStream.close();
         } catch (IOException ex) {
-            throw new InternalServerErrorException("图片上传出错！");
+            throw new InternalServerErrorException("image upload failed");
         }
     }
 
-    public ResourceInputStream getProductBaseImage(String productBaseId, String orgId, Integer version, String imageName) {
+    public ResourceInputStream getProductBaseImage(String orgId, String productBaseId, Integer version, String imageName) {
         try {
             return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}", orgId, productBaseId, version, imageName);
         } catch (NotFoundException ex) {
             return null;
         }
+    }
+
+    private boolean checkRange(ImageRequest.Range range, int rawWidth, int rawHeight) {
+        return range.getX() >= 0
+                && range.getY() >= 0
+                && range.getWidth() > 0
+                && range.getHeight() > 0
+                && range.getX() + range.getWidth() <= rawWidth
+                && range.getY() + range.getHeight() <= rawHeight;
     }
 
 }

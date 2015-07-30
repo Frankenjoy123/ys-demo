@@ -26,7 +26,7 @@ public final class KeyGenerator {
                 .putLong(uuid.getLeastSignificantBits())
                 .array();
         byte[] base64Arr = Base64.encodeBase64URLSafe(keyArr);
-        byte raw = DECODE_TABLE[base64Arr[21]]; // last charactor
+        byte raw = DECODE_TABLE[base64Arr[21]]; // last character
         raw |= (spec & 0xF);
         base64Arr[21] = URL_SAFE_ENCODE_TABLE[raw];
         return StringUtils.newStringUtf8(base64Arr);

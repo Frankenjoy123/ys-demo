@@ -80,7 +80,12 @@ public class ImageProcessor {
         return new ImageProcessor(newBufferedImage);
     }
 
-    public BufferedImage getBufferedImage() {
-        return this.bufferedImage;
+    public int getWidth() {
+        return this.bufferedImage == null ? 0 : this.bufferedImage.getWidth();
     }
+
+    public int getHeight() {
+        return this.bufferedImage == null ? 0 : this.bufferedImage.getHeight();
+    }
+
 }
