@@ -6,7 +6,6 @@ import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +32,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/organization")
 public class OrganizationController {
-
-    @Autowired
-    private RestClient dataAPIClient;
 
     @Autowired
     private OrganizationDomain organizationDomain;
