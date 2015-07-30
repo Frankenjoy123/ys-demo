@@ -1,6 +1,5 @@
 package com.yunsoo.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -14,7 +13,6 @@ import org.joda.time.DateTime;
  * Created on  : 2015/2/27
  * Descriptions:
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Organization {
 
     @JsonProperty("id")
