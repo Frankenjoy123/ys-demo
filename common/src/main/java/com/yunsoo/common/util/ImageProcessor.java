@@ -79,4 +79,8 @@ public class ImageProcessor {
         newBufferedImage.getGraphics().drawImage(image, 0, 0, null);
         return new ImageProcessor(newBufferedImage);
     }
+
+    public BufferedImage getBufferedImage() {
+        return this.bufferedImage;
+    }
 }
