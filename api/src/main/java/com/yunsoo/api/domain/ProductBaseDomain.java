@@ -145,33 +145,33 @@ public class ProductBaseDomain {
             ProductBaseImage.Image imageRect = productBaseImage.getImageRect();
             ProductBaseImage.Image imageSquare = productBaseImage.getImageSquare();
 
-            ByteArrayOutputStream outStream_rect_1 = new ByteArrayOutputStream();
-            ByteArrayOutputStream outStream_rect_2 = new ByteArrayOutputStream();
-            ByteArrayOutputStream outStream_square = new ByteArrayOutputStream();
+            if ((imageRect.getHeight() != 0) && (imageRect.getWidth() != 0)) {
+                ByteArrayOutputStream outStream_rect_1 = new ByteArrayOutputStream();
+                ByteArrayOutputStream outStream_rect_2 = new ByteArrayOutputStream();
+                ImageProcessor imageProcessorRect = imageProcessor.crop(imageRect.getInitX(), imageRect.getInitY(), imageRect.getWidth(), imageRect.getHeight());
+                imageProcessorRect.resize(800, 400).write(outStream_rect_1, "png");
+                imageProcessorRect.resize(400, 200).write(outStream_rect_2, "png");
 
+                InputStream inputStream_rect1 = new ByteArrayInputStream(outStream_rect_1.toByteArray());
+                ResourceInputStream resourceInputStream_rect1 = new ResourceInputStream(inputStream_rect1, outStream_rect_1.toByteArray().length, "image/png");
+                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-800x400.png", resourceInputStream_rect1, orgId, productBaseId, version);
 
-            ImageProcessor imageProcessorRect = imageProcessor.crop(imageRect.getInitX(), imageRect.getInitY(), imageRect.getWidth(), imageRect.getHeight());
-            ImageProcessor imageProcessorSquare = imageProcessor.crop(imageSquare.getInitX(), imageSquare.getInitY(), imageSquare.getWidth(), imageSquare.getHeight());
+                InputStream inputStream_rect2 = new ByteArrayInputStream(outStream_rect_1.toByteArray());
+                ResourceInputStream resourceInputStream_rect2 = new ResourceInputStream(inputStream_rect2, outStream_rect_2.toByteArray().length, "image/png");
+                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-400x200.png", resourceInputStream_rect2, orgId, productBaseId, version);
+                outStream_rect_1.close();
+                outStream_rect_2.close();
 
-            imageProcessorRect.resize(800, 400).write(outStream_rect_1, "png");
-            imageProcessorRect.resize(400, 200).write(outStream_rect_2, "png");
-            imageProcessorSquare.resize(400, 400).write(outStream_square, "png");
-
-            InputStream inputStream_rect1 = new ByteArrayInputStream(outStream_rect_1.toByteArray());
-            ResourceInputStream resourceInputStream_rect1 = new ResourceInputStream(inputStream_rect1, outStream_rect_1.toByteArray().length, "image/png");
-            dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-800x400.png", resourceInputStream_rect1, orgId, productBaseId, version);
-
-            InputStream inputStream_rect2 = new ByteArrayInputStream(outStream_rect_1.toByteArray());
-            ResourceInputStream resourceInputStream_rect2 = new ResourceInputStream(inputStream_rect2, outStream_rect_2.toByteArray().length, "image/png");
-            dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-400x200.png", resourceInputStream_rect2, orgId, productBaseId, version);
-
-            InputStream inputStream_square = new ByteArrayInputStream(outStream_square.toByteArray());
-            ResourceInputStream resourceInputStream_square = new ResourceInputStream(inputStream_square, outStream_square.toByteArray().length, "image/png");
-            dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-400x400.png", resourceInputStream_square, orgId, productBaseId, version);
-
-            outStream_rect_1.close();
-            outStream_rect_2.close();
-            outStream_square.close();
+            }
+            if ((imageSquare.getHeight() != 0) && (imageSquare.getWidth() != 0)) {
+                ByteArrayOutputStream outStream_square = new ByteArrayOutputStream();
+                ImageProcessor imageProcessorSquare = imageProcessor.crop(imageSquare.getInitX(), imageSquare.getInitY(), imageSquare.getWidth(), imageSquare.getHeight());
+                imageProcessorSquare.resize(400, 400).write(outStream_square, "png");
+                InputStream inputStream_square = new ByteArrayInputStream(outStream_square.toByteArray());
+                ResourceInputStream resourceInputStream_square = new ResourceInputStream(inputStream_square, outStream_square.toByteArray().length, "image/png");
+                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-400x400.png", resourceInputStream_square, orgId, productBaseId, version);
+                outStream_square.close();
+            }
             inputStream.close();
         } catch (IOException ex) {
             throw new InternalServerErrorException("图片上传出错！");
