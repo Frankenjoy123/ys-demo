@@ -17,12 +17,6 @@ import java.util.List;
  */
 public class ProductBase {
 
-    @JsonProperty("product_base_details")
-    private ProductBaseDetails productBaseDetails;
-
-    @JsonProperty("product_base_versions")
-    private List<ProductBaseVersions> productBaseVersions;
-
     @JsonProperty("id")
     private String id;
 
@@ -68,10 +62,6 @@ public class ProductBase {
     @JsonProperty("comments")
     private String comments;
 
-    @JsonProperty("deleted")
-    private Boolean deleted;
-
-
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -87,6 +77,12 @@ public class ProductBase {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
+
+    @JsonProperty("details")
+    private ProductBaseDetails details;
+
+    @JsonProperty("product_base_versions")
+    private List<ProductBaseVersions> productBaseVersions;
 
 
     public String getId() {
@@ -209,14 +205,6 @@ public class ProductBase {
         this.comments = comments;
     }
 
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public String getCreatedAccountId() {
         return createdAccountId;
     }
@@ -249,6 +237,21 @@ public class ProductBase {
         this.modifiedDateTime = modifiedDateTime;
     }
 
+    public ProductBaseDetails getDetails() {
+        return details;
+    }
+
+    public void setDetails(ProductBaseDetails details) {
+        this.details = details;
+    }
+
+    public List<ProductBaseVersions> getProductBaseVersions() {
+        return productBaseVersions;
+    }
+
+    public void setProductBaseVersions(List<ProductBaseVersions> productBaseVersions) {
+        this.productBaseVersions = productBaseVersions;
+    }
 
     public ProductBase() {
     }
@@ -269,7 +272,6 @@ public class ProductBase {
             this.setShelfLifeInterval(object.getShelfLifeInterval());
             this.setChildProductCount(object.getChildProductCount());
             this.setComments(object.getComments());
-            this.setDeleted(object.getDeleted());
             this.setCreatedAccountId(object.getCreatedAccountId());
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
@@ -293,27 +295,10 @@ public class ProductBase {
         object.setShelfLifeInterval(this.getShelfLifeInterval());
         object.setChildProductCount(this.getChildProductCount());
         object.setComments(this.getComments());
-        object.setDeleted(this.getDeleted());
         object.setCreatedAccountId(this.getCreatedAccountId());
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());
         object.setModifiedDateTime(this.getModifiedDateTime());
         return object;
-    }
-
-    public ProductBaseDetails getProductBaseDetails() {
-        return productBaseDetails;
-    }
-
-    public void setProductBaseDetails(ProductBaseDetails productBaseDetails) {
-        this.productBaseDetails = productBaseDetails;
-    }
-
-    public List<ProductBaseVersions> getProductBaseVersions() {
-        return productBaseVersions;
-    }
-
-    public void setProductBaseVersions(List<ProductBaseVersions> productBaseVersions) {
-        this.productBaseVersions = productBaseVersions;
     }
 }

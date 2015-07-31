@@ -3,9 +3,7 @@ package com.yunsoo.api.domain;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.dto.ImageRequest;
-import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductBaseDetails;
-import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductBaseVersionsObject;
 import com.yunsoo.common.util.ImageProcessor;
@@ -20,6 +18,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -36,6 +35,11 @@ import java.util.Map;
 @Component
 public class ProductBaseDomain {
 
+    private static final String DETAILS_FILE_NAME = "details.json";
+    private static final String IMAGE_NAME_800X400 = "image-800x400";
+    private static final String IMAGE_NAME_400X200 = "image-400x200";
+    private static final String IMAGE_NAME_400X400 = "image-400x400";
+
     private static ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
@@ -49,14 +53,29 @@ public class ProductBaseDomain {
         }
     }
 
-    public ProductBaseDetails getProductBaseDetailByProductBaseIdAndVersion(String productBaseId, String orgId, Integer version) throws IOException {
+    public ProductBaseDetails getProductBaseDetails(String orgId, String productBaseId, Integer version) {
+        ResourceInputStream resourceInputStream;
         try {
-            String path = "organization/" + orgId + "/product_base/" + productBaseId + "/" + version + "/details.json";
-            FileObject fileObject = dataAPIClient.get("file?path={0}", FileObject.class, path);
-            byte[] buf = fileObject.getData();
-            return mapper.readValue(new ByteArrayInputStream(buf), ProductBaseDetails.class);
+            resourceInputStream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{fileName}",
+                    orgId, productBaseId, version, DETAILS_FILE_NAME);
         } catch (NotFoundException ex) {
-            throw new NotFoundException(40402, "Can't find prod detail");
+            return null;
+        }
+        try {
+            return mapper.readValue(resourceInputStream, ProductBaseDetails.class);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public void saveProductBaseDetails(ProductBaseDetails productBaseDetails, String orgId, String productBaseId, Integer version) {
+        try {
+            byte[] bytes = mapper.writeValueAsBytes(productBaseDetails);
+            ResourceInputStream resourceInputStream = new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE);
+            dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{fileName}",
+                    resourceInputStream, orgId, productBaseId, version, DETAILS_FILE_NAME);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -103,26 +122,19 @@ public class ProductBaseDomain {
         dataAPIClient.put("productbaseversions/{product_base_id}/{version}", productBaseVersionsObject, productBaseVersionsObject.getProductBaseId(), productBaseVersionsObject.getVersion());
     }
 
-    public void deleteProductBase(String id) {
-        dataAPIClient.delete("productbase/{id}", id);
+    public void deleteProductBase(String productBaseId) {
+        dataAPIClient.delete("productbase/{product_base_id}", productBaseId);
     }
 
     public void deleteProductBaseVersions(String productBaseId, Integer version) {
         dataAPIClient.delete("productbaseversions/{product_base_id}/{version}", productBaseId, version);
-
     }
 
-    public void createProductBaseFile(ProductBase productBase, String productBaseId, String orgId, Integer version) {
+    public ResourceInputStream getProductBaseImage(String orgId, String productBaseId, Integer version, String imageName) {
         try {
-            FileObject fileObject = new FileObject();
-            byte[] buf = mapper.writeValueAsBytes(productBase.getProductBaseDetails());
-            fileObject.setData(buf);
-            fileObject.setContentType("application/octet-stream");
-            fileObject.setS3Path("organization/" + orgId + "/product_base/" + productBaseId + "/" + version + "/details.json");
-
-            dataAPIClient.post("file/", fileObject, Long.class);
-        } catch (JsonProcessingException ex) {
-            throw new InternalServerErrorException("文件上传出错！");
+            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}", orgId, productBaseId, version, imageName);
+        } catch (NotFoundException ex) {
+            return null;
         }
     }
 
@@ -150,8 +162,12 @@ public class ProductBaseDomain {
                     throw new BadRequestException("crop range1x1 out of image range");
                 }
                 ImageProcessor imageProcessor1x1 = imageProcessor.crop(range.getX(), range.getY(), range.getWidth(), range.getHeight());
+                //400x400
                 ByteArrayOutputStream image400x400OutputStream = new ByteArrayOutputStream();
                 imageProcessor1x1.resize(400, 400).write(image400x400OutputStream, "png");
+                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}",
+                        new ResourceInputStream(new ByteArrayInputStream(image400x400OutputStream.toByteArray()), image400x400OutputStream.size(), "image/png"),
+                        orgId, productBaseId, version, IMAGE_NAME_400X400);
             }
 
             //800x400, 400x200
@@ -164,28 +180,21 @@ public class ProductBaseDomain {
                 //800x400
                 ByteArrayOutputStream image800x400OutputStream = new ByteArrayOutputStream();
                 imageProcessor2x1.resize(800, 400).write(image800x400OutputStream, "png");
-                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-800x400",
+                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}",
                         new ResourceInputStream(new ByteArrayInputStream(image800x400OutputStream.toByteArray()), image800x400OutputStream.size(), "image/png"),
-                        orgId, productBaseId, version);
+                        orgId, productBaseId, version, IMAGE_NAME_800X400);
                 //400x200
                 ByteArrayOutputStream image400x200OutputStream = new ByteArrayOutputStream();
                 imageProcessor2x1.resize(400, 200).write(image400x200OutputStream, "png");
-                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-400x200",
+                dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}",
                         new ResourceInputStream(new ByteArrayInputStream(image400x200OutputStream.toByteArray()), image400x200OutputStream.size(), "image/png"),
-                        orgId, productBaseId, version);
+                        orgId, productBaseId, version, IMAGE_NAME_400X200);
             }
         } catch (IOException ex) {
             throw new InternalServerErrorException("image upload failed");
         }
     }
 
-    public ResourceInputStream getProductBaseImage(String orgId, String productBaseId, Integer version, String imageName) {
-        try {
-            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}", orgId, productBaseId, version, imageName);
-        } catch (NotFoundException ex) {
-            return null;
-        }
-    }
 
     private boolean checkRange(ImageRequest.Range range, int rawWidth, int rawHeight) {
         return range.getX() >= 0
