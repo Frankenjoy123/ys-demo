@@ -10,6 +10,7 @@ import java.util.List;
  * Descriptions:
  */
 public class ProductBaseDetails {
+
     @JsonProperty("version")
     private String version;
 
@@ -43,7 +44,11 @@ public class ProductBaseDetails {
     }
 
     public static class Item {
+
+        @JsonProperty("name")
         private String name;
+
+        @JsonProperty("value")
         private String value;
 
         public String getName() {
@@ -64,7 +69,11 @@ public class ProductBaseDetails {
     }
 
     public static class Contact {
+
+        @JsonProperty("hotline")
         private String hotline;
+
+        @JsonProperty("support")
         private String support;
 
         public String getHotline() {
@@ -85,7 +94,11 @@ public class ProductBaseDetails {
     }
 
     public static class ECommerce {
+
+        @JsonProperty("title")
         private String title;
+
+        @JsonProperty("url")
         private String url;
 
         public String getTitle() {
@@ -106,7 +119,11 @@ public class ProductBaseDetails {
     }
 
     public static class TCommerce {
+
+        @JsonProperty("name")
         private String name;
+
+        @JsonProperty("address")
         private String address;
 
         public String getName() {

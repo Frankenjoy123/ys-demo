@@ -66,6 +66,12 @@ public class ProductBaseController {
 
     //region product base
 
+    /**
+     * @param productBaseId id of product base
+     * @param version       it will be version of current product base if it's null
+     * @return product base
+     * @throws IOException
+     */
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'productbase:read')")
     public ProductBase getById(@PathVariable(value = "product_base_id") String productBaseId,
@@ -74,7 +80,14 @@ public class ProductBaseController {
         String orgId = productBaseObject.getOrgId();
         if (version == null) {
             version = productBaseObject.getVersion();
+        } else {
+            ProductBaseVersionsObject productBaseVersionsObject = productBaseDomain.getProductBaseVersionsByProductBaseIdAndVersion(productBaseId, version);
+            if (productBaseVersionsObject == null) {
+                throw new NotFoundException("product base not found on the specific version");
+            }
+            productBaseObject = productBaseVersionsObject.getProductBase();
         }
+
         ProductBase productBase = new ProductBase(productBaseObject);
         productBase.setCategory(new ProductCategory(productCategoryDomain.getById(productBase.getCategoryId())));
         productBase.setProductKeyTypes(LookupObject.fromCodeList(lookupDomain.getProductKeyTypes(), productBaseObject.getProductKeyTypeCodes()));
