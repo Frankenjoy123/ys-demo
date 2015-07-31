@@ -10,7 +10,7 @@
           url = "/api/productbase/" + proId;
         }
         else {
-          url = "/api/productbase/" + proId + '?verId=' + verId;
+          url = "/api/productbase/" + proId + '?version=' + verId;
         }
 
         $http.get(url).success(fnSuccess).error(fnError);
@@ -83,12 +83,19 @@
           }
         }
 
-        product.img800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?access_token=" + $scope.utils.auth.getAccessToken();
-        product.img400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400?access_token=" + $scope.utils.auth.getAccessToken();
+        if ($location.search()['verId'] == '') {
+          product.img800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?access_token=" + $scope.utils.auth.getAccessToken();
+          product.img400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400?access_token=" + $scope.utils.auth.getAccessToken();
+        }
+        else {
+          product.img800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?version=" + $location.search()['verId'] + "&access_token=" + $scope.utils.auth.getAccessToken();
+          product.img400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400?version=" + $location.search()['verId'] + "&access_token=" + $scope.utils.auth.getAccessToken();
+        }
 
         var dataPreview = {};
+
         dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo/image-128x128?access_token=" + $scope.utils.auth.getAccessToken();
-        dataPreview.proImgUrl = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?access_token=" + $scope.utils.auth.getAccessToken();
+        dataPreview.proImgUrl = product.img800400;
 
         dataPreview.barcode = product.barCode;
         dataPreview.name = product.productName;
