@@ -104,11 +104,11 @@
 
     var proVersionStatus = {draft: '待提交', submitted: '待审核', rejected: '被拒绝', activated: '已激活', archived: '已归档'};
 
-    $scope.formatProStatusShow = function (statusCode) {
+    var formatProStatusShow = $scope.formatProStatusShow = function (statusCode) {
       return productBaseDataService.getProStatusShow()[statusCode];
     };
 
-    $scope.formatProVersionStatus = function (statusCode) {
+    var formatProVersionStatus = $scope.formatProVersionStatus = function (statusCode) {
       return proVersionStatus[statusCode];
     };
 
@@ -140,19 +140,20 @@
 
           for (var item in data) {
 
-            data[item].is_editable = true;
+            data[item].is_editable = false;
             data[item].status_code_show = 'none';
 
             if (data[item].product_base_versions) {
               if (data[item].product_base_versions[data[item].product_base_versions.length - 1].status_code == 'submitted') {
                 data[item].status_code_show = 'wait';
-                data[item].is_editable = false;
               }
               else if (data[item].product_base_versions[data[item].product_base_versions.length - 1].status_code == 'rejected') {
                 data[item].status_code_show = 'reject';
+                data[item].product_base_versions[data[item].product_base_versions.length - 1].is_editable = true;
               }
               else if (data[item].product_base_versions[data[item].product_base_versions.length - 1].status_code == 'activated') {
                 data[item].status_code_show = 'active';
+                data[item].is_editable = true;
               }
             }
           }
@@ -230,15 +231,21 @@
         productBaseDataService.setTitle('产品创建');
         $location.url('/emulator?title=产品创建&proId=');
       },
-      showProductBaseDetails: function (proId, status) {
+      showProductBaseDetails: function (proId, status, verId) {
         productBaseDataService.setProId(proId);
         productBaseDataService.setCurProStatus(status);
-        $location.url('/product-view?proId=' + proId + '&proStatus=' + status);
+
+        verId = verId || '';
+        var url = '/product-view?proId=' + proId + '&proStatus=' + status + '&verId=' + verId;
+        $location.url(url);
       },
-      editProductBaseDetails: function (proId) {
+      editProductBaseDetails: function (proId, verId) {
         productBaseDataService.setProId(proId);
         productBaseDataService.setTitle('产品编辑');
-        $location.url('/emulator?title=产品编辑&proId=' + proId);
+
+        verId = verId || '';
+        var url = '/emulator?title=产品编辑&proId=' + proId + '&verId=' + verId;
+        $location.url(url);
       },
       deleteProductBaseDetails: function () {
         if (productBase.curDeleteProId != '') {

@@ -21,8 +21,17 @@
 
         return this;
       },
-      getProDetails: function (proId, fnSuccess, fnError) {
-        $http.get("/api/productbase/" + proId).success(fnSuccess).error(fnError);
+      getProDetails: function (proId, verId, fnSuccess, fnError) {
+
+        var url = '';
+        if (verId == '') {
+          url = "/api/productbase/" + proId;
+        }
+        else {
+          url = "/api/productbase/" + proId + '?verId=' + verId;
+        }
+
+        $http.get(url).success(fnSuccess).error(fnError);
 
         return this;
       }
@@ -92,20 +101,22 @@
           jcropObj.destroy();
         }
 
-        $("#imgProductbase").Jcrop({
-              allowSelect: false,
-              aspectRatio: 1,
-              onChange: this.showPreview400,
-              onSelect: this.showPreview400,
-              setSelect: [0, 0, 30, 30]
-            },
-            function () {
-              jcropObj = this;
+        $timeout(function () {
+          $("#imgProductbase").Jcrop({
+                allowSelect: false,
+                aspectRatio: 1,
+                onChange: product.showPreview400,
+                onSelect: product.showPreview400,
+                setSelect: [0, 0, 30, 30]
+              },
+              function () {
+                jcropObj = this;
 
-              bounds = jcropObj.getBounds();
-              boundx = bounds[0];
-              boundy = bounds[1];
-            });
+                bounds = jcropObj.getBounds();
+                boundx = bounds[0];
+                boundy = bounds[1];
+              });
+        }, 50);
       },
       showPreview400: function (coords) {
         $("#imgProductbase400").css('visibility', 'visible');
@@ -134,21 +145,23 @@
           jcropObj.destroy();
         }
 
-        $("#imgProductbase").Jcrop({
-              allowSelect: false,
-              aspectRatio: 2,
-              onChange: this.showPreview800400,
-              onSelect: this.showPreview800400,
-              setSelect: [0, 0, 60, 30]
-            },
-            function () {
-              jcropObj = this;
+        $timeout(function () {
+          $("#imgProductbase").Jcrop({
+                allowSelect: false,
+                aspectRatio: 2,
+                onChange: product.showPreview800400,
+                onSelect: product.showPreview800400,
+                setSelect: [0, 0, 60, 30]
+              },
+              function () {
+                jcropObj = this;
 
-              bounds = jcropObj.getBounds();
-              bounds800400 = bounds;
-              boundx = bounds[0];
-              boundy = bounds[1];
-            });
+                bounds = jcropObj.getBounds();
+                bounds800400 = bounds;
+                boundx = bounds[0];
+                boundy = bounds[1];
+              });
+        }, 50);
       },
       showPreview800400: function (coords) {
         $("#imgProductbase800400").css('visibility', 'visible');
@@ -198,7 +211,7 @@
     }
 
     if ($location.search()['proId'] != '') {
-      emulatorService.getProDetails($location.search()['proId'], function (data) {
+      emulatorService.getProDetails($location.search()['proId'], $location.search()['verId'], function (data) {
         product.productName = data.name;
         product.barCode = data.barcode;
         for (var type in data.product_key_types) {
@@ -381,24 +394,28 @@
         }
       }
 
+      function getDetailImg() {
+        var detailImg = {};
+        detailImg.data = fileInputContent;
+        detailImg.range2x1 = {};
+        detailImg.range2x1.x = coords800400Result.x;
+        detailImg.range2x1.y = coords800400Result.y;
+        detailImg.range2x1.width = coords800400Result.w;
+        detailImg.range2x1.height = coords800400Result.h;
+
+        detailImg.range1x1 = {};
+        detailImg.range1x1.x = coords400Result.x;
+        detailImg.range1x1.y = coords400Result.y;
+        detailImg.range1x1.width = coords400Result.w;
+        detailImg.range1x1.height = coords400Result.h;
+
+        return detailImg;
+      }
+
       if ($location.search()['proId'] != '') {
         proWithDetails.id = $location.search()['proId'];
         emulatorService.updateProWithDetail(proWithDetails, function () {
-              var detailImg = {};
-              detailImg.product_base_id = $location.search()['proId'];
-              detailImg.image_content = fileInputContent;
-              detailImg.image_rect = {};
-              detailImg.image_rect.initX = coords800400Result.x;
-              detailImg.image_rect.initY = coords800400Result.y;
-              detailImg.image_rect.width = coords800400Result.w;
-              detailImg.image_rect.height = coords800400Result.h;
-
-              detailImg.image_square = {};
-              detailImg.image_square.initX = coords400Result.x;
-              detailImg.image_square.initY = coords400Result.y;
-              detailImg.image_square.width = coords400Result.w;
-              detailImg.image_square.height = coords400Result.h;
-
+              var detailImg = getDetailImg();
               emulatorService.putProWithDetailImage($location.search()['proId'], detailImg, function () {
                 $scope.utils.alert('success', '更新产品信息成功');
                 product.spinnerShow = false;
@@ -417,22 +434,7 @@
       else {
         emulatorService.createProWithDetail(proWithDetails, function (data) {
               if (data != null && data != '') {
-
-                var detailImg = {};
-                detailImg.product_base_id = data.id;
-                detailImg.image_content = fileInputContent;
-                detailImg.image_rect = {};
-                detailImg.image_rect.initX = coords800400Result.x;
-                detailImg.image_rect.initY = coords800400Result.y;
-                detailImg.image_rect.width = coords800400Result.w;
-                detailImg.image_rect.height = coords800400Result.h;
-
-                detailImg.image_square = {};
-                detailImg.image_square.initX = coords400Result.x;
-                detailImg.image_square.initY = coords400Result.y;
-                detailImg.image_square.width = coords400Result.w;
-                detailImg.image_square.height = coords400Result.h;
-
+                var detailImg = getDetailImg();
                 emulatorService.putProWithDetailImage(data.id, detailImg, function () {
                   $scope.utils.alert('success', '创建产品信息成功');
                   product.spinnerShow = false;
@@ -473,10 +475,6 @@
 
                 $scope.$apply();
 
-                if (jcropObj != null) {
-                  jcropObj.destroy();
-                }
-
                 imgProductbaseWidth = ProductBaseImagePreviewRec.w;
                 imgProductbaseHeight = ProductBaseImagePreviewRec.h;
 
@@ -487,37 +485,33 @@
 
                 imgProductbase.attr('src', oriImg);
 
-                $timeout(function () {
-                  if (imgProductbase[0].naturalWidth < ProductBaseImagePreviewRec.ow && imgProductbase[0].naturalHeight < ProductBaseImagePreviewRec.oh) {
-                    imgProductbaseWidth = imgProductbase[0].naturalWidth / ProductBaseImagePreviewRec.r;
-                    imgProductbaseHeight = imgProductbase[0].naturalHeight / ProductBaseImagePreviewRec.r;
+                if (imgProductbase[0].naturalWidth < ProductBaseImagePreviewRec.ow && imgProductbase[0].naturalHeight < ProductBaseImagePreviewRec.oh) {
+                  imgProductbaseWidth = imgProductbase[0].naturalWidth / ProductBaseImagePreviewRec.r;
+                  imgProductbaseHeight = imgProductbase[0].naturalHeight / ProductBaseImagePreviewRec.r;
+                }
+                else {
+                  if ((imgProductbase[0].naturalWidth / ProductBaseImagePreviewRec.w) >= (imgProductbase[0].naturalHeight / ProductBaseImagePreviewRec.h)) {
+                    var rate = imgProductbase[0].naturalWidth / ProductBaseImagePreviewRec.w;
+                    imgProductbaseHeight = imgProductbase[0].naturalHeight / rate;
                   }
-                  else {
-                    if ((imgProductbase[0].naturalWidth / ProductBaseImagePreviewRec.w) >= (imgProductbase[0].naturalHeight / ProductBaseImagePreviewRec.h)) {
-                      var rate = imgProductbase[0].naturalWidth / ProductBaseImagePreviewRec.w;
-                      imgProductbaseHeight = imgProductbase[0].naturalHeight / rate;
-                    }
-                    else if ((imgProductbase[0].naturalWidth / ProductBaseImagePreviewRec.w) < (imgProductbase[0].naturalHeight / ProductBaseImagePreviewRec.h)) {
-                      var rate = imgProductbase[0].naturalHeight / ProductBaseImagePreviewRec.h;
-                      imgProductbaseWidth = imgProductbase[0].naturalWidth / rate;
-                    }
+                  else if ((imgProductbase[0].naturalWidth / ProductBaseImagePreviewRec.w) < (imgProductbase[0].naturalHeight / ProductBaseImagePreviewRec.h)) {
+                    var rate = imgProductbase[0].naturalHeight / ProductBaseImagePreviewRec.h;
+                    imgProductbaseWidth = imgProductbase[0].naturalWidth / rate;
                   }
+                }
 
-                  imgProductbase.css('width', imgProductbaseWidth + 'px');
-                  imgProductbase.css('height', imgProductbaseHeight + 'px');
+                imgProductbase.css('width', imgProductbaseWidth + 'px');
+                imgProductbase.css('height', imgProductbaseHeight + 'px');
 
-                  imgProductbase800400.attr('src', oriImg);
-                  imgProductbase400.attr('src', oriImg);
+                imgProductbase800400.attr('src', oriImg);
+                imgProductbase400.attr('src', oriImg);
 
-                  imgProductbase800400.css('visibility', 'hidden');
-                  imgProductbase400.css('visibility', 'hidden');
+                imgProductbase800400.css('visibility', 'hidden');
+                imgProductbase400.css('visibility', 'hidden');
 
-                  product.initJcrop800400();
+                product.initJcrop800400();
 
-                  fileInputContent = oriImg;
-
-                }, 50);
-
+                fileInputContent = oriImg;
               };
             }
         );

@@ -3,8 +3,17 @@
 
   app.factory("productViewService", ["$http", function ($http) {
     return {
-      getProDetails: function (proId, fnSuccess, fnError) {
-        $http.get("/api/productbase/" + proId).success(fnSuccess).error(fnError);
+      getProDetails: function (proId, verId, fnSuccess, fnError) {
+
+        var url = '';
+        if (verId == '') {
+          url = "/api/productbase/" + proId;
+        }
+        else {
+          url = "/api/productbase/" + proId + '?verId=' + verId;
+        }
+
+        $http.get(url).success(fnSuccess).error(fnError);
 
         return this;
       }
@@ -18,7 +27,7 @@
       productAddress: [],//{address: '', tel: ''}
       productCommerce: [],//{title: '', url: ''}
       barCode: '',
-      statusCode: productBaseDataService.getCurProStatus(),
+      statusCode: $location.search()['proStatus'],
       productName: '',
       expireDate: '',
       expireDateUnit: '',
@@ -29,12 +38,17 @@
       img800400: '',
       img400400: '',
       formatStatusCode: function () {
-        return productBaseDataService.getProStatusShow()[$location.search()['proStatus']];
+        if ($location.search()['verId'] != '') {
+          return $location.search()['proStatus'];
+        }
+        else {
+          return productBaseDataService.getProStatusShow()[$location.search()['proStatus']];
+        }
       }
     };
 
     if ($location.search()['proId'] != '') {
-      productViewService.getProDetails($location.search()['proId'], function (data) {
+      productViewService.getProDetails($location.search()['proId'], $location.search()['verId'], function (data) {
 
         product.productName = data.name;
         product.barCode = data.barcode;

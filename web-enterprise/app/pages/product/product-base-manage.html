@@ -97,10 +97,11 @@
                         </td>
                         <td>{{utils.formatDateString(pb.created_datetime)}}</td>
                         <td class="text-right">
-                            <button type="button" class="btn btn-info fa fa-edit" ng-show="pb.is_editable"
+                            <button type="button" class="btn btn-info fa fa-edit"
+                                    ng-show="pb.is_editable && productBaseButtonShow"
                                     ng-click="productBase.editProductBaseDetails(pb.id)">
                             </button>
-                            <button type="button" class="btn btn-danger fa fa-trash-o"
+                            <button type="button" class="btn btn-danger fa fa-trash-o" ng-show="productBaseButtonShow"
                                     ng-click="productBase.showDeleteProModal(pb.id, pb.name)">
                             </button>
                             <button type="button" class="btn btn-success fa fa-eye"
@@ -114,12 +115,22 @@
                                     <td>修改时间</td>
                                     <td>修改人</td>
                                     <td>修改状态</td>
+                                    <td>操作</td>
                                 </tr>
                                 <tr ng-repeat="ver in pb.product_base_versions">
                                     <td>{{utils.formatDateString(ver.created_datetime)}}</td>
                                     <td>{{ver.created_account_id}}</td>
                                     <td><span
                                             class="label {{ver.status_code == 'rejected' ? 'label-danger' : (ver.status_code == 'submitted' ? 'label-success' : 'label-info')}}">{{formatProVersionStatus(ver.status_code)}}</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <a ng-show="ver.is_editable && productBaseButtonShow"
+                                           ng-click="productBase.editProductBaseDetails(ver.product_base_id, ver.version)"
+                                           style="color:#46b9d8;cursor:pointer"><i
+                                                class="fa fa-edit"></i></a>
+                                        <a ng-click="productBase.showProductBaseDetails(ver.product_base_id, formatProVersionStatus(ver.status_code), ver.version)"
+                                           style="color:#97c664;cursor:pointer"><i
+                                                class="fa fa-eye"></i></a>
                                     </td>
                                 </tr>
                                 </tbody>

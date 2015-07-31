@@ -220,6 +220,19 @@
           }
         }
 
+        if (!hasAccess(RESOURCE.PRODUCTBASE, ACTION.READ) && !hasAccess(RESOURCE.PRODUCTBASE, ACTION.MANAGE)) {
+          $('#liProductBase').attr('style', "display:none");
+          if (path == '/product-base-manage' || path == '/emulator') {
+            $location.path('/no_access');
+          }
+        }
+        else if (hasAccess(RESOURCE.LOGISTICS, ACTION.READ) && !hasAccess(RESOURCE.LOGISTICS, ACTION.MANAGE)) {
+          $scope.productBaseButtonShow = false;
+        }
+        else if (hasAccess(RESOURCE.LOGISTICS, ACTION.MANAGE)) {
+          $scope.productBaseButtonShow = true;
+        }
+
         if (!hasAccess(RESOURCE.PRODUCTKEY, ACTION.READ) && !hasAccess(RESOURCE.PRODUCTKEY, ACTION.MANAGE)) {
           $('#liProductKey').attr('style', "display:none");
           if (path == '/product-key-manage') {
@@ -264,22 +277,6 @@
           if (path == '/echarts-bar' || path == '/stacked-bar' || path == '/mix-map' || path == '/pie-map') {
             $location.path('/no_access');
           }
-        }
-
-        if (!hasAccess(RESOURCE.PRODUCTBASE, ACTION.READ) && !hasAccess(RESOURCE.PRODUCTBASE, ACTION.MANAGE)) {
-          $('#liProductBase').attr('style', "display:none");
-          if (path == '/product-base-manage' || path == '/emulator') {
-            $location.path('/no_access');
-          }
-        }
-        else if (hasAccess(RESOURCE.LOGISTICS, ACTION.READ) && !hasAccess(RESOURCE.LOGISTICS, ACTION.MANAGE)) {
-          $scope.productBaseButtonShow = false;
-        }
-        else if (hasAccess(RESOURCE.LOGISTICS, ACTION.MANAGE)) {
-          $scope.productBaseButtonShow = true;
-        }
-        else {
-          isShowSetting = true;
         }
 
         if (!hasAccess(RESOURCE.MESSAGE, ACTION.READ) && !hasAccess(RESOURCE.MESSAGE, ACTION.MANAGE)) {
