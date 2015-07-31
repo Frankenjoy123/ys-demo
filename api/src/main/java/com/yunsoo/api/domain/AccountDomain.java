@@ -20,7 +20,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
 import java.util.List;
 
 /**
@@ -89,8 +88,7 @@ public class AccountDomain {
         return dataAPIClient.post("account", accountObject, AccountObject.class);
     }
 
-
-    @CacheEvict(key="#root.targetClass.getName().concat('.getById.').concat(#accountId).concat('.')")
+    @CacheEvict(key="T(com.yunsoo.api.cache.CustomKeyGenerator).getKey(#root.targetClass.getName(), 'getById', #accountId)")
     public void updatePassword(String accountId, String rawNewPassword) {
         if (!StringUtils.isEmpty(accountId)) {
             String hashSalt = RandomUtils.generateString(8);

@@ -59,7 +59,6 @@ public class ProductBaseObject implements Serializable {
     @JsonProperty("deleted")
     private Boolean deleted;
 
-
     @JsonProperty("created_account_id")
     private String createdAccountId;
 

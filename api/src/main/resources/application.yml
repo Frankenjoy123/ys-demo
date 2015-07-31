@@ -39,7 +39,7 @@ yunsoo:
             processor:
                 baseurl: http://processor:4080/
         product_key_base_url: http://t.m.yunsu.co/
-    elasticachename: dev-cache     #if have several cach, use semicolon as separator
+    elasticachename: dev-cache
 ---
 spring:
     profiles: qa

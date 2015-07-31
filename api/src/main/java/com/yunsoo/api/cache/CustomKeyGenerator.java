@@ -24,4 +24,19 @@ public class CustomKeyGenerator implements KeyGenerator {
         }
         return keyName.toString();
     }
+
+    public static Object getKey(String className, String methodName, Object... params){
+        StringBuilder keyName = new StringBuilder();
+        keyName.append(className);
+        keyName.append(".");
+        keyName.append(methodName);
+        keyName.append(".");
+        for(Object para : params){
+            if(para == null)
+                continue;
+            keyName.append(para.toString());
+            keyName.append(".");
+        }
+        return keyName.toString();
+    }
 }

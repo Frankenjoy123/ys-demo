@@ -34,8 +34,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -68,32 +66,34 @@ public class ProductBaseController {
 
     //region product base
 
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "{product_base_id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'productbase:read')")
-    public ProductBase getById(@PathVariable(value = "id") String id) throws IOException {
-        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(id);
-        if (productBaseObject == null) {
-            throw new NotFoundException("product base not found");
+    public ProductBase getById(@PathVariable(value = "product_base_id") String productBaseId,
+                               @RequestParam(value = "version", required = false) Integer version) throws IOException {
+        ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
+        String orgId = productBaseObject.getOrgId();
+        if (version == null) {
+            version = productBaseObject.getVersion();
         }
         ProductBase productBase = new ProductBase(productBaseObject);
         productBase.setCategory(new ProductCategory(productCategoryDomain.getById(productBase.getCategoryId())));
         productBase.setProductKeyTypes(LookupObject.fromCodeList(lookupDomain.getProductKeyTypes(), productBaseObject.getProductKeyTypeCodes()));
-        productBase.setProductBaseDetails(productBaseDomain.getProductBaseDetailByProductBaseIdAndVersion(id, productBaseObject.getOrgId(), productBaseObject.getVersion()));
+        productBase.setDetails(productBaseDomain.getProductBaseDetails(orgId, productBaseId, version));
         return productBase;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'productbase:read')")
-    public List<ProductBase> getByOrgId(@RequestParam(value = "org_id", required = false) String orgId,
-                                        Pageable pageable,
-                                        HttpServletResponse response) {
+    public List<ProductBase> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                         Pageable pageable,
+                                         HttpServletResponse response) {
         orgId = fixOrgId(orgId);
-        Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
-        List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
         Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", productBasePage.toContentRange());
         }
+        Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
+        List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
         List<ProductBase> productBases = productBasePage.map(p -> {
             ProductBase pb = new ProductBase(p);
             pb.setCategory(new ProductCategory(productCategoryDomain.getById(p.getCategoryId(), productCategoryObjectMap)));
@@ -102,45 +102,16 @@ public class ProductBaseController {
         }).getContent();
 
         List<String> productBaseIds = productBases.stream().map(ProductBase::getId).collect(Collectors.toList());
-        Map<String, List<ProductBaseVersionsObject>> map = productBaseDomain.getProductBaseVersionsByProductBaseIds(productBaseIds);
+        Map<String, List<ProductBaseVersionsObject>> productbaseVersionsMap = productBaseDomain.getProductBaseVersionsByProductBaseIds(productBaseIds);
         for (ProductBase pb : productBases) {
-            List<ProductBaseVersionsObject> productBaseVersionsObjects = map.get(pb.getId());
+            List<ProductBaseVersionsObject> productBaseVersionsObjects = productbaseVersionsMap.get(pb.getId());
             if (productBaseVersionsObjects != null) {
-                List<ProductBaseVersions> productBaseVersions = new ArrayList<ProductBaseVersions>();
-                Iterator<ProductBaseVersionsObject> iter = productBaseVersionsObjects.iterator();
-                while (iter.hasNext()) {
-                    productBaseVersions.add(new ProductBaseVersions(iter.next()));
-                }
-                pb.setProductBaseVersions(productBaseVersions);
+                pb.setProductBaseVersions(productBaseVersionsObjects.stream().map(ProductBaseVersions::new).collect(Collectors.toList()));
             }
         }
         return productBases;
     }
 
-    @RequestMapping(value = "productbaseversions", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'productbase:read')")
-    public List<ProductBase> getProductBaseVersionsByOrgId(@RequestParam(value = "org_id", required = false) String orgId,
-                                                           Pageable pageable,
-                                                           HttpServletResponse response) {
-        List<ProductBase> productBases = new ArrayList<ProductBase>();
-        orgId = fixOrgId(orgId);
-        Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", productBasePage.toContentRange());
-        }
-        List<String> productBaseIds = productBasePage.map(ProductBaseObject::getId).getContent();
-        Map<String, List<ProductBaseVersionsObject>> map = productBaseDomain.getProductBaseVersionsByProductBaseIds(productBaseIds);
-        Iterator it = map.values().iterator();
-        while (it.hasNext()) {
-            List<ProductBaseVersionsObject> productBaseVersionsObjects = (List<ProductBaseVersionsObject>) it.next();
-            Iterator<ProductBaseVersionsObject> iter = productBaseVersionsObjects.iterator();
-            while (iter.hasNext()) {
-                ProductBase productBase = new ProductBase(iter.next().getProductBase());
-                productBases.add(productBase);
-            }
-        }
-        return productBases;
-    }
 
     //create product base
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -181,7 +152,7 @@ public class ProductBaseController {
         productBaseVersionsObject.setCreatedAccountId(currentAccountId);
         productBaseVersionsObject.setCreatedDateTime(DateTime.now());
         productBaseDomain.createProductBaseVersions(productBaseVersionsObject);
-        productBaseDomain.createProductBaseFile(productBase, id, productBaseObject.getOrgId(), productBaseObject.getVersion());
+        productBaseDomain.saveProductBaseDetails(productBase.getDetails(), productBaseObject.getOrgId(), id, productBaseObject.getVersion());
         return new ProductBase(newProductBaseObject);
     }
 
@@ -239,29 +210,43 @@ public class ProductBaseController {
             productBaseVersionsObject.setModifiedDateTime(DateTime.now());
             productBaseDomain.patchUpdate(productBaseVersionsObject);
         }
-        productBaseDomain.createProductBaseFile(productBase, productBaseId, productBaseObject.getOrgId(), actualVersion);
+        productBaseDomain.saveProductBaseDetails(productBase.getDetails(), productBaseObject.getOrgId(), productBaseId, actualVersion);
     }
 
-    //delete product base
+
+    /**
+     * delete product base or specified editable version
+     *
+     * @param productBaseId id of product base
+     * @param version       if version is null delete the product base, else delete the specified version
+     */
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(value = "product_base_id") String productBaseId) {
+    public void delete(@PathVariable(value = "product_base_id") String productBaseId,
+                       @RequestParam(value = "version", required = false) Integer version) {
         ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
         if (productBaseObject != null) {
-            TPermission tPermission = new TPermission(productBaseObject.getOrgId(), "productbase", "delete");
-            if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
-                throw new ForbiddenException();
+            if (version == null) {
+                //delete product base
+                TPermission tPermission = new TPermission(productBaseObject.getOrgId(), "productbase", "delete");
+                if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
+                    throw new ForbiddenException("operation denied");
+                }
+                productBaseDomain.deleteProductBase(productBaseId);
+            } else {
+                TPermission tPermission = new TPermission(productBaseObject.getOrgId(), "productbase", "modify");
+                if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
+                    throw new ForbiddenException("operation denied");
+                }
+                ProductBaseVersionsObject productBaseVersionsObject = productBaseDomain.getProductBaseVersionsByProductBaseIdAndVersion(productBaseId, version);
+                if (productBaseVersionsObject != null) {
+                    if (!LookupCodes.ProductBaseVersionsStatus.EDITABLE_STATUS.contains(productBaseVersionsObject.getStatusCode())) {
+                        throw new UnprocessableEntityException("illegal operation");
+                    }
+                    productBaseDomain.deleteProductBaseVersions(productBaseId, version);
+                }
             }
-            productBaseDomain.deleteProductBase(productBaseId);
         }
-    }
-
-    //delete product base versions
-    @RequestMapping(value = "{product_base_id}/{version}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProductBaseVersions(@PathVariable(value = "product_base_id") String productBaseId,
-                                          @PathVariable(value = "version") Integer version) {
-        productBaseDomain.deleteProductBaseVersions(productBaseId, version);
     }
 
     //endregion
@@ -269,6 +254,11 @@ public class ProductBaseController {
 
     //region product base image
 
+    /**
+     * @param productBaseId id of product base
+     * @param version       it will be current active version of product base if it's null
+     * @param imageRequest  image base64 string format with schema header and crop arguments
+     */
     @RequestMapping(value = "{product_base_id}/image", method = RequestMethod.PUT)
     public void putProductBaseImage(@PathVariable(value = "product_base_id") String productBaseId,
                                     @RequestParam(value = "version", required = false) Integer version,
@@ -276,8 +266,8 @@ public class ProductBaseController {
         ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
         String orgId = productBaseObject.getOrgId();
         Integer currentVersion = productBaseObject.getVersion();
-        if (version == null || version < 1 || version > currentVersion + 1) {
-            version = currentVersion + 1;
+        if (version == null) {
+            version = currentVersion;
         }
         //check permission
         //todo:
@@ -292,6 +282,12 @@ public class ProductBaseController {
         LOGGER.info("image saved [orgId: {}, productBaseId:{}, version:{}]", orgId, productBaseId, version);
     }
 
+    /**
+     * @param productBaseId id of product base
+     * @param imageName     Ex. image-800x400
+     * @param version       it will be current active version of product base if it's null
+     * @return image
+     */
     @RequestMapping(value = "{product_base_id}/image/{image_name}", method = RequestMethod.GET)
     public ResponseEntity<?> getProductBaseImage(
             @PathVariable(value = "product_base_id") String productBaseId,
@@ -300,11 +296,11 @@ public class ProductBaseController {
         ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
         String orgId = productBaseObject.getOrgId();
         Integer currentVersion = productBaseObject.getVersion();
-        if (version == null || version < 1 || version > currentVersion + 1) {
+        if (version == null) {
             version = currentVersion;
         }
 
-        ResourceInputStream resourceInputStream = productBaseDomain.getProductBaseImage(productBaseId, orgId, version, imageName);
+        ResourceInputStream resourceInputStream = productBaseDomain.getProductBaseImage(orgId, productBaseId, version, imageName);
         if (resourceInputStream == null) {
             throw new NotFoundException("image not found");
         }

@@ -2,6 +2,7 @@ package com.yunsoo.api.config;
 
 import com.yunsoo.api.cache.CustomKeyGenerator;
 import com.yunsoo.api.cache.NotOnAwsCloudEnvironmentCondition;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -18,6 +19,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CacheConfiguration{
 
+
+   // @Value("${yunsoo.elasticachename}")
     public static final String cacheName = "dev-cache";
 
 
