@@ -2,6 +2,7 @@
   var app = angular.module('root');
 
   app.value('ProductDetailsVersion', '1.0');
+  app.value('ProductBaseImagePreviewRec', {w: 422, h: 211, r: 1.8957, ow: 800, oh: 400});
 
   app.factory("emulatorService", ["$http", function ($http) {
     return {
@@ -28,7 +29,7 @@
     };
   }]);
 
-  app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", "$location", "ProductDetailsVersion", "productBaseDataService", function ($scope, emulatorService, $timeout, $location, ProductDetailsVersion, productBaseDataService) {
+  app.controller("emulatorCtrl", ["$scope", "emulatorService", "$timeout", "$location", "ProductDetailsVersion", "productBaseDataService", "ProductBaseImagePreviewRec", function ($scope, emulatorService, $timeout, $location, ProductDetailsVersion, productBaseDataService, ProductBaseImagePreviewRec) {
 
     var jcropObj = null;
     var bounds, boundx, boundy;
@@ -37,6 +38,9 @@
     var coords800400Result = {x: 0, y: 0, w: 0, h: 0};
     var coords400Result = {x: 0, y: 0, w: 0, h: 0};
     var fileInputContent = '';
+
+    var imgProductbaseWidth = ProductBaseImagePreviewRec.w;
+    var imgProductbaseHeight = ProductBaseImagePreviewRec.h;
 
     var product = $scope.product = {
       spinnerShow: false,
@@ -93,7 +97,7 @@
               aspectRatio: 1,
               onChange: this.showPreview400,
               onSelect: this.showPreview400,
-              setSelect: [0, 0, 130, 130]
+              setSelect: [0, 0, 30, 30]
             },
             function () {
               jcropObj = this;
@@ -106,10 +110,10 @@
       showPreview400: function (coords) {
         $("#imgProductbase400").css('visibility', 'visible');
 
-        coords400Result.x = parseInt(($('#imgProductbase400')[0].naturalWidth / 422) * coords.x);
-        coords400Result.w = parseInt(($('#imgProductbase400')[0].naturalWidth / 422) * coords.w);
-        coords400Result.y = parseInt(($('#imgProductbase400')[0].naturalHeight / 211) * coords.y);
-        coords400Result.h = parseInt(($('#imgProductbase400')[0].naturalHeight / 211) * coords.h);
+        coords400Result.x = parseInt(($('#imgProductbase400')[0].naturalWidth / imgProductbaseWidth) * coords.x);
+        coords400Result.w = parseInt(($('#imgProductbase400')[0].naturalWidth / imgProductbaseWidth) * coords.w);
+        coords400Result.y = parseInt(($('#imgProductbase400')[0].naturalHeight / imgProductbaseHeight) * coords.y);
+        coords400Result.h = parseInt(($('#imgProductbase400')[0].naturalHeight / imgProductbaseHeight) * coords.h);
 
         $('#showRealPix').html('W:' + coords400Result.w + ' H:' + coords400Result.h);
 
@@ -135,7 +139,7 @@
               aspectRatio: 2,
               onChange: this.showPreview800400,
               onSelect: this.showPreview800400,
-              setSelect: [0, 0, 260, 130]
+              setSelect: [0, 0, 60, 30]
             },
             function () {
               jcropObj = this;
@@ -151,10 +155,10 @@
 
         coords800400 = coords;
 
-        coords800400Result.x = parseInt(($('#imgProductbase800400')[0].naturalWidth / 422) * coords.x);
-        coords800400Result.w = parseInt(($('#imgProductbase800400')[0].naturalWidth / 422) * coords.w);
-        coords800400Result.y = parseInt(($('#imgProductbase800400')[0].naturalHeight / 211) * coords.y);
-        coords800400Result.h = parseInt(($('#imgProductbase800400')[0].naturalHeight / 211) * coords.h);
+        coords800400Result.x = parseInt(($('#imgProductbase800400')[0].naturalWidth / imgProductbaseWidth) * coords.x);
+        coords800400Result.w = parseInt(($('#imgProductbase800400')[0].naturalWidth / imgProductbaseWidth) * coords.w);
+        coords800400Result.y = parseInt(($('#imgProductbase800400')[0].naturalHeight / imgProductbaseHeight) * coords.y);
+        coords800400Result.h = parseInt(($('#imgProductbase800400')[0].naturalHeight / imgProductbaseHeight) * coords.h);
 
         $('#showRealPix').html('W:' + coords800400Result.w + ' H:' + coords800400Result.h);
 
@@ -469,17 +473,51 @@
 
                 $scope.$apply();
 
+                if (jcropObj != null) {
+                  jcropObj.destroy();
+                }
+
+                imgProductbaseWidth = ProductBaseImagePreviewRec.w;
+                imgProductbaseHeight = ProductBaseImagePreviewRec.h;
+
+                imgProductbase.css('width', imgProductbaseWidth + 'px');
+                imgProductbase.css('height', imgProductbaseHeight + 'px');
+
                 var oriImg = this.result;
+
                 imgProductbase.attr('src', oriImg);
-                imgProductbase800400.attr('src', oriImg);
-                imgProductbase400.attr('src', oriImg);
 
-                imgProductbase800400.css('visibility', 'hidden');
-                imgProductbase400.css('visibility', 'hidden');
+                $timeout(function () {
+                  if (imgProductbase[0].naturalWidth < ProductBaseImagePreviewRec.ow && imgProductbase[0].naturalHeight < ProductBaseImagePreviewRec.oh) {
+                    imgProductbaseWidth = imgProductbase[0].naturalWidth / ProductBaseImagePreviewRec.r;
+                    imgProductbaseHeight = imgProductbase[0].naturalHeight / ProductBaseImagePreviewRec.r;
+                  }
+                  else {
+                    if ((imgProductbase[0].naturalWidth / ProductBaseImagePreviewRec.w) >= (imgProductbase[0].naturalHeight / ProductBaseImagePreviewRec.h)) {
+                      var rate = imgProductbase[0].naturalWidth / ProductBaseImagePreviewRec.w;
+                      imgProductbaseHeight = imgProductbase[0].naturalHeight / rate;
+                    }
+                    else if ((imgProductbase[0].naturalWidth / ProductBaseImagePreviewRec.w) < (imgProductbase[0].naturalHeight / ProductBaseImagePreviewRec.h)) {
+                      var rate = imgProductbase[0].naturalHeight / ProductBaseImagePreviewRec.h;
+                      imgProductbaseWidth = imgProductbase[0].naturalWidth / rate;
+                    }
+                  }
 
-                product.initJcrop800400();
+                  imgProductbase.css('width', imgProductbaseWidth + 'px');
+                  imgProductbase.css('height', imgProductbaseHeight + 'px');
 
-                fileInputContent = this.result;
+                  imgProductbase800400.attr('src', oriImg);
+                  imgProductbase400.attr('src', oriImg);
+
+                  imgProductbase800400.css('visibility', 'hidden');
+                  imgProductbase400.css('visibility', 'hidden');
+
+                  product.initJcrop800400();
+
+                  fileInputContent = oriImg;
+
+                }, 50);
+
               };
             }
         );

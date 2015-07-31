@@ -13,7 +13,7 @@ public class ImageRequest {
 
     @NotNull(message = "data must not be null")
     @JsonProperty("data")
-    private String data;
+    private String data; // prefix: data:image/png;base64,
 
     @JsonProperty("range2x1")
     private Range range2x1;
