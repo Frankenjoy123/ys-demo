@@ -11,13 +11,18 @@
 
         return this;
       },
-      updateProWithDetail: function (proDetail, fnSuccess, fnError) {
-        $http.patch("/api/productbase/" + proDetail.id, proDetail).success(fnSuccess).error(fnError);
+      postProWithDetail: function (proDetail, fnSuccess, fnError) {
+        $http.post("/api/productbase/" + proDetail.id, proDetail).success(fnSuccess).error(fnError);
 
         return this;
       },
-      putProWithDetailImage: function (proId, proDetailImage, fnSuccess, fnError) {
-        $http.put("/api/productbase/" + proId + '/image', proDetailImage).success(fnSuccess).error(fnError);
+      updateProWithDetail: function (verId, proDetail, fnSuccess, fnError) {
+        $http.patch("/api/productbase/" + proDetail.id + '?version=' + verId, proDetail).success(fnSuccess).error(fnError);
+
+        return this;
+      },
+      putProWithDetailImage: function (proId, verId, proDetailImage, fnSuccess, fnError) {
+        $http.put("/api/productbase/" + proId + '/image?version=' + verId, proDetailImage).success(fnSuccess).error(fnError);
 
         return this;
       },
@@ -28,7 +33,7 @@
           url = "/api/productbase/" + proId;
         }
         else {
-          url = "/api/productbase/" + proId + '?verId=' + verId;
+          url = "/api/productbase/" + proId + '?version=' + verId;
         }
 
         $http.get(url).success(fnSuccess).error(fnError);
@@ -256,16 +261,23 @@
           }
         }
 
-        product.imgSrc800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?access_token=" + $scope.utils.auth.getAccessToken();
-        product.imgSrc400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400?access_token=" + $scope.utils.auth.getAccessToken();
+        if ($location.search()['verId'] == '') {
+          product.imgSrc800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?access_token=" + $scope.utils.auth.getAccessToken();
+          product.imgSrc400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400?access_token=" + $scope.utils.auth.getAccessToken();
+        }
+        else {
+          product.imgSrc800400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?version=" + $location.search()['verId'] + "&access_token=" + $scope.utils.auth.getAccessToken();
+          product.imgSrc400400 = "/api/productbase/" + $location.search()['proId'] + "/image/image-400x400?version=" + $location.search()['verId'] + "&access_token=" + $scope.utils.auth.getAccessToken();
+        }
 
         product.proPicPreview = true;
         product.proPicPreviewUpload = false;
         product.showButton800400 = false;
 
         var dataPreview = {};
+
         dataPreview.orgImgUrl = "/api/organization/" + $scope.context.organization.id + "/logo/image-128x128?access_token=" + $scope.utils.auth.getAccessToken();
-        dataPreview.proImgUrl = "/api/productbase/" + $location.search()['proId'] + "/image/image-800x400?access_token=" + $scope.utils.auth.getAccessToken();
+        dataPreview.proImgUrl = product.imgSrc800400;
 
         dataPreview.barcode = product.barCode;
         dataPreview.name = product.productName;
@@ -413,29 +425,52 @@
       }
 
       if ($location.search()['proId'] != '') {
-        proWithDetails.id = $location.search()['proId'];
-        emulatorService.updateProWithDetail(proWithDetails, function () {
-              var detailImg = getDetailImg();
-              emulatorService.putProWithDetailImage($location.search()['proId'], detailImg, function () {
-                $scope.utils.alert('success', '更新产品信息成功');
+        if ($location.search()['verId'] != '') {
+          proWithDetails.id = $location.search()['proId'];
+          emulatorService.updateProWithDetail($location.search()['verId'], proWithDetails, function () {
+                var detailImg = getDetailImg();
+                emulatorService.putProWithDetailImage($location.search()['proId'], $location.search()['verId'], detailImg, function () {
+                  $scope.utils.alert('success', '更新产品信息成功');
+                  product.spinnerShow = false;
+                  $location.path('/product-base-manage');
+                }, function () {
+                  $scope.utils.alert('info', '更新产品信息成功，但更新产品图片失败');
+                  product.spinnerShow = false;
+                  $location.path('/product-base-manage');
+                });
+              },
+              function () {
+                $scope.utils.alert('info', '更新产品信息失败');
                 product.spinnerShow = false;
-                $location.path('/product-base-manage');
-              }, function () {
-                $scope.utils.alert('info', '更新产品信息成功，但更新产品图片失败');
-                product.spinnerShow = false;
-                $location.path('/product-base-manage');
               });
-            },
-            function () {
-              $scope.utils.alert('info', '更新产品信息失败');
-              product.spinnerShow = false;
-            });
+        }
+        else {
+          proWithDetails.id = $location.search()['proId'];
+          emulatorService.postProWithDetail(proWithDetails, function (data) {
+                if (data != null && data != '') {
+                  var detailImg = getDetailImg();
+                  emulatorService.putProWithDetailImage($location.search()['proId'], data.version, detailImg, function () {
+                    $scope.utils.alert('success', '更新产品信息成功');
+                    product.spinnerShow = false;
+                    $location.path('/product-base-manage');
+                  }, function () {
+                    $scope.utils.alert('info', '更新产品信息成功，但更新产品图片失败');
+                    product.spinnerShow = false;
+                    $location.path('/product-base-manage');
+                  });
+                }
+              },
+              function () {
+                $scope.utils.alert('info', '更新产品信息失败');
+                product.spinnerShow = false;
+              });
+        }
       }
       else {
         emulatorService.createProWithDetail(proWithDetails, function (data) {
               if (data != null && data != '') {
                 var detailImg = getDetailImg();
-                emulatorService.putProWithDetailImage(data.id, detailImg, function () {
+                emulatorService.putProWithDetailImage(data.id, data.version, detailImg, function () {
                   $scope.utils.alert('success', '创建产品信息成功');
                   product.spinnerShow = false;
                   $location.path('/product-base-manage');
