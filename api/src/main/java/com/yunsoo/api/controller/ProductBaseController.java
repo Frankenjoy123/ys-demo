@@ -14,6 +14,7 @@ import com.yunsoo.common.data.object.ProductBaseVersionsObject;
 import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
@@ -169,25 +170,74 @@ public class ProductBaseController {
         return new ProductBase(newProductBaseObject);
     }
 
-    //update product base versions: created new product version or edit current product version detail
+    //create new product base versions
+    @RequestMapping(value = "{product_base_id}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:modify')")
+    public ProductBaseVersionsObject createProductBaseVersions(@PathVariable(value = "product_base_id") String productBaseId,
+                                                               @RequestBody ProductBase productBase) {
+        ProductBaseObject originalProductBaseObject = findProductBaseById(productBaseId);
+        if (originalProductBaseObject == null) {
+            throw new NotFoundException("product base not found");
+        }
+        ProductBaseVersionsObject latestProductBaseVersionsObject = productBaseDomain.getLatestProductBaseVersionsByProductBaseId(productBaseId);
+        if ((latestProductBaseVersionsObject == null) || (originalProductBaseObject.getStatusCode() != LookupCodes.ProductBaseStatus.ACTIVATED) || (latestProductBaseVersionsObject.getStatusCode() != LookupCodes.ProductBaseVersionsStatus.ACTIVATED)) {
+            throw new BadRequestException("Not allow to create new product base version on the current product base id");
+        }
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
+        ProductBaseObject productBaseObject = new ProductBaseObject();
+
+        productBaseVersionsObject.setProductBaseId(productBaseId);
+        productBaseVersionsObject.setVersion(originalProductBaseObject.getVersion() + 1);
+        productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.SUBMITTED);
+        productBaseVersionsObject.setCreatedAccountId(currentAccountId);
+        productBaseVersionsObject.setCreatedDateTime(DateTime.now());
+
+        productBaseObject.setId(productBaseId);
+        productBaseObject.setName(productBase.getName());
+        productBaseObject.setVersion(originalProductBaseObject.getVersion() + 1);
+        if (StringUtils.hasText(productBase.getOrgId()))
+            productBaseObject.setOrgId(productBase.getOrgId());
+        else
+            productBaseObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+        productBaseObject.setBarcode(productBase.getBarcode());
+        productBaseObject.setStatusCode(LookupCodes.ProductBaseStatus.CREATED);
+        productBaseObject.setCategoryId(productBase.getCategoryId());
+        productBaseObject.setChildProductCount(productBase.getChildProductCount());
+        productBaseObject.setComments(productBase.getComments());
+        productBaseObject.setCreatedAccountId(currentAccountId);
+        productBaseObject.setCreatedDateTime(DateTime.now());
+        productBaseObject.setModifiedDateTime(productBase.getModifiedDateTime());
+        productBaseObject.setProductKeyTypeCodes(productBase.getProductKeyTypeCodes());
+        productBaseObject.setShelfLife(productBase.getShelfLife());
+        productBaseObject.setShelfLifeInterval(productBase.getShelfLifeInterval());
+        productBaseVersionsObject.setProductBase(productBaseObject);
+
+        return productBaseDomain.createProductBaseVersions(productBaseVersionsObject);
+    }
+
+    //update product base versions: edit current product version detail
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:modify')")
     public void updateProductBaseVersions(@PathVariable(value = "product_base_id") String productBaseId,
+                                          @RequestParam(value = "version", required = false) Integer version,
                                           @RequestBody ProductBase productBase) {
-        ProductBaseObject productBaseObject = new ProductBaseObject();
-        ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
+        ProductBaseObject originalProductBaseObject = findProductBaseById(productBaseId);
+        Integer currentVersion = originalProductBaseObject.getVersion();
+        if (version == null) {
+            version = currentVersion;
+        }
         List<ProductBaseVersionsObject> productBaseVersionsObjects = productBaseDomain.getProductBaseVersionsByProductBaseId(productBaseId);
         if (productBaseVersionsObjects.size() == 0) {
             throw new NotFoundException("product base version not found");
         }
 
-        String currentVersionStatus = productBaseVersionsObjects.get(productBaseVersionsObjects.size() - 1).getStatusCode();
-        Integer currentVersion = productBaseVersionsObjects.get(productBaseVersionsObjects.size() - 1).getVersion();
-        Integer actualVersion = currentVersion;
-        if (LookupCodes.ProductBaseVersionsStatus.SUBMITTED.equals(currentVersionStatus)) {
-            throw new UnprocessableEntityException("Sorry, you can't process current product version!");
-        }
+        ProductBaseObject productBaseObject = new ProductBaseObject();
+        ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
+
         productBaseObject.setId(productBaseId);
+        productBaseObject.setVersion(version);
         productBaseObject.setName(productBase.getName());
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         if (StringUtils.hasText(productBase.getOrgId()))
@@ -213,17 +263,8 @@ public class ProductBaseController {
         productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.SUBMITTED);
         productBaseVersionsObject.setCreatedAccountId(currentAccountId);
         productBaseVersionsObject.setCreatedDateTime(DateTime.now());
-
-        if (LookupCodes.ProductBaseVersionsStatus.ACTIVATED.equals(currentVersionStatus)) {
-            productBaseDomain.createProductBaseVersions(productBaseVersionsObject);
-            actualVersion = currentVersion + 1;
-        }
-        if (LookupCodes.ProductBaseVersionsStatus.DRAFT.equals(currentVersionStatus) || LookupCodes.ProductBaseVersionsStatus.REJECTED.equals(currentVersionStatus)) {
-            productBaseVersionsObject.setModifiedAccountId(currentAccountId);
-            productBaseVersionsObject.setModifiedDateTime(DateTime.now());
-            productBaseDomain.patchUpdate(productBaseVersionsObject);
-        }
-        productBaseDomain.saveProductBaseDetails(productBase.getDetails(), productBaseObject.getOrgId(), productBaseId, actualVersion);
+        productBaseDomain.patchUpdate(productBaseVersionsObject);
+        productBaseDomain.saveProductBaseDetails(productBase.getDetails(), productBaseObject.getOrgId(), productBaseId, version);
     }
 
 

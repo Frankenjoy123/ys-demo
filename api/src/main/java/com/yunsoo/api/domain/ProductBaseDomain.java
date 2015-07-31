@@ -84,6 +84,16 @@ public class ProductBaseDomain {
         }, productBaseId);
     }
 
+    public ProductBaseVersionsObject getLatestProductBaseVersionsByProductBaseId(String productBaseId) {
+        List<ProductBaseVersionsObject> productBaseVersionsObjects = dataAPIClient.get("productbaseversions/{product_base_Id}", new ParameterizedTypeReference<List<ProductBaseVersionsObject>>() {
+        }, productBaseId);
+        if (productBaseVersionsObjects.size() == 0) {
+            return null;
+        }
+        return productBaseVersionsObjects.get(productBaseVersionsObjects.size() - 1);
+    }
+
+
     public Map<String, List<ProductBaseVersionsObject>> getProductBaseVersionsByProductBaseIds(List<String> productBaseIds) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("product_base_ids", productBaseIds)
