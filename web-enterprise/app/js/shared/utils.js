@@ -10,12 +10,15 @@
       },
       logout: function () {
         console.log('[logout]');
-        $.removeCookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN, {path: '/'});
+        //$.removeCookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN, {path: '/'});
+        localStorage.removeItem('auth');
         window.location.href = 'login.html';
       },
       lock: function () {
         console.log('[lock screen]');
-        this.notification('warning', '锁屏界面开发中...');
+        //this.notification('warning', '锁屏界面开发中...');
+        localStorage.removeItem('auth');
+        window.location.href = 'lock.html';
       },
       /**
        * shortcut of $.niftyNoty, show floating notification on the top right
