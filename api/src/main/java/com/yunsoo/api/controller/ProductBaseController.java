@@ -261,7 +261,7 @@ public class ProductBaseController {
 
         productBaseVersionsObject.setProductBase(productBaseObject);
         productBaseVersionsObject.setProductBaseId(productBaseId);
-        productBaseVersionsObject.setVersion(currentVersion);
+        productBaseVersionsObject.setVersion(version);
         productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.SUBMITTED);
         productBaseVersionsObject.setCreatedAccountId(currentAccountId);
         productBaseVersionsObject.setCreatedDateTime(DateTime.now());
