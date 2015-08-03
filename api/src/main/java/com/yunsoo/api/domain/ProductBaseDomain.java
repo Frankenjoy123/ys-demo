@@ -152,7 +152,10 @@ public class ProductBaseDomain {
         try {
             String imageData = imageRequest.getData();
             //data:image/png;base64,
-            if ((imageData == null) || ("".equals(imageData))) {
+            if (((imageData == null) || ("".equals(imageData)))) {
+                if (!checkImageExist(orgId, productBaseId, version)) {
+                    copyProductBaseImageFromPreviousVersion(orgId, productBaseId, version);
+                }
                 return;
             }
             int splitIndex = imageData.indexOf(",");
@@ -206,6 +209,41 @@ public class ProductBaseDomain {
         } catch (IOException ex) {
             throw new InternalServerErrorException("image upload failed");
         }
+    }
+
+    private void copyProductBaseImageFromPreviousVersion(String orgId, String productBaseId, Integer version) {
+        try {
+            if (version > 1) {
+                Integer latestVersion = version - 1;
+                ResourceInputStream resourceImageRaw = getProductBaseImage(orgId, productBaseId, latestVersion, "image-raw");
+                if (resourceImageRaw != null) {
+                    dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/image-raw",
+                            resourceImageRaw, orgId, productBaseId, version);
+                }
+                ResourceInputStream resourceImageRect400x400 = getProductBaseImage(orgId, productBaseId, latestVersion, IMAGE_NAME_400X400);
+                if (resourceImageRect400x400 != null) {
+                    dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}",
+                            resourceImageRect400x400, orgId, productBaseId, version, IMAGE_NAME_400X400);
+                }
+                ResourceInputStream resourceImageRect800x400 = getProductBaseImage(orgId, productBaseId, latestVersion, IMAGE_NAME_800X400);
+                if (resourceImageRect800x400 != null) {
+                    dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}",
+                            resourceImageRect800x400, orgId, productBaseId, version, IMAGE_NAME_800X400);
+                }
+                ResourceInputStream resourceImageRect400x200 = getProductBaseImage(orgId, productBaseId, latestVersion, IMAGE_NAME_400X200);
+                if (resourceImageRect400x200 != null) {
+                    dataAPIClient.put("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}",
+                            resourceImageRect400x200, orgId, productBaseId, version, IMAGE_NAME_400X200);
+                }
+            }
+        } catch (BadRequestException ex) {
+            throw new InternalServerErrorException("image copy failed");
+        }
+    }
+
+    private boolean checkImageExist(String orgId, String productBaseId, Integer version) {
+        ResourceInputStream resourceImageRaw = getProductBaseImage(orgId, productBaseId, version, "image-raw");
+        return resourceImageRaw == null ? false : true;
     }
 
 
