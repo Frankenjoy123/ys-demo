@@ -120,19 +120,11 @@ public class ProductBaseDetails {
 
     public static class TCommerce {
 
-        @JsonProperty("name")
-        private String name;
-
         @JsonProperty("address")
         private String address;
 
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
+        @JsonProperty("tel")
+        private String tel;
 
         public String getAddress() {
             return address;
@@ -140,6 +132,14 @@ public class ProductBaseDetails {
 
         public void setAddress(String address) {
             this.address = address;
+        }
+
+        public String getTel() {
+            return tel;
+        }
+
+        public void setTel(String tel) {
+            this.tel = tel;
         }
     }
 
