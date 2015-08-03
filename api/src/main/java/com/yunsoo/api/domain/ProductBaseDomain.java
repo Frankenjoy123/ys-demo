@@ -152,6 +152,9 @@ public class ProductBaseDomain {
         try {
             String imageData = imageRequest.getData();
             //data:image/png;base64,
+            if ((imageData == null) || ("".equals(imageData))) {
+                return;
+            }
             int splitIndex = imageData.indexOf(",");
             String metaHeader = imageData.substring(0, splitIndex);
             String contentType = metaHeader.split(";")[0].split(":")[1];
