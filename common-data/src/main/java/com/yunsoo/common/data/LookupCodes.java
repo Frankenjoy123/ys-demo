@@ -87,7 +87,7 @@ public class LookupCodes {
         public static final String REJECTED = "rejected";
         public static final String ACTIVATED = "activated";
         public static final String ARCHIVED = "archived";
-        public static final List<String> EDITABLE_STATUS = Arrays.asList("draft", "rejected");
+        public static final List<String> EDITABLE_STATUS = Arrays.asList("draft", "rejected", "submitted");
     }
 
     public static class ProductKeyTransactionStatus {

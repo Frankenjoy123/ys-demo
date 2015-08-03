@@ -181,7 +181,7 @@ public class ProductBaseController {
             throw new NotFoundException("product base not found");
         }
         ProductBaseVersionsObject latestProductBaseVersionsObject = productBaseDomain.getLatestProductBaseVersionsByProductBaseId(productBaseId);
-        if ((latestProductBaseVersionsObject == null) || (originalProductBaseObject.getStatusCode() != LookupCodes.ProductBaseStatus.ACTIVATED) || (latestProductBaseVersionsObject.getStatusCode() != LookupCodes.ProductBaseVersionsStatus.ACTIVATED)) {
+        if ((latestProductBaseVersionsObject == null) || (!LookupCodes.ProductBaseStatus.ACTIVATED.equals(originalProductBaseObject.getStatusCode())) || (!LookupCodes.ProductBaseVersionsStatus.ACTIVATED.equals(latestProductBaseVersionsObject.getStatusCode()))) {
             throw new BadRequestException("Not allow to create new product base version on the current product base id");
         }
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
