@@ -17,6 +17,8 @@ import java.util.List;
 public class ProductBase {
     @JsonProperty("id")
     private String id;
+    @JsonProperty("version")
+    private Integer version;
     @JsonProperty("category")
     private ProductCategory category;
     @JsonProperty("org_id")
@@ -54,6 +56,14 @@ public class ProductBase {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public ProductCategory getCategory() {
@@ -159,4 +169,5 @@ public class ProductBase {
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;
     }
+
 }

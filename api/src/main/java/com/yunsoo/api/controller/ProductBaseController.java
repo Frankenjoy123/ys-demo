@@ -214,7 +214,9 @@ public class ProductBaseController {
         productBaseObject.setShelfLifeInterval(productBase.getShelfLifeInterval());
         productBaseVersionsObject.setProductBase(productBaseObject);
 
-        return productBaseDomain.createProductBaseVersions(productBaseVersionsObject);
+        ProductBaseVersionsObject newProductBaseVersionsObject = productBaseDomain.createProductBaseVersions(productBaseVersionsObject);
+        productBaseDomain.saveProductBaseDetails(productBase.getDetails(), productBaseObject.getOrgId(), productBaseId, newProductBaseVersionsObject.getVersion());
+        return newProductBaseVersionsObject;
     }
 
     //update product base versions: edit current product version detail
