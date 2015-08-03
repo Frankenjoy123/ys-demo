@@ -110,9 +110,10 @@
           $("#imgProductbase").Jcrop({
                 allowSelect: false,
                 aspectRatio: 1,
+                keySupport: true,
                 onChange: product.showPreview400,
                 onSelect: product.showPreview400,
-                setSelect: [0, 0, 30, 30]
+                setSelect: [0, 0, 211, 211]
               },
               function () {
                 jcropObj = this;
@@ -120,6 +121,8 @@
                 bounds = jcropObj.getBounds();
                 boundx = bounds[0];
                 boundy = bounds[1];
+
+                jcropObj.animateTo([ 0, 0, 211, 211 ]);
               });
         }, 50);
       },
@@ -154,9 +157,10 @@
           $("#imgProductbase").Jcrop({
                 allowSelect: false,
                 aspectRatio: 2,
+                keySupport: true,
                 onChange: product.showPreview800400,
                 onSelect: product.showPreview800400,
-                setSelect: [0, 0, 60, 30]
+                setSelect: [0, 0, 422, 211]
               },
               function () {
                 jcropObj = this;
@@ -165,6 +169,8 @@
                 bounds800400 = bounds;
                 boundx = bounds[0];
                 boundy = bounds[1];
+
+                jcropObj.animateTo([ 0, 0, 422, 211 ]);
               });
         }, 50);
       },
