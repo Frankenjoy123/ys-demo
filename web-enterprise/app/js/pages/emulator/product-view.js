@@ -59,8 +59,8 @@
         product.expireDateUnit = data.shelf_life_interval;
         product.comments = data.comments;
 
-        if (data.product_base_details) {
-          var details = data.product_base_details;
+        if (data.details) {
+          var details = data.details;
           for (var proInfo in details.details) {
             product.productInfos.push({name: details.details[proInfo].name, value: details.details[proInfo].value});
           }
