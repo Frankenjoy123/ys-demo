@@ -30,6 +30,54 @@
         rememberMe: false
       });
 
+      var lockForm = $scope.lockForm = {
+        organization: (JSON.parse(localStorage.loginForm || '{}')).organization,
+        identifier: (JSON.parse(localStorage.loginForm || '{}')).identifier,
+        password: '',
+        submit: function () {
+          loginService.login({
+            organization: lockForm.organization,
+            identifier: lockForm.identifier,
+            password: lockForm.password,
+            rememberMe: false
+          }, function (data) {
+            if (!data || !data.access_token || !data.access_token.token) {
+              $.niftyNoty({
+                type: 'danger',
+                container: '#panel-lock',
+                html: '登陆失败请稍后再试',
+                focus: false,
+                timer: 3000
+              });
+              return;
+            }
+
+            //save auth
+            utils.auth.setAccessToken(data.access_token.token, DateTime.now().addSeconds(data.access_token.expires_in).valueOf());
+            utils.auth.setPermanentToken(data.permanent_token.token, DateTime.now().addSeconds(data.permanent_token.expires_in).valueOf());
+
+            //animation
+            $('body').addClass('animated fadeOut');
+            $('#panel-lock').addClass('animated zoomOut');
+            //redirect to index.html
+            $timeout(function () {
+              window.location.href = './';
+            }, 1000);
+
+          }, function (data, code) {
+            console.log('[login failed]', data.message, code);
+            $scope.lockForm.password = '';
+            $.niftyNoty({
+              type: 'danger',
+              container: '#panel-lock',
+              html: '密码错误',
+              focus: false,
+              timer: 3000
+            });
+          });
+        }
+      };
+
       function login() {
         var loginForm = $scope.loginForm;
         //trim
@@ -56,10 +104,12 @@
 
           //save current login form
           if (loginForm.rememberMe) {
-            loginForm.password = '';
-            console.log('[saving login form]');
-            loginService.loginForm(loginForm);
+            loginForm.rememberMe = true;
+            //console.log('[saving login form]');
           }
+
+          loginForm.password = '';
+          loginService.loginForm(loginForm);
 
           //animation
           $('body').addClass('animated fadeOut');
@@ -125,6 +175,7 @@
       //show login form
       $timeout(function () {
         $scope.showLoginFormDelay = true;
+        $scope.showLockFormDelay = true;
       }, 1500);
     }]);
 
