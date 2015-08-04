@@ -16,10 +16,12 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 
@@ -43,7 +45,7 @@ public class FileController {
 
 
     @RequestMapping(value = "s3", method = RequestMethod.GET)
-    public ResponseEntity getS3FileByPath(@RequestParam(value = "path", required = true) String path) {
+    public ResponseEntity getS3FileByPath(@RequestParam(value = "path", required = true) String path) throws IOException {
         if (path.isEmpty()) {
             throw new BadRequestException("path must not be null or empty");
         }
@@ -63,7 +65,9 @@ public class FileController {
         if (contentLength > 0) {
             bodyBuilder.contentLength(contentLength);
         }
-        return bodyBuilder.body(new InputStreamResource(s3ObjectInputStream));
+        ByteArrayInputStream resultInputStream = new ByteArrayInputStream(StreamUtils.copyToByteArray(s3ObjectInputStream));
+        s3ObjectInputStream.close();
+        return bodyBuilder.body(new InputStreamResource(resultInputStream));
     }
 
     @RequestMapping(value = "s3", method = RequestMethod.PUT)
