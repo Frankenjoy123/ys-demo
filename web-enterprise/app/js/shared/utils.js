@@ -74,26 +74,6 @@
     return u;
   }]);
 
-  utils.directive('dtPageable', function () {
-    return {
-      restrict: 'A',
-      scope: {
-        pageable: '=dtPageable'
-      },
-      templateUrl: 'partials/widgets/pageable.html'
-    };
-  });
-
-  utils.directive('echartDate', function () {
-    return {
-      restrict: 'A',
-      scope: {
-        dataTable: '=echartDate'
-      },
-      templateUrl: 'partials/widgets/echart-date.html'
-    };
-  });
-
   //classes
   var DataTable = (function () {
     /**
