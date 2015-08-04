@@ -40,7 +40,7 @@ yunsoo:
     debug: false
     environment: test
     s3:
-        basebucket: test-yunsoo
+        bucket_name: test-yunsoo
 
 AmazonSettings:
     s3_basebucket:  test-yunsoo
