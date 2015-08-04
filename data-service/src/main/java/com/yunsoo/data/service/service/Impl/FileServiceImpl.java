@@ -30,9 +30,6 @@ public class FileServiceImpl implements FileService {
     @Override
     public S3Object getFile(String bucketName, String key) {
         try {
-            if (!s3ItemDao.hasItem(bucketName, key)) {
-                return null;
-            }
             return s3ItemDao.getItem(bucketName, key);
         } catch (AmazonS3Exception s3ex) {
             return null;
