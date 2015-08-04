@@ -51,11 +51,8 @@
                     }
 
                     //save auth
-                    $.removeCookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN, {path: '/'});
-                    $.cookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN, data.access_token.token, {
-                        expires: data.access_token.expires_in / (60 * 60 * 24),
-                        path: '/'
-                    });
+                    utils.auth.setAccessToken(data.access_token.token, DateTime.now().addSeconds(data.access_token.expires_in).valueOf());
+                    utils.auth.setPermanentToken(data.permanent_token.token, DateTime.now().addSeconds(data.permanent_token.expires_in).valueOf());
 
                     //save current login form
                     if (loginForm.rememberMe) {
