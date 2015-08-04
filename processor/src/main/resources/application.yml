@@ -28,7 +28,7 @@ yunsoo:
 
 ---
 spring:
-    profiles: qa
+    profiles: test
 
 yunsoo:
     environment: test

@@ -1,3 +1,5 @@
+version = '1.0'
+
 buildscript {
     repositories {
         mavenLocal()
@@ -14,10 +16,6 @@ apply plugin: 'spring-boot'
 
 description = 'data-service'
 
-jar {
-    baseName = 'com.yunsoo.data-service'
-    version = '0.1.0'
-}
 
 repositories {
     mavenCentral()
