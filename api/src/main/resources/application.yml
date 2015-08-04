@@ -6,6 +6,14 @@ management:
 multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
+cloud:
+    aws:
+        stack:
+            auto: false
+        region:
+            auto: true
+            static: cn-north-1
+
 yunsoo:
     api:
         permanent_token:
