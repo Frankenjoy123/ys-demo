@@ -5,7 +5,7 @@ multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
 spring:
-    profiles.active: qa
+    profiles.active: default
 ---
 spring:
     profiles: default
@@ -31,7 +31,7 @@ yunsoo:
                 baseurl: http://dataapi:8080/
 ---
 spring:
-    profiles: qa
+    profiles: test
 management:
     port: 6089
     address: 127.0.0.1

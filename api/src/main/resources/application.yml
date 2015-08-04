@@ -29,8 +29,6 @@ logging:
         org.hibernate: 'ERROR'
 
 yunsoo:
-#    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
-
     debug: true
     api:
         client:
@@ -42,7 +40,7 @@ yunsoo:
     elasticachename: dev-cache
 ---
 spring:
-    profiles: qa
+    profiles: test
 management:
     port: 6081
     address: 127.0.0.1
@@ -55,8 +53,6 @@ logging:
         org.hibernate: 'INFO'
 
 yunsoo:
-#    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
-
     debug: true
     api:
         client:
