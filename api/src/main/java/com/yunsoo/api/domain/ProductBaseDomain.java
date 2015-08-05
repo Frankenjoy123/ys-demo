@@ -129,7 +129,7 @@ public class ProductBaseDomain {
     }
 
     public void updateProductBase(ProductBaseObject productBaseObject) {
-        dataAPIClient.put("productbase/{product_base_id}", productBaseObject, productBaseObject.getId());
+        dataAPIClient.put("productbase/{id}", productBaseObject, productBaseObject.getId());
     }
 
     public void patchUpdate(ProductBaseVersionsObject productBaseVersionsObject) {
