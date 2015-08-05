@@ -73,9 +73,9 @@ public class ProductBaseController {
 
     //update
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public void update(@PathVariable(value = "product_base_id") String productBaseId,
+    public void update(@PathVariable(value = "id") String id,
                        @RequestBody ProductBaseObject productBaseObject) {
-        ProductBaseEntity oldentity = productBaseRepository.findOne(productBaseId);
+        ProductBaseEntity oldentity = productBaseRepository.findOne(id);
         if (oldentity != null && !oldentity.isDeleted()) {
             ProductBaseEntity entity = toProductBaseEntity(productBaseObject);
             productBaseRepository.save(entity);
