@@ -139,20 +139,7 @@
                                         <label class="col-md-3 text-bold text-right">产品码类型</label>
 
                                         <div class="col-md-9">
-
-                                          <span ng-repeat="type in product.productKeyTypeCodes">
-
-                            <span ng-show="type.code == 'qr_public'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="二维码"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"
-                                                                           style="color:#5cb85c"></i></span>
-                            <span ng-show="type.code == 'qr_secure'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="隐藏二维码"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"></i></span>
-                            <span ng-show="type.code == 'rfid'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="RFID标签"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-rss fa-lg"></i></span>
-                            </span>
+                                            <span key-type="product.productKeyTypeCodes"></span>
                                         </div>
                                     </div>
                                     <div class="form-group">
