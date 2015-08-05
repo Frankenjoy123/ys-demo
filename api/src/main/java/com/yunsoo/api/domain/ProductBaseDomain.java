@@ -128,6 +128,10 @@ public class ProductBaseDomain {
         return dataAPIClient.post("productbaseversions/{product_base_id}", productBaseVersionsObject, ProductBaseVersionsObject.class, productBaseVersionsObject.getProductBaseId());
     }
 
+    public void updateProductBase(ProductBaseObject productBaseObject) {
+        dataAPIClient.put("productbase/{product_base_id}", productBaseObject, productBaseObject.getId());
+    }
+
     public void patchUpdate(ProductBaseVersionsObject productBaseVersionsObject) {
         dataAPIClient.put("productbaseversions/{product_base_id}/{version}", productBaseVersionsObject, productBaseVersionsObject.getProductBaseId(), productBaseVersionsObject.getVersion());
     }
@@ -211,6 +215,30 @@ public class ProductBaseDomain {
         }
     }
 
+    public ProductBaseObject copyFromProductBaseVersionsObject(ProductBaseVersionsObject productBaseVersionsObject) {
+        if (productBaseVersionsObject == null) {
+            return null;
+        }
+        ProductBaseObject productBaseObject = new ProductBaseObject();
+        productBaseObject.setId(productBaseVersionsObject.getProductBaseId());
+        productBaseObject.setVersion(productBaseVersionsObject.getVersion());
+        productBaseObject.setStatusCode(productBaseVersionsObject.getStatusCode());
+        productBaseObject.setOrgId(productBaseVersionsObject.getProductBase().getOrgId());
+        productBaseObject.setCategoryId(productBaseVersionsObject.getProductBase().getCategoryId());
+        productBaseObject.setName(productBaseVersionsObject.getProductBase().getName());
+        productBaseObject.setDescription(productBaseVersionsObject.getProductBase().getDescription());
+        productBaseObject.setBarcode(productBaseVersionsObject.getProductBase().getBarcode());
+        productBaseObject.setProductKeyTypeCodes(productBaseVersionsObject.getProductBase().getProductKeyTypeCodes());
+        productBaseObject.setShelfLife(productBaseVersionsObject.getProductBase().getShelfLife());
+        productBaseObject.setShelfLifeInterval(productBaseVersionsObject.getProductBase().getShelfLifeInterval());
+        productBaseObject.setChildProductCount(productBaseVersionsObject.getProductBase().getChildProductCount());
+        productBaseObject.setComments(productBaseVersionsObject.getProductBase().getComments());
+        productBaseObject.setCreatedAccountId(productBaseVersionsObject.getCreatedAccountId());
+        productBaseObject.setCreatedDateTime(productBaseVersionsObject.getCreatedDateTime());
+        productBaseObject.setModifiedAccountId(productBaseVersionsObject.getModifiedAccountId());
+        productBaseObject.setModifiedDateTime(productBaseVersionsObject.getModifiedDateTime());
+        return productBaseObject;
+    }
     private void copyProductBaseImageFromPreviousVersion(String orgId, String productBaseId, Integer version) {
         try {
             if (version > 1) {

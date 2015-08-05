@@ -131,6 +131,7 @@ public class ProductDomain {
     public ProductBase convertFromProductBaseObject(ProductBaseObject productBaseObject, List<ProductKeyType> productKeyTypes) {
         ProductBase productBase = new ProductBase();
         productBase.setId(productBaseObject.getId());
+        productBase.setVersion(productBaseObject.getVersion());
         productBase.setName(productBaseObject.getName());
         productBase.setBarcode(productBaseObject.getBarcode());
         productBase.setStatus(productBaseObject.getStatusCode());

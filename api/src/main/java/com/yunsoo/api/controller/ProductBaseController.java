@@ -269,7 +269,45 @@ public class ProductBaseController {
         productBaseDomain.saveProductBaseDetails(productBase.getDetails(), productBaseObject.getOrgId(), productBaseId, version);
     }
 
-
+    //approve/reject product base versions
+    @RequestMapping(value = "{product_base_id}/approval", method = RequestMethod.PATCH)
+    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:modify')")
+    public void approveProductBaseVersions(@PathVariable(value = "product_base_id") String productBaseId,
+                                           @RequestParam(value = "version", required = false) Integer version,
+                                           @RequestParam(value = "approval_status") String approvalStatus,
+                                           @RequestParam(value = "review_comments", required = false) String reviewComments) {
+        ProductBaseVersionsObject originalProductBaseVersionsObject = productBaseDomain.getLatestProductBaseVersionsByProductBaseId(productBaseId);
+        ProductBaseObject originalProductBaseObject = productBaseDomain.getProductBaseById(productBaseId);
+        if ((originalProductBaseVersionsObject == null) || (originalProductBaseObject == null)) {
+            throw new NotFoundException("product base or product base version not found");
+        }
+        if (version == null) {
+            version = originalProductBaseVersionsObject.getVersion();
+        }
+        ProductBaseVersionsObject productBaseVersionsObject = productBaseDomain.getProductBaseVersionsByProductBaseIdAndVersion(productBaseId, version);
+        if (productBaseVersionsObject == null) {
+            throw new NotFoundException("product base version not found");
+        }
+        if (!LookupCodes.ProductBaseVersionsStatus.SUBMITTED.equals(productBaseVersionsObject.getStatusCode())) {
+            throw new UnprocessableEntityException("illegal operation");
+        }
+        if (LookupCodes.ProductBaseVersionsApprovalStatus.APPROVED.equals(approvalStatus)) {
+            productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.ACTIVATED);
+            if (reviewComments != null) {
+                productBaseVersionsObject.setReviewComments(reviewComments);
+            }
+            productBaseDomain.patchUpdate(productBaseVersionsObject);
+            ProductBaseObject productBaseObject = productBaseDomain.copyFromProductBaseVersionsObject(productBaseVersionsObject);
+            productBaseDomain.updateProductBase(productBaseObject);
+        }
+        if (LookupCodes.ProductBaseVersionsApprovalStatus.REJECTED.equals(productBaseVersionsObject.getStatusCode())) {
+            productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.REJECTED);
+            if (reviewComments != null) {
+                productBaseVersionsObject.setReviewComments(reviewComments);
+            }
+            productBaseDomain.patchUpdate(productBaseVersionsObject);
+        }
+    }
     /**
      * delete product base or specified editable version
      *

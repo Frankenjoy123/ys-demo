@@ -71,6 +71,17 @@ public class ProductBaseController {
         return toProductBaseObject(newEntity);
     }
 
+    //update
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    public void update(@PathVariable(value = "product_base_id") String productBaseId,
+                       @RequestBody ProductBaseObject productBaseObject) {
+        ProductBaseEntity oldentity = productBaseRepository.findOne(productBaseId);
+        if (oldentity != null && !oldentity.isDeleted()) {
+            ProductBaseEntity entity = toProductBaseEntity(productBaseObject);
+            productBaseRepository.save(entity);
+        }
+    }
+
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "id") String id) {

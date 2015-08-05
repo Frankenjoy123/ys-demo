@@ -134,7 +134,7 @@ public class ProductBaseController {
 //        }
     }
 
-    @RequestMapping(value = "{product_base_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "{product_base_id}/details", method = RequestMethod.GET)
     public ResponseEntity<?> getProductBaseDetails(
             @PathVariable(value = "product_base_id") String productBaseId) {
         ResourceInputStream resourceInputStream = productDomain.getProductBaseDetailsById(productBaseId);
