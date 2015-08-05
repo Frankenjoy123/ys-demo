@@ -115,7 +115,47 @@
     </style>
 
     <div class="panel panel-bordered-primary">
-        <div class="animated slideInRight">
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">审核拒绝</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-horizontal" id="">
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">理由</label>
+
+                                        <div class="col-md-10">
+                                        <textarea placeholder="拒绝理由" id="comment" rows="5"
+                                                  class="form-control" ng-model="product.rejectComment"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group text-center">
+                                        <button type="button" class="btn btn-primary"
+                                                ng-click="product.reject()">确定
+                                        </button>
+                                        <button type="button" class="btn btn-info"
+                                                ng-click="product.hideModal()">取消
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="animated zoomIn">
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-6">
@@ -139,20 +179,7 @@
                                         <label class="col-md-3 text-bold text-right">产品码类型</label>
 
                                         <div class="col-md-9">
-
-                                          <span ng-repeat="type in product.productKeyTypeCodes">
-
-                            <span ng-show="type.code == 'qr_public'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="二维码"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"
-                                                                           style="color:#5cb85c"></i></span>
-                            <span ng-show="type.code == 'qr_secure'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="隐藏二维码"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"></i></span>
-                            <span ng-show="type.code == 'rfid'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="RFID标签"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-rss fa-lg"></i></span>
-                            </span>
+                                            <span key-type="product.productKeyTypeCodes"></span>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -273,8 +300,14 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row text-center">
-                                        <button class="btn btn-primary btn-labeled fa fa-reply" type="button"
-                                                ng-click="return()">返回
+                                        <button class="btn btn-info btn-labeled fa fa-reply" type="button"
+                                                ng-click="product.returnTo()">返回
+                                        </button>
+                                        <button class="btn btn-danger btn-labeled fa fa-rotate-left" type="button"
+                                                ng-click="product.showModal()">拒绝
+                                        </button>
+                                        <button class="btn btn-primary btn-labeled fa fa-rotate-right" type="button"
+                                                ng-click="product.approve()">通过
                                         </button>
                                     </div>
                                 </div>

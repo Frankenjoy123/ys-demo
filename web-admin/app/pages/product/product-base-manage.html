@@ -13,7 +13,19 @@
 <!--===================================================-->
 <div id="page-content">
     <div class="panel panel-bordered-primary">
-        <div class="animated slideInRight">
+        <div class="animated zoomIn">
+
+            <div class="col-md-offset-9" style="padding: 20px 20px 0px 0px">
+                <select class="form-control"
+                        ng-model="currOrg"
+                        ng-change="orgChange(currOrg)">
+                    <option ng-repeat="org in orgList"
+                            value="{{org.id}}">
+                        {{org.name}}
+                    </option>
+                </select>
+            </div>
+
             <div class="panel-body">
                 <table class="table toggle-arrow-tiny" id="proBaseTable">
                     <thead>
@@ -56,7 +68,8 @@
                         <td>{{utils.formatDateString(pb.created_datetime)}}</td>
                         <td>
                             <button type="button" class="btn btn-info fa fa-edit"
-                                    ng-click="productBase.editProductBaseDetails(pb.id)">
+                                    ng-show="pb.status_code_show == 'wait'"
+                                    ng-click="productBase.showProductBaseDetails(pb.id, pb.status_code_show, pb.product_base_versions[pb.product_base_versions.length - 1].version)">
                                 审核
                             </button>
                         </td>

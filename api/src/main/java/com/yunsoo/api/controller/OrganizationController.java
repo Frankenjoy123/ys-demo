@@ -53,7 +53,7 @@ public class OrganizationController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
-    public List<Organization> getByFilter(@RequestParam(value = "name") String name,
+    public List<Organization> getByFilter(@RequestParam(value = "name", required = false) String name,
                                           @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                           Pageable pageable,
                                           HttpServletResponse response) {

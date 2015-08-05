@@ -4,8 +4,8 @@
 
   app.factory('orgService', ['$http', function ($http) {
     return {
-      getOrgList: function (dataTable, fnSuccess, fnError) {
-        $http.get('/api/organization/list?' + dataTable.toString()).success(fnSuccess);
+      getOrgList: function (fnSuccess, fnError) {
+        $http.get('/api/organization').success(fnSuccess);
 
         return this;
       },
@@ -121,7 +121,7 @@
         }
         ,
         flush: function (callback) {
-          orgService.getOrgList(this, function (data, status, headers) {
+          orgService.getOrgList(function (data, status, headers) {
             callback({data: data, headers: headers});
           });
         }

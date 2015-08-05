@@ -16,6 +16,11 @@
         $http.get(url).success(fnSuccess).error(fnError);
 
         return this;
+      },
+      updateProStatus: function (proId, status, comments, fnSuccess, fnError) {
+        $http.patch("/api/productbase/" + proId + '/approval?approval_status=' + status + '&review_comments=' + comments).success(fnSuccess).error(fnError);
+
+        return this;
       }
     };
   }]);
@@ -23,6 +28,7 @@
   app.controller("productViewCtrl", ["$scope", "productViewService", "$location", "productBaseDataService", function ($scope, productViewService, $location, productBaseDataService) {
 
     var product = $scope.product = {
+      rejectComment: '',
       productInfos: [],//{name: '', value: ''}
       productAddress: [],//{address: '', tel: ''}
       productCommerce: [],//{title: '', url: ''}
@@ -38,12 +44,35 @@
       img800400: '',
       img400400: '',
       formatStatusCode: function () {
-        if ($location.search()['verId'] != '') {
-          return $location.search()['proStatus'];
-        }
-        else {
-          return productBaseDataService.getProStatusShow()[$location.search()['proStatus']];
-        }
+        return productBaseDataService.getProStatusShow()[$location.search()['proStatus']];
+      },
+      showModal: function () {
+        $('#myModal').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
+          $(this).removeData("bs.modal");
+        });
+      },
+      hideModal: function () {
+        $('#myModal').modal('hide');
+      },
+      returnTo: function () {
+        $location.path('/product-base-manage');
+      },
+      approve: function () {
+        productViewService.updateProStatus($location.search()['proId'], 'approved', '审核通过', function () {
+          $location.path('/product-base-manage');
+          $scope.utils.alert('info', '审核产品成功');
+        }, function () {
+          $scope.utils.alert('danger', '审核产品失败');
+        });
+      },
+      reject: function () {
+        productViewService.updateProStatus($location.search()['proId'], 'rejected', product.rejectComment, function () {
+
+          $location.path('/product-base-manage');
+          $scope.utils.alert('info', '拒绝产品成功');
+        }, function () {
+          $scope.utils.alert('danger', '拒绝产品成功', '#myModal .modal-dialog', false);
+        });
       }
     };
 
@@ -56,7 +85,7 @@
         product.productKeyTypeCodes = data.product_key_types.slice(0);
 
         product.expireDate = data.shelf_life;
-        product.expireDateUnit = data.shelf_life_interval;
+        product.expireDateUnit = productBaseDataService.getProShelfLife()[data.shelf_life_interval];
         product.comments = data.comments;
 
         if (data.details) {
@@ -110,9 +139,6 @@
 
       }, function () {
       });
-    }
-    $scope.return = function () {
-      $location.path('/product-base-manage');
     }
   }]);
 })();
