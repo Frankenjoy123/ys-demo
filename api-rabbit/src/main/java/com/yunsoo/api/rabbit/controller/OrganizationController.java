@@ -40,6 +40,9 @@ public class OrganizationController {
             @PathVariable(value = "id") String id,
             @PathVariable(value = "imageKey") String imageKey) {
         String imageName = "image-128x128"; //hard coded, this method should not be used anymore
+        if ("logo-mobile".equals(imageKey)) {
+            imageName = "image-200x200";
+        }
         return getLogo(id, imageName);
     }
 

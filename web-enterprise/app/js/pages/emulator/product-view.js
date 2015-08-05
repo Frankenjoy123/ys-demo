@@ -56,7 +56,7 @@
         product.productKeyTypeCodes = data.product_key_types.slice(0);
 
         product.expireDate = data.shelf_life;
-        product.expireDateUnit = data.shelf_life_interval;
+        product.expireDateUnit = productBaseDataService.getProShelfLife()[data.shelf_life_interval];
         product.comments = data.comments;
 
         if (data.details) {

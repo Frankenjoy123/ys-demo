@@ -31,7 +31,14 @@
       curProStatus: '',
       proDetails: null,
       isCreateMode: true,
-      proStatusShow: {wait: '待审核', active: '已激活', reject: '被拒绝', none: '未知'}
+      proStatusShow: {wait: '待审核', active: '已激活', reject: '被拒绝', none: '未知'},
+      SHELFLIFE_INTERVALS: {
+        'year': '年',
+        'month': '月',
+        'week': '周',
+        'day': '天',
+        'hour': '小时'
+      }
     };
 
     function getDetails() {
@@ -78,6 +85,10 @@
       return savedData.proStatusShow;
     }
 
+    function getProShelfLife() {
+      return savedData.SHELFLIFE_INTERVALS;
+    }
+
     return {
       getDetails: getDetails,
       setDetails: setDetails,
@@ -89,18 +100,14 @@
       setMode: setMode,
       getCurProStatus: getCurProStatus,
       setCurProStatus: setCurProStatus,
-      getProStatusShow: getProStatusShow
+      getProStatusShow: getProStatusShow,
+      getProShelfLife: getProShelfLife
     }
   });
 
-  app.controller('ProductBaseManageCtrl', ['$scope', 'productBaseManageService', 'productBaseDataService', '$location', "$timeout", function ($scope, productBaseManageService, productBaseDataService, $location, $timeout) {
-    $scope.SHELFLIFE_INTERVALS = {
-      'year': '年',
-      'month': '月',
-      'week': '周',
-      'day': '天',
-      'hour': '小时'
-    };
+  app.controller('ProductBaseManageCtrl', ['$scope', 'productBaseManageService', 'productBaseDataService', '$location', "$timeout", '$route', function ($scope, productBaseManageService, productBaseDataService, $location, $timeout, $route) {
+    
+    var SHELFLIFE_INTERVALS = $scope.SHELFLIFE_INTERVALS = productBaseDataService.getProShelfLife();
 
     var proVersionStatus = {draft: '待提交', submitted: '待审核', rejected: '被拒绝', activated: '已激活', archived: '已归档'};
 
@@ -257,6 +264,7 @@
             $('#deleteConfirmDialog').modal('hide');
 
             $location.path('/product-base-manage');
+            $route.reload();
             $scope.utils.alert('info', '删除产品成功');
 
           }, function () {
