@@ -151,11 +151,11 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-md-3" for="barCode">BARCODE</label>
+                                        <label class="col-md-3" for="barCode">产品码</label>
 
                                         <div class="col-md-9 has-feedback"
                                              ng-class="{ 'has-error' : productForm.barCode.$invalid && !productForm.barCode.$pristine, 'has-success' : productForm.barCode.$valid && !productForm.barCode.$pristine}">
-                                            <input type="text" placeholder="BARCODE" id="barCode"
+                                            <input type="text" placeholder="产品码" id="barCode"
                                                    class="form-control" ng-model="product.barCode" name="barCode"
                                                    novalidate
                                                    required>
@@ -165,7 +165,7 @@
                                               ng-show="productForm.barCode.$dirty && productForm.barCode.$invalid"></span>
 
                                             <p ng-show="productForm.barCode.$invalid && !productForm.barCode.$pristine"
-                                               class="help-block">请输入产品BARCODE</p>
+                                               class="help-block">请输入产品码</p>
                                         </div>
                                     </div>
                                     <div class="form-group">
