@@ -271,7 +271,6 @@ public class ProductBaseController {
 
     //approve/reject product base versions
     @RequestMapping(value = "{product_base_id}/approval", method = RequestMethod.PATCH)
-    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:modify')")
     public void approveProductBaseVersions(@PathVariable(value = "product_base_id") String productBaseId,
                                            @RequestParam(value = "version", required = false) Integer version,
                                            @RequestParam(value = "approval_status") String approvalStatus,
@@ -300,7 +299,7 @@ public class ProductBaseController {
             ProductBaseObject productBaseObject = productBaseDomain.copyFromProductBaseVersionsObject(productBaseVersionsObject);
             productBaseDomain.updateProductBase(productBaseObject);
         }
-        if (LookupCodes.ProductBaseVersionsApprovalStatus.REJECTED.equals(productBaseVersionsObject.getStatusCode())) {
+        if (LookupCodes.ProductBaseVersionsApprovalStatus.REJECTED.equals(approvalStatus)) {
             productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.REJECTED);
             if (reviewComments != null) {
                 productBaseVersionsObject.setReviewComments(reviewComments);
