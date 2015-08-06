@@ -259,10 +259,19 @@
                                                 </ng-form>
                                             </div>
                                             <div>
-                                                <a ng-click="product.addProductInfo()" style="cursor: pointer"><i
-                                                        class="fa fa-plus-square-o"></i></a>
-                                                <a ng-click="product.subProductInfo()" style="cursor: pointer"><i
-                                                        class="fa fa-minus-square-o"></i></a>
+                                                <span class="btn-hover-info add-tooltip"
+                                                      data-placement="left" data-toggle="tooltip"
+                                                      data-original-title="增加详细信息"
+                                                      onMouseOver="angular.element(this).tooltip('show')"> <a
+                                                        ng-click="product.addProductInfo()" style="cursor: pointer"><i
+                                                        class="fa fa-plus-square-o"></i></a></span>
+
+                                                  <span class="btn-hover-info add-tooltip"
+                                                        data-placement="right" data-toggle="tooltip"
+                                                        data-original-title="减少详细信息"
+                                                        onMouseOver="angular.element(this).tooltip('show')"> <a
+                                                          ng-click="product.subProductInfo()" style="cursor: pointer"><i
+                                                          class="fa fa-minus-square-o"></i></a></span>
                                             </div>
                                         </div>
                                     </div>
@@ -299,10 +308,20 @@
                                             </ng-form>
                                         </div>
                                         <div class="col-md-offset-3">
-                                            <a ng-click="product.addProductCommerce()" style="cursor: pointer"><i
-                                                    class="fa fa-plus-square-o"></i></a>
-                                            <a ng-click="product.subProductCommerce()" style="cursor: pointer"><i
-                                                    class="fa fa-minus-square-o"></i></a>
+
+                                                <span class="btn-hover-info add-tooltip"
+                                                      data-placement="left" data-toggle="tooltip"
+                                                      data-original-title="增加在线商城"
+                                                      onMouseOver="angular.element(this).tooltip('show')"><a
+                                                        ng-click="product.addProductCommerce()" style="cursor: pointer"><i
+                                                        class="fa fa-plus-square-o"></i></a></span>
+
+                                              <span class="btn-hover-info add-tooltip"
+                                                    data-placement="right" data-toggle="tooltip"
+                                                    data-original-title="减少在线商城"
+                                                    onMouseOver="angular.element(this).tooltip('show')"><a
+                                                      ng-click="product.subProductCommerce()" style="cursor: pointer"><i
+                                                      class="fa fa-minus-square-o"></i></a></span>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -322,10 +341,20 @@
                                             </ng-form>
                                         </div>
                                         <div class="col-md-offset-3">
-                                            <a ng-click="product.addProAddress()" style="cursor: pointer"><i
-                                                    class="fa fa-plus-square-o"></i></a>
-                                            <a ng-click="product.subProAddress()" style="cursor: pointer"><i
-                                                    class="fa fa-minus-square-o"></i></a>
+
+                                             <span class="btn-hover-info add-tooltip"
+                                                   data-placement="left" data-toggle="tooltip"
+                                                   data-original-title="增加实体店"
+                                                   onMouseOver="angular.element(this).tooltip('show')"> <a
+                                                     ng-click="product.addProAddress()" style="cursor: pointer"><i
+                                                     class="fa fa-plus-square-o"></i></a></span>
+
+                                               <span class="btn-hover-info add-tooltip"
+                                                     data-placement="right" data-toggle="tooltip"
+                                                     data-original-title="减少实体店"
+                                                     onMouseOver="angular.element(this).tooltip('show')"> <a
+                                                       ng-click="product.subProAddress()" style="cursor: pointer"><i
+                                                       class="fa fa-minus-square-o"></i></a></span>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -344,18 +373,28 @@
                                                 <div class="col-md-8"><span
                                                         class="label label-info">800*400</span>
 
-                                                    <a ng-click="product.comfirmSelect800400()"
-                                                       ng-show="product.showButton800400" style="color:#5cb85c; cursor: pointer"
-                                                            ><i
-                                                            class="fa fa-save fa-lg"></i></a>
+                                                     <span class="btn-hover-info add-tooltip"
+                                                           data-placement="top" data-toggle="tooltip"
+                                                           data-original-title="确定保存成800*400像素"
+                                                           onMouseOver="angular.element(this).tooltip('show')"> <a
+                                                             ng-click="product.comfirmSelect800400()"
+                                                             ng-show="product.showButton800400"
+                                                             style="color:#5cb85c; cursor: pointer"><i
+                                                             class="fa fa-save fa-lg"></i></a></span>
                                                 </div>
 
                                                 <div class="col-md-4"><span
                                                         class="label label-info">400*400</span>
 
-                                                    <a ng-click="product.comfirmSelect400()" style="color:#5cb85c; cursor: pointer"
-                                                       ng-show="product.showButton400"><i
-                                                            class="fa fa-save fa-lg"></i></a></div>
+                                                      <span class="btn-hover-info add-tooltip"
+                                                            data-placement="top" data-toggle="tooltip"
+                                                            data-original-title="确定保存成400*400像素"
+                                                            onMouseOver="angular.element(this).tooltip('show')">  <a
+                                                              ng-click="product.comfirmSelect400()"
+                                                              style="color:#5cb85c; cursor: pointer"
+                                                              ng-show="product.showButton400"><i
+                                                              class="fa fa-save fa-lg"></i></a></span>
+                                                </div>
                                             </div>
 
                                             <div class="row" ng-show="product.proPicPreview" style="margin-top: 5px">
