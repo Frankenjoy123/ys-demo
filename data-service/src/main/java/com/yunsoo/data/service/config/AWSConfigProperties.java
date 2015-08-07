@@ -1,6 +1,6 @@
 package com.yunsoo.data.service.config;
 
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -67,7 +67,7 @@ public class AWSConfigProperties {
 
     public static class S3 {
 
-        @NotBlank(message = "bucketName not configured")
+        @NotEmpty(message = "bucketName not configured")
         private String bucketName;
 
         public String getBucketName() {

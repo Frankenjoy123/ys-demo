@@ -5,10 +5,10 @@ multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
 spring:
-    profiles.active: default
+    profiles.active: dev
 ---
 spring:
-    profiles: default
+    profiles: dev
 management:
     port: 6089
     address: 127.0.0.1
@@ -28,7 +28,7 @@ yunsoo:
     api:
         client:
             dataapi:
-                baseurl: http://dataapi:3080/
+                baseurl: http://localhost:3080/
 ---
 spring:
     profiles: test

@@ -29,7 +29,7 @@ yunsoo:
     aws:
         region: cn-north-1
         s3:
-            bucket_name:
+            bucket_name: dev-yunsoo
 
 jdbc:
     master:
