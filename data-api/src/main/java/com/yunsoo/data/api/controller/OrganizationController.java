@@ -1,16 +1,10 @@
 package com.yunsoo.data.api.controller;
 
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.util.IOUtils;
-import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.OrganizationObject;
-import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
-import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.entity.OrganizationEntity;
 import com.yunsoo.data.service.repository.OrganizationRepository;
-import com.yunsoo.data.service.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,11 +27,6 @@ public class OrganizationController {
     @Autowired
     private OrganizationRepository organizationRepository;
 
-    @Autowired
-    private OrganizationService organizationService;
-
-    @Autowired
-    private AmazonSetting amazonSetting;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public OrganizationObject getById(@PathVariable(value = "id") String id) {
@@ -76,33 +64,6 @@ public class OrganizationController {
         entity.setId(null);
         OrganizationEntity newEntity = organizationRepository.save(entity);
         return toOrganizationObject(newEntity);
-    }
-
-
-    @RequestMapping(value = "/{id}/{imageKey}", method = RequestMethod.GET)
-    public FileObject getThumbnail(
-            @PathVariable(value = "id") String id,
-            @PathVariable(value = "imageKey") String imageKey) {
-
-        S3Object s3Object;
-        try {
-            s3Object = organizationService.getOrgThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_org_image_url() + "/" + id + "/" + imageKey);
-            if (s3Object == null) {
-                //throw new NotFoundException(40402, "找不到图片 id = " + id +"  client = " + client);
-                s3Object = organizationService.getOrgThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_org_default_image_url());
-            }
-
-            FileObject fileObject = new FileObject();
-//            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
-            fileObject.setContentType(s3Object.getObjectMetadata().getContentType());
-            fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
-            fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
-            return fileObject;
-
-        } catch (IOException ex) {
-            //to-do: log
-            throw new InternalServerErrorException("图片获取出错！");
-        }
     }
 
     private OrganizationObject toOrganizationObject(OrganizationEntity entity) {

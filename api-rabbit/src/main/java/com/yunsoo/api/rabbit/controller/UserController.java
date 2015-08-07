@@ -43,7 +43,7 @@ public class UserController {
         if (id == null || id.isEmpty()) {
             throw new BadRequestException("UserId不应为空！");
         }
-        User user = dataAPIClient.get("user/id/{id}", User.class, id);
+        User user = dataAPIClient.get("user/{id}", User.class, id);
         if (user == null) throw new NotFoundException(40401, "User not found id=" + id);
         return user;
     }
@@ -74,19 +74,13 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/{id}/{key}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{name}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#user, 'user:read')")
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") String id,
-            @PathVariable(value = "key") String key) {
-        if (id == null || id.isEmpty()) {
-            throw new BadRequestException("Id不应为空！");
-        }
-        if (key == null || key.isEmpty()) {
-            throw new BadRequestException("Key不应为空！");
-        }
+            @PathVariable(value = "name") String name) {
 
-        FileObject fileObject = dataAPIClient.get("user/{id}/{key}", FileObject.class, id, key);
+        FileObject fileObject = dataAPIClient.get("user/{id}/gravatar/{key}", FileObject.class, id, name);
         if (fileObject.getLength() > 0) {
             return ResponseEntity.ok()
                     .contentLength(fileObject.getLength())

@@ -8,7 +8,7 @@ import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.data.service.config.AmazonSetting;
+import com.yunsoo.data.service.config.AWSConfigProperties;
 import com.yunsoo.data.service.service.MessageService;
 import com.yunsoo.data.service.service.contract.Message;
 import org.joda.time.DateTime;
@@ -36,7 +36,7 @@ public class MessageController {
     private final MessageService messageService;
 
     @Autowired
-    private AmazonSetting amazonSetting;
+    private AWSConfigProperties awsConfigProperties;
 
     @Autowired
     MessageController(MessageService messageService) {
@@ -123,7 +123,7 @@ public class MessageController {
         if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("ImageKey不能为空！");
         S3Object s3Object;
         try {
-            s3Object = messageService.getMessageImage(amazonSetting.getS3_basebucket(), amazonSetting.getS3_message_image_url() + "/" + id + "/" + imagekey);
+            s3Object = messageService.getMessageImage(awsConfigProperties.getS3().getBucketName(), "message/" + id + "/" + imagekey);
             if (s3Object == null) throw new NotFoundException("找不到图片!");
 
             FileObject fileObject = new FileObject();
