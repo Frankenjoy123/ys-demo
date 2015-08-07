@@ -41,7 +41,7 @@ yunsoo:
     api:
         client:
             dataapi:
-                baseurl: http://dataapi:8080/
+                baseurl: http://dataapi:3080/
             processor:
                 baseurl: http://processor:4080/
         product_key_base_url: http://t.m.yunsu.co/
@@ -65,7 +65,7 @@ yunsoo:
     api:
         client:
             dataapi:
-                baseurl: http://localhost:8080/
+                baseurl: http://localhost:3080/
             processor:
                 baseurl: http://localhost:4080/
         product_key_base_url: http://t.m.yunsu.co:9080/
