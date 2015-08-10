@@ -1,0 +1,82 @@
+server:
+    port: 3080
+management:
+    port: 3081
+    address: 127.0.0.1
+
+multipart.maxFileSize: 20MB
+multipart.maxRequestSize: 20MB
+
+hibernate:
+    dialect: org.hibernate.dialect.MySQL5Dialect
+    show_sql: false
+    package_to_scan: com.yunsoo.data.service.dbmodel
+
+spring:
+    profiles.active: dev
+---
+spring:
+    profiles: dev
+
+logging:
+    file: c:/logs/data-api.log
+    level:
+        org.springframework: 'INFO'
+        org.hibernate: 'INFO'
+yunsoo:
+    debug: true
+    environment: dev
+    aws:
+        region: cn-north-1
+        s3:
+            bucket_name: dev-yunsoo
+
+jdbc:
+    master:
+        driver_class: com.mysql.jdbc.Driver
+        url: jdbc:mysql://dev-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+        username: root
+        password: admin201512
+        pool_initialsize: 1
+        pool_maxidle: 100
+    read1:
+        driver_class: com.mysql.jdbc.Driver
+        url: jdbc:mysql://dev-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+        username: root
+        password: admin201512
+        pool_initialsize: 1
+        pool_maxidle: 100
+
+---
+spring:
+    profiles: test
+
+logging:
+    path: /var/log
+    file: data-api.log
+    level:
+        org.springframework: 'INFO'
+        org.hibernate: 'INFO'
+yunsoo:
+    debug: false
+    environment: test
+    aws:
+        region: cn-north-1
+        s3:
+            bucket_name: test-yunsoo
+
+jdbc:
+    master:
+        driver_class: com.mysql.jdbc.Driver
+        url: jdbc:mysql://test-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+        username: root
+        password: admin201512
+        pool_initialsize: 1
+        pool_maxidle: 100
+    read1:
+        driver_class: com.mysql.jdbc.Driver
+        url: jdbc:mysql://test-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+        username: root
+        password: admin201512
+        pool_initialsize: 1
+        pool_maxidle: 100

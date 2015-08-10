@@ -73,7 +73,7 @@ public class ScanController {
             TAccount tAccount = tokenAuthenticationService.parseUser(accessToken);
             currentUser = userDomain.ensureUser(tAccount.getId(), null, null);
         } else {
-            currentUser = dataAPIClient.get("user/id/{id}", User.class, "2k64dcya672axp5jcgv"); //hardcode for web-scan
+            currentUser = dataAPIClient.get("user/{id}", User.class, "2k64dcya672axp5jcgv"); //hardcode for web-scan
         }
 
         if (currentUser == null) {

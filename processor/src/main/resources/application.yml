@@ -12,10 +12,10 @@ cloud:
             static: cn-north-1
 
 spring:
-    profiles.active: default
+    profiles.active: dev
 ---
 spring:
-    profiles: default
+    profiles: dev
 
 
 yunsoo:
@@ -24,7 +24,7 @@ yunsoo:
     processor:
         client:
             dataapi:
-                baseurl: http://dataapi:8080/
+                baseurl: http://localhost:3080/
 
 ---
 spring:
@@ -36,4 +36,4 @@ yunsoo:
     processor:
         client:
             dataapi:
-                baseurl: http://localhost:8080/
+                baseurl: http://localhost:3080/

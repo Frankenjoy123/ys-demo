@@ -52,7 +52,7 @@ public class UserDomain {
         //Step 2: try ensure user by existing user Id!
         if (!StringUtils.isEmpty(userId)) {
             try {
-                user = dataAPIClient.get("user/id/{id}", User.class, userId);
+                user = dataAPIClient.get("user/{id}", User.class, userId);
                 if (user != null) {
                     //update cellular and device code if has new value.
                     if (user.getCellular() != cellular || user.getDeviceCode() != deviceCode) {

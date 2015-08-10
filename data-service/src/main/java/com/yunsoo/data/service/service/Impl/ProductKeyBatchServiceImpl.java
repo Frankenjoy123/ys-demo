@@ -4,9 +4,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.common.util.KeyGenerator;
-import com.yunsoo.data.service.config.AmazonSetting;
+import com.yunsoo.data.service.config.AWSConfigProperties;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
 import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
@@ -40,8 +39,6 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     private static final byte[] DELIMITER1 = new byte[]{0x2C}; //,
     private static final byte[] DELIMITER2 = new byte[]{0x3B}; //;
 
-    private static ObjectMapper mapper = new ObjectMapper();
-
     @Autowired
     private ProductKeyBatchRepository productKeyBatchRepository;
 
@@ -49,7 +46,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     private S3ItemDao s3ItemDao;
 
     @Autowired
-    private AmazonSetting amazonSetting;
+    private AWSConfigProperties awsConfigProperties;
 
 
     @Override
@@ -57,24 +54,6 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(id);
         return toProductKeyBatch(entity);
     }
-//
-//    @Override
-//    public List<ProductKeyBatch> getByFilterPaged(String orgId, int $page, int $size) {
-//        Page<ProductKeyBatchEntity> entityPage =
-//                productKeyBatchRepository.findByOrgIdOrderByCreatedDateTimeDesc(orgId, new PageRequest($page, $size));
-//        return StreamSupport.stream(entityPage.spliterator(), false)
-//                .map(this::toProductKeyBatch)
-//                .collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public List<ProductKeyBatch> getByFilterPaged(String orgId, String productBaseId, int page, int size) {
-//        Page<ProductKeyBatchEntity> entityPage =
-//                productKeyBatchRepository.findByOrgIdAndProductBaseIdOrderByCreatedDateTimeDesc(orgId, productBaseId, new PageRequest(page, size));
-//        return StreamSupport.stream(entityPage.spliterator(), false)
-//                .map(this::toProductKeyBatch)
-//                .collect(Collectors.toList());
-//    }
 
     @Override
     public ProductKeys getProductKeysByBatchId(String batchId) {
@@ -115,6 +94,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
         //save product keys to S3
         String uri = saveProductKeyListToS3(
+                newEntity.getOrgId(),
                 newEntity.getId(),
                 quantity,
                 keyTypeCodes.size(),
@@ -164,7 +144,8 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         return keyList;
     }
 
-    private String saveProductKeyListToS3(String batchId,
+    private String saveProductKeyListToS3(String orgId,
+                                          String batchId,
                                           int quantity,
                                           int productKeyTypeCodesCount,
                                           List<List<String>> keyList) {
@@ -182,8 +163,8 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
             byteArrayOutputStream.write(DELIMITER2, 0, 1);
         }
 
-        String bucketName = amazonSetting.getS3_basebucket();
-        String key = String.join("/", amazonSetting.getS3_product_key_batch_path(), batchId);
+        String bucketName = awsConfigProperties.getS3().getBucketName();
+        String key = String.format("organization/%s/product_key_batch/%s", orgId, batchId);
         InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(totalKeyLength);
