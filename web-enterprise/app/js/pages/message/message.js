@@ -17,7 +17,7 @@
     };
   }]);
 
-  app.controller('MessageCtrl', ['$scope', '$timeout', 'messageService', function ($scope, $timeout, messageService) {
+  app.controller('MessageCtrl', ['$scope', '$timeout', 'messageService', '$location', function ($scope, $timeout, messageService, $location) {
 
     $scope.spinnerShow = false;
 
@@ -148,9 +148,11 @@
     };
 
     $scope.showModal = function () {
-      $('#myModal').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
-        $(this).removeData("bs.modal");
-      });
+      //$('#myModal').modal({backdrop: 'static', keyboard: false}).on("hidden.bs.modal", function () {
+      //  $(this).removeData("bs.modal");
+      //});
+
+      $location.path('/message-edit');
     };
 
     $scope.hideModal = function () {

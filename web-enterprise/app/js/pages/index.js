@@ -32,6 +32,10 @@
           templateUrl: 'pages/message/message.html',
           controller: 'MessageCtrl'
         })
+        .when('/message-edit', {
+          templateUrl: 'pages/message/message-edit.html',
+          controller: 'messageEditCtrl'
+        })
         .when('/package-manage', {
           templateUrl: 'pages/package/packageManage.html',
           controller: 'PackageCtrl'
