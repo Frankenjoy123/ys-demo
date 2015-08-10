@@ -13,6 +13,7 @@ import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 /**
@@ -30,7 +31,7 @@ public class JPAConfig {
     DataSource dataSource;
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+    public EntityManagerFactory entityManagerFactory() {
 
 //        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 //        vendorAdapter.setDatabase(Database.MYSQL);
@@ -40,13 +41,14 @@ public class JPAConfig {
         factory.setPackagesToScan("com.yunsoo.data.service.entity");
         factory.setDataSource(dataSource);
         factory.setPersistenceUnitName("master");
-        return factory;
+        factory.afterPropertiesSet();
+        return factory.getObject();
     }
 
     @Bean
     public PlatformTransactionManager transactionManager() {
         JpaTransactionManager txManager = new JpaTransactionManager();
-        txManager.setEntityManagerFactory(entityManagerFactory().getObject());
+        txManager.setEntityManagerFactory(entityManagerFactory());
         return txManager;
     }
 
