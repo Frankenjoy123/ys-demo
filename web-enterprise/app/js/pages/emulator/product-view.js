@@ -20,7 +20,7 @@
     };
   }]);
 
-  app.controller("productViewCtrl", ["$scope", "productViewService", "$location", "productBaseDataService", function ($scope, productViewService, $location, productBaseDataService) {
+  app.controller("productViewCtrl", ["$scope", "productViewService", "$location", "productBaseDataService", "$timeout", function ($scope, productViewService, $location, productBaseDataService, $timeout) {
 
     var product = $scope.product = {
       productInfos: [],//{name: '', value: ''}
@@ -106,7 +106,9 @@
 
         dataPreview.isReadOnlyMode = true;
 
-        $('#iphone-6-portrait')[0].contentWindow.refresh(dataPreview);
+        $timeout(function () {
+          $('#iphone-6-portrait')[0].contentWindow.refresh(dataPreview);
+        }, 300);
 
       }, function () {
       });
