@@ -122,7 +122,7 @@
                 boundx = bounds[0];
                 boundy = bounds[1];
 
-                jcropObj.animateTo([ 0, 0, 211, 211 ]);
+                jcropObj.animateTo([0, 0, 211, 211]);
               });
         }, 50);
       },
@@ -170,7 +170,7 @@
                 boundx = bounds[0];
                 boundy = bounds[1];
 
-                jcropObj.animateTo([ 0, 0, 422, 211 ]);
+                jcropObj.animateTo([0, 0, 422, 211]);
               });
         }, 50);
       },
@@ -294,7 +294,9 @@
 
         dataPreview.isReadOnlyMode = true;
 
-        $('#iphone-6-portrait')[0].contentWindow.refresh(dataPreview);
+        $timeout(function () {
+          $('#iphone-6-portrait')[0].contentWindow.refresh(dataPreview);
+        }, 300);
 
       }, function () {
         $scope.utils.alert('info', '获取产品信息失败');
