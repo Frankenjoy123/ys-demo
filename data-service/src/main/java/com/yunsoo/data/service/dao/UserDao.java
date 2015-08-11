@@ -1,7 +1,6 @@
 package com.yunsoo.data.service.dao;
 
 import com.yunsoo.data.service.dbmodel.UserModel;
-import com.yunsoo.data.service.service.contract.UserFollowing;
 
 import java.util.List;
 
@@ -9,20 +8,20 @@ import java.util.List;
  * @author Zhe Zhang
  */
 public interface UserDao {
-    public UserModel getById(String id);
+    UserModel getById(String id);
 
-    public UserModel getByCellular(String cellular);
+    UserModel getByCellular(String cellular);
 
-    public String save(UserModel userModel);
+    String save(UserModel userModel);
 
-    public DaoStatus patchUpdate(UserModel userModelForPatch);
+    DaoStatus patchUpdate(UserModel userModelForPatch);
 
-    public DaoStatus update(UserModel userModel);
+    DaoStatus update(UserModel userModel);
 
-    public DaoStatus delete(String id, String deleteStatus);
+    DaoStatus delete(String id, String deleteStatus);
 
-    public List<UserModel> getAllUsers();
+    List<UserModel> getAllUsers();
 
-    public List<UserModel> getUsersByFilter(String id, String deviceCode, String cellular, String status);
+    List<UserModel> getUsersByFilter(String id, String deviceCode, String cellular, String status);
 
 }

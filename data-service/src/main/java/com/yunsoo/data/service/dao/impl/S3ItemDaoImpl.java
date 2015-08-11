@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
 
 /**
  * Created by  : Zhe
@@ -22,7 +21,7 @@ import java.util.List;
  */
 @Repository("s3ItemDao")
 public class S3ItemDaoImpl implements S3ItemDao {
-    private static final String SUFFIX = "/";
+
     private static ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
@@ -58,11 +57,6 @@ public class S3ItemDaoImpl implements S3ItemDao {
     @Override
     public void deleteItem(String bucketName, String key) {
         amazonS3Client.deleteObject(bucketName, key);
-    }
-
-    @Override
-    public List<Bucket> getBuckets() {
-        return amazonS3Client.listBuckets();
     }
 
     @Override

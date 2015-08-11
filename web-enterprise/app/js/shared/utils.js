@@ -10,12 +10,15 @@
       },
       logout: function () {
         console.log('[logout]');
-        $.removeCookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN, {path: '/'});
+        //$.removeCookie(YUNSOO_CONFIG.NAME_ACCESS_TOKEN, {path: '/'});
+        localStorage.removeItem('auth');
         window.location.href = 'login.html';
       },
       lock: function () {
         console.log('[lock screen]');
-        this.notification('warning', '锁屏界面开发中...');
+        //this.notification('warning', '锁屏界面开发中...');
+        localStorage.removeItem('auth');
+        window.location.href = 'lock.html';
       },
       /**
        * shortcut of $.niftyNoty, show floating notification on the top right
@@ -70,26 +73,6 @@
     window._debug && (window._debug.utils = u); //debug only
     return u;
   }]);
-
-  utils.directive('dtPageable', function () {
-    return {
-      restrict: 'A',
-      scope: {
-        pageable: '=dtPageable'
-      },
-      templateUrl: 'partials/widgets/pageable.html'
-    };
-  });
-
-  utils.directive('echartDate', function () {
-    return {
-      restrict: 'A',
-      scope: {
-        dataTable: '=echartDate'
-      },
-      templateUrl: 'partials/widgets/echart-date.html'
-    };
-  });
 
   //classes
   var DataTable = (function () {
@@ -540,122 +523,191 @@
   var DateHelp = (function () {
 
     function DateHelp(getData) {
-      this.date = new Date();
-      this.days = [];
-      this.years = [];
+      this.datetime = DateTime.now();
 
-      this.selYear = getCurrYear.apply(this);
-      this.selMon = getCurrMonth.apply(this);
-      this.selDay = getCurrDay.apply(this);
+      this.timeLine = [];
 
-      for (var i = this.date.getFullYear() - 2; i <= this.date.getFullYear() + 2; i++) {
-        this.years.push('' + i);
-      }
+      this.selUnits = this.units[3];
 
-      initDays.apply(this);
+      this.selYear = this.datetime.year.toString();
+      this.selMon = this.selYear + this.datetime.month.toString();
+      this.selWeek = getCurrWeek(this.datetime);
+      this.selDay = this.selYear + this.selMon + this.datetime.day.toString();
+
+      this.selTimes = this.datetime.addDays(-1).toString('yyyyMMdd');
+
+      initTimeline.apply(this);
 
       this.getData = getData;
     }
 
-    function getMonthMaxDay() {
-      var year = this.selYear - 0;
-      var month = this.selMon - 1;
+    DateHelp.prototype.units = ['年', '月', '周', '日'];
 
-      var numDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-      // Update the number of days in Feb of leap year
-      if (year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0)) {
-        numDays[1] = 29;
+    function getCurrWeek(dateTime) {
+      var weekFirstDay = dateTime.addDays(1 - dateTime.dayOfWeek).toString('yyyyMMdd');
+      var weekLastDay = dateTime.addDays(7 - dateTime.dayOfWeek).toString('yyyyMMdd');
+
+      return weekFirstDay + '-' + weekLastDay;
+    };
+
+    DateHelp.prototype.setTimes = function (data) {
+      this.selTimes = data;
+
+      if (this.selUnits == this.units[0]) {
+        this.selYear = this.selTimes;
+      }
+      else if (this.selUnits == this.units[1]) {
+        this.selMon = this.selTimes;
+      }
+      else if (this.selUnits == this.units[2]) {
+        this.selWeek = this.selTimes;
+      }
+      else if (this.selUnits == this.units[3]) {
+        this.selDay = this.selTimes;
       }
 
-      return numDays[month];
+      this.getData();
     };
 
-    function getCurrYear() {
-      var year = this.date.getYear();
+    DateHelp.prototype.goLeft = function () {
+      var i;
 
-      return year + 1900 + '';
-    };
-
-    function getCurrDay() {
-      var d = this.date.getDate();
-      if (d < 10) {
-        d = "0" + d;
+      if (this.selUnits == this.units[0]) {
+        var currMinYear = this.timeLine[0];
+        this.timeLine = [];
+        for (i = currMinYear - 7; i <= currMinYear - 1; i++) {
+          this.timeLine.push(i + '');
+        }
       }
-      return d;
-    };
-
-    function getCurrMonth() {
-      var mon = this.date.getMonth() + 1;
-      if (mon < 10) {
-        mon = "0" + mon;
+      else if (this.selUnits == this.units[1]) {
+        var currMinMon = this.timeLine[0];
+        var year = currMinMon.substring(0, 4);
+        this.timeLine = [];
+        for (i = 1; i <= 12; i++) {
+          if (i < 10)
+            this.timeLine.push(year - 1 + '0' + i);
+          else
+            this.timeLine.push(year - 1 + '' + i);
+        }
       }
-      return mon;
-    };
+      else if (this.selUnits == this.units[2]) {
+        var currMinWeek = this.timeLine[0];
+        var year = currMinWeek.substring(0, 4) - 0;
+        var month = currMinWeek.substring(4, 6) - 1;
+        var day = currMinWeek.substring(6, 8) - 0;
 
-    DateHelp.prototype.getDateStr = function (year, mon, day) {
-      var xYear = getCurrYear.apply(this);
-      if (year != undefined && year != '') {
-        xYear = year;
+        this.timeLine = [];
+        for (i = 5; i >= 1; i--) {
+          this.timeLine.push(getCurrWeek(new DateTime(new Date(year, month, day - i * 7))));
+        }
       }
+      else if (this.selUnits == this.units[3]) {
+        var week = this.timeLine[0];
 
-      var xMonth = getCurrMonth.apply(this);
-      if (mon != undefined && mon != '') {
-        xMonth = mon;
+        var firstWeekYear = week.substring(0, 4) - 0;
+        var firstWeekMon = week.substring(4, 6) - 1;
+        var firstWeekDay = week.substring(6, 8) - 0;
+
+        var firstWeekDateTime = new DateTime(new Date(firstWeekYear, firstWeekMon, firstWeekDay));
+
+        this.timeLine = [];
+        for (i = 6; i >= 0; i--) {
+          this.timeLine.push(firstWeekDateTime.addDays(-i - 1).toString("yyyyMMdd"));
+        }
       }
+    };
 
-      var xDay = getCurrDay.apply(this);
-      if (day != undefined && day != '') {
-        xDay = day;
+    DateHelp.prototype.goRight = function () {
+      var i;
+
+      if (this.selUnits == this.units[0]) {
+        var currMaxYear = parseInt(this.timeLine[6]);
+        this.timeLine = [];
+        for (i = currMaxYear + 1; i <= currMaxYear + 7; i++) {
+          this.timeLine.push(i + '');
+        }
       }
+      else if (this.selUnits == this.units[1]) {
+        var currMinMon = this.timeLine[0];
+        var year = currMinMon.substring(0, 4);
+        this.timeLine = [];
+        for (i = 1; i <= 12; i++) {
+          if (i < 10)
+            this.timeLine.push(parseInt(year) + 1 + '0' + i);
+          else
+            this.timeLine.push(parseInt(year) + 1 + '' + i);
+        }
+      }
+      else if (this.selUnits == this.units[2]) {
+        var currMinWeek = this.timeLine[4];
+        var year = currMinWeek.substring(0, 4) - 0;
+        var month = currMinWeek.substring(4, 6) - 1;
+        var day = currMinWeek.substring(6, 8) - 0;
 
-      return xYear + xMonth + xDay;
+        this.timeLine = [];
+        for (i = 1; i <= 5; i++) {
+          this.timeLine.push(getCurrWeek(new DateTime(new Date(year, month, day + i * 7))));
+        }
+      }
+      else if (this.selUnits == this.units[3]) {
+        var week = this.timeLine[6];
+
+        var lastWeekYear = week.substring(0, 4) - 0;
+        var lastWeekMon = week.substring(4, 6) - 1;
+        var lastWeekDay = week.substring(6, 8) - 0;
+
+        var lastWeekDateTime = new DateTime(new Date(lastWeekYear, lastWeekMon, lastWeekDay));
+
+        this.timeLine = [];
+        for (i = 1; i <= 7; i++) {
+          this.timeLine.push(lastWeekDateTime.addDays(i).toString("yyyyMMdd"));
+        }
+      }
     };
 
-    DateHelp.prototype.mons = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-    DateHelp.prototype.monsShow = {
-      '01': '一月',
-      '02': '二月',
-      '03': '三月',
-      '04': '四月',
-      '05': '五月',
-      '06': '六月',
-      '07': '七月',
-      '08': '八月',
-      '09': '九月',
-      '10': '十月',
-      '11': '十一月',
-      '12': '十二月'
+    DateHelp.prototype.setUnits = function (data) {
+      this.selUnits = data;
+
+      initTimeline.apply(this);
     };
 
-    DateHelp.prototype.setYear = function (data) {
-      this.selYear = data;
+    function initTimeline() {
+      this.timeLine = [];
+      var i;
 
-      initDays.apply(this);
-      this.getData(this.selYear, this.selMon, this.selDay);
-    };
+      if (this.selUnits == this.units[0]) {
+        for (i = this.datetime.year - 3; i <= this.datetime.year + 3; i++) {
+          this.timeLine.push('' + i);
+        }
+      }
+      else if (this.selUnits == this.units[1]) {
+        for (i = 1; i <= 12; i++) {
+          if (i < 10)
+            this.timeLine.push(this.selYear + '0' + i);
+          else
+            this.timeLine.push(this.selYear + i);
+        }
+      }
+      else if (this.selUnits == this.units[2]) {
+        var year = this.selYear - 0;
+        var month = this.selMon.substring(4, 6) - 1;
 
-    DateHelp.prototype.setMon = function (data) {
-      this.selMon = data;
+        for (i = 0; i < 5; i++) {
+          this.timeLine.push(getCurrWeek(new DateTime(new Date(year, month, i * 7))));
+        }
+      }
+      else if (this.selUnits == this.units[3]) {
+        var week = this.selWeek;
 
-      initDays.apply(this);
-      this.getData(this.selYear, this.selMon, this.selDay);
-    };
+        var firstWeekYear = week.substring(0, 4) - 0;
+        var firstWeekMon = week.substring(4, 6) - 1;
+        var firstWeekDay = week.substring(6, 8) - 0;
 
-    DateHelp.prototype.setDay = function (data) {
-      this.selDay = data;
+        var firstWeekDateTime = new DateTime(new Date(firstWeekYear, firstWeekMon, firstWeekDay));
 
-      initDays.apply(this);
-      this.getData(this.selYear, this.selMon, this.selDay);
-    };
-
-    function initDays() {
-      this.days = [];
-
-      for (var i = 1; i <= getMonthMaxDay.apply(this); i++) {
-        if (i < 10)
-          this.days.push('0' + i);
-        else
-          this.days.push('' + i);
+        for (i = 0; i <= 6; i++) {
+          this.timeLine.push(firstWeekDateTime.addDays(i).toString("yyyyMMdd"));
+        }
       }
     };
 

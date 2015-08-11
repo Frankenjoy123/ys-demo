@@ -23,7 +23,7 @@ public class ProductBaseRequest {
     private ProductCategory category;
 
     @JsonProperty("category_id")
-    private Integer categoryId;
+    private String categoryId;
 
     @JsonProperty("org_id")
     private String orgId;
@@ -87,11 +87,11 @@ public class ProductBaseRequest {
         this.category = category;
     }
 
-    public Integer getCategoryId() {
+    public String getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Integer categoryId) {
+    public void setCategoryId(String categoryId) {
         this.categoryId = categoryId;
     }
 

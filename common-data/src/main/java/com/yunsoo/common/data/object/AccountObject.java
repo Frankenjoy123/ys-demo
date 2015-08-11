@@ -7,12 +7,14 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/4/17
  * Descriptions:
  */
-public class AccountObject {
+public class AccountObject implements Serializable {
     @JsonProperty("id")
     private String id;
 
@@ -57,7 +59,7 @@ public class AccountObject {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
-    private DateTime modifiedDatetime;
+    private DateTime modifiedDateTime;
 
     public String getId() {
         return id;
@@ -163,11 +165,11 @@ public class AccountObject {
         this.modifiedAccountId = modifiedAccountId;
     }
 
-    public DateTime getModifiedDatetime() {
-        return modifiedDatetime;
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
     }
 
-    public void setModifiedDatetime(DateTime modifiedDatetime) {
-        this.modifiedDatetime = modifiedDatetime;
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 }

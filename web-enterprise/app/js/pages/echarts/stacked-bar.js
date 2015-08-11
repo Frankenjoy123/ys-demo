@@ -16,7 +16,7 @@
 
     var dataTable = $scope.dataTable = new $scope.utils.DateHelp(getData);
 
-    stackedBarService.getScanCount(dataTable.getDateStr(), getScanCount, function () {
+    stackedBarService.getScanCount(dataTable.selTimes, getScanCount, function () {
       //$scope.utils.alert('info', date.getDateStr() + '该日数据不存在');
       var data = {};
       data.data = [];
@@ -27,8 +27,8 @@
       getScanCount(data);
     });
 
-    function getData(year, mon, day) {
-      stackedBarService.getScanCount(dataTable.getDateStr(year, mon, day), getScanCount, function () {
+    function getData() {
+      stackedBarService.getScanCount(dataTable.selTimes, getScanCount, function () {
         //$scope.utils.alert('info', date.getDateStr(year, mon, day) + '该日数据不存在');
         var data1 = {};
         data1.data = [];

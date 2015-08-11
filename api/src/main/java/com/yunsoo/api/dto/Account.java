@@ -52,7 +52,7 @@ public class Account {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
-    private DateTime modifiedDatetime;
+    private DateTime modifiedDateTime;
 
 
     public String getId() {
@@ -143,12 +143,12 @@ public class Account {
         this.modifiedAccountId = modifiedAccountId;
     }
 
-    public DateTime getModifiedDatetime() {
-        return modifiedDatetime;
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
     }
 
-    public void setModifiedDatetime(DateTime modifiedDatetime) {
-        this.modifiedDatetime = modifiedDatetime;
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 
 
@@ -167,6 +167,6 @@ public class Account {
         this.setCreatedAccountId(accountObject.getCreatedAccountId());
         this.setCreatedDateTime(accountObject.getCreatedDateTime());
         this.setModifiedAccountId(accountObject.getModifiedAccountId());
-        this.setModifiedDatetime(accountObject.getModifiedDatetime());
+        this.setModifiedDateTime(accountObject.getModifiedDateTime());
     }
 }

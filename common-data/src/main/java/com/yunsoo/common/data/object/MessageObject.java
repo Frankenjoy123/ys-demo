@@ -7,12 +7,14 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 /**
  * Created by  : Zhe
  * Created on  : 2015/3/9
  * Descriptions:
  */
-public class MessageObject {
+public class MessageObject  implements Serializable {
     @JsonProperty("id")
     private Long Id;
     @JsonProperty("title")

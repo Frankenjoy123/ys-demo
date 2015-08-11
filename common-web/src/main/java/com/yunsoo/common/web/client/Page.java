@@ -3,6 +3,7 @@ package com.yunsoo.common.web.client;
 import com.yunsoo.common.web.util.PageableUtils;
 import org.springframework.util.Assert;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
  * Created on  : 2015/5/25
  * Descriptions:
  */
-public class Page<T> implements Iterable<T> {
+public class Page<T> implements Iterable<T>, Serializable {
 
     private List<T> content;
     private Integer page;

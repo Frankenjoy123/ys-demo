@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.util.HashUtils;
@@ -10,12 +11,15 @@ import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
 import java.util.List;
 
 /**
@@ -24,13 +28,16 @@ import java.util.List;
  * Descriptions:
  */
 @Component
+@ElastiCacheConfig
 public class AccountDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountDomain.class);
 
-
+    @Cacheable
     public AccountObject getById(String accountId) {
+        LOGGER.debug("missed cache: AccountDomain.getById");
         if (StringUtils.isEmpty(accountId)) {
             return null;
         }
@@ -81,6 +88,7 @@ public class AccountDomain {
         return dataAPIClient.post("account", accountObject, AccountObject.class);
     }
 
+    @CacheEvict(key="T(com.yunsoo.api.cache.CustomKeyGenerator).getKey(#root.targetClass.getName(), 'getById', #accountId)")
     public void updatePassword(String accountId, String rawNewPassword) {
         if (!StringUtils.isEmpty(accountId)) {
             String hashSalt = RandomUtils.generateString(8);

@@ -38,22 +38,8 @@
                             </div>
                             <div class="form-group col-md-6 animated slideInRight"
                                  ng-show="creationPanel.selectedProductBase">
-                                <label>产品码类型：
-                                <span ng-repeat="type in creationPanel.selectedProductBase.product_key_types">
-
-                            <span ng-show="type.code == 'qr_public'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="二维码"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"
-                                                                           style="color:#5cb85c"></i></span>
-                            <span ng-show="type.code == 'qr_secure'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="隐藏二维码"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"></i></span>
-                            <span ng-show="type.code == 'rfid'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="RFID标签"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-rss fa-lg"></i></span>
-                        </span>
-
-                                </label>
+                                <label>产品码类型：</label>
+                                <span key-type="creationPanel.selectedProductBase.product_key_types"></span>
                             </div>
                         </div>
                         <div class="row">
@@ -126,20 +112,7 @@
                         <td>{{$index + 1}}</td>
                         <td>{{b.quantity}}</td>
                         <td>
-                            <!--{{formatProductKeyTypes(b.product_key_types)}}-->
-                            <span ng-repeat="type in b.product_key_types">
-
-                            <span ng-show="type.code == 'qr_public'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="二维码"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"
-                                                                           style="color:#5cb85c"></i></span>
-                            <span ng-show="type.code == 'qr_secure'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="隐藏二维码"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"></i></span>
-                            <span ng-show="type.code == 'rfid'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="RFID标签"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-rss fa-lg"></i></span>
-                        </span>
+                            <span key-type="b.product_key_types"></span>
                         </td>
                         <td>{{productBaseMap[b.product_base_id].name}}</td>
                         <td>
@@ -164,64 +137,53 @@
     </div>
 
     <div ng-show="listPanel" class="panel panel-bordered-primary">
-        <div class="col-sm-12 pull-left" style="padding: 20px 20px;" ng-show="productKeyButtonShow">
-            <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" ng-click="showModal()">产品码申请
-            </button>
-        </div>
+        <div class="animated slideInRight">
+            <div class="col-sm-12 pull-left" style="padding: 20px 20px;" ng-show="productKeyButtonShow">
+                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus" ng-click="showModal()">产品码申请
+                </button>
+            </div>
 
-        <div class="panel-body">
-            <table class="table table-hover">
-                <thead id="sort-bar">
-                <tr>
-                    <th>#</th>
-                    <th data-sort-field="quantity">数量</th>
-                    <th>产品码类型</th>
-                    <th>产品</th>
-                    <th data-sort-field="statusCode">状态</th>
-                    <th data-sort-field="createdDateTime">申请时间</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="b in listPanel.table.pageable.data track by b.id" data-id="{{b.id}}">
-                    <td>{{$index + 1}}</td>
-                    <td>{{b.quantity}}</td>
-                    <td>
-                        <!--{{formatProductKeyTypes(b.product_key_types)}}-->
-                        <span ng-repeat="type in b.product_key_types">
-
-                            <span ng-show="type.code == 'qr_public'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="二维码"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"
-                                                                           style="color:#5cb85c"></i></span>
-                            <span ng-show="type.code == 'qr_secure'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="隐藏二维码"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-qrcode fa-lg"></i></span>
-                            <span ng-show="type.code == 'rfid'" class="btn-hover-info add-tooltip"
-                                  data-placement="bottom" data-toggle="tooltip" data-original-title="RFID标签"
-                                  onMouseOver="$(this).tooltip('show')"><i class="fa fa-rss fa-lg"></i></span>
-                        </span>
-                    </td>
-                    <td>{{productBaseMap[b.product_base_id].name}}</td>
-                    <td>
-                        <div class="label label-table"
-                             data-status.code="{{b.status.code}}"
-                             ng-class="{'label-success': b.status.code==='available',
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead id="sort-bar">
+                    <tr>
+                        <th>#</th>
+                        <th data-sort-field="quantity">数量</th>
+                        <th>产品码类型</th>
+                        <th>产品</th>
+                        <th data-sort-field="statusCode">状态</th>
+                        <th data-sort-field="createdDateTime">申请时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="b in listPanel.table.pageable.data track by b.id" data-id="{{b.id}}">
+                        <td>{{$index + 1}}</td>
+                        <td>{{b.quantity}}</td>
+                        <td>
+                            <span key-type="b.product_key_types"></span>
+                        </td>
+                        <td>{{productBaseMap[b.product_base_id].name}}</td>
+                        <td>
+                            <div class="label label-table"
+                                 data-status.code="{{b.status.code}}"
+                                 ng-class="{'label-success': b.status.code==='available',
                                             'label-info': b.status.code==='creating',
                                             'label-warning': b.status.code!=='available' && b.status.code!=='creating'}">
-                            {{b.status.name}}
-                        </div>
-                    </td>
-                    <td>{{utils.formatDateString(b.created_datetime)}}</td>
-                    <td>
-                        <button class="btn btn-primary btn-labeled fa fa-cloud-download"
-                                ng-click="listPanel.download(b.id)">下载
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <div class="pull-right pagination" dt-pageable="listPanel.table.pageable">
+                                {{b.status.name}}
+                            </div>
+                        </td>
+                        <td>{{utils.formatDateString(b.created_datetime)}}</td>
+                        <td>
+                            <button class="btn btn-primary btn-labeled fa fa-cloud-download"
+                                    ng-click="listPanel.download(b.id)">下载
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="pull-right pagination" dt-pageable="listPanel.table.pageable">
+                </div>
             </div>
         </div>
     </div>

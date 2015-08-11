@@ -1,16 +1,10 @@
 package com.yunsoo.data.api.controller;
 
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.util.IOUtils;
-import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.OrganizationObject;
-import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
-import com.yunsoo.data.service.config.AmazonSetting;
 import com.yunsoo.data.service.entity.OrganizationEntity;
 import com.yunsoo.data.service.repository.OrganizationRepository;
-import com.yunsoo.data.service.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Created by  : Chen Jerry
@@ -35,39 +27,34 @@ public class OrganizationController {
     @Autowired
     private OrganizationRepository organizationRepository;
 
-    @Autowired
-    private OrganizationService organizationService;
-
-    @Autowired
-    private AmazonSetting amazonSetting;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public OrganizationObject getOrganizationById(@PathVariable(value = "id") String id) {
+    public OrganizationObject getById(@PathVariable(value = "id") String id) {
         OrganizationEntity organizationEntity = organizationRepository.findOne(id);
         if (organizationEntity == null) {
             throw new NotFoundException("organization not found by [id: " + id + "]");
         }
-        return fromOrganizationEntity(organizationEntity);
+        return toOrganizationObject(organizationEntity);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public OrganizationObject getOrganizationByName(@RequestParam(value = "name") String name) {
-        OrganizationEntity organizationEntity = organizationRepository.findByName(name);
-        if (organizationEntity == null) {
-            throw new NotFoundException("organization not found by [name: " + name + "]");
+    public List<OrganizationObject> getByFilter(
+            @RequestParam(value = "name", required = false) String name,
+            Pageable pageable,
+            HttpServletResponse response) {
+        if (name != null) {
+            return organizationRepository.findByName(name).stream()
+                    .map(this::toOrganizationObject)
+                    .collect(Collectors.toList());
+        } else {
+            Page<OrganizationEntity> entityPage = organizationRepository.findAll(pageable);
+            if (pageable != null) {
+                response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+            }
+            return entityPage.getContent().stream()
+                    .map(this::toOrganizationObject)
+                    .collect(Collectors.toList());
         }
-        return fromOrganizationEntity(organizationEntity);
-    }
-
-    @RequestMapping(value = "/list", method = RequestMethod.GET) //todo: merge it to above GET method
-    public List<OrganizationObject> getByFilterPaged(Pageable pageable, HttpServletResponse response) {
-        Page<OrganizationEntity> entityPage = organizationRepository.findAll(pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
-        }
-        return StreamSupport.stream(entityPage.spliterator(), false)
-                .map(this::fromOrganizationEntity)
-                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -76,37 +63,10 @@ public class OrganizationController {
         OrganizationEntity entity = toOrganizationEntity(organizationObject);
         entity.setId(null);
         OrganizationEntity newEntity = organizationRepository.save(entity);
-        return fromOrganizationEntity(newEntity);
+        return toOrganizationObject(newEntity);
     }
 
-
-    @RequestMapping(value = "/{id}/{imageKey}", method = RequestMethod.GET)
-    public FileObject getThumbnail(
-            @PathVariable(value = "id") String id,
-            @PathVariable(value = "imageKey") String imageKey) {
-
-        S3Object s3Object;
-        try {
-            s3Object = organizationService.getOrgThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_org_image_url() + "/" + id + "/" + imageKey);
-            if (s3Object == null) {
-                //throw new NotFoundException(40402, "找不到图片 id = " + id +"  client = " + client);
-                s3Object = organizationService.getOrgThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_org_default_image_url());
-            }
-
-            FileObject fileObject = new FileObject();
-//            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
-            fileObject.setContentType(s3Object.getObjectMetadata().getContentType());
-            fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
-            fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
-            return fileObject;
-
-        } catch (IOException ex) {
-            //to-do: log
-            throw new InternalServerErrorException("图片获取出错！");
-        }
-    }
-
-    private OrganizationObject fromOrganizationEntity(OrganizationEntity entity) {
+    private OrganizationObject toOrganizationObject(OrganizationEntity entity) {
         OrganizationObject object = new OrganizationObject();
         object.setId(entity.getId());
         object.setName(entity.getName());

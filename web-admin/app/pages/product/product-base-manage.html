@@ -13,35 +13,46 @@
 <!--===================================================-->
 <div id="page-content">
     <div class="panel panel-bordered-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">产品列表</h3>
-        </div>
-        <div class="animated slideInRight">
-            <div class="col-sm-12 pull-left" style="padding: 20px 20px;">
-                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus"><a href="#/emulator" style="color: white">创建产品</a></button>
+        <div class="animated zoomIn">
+
+            <div class="col-md-offset-9" style="padding: 20px 20px 0px 0px">
+                <select class="form-control"
+                        ng-model="currOrg"
+                        ng-change="orgChange(currOrg)">
+                    <option ng-repeat="org in orgList"
+                            value="{{org.id}}">
+                        {{org.name}}
+                    </option>
+                </select>
             </div>
+
             <div class="panel-body">
-                <table class="table table-hover">
+                <table class="table toggle-arrow-tiny" id="proBaseTable">
                     <thead>
                     <tr>
                         <th>名称</th>
-                        <th class="col-xs-1">品类</th>
-                        <th class="col-xs-1">条码</th>
-                        <th class="col-xs-1">保质期</th>
-                        <th class="col-xs-2">产品码类型</th>
-                        <th class="col-xs-1">可用额度</th>
-                        <th>备注</th>
-                        <th class="col-xs-2">创建时间</th>
+                        <th>状态</th>
+                        <th>品类</th>
+                        <th>条码</th>
+                        <th class="col-md-1">保质期</th>
+                        <th class="col-md-1">产品码类型</th>
+                        <th class="col-md-2">可用额度</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="pb in dataTable.data track by pb.id">
+                    <tr ng-repeat="pb in dataTable.pageable.data track by pb.id" id="pb.id">
                         <td>{{pb.name}}</td>
+                        <td><span
+                                class="label {{pb.status_code_show == 'reject' ? 'label-danger' : (pb.status_code_show == 'active' ? 'label-success' : 'label-primary')}}">{{formatProStatusShow(pb.status_code_show)}}</span>
+                        </td>
                         <td>{{pb.category ? pb.category.name : '未知'}}</td>
                         <td>{{pb.barcode}}</td>
                         <td>{{pb.shelf_life + " " + SHELFLIFE_INTERVALS[pb.shelf_life_interval]}}</td>
-
-                        <td>{{formatProductKeyTypes(pb.product_key_types)}}</td>
+                        <td>
+                            <div key-type="pb.product_key_types"></div>
+                        </td>
                         <td>
                             <div class="progress-group"><span
                                     class="progress-number"><span
@@ -54,8 +65,14 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{formatComments(pb.comments)}}</td>
                         <td>{{utils.formatDateString(pb.created_datetime)}}</td>
+                        <td>
+                            <button type="button" class="btn btn-info fa fa-edit"
+                                    ng-show="pb.status_code_show == 'wait'"
+                                    ng-click="productBase.showProductBaseDetails(pb.id, pb.status_code_show, pb.product_base_versions[pb.product_base_versions.length - 1].version)">
+                                审核
+                            </button>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

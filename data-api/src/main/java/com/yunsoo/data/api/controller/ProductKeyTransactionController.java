@@ -2,16 +2,19 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.ProductKeyTransactionObject;
 import com.yunsoo.common.util.IdGenerator;
-import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.ProductKeyTransactionDetailEntity;
 import com.yunsoo.data.service.repository.ProductKeyTransactionDetailRepository;
+import com.yunsoo.data.service.service.ProductKeyTransactionService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,13 +34,17 @@ public class ProductKeyTransactionController {
     @Autowired
     private ProductKeyTransactionDetailRepository productKeyTransactionDetailRepository;
 
+    @Autowired
+    private ProductKeyTransactionService productKeyTransactionService;
+
+
     @RequestMapping(value = "{transactionId}", method = RequestMethod.GET)
     public ProductKeyTransactionObject getByTransactionId(@PathVariable(value = "transactionId") String transactionId) {
         List<ProductKeyTransactionDetailEntity> detailEntities = productKeyTransactionDetailRepository.findByTransactionId(transactionId);
         if (detailEntities.size() == 0) {
             throw new NotFoundException("ProductKeyTransaction not found by [transactionId: " + transactionId + "]");
         }
-        return toOrgProductKeyTransactionObjectList(detailEntities).get(0);
+        return toProductKeyTransactionObjectList(detailEntities).get(0);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -45,13 +52,16 @@ public class ProductKeyTransactionController {
                                                          @RequestParam(value = "product_key_batch_id", required = false) String productKeyBatchId,
                                                          @RequestParam(value = "order_id", required = false) String orderId,
                                                          @RequestParam(value = "status_code", required = false) String statusCode,
-                                                         @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
-                                                         @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        PageRequest pageRequest = (pageIndex == null || pageSize == null) ? null : new PageRequest(pageIndex, pageSize);
+                                                         Pageable pageable,
+                                                         HttpServletResponse response) {
 
-        List<ProductKeyTransactionDetailEntity> detailEntities = productKeyTransactionDetailRepository.query(orgId, productKeyBatchId, orderId, statusCode, pageRequest);
+        Page<ProductKeyTransactionDetailEntity> entityPage = productKeyTransactionDetailRepository.query(orgId, productKeyBatchId, orderId, statusCode, pageable);
 
-        return toOrgProductKeyTransactionObjectList(detailEntities);
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+
+        return toProductKeyTransactionObjectList(entityPage.getContent());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -64,30 +74,37 @@ public class ProductKeyTransactionController {
             object.setCreatedDateTime(DateTime.now());
         }
 
-        List<ProductKeyTransactionDetailEntity> detailEntities = toOrgProductKeyTransactionDetailEntityList(object);
+        List<ProductKeyTransactionDetailEntity> detailEntities = toProductKeyTransactionDetailEntityList(object);
         for (ProductKeyTransactionDetailEntity entity : detailEntities) {
             entity.setId(null); //make sure it's insert
         }
         List<ProductKeyTransactionDetailEntity> newEntities = productKeyTransactionDetailRepository.save(detailEntities);
 
-        return toOrgProductKeyTransactionObjectList(newEntities).get(0);
+        return toProductKeyTransactionObjectList(newEntities).get(0);
     }
 
-    @RequestMapping(value = "{transactionId}/statuscode", method = RequestMethod.PUT)
-    public void updateStatusCode(@PathVariable(value = "transactionId") String transactionId, @RequestBody String statusCode) {
-        List<ProductKeyTransactionDetailEntity> detailEntities = productKeyTransactionDetailRepository.findByTransactionId(transactionId);
-        if (detailEntities.size() == 0) {
+    @RequestMapping(value = "{transactionId}/commit", method = RequestMethod.POST)
+    public ProductKeyTransactionObject commit(@PathVariable(value = "transactionId") String transactionId) {
+        List<ProductKeyTransactionDetailEntity> transactionDetailEntities = productKeyTransactionDetailRepository.findByTransactionId(transactionId);
+        if (transactionDetailEntities.size() == 0) {
             throw new NotFoundException("ProductKeyTransaction not found by [transactionId: " + transactionId + "]");
         }
-        if (statusCode == null || statusCode.length() == 0) {
-            throw new BadRequestException("status_code can not be null or empty");
+        List<ProductKeyTransactionDetailEntity> committedEntities = productKeyTransactionService.commit(transactionDetailEntities);
+        return toProductKeyTransactionObjectList(committedEntities).get(0);
+    }
+
+    @RequestMapping(value = "{transactionId}/rollback", method = RequestMethod.POST)
+    public ProductKeyTransactionObject rollback(@PathVariable(value = "transactionId") String transactionId) {
+        List<ProductKeyTransactionDetailEntity> transactionDetailEntities = productKeyTransactionDetailRepository.findByTransactionId(transactionId);
+        if (transactionDetailEntities.size() == 0) {
+            throw new NotFoundException("ProductKeyTransaction not found by [transactionId: " + transactionId + "]");
         }
-        detailEntities.forEach(e -> e.setStatusCode(statusCode));
-        productKeyTransactionDetailRepository.save(detailEntities);
+        List<ProductKeyTransactionDetailEntity> rollbackEntities = productKeyTransactionService.rollback(transactionDetailEntities);
+        return toProductKeyTransactionObjectList(rollbackEntities).get(0);
     }
 
 
-    private List<ProductKeyTransactionObject> toOrgProductKeyTransactionObjectList(List<ProductKeyTransactionDetailEntity> detailEntities) {
+    private List<ProductKeyTransactionObject> toProductKeyTransactionObjectList(List<ProductKeyTransactionDetailEntity> detailEntities) {
         if (detailEntities == null) {
             return null;
         }
@@ -125,7 +142,7 @@ public class ProductKeyTransactionController {
         return objects;
     }
 
-    private List<ProductKeyTransactionDetailEntity> toOrgProductKeyTransactionDetailEntityList(ProductKeyTransactionObject object) {
+    private List<ProductKeyTransactionDetailEntity> toProductKeyTransactionDetailEntityList(ProductKeyTransactionObject object) {
         if (object == null) {
             return null;
         }

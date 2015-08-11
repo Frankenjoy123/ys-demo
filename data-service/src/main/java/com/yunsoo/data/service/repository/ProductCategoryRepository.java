@@ -10,10 +10,10 @@ import java.util.List;
  * Created on  : 2015/7/1
  * Descriptions:
  */
-public interface ProductCategoryRepository extends FindOneAndSaveRepository<ProductCategoryEntity, Integer> {
+public interface ProductCategoryRepository extends FindOneAndSaveRepository<ProductCategoryEntity, String> {
 
 
     List<ProductCategoryEntity> findAll();
 
-    List<ProductCategoryEntity> findByParentId(Integer parentId);
+    List<ProductCategoryEntity> findByParentId(String parentId);
 }

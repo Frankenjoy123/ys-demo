@@ -1,11 +1,13 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -13,25 +15,66 @@ import java.util.List;
  * Created on:   2015/3/13
  * Descriptions:
  */
-public class ProductBaseObject {
+public class ProductBaseObject implements Serializable {
 
+    @JsonProperty("id")
     private String id;
-    private Integer categoryId;
+
+    @JsonProperty("version")
+    private Integer version;
+
+    @JsonProperty("status_code")
+    private String statusCode;
+
+    @JsonProperty("org_id")
     private String orgId;
-    private String barcode;
+
+    @JsonProperty("category_id")
+    private String categoryId;
+
+    @JsonProperty("name")
     private String name;
-    private String comment;
-    private Integer shelfLife;
-    private String shelfLifeInterval;
+
+    @JsonProperty("description")
+    private String description;
+
+    @JsonProperty("barcode")
+    private String barcode;
+
+    @JsonProperty("product_key_type_codes")
     private List<String> productKeyTypeCodes;
-    private String status;
+
+    @JsonProperty("shelf_life")
+    private Integer shelfLife;
+
+    @JsonProperty("shelf_life_interval")
+    private String shelfLifeInterval;
+
+    @JsonProperty("child_product_count")
     private Integer childProductCount;
+
+    @JsonProperty("comments")
+    private String comments;
+
+    @JsonProperty("deleted")
+    private Boolean deleted;
+
+    @JsonProperty("created_account_id")
+    private String createdAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
+
+    @JsonProperty("modified_account_id")
+    private String modifiedAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
+
 
     public String getId() {
         return id;
@@ -41,12 +84,20 @@ public class ProductBaseObject {
         this.id = id;
     }
 
-    public Integer getCategoryId() {
-        return categoryId;
+    public Integer getVersion() {
+        return version;
     }
 
-    public void setCategoryId(Integer baseProductId) {
-        this.categoryId = baseProductId;
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
     public String getOrgId() {
@@ -57,12 +108,12 @@ public class ProductBaseObject {
         this.orgId = orgId;
     }
 
-    public String getBarcode() {
-        return barcode;
+    public String getCategoryId() {
+        return categoryId;
     }
 
-    public void setBarcode(String barcode) {
-        this.barcode = barcode;
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getName() {
@@ -73,12 +124,28 @@ public class ProductBaseObject {
         this.name = name;
     }
 
-    public String getComment() {
-        return comment;
+    public String getDescription() {
+        return description;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public List<String> getProductKeyTypeCodes() {
+        return productKeyTypeCodes;
+    }
+
+    public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
+        this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
     public Integer getShelfLife() {
@@ -97,14 +164,6 @@ public class ProductBaseObject {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
-    public List<String> getProductKeyTypeCodes() {
-        return productKeyTypeCodes;
-    }
-
-    public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
-        this.productKeyTypeCodes = productKeyTypeCodes;
-    }
-
     public Integer getChildProductCount() {
         return childProductCount;
     }
@@ -113,20 +172,44 @@ public class ProductBaseObject {
         this.childProductCount = childProductCount;
     }
 
-    public String getStatus() {
-        return status;
+    public String getComments() {
+        return comments;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public String getCreatedAccountId() {
+        return createdAccountId;
+    }
+
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
     }
 
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public void setCreatedDateTime(DateTime createdDate) {
-        this.createdDateTime = createdDate;
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    public String getModifiedAccountId() {
+        return modifiedAccountId;
+    }
+
+    public void setModifiedAccountId(String modifiedAccountId) {
+        this.modifiedAccountId = modifiedAccountId;
     }
 
     public DateTime getModifiedDateTime() {

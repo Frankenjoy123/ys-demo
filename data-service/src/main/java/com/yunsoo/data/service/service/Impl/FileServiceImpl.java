@@ -13,12 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
 /**
- * Created by Zhe on 2015/5/29.
+ * Created by  : Zhe
+ * Created on  : 2015/5/29
+ * Descriptions:
  */
 @Service("fileService")
 public class FileServiceImpl implements FileService {
@@ -27,30 +28,22 @@ public class FileServiceImpl implements FileService {
     private S3ItemDao s3ItemDao;
 
     @Override
-    public S3Object getFile(String bucket, String key) throws IOException {
+    public S3Object getFile(String bucketName, String key) {
         try {
-            S3Object item = s3ItemDao.getItem(bucket, key);
-            return item;
+            return s3ItemDao.getItem(bucketName, key);
         } catch (AmazonS3Exception s3ex) {
-            if (s3ex.getErrorCode() == "NoSuchKey") {
-                //log
+            if (s3ex.getStatusCode() == 404) {
+                return null;
+            } else {
+                throw s3ex;
             }
-            return null;
-        } catch (Exception ex) {
-            //to-do: log
-            return null;
         }
     }
 
     @Override
-    public URL getPresignedUrl(String bucketName, String key, DateTime expiration) {
-        return s3ItemDao.generatePresignedUrl(bucketName, key, expiration, HttpMethod.GET);
-    }
-
-    @Override
-    public int uploadFile(String bucketName, String fullKey, FileObject fileObject, Boolean override) throws Exception {
-        if (fileObject == null) throw new Exception("文件不能为空!");
-        if (!override && s3ItemDao.hasItem(bucketName, fullKey)) return 0;
+    public void putFile(String bucketName, String key, FileObject fileObject, Boolean override) {
+        if (fileObject == null) throw new RuntimeException("file must not be null");
+        if (!override && s3ItemDao.hasItem(bucketName, key)) throw new RuntimeException("file already exits");
 
         InputStream inputStream = new ByteArrayInputStream(fileObject.getData());
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -61,8 +54,13 @@ public class FileServiceImpl implements FileService {
             objectMetadata.setContentLength(fileObject.getLength()); //set content-length
         }
 
-        s3ItemDao.putItem(bucketName, fullKey, inputStream, objectMetadata, CannedAccessControlList.BucketOwnerFullControl);
-        //to-do: move the old thumb into history folder.
-        return 1;
+        s3ItemDao.putItem(bucketName, key, inputStream, objectMetadata, CannedAccessControlList.BucketOwnerFullControl);
+
     }
+
+    @Override
+    public URL getPresignedUrl(String bucketName, String key, DateTime expiration) {
+        return s3ItemDao.generatePresignedUrl(bucketName, key, expiration, HttpMethod.GET);
+    }
+
 }

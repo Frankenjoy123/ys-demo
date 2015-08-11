@@ -1,11 +1,11 @@
 package com.yunsoo.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.OrganizationObject;
 import org.joda.time.DateTime;
 
 /**
@@ -13,7 +13,6 @@ import org.joda.time.DateTime;
  * Created on  : 2015/2/27
  * Descriptions:
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Organization {
 
     @JsonProperty("id")
@@ -30,9 +29,6 @@ public class Organization {
 
     @JsonProperty("description")
     private String description;
-
-//    @JsonProperty("image_uri")
-//    private String imageUri;
 
     @JsonProperty("details")
     private String details;
@@ -108,5 +104,34 @@ public class Organization {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public Organization() {
+    }
+
+    public Organization(OrganizationObject object) {
+        if (object != null) {
+            this.setId(object.getId());
+            this.setName(object.getName());
+            this.setStatusCode(object.getStatusCode());
+            this.setDescription(object.getDescription());
+            this.setTypeCode(object.getTypeCode());
+            this.setDetails(object.getDetails());
+            this.setCreatedAccountId(object.getCreatedAccountId());
+            this.setCreatedDateTime(object.getCreatedDateTime());
+        }
+    }
+
+    public OrganizationObject toOrganizationObject() {
+        OrganizationObject object = new OrganizationObject();
+        object.setId(this.getId());
+        object.setName(this.getName());
+        object.setStatusCode(this.getStatusCode());
+        object.setDescription(this.getDescription());
+        object.setTypeCode(this.getTypeCode());
+        object.setDetails(this.getDetails());
+        object.setCreatedAccountId(this.getCreatedAccountId());
+        object.setCreatedDateTime(this.getCreatedDateTime());
+        return object;
     }
 }

@@ -65,7 +65,7 @@
       echartBar.setOption(option);
     };
 
-    echartsBarService.getQRCode(dataTable.getDateStr(), getQRCode, function () {
+    echartsBarService.getQRCode(dataTable.selTimes, getQRCode, function () {
       //$scope.utils.alert('info', date.getDateStr() + '该日数据不存在');
       var data = {};
       data.data = [];
@@ -74,8 +74,8 @@
       getQRCode(data);
     });
 
-    function getData(year, mon, day) {
-      echartsBarService.getQRCode(dataTable.getDateStr(year, mon, day), getQRCode, function () {
+    function getData() {
+      echartsBarService.getQRCode(dataTable.selTimes, getQRCode, function () {
         //$scope.utils.alert('info', date.getDateStr(year, mon, day) + '该日数据不存在');
         var data1 = {};
         data1.data = [];

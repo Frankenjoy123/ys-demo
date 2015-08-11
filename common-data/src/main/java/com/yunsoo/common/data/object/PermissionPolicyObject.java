@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  * Created on:   2015/4/14
  * Descriptions:
  */
-public class PermissionPolicyObject {
+public class PermissionPolicyObject implements Serializable {
 
     @JsonProperty("code")
     private String code;

@@ -1,23 +1,17 @@
+version = '1.0'
+
 buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
-        //maven { url "https://repo.spring.io/libs-release" }
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
     }
 }
 
-apply plugin: 'java'
 apply plugin: 'spring-boot'
 
-description = 'data-service'
-
-jar {
-    baseName = 'com.yunsoo.data-service'
-    version = '0.1.0'
-}
 
 repositories {
     mavenCentral()
@@ -25,24 +19,20 @@ repositories {
 dependencies {
     compile project(":common")
     compile project(":common-data")
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile 'org.springframework:spring-context:4.1.6.RELEASE'
-    compile 'org.springframework:spring-orm:4.1.6.RELEASE'
+    runtime('mysql:mysql-connector-java:5.1.36')
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
     compile("org.springframework.boot:spring-boot-autoconfigure")
-    //compile ('org.springframework.boot:spring-boot-starter-security')
-    compile("com.h2database:h2")
-    compile 'org.hibernate:hibernate-core:4.3.5.Final'
-    compile 'org.hibernate:hibernate-ehcache:4.3.5.Final'
-    //compile("joda-time:joda-time:2.4") It's already included in common.
+    compile('org.springframework:spring-context:4.2.0.RELEASE')
+    compile('org.springframework:spring-orm:4.2.0.RELEASE')
+    compile('org.hibernate:hibernate-core:4.3.10.Final')
+    compile('org.hibernate:hibernate-ehcache:4.3.10.Final')
     compile("org.jadira.usertype:usertype.jodatime:2.0.1")
-    compile("org.apache.commons:commons-dbcp2:2.0")
-    runtime('mysql:mysql-connector-java:5.1.6')
-    compile 'org.slf4j:slf4j-api:1.7.9'
-    compile 'com.amazonaws:aws-java-sdk-dynamodb:1.9.3'
-    //compile 'com.amazonaws:aws-java-sdk-elasticache:1.9.14'
-    compile 'com.amazonaws:aws-java-sdk-s3:1.9.3'
-    //compile fileTree(dir: 'libs', include: '*.jar')
+    compile("org.apache.commons:commons-dbcp2:2.1")
+    compile('com.amazonaws:aws-java-sdk-dynamodb:1.10.9')
+    compile('com.amazonaws:aws-java-sdk-s3:1.10.9')
+    compile("com.h2database:h2")
+    compile('org.slf4j:slf4j-api:1.7.9')
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("junit:junit")

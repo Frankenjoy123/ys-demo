@@ -127,6 +127,25 @@
                                         </div>
                                         <div class="form-group">
                                             <label class="col-md-2"><i
+                                                    class="fa fa-fw fa-puzzle-piece"></i>&nbsp;<strong>产品</strong></label>
+
+                                                <div class="col-md-10">
+                                                    <label class="form-checkbox form-icon form-primary form-text" ng-class="{ 'active' : accountPermission.productRead}"><input
+                                                            type="checkbox" ng-true-value="true"
+                                                            ng-false-value="false"
+                                                            ng-model="accountPermission.productRead"
+                                                            ng-click="account.auth.authProductRead()"
+                                                            ng-disabled="account.auth.disableAll">查看</label>
+                                                    <label class="form-checkbox form-icon form-success form-text" ng-class="{ 'active' : accountPermission.productMng}"><input
+                                                            type="checkbox" ng-true-value="true"
+                                                            ng-false-value="false"
+                                                            ng-model="accountPermission.productMng"
+                                                            ng-click="account.auth.authProductMng()"
+                                                            ng-disabled="account.auth.disableAll">管理</label>
+                                                </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-2"><i
                                                     class="fa fa-fw fa-tags"></i>&nbsp;<strong>产品码</strong></label>
 
                                             <div class="col-md-10">
@@ -197,26 +216,6 @@
                                             <label class="col-md-2"><i
                                                     class="fa fa-fw fa-cogs"></i>&nbsp;<strong>设置</strong></label>
 
-                                            <div class="col-md-offset-2 form-inline" style="margin-top: 6px">
-                                                <div class="row">
-                                                    <label class="col-md-2">产品</label>
-
-                                                    <div class="col-md-10">
-                                                        <label class="form-checkbox form-icon form-primary form-text" ng-class="{ 'active' : accountPermission.productRead}"><input
-                                                                type="checkbox" ng-true-value="true"
-                                                                ng-false-value="false"
-                                                                ng-model="accountPermission.productRead"
-                                                                ng-click="account.auth.authProductRead()"
-                                                                ng-disabled="account.auth.disableAll">查看</label>
-                                                        <label class="form-checkbox form-icon form-success form-text" ng-class="{ 'active' : accountPermission.productMng}"><input
-                                                                type="checkbox" ng-true-value="true"
-                                                                ng-false-value="false"
-                                                                ng-model="accountPermission.productMng"
-                                                                ng-click="account.auth.authProductMng()"
-                                                                ng-disabled="account.auth.disableAll">管理</label>
-                                                    </div>
-                                                </div>
-                                            </div>
                                             <div class="col-md-offset-2 form-inline" style="margin-top: 6px">
                                                 <div class="row">
                                                     <label class="col-md-2">消息</label>

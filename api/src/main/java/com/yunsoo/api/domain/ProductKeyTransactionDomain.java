@@ -56,7 +56,6 @@ public class ProductKeyTransactionDomain {
         return quantity;
     }
 
-
     public String purchase(final ProductKeyBatchObject batch) {
         int quantity = batch.getQuantity();
         String productBaseId = batch.getProductBaseId();
@@ -136,11 +135,11 @@ public class ProductKeyTransactionDomain {
     }
 
     public void commit(String transactionId) {
-
+        dataAPIClient.post("productkeytransaction/{transactionId}/commit", null, ProductKeyTransactionObject.class, transactionId);
     }
 
     public void rollback(String transactionId) {
-
+        dataAPIClient.post("productkeytransaction/{transactionId}/rollback", null, ProductKeyTransactionObject.class, transactionId);
     }
 
 }

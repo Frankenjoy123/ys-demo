@@ -7,12 +7,14 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 /**
  * Created by  : Lijian
  * Created on  : 2015/6/24
  * Descriptions:
  */
-public class GroupPermissionObject {
+public class GroupPermissionObject implements Serializable {
     @JsonProperty("id")
     private String id;
 

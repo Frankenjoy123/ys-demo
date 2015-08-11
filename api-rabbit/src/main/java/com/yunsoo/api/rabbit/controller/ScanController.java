@@ -73,12 +73,12 @@ public class ScanController {
             TAccount tAccount = tokenAuthenticationService.parseUser(accessToken);
             currentUser = userDomain.ensureUser(tAccount.getId(), null, null);
         } else {
-            currentUser = dataAPIClient.get("user/id/{id}", User.class, "2k64dcya672axp5jcgv"); //hardcode for web-scan
+            currentUser = dataAPIClient.get("user/{id}", User.class, "2k64dcya672axp5jcgv"); //hardcode for web-scan
         }
 
         if (currentUser == null) {
 //            LOGGER.error("User not found by userId ={0}, deviceCode = {1}", scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
-            throw new NotFoundException(40401, "User not found by userId = " + currentUser.getId() + " deviceCode = " + scanRequestBody.getDeviceCode());
+            throw new NotFoundException(40401, "User not found deviceCode = " + scanRequestBody.getDeviceCode());
         }
 
         ScanResult scanResult = new ScanResult();
@@ -115,7 +115,7 @@ public class ScanController {
 
         //6, get company information.
         OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, scanResult.getProduct().getOrgId());
-        scanResult.setManufacturer(Organization.fromOrganizationObject(organizationObject));
+        scanResult.setManufacturer(new Organization(organizationObject));
 
         //7，ensure user following the company, and set the followed status in result.
         UserFollowing userFollowing = new UserFollowing();
@@ -171,7 +171,7 @@ public class ScanController {
 
         //5, get company information.
         OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, scanResult.getProduct().getOrgId());
-        scanResult.setManufacturer(Organization.fromOrganizationObject(organizationObject));
+        scanResult.setManufacturer(new Organization(organizationObject));
 
         //6, set validation result by our validation strategy.
         scanResult.setValidationResult(scanRecordList.size() == 0 ? ValidationResult.Real : ValidationResult.Uncertain);
@@ -330,11 +330,11 @@ public class ScanController {
                 if (productBaseObject != null) {
                     productHashMap.put(scanRecord.getBaseProductId(), productBaseObject);
                     scanRecord.setProductName(productBaseObject.getName());
-                    scanRecord.setProductComment(productBaseObject.getComment());
+                    scanRecord.setProductComment(productBaseObject.getComments());
                 }
             } else {
                 scanRecord.setProductName(productHashMap.get(scanRecord.getBaseProductId()).getName());
-                scanRecord.setProductComment(productHashMap.get(scanRecord.getBaseProductId()).getComment());
+                scanRecord.setProductComment(productHashMap.get(scanRecord.getBaseProductId()).getComments());
             }
         }
     }

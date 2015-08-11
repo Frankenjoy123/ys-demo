@@ -16,7 +16,7 @@
 
     var dataTable = $scope.dataTable = new $scope.utils.DateHelp(getData);
 
-    pieMapService.getScanCount(dataTable.getDateStr(), getScanCount, function () {
+    pieMapService.getScanCount(dataTable.selTimes, getScanCount, function () {
       //$scope.utils.alert('info', date.getDateStr() + '该日数据不存在');
       var data = {};
       data.data = [];
@@ -25,8 +25,8 @@
       getScanCount(data);
     });
 
-    function getData (year, mon, day) {
-      pieMapService.getScanCount(dataTable.getDateStr(year, mon, day), getScanCount, function () {
+    function getData () {
+      pieMapService.getScanCount(dataTable.selTimes, getScanCount, function () {
         //$scope.utils.alert('info', date.getDateStr(year, mon, day) + '该日数据不存在');
         var data1 = {};
         data1.data = [];

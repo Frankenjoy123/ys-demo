@@ -4,10 +4,9 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.UserObject;
-import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.data.service.config.AmazonSetting;
+import com.yunsoo.data.service.config.AWSConfigProperties;
 import com.yunsoo.data.service.service.ServiceOperationStatus;
 import com.yunsoo.data.service.service.UserService;
 import com.yunsoo.data.service.service.contract.User;
@@ -22,28 +21,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/1/26.
+ * Created by:   Zhe
+ * Created on:   2015/1/26
+ * Descriptions:
  */
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
     @Autowired
-    private final UserService userService;
-    @Autowired
-    private AmazonSetting amazonSetting;
+    private UserService userService;
 
     @Autowired
-    UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private AWSConfigProperties awsConfigProperties;
 
-    @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
-    public ResponseEntity<UserObject> getUserById(@PathVariable(value = "id") String id) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public UserObject getUserById(@PathVariable(value = "id") String id) {
         User user = userService.getById(id);
         if (user == null) throw new NotFoundException("User not found for id = " + id);
-        UserObject userObject = this.FromUser(user);
-        return new ResponseEntity<UserObject>(userObject, HttpStatus.OK);
+        return this.FromUser(user);
     }
 
     @RequestMapping(value = "/cellular/{cellular}", method = RequestMethod.GET)
@@ -61,27 +57,24 @@ public class UserController {
         return this.FromUser(users.get(0));
     }
 
-    @RequestMapping(value = "/{id}/{key}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/gravatar/{name}", method = RequestMethod.GET)
     public ResponseEntity getThumbnail(
             @PathVariable(value = "id") String id,
-            @PathVariable(value = "key") String key) {
+            @PathVariable(value = "name") String name) {
 
-        if (key == null || key.isEmpty()) throw new BadRequestException("Key不能为空！");
         S3Object s3Object;
         try {
-            s3Object = userService.getUserThumbnail(amazonSetting.getS3_basebucket(), amazonSetting.getS3_userbaseurl() + "/" + id + "/" + key);
-            if (s3Object == null) throw new NotFoundException("找不到图片!");
+            s3Object = userService.getUserThumbnail(awsConfigProperties.getS3().getBucketName(),
+                    "user/" + id + "/gravatar/" + name);
+            if (s3Object == null) throw new NotFoundException("image not found");
 
             FileObject fileObject = new FileObject();
-//            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
             fileObject.setContentType(s3Object.getObjectMetadata().getContentType());
             fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
             fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
             return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
-
         } catch (IOException ex) {
-            //to-do: log
-            throw new InternalServerErrorException("图片获取出错！");
+            throw new InternalServerErrorException();
         }
     }
 
@@ -91,14 +84,10 @@ public class UserController {
         return null;
     }
 
-    //Return -1L if Fail, or the userId if Success.
     @RequestMapping(value = "", method = RequestMethod.POST)
     public String createUser(@RequestBody UserObject userObject) throws Exception {
         User user = this.ToUser(userObject);
-        String id = userService.save(user);
-        return id;
-//        HttpStatus status = (id.length() > 20) ? HttpStatus.CREATED : HttpStatus.UNPROCESSABLE_ENTITY;
-//        return new ResponseEntity<String>(id, status);
+        return userService.save(user);
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
@@ -115,9 +104,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteUser(@PathVariable(value = "id") String id) {
-        Boolean result = userService.delete(id); //deletePermanantly status is 5 in dev DB
-        return new ResponseEntity<Boolean>(result, HttpStatus.NO_CONTENT);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable(value = "id") String id) {
+        userService.delete(id); //deletePermanantly status is 5 in dev DB
     }
 
     private UserObject FromUser(User User) {

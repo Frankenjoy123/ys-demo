@@ -6,6 +6,7 @@ import com.yunsoo.api.rabbit.dto.basic.ProductBase;
 import com.yunsoo.api.rabbit.dto.basic.ProductCategory;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
+import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class ProductDomain {
         ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         product.setProductBaseId(productBaseId);
         product.setBarcode(productBaseObject.getBarcode());
-        product.setComment(productBaseObject.getComment());
+        product.setComment(productBaseObject.getComments());
         product.setName(productBaseObject.getName());
         product.setOrgId(productBaseObject.getOrgId());
 
@@ -63,7 +64,7 @@ public class ProductDomain {
         return product;
     }
 
-    public ProductCategory getProductCategoryById(Integer id) {
+    public ProductCategory getProductCategoryById(String id) {
         if (id == null) {
             return null;
         }
@@ -79,6 +80,26 @@ public class ProductDomain {
         ProductBase productBase = convertFromProductBaseObject(productBaseObject, lookupDomain.getAllProductKeyTypes(null));
 //        productBase.setThumbnailURL(yunsooYamlConfig.getDataapi_productbase_picture_basepath() + "id" + productBase.getId() + ".jpg");
         return productBase;
+    }
+
+    // get product details
+    public ResourceInputStream getProductBaseDetailsById(String productBaseId) {
+        try {
+            ProductBase productBase = getProductBaseById(productBaseId);
+            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json", productBase.getOrgId(), productBaseId, productBase.getVersion());
+        } catch (NotFoundException ex) {
+            return null;
+        }
+    }
+
+    // get product images
+    public ResourceInputStream getProductBaseImage(String productBaseId, String imageName) {
+        try {
+            ProductBase productBase = getProductBaseById(productBaseId);
+            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}", productBase.getOrgId(), productBaseId, productBase.getVersion(), imageName);
+        } catch (NotFoundException ex) {
+            return null;
+        }
     }
 
     //获取基本产品信息 - ProductBase
@@ -110,10 +131,11 @@ public class ProductDomain {
     public ProductBase convertFromProductBaseObject(ProductBaseObject productBaseObject, List<ProductKeyType> productKeyTypes) {
         ProductBase productBase = new ProductBase();
         productBase.setId(productBaseObject.getId());
+        productBase.setVersion(productBaseObject.getVersion());
         productBase.setName(productBaseObject.getName());
         productBase.setBarcode(productBaseObject.getBarcode());
-        productBase.setStatus(productBaseObject.getStatus());
-        productBase.setComment(productBaseObject.getComment());
+        productBase.setStatus(productBaseObject.getStatusCode());
+        productBase.setComment(productBaseObject.getComments());
         productBase.setOrgId(productBaseObject.getOrgId());
         productBase.setShelfLife(productBaseObject.getShelfLife());
         productBase.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());

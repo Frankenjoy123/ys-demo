@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 public class HibernateSetting {
     private String dialect;
     private String show_sql;
-    private String hbm2ddl_auto;
     private String package_to_scan;
 
     public String getDialect() {
@@ -30,14 +29,6 @@ public class HibernateSetting {
 
     public void setShow_sql(String show_sql) {
         this.show_sql = show_sql;
-    }
-
-    public String getHbm2ddl_auto() {
-        return hbm2ddl_auto;
-    }
-
-    public void setHbm2ddl_auto(String hbm2ddl_auto) {
-        this.hbm2ddl_auto = hbm2ddl_auto;
     }
 
     public String getPackage_to_scan() {

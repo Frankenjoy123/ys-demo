@@ -1,0 +1,335 @@
+<div id="page-title">
+    <h1 class="page-header text-overflow">产品审核</h1>
+</div>
+
+<div id="page-content">
+    <style type="text/css">
+        .hasError {
+            border-color: #a94442;
+        }
+
+        .deviceWrap {
+            background-image: url(img/emulator/iphone-6-portrait.png);
+            background-position: 50% 0%;
+            background-repeat: no-repeat;
+            display: block;
+            font-family: helvetica, arial, sans-serif;
+            font-size: 13px;
+            height: 887px;
+            line-height: 13px;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            margin-left: 0px;
+            margin-right: 0px;
+            padding-bottom: 117px;
+            padding-left: 0px;
+            padding-right: 0px;
+            padding-top: 103px;
+            position: relative;
+            text-align: center;
+            width: 100%;
+        }
+
+        .device {
+            display: block;
+            font-family: helvetica, arial, sans-serif;
+            font-size: 13px;
+            height: 667px;
+            line-height: 13px;
+            margin: 0 auto;
+            padding-bottom: 44px;
+            padding-top: 20px;
+            position: relative;
+            text-align: center;
+            width: 375px;
+        }
+
+        .flashingTop {
+            display: block;
+            font-family: helvetica, arial, sans-serif;
+            font-size: 13px;
+            height: 20px;
+            left: 0px;
+            line-height: 13px;
+            padding-top: 4px;
+            position: absolute;
+            text-align: center;
+            top: 0px;
+            width: 375px;
+        }
+
+        .flashingBottom {
+            bottom: 0px;
+            display: block;
+            font-family: helvetica, arial, sans-serif;
+            font-size: 13px;
+            height: 44px;
+            left: 0px;
+            line-height: 13px;
+            position: absolute;
+            text-align: center;
+            width: 375px;
+        }
+
+        .time {
+            color: rgb(255, 255, 255);
+            display: inline;
+            font-family: helvetica, arial, sans-serif;
+            font-size: 12px;
+            height: auto;
+            line-height: 13px;
+            text-align: center;
+            width: auto;
+        }
+
+        .iframe {
+            border-bottom-color: rgb(209, 209, 209);
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-image-outset: 0px;
+            border-image-repeat: stretch;
+            border-image-slice: 100%;
+            border-image-source: none;
+            border-image-width: 1;
+            border-left-color: rgb(209, 209, 209);
+            border-left-style: solid;
+            border-left-width: 1px;
+            border-right-color: rgb(209, 209, 209);
+            border-right-style: solid;
+            border-right-width: 1px;
+            border-top-color: rgb(209, 209, 209);
+            border-top-style: solid;
+            border-top-width: 1px;
+            display: inline;
+            font-family: helvetica, arial, sans-serif;
+            font-size: 13px;
+            height: 603px;
+            line-height: 13px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            margin-right: 0px;
+            margin-top: 0px;
+            text-align: center;
+            width: 375px;
+        }
+    </style>
+
+    <div class="panel panel-bordered-primary">
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">审核拒绝</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-horizontal" id="">
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label">理由</label>
+
+                                        <div class="col-md-10">
+                                        <textarea placeholder="拒绝理由" id="comment" rows="5"
+                                                  class="form-control" ng-model="product.rejectComment"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group text-center">
+                                        <button type="button" class="btn btn-primary"
+                                                ng-click="product.reject()">确定
+                                        </button>
+                                        <button type="button" class="btn btn-info"
+                                                ng-click="product.hideModal()">取消
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="animated zoomIn">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="panel">
+                            <div class="panel-body">
+                                <!--Horizontal Form-->
+                                <!--===================================================-->
+
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="col-md-3 text-bold text-right">产品名</label>
+
+                                        <label class="col-md-9">{{product.productName}}</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 text-bold text-right">BARCODE</label>
+
+                                        <label class="col-md-9">{{product.barCode}}</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 text-bold text-right">产品码类型</label>
+
+                                        <div class="col-md-9">
+                                            <span key-type="product.productKeyTypeCodes"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 text-bold text-right">产品状态</label>
+
+                                        <div class="col-md-9">
+                                            <span
+                                                    class="label {{product.statusCode == 'reject' ? 'label-danger' : 'label-success'}}">{{product.formatStatusCode()}}</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 text-bold text-right">产品过期时间</label>
+
+                                        <label class="col-md-9">{{product.expireDate}}</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 text-bold text-right">产品过期单位</label>
+
+                                        <label class="col-md-9">{{product.expireDateUnit}}</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 text-bold text-right">产品详细信息</label>
+
+                                        <div class="col-md-9">
+                                            <div ng-repeat="data in product.productInfos" class="row">
+                                                <label class="col-md-3 text-bold text-right">{{data.name}}</label>
+
+                                                <label class="col-md-9">{{data.value}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 text-bold text-right">联系方式</label>
+
+                                        <div class="col-md-9">
+                                            <div class="row">
+                                                <label class="col-md-3 text-bold text-right">热线电话</label>
+
+                                                <label class="col-md-9">{{product.hotline}}</label>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 text-bold text-right">技术支持</label>
+
+                                                <label class="col-md-9">{{product.support}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 text-bold text-right">在线商城</label>
+
+                                        <div class="col-md-offset-3"
+                                             ng-repeat="data in product.productCommerce">
+
+                                            <div class="row">
+                                                <label class="col-md-3 text-bold text-right">商城名</label>
+
+                                                <label class="col-md-9">{{data.title}}</label>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 text-bold text-right">商城URL</label>
+
+                                                <label class="col-md-9">{{data.url}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 text-bold text-right">实体店列表</label>
+
+                                        <div class="col-md-offset-3"
+                                             ng-repeat="data in product.productAddress">
+
+                                            <div class="row">
+                                                <label class="col-md-3 text-bold text-right">实体店地址</label>
+
+                                                <label class="col-md-9">{{data.address}}</label>
+                                            </div>
+                                            <div class="row">
+                                                <label class="col-md-3 text-bold text-right">实体店电话</label>
+
+                                                <label class="col-md-9">{{data.tel}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 text-bold text-right">产品备注</label>
+
+                                        <label class="col-md-9">{{product.comments}}</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 text-bold text-right">产品图片</label>
+
+                                        <div class="col-md-9">
+                                            <div class="row">
+                                                <div class="col-md-8"><span
+                                                        class="label label-info">800*400</span>
+                                                </div>
+
+                                                <div class="col-md-4"><span
+                                                        class="label label-info">400*400</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="row" style="margin-top: 5px">
+
+                                                <div class="col-md-8" id="divImg800400">
+                                                    <img id="imgProductbase800400" src="{{product.img800400}}"
+                                                         width="260px" height="130px"/>
+                                                </div>
+
+                                                <div class="col-md-4" id="divImg400">
+                                                    <img id="imgProductbase400" src="{{product.img400400}}"
+                                                         width="130px" height="130px"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row text-center">
+                                        <button class="btn btn-info btn-labeled fa fa-reply" type="button"
+                                                ng-click="product.returnTo()">返回
+                                        </button>
+                                        <button class="btn btn-danger btn-labeled fa fa-rotate-left" type="button"
+                                                ng-click="product.showModal()">拒绝
+                                        </button>
+                                        <button class="btn btn-primary btn-labeled fa fa-rotate-right" type="button"
+                                                ng-click="product.approve()">通过
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--===================================================-->
+                        <!--End Horizontal Form-->
+                    </div>
+                    <div class="col-md-6">
+                        <div class="deviceWrap">
+                            <div class="device">
+                                <div class="flashingTop"><span
+                                        class="time">4:17 <span>PM</span></span></div>
+                                <div class="flashingBottom"></div>
+                                <iframe src="pages/emulator/home.html" id="iphone-6-portrait" class="iframe"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>

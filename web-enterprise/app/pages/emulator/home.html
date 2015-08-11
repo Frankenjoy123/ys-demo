@@ -44,7 +44,7 @@
             var details = data.details;
             for (var index = 0; index < details.length; index++) {
                 var item = details[index];
-                var td1 = $('<td></td>').css("width", "30%").css("word-break","break-all").html(item.key);
+                var td1 = $('<td></td>').css("width", "30%").css("word-break","break-all").html(item.name);
                 var td2 = $('<td></td>').css("width", "70%").css("word-break","break-all").html(item.value);
                 var tr = $('<tr></tr>').append(td1).append(td2);
                 var tdSpace = $('<td></td>').css('height', '10px');
@@ -55,6 +55,27 @@
         }
 
         $("#divMainBody").css('display', '');
+
+        if (data.coords800400 && parseInt(data.coords800400.w) > 0) {
+            var rx = 356 / data.coords800400.w;
+            var ry = 178 / data.coords800400.h;
+
+            $('#imgProduct').css({
+                width: Math.round(rx * data.bounds800400[0]) + 'px',
+                height: Math.round(ry * data.bounds800400[1]) + 'px',
+                marginLeft: '-' + Math.round(rx * data.coords800400.x) + 'px',
+                marginTop: '-' + Math.round(ry * data.coords800400.y) + 'px'
+            });
+        }
+
+        if (data.isReadOnlyMode) {
+            $('#imgProduct').attr('width', '356px');
+            $('#imgProduct').attr('height', '178px');
+        }
+        else {
+            $('#imgProduct').attr('width', '');
+            $('#imgProduct').attr('height', '');
+        }
     }
 
     $(document).ready(function () {
@@ -113,7 +134,10 @@
         <div class="panel box box-primary ">
             <div class="row">
                 <div width="100%">
-                    <img id="imgProduct" src="" width="100%"/>
+
+                    <div style="width:356px;height:178px;overflow:hidden">
+                        <img id="imgProduct" src="" width="" height=""/>
+                    </div>
 
                     <div class="float-img animationDiv">
                         <img id="imgManufacture" src="" width="60px" height="60px" class="img-circle"/>

@@ -1,5 +1,7 @@
 package com.yunsoo.data.service.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 /**
@@ -12,9 +14,10 @@ import javax.persistence.*;
 public class ProductCategoryEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
-    private Integer id;
+    private String id;
 
     @Column(name = "name")
     private String name;
@@ -23,17 +26,17 @@ public class ProductCategoryEntity {
     private String description;
 
     @Column(name = "parent_id")
-    private Integer parentId;
+    private String parentId;
 
     @Column(name = "active")
     private boolean active;
 
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -53,11 +56,11 @@ public class ProductCategoryEntity {
         this.description = description;
     }
 
-    public Integer getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(Integer parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 

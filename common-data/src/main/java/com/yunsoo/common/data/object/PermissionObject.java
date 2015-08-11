@@ -2,12 +2,14 @@ package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/4/14
  * Descriptions:
  */
-public class PermissionObject {
+public class PermissionObject implements Serializable {
 
     @JsonProperty("resource_code")
     private String resourceCode;

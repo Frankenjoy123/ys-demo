@@ -12,37 +12,65 @@
 <!--Page content-->
 <!--===================================================-->
 <div id="page-content">
+
+    <div class="modal fade" id="deleteConfirmDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">删除产品</h4>
+                </div>
+                <div class="modal-body">
+                    <p>确定删除产品名为 <span class="label label-success">{{productBase.curDeleteProName}}</span> 吗？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" ng-click="productBase.deleteProductBaseDetailsCancel()">
+                        取消
+                    </button>
+                    <button type="button" class="btn btn-primary" ng-click="productBase.deleteProductBaseDetails()">确定
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
     <div class="panel panel-bordered-primary">
         <div class="animated slideInRight">
-            <div class="col-sm-12 pull-left" style="padding: 20px 20px;" ng-show="productBaseButtonShow">
-                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus"><a href="#/emulator" style="color: white">创建产品</a></button>
+            <div class="col-md-12 pull-left" style="padding: 20px 20px;" ng-show="productBaseButtonShow">
+                <button id="btn-addrow" class="btn btn-primary btn-labeled fa fa-plus"
+                        ng-click="productBase.showCreateProduct()">创建产品
+                </button>
             </div>
             <div class="panel-body">
-                <table class="table table-hover">
+                <table class="table toggle-arrow-tiny" id="proBaseTable">
                     <thead>
                     <tr>
-                        <th>#</th>
                         <th>名称</th>
-                        <th class="col-xs-1">品类</th>
-                        <th class="col-xs-1">条码</th>
-                        <th class="col-xs-1">保质期</th>
-                        <th class="col-xs-2">产品码类型</th>
-                        <th class="col-xs-1">可用额度</th>
-                        <th>备注</th>
-                        <th class="col-xs-2">创建时间</th>
+                        <th>状态</th>
+                        <th>品类</th>
+                        <th>条码</th>
+                        <th class="col-md-1">保质期</th>
+                        <th class="col-md-1">产品码类型</th>
+                        <th class="col-md-2">可用额度</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                        <th data-hide="all"></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="pb in dataTable.pageable.data track by pb.id">
-                        <td>
-                            <span>{{$index + 1}}</span>
-                        </td>
+                    <tr ng-repeat="pb in dataTable.pageable.data track by pb.id" id="pb.id">
                         <td>{{pb.name}}</td>
+                        <td><span
+                                class="label {{pb.status_code_show == 'reject' ? 'label-danger' : (pb.status_code_show == 'active' ? 'label-success' : 'label-primary')}}">{{formatProStatusShow(pb.status_code_show)}}</span>
+                        </td>
                         <td>{{pb.category ? pb.category.name : '未知'}}</td>
                         <td>{{pb.barcode}}</td>
                         <td>{{pb.shelf_life + " " + SHELFLIFE_INTERVALS[pb.shelf_life_interval]}}</td>
 
-                        <td>{{formatProductKeyTypes(pb.product_key_types)}}</td>
+                        <td>
+                            <div key-type="pb.product_key_types"></div>
+                        </td>
                         <td>
                             <div class="progress-group"><span
                                     class="progress-number"><span
@@ -55,8 +83,47 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{formatComments(pb.comments)}}</td>
                         <td>{{utils.formatDateString(pb.created_datetime)}}</td>
+                        <td class="text-right">
+                            <button type="button" class="btn btn-info fa fa-edit"
+                                    ng-show="pb.is_editable && productBaseButtonShow"
+                                    ng-click="productBase.editProductBaseDetails(pb.id)">
+                            </button>
+                            <button type="button" class="btn btn-danger fa fa-trash-o" ng-show="productBaseButtonShow"
+                                    ng-click="productBase.showDeleteProModal(pb.id, pb.name)">
+                            </button>
+                            <button type="button" class="btn btn-success fa fa-eye"
+                                    ng-click="productBase.showProductBaseDetails(pb.id, pb.status_code_show)">
+                            </button>
+                        </td>
+                        <td>
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <td>修改时间</td>
+                                    <td>修改人</td>
+                                    <td>修改状态</td>
+                                    <td>操作</td>
+                                </tr>
+                                <tr ng-repeat="ver in pb.product_base_versions">
+                                    <td>{{utils.formatDateString(ver.created_datetime)}}</td>
+                                    <td>{{ver.created_account_id}}</td>
+                                    <td><span
+                                            class="label {{ver.status_code == 'rejected' ? 'label-danger' : (ver.status_code == 'submitted' ? 'label-success' : 'label-info')}}">{{formatProVersionStatus(ver.status_code)}}</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <a ng-show="ver.is_editable && productBaseButtonShow"
+                                           ng-click="productBase.editProductBaseDetails(ver.product_base_id, ver.version)"
+                                           style="color:#46b9d8;cursor:pointer"><i
+                                                class="fa fa-edit"></i></a>
+                                        <a ng-click="productBase.showProductBaseDetails(ver.product_base_id, formatProVersionStatus(ver.status_code), ver.version)"
+                                           style="color:#97c664;cursor:pointer"><i
+                                                class="fa fa-eye"></i></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

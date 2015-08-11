@@ -2,15 +2,17 @@ package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 /**
  * Created by  : Zhe
  * Created on  : 2015/3/13
  * Descriptions:
  */
-public class ProductCategoryObject {
+public class ProductCategoryObject implements Serializable {
 
     @JsonProperty("id")
-    private Integer id;
+    private String id;
 
     @JsonProperty("name")
     private String name;
@@ -19,16 +21,16 @@ public class ProductCategoryObject {
     private String description;
 
     @JsonProperty("parent_id")
-    private Integer parentId;
+    private String parentId;
 
     @JsonProperty("active")
-    private boolean active;
+    private Boolean active;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -48,19 +50,19 @@ public class ProductCategoryObject {
         this.description = description;
     }
 
-    public Integer getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(Integer parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

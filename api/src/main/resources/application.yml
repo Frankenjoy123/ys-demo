@@ -6,6 +6,14 @@ management:
 multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
+cloud:
+    aws:
+        stack:
+            auto: false
+        region:
+            auto: true
+            static: cn-north-1
+
 yunsoo:
     api:
         permanent_token:
@@ -16,10 +24,10 @@ yunsoo:
             expires_minutes: 5
 
 spring:
-    profiles.active: default
+    profiles.active: dev
 ---
 spring:
-    profiles: default
+    profiles: dev
 
 
 logging:
@@ -29,19 +37,18 @@ logging:
         org.hibernate: 'ERROR'
 
 yunsoo:
-#    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
-
     debug: true
     api:
         client:
             dataapi:
-                baseurl: http://dataapi:8080/
+                baseurl: http://localhost:3080/
             processor:
-                baseurl: http://processor:4080/
+                baseurl: http://localhost:4080/
         product_key_base_url: http://t.m.yunsu.co/
+    elasticachename: dev-cache
 ---
 spring:
-    profiles: qa
+    profiles: test
 management:
     port: 6081
     address: 127.0.0.1
@@ -54,13 +61,11 @@ logging:
         org.hibernate: 'INFO'
 
 yunsoo:
-#    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
-
     debug: true
     api:
         client:
             dataapi:
-                baseurl: http://localhost:8080/
+                baseurl: http://localhost:3080/
             processor:
                 baseurl: http://localhost:4080/
-        product_key_base_url: http://t.m.yunsu.co/
+        product_key_base_url: http://t.m.yunsu.co:9080/
