@@ -262,8 +262,8 @@ $(document).ready(function () {
     $("#divScanValidKey").css('display', '');
     $("#divScanResultValidKey").css('display', '');
 
-    $("#imgManufacture").attr("src", "/api-rabbit/organization/" + data.manufacturer.id + "/logo-mobile");
-    $("#imgProduct").attr("src", "/api-rabbit/productbase/" + data.product.product_base_id + "/full-mobile");
+    $("#imgManufacture").attr("src", "/api-rabbit/organization/" + data.manufacturer.id + "/logo/image-128x128");
+    $("#imgProduct").attr("src", "/api-rabbit/productbase/" + data.product.product_base_id + "/image/image-800x400");
     if (data.validation_result.toLowerCase() == "uncertain") {
       $("#imgProStatus").attr("src", "images/icon-warning.png");
       $("#proStatus").html("此产品不确定");
