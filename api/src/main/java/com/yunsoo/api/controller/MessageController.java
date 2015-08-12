@@ -116,7 +116,6 @@ public class MessageController {
     //create message
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#message.orgId, 'filterByOrg', 'message:create')")
     public MessageObject createMessage() {
         MessageObject messageObject = new MessageObject();
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
