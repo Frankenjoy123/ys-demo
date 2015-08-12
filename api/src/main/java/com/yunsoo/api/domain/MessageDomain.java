@@ -3,7 +3,6 @@ package com.yunsoo.api.domain;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.dto.Message;
-import com.yunsoo.api.dto.MessageBodyRequest;
 import com.yunsoo.api.dto.MessageDetails;
 import com.yunsoo.api.dto.MessageImageRequest;
 import com.yunsoo.common.data.object.MessageObject;
@@ -77,7 +76,7 @@ public class MessageDomain {
         dataAPIClient.delete("message/{id}", id);
     }
 
-    public void saveMessageCoverImage(MessageImageRequest messageImageRequest, String orgId, String id) {
+    public String saveMessageCoverImage(MessageImageRequest messageImageRequest, String orgId, String id) {
         String imageData = messageImageRequest.getData();
         //data:image/png;base64,
         if (((imageData == null) || ("".equals(imageData)))) {
@@ -91,6 +90,7 @@ public class MessageDomain {
         //save message cover image
         dataAPIClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{imageName}",
                 new ResourceInputStream(new ByteArrayInputStream(imageDataBytes), imageDataBytes.length, contentType), orgId, id, COVER_IMAGE_NAME);
+        return "organization/" + orgId + "/message/" + id + "/" + COVER_IMAGE_NAME;
     }
 
     public String saveMessageBodyImage(MessageImageRequest messageImageRequest, String orgId, String id) {
@@ -111,20 +111,15 @@ public class MessageDomain {
         return "organization/" + orgId + "/message/" + id + "/" + imageName;
     }
 
-    public String saveMessageBodyText(MessageBodyRequest messageBodyRequest, String orgId, String id) {
-        String messageBodyData = messageBodyRequest.getData();
-        //data:text/html;base64,
+    public String saveMessageBodyText(String messageBodyData, String orgId, String id) {
+
         if (((messageBodyData == null) || ("".equals(messageBodyData)))) {
             throw new BadRequestException("upload html text failed");
         }
-        int splitIndex = messageBodyData.indexOf(",");
-        String metaHeader = messageBodyData.substring(0, splitIndex);
-        String contentType = metaHeader.split(";")[0].split(":")[1];
-        String messageBodyDataBase64 = messageBodyData.substring(splitIndex + 1);
-        byte[] messageBodyDataBytes = Base64.decodeBase64(messageBodyDataBase64);
+        byte[] messageBodyDataBytes = Base64.decodeBase64(messageBodyData);
         //save message body text
         dataAPIClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{bodyFileName}",
-                new ResourceInputStream(new ByteArrayInputStream(messageBodyDataBytes), messageBodyDataBytes.length, contentType), orgId, id, BODY_FILE_NAME);
+                new ResourceInputStream(new ByteArrayInputStream(messageBodyDataBytes), messageBodyDataBytes.length, MediaType.TEXT_HTML_VALUE), orgId, id, BODY_FILE_NAME);
         return "organization/" + orgId + "/message/" + id + "/" + BODY_FILE_NAME;
     }
 
@@ -135,7 +130,8 @@ public class MessageDomain {
                 String coverPath = "organization/" + orgId + "/message/" + id + "/" + COVER_IMAGE_NAME;
                 messageDetails.setCover(coverPath);
             }
-            if (messageDetails.getBody() == null) {
+            if (messageDetails.getBody() != null) {
+                saveMessageBodyText(messageDetails.getBody(), orgId, id);
                 String bodyPath = "organization/" + orgId + "/message/" + id + "/" + BODY_FILE_NAME;
                 messageDetails.setBody(bodyPath);
             }

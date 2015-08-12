@@ -4,7 +4,6 @@ import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.MessageDomain;
 import com.yunsoo.api.dto.Message;
-import com.yunsoo.api.dto.MessageBodyRequest;
 import com.yunsoo.api.dto.MessageImageRequest;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
@@ -260,16 +259,6 @@ public class MessageController {
         String imagePath = messageDomain.saveMessageBodyImage(messageImageRequest, orgId, id);
         LOGGER.info("message body image saved [orgId: {}, messageId:{},path:{}]", orgId, id, imagePath);
         return imagePath;
-    }
-
-    @RequestMapping(value = "{id}/bodytext", method = RequestMethod.PUT)
-    public String putMessageBodyText(@PathVariable(value = "id") String id,
-                                     @RequestBody @Valid MessageBodyRequest messagebodyRequest) {
-        MessageObject messageObject = findMessageById(id);
-        String orgId = messageObject.getOrgId();
-        String bodyPath = messageDomain.saveMessageBodyText(messagebodyRequest, orgId, id);
-        LOGGER.info("message body text saved [orgId: {}, messageId:{},path:{}]", orgId, id, bodyPath);
-        return bodyPath;
     }
 
 
