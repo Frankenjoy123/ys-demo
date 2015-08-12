@@ -243,12 +243,13 @@ public class MessageController {
     }
 
     @RequestMapping(value = "{id}/coverimage", method = RequestMethod.PUT)
-    public void putMessageCoverImage(@PathVariable(value = "id") String id,
+    public String putMessageCoverImage(@PathVariable(value = "id") String id,
                                      @RequestBody @Valid MessageImageRequest messageImageRequest) {
         MessageObject messageObject = findMessageById(id);
         String orgId = messageObject.getOrgId();
-        messageDomain.saveMessageCoverImage(messageImageRequest, orgId, id);
+        String coverPath = messageDomain.saveMessageCoverImage(messageImageRequest, orgId, id);
         LOGGER.info("message cover image saved [orgId: {}, messageId:{}]", orgId, id);
+        return coverPath;
     }
 
     @RequestMapping(value = "{id}/bodyimage", method = RequestMethod.PUT)
