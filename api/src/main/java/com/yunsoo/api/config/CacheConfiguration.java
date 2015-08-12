@@ -15,19 +15,18 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
-public class CacheConfiguration{
+public class CacheConfiguration {
 
     public static final String CACHE_NAME = "yunsoo-cache";
 
 
     @Configuration
-    @EnableElastiCache(value = {@CacheClusterConfig(name = CACHE_NAME)})
-    //@EnableContextRegion(region = "cn-north-1")
+    @EnableElastiCache(value = {@CacheClusterConfig(name = CACHE_NAME)}, defaultExpiration = 3600)
     @ConditionalOnAwsCloudEnvironment
     public static class ElastiCacheConfiguration {
 
         @Bean
-        public KeyGenerator keyGenerator(){
+        public KeyGenerator keyGenerator() {
             return new CustomKeyGenerator();
         }
 
@@ -39,12 +38,12 @@ public class CacheConfiguration{
     public static class LocalCacheConfiguration {
 
         @Bean
-        public  CacheManager cacheManager() {
-          return new ConcurrentMapCacheManager();
+        public CacheManager cacheManager() {
+            return new ConcurrentMapCacheManager();
         }
 
         @Bean
-        public KeyGenerator keyGenerator(){
+        public KeyGenerator keyGenerator() {
             return new CustomKeyGenerator();
         }
 
