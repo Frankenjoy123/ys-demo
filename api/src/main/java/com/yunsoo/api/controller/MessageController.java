@@ -4,6 +4,7 @@ import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.MessageDomain;
 import com.yunsoo.api.dto.Message;
+import com.yunsoo.api.dto.MessageBodyImage;
 import com.yunsoo.api.dto.MessageImageRequest;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
@@ -242,23 +243,24 @@ public class MessageController {
     }
 
     @RequestMapping(value = "{id}/coverimage", method = RequestMethod.PUT)
-    public String putMessageCoverImage(@PathVariable(value = "id") String id,
+    public void putMessageCoverImage(@PathVariable(value = "id") String id,
                                      @RequestBody @Valid MessageImageRequest messageImageRequest) {
         MessageObject messageObject = findMessageById(id);
         String orgId = messageObject.getOrgId();
-        String coverPath = messageDomain.saveMessageCoverImage(messageImageRequest, orgId, id);
+        messageDomain.saveMessageCoverImage(messageImageRequest, orgId, id);
         LOGGER.info("message cover image saved [orgId: {}, messageId:{}]", orgId, id);
-        return coverPath;
     }
 
     @RequestMapping(value = "{id}/bodyimage", method = RequestMethod.PUT)
-    public String putMessageBodyImage(@PathVariable(value = "id") String id,
+    public MessageBodyImage putMessageBodyImage(@PathVariable(value = "id") String id,
                                       @RequestBody @Valid MessageImageRequest messageImageRequest) {
         MessageObject messageObject = findMessageById(id);
+        MessageBodyImage messageBodyImage = new MessageBodyImage();
         String orgId = messageObject.getOrgId();
         String imagePath = messageDomain.saveMessageBodyImage(messageImageRequest, orgId, id);
+        messageBodyImage.setPath(imagePath);
         LOGGER.info("message body image saved [orgId: {}, messageId:{},path:{}]", orgId, id, imagePath);
-        return imagePath;
+        return messageBodyImage;
     }
 
 

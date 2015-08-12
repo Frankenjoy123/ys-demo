@@ -76,7 +76,7 @@ public class MessageDomain {
         dataAPIClient.delete("message/{id}", id);
     }
 
-    public String saveMessageCoverImage(MessageImageRequest messageImageRequest, String orgId, String id) {
+    public void saveMessageCoverImage(MessageImageRequest messageImageRequest, String orgId, String id) {
         String imageData = messageImageRequest.getData();
         //data:image/png;base64,
         if (((imageData == null) || ("".equals(imageData)))) {
@@ -90,7 +90,6 @@ public class MessageDomain {
         //save message cover image
         dataAPIClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{imageName}",
                 new ResourceInputStream(new ByteArrayInputStream(imageDataBytes), imageDataBytes.length, contentType), orgId, id, COVER_IMAGE_NAME);
-        return "organization/" + orgId + "/message/" + id + "/" + COVER_IMAGE_NAME;
     }
 
     public String saveMessageBodyImage(MessageImageRequest messageImageRequest, String orgId, String id) {
