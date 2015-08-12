@@ -141,7 +141,9 @@ public class MessageController {
             @RequestParam(value = "type_code_in", required = false) List<String> typeCodeIn,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
             @RequestParam(value = "post_show_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime postShowTime) {
-        int countMessage = messageService.countMessage(typeCodeIn, statusCodeIn, orgId, postShowTime);
+        // int countMessage = messageService.countMessage(typeCodeIn, statusCodeIn, orgId, postShowTime);
+        // hard code, to be removed
+        int countMessage = 10;
         return countMessage;
     }
 

@@ -3,6 +3,7 @@ package com.yunsoo.api.domain;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.dto.Message;
+import com.yunsoo.api.dto.MessageBodyRequest;
 import com.yunsoo.api.dto.MessageDetails;
 import com.yunsoo.api.dto.MessageImageRequest;
 import com.yunsoo.common.data.object.MessageObject;
@@ -32,7 +33,10 @@ import java.util.Random;
 @Component
 public class MessageDomain {
 
-    private static final String DETAILS_FILE_NAME = "messagedetails.json";
+    private static final String DETAILS_FILE_NAME = "message-details.json";
+    private static final String BODY_FILE_NAME = "message-body.html";
+    private static final String COVER_IMAGE_NAME = "image-cover";
+
     private static ObjectMapper mapper = new ObjectMapper();
 
 
@@ -85,8 +89,8 @@ public class MessageDomain {
         String imageDataBase64 = imageData.substring(splitIndex + 1);
         byte[] imageDataBytes = Base64.decodeBase64(imageDataBase64);
         //save message cover image
-        dataAPIClient.put("file/s3?path=organization/{orgId}/message/{messageId}/image-cover",
-                new ResourceInputStream(new ByteArrayInputStream(imageDataBytes), imageDataBytes.length, contentType), orgId, id);
+        dataAPIClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{imageName}",
+                new ResourceInputStream(new ByteArrayInputStream(imageDataBytes), imageDataBytes.length, contentType), orgId, id, COVER_IMAGE_NAME);
     }
 
     public String saveMessageBodyImage(MessageImageRequest messageImageRequest, String orgId, String id) {
@@ -107,11 +111,37 @@ public class MessageDomain {
         return "organization/" + orgId + "/message/" + id + "/" + imageName;
     }
 
+    public String saveMessageBodyText(MessageBodyRequest messageBodyRequest, String orgId, String id) {
+        String messageBodyData = messageBodyRequest.getData();
+        //data:text/html;base64,
+        if (((messageBodyData == null) || ("".equals(messageBodyData)))) {
+            throw new BadRequestException("upload html text failed");
+        }
+        int splitIndex = messageBodyData.indexOf(",");
+        String metaHeader = messageBodyData.substring(0, splitIndex);
+        String contentType = metaHeader.split(";")[0].split(":")[1];
+        String messageBodyDataBase64 = messageBodyData.substring(splitIndex + 1);
+        byte[] messageBodyDataBytes = Base64.decodeBase64(messageBodyDataBase64);
+        //save message body text
+        dataAPIClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{bodyFileName}",
+                new ResourceInputStream(new ByteArrayInputStream(messageBodyDataBytes), messageBodyDataBytes.length, contentType), orgId, id, BODY_FILE_NAME);
+        return "organization/" + orgId + "/message/" + id + "/" + BODY_FILE_NAME;
+    }
+
+
     public void saveMessageDetails(MessageDetails messageDetails, String orgId, String id) {
         try {
+            if (messageDetails.getCover() == null) {
+                String coverPath = "organization/" + orgId + "/message/" + id + "/" + COVER_IMAGE_NAME;
+                messageDetails.setCover(coverPath);
+            }
+            if (messageDetails.getBody() == null) {
+                String bodyPath = "organization/" + orgId + "/message/" + id + "/" + BODY_FILE_NAME;
+                messageDetails.setBody(bodyPath);
+            }
             byte[] bytes = mapper.writeValueAsBytes(messageDetails);
             ResourceInputStream resourceInputStream = new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE);
-            dataAPIClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{version}/{fileName}",
+            dataAPIClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{fileName}",
                     resourceInputStream, orgId, id, DETAILS_FILE_NAME);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
