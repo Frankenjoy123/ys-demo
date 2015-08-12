@@ -65,6 +65,14 @@ public class LookupCodes {
         public static final String CREATED = "created";
         public static final String DELETED = "deleted";
         public static final String APPROVED = "approved";
+        public static final String SUCCESSFULLY_PUSHED = "successfully pushed";
+    }
+
+    public static class MessageType {
+        private MessageType() {
+        }
+
+        public static final String BUSINESS = "business";
     }
 
     public static class ProductBaseStatus {

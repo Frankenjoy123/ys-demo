@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.MessageObject;
 import org.joda.time.DateTime;
 
 /**
@@ -13,87 +14,48 @@ import org.joda.time.DateTime;
  * Descriptions:
  */
 public class Message {
+
     @JsonProperty("id")
-    private Long id;
-
-    @JsonProperty("title")
-    private String title;
-
-    @JsonProperty("body")
-    private String body;
-
-    @JsonProperty("digest")
-    private String digest;
+    private String id;
 
     @JsonProperty("org_id")
     private String orgId;
 
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("expired_datetime")
-    private DateTime expiredDateTime;
+    @JsonProperty("title")
+    private String title;
 
-    @JsonProperty("link")
-    private String link;
+    @JsonProperty("status_code")
+    private String statusCode;
 
-    @JsonProperty("type")
-    private String type;
+    @JsonProperty("type_code")
+    private String typeCode;
 
-    @JsonProperty("status")
-    private String status;
-
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("post_show_time")
-    private DateTime postShowTime;
-
-    @JsonProperty("created_by")
-    private String createdBy; //associate to company's accountId
+    @JsonProperty("created_account_id")
+    private String createdAccountId;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
-    @JsonProperty("last_updated_by")
-    private String lastUpdatedBy; //associate to company's accountId
+    @JsonProperty("modified_account_id")
+    private String modifiedAccountId;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("last_updated_DateTime")
-    private DateTime lastUpdatedDateTime;
+    @JsonProperty("modified_datetime")
+    private DateTime modifiedDateTime;
+
+    @JsonProperty("details")
+    private MessageDetails details;
 
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public String getDigest() {
-        return digest;
-    }
-
-    public void setDigest(String digest) {
-        this.digest = digest;
     }
 
     public String getOrgId() {
@@ -104,47 +66,37 @@ public class Message {
         this.orgId = orgId;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public String getTitle() {
+        return title;
     }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getLink() {
-        return link;
+    public String getStatusCode() {
+        return statusCode;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
-    public String getType() {
-        return type;
+    public String getTypeCode() {
+        return typeCode;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
-    public String getStatus() {
-        return status;
+    public String getCreatedAccountId() {
+        return createdAccountId;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
     }
-
-
-    public String getLastUpdatedBy() {
-        return lastUpdatedBy;
-    }
-
-    public void setLastUpdatedBy(String lastUpdatedBy) {
-        this.lastUpdatedBy = lastUpdatedBy;
-    }
-
 
     public DateTime getCreatedDateTime() {
         return createdDateTime;
@@ -154,27 +106,58 @@ public class Message {
         this.createdDateTime = createdDateTime;
     }
 
-    public DateTime getExpiredDateTime() {
-        return expiredDateTime;
+    public String getModifiedAccountId() {
+        return modifiedAccountId;
     }
 
-    public void setExpiredDateTime(DateTime expiredDateTime) {
-        this.expiredDateTime = expiredDateTime;
+    public void setModifiedAccountId(String modifiedAccountId) {
+        this.modifiedAccountId = modifiedAccountId;
     }
 
-    public DateTime getLastUpdatedDateTime() {
-        return lastUpdatedDateTime;
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
     }
 
-    public void setLastUpdatedDateTime(DateTime lastUpdatedDateTime) {
-        this.lastUpdatedDateTime = lastUpdatedDateTime;
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 
-    public DateTime getPostShowTime() {
-        return postShowTime;
+    public MessageDetails getDetails() {
+        return details;
     }
 
-    public void setPostShowTime(DateTime postShowTime) {
-        this.postShowTime = postShowTime;
+    public void setDetails(MessageDetails details) {
+        this.details = details;
+    }
+
+    public Message() {
+    }
+
+    public Message(MessageObject object) {
+        if (object != null) {
+            this.setId(object.getId());
+            this.setOrgId(object.getOrgId());
+            this.setTitle(object.getTitle());
+            this.setStatusCode(object.getStatusCode());
+            this.setTypeCode(object.getTypeCode());
+            this.setCreatedAccountId(object.getCreatedAccountId());
+            this.setCreatedDateTime(object.getCreatedDateTime());
+            this.setModifiedAccountId(object.getModifiedAccountId());
+            this.setModifiedDateTime(object.getModifiedDateTime());
+        }
+    }
+
+    public MessageObject toMessageObject() {
+        MessageObject object = new MessageObject();
+        object.setId(this.getId());
+        object.setOrgId(this.getOrgId());
+        object.setTitle(this.getTitle());
+        object.setStatusCode(this.getStatusCode());
+        object.setTypeCode(this.getTypeCode());
+        object.setCreatedAccountId(this.getCreatedAccountId());
+        object.setCreatedDateTime(this.getCreatedDateTime());
+        object.setModifiedAccountId(this.getModifiedAccountId());
+        object.setModifiedDateTime(this.getModifiedDateTime());
+        return object;
     }
 }
