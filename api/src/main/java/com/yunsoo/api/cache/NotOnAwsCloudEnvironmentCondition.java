@@ -6,7 +6,9 @@ import org.springframework.context.annotation.ConfigurationCondition;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
- * Created by yan on 7/30/2015.
+ * Created by:   yan
+ * Created on:   7/30/2015
+ * Descriptions:
  */
 public class NotOnAwsCloudEnvironmentCondition implements ConfigurationCondition {
 
