@@ -276,9 +276,9 @@ public class MessageController {
         MessageObject messageObject = findMessageById(id);
         MessageBodyImage messageBodyImage = new MessageBodyImage();
         String orgId = messageObject.getOrgId();
-        String imagePath = messageDomain.saveMessageBodyImage(messageImageRequest, orgId, id);
-        messageBodyImage.setPath(imagePath);
-        LOGGER.info("message body image saved [orgId: {}, messageId:{},path:{}]", orgId, id, imagePath);
+        String imageName = messageDomain.saveMessageBodyImage(messageImageRequest, orgId, id);
+        messageBodyImage.setImageName(imageName);
+        LOGGER.info("message body image saved [orgId: {}, messageId:{},name:{}]", orgId, id, imageName);
         return messageBodyImage;
     }
 

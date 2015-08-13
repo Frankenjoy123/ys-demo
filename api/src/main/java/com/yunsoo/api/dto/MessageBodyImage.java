@@ -9,15 +9,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class MessageBodyImage {
 
-    @JsonProperty("path")
-    private String path;
+    @JsonProperty("imageName")
+    private String imageName;
 
-    public String getPath() {
-        return path;
+    public String getImageName() {
+        return imageName;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
     public MessageBodyImage() {

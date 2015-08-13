@@ -107,7 +107,7 @@ public class MessageDomain {
         //save message cover image
         dataAPIClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{imageName}",
                 new ResourceInputStream(new ByteArrayInputStream(imageDataBytes), imageDataBytes.length, contentType), orgId, id, imageName);
-        return "organization/" + orgId + "/message/" + id + "/" + imageName;
+        return imageName;
     }
 
     public String saveMessageBodyText(String messageBodyData, String orgId, String id) {
