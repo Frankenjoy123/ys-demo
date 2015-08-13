@@ -71,7 +71,7 @@ public class MessageController {
         }
         Message message = new Message(messageObject);
         message.setDetails(messageDomain.getMessageDetails(messageObject.getOrgId(), id));
-        return new Message(messageObject);
+        return message;
     }
 
     //query by org id
@@ -210,6 +210,7 @@ public class MessageController {
 
     @RequestMapping(value = "{id}/image/{image_name}", method = RequestMethod.GET)
     public ResponseEntity<?> getMessageImage(
+            @RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token,
             @PathVariable(value = "id") String id,
             @PathVariable(value = "image_name") String imageName) {
         MessageObject messageObject = findMessageById(id);
