@@ -158,6 +158,14 @@ public class MessageDomain {
         }
     }
 
+    public ResourceInputStream getMessageImage(String orgId, String id, String imageName) {
+        try {
+            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/message/{id}/{imageName}", orgId, id, imageName);
+        } catch (NotFoundException ex) {
+            return null;
+        }
+    }
+
 
     //generate random 10 bit ID
     public static String getRandomString() {

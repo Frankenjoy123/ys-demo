@@ -9,9 +9,9 @@ import com.yunsoo.api.dto.MessageImageRequest;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
 import java.util.List;
 
 /**
@@ -188,26 +187,46 @@ public class MessageController {
         dataAPIClient.patch("message", message);
     }
 
-    @RequestMapping(value = "/{id}/{imagekey}", method = RequestMethod.GET)
-    public ResponseEntity<?> getThumbnail(@PathVariable(value = "id") String id,
-                                          @PathVariable(value = "imagekey") String imagekey) {
-        if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("imagekey不能为空！");
-        try {
-            FileObject fileObject = dataAPIClient.get("message/{id}/{imagekey}", FileObject.class, id, imagekey);
-            if (fileObject.getLength() > 0) {
-                return ResponseEntity.ok()
-                        .contentLength(fileObject.getLength())
-                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
-            } else {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
-            }
-        } catch (NotFoundException ex) {
-            throw new NotFoundException(40402, "找不到消息图片 imagekey = " + imagekey);
+//    @RequestMapping(value = "/{id}/{imagekey}", method = RequestMethod.GET)
+//    public ResponseEntity<?> getThumbnail(@PathVariable(value = "id") String id,
+//                                          @PathVariable(value = "imagekey") String imagekey) {
+//        if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("imagekey不能为空！");
+//        try {
+//            FileObject fileObject = dataAPIClient.get("message/{id}/{imagekey}", FileObject.class, id, imagekey);
+//            if (fileObject.getLength() > 0) {
+//                return ResponseEntity.ok()
+//                        .contentLength(fileObject.getLength())
+//                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
+//                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
+//            } else {
+//                return ResponseEntity.ok()
+//                        .contentType(MediaType.parseMediaType(fileObject.getContentType()))
+//                        .body(new InputStreamResource(new ByteArrayInputStream(fileObject.getData())));
+//            }
+//        } catch (NotFoundException ex) {
+//            throw new NotFoundException(40402, "找不到消息图片 imagekey = " + imagekey);
+//        }
+//    }
+
+    @RequestMapping(value = "{id}/image/{image_name}", method = RequestMethod.GET)
+    public ResponseEntity<?> getMessageImage(
+            @PathVariable(value = "id") String id,
+            @PathVariable(value = "image_name") String imageName) {
+        MessageObject messageObject = findMessageById(id);
+        String orgId = messageObject.getOrgId();
+
+        ResourceInputStream resourceInputStream = messageDomain.getMessageImage(orgId, id, imageName);
+        if (resourceInputStream == null) {
+            throw new NotFoundException("image not found");
         }
+        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
+        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
+        if (resourceInputStream.getContentLength() > 0) {
+            builder.contentLength(resourceInputStream.getContentLength());
+        }
+        return builder.body(new InputStreamResource(resourceInputStream));
     }
+
 
     private Message toMessage(MessageObject object) {
         if (object == null) {
@@ -262,6 +281,5 @@ public class MessageController {
         LOGGER.info("message body image saved [orgId: {}, messageId:{},path:{}]", orgId, id, imagePath);
         return messageBodyImage;
     }
-
 
 }
