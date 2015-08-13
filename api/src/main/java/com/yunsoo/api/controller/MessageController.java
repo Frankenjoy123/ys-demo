@@ -1,6 +1,5 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.MessageDomain;
 import com.yunsoo.api.dto.Message;
@@ -214,7 +213,6 @@ public class MessageController {
 
     @RequestMapping(value = "{id}/image/{image_name}", method = RequestMethod.GET)
     public ResponseEntity<?> getMessageImage(
-            @RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token,
             @PathVariable(value = "id") String id,
             @PathVariable(value = "image_name") String imageName) {
         MessageObject messageObject = findMessageById(id);
