@@ -6,15 +6,12 @@ import com.yunsoo.api.domain.MessageDomain;
 import com.yunsoo.api.dto.Message;
 import com.yunsoo.api.dto.MessageBodyImage;
 import com.yunsoo.api.dto.MessageImageRequest;
-import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
@@ -169,23 +166,30 @@ public class MessageController {
 //        dataAPIClient.patch("message", message);
 //    }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteMessages(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @PathVariable(value = "id") Long id) {
-        if (id == null || id <= 0) throw new BadRequestException("Id不能小于0！");
-        Message message = dataAPIClient.get("/message/{id}", Message.class, id);
-        if (message == null) return; //no such message exist!
+//    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    public void deleteMessages(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @PathVariable(value = "id") Long id) {
+//        if (id == null || id <= 0) throw new BadRequestException("Id不能小于0！");
+//        Message message = dataAPIClient.get("/message/{id}", Message.class, id);
+//        if (message == null) return; //no such message exist!
+//
+//        TPermission tPermission = new TPermission();
+//        tPermission.setOrgId(message.getOrgId());
+//        tPermission.setResourceCode("message");
+//        tPermission.setActionCode("delete");
+//        if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
+//            throw new ForbiddenException("没有权限删去此信息！");
+//        }
+//        message.setStatusCode(LookupCodes.MessageStatus.DELETED); //set status as deleted
+//        dataAPIClient.patch("message", message);
+//    }
 
-        TPermission tPermission = new TPermission();
-        tPermission.setOrgId(message.getOrgId());
-        tPermission.setResourceCode("message");
-        tPermission.setActionCode("delete");
-        if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
-            throw new ForbiddenException("没有权限删去此信息！");
-        }
-        message.setStatusCode(LookupCodes.MessageStatus.DELETED); //set status as deleted
-        dataAPIClient.patch("message", message);
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMessages(@PathVariable(value = "id") String id) {
+        messageDomain.deleteMessage(id);
     }
+
 
 //    @RequestMapping(value = "/{id}/{imagekey}", method = RequestMethod.GET)
 //    public ResponseEntity<?> getThumbnail(@PathVariable(value = "id") String id,

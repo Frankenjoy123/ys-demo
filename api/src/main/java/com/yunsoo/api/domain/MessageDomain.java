@@ -131,8 +131,8 @@ public class MessageDomain {
             }
             if (messageDetails.getBody() != null) {
                 saveMessageBodyText(messageDetails.getBody(), orgId, id);
-                String bodyPath = "organization/" + orgId + "/message/" + id + "/" + BODY_FILE_NAME;
-                messageDetails.setBody(bodyPath);
+                //     String bodyPath = "organization/" + orgId + "/message/" + id + "/" + BODY_FILE_NAME;
+                messageDetails.setBody(messageDetails.getBody());
             }
             byte[] bytes = mapper.writeValueAsBytes(messageDetails);
             ResourceInputStream resourceInputStream = new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE);
