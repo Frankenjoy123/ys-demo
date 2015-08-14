@@ -5,7 +5,9 @@ import org.springframework.cache.interceptor.KeyGenerator;
 import java.lang.reflect.Method;
 
 /**
- * Created by yan on 7/24/2015.
+ * Created by:   yan
+ * Created on:   7/24/2015
+ * Descriptions:
  */
 public class CustomKeyGenerator implements KeyGenerator {
 
