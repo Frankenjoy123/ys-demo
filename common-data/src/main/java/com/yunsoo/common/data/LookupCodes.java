@@ -117,6 +117,17 @@ public class LookupCodes {
         public static final String ROLLBACK = "rollback";
     }
 
+    public static class PushBase {
+        private PushBase() {
+        }
+
+        public static final String APPID = "15UhqWHcYs8BaVO3lzc7WA";
+        public static final String APPKEY = "wolubo372p5u9JAPPUC1IA";
+        public static final String MASTERSECRET = "3po0VtEEW58IyudByMCjf6";
+        public static final String CLIENTID = "e3af3f8c1b6afa5324f21865474f44bc";
+        public static final String API = "http://sdk.open.api.igexin.com/apiex.htm";     //OpenService½Ó¿ÚµØÖ·
+    }
+
     public static class DeviceStatus {
         private DeviceStatus() {
         }

@@ -2,12 +2,15 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.MessageDomain;
+import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.Message;
 import com.yunsoo.api.dto.MessageBodyImage;
 import com.yunsoo.api.dto.MessageImageRequest;
+import com.yunsoo.api.dto.MessageToApp;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.MessageObject;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
@@ -50,6 +53,10 @@ public class MessageController {
 
     @Autowired
     private MessageDomain messageDomain;
+
+    @Autowired
+    private OrganizationDomain organizationDomain;
+
 
     @Autowired
     private AccountPermissionDomain accountPermissionDomain;
@@ -152,6 +159,19 @@ public class MessageController {
         messageObject.setModifiedDateTime(null);
         messageDomain.updateMessage(messageObject);
         messageDomain.saveMessageDetails(message.getDetails(), messageObject.getOrgId(), id);
+
+        // push message
+        OrganizationObject organizationObject = organizationDomain.getOrganizationById(messageObject.getOrgId());
+        if (organizationObject == null) {
+            throw new NotFoundException("organization not found");
+        }
+        MessageToApp messageToApp = new MessageToApp();
+        String orgId = organizationObject.getId();
+        String orgName = organizationObject.getName();
+        messageToApp.setOrg(orgName);
+        messageToApp.setTitle(message.getTitle());
+        messageToApp.setBody(message.getDetails().getBody());
+        messageDomain.pushMessageToApp(orgId, id, messageToApp);
         return new Message(messageObject);
     }
 

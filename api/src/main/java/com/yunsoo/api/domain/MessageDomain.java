@@ -2,9 +2,16 @@ package com.yunsoo.api.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gexin.rp.sdk.base.IIGtPush;
+import com.gexin.rp.sdk.base.IPushResult;
+import com.gexin.rp.sdk.base.impl.AppMessage;
+import com.gexin.rp.sdk.http.IGtPush;
+import com.gexin.rp.sdk.template.TransmissionTemplate;
 import com.yunsoo.api.dto.Message;
 import com.yunsoo.api.dto.MessageDetails;
 import com.yunsoo.api.dto.MessageImageRequest;
+import com.yunsoo.api.dto.MessageToApp;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -21,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -35,6 +43,8 @@ public class MessageDomain {
     private static final String DETAILS_FILE_NAME = "message-details.json";
     private static final String BODY_FILE_NAME = "message-body.html";
     private static final String COVER_IMAGE_NAME = "image-cover";
+    private static final IIGtPush iiGtPush = new IGtPush(LookupCodes.PushBase.API, LookupCodes.PushBase.APPKEY, LookupCodes.PushBase.MASTERSECRET);
+
 
     private static ObjectMapper mapper = new ObjectMapper();
 
@@ -162,6 +172,39 @@ public class MessageDomain {
         try {
             return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/message/{id}/{imageName}", orgId, id, imageName);
         } catch (NotFoundException ex) {
+            return null;
+        }
+    }
+
+    public IPushResult pushMessageToApp(String orgId, String id, MessageToApp messageToApp) {
+        // define messge template
+        try {
+            String content = mapper.writeValueAsString(messageToApp);
+            TransmissionTemplate transmissionTemplate = new TransmissionTemplate();
+            transmissionTemplate.setAppId(LookupCodes.PushBase.APPID);
+            transmissionTemplate.setAppkey(LookupCodes.PushBase.APPKEY);
+            transmissionTemplate.setTransmissionType(2);
+            transmissionTemplate.setTransmissionContent(content);
+            // define app and message tag
+            List appIdList = new ArrayList();
+            List tagList = new ArrayList<>();
+            appIdList.add(LookupCodes.PushBase.APPID);
+            tagList.add("yunsu");
+            tagList.add(orgId);
+
+            // message content
+            AppMessage appMessage = new AppMessage();
+            appMessage.setData(transmissionTemplate);
+            appMessage.setOffline(true);
+            appMessage.setAppIdList(appIdList);
+            appMessage.setTagList(tagList);
+
+            //push message to users
+            iiGtPush.connect();
+            IPushResult iPushResult = iiGtPush.pushMessageToApp(appMessage);
+            iiGtPush.close();
+            return iPushResult;
+        } catch (IOException ex) {
             return null;
         }
     }
