@@ -1,46 +1,37 @@
-package com.yunsoo.data.service.entity;
+package com.yunsoo.common.data.object;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
-
-import javax.persistence.*;
 
 /**
  * Created by:   Lijian
  * Created on:   2015/8/17
  * Descriptions:
  */
-@Entity
-@Table(name = "user_point_transaction")
-public class UserPointTransactionEntity {
+public class UserPointTransactionObject {
 
-    @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
-    @Column(name = "id")
+    @JsonProperty("id")
     private String id;
 
-    @Column(name = "user_id")
+    @JsonProperty("user_id")
     private String userId;
 
-    @Column(name = "point")
-    private Integer point;
+    @JsonProperty("point")
+    private int point;
 
-    @Column(name = "is_increase")
+    @JsonProperty("is_increase")
     private boolean isIncrease;
 
-    @Column(name = "type_code")
+    @JsonProperty("type_code")
     private String typeCode;
 
-    @Column(name = "status_code")
+    @JsonProperty("status_code")
     private String statusCode;
 
-    @Column(name = "created_account_id")
+    @JsonProperty("created_account_id")
     private String createdAccountId;
 
-    @Column(name = "created_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
 
@@ -60,11 +51,11 @@ public class UserPointTransactionEntity {
         this.userId = userId;
     }
 
-    public Integer getPoint() {
+    public int getPoint() {
         return point;
     }
 
-    public void setPoint(Integer point) {
+    public void setPoint(int point) {
         this.point = point;
     }
 
@@ -107,4 +98,5 @@ public class UserPointTransactionEntity {
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
+
 }

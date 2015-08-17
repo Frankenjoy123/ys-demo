@@ -1,34 +1,25 @@
-package com.yunsoo.data.service.entity;
+package com.yunsoo.common.data.object;
 
-import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 /**
  * Created by:   Lijian
  * Created on:   2015/8/17
  * Descriptions:
  */
-@Entity
-@Table(name = "user_point")
-public class UserPointEntity {
+public class UserPointObject {
 
-    @Id
-    @Column(name = "user_id")
+    @JsonProperty("user_id")
     private String userId;
 
-    @Column(name = "point")
+    @JsonProperty("point")
     private Integer point;
 
-    @Column(name = "last_sign_in_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @JsonProperty("last_sign_in_datetime")
     private DateTime lastSignInDateTime;
 
-    @Column(name = "continuous_sign_in_days")
+    @JsonProperty("continuous_sign_in_days")
     private Integer continuousSignInDays;
 
 
