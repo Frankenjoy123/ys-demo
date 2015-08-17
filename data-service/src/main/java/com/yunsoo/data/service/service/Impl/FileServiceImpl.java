@@ -32,7 +32,11 @@ public class FileServiceImpl implements FileService {
         try {
             return s3ItemDao.getItem(bucketName, key);
         } catch (AmazonS3Exception s3ex) {
-            return null;
+            if (s3ex.getStatusCode() == 404) {
+                return null;
+            } else {
+                throw s3ex;
+            }
         }
     }
 

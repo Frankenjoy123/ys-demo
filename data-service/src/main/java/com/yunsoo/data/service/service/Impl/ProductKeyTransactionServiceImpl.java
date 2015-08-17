@@ -74,5 +74,4 @@ public class ProductKeyTransactionServiceImpl implements ProductKeyTransactionSe
         productKeyOrderRepository.save(orderEntities);
         return productKeyTransactionDetailRepository.save(transactionDetailEntities);
     }
-
 }

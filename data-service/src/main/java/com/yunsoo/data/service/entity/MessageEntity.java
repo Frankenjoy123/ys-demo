@@ -1,50 +1,50 @@
-package com.yunsoo.common.data.object;
+package com.yunsoo.data.service.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import java.io.Serializable;
+import javax.persistence.*;
 
 /**
- * Created by  : Zhe
- * Created on  : 2015/3/9
+ * Created by  : Haitao
+ * Created on  : 2015/8/11
  * Descriptions:
  */
-public class MessageObject  implements Serializable {
+@Entity
+@Table(name = "message")
+public class MessageEntity {
 
-    @JsonProperty("id")
+    @Id
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
+    @Column(name = "id")
     private String id;
 
-    @JsonProperty("org_id")
+    @Column(name = "org_id")
     private String orgId;
 
-    @JsonProperty("title")
+    @Column(name = "title")
     private String title;
 
-    @JsonProperty("status_code")
+    @Column(name = "status_code")
     private String statusCode;
 
-    @JsonProperty("type_code")
+    @Column(name = "type_code")
     private String typeCode;
 
-    @JsonProperty("created_account_id")
+    @Column(name = "created_account_id")
     private String createdAccountId;
 
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("created_datetime")
+    @Column(name = "created_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
-    @JsonProperty("modified_account_id")
+    @Column(name = "modified_account_id")
     private String modifiedAccountId;
 
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("modified_datetime")
+    @Column(name = "modified_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modifiedDateTime;
 
     public String getId() {

@@ -1,16 +1,16 @@
 package com.yunsoo.data.service.service.Impl;
 
-import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.FileObject;
-import com.yunsoo.data.service.config.AmazonSetting;
+import com.yunsoo.data.service.config.AWSConfigProperties;
 import com.yunsoo.data.service.dao.DaoStatus;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.dao.UserDao;
 import com.yunsoo.data.service.dbmodel.UserModel;
+import com.yunsoo.data.service.service.FileService;
 import com.yunsoo.data.service.service.ServiceOperationStatus;
 import com.yunsoo.data.service.service.UserService;
 import com.yunsoo.data.service.service.contract.User;
@@ -35,10 +35,15 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDAO;
+
     @Autowired
     private S3ItemDao s3ItemDao;
+
     @Autowired
-    private AmazonSetting amazonSetting;
+    private FileService fileService;
+
+    @Autowired
+    private AWSConfigProperties awsConfigProperties;
 
     @Override
     public User getById(String id) {
@@ -53,19 +58,7 @@ public class UserServiceImpl implements UserService {
     //to-be refactored
     @Override
     public S3Object getUserThumbnail(String bucketName, String key) throws IOException {
-
-        try {
-            S3Object item = s3ItemDao.getItem(bucketName, key);
-            return item;
-        } catch (AmazonS3Exception s3ex) {
-            if (s3ex.getErrorCode() == "NoSuchKey") {
-                //log
-            }
-            return null;
-        } catch (Exception ex) {
-            //to-do: log
-            return null;
-        }
+        return fileService.getFile(bucketName, key);
     }
 
     @Override
@@ -114,9 +107,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean delete(String id) {
-        DaoStatus daoStatus = userDAO.delete(id, LookupCodes.MessageStatus.DELETED);
-        return daoStatus == DaoStatus.success ? true : false;
+    public void delete(String id) {
+        userDAO.delete(id, LookupCodes.MessageStatus.DELETED);
     }
 
     @Override
@@ -132,8 +124,8 @@ public class UserServiceImpl implements UserService {
     }
 
     //Save thumbnail into S3 bucket
-    private String saveUserThumbnail(String userId, FileObject fileObject, String thumbnailKey) throws IOException, Exception {
-        if (fileObject == null) throw new Exception("ThumbnailFile is null!");
+    private String saveUserThumbnail(String userId, FileObject fileObject, String thumbnailKey) {
+        if (fileObject == null) throw new RuntimeException("fileObject is null!");
         InputStream inputStream = new ByteArrayInputStream(fileObject.getData());
         //to-do:
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -150,8 +142,8 @@ public class UserServiceImpl implements UserService {
         if (fileObject.getLength() != null) {
             objectMetadata.setContentLength(fileObject.getLength()); //set content-length
         }
-        String fullKey = amazonSetting.getS3_userbaseurl() + "/" + userId + "/" + thumbnailKey;
-        s3ItemDao.putItem(amazonSetting.getS3_basebucket(), fullKey, inputStream, objectMetadata, CannedAccessControlList.BucketOwnerFullControl);
+        String fullKey = "user/" + userId + "/gravatar/" + thumbnailKey;
+        s3ItemDao.putItem(awsConfigProperties.getS3().getBucketName(), fullKey, inputStream, objectMetadata, CannedAccessControlList.BucketOwnerFullControl);
         //to-do: move the old thumb into history folder.
 
         return fullKey;

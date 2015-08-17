@@ -11,7 +11,7 @@ cloud:
         stack:
             auto: false
         region:
-            auto: true
+            auto: false
             static: cn-north-1
 
 yunsoo:
@@ -24,10 +24,10 @@ yunsoo:
             expires_minutes: 5
 
 spring:
-    profiles.active: default
+    profiles.active: dev
 ---
 spring:
-    profiles: default
+    profiles: dev
 
 
 logging:
@@ -38,14 +38,15 @@ logging:
 
 yunsoo:
     debug: true
+    environment: dev
     api:
         client:
             dataapi:
-                baseurl: http://dataapi:8080/
+                baseurl: http://localhost:3080/
             processor:
-                baseurl: http://processor:4080/
+                baseurl: http://localhost:4080/
         product_key_base_url: http://t.m.yunsu.co/
-    elasticachename: dev-cache
+
 ---
 spring:
     profiles: test
@@ -62,10 +63,11 @@ logging:
 
 yunsoo:
     debug: true
+    environment: test
     api:
         client:
             dataapi:
-                baseurl: http://localhost:8080/
+                baseurl: http://localhost:3080/
             processor:
                 baseurl: http://localhost:4080/
         product_key_base_url: http://t.m.yunsu.co:9080/

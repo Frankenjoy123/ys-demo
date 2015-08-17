@@ -9,10 +9,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by yan on 7/30/2015.
+ * Created by:   yan
+ * Created on:   7/30/2015
+ * Descriptions:
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
-@CacheConfig(keyGenerator = "keyGenerator", cacheNames = {CacheConfiguration.cacheName})
+@CacheConfig(keyGenerator = "keyGenerator", cacheNames = {CacheConfiguration.CACHE_NAME})
 public @interface ElastiCacheConfig {
 }
