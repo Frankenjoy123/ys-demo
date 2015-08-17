@@ -9,8 +9,8 @@ import javax.persistence.*;
  * Created by Zhe on 2015/4/15.
  */
 @Entity
-@Table(name = "user_following")
-public class UserFollowingEntity {
+@Table(name = "user_organization_following")
+public class UserOrganizationFollowingEntity {
 
     @Id
     @GeneratedValue
@@ -23,19 +23,16 @@ public class UserFollowingEntity {
     @Column(name = "organization_id")
     private String organizationId;
 
-    @Column(name = "last_read_message_id")
-    private Long lastReadMessageId;
-
     @Column(name = "is_following")
     private Boolean isFollowing;
 
-    @Column(name = "created_datetime")
+    @Column(name = "created_time")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
-    @Column(name = "last_update_time", nullable = true)
+    @Column(name = "modified_time", nullable = true)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime lastUpdatedDateTime;
+    private DateTime modifiedDateTime;
 
     public Long getId() {
         return id;
@@ -62,14 +59,6 @@ public class UserFollowingEntity {
         this.organizationId = organizationId;
     }
 
-    public Long getLastReadMessageId() {
-        return lastReadMessageId;
-    }
-
-    public void setLastReadMessageId(Long lastReadMessageId) {
-        this.lastReadMessageId = lastReadMessageId;
-    }
-
     public Boolean getIsFollowing() {
         return isFollowing;
     }
@@ -86,11 +75,11 @@ public class UserFollowingEntity {
         this.createdDateTime = createdDateTime;
     }
 
-    public DateTime getLastUpdatedDateTime() {
-        return lastUpdatedDateTime;
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
     }
 
-    public void setLastUpdatedDateTime(DateTime lastUpdatedDateTime) {
-        this.lastUpdatedDateTime = lastUpdatedDateTime;
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 }

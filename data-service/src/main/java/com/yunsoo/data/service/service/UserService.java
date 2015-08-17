@@ -2,7 +2,6 @@ package com.yunsoo.data.service.service;
 
 import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.data.service.service.contract.User;
-import com.yunsoo.data.service.service.contract.UserFollowing;
 
 import java.io.IOException;
 import java.util.List;

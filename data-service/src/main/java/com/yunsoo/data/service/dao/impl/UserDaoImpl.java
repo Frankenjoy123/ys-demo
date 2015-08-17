@@ -6,9 +6,6 @@ import com.yunsoo.data.service.dbmodel.UserModel;
 
 import java.util.List;
 
-import com.yunsoo.data.service.entity.UserFollowingEntity;
-import com.yunsoo.data.service.repository.UserFollowingRepository;
-import com.yunsoo.data.service.service.contract.UserFollowing;
 import com.yunsoo.data.service.util.SpringBeanUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Session;

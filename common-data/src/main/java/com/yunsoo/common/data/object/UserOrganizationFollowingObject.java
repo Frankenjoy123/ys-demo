@@ -12,15 +12,13 @@ import java.io.Serializable;
 /**
  * Created by Zhe on 2015/6/3.
  */
-public class UserFollowingObject implements Serializable {
+public class UserOrganizationFollowingObject implements Serializable {
     @JsonProperty("id")
     private Long id;
     @JsonProperty("user_id")
     private String userId;
     @JsonProperty("organization_id")
     private String organizationId;
-    @JsonProperty("last_read_message_id")
-    private Long lastReadMessageId;
     @JsonProperty("is_following")
     private Boolean isFollowing;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
@@ -29,8 +27,8 @@ public class UserFollowingObject implements Serializable {
     private DateTime createdDateTime;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("last_updated_datetime")
-    private DateTime lastUpdatedDateTime;
+    @JsonProperty("modified_datetime")
+    private DateTime modifiedDateTime;
 
     public Long getId() {
         return id;
@@ -56,14 +54,6 @@ public class UserFollowingObject implements Serializable {
         this.organizationId = organizationId;
     }
 
-    public Long getLastReadMessageId() {
-        return lastReadMessageId;
-    }
-
-    public void setLastReadMessageId(Long lastReadMessageId) {
-        this.lastReadMessageId = lastReadMessageId;
-    }
-
     public Boolean getIsFollowing() {
         return isFollowing;
     }
@@ -80,11 +70,11 @@ public class UserFollowingObject implements Serializable {
         this.createdDateTime = createdDateTime;
     }
 
-    public DateTime getLastUpdatedDateTime() {
-        return lastUpdatedDateTime;
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
     }
 
-    public void setLastUpdatedDateTime(DateTime lastUpdatedDateTime) {
-        this.lastUpdatedDateTime = lastUpdatedDateTime;
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 }

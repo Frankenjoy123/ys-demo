@@ -169,8 +169,8 @@ public class UserServiceImpl implements UserService {
 
 //    @Transactional
 //    @Override
-//    public long createUserFollowing(UserFollowing userFollowing) {
-//        UserFollowingEntity newEntity = userFollowingRepository.save(UserFollowing.ToEntity(userFollowing));
+//    public long createUserFollowing(UserOrganizationFollowing userFollowing) {
+//        UserOrganizationFollowingEntity newEntity = userFollowingRepository.save(UserOrganizationFollowing.ToEntity(userFollowing));
 //        return newEntity.getId();
 //    }
 }
