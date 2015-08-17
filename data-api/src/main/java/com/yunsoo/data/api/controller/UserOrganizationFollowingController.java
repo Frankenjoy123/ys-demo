@@ -27,26 +27,26 @@ import java.util.List;
 public class UserOrganizationFollowingController {
 
     @Autowired
-    private UserOrganizationFollowingRepository userFollowingRepository;
+    private UserOrganizationFollowingRepository userOrganizationFollowingRepository;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public UserOrganizationFollowingObject getFollowingOrgsByUserId(@PathVariable(value = "id") Long id) {
+    public UserOrganizationFollowingObject getFollowingOrgByFollowingId(@PathVariable(value = "id") Long id) {
         if (id == null || id <= 0) throw new BadRequestException("id不能为空！");
-        List<UserOrganizationFollowing> userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userFollowingRepository.findById(id));
+        List<UserOrganizationFollowing> userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userOrganizationFollowingRepository.findById(id));
         if (userOrganizationFollowingList == null || userOrganizationFollowingList.size() < 1) {
-            throw new NotFoundException(40401, "找不到组织的记录! ID = " + id);
+            throw new NotFoundException(40401, "找不到关注的记录! ID = " + id);
         }
         return this.FromUserFollowing(userOrganizationFollowingList.get(0));
     }
 
     @RequestMapping(value = "/who/{id}", method = RequestMethod.GET)
-    public List<UserOrganizationFollowingObject> getFollowingOrgsByUserId(@PathVariable(value = "id") String id,
+    public List<UserOrganizationFollowingObject> getFollowingOrgsByUserId(@PathVariable(value = "id") String userId,
                                                         @RequestParam(value = "index") Integer index,
                                                         @RequestParam(value = "size") Integer size) {
         if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
 
-        List<UserOrganizationFollowing> userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userFollowingRepository.findByUserIdAndIsFollowing(id, true, new PageRequest(index, size)));
+        List<UserOrganizationFollowing> userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userOrganizationFollowingRepository.findByUserIdAndIsFollowing(userId, true, new PageRequest(index, size)));
 //        if (userOrganizationFollowingList == null || userOrganizationFollowingList.size() < 1) {
 //            throw new NotFoundException(40401, "找不到用户follow组织的记录! 用户ID = " + id);
 //        }
@@ -54,28 +54,33 @@ public class UserOrganizationFollowingController {
     }
 
     @RequestMapping(value = "/org/{id}", method = RequestMethod.GET)
-    public List<UserOrganizationFollowingObject> getFollowerByOrgId(@PathVariable(value = "id") String id,
-                                                  @RequestParam(value = "index") Integer index,
-                                                  @RequestParam(value = "size") Integer size) {
-        if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
-        if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
-        if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
+    public List<UserOrganizationFollowingObject> getFollowersByOrgId(@PathVariable(value = "id") String orgId,
+                                                  @RequestParam(value = "index", required = false) Integer index,
+                                                  @RequestParam(value = "size", required = false) Integer size) {
+        if (orgId == null || orgId.isEmpty()) throw new BadRequestException("id不能为空！");
+        if (index != null && index < 0) throw new BadRequestException("Index必须为不小于0的值！");
+        if (size != null && size < 0) throw new BadRequestException("Size必须为不小于0的值！");
+        List<UserOrganizationFollowing> userOrganizationFollowingList = null;
+        if(index != null){
+            userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userOrganizationFollowingRepository.findByOrganizationId(orgId, new PageRequest(index, size)));
+        }
+        else{
+            userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userOrganizationFollowingRepository.findByOrganizationId(orgId));
 
-        List<UserOrganizationFollowing> userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userFollowingRepository.findByOrganizationId(id, new PageRequest(index, size)));
-//        if (userOrganizationFollowingList == null || userOrganizationFollowingList.size() < 1) {
-//            throw new NotFoundException(40401, "找不到组织的粉丝记录! 组织ID = " + id);
-//        }
+        }
+
         return this.FromUserFollowingList(userOrganizationFollowingList);
+
     }
 
     //Check whether the user - org link exists or not.
     @RequestMapping(value = "/who/{id}/org/{orgid}", method = RequestMethod.GET)
-    public UserOrganizationFollowingObject getFollowingRecord(@PathVariable(value = "id") String id,
+    public UserOrganizationFollowingObject getFollowingRecord(@PathVariable(value = "id") String userId,
                                             @PathVariable(value = "orgid") String orgId) {
-        if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
+        if (userId == null || userId.isEmpty()) throw new BadRequestException("id不能为空！");
         if (orgId == null || orgId.isEmpty()) throw new BadRequestException("orgId不能为空！");
 
-        List<UserOrganizationFollowing> userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userFollowingRepository.findByUserIdAndOrganizationId(id, orgId));
+        List<UserOrganizationFollowing> userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userOrganizationFollowingRepository.findByUserIdAndOrganizationId(userId, orgId));
         if (userOrganizationFollowingList == null || userOrganizationFollowingList.size() < 1) {
             return null;
         }
@@ -88,16 +93,19 @@ public class UserOrganizationFollowingController {
         UserOrganizationFollowing userOrganizationFollowing = this.ToUserFollowing(userOrganizationFollowingObject);
         userOrganizationFollowing.setCreatedDateTime(DateTime.now());  //set created datetime
         userOrganizationFollowing.setModifiedDateTime(DateTime.now());
-        UserOrganizationFollowingEntity newEntity = userFollowingRepository.save(UserOrganizationFollowing.ToEntity(userOrganizationFollowing));
+        UserOrganizationFollowingEntity newEntity = userOrganizationFollowingRepository.save(UserOrganizationFollowing.ToEntity(userOrganizationFollowing));
         return newEntity.getId();
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
     public void updateUserFollow(@RequestBody UserOrganizationFollowingObject userOrganizationFollowingObject) {
-        UserOrganizationFollowing userOrganizationFollowing = this.ToUserFollowing(userOrganizationFollowingObject);
-        userOrganizationFollowing.setModifiedDateTime(DateTime.now());
-        userFollowingRepository.save(UserOrganizationFollowing.ToEntity(userOrganizationFollowing));
-
+        UserOrganizationFollowingObject orignalObj = getFollowingOrgByFollowingId(userOrganizationFollowingObject.getId());
+        if(orignalObj != null) {
+            UserOrganizationFollowing userOrganizationFollowing = this.ToUserFollowing(userOrganizationFollowingObject);
+            userOrganizationFollowing.setModifiedDateTime(DateTime.now());
+            userOrganizationFollowing.setCreatedDateTime(orignalObj.getCreatedDateTime());
+            userOrganizationFollowingRepository.save(UserOrganizationFollowing.ToEntity(userOrganizationFollowing));
+        }
     }
 
     private UserOrganizationFollowingObject FromUserFollowing(UserOrganizationFollowing userOrganizationFollowing) {
@@ -131,5 +139,6 @@ public class UserOrganizationFollowingController {
         }
         return userOrganizationFollowingList;
     }
+
 
 }

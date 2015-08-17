@@ -82,4 +82,25 @@ public class UserOrganizationFollowingEntity {
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserOrganizationFollowingEntity)) return false;
+
+        UserOrganizationFollowingEntity that = (UserOrganizationFollowingEntity) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (!userId.equals(that.userId)) return false;
+        return organizationId.equals(that.organizationId);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + userId.hashCode();
+        result = 31 * result + organizationId.hashCode();
+        return result;
+    }
 }

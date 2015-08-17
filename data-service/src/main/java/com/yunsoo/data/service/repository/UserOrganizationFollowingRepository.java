@@ -24,4 +24,6 @@ public interface UserOrganizationFollowingRepository extends PagingAndSortingRep
 
     Page<UserOrganizationFollowingEntity> findByOrganizationId(String organizationId, Pageable pageable);
 
+    Iterable<UserOrganizationFollowingEntity> findByOrganizationId(String organizationId);
+
 }

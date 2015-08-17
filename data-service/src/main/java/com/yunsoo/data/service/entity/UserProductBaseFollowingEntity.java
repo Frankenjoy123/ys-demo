@@ -80,4 +80,25 @@ public class UserProductBaseFollowingEntity {
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserProductBaseFollowingEntity)) return false;
+
+        UserProductBaseFollowingEntity entity = (UserProductBaseFollowingEntity) o;
+
+        if (id != null ? !id.equals(entity.id) : entity.id != null) return false;
+        if (!userId.equals(entity.userId)) return false;
+        return productBaseId.equals(entity.productBaseId);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + userId.hashCode();
+        result = 31 * result + productBaseId.hashCode();
+        return result;
+    }
 }
