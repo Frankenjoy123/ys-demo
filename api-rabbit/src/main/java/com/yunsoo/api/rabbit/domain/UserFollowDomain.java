@@ -27,24 +27,24 @@ public class UserFollowDomain {
             throw new BadRequestException("UserFollowing 不能为空！");
         }
         //check if exist in DB
-        UserFollowing existingUserFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class, userFollowing.getUserId(), userFollowing.getOrganizationId());
+        UserFollowing existingUserFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserFollowing.class, userFollowing.getUserId(), userFollowing.getOrganizationId());
         if (existingUserFollowing != null) {
             //when user is unfollowing org, and we need to force user to follow
             if (!existingUserFollowing.getIsFollowing() && forceFollow) {
                 existingUserFollowing.setIsFollowing(true);
-                dataAPIClient.patch("/user/following", existingUserFollowing, long.class);
+                dataAPIClient.patch("/userorganization/following", existingUserFollowing, long.class);
             }
             return existingUserFollowing.getId();
         } else {
             //user never follow org before, just add new record.
             userFollowing.setIsFollowing(true);
-            Long id = dataAPIClient.post("/user/following", userFollowing, long.class);
+            Long id = dataAPIClient.post("/userorganization/following", userFollowing, long.class);
             return id;
         }
     }
 
     public UserFollowing getUserFollowing(String userId, String orgId) {
-        UserFollowing userFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class, userId, orgId);
+        UserFollowing userFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserFollowing.class, userId, orgId);
         return userFollowing;
     }
 }

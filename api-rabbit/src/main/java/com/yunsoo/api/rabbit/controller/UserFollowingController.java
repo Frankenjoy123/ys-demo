@@ -45,7 +45,7 @@ public class UserFollowingController {
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
 
 
-        List<UserFollowing> userFollowingList = dataAPIClient.get("/user/following/who/{0}?index={1}&size={2}", new ParameterizedTypeReference<List<UserFollowing>>() {
+        List<UserFollowing> userFollowingList = dataAPIClient.get("/userorganization/following/who/{0}?index={1}&size={2}", new ParameterizedTypeReference<List<UserFollowing>>() {
         }, id, index, size);
 
         //fill organization Name
@@ -72,7 +72,7 @@ public class UserFollowingController {
     @PreAuthorize("hasPermission(#id, 'UserFollowing', 'userfollowing:read')")
     public UserFollowing getFollowingRecord(@PathVariable(value = "id") String id,
                                             @PathVariable(value = "orgid") String orgId) {
-        UserFollowing userFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class, id, orgId);
+        UserFollowing userFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserFollowing.class, id, orgId);
         if (userFollowing == null) {
             throw new NotFoundException("找不到用户Follow的公司信息");
         }
@@ -85,11 +85,11 @@ public class UserFollowingController {
     public long userFollowingOrgs(@RequestBody UserFollowing userFollowing) {
         if (userFollowing == null) throw new BadRequestException("userFollowing 不能为空！");
         return userFollowDomain.ensureFollow(userFollowing, true);
-//        UserFollowing existingUserFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class, userFollowing.getUserId(), userFollowing.getOrganizationId());
+//        UserFollowing existingUserFollowing = dataAPIClient.get("/useruserorganization/following/who/{id}/org/{orgid}", UserFollowing.class, userFollowing.getUserId(), userFollowing.getOrganizationId());
 //        if (existingUserFollowing != null) {
 //            return existingUserFollowing.getId();
 //        } else {
-//            Long id = dataAPIClient.post("/user/following/link", userFollowing, long.class);
+//            Long id = dataAPIClient.post("/userorganization/following/link", userFollowing, long.class);
 //            return id;
 //        }
     }
@@ -100,16 +100,16 @@ public class UserFollowingController {
     public void userUnfollowOrg(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @RequestBody UserFollowing userFollowing) {
         if (userFollowing == null) throw new BadRequestException("userFollowing 不能为空！");
 
-        UserFollowing existingUserFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class,
+        UserFollowing existingUserFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserFollowing.class,
                 userFollowing.getUserId(), userFollowing.getOrganizationId());
         if (existingUserFollowing == null) {
             throw new NotFoundException(40401, "找不到用户follow记录！");
         }
-//        UserFollowing userFollowing = dataAPIClient.get("/user/following/{id}", UserFollowing.class, Id);
+//        UserFollowing userFollowing = dataAPIClient.get("/userorganization/following/{id}", UserFollowing.class, Id);
         if (!userDomain.validateToken(token, userFollowing.getUserId())) {
             throw new UnauthorizedException("不能删除其他用户的收藏信息！");
         }
         existingUserFollowing.setIsFollowing(false);
-        dataAPIClient.patch("user/following", existingUserFollowing); //just mark isFollowing as False.
+        dataAPIClient.patch("userorganization/following", existingUserFollowing); //just mark isFollowing as False.
     }
 }
