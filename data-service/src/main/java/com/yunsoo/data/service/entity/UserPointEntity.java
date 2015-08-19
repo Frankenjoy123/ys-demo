@@ -28,8 +28,8 @@ public class UserPointEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastSignInDateTime;
 
-    @Column(name = "continuous_sign_in_days")
-    private Integer continuousSignInDays;
+    @Column(name = "last_sign_in_continuous_days")
+    private Integer lastSignInContinuousDays;
 
 
     public String getUserId() {
@@ -56,11 +56,11 @@ public class UserPointEntity {
         this.lastSignInDateTime = lastSignInDateTime;
     }
 
-    public Integer getContinuousSignInDays() {
-        return continuousSignInDays;
+    public Integer getLastSignInContinuousDays() {
+        return lastSignInContinuousDays;
     }
 
-    public void setContinuousSignInDays(Integer continuousSignInDays) {
-        this.continuousSignInDays = continuousSignInDays;
+    public void setLastSignInContinuousDays(Integer lastSignInContinuousDays) {
+        this.lastSignInContinuousDays = lastSignInContinuousDays;
     }
 }

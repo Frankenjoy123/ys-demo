@@ -1,7 +1,14 @@
 package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by:   Lijian
@@ -13,24 +20,28 @@ public class UserPointTransactionObject {
     @JsonProperty("id")
     private String id;
 
+    @NotEmpty(message = "user_id must not be null or empty")
     @JsonProperty("user_id")
     private String userId;
 
+    @NotNull(message = "point must not be null")
     @JsonProperty("point")
     private Integer point;
 
-    @JsonProperty("is_increase")
-    private Boolean isIncrease;
-
+    @NotEmpty(message = "type_code must not be null or empty")
     @JsonProperty("type_code")
     private String typeCode;
 
+    @NotEmpty(message = "status_code must not be null or empty")
     @JsonProperty("status_code")
     private String statusCode;
 
+    @NotEmpty(message = "created_account_id must not be null or empty")
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
@@ -57,14 +68,6 @@ public class UserPointTransactionObject {
 
     public void setPoint(Integer point) {
         this.point = point;
-    }
-
-    public Boolean isIncrease() {
-        return isIncrease;
-    }
-
-    public void setIsIncrease(Boolean isIncrease) {
-        this.isIncrease = isIncrease;
     }
 
     public String getTypeCode() {

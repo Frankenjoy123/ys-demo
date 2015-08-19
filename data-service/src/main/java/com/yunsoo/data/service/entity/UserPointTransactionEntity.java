@@ -27,9 +27,6 @@ public class UserPointTransactionEntity {
     @Column(name = "point")
     private Integer point;
 
-    @Column(name = "is_increase")
-    private boolean isIncrease;
-
     @Column(name = "type_code")
     private String typeCode;
 
@@ -66,14 +63,6 @@ public class UserPointTransactionEntity {
 
     public void setPoint(Integer point) {
         this.point = point;
-    }
-
-    public boolean isIncrease() {
-        return isIncrease;
-    }
-
-    public void setIsIncrease(boolean isIncrease) {
-        this.isIncrease = isIncrease;
     }
 
     public String getTypeCode() {

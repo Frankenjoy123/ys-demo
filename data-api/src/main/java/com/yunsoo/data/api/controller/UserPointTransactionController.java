@@ -5,12 +5,15 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.UserPointTransactionEntity;
 import com.yunsoo.data.service.repository.UserPointTransactionRepository;
+import com.yunsoo.data.service.service.UserPointTransactionService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,13 +29,13 @@ public class UserPointTransactionController {
     @Autowired
     private UserPointTransactionRepository userPointTransactionRepository;
 
+    @Autowired
+    private UserPointTransactionService userPointTransactionService;
 
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public UserPointTransactionObject getById(@PathVariable String id) {
-        UserPointTransactionEntity entity = userPointTransactionRepository.findOne(id);
-        if (entity == null) {
-            throw new NotFoundException("user_point_transaction not found by [id: " + id + ']');
-        }
+
+    @RequestMapping(value = "{transactionId}", method = RequestMethod.GET)
+    public UserPointTransactionObject getById(@PathVariable String transactionId) {
+        UserPointTransactionEntity entity = findById(transactionId);
         return toUserPointTransactionObject(entity);
     }
 
@@ -52,6 +55,38 @@ public class UserPointTransactionController {
                 .collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public UserPointTransactionObject createTransaction(@RequestBody @Valid UserPointTransactionObject userPointTransactionObject) {
+        UserPointTransactionEntity entity = toUserPointTransactionEntity(userPointTransactionObject);
+        entity.setId(null);
+        if (entity.getCreatedDateTime() == null) {
+            entity.setCreatedDateTime(DateTime.now());
+        }
+        UserPointTransactionEntity newEntity = userPointTransactionRepository.save(entity);
+        return toUserPointTransactionObject(newEntity);
+    }
+
+    @RequestMapping(value = "{transactionId}/commit", method = RequestMethod.POST)
+    public UserPointTransactionObject commit(@PathVariable String transactionId) {
+        UserPointTransactionEntity entity = findById(transactionId);
+        UserPointTransactionEntity newEntity = userPointTransactionService.commit(entity);
+        return toUserPointTransactionObject(newEntity);
+    }
+
+    @RequestMapping(value = "{transactionId}/rollback", method = RequestMethod.POST)
+    public UserPointTransactionObject rollback(@PathVariable String transactionId) {
+        UserPointTransactionEntity entity = findById(transactionId);
+        UserPointTransactionEntity newEntity = userPointTransactionService.rollback(entity);
+        return toUserPointTransactionObject(newEntity);
+    }
+
+    private UserPointTransactionEntity findById(String transactionId) {
+        UserPointTransactionEntity entity = userPointTransactionRepository.findOne(transactionId);
+        if (entity == null) {
+            throw new NotFoundException("user_point_transaction not found by [id: " + transactionId + ']');
+        }
+        return entity;
+    }
 
     private UserPointTransactionObject toUserPointTransactionObject(UserPointTransactionEntity entity) {
         if (entity == null) {
@@ -61,7 +96,6 @@ public class UserPointTransactionController {
         object.setId(entity.getId());
         object.setUserId(entity.getUserId());
         object.setPoint(entity.getPoint());
-        object.setIsIncrease(entity.isIncrease());
         object.setTypeCode(entity.getTypeCode());
         object.setStatusCode(entity.getStatusCode());
         object.setCreatedAccountId(entity.getCreatedAccountId());
@@ -77,7 +111,6 @@ public class UserPointTransactionController {
         entity.setId(object.getId());
         entity.setUserId(object.getUserId());
         entity.setPoint(object.getPoint());
-        entity.setIsIncrease(object.isIncrease());
         entity.setTypeCode(object.getTypeCode());
         entity.setStatusCode(object.getStatusCode());
         entity.setCreatedAccountId(object.getCreatedAccountId());

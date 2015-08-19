@@ -56,7 +56,7 @@ public class ProductKeyTransactionServiceImpl implements ProductKeyTransactionSe
     @Override
     public List<ProductKeyTransactionDetailEntity> rollback(List<ProductKeyTransactionDetailEntity> transactionDetailEntities) {
         List<String> orderIds = transactionDetailEntities.stream()
-                .filter(t -> !LookupCodes.ProductKeyTransactionStatus.ROLLBACK.equals(t.getStatusCode()))
+                .filter(t -> LookupCodes.ProductKeyTransactionStatus.COMMITTED.equals(t.getStatusCode()))
                 .map(ProductKeyTransactionDetailEntity::getOrderId)
                 .collect(Collectors.toList());
         List<ProductKeyOrderEntity> orderEntities = productKeyOrderRepository.findAll(orderIds);
