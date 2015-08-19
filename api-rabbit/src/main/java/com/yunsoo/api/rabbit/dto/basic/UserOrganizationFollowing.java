@@ -10,7 +10,7 @@ import org.joda.time.DateTime;
 /**
  * Created by Zhe on 2015/4/21.
  */
-public class UserFollowing {
+public class UserOrganizationFollowing {
     @JsonProperty("id")
     private Long id;
     @JsonProperty("user_id")

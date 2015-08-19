@@ -118,11 +118,11 @@ public class ScanController {
         scanResult.setManufacturer(new Organization(organizationObject));
 
         //7，ensure user following the company, and set the followed status in result.
-        UserFollowing userFollowing = new UserFollowing();
+        UserOrganizationFollowing userFollowing = new UserOrganizationFollowing();
         userFollowing.setUserId(currentUser.getId());
         userFollowing.setOrganizationId(organizationObject.getId());
         userFollowDomain.ensureFollow(userFollowing, false);
-        UserFollowing userFollowingResult = userFollowDomain.getUserFollowing(currentUser.getId(), organizationObject.getId());
+        UserOrganizationFollowing userFollowingResult = userFollowDomain.getUserFollowing(currentUser.getId(), organizationObject.getId());
         if (userFollowingResult != null) {
             scanResult.setFollowed_org(userFollowingResult.getIsFollowing());
         } else {

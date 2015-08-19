@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
+import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
+import com.yunsoo.api.rabbit.dto.basic.UserProductFollowing;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.slf4j.Logger;
@@ -18,16 +19,16 @@ public class UserFollowDomain {
     private RestClient dataAPIClient;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserFollowDomain.class);
 
-//    public long ensureFollow(UserFollowing userFollowing, Boolean forceFollow) {
+//    public long ensureFollow(UserOrganizationFollowing userFollowing, Boolean forceFollow) {
 //        return this.ensureFollow(userFollowing, forceFollow, false);
 //    }
 
-    public long ensureFollow(UserFollowing userFollowing, Boolean forceFollow) {
+    public long ensureFollow(UserOrganizationFollowing userFollowing, Boolean forceFollow) {
         if (userFollowing == null) {
-            throw new BadRequestException("UserFollowing 不能为空！");
+            throw new BadRequestException("UserOrganizationFollowing 不能为空！");
         }
         //check if exist in DB
-        UserFollowing existingUserFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserFollowing.class, userFollowing.getUserId(), userFollowing.getOrganizationId());
+        UserOrganizationFollowing existingUserFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class, userFollowing.getUserId(), userFollowing.getOrganizationId());
         if (existingUserFollowing != null) {
             //when user is unfollowing org, and we need to force user to follow
             if (!existingUserFollowing.getIsFollowing() && forceFollow) {
@@ -43,8 +44,39 @@ public class UserFollowDomain {
         }
     }
 
-    public UserFollowing getUserFollowing(String userId, String orgId) {
-        UserFollowing userFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserFollowing.class, userId, orgId);
+    public long ensureFollow(UserProductFollowing userFollowing, Boolean forceFollow) {
+        if (userFollowing == null) {
+            throw new BadRequestException("UserProductFollowing 不能为空！");
+        }
+        //check if exist in DB
+        UserProductFollowing existingUserFollowing = getUserProductFollowing(userFollowing.getUserId(), userFollowing.getProductId());
+        if (existingUserFollowing != null) {
+            //when user is unfollowing org, and we need to force user to follow
+            if (!existingUserFollowing.getIsFollowing() && forceFollow) {
+                existingUserFollowing.setIsFollowing(true);
+                dataAPIClient.patch("/userproduct/following", existingUserFollowing, long.class);
+            }
+            return existingUserFollowing.getId();
+        } else {
+            //user never follow org before, just add new record.
+            userFollowing.setIsFollowing(true);
+            Long id = dataAPIClient.post("/userproduct/following", userFollowing, long.class);
+            return id;
+        }
+    }
+
+
+    public UserOrganizationFollowing getUserFollowing(String userId, String orgId) {
+        UserOrganizationFollowing userFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class, userId, orgId);
+        return userFollowing;
+    }
+
+
+    public UserProductFollowing getUserProductFollowing(String userId, String productId) {
+
+        UserProductFollowing userFollowing = dataAPIClient.get("/userproduct/following/who/{id}/product/{productid}", UserProductFollowing.class,userId, productId);
+
+
         return userFollowing;
     }
 }

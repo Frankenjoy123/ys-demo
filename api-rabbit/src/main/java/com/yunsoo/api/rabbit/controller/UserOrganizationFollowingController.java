@@ -2,7 +2,7 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
-import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
+import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
 import com.yunsoo.api.rabbit.object.Constants;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.RestClient;
@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/user/following")
-public class UserFollowingController {
+public class UserOrganizationFollowingController {
     @Autowired
     private RestClient dataAPIClient;
     @Autowired
@@ -37,7 +37,7 @@ public class UserFollowingController {
 
     @RequestMapping(value = "/who/{id}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#id, 'UserFollowing', 'userfollowing:read')")
-    public List<UserFollowing> getFollowingOrgsByUserId(@PathVariable(value = "id") String id,
+    public List<UserOrganizationFollowing> getFollowingOrgsByUserId(@PathVariable(value = "id") String id,
                                                         @RequestParam(value = "index") Integer index,
                                                         @RequestParam(value = "size") Integer size) {
         if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
@@ -45,12 +45,12 @@ public class UserFollowingController {
         if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
 
 
-        List<UserFollowing> userFollowingList = dataAPIClient.get("/userorganization/following/who/{0}?index={1}&size={2}", new ParameterizedTypeReference<List<UserFollowing>>() {
+        List<UserOrganizationFollowing> userFollowingList = dataAPIClient.get("/userorganization/following/who/{0}?index={1}&size={2}", new ParameterizedTypeReference<List<UserOrganizationFollowing>>() {
         }, id, index, size);
 
         //fill organization Name
         HashMap<String, OrganizationObject> orgMap = new HashMap<>();
-        for (UserFollowing userFollowing : userFollowingList) {
+        for (UserOrganizationFollowing userFollowing : userFollowingList) {
             if (!orgMap.containsKey(userFollowing.getOrganizationId())) {
                 OrganizationObject object = dataAPIClient.get("organization/{id}", OrganizationObject.class, userFollowing.getOrganizationId());
                 if (object != null) {
@@ -70,9 +70,9 @@ public class UserFollowingController {
 
     @RequestMapping(value = "/who/{id}/org/{orgid}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#id, 'UserFollowing', 'userfollowing:read')")
-    public UserFollowing getFollowingRecord(@PathVariable(value = "id") String id,
+    public UserOrganizationFollowing getFollowingRecord(@PathVariable(value = "id") String id,
                                             @PathVariable(value = "orgid") String orgId) {
-        UserFollowing userFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserFollowing.class, id, orgId);
+        UserOrganizationFollowing userFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class, id, orgId);
         if (userFollowing == null) {
             throw new NotFoundException("找不到用户Follow的公司信息");
         }
@@ -82,10 +82,10 @@ public class UserFollowingController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
-    public long userFollowingOrgs(@RequestBody UserFollowing userFollowing) {
+    public long userFollowingOrgs(@RequestBody UserOrganizationFollowing userFollowing) {
         if (userFollowing == null) throw new BadRequestException("userFollowing 不能为空！");
         return userFollowDomain.ensureFollow(userFollowing, true);
-//        UserFollowing existingUserFollowing = dataAPIClient.get("/useruserorganization/following/who/{id}/org/{orgid}", UserFollowing.class, userFollowing.getUserId(), userFollowing.getOrganizationId());
+//        UserOrganizationFollowing existingUserFollowing = dataAPIClient.get("/useruserorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class, userFollowing.getUserId(), userFollowing.getOrganizationId());
 //        if (existingUserFollowing != null) {
 //            return existingUserFollowing.getId();
 //        } else {
@@ -97,15 +97,15 @@ public class UserFollowingController {
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
 //    @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
-    public void userUnfollowOrg(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @RequestBody UserFollowing userFollowing) {
+    public void userUnfollowOrg(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @RequestBody UserOrganizationFollowing userFollowing) {
         if (userFollowing == null) throw new BadRequestException("userFollowing 不能为空！");
 
-        UserFollowing existingUserFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserFollowing.class,
+        UserOrganizationFollowing existingUserFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class,
                 userFollowing.getUserId(), userFollowing.getOrganizationId());
         if (existingUserFollowing == null) {
             throw new NotFoundException(40401, "找不到用户follow记录！");
         }
-//        UserFollowing userFollowing = dataAPIClient.get("/userorganization/following/{id}", UserFollowing.class, Id);
+//        UserOrganizationFollowing userFollowing = dataAPIClient.get("/userorganization/following/{id}", UserOrganizationFollowing.class, Id);
         if (!userDomain.validateToken(token, userFollowing.getUserId())) {
             throw new UnauthorizedException("不能删除其他用户的收藏信息！");
         }

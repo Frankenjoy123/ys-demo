@@ -1,8 +1,9 @@
 package com.yunsoo.api.rabbit.security.permission;
 
 import com.yunsoo.api.rabbit.dto.basic.User;
-import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
+import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
 import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
+import com.yunsoo.api.rabbit.dto.basic.UserProductFollowing;
 import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.ForbiddenException;
@@ -44,9 +45,11 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 hasPermission = ((User) targetDomainObject).getId().equals(account.getId());
             } else if (targetDomainObject instanceof UserLikedProduct) {
                 hasPermission = ((UserLikedProduct) targetDomainObject).getUserId().equals(account.getId());
-            } else if (targetDomainObject instanceof UserFollowing) {
-                hasPermission = ((UserFollowing) targetDomainObject).getUserId().equals(account.getId());
-            } else {
+            } else if (targetDomainObject instanceof UserOrganizationFollowing) {
+                hasPermission = ((UserOrganizationFollowing) targetDomainObject).getUserId().equals(account.getId());
+            } else if (targetDomainObject instanceof UserProductFollowing) {
+                hasPermission = ((UserProductFollowing) targetDomainObject).getUserId().equals(account.getId());
+            }else {
                 hasPermission = true;
             }
             //mockup here, always true

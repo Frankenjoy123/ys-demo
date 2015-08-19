@@ -31,11 +31,11 @@ public class UserProductionBaseFollowingController {
     private UserProductBaseFollowingRepository userProductBaseFollowingRepository;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public UserProductBaseFollowingObject getFollowingProductByFollowingId(@PathVariable(value = "id") Long id) {
-        if (id == null || id <= 0) throw new BadRequestException("id?????");
+    public UserProductBaseFollowingObject getFollowingProductsByFollowingId(@PathVariable(value = "id") Long id) {
+        if (id == null || id <= 0) throw new BadRequestException("id不能为空");
         List<UserProductBaseFollowingEntity> userProductBaseFollowingEntities = userProductBaseFollowingRepository.findById(id);
         if (userProductBaseFollowingEntities == null || userProductBaseFollowingEntities.size() < 1) {
-            throw new NotFoundException(40401, "????????! ID = " + id);
+            throw new NotFoundException(40401, "找不到关注的记录! ID = " + id);
         }
         return toUserProductFollowingObject(userProductBaseFollowingEntities.get(0));
     }
@@ -44,8 +44,8 @@ public class UserProductionBaseFollowingController {
     public List<UserProductBaseFollowingObject> getFollowingProductsByUserId(@PathVariable(value = "id") String userId,
                                                                           @RequestParam(value = "index") Integer index,
                                                                           @RequestParam(value = "size") Integer size) {
-        if (index == null || index < 0) throw new BadRequestException("Index??????0???");
-        if (size == null || size < 0) throw new BadRequestException("Size??????0???");
+        if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值");
+        if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值");
 
         Page<UserProductBaseFollowingEntity> list = userProductBaseFollowingRepository.findByUserIdAndIsFollowing(userId, true, new PageRequest(index, size));
 
@@ -56,9 +56,9 @@ public class UserProductionBaseFollowingController {
     public List<UserProductBaseFollowingObject> getFollowersByProductId(@PathVariable(value = "id") String prodId,
                                                                     @RequestParam(value = "index", required = false) Integer index,
                                                                     @RequestParam(value = "size", required = false) Integer size) {
-        if (prodId == null || prodId.isEmpty()) throw new BadRequestException("id?????");
-        if (index != null && index < 0) throw new BadRequestException("Index??????0???");
-        if (size != null && size < 0) throw new BadRequestException("Size??????0???");
+        if (prodId == null || prodId.isEmpty()) throw new BadRequestException("id不能为空！");
+        if (index != null && index < 0) throw new BadRequestException("Index必须为不小于0的值");
+        if (size != null && size < 0) throw new BadRequestException("Size必须为不小于0的值");
 
         if(index != null){
             Page<UserProductBaseFollowingEntity>   list = userProductBaseFollowingRepository.findByProductBaseId(prodId, new PageRequest(index, size));
@@ -77,8 +77,8 @@ public class UserProductionBaseFollowingController {
     @RequestMapping(value = "/who/{id}/product/{prodid}", method = RequestMethod.GET)
     public UserProductBaseFollowingObject getFollowingRecord(@PathVariable(value = "id") String userId,
                                                               @PathVariable(value = "prodid") String productId) {
-        if (userId == null || userId.isEmpty()) throw new BadRequestException("id?????");
-        if (productId == null || productId.isEmpty()) throw new BadRequestException("prodid?????");
+        if (userId == null || userId.isEmpty()) throw new BadRequestException("id不能为空！");
+        if (productId == null || productId.isEmpty()) throw new BadRequestException("prodid不能为空！");
 
         List<UserProductBaseFollowingEntity> userOrganizationFollowingList = userProductBaseFollowingRepository.findByUserIdAndProductBaseId(userId, productId);
         if (userOrganizationFollowingList == null || userOrganizationFollowingList.size() < 1) {
@@ -99,7 +99,7 @@ public class UserProductionBaseFollowingController {
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
     public void updateUserFollow(@RequestBody UserProductBaseFollowingObject object) {
-        UserProductBaseFollowingObject orignalObj = getFollowingProductByFollowingId(object.getId());
+        UserProductBaseFollowingObject orignalObj = getFollowingProductsByFollowingId(object.getId());
         if(orignalObj != null) {
             UserProductBaseFollowingEntity entity = this.toUserOrganizationFollowingEntity(object);
             entity.setCreatedDateTime(orignalObj.getCreatedDateTime());
