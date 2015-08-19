@@ -51,15 +51,15 @@ public class UserOrganizationFollowingController {
         //fill organization Name
         HashMap<String, OrganizationObject> orgMap = new HashMap<>();
         for (UserOrganizationFollowing userFollowing : userFollowingList) {
-            if (!orgMap.containsKey(userFollowing.getOrganizationId())) {
-                OrganizationObject object = dataAPIClient.get("organization/{id}", OrganizationObject.class, userFollowing.getOrganizationId());
+            if (!orgMap.containsKey(userFollowing.getOrgId())) {
+                OrganizationObject object = dataAPIClient.get("organization/{id}", OrganizationObject.class, userFollowing.getOrgId());
                 if (object != null) {
-                    orgMap.put(userFollowing.getOrganizationId(), object);
-                    userFollowing.setOrganizationName(object.getName());
-                    userFollowing.setOrganizationDescription(object.getDescription());
+                    orgMap.put(userFollowing.getOrgId(), object);
+                    userFollowing.setOrgName(object.getName());
+                    userFollowing.setOrgDescription(object.getDescription());
                 } else {
-                    userFollowing.setOrganizationName(orgMap.get(userFollowing.getOrganizationId()).getName());
-                    userFollowing.setOrganizationDescription(orgMap.get(userFollowing.getOrganizationId()).getDescription());
+                    userFollowing.setOrgName(orgMap.get(userFollowing.getOrgId()).getName());
+                    userFollowing.setOrgDescription(orgMap.get(userFollowing.getOrgId()).getDescription());
                 }
             }
         }
@@ -85,7 +85,7 @@ public class UserOrganizationFollowingController {
     public long userFollowingOrgs(@RequestBody UserOrganizationFollowing userFollowing) {
         if (userFollowing == null) throw new BadRequestException("userFollowing 不能为空！");
         return userFollowDomain.ensureFollow(userFollowing, true);
-//        UserOrganizationFollowing existingUserFollowing = dataAPIClient.get("/useruserorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class, userFollowing.getUserId(), userFollowing.getOrganizationId());
+//        UserOrganizationFollowing existingUserFollowing = dataAPIClient.get("/useruserorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class, userFollowing.getUserId(), userFollowing.getOrgId());
 //        if (existingUserFollowing != null) {
 //            return existingUserFollowing.getId();
 //        } else {
@@ -96,12 +96,12 @@ public class UserOrganizationFollowingController {
 
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-//    @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
+    @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
     public void userUnfollowOrg(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @RequestBody UserOrganizationFollowing userFollowing) {
         if (userFollowing == null) throw new BadRequestException("userFollowing 不能为空！");
 
         UserOrganizationFollowing existingUserFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class,
-                userFollowing.getUserId(), userFollowing.getOrganizationId());
+                userFollowing.getUserId(), userFollowing.getOrgId());
         if (existingUserFollowing == null) {
             throw new NotFoundException(40401, "找不到用户follow记录！");
         }

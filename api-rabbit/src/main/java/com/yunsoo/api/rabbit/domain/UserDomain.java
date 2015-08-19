@@ -111,7 +111,7 @@ public class UserDomain {
         //force following 云溯科技
         UserOrganizationFollowing userFollowing = new UserOrganizationFollowing();
         userFollowing.setUserId(id);
-        userFollowing.setOrganizationId(Constants.Yunsoo.ORG_ID); //get Yunsu's orgID
+        userFollowing.setOrgId(Constants.Yunsoo.ORG_ID); //get Yunsu's orgID
         userFollowing.setIsFollowing(true);
         userFollowDomain.ensureFollow(userFollowing, true);
         return newUser;

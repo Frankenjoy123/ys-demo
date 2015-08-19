@@ -25,11 +25,11 @@ public class UserProductBaseFollowingEntity {
     @Column(name = "is_following")
     private Boolean isFollowing;
 
-    @Column(name = "created_time")
+    @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
-    @Column(name = "modified_time", nullable = true)
+    @Column(name = "modified_datetime", nullable = true)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modifiedDateTime;
 

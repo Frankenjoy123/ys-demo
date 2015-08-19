@@ -15,12 +15,12 @@ public class UserOrganizationFollowing {
     private Long id;
     @JsonProperty("user_id")
     private String userId;
-    @JsonProperty("organization_id")
-    private String organizationId;
-    @JsonProperty("organization_name")
-    private String organizationName;
-    @JsonProperty("organization_desc")
-    private String organizationDescription;
+    @JsonProperty("org_id")
+    private String orgId;
+    @JsonProperty("org_name")
+    private String orgName;
+    @JsonProperty("org_desc")
+    private String orgDescription;
     @JsonProperty("last_read_message_id")
     private Long lastReadMessageId;
     @JsonProperty("is_following")
@@ -48,28 +48,28 @@ public class UserOrganizationFollowing {
         this.userId = userId;
     }
 
-    public String getOrganizationId() {
-        return organizationId;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 
-    public String getOrganizationName() {
-        return organizationName;
+    public String getOrgName() {
+        return orgName;
     }
 
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
     }
 
-    public String getOrganizationDescription() {
-        return organizationDescription;
+    public String getOrgDescription() {
+        return orgDescription;
     }
 
-    public void setOrganizationDescription(String organizationDescription) {
-        this.organizationDescription = organizationDescription;
+    public void setOrgDescription(String orgDescription) {
+        this.orgDescription = orgDescription;
     }
 
     public Long getLastReadMessageId() {

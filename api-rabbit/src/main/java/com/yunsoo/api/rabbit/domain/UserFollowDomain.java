@@ -28,7 +28,7 @@ public class UserFollowDomain {
             throw new BadRequestException("UserOrganizationFollowing 不能为空！");
         }
         //check if exist in DB
-        UserOrganizationFollowing existingUserFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class, userFollowing.getUserId(), userFollowing.getOrganizationId());
+        UserOrganizationFollowing existingUserFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class, userFollowing.getUserId(), userFollowing.getOrgId());
         if (existingUserFollowing != null) {
             //when user is unfollowing org, and we need to force user to follow
             if (!existingUserFollowing.getIsFollowing() && forceFollow) {

@@ -18,7 +18,7 @@ public class UserOrganizationFollowing {
 
     private Long id;
     private String userId;
-    private String organizationId;
+    private String orgId;
     private Boolean isFollowing;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -43,12 +43,12 @@ public class UserOrganizationFollowing {
         this.userId = userId;
     }
 
-    public String getOrganizationId() {
-        return organizationId;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 
     public Boolean getIsFollowing() {

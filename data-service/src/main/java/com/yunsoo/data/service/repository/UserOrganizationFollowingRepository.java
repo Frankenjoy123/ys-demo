@@ -16,14 +16,14 @@ public interface UserOrganizationFollowingRepository extends PagingAndSortingRep
 
     Iterable<UserOrganizationFollowingEntity> findByUserId(String userId);
 
-    Iterable<UserOrganizationFollowingEntity> findByUserIdAndOrganizationId(String userId, String organizationId);
+    Iterable<UserOrganizationFollowingEntity> findByUserIdAndOrgId(String userId, String orgId);
 
     Page<UserOrganizationFollowingEntity> findByUserId(String userId, Pageable pageable);
 
     Page<UserOrganizationFollowingEntity> findByUserIdAndIsFollowing(String userId, Boolean isFollowing, Pageable pageable);
 
-    Page<UserOrganizationFollowingEntity> findByOrganizationId(String organizationId, Pageable pageable);
+    Page<UserOrganizationFollowingEntity> findByOrgId(String orgId, Pageable pageable);
 
-    Iterable<UserOrganizationFollowingEntity> findByOrganizationId(String organizationId);
+    Iterable<UserOrganizationFollowingEntity> findByOrgId(String orgId);
 
 }

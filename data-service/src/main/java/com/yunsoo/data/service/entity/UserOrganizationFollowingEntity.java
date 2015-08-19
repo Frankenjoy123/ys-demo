@@ -20,17 +20,17 @@ public class UserOrganizationFollowingEntity {
     @Column(name = "user_id")
     private String userId;
 
-    @Column(name = "organization_id")
-    private String organizationId;
+    @Column(name = "org_id")
+    private String orgId;
 
     @Column(name = "is_following")
     private Boolean isFollowing;
 
-    @Column(name = "created_time")
+    @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
-    @Column(name = "modified_time", nullable = true)
+    @Column(name = "modified_datetime", nullable = true)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modifiedDateTime;
 
@@ -51,12 +51,12 @@ public class UserOrganizationFollowingEntity {
         this.userId = userId;
     }
 
-    public String getOrganizationId() {
-        return organizationId;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 
     public Boolean getIsFollowing() {
@@ -92,7 +92,7 @@ public class UserOrganizationFollowingEntity {
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (!userId.equals(that.userId)) return false;
-        return organizationId.equals(that.organizationId);
+        return orgId.equals(that.orgId);
 
     }
 
@@ -100,7 +100,7 @@ public class UserOrganizationFollowingEntity {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + userId.hashCode();
-        result = 31 * result + organizationId.hashCode();
+        result = 31 * result + orgId.hashCode();
         return result;
     }
 }

@@ -62,10 +62,10 @@ public class UserOrganizationFollowingController {
         if (size != null && size < 0) throw new BadRequestException("Size必须为不小于0的值！");
         List<UserOrganizationFollowing> userOrganizationFollowingList = null;
         if(index != null){
-            userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userOrganizationFollowingRepository.findByOrganizationId(orgId, new PageRequest(index, size)));
+            userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userOrganizationFollowingRepository.findByOrgId(orgId, new PageRequest(index, size)));
         }
         else{
-            userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userOrganizationFollowingRepository.findByOrganizationId(orgId));
+            userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userOrganizationFollowingRepository.findByOrgId(orgId));
 
         }
 
@@ -80,7 +80,7 @@ public class UserOrganizationFollowingController {
         if (userId == null || userId.isEmpty()) throw new BadRequestException("id不能为空！");
         if (orgId == null || orgId.isEmpty()) throw new BadRequestException("orgId不能为空！");
 
-        List<UserOrganizationFollowing> userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userOrganizationFollowingRepository.findByUserIdAndOrganizationId(userId, orgId));
+        List<UserOrganizationFollowing> userOrganizationFollowingList = UserOrganizationFollowing.FromEntityList(userOrganizationFollowingRepository.findByUserIdAndOrgId(userId, orgId));
         if (userOrganizationFollowingList == null || userOrganizationFollowingList.size() < 1) {
             return null;
         }

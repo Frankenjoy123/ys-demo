@@ -17,8 +17,8 @@ public class UserOrganizationFollowingObject implements Serializable {
     private Long id;
     @JsonProperty("user_id")
     private String userId;
-    @JsonProperty("organization_id")
-    private String organizationId;
+    @JsonProperty("org_id")
+    private String orgId;
     @JsonProperty("is_following")
     private Boolean isFollowing;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
@@ -46,12 +46,12 @@ public class UserOrganizationFollowingObject implements Serializable {
         this.userId = userId;
     }
 
-    public String getOrganizationId() {
-        return organizationId;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 
     public Boolean getIsFollowing() {
