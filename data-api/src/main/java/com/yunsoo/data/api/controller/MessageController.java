@@ -19,7 +19,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -136,15 +135,27 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/count/on", method = RequestMethod.GET)
-    public int getNewMessagesByMessageId(
-            @RequestParam(value = "org_id", required = false) String orgId,
+    public Long getNewMessagesByMessageId(
+            @RequestParam(value = "org_id") String orgId,
             @RequestParam(value = "type_code_in", required = false) List<String> typeCodeIn,
-            @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
-            @RequestParam(value = "post_show_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime postShowTime) {
+            @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
         // int countMessage = messageService.countMessage(typeCodeIn, statusCodeIn, orgId, postShowTime);
         // hard code, to be removed
-        int countMessage = 10;
-        return countMessage;
+        //  int countMessage = 10;
+        if (typeCodeIn == null) {
+            if (statusCodeIn == null) {
+                return messageRepository.countByOrgId(orgId);
+            } else {
+                return messageRepository.countByOrgIdAndStatusCodeIn(orgId, statusCodeIn);
+            }
+        } else {
+            if (statusCodeIn == null) {
+                return messageRepository.countByOrgIdAndTypeCodeIn(orgId, typeCodeIn);
+            } else {
+                return messageRepository.countByOrgIdAndTypeCodeInAndStatusCodeIn(orgId, typeCodeIn, statusCodeIn);
+            }
+        }
+        //  return countMessage;
     }
 
 
