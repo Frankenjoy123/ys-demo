@@ -76,6 +76,9 @@ public class ProductKeyOrderController {
         if (order.getOrgId() == null || order.getOrgId().trim().isEmpty()) {
             order.setOrgId(orgId);
         }
+        if (order.getProductBaseId() != null && order.getProductBaseId().length() == 0) {
+            order.setProductBaseId(null);
+        }
         order.setCreatedAccountId(accountId);
         order.setActive(true);
         order.setCreatedDateTime(DateTime.now());
