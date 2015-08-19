@@ -17,10 +17,10 @@ public class UserPointTransactionObject {
     private String userId;
 
     @JsonProperty("point")
-    private int point;
+    private Integer point;
 
     @JsonProperty("is_increase")
-    private boolean isIncrease;
+    private Boolean isIncrease;
 
     @JsonProperty("type_code")
     private String typeCode;
@@ -51,19 +51,19 @@ public class UserPointTransactionObject {
         this.userId = userId;
     }
 
-    public int getPoint() {
+    public Integer getPoint() {
         return point;
     }
 
-    public void setPoint(int point) {
+    public void setPoint(Integer point) {
         this.point = point;
     }
 
-    public boolean isIncrease() {
+    public Boolean isIncrease() {
         return isIncrease;
     }
 
-    public void setIsIncrease(boolean isIncrease) {
+    public void setIsIncrease(Boolean isIncrease) {
         this.isIncrease = isIncrease;
     }
 

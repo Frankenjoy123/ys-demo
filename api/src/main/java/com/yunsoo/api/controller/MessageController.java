@@ -15,14 +15,12 @@ import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -96,24 +94,15 @@ public class MessageController {
         return messages;
     }
 
-
     @RequestMapping(value = "/count/on", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'message:read')")
-    public int getNewMessagesByMessageId(
+    public Long getNewMessagesByMessageId(
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "type_code_in", required = false) List<String> typeCodeIn,
-            @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
-            @RequestParam(value = "post_show_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime postShowTime) {
+            @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
 
-        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId)
-                .append("type_code_in", typeCodeIn)
-                .append("status_code_in", statusCodeIn)
-                .append("post_show_time", postShowTime)
-                .build();
-
-        int countMessage = dataAPIClient.get("message/count/on" + query, int.class);
-        return countMessage;
+        orgId = fixOrgId(orgId);
+        return messageDomain.count(orgId, typeCodeIn, statusCodeIn);
     }
 
     //create message
@@ -175,33 +164,6 @@ public class MessageController {
         return new Message(messageObject);
     }
 
-
-//
-//    @RequestMapping(value = "", method = RequestMethod.PATCH)
-//    @PreAuthorize("hasPermission(#message, 'message:update')")
-//    public void updateMessages(@RequestBody Message message) {
-//        if (message == null) throw new BadRequestException("Message不能为空！");
-//        message.setModifiedAccountId(tokenAuthenticationService.getAuthentication().getDetails().getId()); //set last updated by
-//        dataAPIClient.patch("message", message);
-//    }
-
-//    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    public void deleteMessages(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @PathVariable(value = "id") Long id) {
-//        if (id == null || id <= 0) throw new BadRequestException("Id不能小于0！");
-//        Message message = dataAPIClient.get("/message/{id}", Message.class, id);
-//        if (message == null) return; //no such message exist!
-//
-//        TPermission tPermission = new TPermission();
-//        tPermission.setOrgId(message.getOrgId());
-//        tPermission.setResourceCode("message");
-//        tPermission.setActionCode("delete");
-//        if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
-//            throw new ForbiddenException("没有权限删去此信息！");
-//        }
-//        message.setStatusCode(LookupCodes.MessageStatus.DELETED); //set status as deleted
-//        dataAPIClient.patch("message", message);
-//    }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -304,5 +266,6 @@ public class MessageController {
         LOGGER.info("message body image saved [orgId: {}, messageId:{},name:{}]", orgId, id, imageName);
         return messageBodyImage;
     }
+
 
 }

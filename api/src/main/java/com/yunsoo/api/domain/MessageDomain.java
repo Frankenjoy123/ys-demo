@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gexin.rp.sdk.base.IIGtPush;
 import com.gexin.rp.sdk.base.IPushResult;
 import com.gexin.rp.sdk.base.impl.AppMessage;
+import com.gexin.rp.sdk.base.payload.APNPayload;
 import com.gexin.rp.sdk.http.IGtPush;
 import com.gexin.rp.sdk.template.TransmissionTemplate;
 import com.yunsoo.api.Constants;
@@ -176,6 +177,15 @@ public class MessageDomain {
         }
     }
 
+    public Long count(String orgId, List<String> typeCodeIn, List<String> statusCodeIn) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("type_code_in", typeCodeIn)
+                .append("status_code_in", statusCodeIn)
+                .build();
+        return dataAPIClient.get("message/count/on" + query, Long.class);
+    }
+
     public IPushResult pushMessageToApp(String orgId, String id, MessageToApp messageToApp) {
         // define messge template
         try {
@@ -202,13 +212,39 @@ public class MessageDomain {
             //push message to users
             iiGtPush.connect();
             IPushResult iPushResult = iiGtPush.pushMessageToApp(appMessage);
+//            iiGtPush.close();
+
+            //push message to ios users
+            TransmissionTemplate iostransmissionTemplate = new TransmissionTemplate();
+            iostransmissionTemplate.setAppId(Constants.PushBase.APPID);
+            iostransmissionTemplate.setAppkey(Constants.PushBase.APPKEY);
+            iostransmissionTemplate.setTransmissionType(2);
+            iostransmissionTemplate.setTransmissionContent(content);
+            APNPayload payload = new APNPayload();
+            payload.setBadge(1);
+            payload.setContentAvailable(1);
+            payload.setSound("default");
+            payload.setCategory("default");
+            APNPayload.DictionaryAlertMsg alertMsg = new APNPayload.DictionaryAlertMsg();
+            alertMsg.setTitle(messageToApp.getTitle());
+            alertMsg.setBody(messageToApp.getBody());
+            payload.setAlertMsg(alertMsg);
+            //payload.setAlertMsg(new APNPayload.SimpleAlertMsg("hello"));
+            iostransmissionTemplate.setAPNInfo(payload);
+            AppMessage iosappMessage = new AppMessage();
+            iosappMessage.setData(iostransmissionTemplate);
+            iosappMessage.setOffline(true);
+            iosappMessage.setAppIdList(appIdList);
+            iosappMessage.setTagList(tagList);
+//            iiGtPush.connect();
+            IPushResult iosPushResult = iiGtPush.pushMessageToApp(iosappMessage);
             iiGtPush.close();
+
             return iPushResult;
         } catch (IOException ex) {
             return null;
         }
     }
-
 
     //generate random 10 bit ID
     public static String getRandomString() {
@@ -221,5 +257,4 @@ public class MessageDomain {
         }
         return buffer.toString();
     }
-
 }
