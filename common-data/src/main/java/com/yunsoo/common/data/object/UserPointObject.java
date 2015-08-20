@@ -7,12 +7,14 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 /**
  * Created by:   Lijian
  * Created on:   2015/8/17
  * Descriptions:
  */
-public class UserPointObject {
+public class UserPointObject implements Serializable {
 
     @JsonProperty("user_id")
     private String userId;

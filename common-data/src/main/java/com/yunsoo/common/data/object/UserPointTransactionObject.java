@@ -9,13 +9,14 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * Created by:   Lijian
  * Created on:   2015/8/17
  * Descriptions:
  */
-public class UserPointTransactionObject {
+public class UserPointTransactionObject implements Serializable {
 
     @JsonProperty("id")
     private String id;

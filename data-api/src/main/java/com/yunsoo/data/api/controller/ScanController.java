@@ -1,13 +1,12 @@
 package com.yunsoo.data.api.controller;
 
+import com.yunsoo.common.data.object.ScanRecordObject;
 import com.yunsoo.data.service.service.ScanRecordService;
 import com.yunsoo.data.service.service.contract.ScanRecord;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.yunsoo.common.data.object.ScanRecordObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +27,8 @@ public class ScanController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<ScanRecordObject> getNewMessagesByMessageId(@PathVariable(value = "id") Long id) {
-        return new ResponseEntity(this.FromScanRecord(scanRecordService.get(id)), HttpStatus.OK);
+    public ScanRecordObject getNewMessagesByMessageId(@PathVariable(value = "id") Long id) {
+        return this.FromScanRecord(scanRecordService.get(id));
     }
 
     //General 的扫描记录filter
@@ -60,8 +59,7 @@ public class ScanController {
     @ResponseStatus(HttpStatus.CREATED)
     public long createScanRecord(@RequestBody ScanRecordObject scanRecordObject) {
         ScanRecord scanRecord = this.ToScanRecord(scanRecordObject);
-        long id = scanRecordService.save(scanRecord);
-        return id;
+        return scanRecordService.save(scanRecord);
     }
 
 

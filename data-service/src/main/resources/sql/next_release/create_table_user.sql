@@ -2,15 +2,14 @@
 DROP TABLE IF EXISTS user;
 CREATE TABLE user
 (
-  id               VARCHAR(25) PRIMARY KEY NOT NULL,
-  device_code      VARCHAR(80),
-  cellular         VARBINARY(45),
-  thumbnail        VARCHAR(100),
-  address          VARCHAR(100),
-  ys_creadit       INT,
-  level            INT,
-  status           VARCHAR(20),
-  created_datetime DATETIME,
-  name             VARCHAR(45)
+  id                   VARCHAR(20) PRIMARY KEY            NOT NULL,
+  device_id            VARCHAR(40),
+  phone                VARCHAR(20),
+  name                 VARCHAR(45),
+  status_code          VARCHAR(20)                        NOT NULL,
+  point                INT                                NOT NULL,
+  address              VARCHAR(100),
+  last_access_datetime DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  created_datetime     DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
-CREATE UNIQUE INDEX id ON user (id);
+CREATE INDEX phone ON user (phone);
