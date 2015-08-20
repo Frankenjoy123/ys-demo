@@ -68,7 +68,7 @@ public class ProductKeyBatchHandler {
         for (int i = 0; i < quantity; i += SUB_BATCH_LIMIT) {
             request.setProductKeys(productKeys.subList(i, quantity < i + SUB_BATCH_LIMIT ? quantity : i + SUB_BATCH_LIMIT));
             //batch create product key
-            dataAPIClient.post("productkey/batch", request);
+            dataAPIClient.put("productkey/batch", request);
         }
 
         batch.setStatusCode("available");

@@ -153,7 +153,7 @@ public class ProductKeyDomain {
             sqsMessage.setProductStatusCode(LookupCodes.ProductStatus.ACTIVATED);  //default activated
         }
         try {
-            processorClient.post("sqs/productkeybatch", sqsMessage);
+            processorClient.post("sqs/productkeybatch", sqsMessage, ProductKeyBatchMassage.class);
             LOGGER.info("ProductKeyBatchMassage posted to sqs {}", sqsMessage);
         } catch (Exception ex) {
             LOGGER.error("ProductKeyBatchMassage posting to sqs failed [exceptionMessage: {}]", ex.getMessage());
