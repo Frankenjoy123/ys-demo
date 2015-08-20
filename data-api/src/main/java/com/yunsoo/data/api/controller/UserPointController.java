@@ -1,12 +1,22 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.UserPointObject;
+import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.UserPointEntity;
 import com.yunsoo.data.service.repository.UserPointRepository;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -30,6 +40,35 @@ public class UserPointController {
         return toUserPointObject(entity);
     }
 
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<UserPointObject> getByFilter(@RequestParam(value = "point_ge", required = false) Integer pointGE,
+                                             @RequestParam(value = "point_le", required = false) Integer pointLE,
+                                             @RequestParam(value = "last_sign_in_datetime_ge", required = false)
+                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                             DateTime lastSignInDatetimeGE,
+                                             @RequestParam(value = "last_sign_in_datetime_le", required = false)
+                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                             DateTime lastSignInDatetimeLE,
+                                             @RequestParam(value = "last_sign_in_continuous_days_ge", required = false)
+                                             Integer lastSignInContinuousDaysGE,
+                                             @RequestParam(value = "last_sign_in_continuous_days_le", required = false)
+                                             Integer lastSignInContinuousDaysLE,
+                                             Pageable pageable,
+                                             HttpServletResponse response) {
+        Page<UserPointEntity> entityPage = userPointRepository.query(
+                pointGE,
+                pointLE,
+                DateTimeUtils.toDBString(lastSignInDatetimeGE),
+                DateTimeUtils.toDBString(lastSignInDatetimeLE),
+                lastSignInContinuousDaysGE,
+                lastSignInContinuousDaysLE,
+                pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+        return entityPage.getContent().stream().map(this::toUserPointObject).collect(Collectors.toList());
+    }
+
     @RequestMapping(value = "{userId}", method = RequestMethod.PUT)
     public void createOrUpdateByUserId(@PathVariable("userId") String userId, @RequestBody UserPointObject userPoint) {
         if (userPoint.getPoint() == null) {
@@ -38,7 +77,7 @@ public class UserPointController {
         if (userPoint.getLastSignInDateTime() == null) {
             throw new BadRequestException("last_sign_in_datetime must not be null");
         }
-        if (userPoint.getContinuousSignInDays() == null) {
+        if (userPoint.getLastSignInContinuousDays() == null) {
             throw new BadRequestException("continuous_sign_in_days must not be null");
         }
         UserPointEntity entity = toUserPointEntity(userPoint);
@@ -58,8 +97,8 @@ public class UserPointController {
         if (userPoint.getLastSignInDateTime() != null) {
             entity.setLastSignInDateTime(userPoint.getLastSignInDateTime());
         }
-        if (userPoint.getContinuousSignInDays() != null) {
-            entity.setContinuousSignInDays(userPoint.getContinuousSignInDays());
+        if (userPoint.getLastSignInContinuousDays() != null) {
+            entity.setLastSignInContinuousDays(userPoint.getLastSignInContinuousDays());
         }
         userPointRepository.save(entity);
     }
@@ -72,7 +111,7 @@ public class UserPointController {
         object.setUserId(entity.getUserId());
         object.setPoint(entity.getPoint());
         object.setLastSignInDateTime(entity.getLastSignInDateTime());
-        object.setContinuousSignInDays(entity.getContinuousSignInDays());
+        object.setLastSignInContinuousDays(entity.getLastSignInContinuousDays());
         return object;
     }
 
@@ -84,7 +123,7 @@ public class UserPointController {
         entity.setUserId(object.getUserId());
         entity.setPoint(object.getPoint());
         entity.setLastSignInDateTime(object.getLastSignInDateTime());
-        entity.setContinuousSignInDays(object.getContinuousSignInDays());
+        entity.setLastSignInContinuousDays(object.getLastSignInContinuousDays());
         return entity;
     }
 

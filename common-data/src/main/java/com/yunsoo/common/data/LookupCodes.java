@@ -123,4 +123,13 @@ public class LookupCodes {
 
         public static final String ACTIVATED = "activated";
     }
+
+    public static class UserPointTransactionStatus {
+        private UserPointTransactionStatus() {
+        }
+
+        public static final String CREATED = "created";
+        public static final String COMMITTED = "committed";
+        public static final String ROLLBACK = "rollback";
+    }
 }

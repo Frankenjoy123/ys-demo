@@ -28,7 +28,7 @@ public class ProductKeyController {
         return toProductKeyObject(productKey);
     }
 
-    @RequestMapping(value = "batch", method = RequestMethod.POST)
+    @RequestMapping(value = "batch", method = RequestMethod.PUT)
     public void batchSave(@RequestBody ProductKeyBatchDetailedObject batch) {
         ProductObject productObject = batch.getProductTemplate();
         Product productTemplate = null;

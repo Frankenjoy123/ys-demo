@@ -1,6 +1,10 @@
 package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
@@ -16,11 +20,13 @@ public class UserPointObject {
     @JsonProperty("point")
     private Integer point;
 
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("last_sign_in_datetime")
     private DateTime lastSignInDateTime;
 
-    @JsonProperty("continuous_sign_in_days")
-    private Integer continuousSignInDays;
+    @JsonProperty("last_sign_in_continuous_days")
+    private Integer lastSignInContinuousDays;
 
 
     public String getUserId() {
@@ -47,11 +53,11 @@ public class UserPointObject {
         this.lastSignInDateTime = lastSignInDateTime;
     }
 
-    public Integer getContinuousSignInDays() {
-        return continuousSignInDays;
+    public Integer getLastSignInContinuousDays() {
+        return lastSignInContinuousDays;
     }
 
-    public void setContinuousSignInDays(Integer continuousSignInDays) {
-        this.continuousSignInDays = continuousSignInDays;
+    public void setLastSignInContinuousDays(Integer lastSignInContinuousDays) {
+        this.lastSignInContinuousDays = lastSignInContinuousDays;
     }
 }

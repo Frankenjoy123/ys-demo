@@ -1,8 +1,8 @@
 package com.yunsoo.processor.controller;
 
+import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.processor.common.LogicalQueueName;
 import com.yunsoo.processor.common.PayloadName;
-import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.processor.handler.ProductKeyBatchHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class SqsController {
 
 
     @RequestMapping(value = "/productkeybatch", method = RequestMethod.POST)
-    public void sendToMessageQueue(@RequestBody ProductKeyBatchMassage message) {
+    public ProductKeyBatchMassage sendToMessageQueue(@RequestBody ProductKeyBatchMassage message) {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(HEADER_PAYLOAD_NAME, PayloadName.PRODUCT_KEY_BATCH);
@@ -52,6 +52,8 @@ public class SqsController {
                 PayloadName.PRODUCT_KEY_BATCH,
                 message.toString(),
                 resourceIdResolver.resolveToPhysicalResourceId(LogicalQueueName.PRODUCT_KEY_BATCH));
+
+        return message;
     }
 
 
