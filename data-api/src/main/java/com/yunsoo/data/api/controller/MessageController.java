@@ -1,31 +1,18 @@
 package com.yunsoo.data.api.controller;
 
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.util.IOUtils;
-import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.data.object.MessageObject;
-import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
-import com.yunsoo.data.service.config.AWSConfigProperties;
 import com.yunsoo.data.service.entity.MessageEntity;
 import com.yunsoo.data.service.repository.MessageRepository;
-import com.yunsoo.data.service.service.MessageService;
-import com.yunsoo.data.service.service.contract.Message;
 import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,29 +27,6 @@ public class MessageController {
 
     @Autowired
     private MessageRepository messageRepository;
-
-    @Autowired
-    private final MessageService messageService;
-
-    @Autowired
-    private AWSConfigProperties awsConfigProperties;
-
-    @Autowired
-    MessageController(MessageService messageService) {
-        this.messageService = messageService;
-    }
-
-    //Push unread messages to user.
-    @RequestMapping(value = "/pushto/{userid}/type/{typeid}", method = RequestMethod.GET)
-    public ResponseEntity<List<MessageObject>> getNewMessagesByUserId(@PathVariable(value = "userid") String id,
-                                                                      @PathVariable(value = "type") String type,
-                                                                      @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
-                                                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        List<Message> messageList = messageService.getMessagesByFilter(type, LookupCodes.MessageStatus.APPROVED, null, true, null, pageIndex, pageSize); //push approved message only
-        List<MessageObject> messageObjectList = this.FromMessageList(messageList);
-        return new ResponseEntity<List<MessageObject>>(messageObjectList, HttpStatus.OK);
-    }
-
 
     //get message by id
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -125,14 +89,6 @@ public class MessageController {
             messageRepository.delete(id);
         }
     }
-    @RequestMapping(value = "/getUnread", method = RequestMethod.GET)
-    public ResponseEntity<List<MessageObject>> getUnreadMessagesBy(@RequestParam(value = "userid", required = true) String userId,
-                                                                   @RequestParam(value = "orgid", required = true) String orgId,
-                                                                   @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
-        List<Message> messageList = messageService.getUnreadMessages(userId, orgId, lastReadMessageId);
-        List<MessageObject> messageObjectList = this.FromMessageList(messageList);
-        return new ResponseEntity<List<MessageObject>>(messageObjectList, HttpStatus.OK);
-    }
 
     @RequestMapping(value = "/count/on", method = RequestMethod.GET)
     public Long getNewMessagesByMessageId(
@@ -140,8 +96,7 @@ public class MessageController {
             @RequestParam(value = "type_code_in", required = false) List<String> typeCodeIn,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
         // int countMessage = messageService.countMessage(typeCodeIn, statusCodeIn, orgId, postShowTime);
-        // hard code, to be removed
-        //  int countMessage = 10;
+
         if (typeCodeIn == null) {
             if (statusCodeIn == null) {
                 return messageRepository.countByOrgId(orgId);
@@ -156,60 +111,6 @@ public class MessageController {
             }
         }
         //  return countMessage;
-    }
-
-
-    @RequestMapping(value = "/{id}/{imagekey}", method = RequestMethod.GET)
-    public ResponseEntity getThumbnail(@PathVariable(value = "id") String id, @PathVariable(value = "imagekey") String imagekey) {
-
-        if (imagekey == null || imagekey.isEmpty()) throw new BadRequestException("ImageKey不能为空！");
-        S3Object s3Object;
-        try {
-            s3Object = messageService.getMessageImage(awsConfigProperties.getS3().getBucketName(), "message/" + id + "/" + imagekey);
-            if (s3Object == null) throw new NotFoundException("找不到图片!");
-
-            FileObject fileObject = new FileObject();
-            fileObject.setContentType(s3Object.getObjectMetadata().getContentType());
-            fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
-            fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
-            return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
-
-        } catch (IOException ex) {
-            //to-do: log
-            throw new InternalServerErrorException("图片获取出错！");
-        }
-    }
-
-    private MessageObject FromMessage(Message message) {
-        MessageObject messageObject = new MessageObject();
-        BeanUtils.copyProperties(message, messageObject);
-        return messageObject;
-    }
-
-    private Message ToMessage(MessageObject messageObject) {
-        Message message = new Message();
-        BeanUtils.copyProperties(messageObject, message);
-        return message;
-    }
-
-    private List<MessageObject> FromMessageList(List<Message> messageList) {
-        if (messageList == null) return null;
-
-        List<MessageObject> messageObjectList = new ArrayList<>();
-        for (Message message : messageList) {
-            messageObjectList.add(this.FromMessage(message));
-        }
-        return messageObjectList;
-    }
-
-    private List<Message> ToMessageList(List<MessageObject> messageObjectList) {
-        if (messageObjectList == null) return null;
-
-        List<Message> messageList = new ArrayList<>();
-        for (MessageObject messageObject : messageObjectList) {
-            messageList.add(this.ToMessage(messageObject));
-        }
-        return messageList;
     }
 
     private MessageObject toMessageObject(MessageEntity entity) {

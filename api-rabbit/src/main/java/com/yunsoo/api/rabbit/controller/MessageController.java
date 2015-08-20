@@ -11,12 +11,10 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,25 +44,6 @@ public class MessageController {
         this.dataAPIClient = dataAPIClient;
     }
 
-    //    @RequestMapping(value = "/pushTo/{userid}/type/{typeid}", method = RequestMethod.GET)
-//    @PreAuthorize("hasPermission(#message, 'message:read')")
-    @PreAuthorize("hasPermission(#userid, 'UserInToken', 'message:read')")
-    public List<Message> getNewMessagesByUserId(@PathVariable(value = "userid") String userid,
-                                                @PathVariable(value = "type") String type) {
-        if (userid == null || userid.isEmpty()) throw new BadRequestException("UserId不能为空！");
-        if (type == null || type.isEmpty()) throw new BadRequestException("Type不能为空！");
-
-        try {
-            List<Message> messageList = dataAPIClient.get("message/pushto/{userid}/type/{type}", new ParameterizedTypeReference<List<Message>>() {
-            }, userid, type);
-            if (messageList == null || messageList.size() == 0) {
-                throw new NotFoundException(40401, "Message not found for userid = " + userid);
-            }
-            return messageList;
-        } catch (NotFoundException ex) {
-            throw new NotFoundException(40401, "Message not found for userid = " + userid);
-        }
-    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#message, 'message:read')")
@@ -100,25 +79,6 @@ public class MessageController {
         List<MessageObject> messageObjects = messageDomain.getMessageByOrgId(orgId);
         List<Message> messages = messageObjects.stream().map(Message::new).collect(Collectors.toList());
         return messages;
-    }
-
-    @RequestMapping(value = "/getunread", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#userId, 'UserInToken', 'message:read')")
-    public List<Message> getUnreadMessagesBy(@RequestParam(value = "userid", required = true) String userId,
-                                             @RequestParam(value = "orgid", required = true) String orgId,
-                                             @RequestParam(value = "lastreadmessageid", required = true) Long lastReadMessageId) {
-        if (userId == null || userId.isEmpty()) throw new BadRequestException("UserId不能为空！");
-        if (orgId == null || orgId.isEmpty()) throw new BadRequestException("OrgId不能为空！");
-
-        //fix 404 issue
-        try {
-            List<Message> messageList = dataAPIClient.get("message/getunread?userid={0}&orgid={1}&lastreadmessageid={2}", new ParameterizedTypeReference<List<Message>>() {
-            }, userId, orgId, lastReadMessageId);
-            return messageList;
-        } catch (NotFoundException ex) {
-            throw new NotFoundException(40401, "Message not found for userid = " + userId + ". orgId = " + orgId + ". lastReadMessageId = " + lastReadMessageId);
-        }
-
     }
 
     @Deprecated //todo: to be removed
