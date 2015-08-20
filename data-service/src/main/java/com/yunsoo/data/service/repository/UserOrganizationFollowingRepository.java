@@ -6,24 +6,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * Created by Zhe on 2015/4/15.
  */
 @Transactional
 public interface UserOrganizationFollowingRepository extends PagingAndSortingRepository<UserOrganizationFollowingEntity, Long> {
 
-    Iterable<UserOrganizationFollowingEntity> findById(Long Id);
+    List<UserOrganizationFollowingEntity> findById(String Id);
 
-    Iterable<UserOrganizationFollowingEntity> findByUserId(String userId);
-
-    Iterable<UserOrganizationFollowingEntity> findByUserIdAndOrgId(String userId, String orgId);
+    List<UserOrganizationFollowingEntity> findByUserIdAndOrgId(String userId, String orgId);
 
     Page<UserOrganizationFollowingEntity> findByUserId(String userId, Pageable pageable);
 
-    Page<UserOrganizationFollowingEntity> findByUserIdAndIsFollowing(String userId, Boolean isFollowing, Pageable pageable);
-
     Page<UserOrganizationFollowingEntity> findByOrgId(String orgId, Pageable pageable);
-
-    Iterable<UserOrganizationFollowingEntity> findByOrgId(String orgId);
 
 }

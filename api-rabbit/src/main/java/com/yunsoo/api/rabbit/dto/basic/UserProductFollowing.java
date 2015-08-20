@@ -7,13 +7,15 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 /**
  * Created by yan on 8/18/2015.
  */
 public class UserProductFollowing {
 
     @JsonProperty("id")
-    private Long id;
+    private String id;
     @JsonProperty("user_id")
     private String userId;
     @JsonProperty("product_base_id")
@@ -33,11 +35,11 @@ public class UserProductFollowing {
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -1,5 +1,6 @@
 package com.yunsoo.data.service.entity;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -13,9 +14,10 @@ import javax.persistence.*;
 public class UserOrganizationFollowingEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
-    private Long id;
+    private String id;
 
     @Column(name = "user_id")
     private String userId;
@@ -23,22 +25,16 @@ public class UserOrganizationFollowingEntity {
     @Column(name = "org_id")
     private String orgId;
 
-    @Column(name = "is_following")
-    private Boolean isFollowing;
-
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
-    @Column(name = "modified_datetime", nullable = true)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime modifiedDateTime;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -59,28 +55,12 @@ public class UserOrganizationFollowingEntity {
         this.orgId = orgId;
     }
 
-    public Boolean getIsFollowing() {
-        return isFollowing;
-    }
-
-    public void setIsFollowing(Boolean isFollowing) {
-        this.isFollowing = isFollowing;
-    }
-
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
-    }
-
-    public DateTime getModifiedDateTime() {
-        return modifiedDateTime;
-    }
-
-    public void setModifiedDateTime(DateTime modifiedDateTime) {
-        this.modifiedDateTime = modifiedDateTime;
     }
 
     @Override

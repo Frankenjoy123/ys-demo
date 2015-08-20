@@ -1,6 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.service.contract.UserOrganizationFollowing;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
@@ -11,9 +12,11 @@ import com.yunsoo.data.service.repository.UserProductBaseFollowingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,8 +34,8 @@ public class UserProductionBaseFollowingController {
     private UserProductBaseFollowingRepository userProductBaseFollowingRepository;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public UserProductBaseFollowingObject getFollowingProductsByFollowingId(@PathVariable(value = "id") Long id) {
-        if (id == null || id <= 0) throw new BadRequestException("id不能为空");
+    public UserProductBaseFollowingObject getFollowingProductsByFollowingId(@PathVariable(value = "id") String id) {
+        if (id == null) throw new BadRequestException("id不能为空");
         List<UserProductBaseFollowingEntity> userProductBaseFollowingEntities = userProductBaseFollowingRepository.findById(id);
         if (userProductBaseFollowingEntities == null || userProductBaseFollowingEntities.size() < 1) {
             throw new NotFoundException(40401, "找不到关注的记录! ID = " + id);
@@ -42,79 +45,69 @@ public class UserProductionBaseFollowingController {
 
     @RequestMapping(value = "/who/{id}", method = RequestMethod.GET)
     public List<UserProductBaseFollowingObject> getFollowingProductsByUserId(@PathVariable(value = "id") String userId,
-                                                                          @RequestParam(value = "index") Integer index,
-                                                                          @RequestParam(value = "size") Integer size) {
-        if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值");
-        if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值");
+                                                                             Pageable pageable,
+                                                                             HttpServletResponse response) {
 
-        Page<UserProductBaseFollowingEntity> list = userProductBaseFollowingRepository.findByUserIdAndIsFollowing(userId, true, new PageRequest(index, size));
-
-        return list.getContent().stream().map(this::toUserProductFollowingObject).collect(Collectors.toList());
+        Page<UserProductBaseFollowingEntity> entityPage = userProductBaseFollowingRepository.findByUserId(userId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+        return entityPage.getContent().stream().map(this::toUserProductFollowingObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/product/{id}", method = RequestMethod.GET)
     public List<UserProductBaseFollowingObject> getFollowersByProductId(@PathVariable(value = "id") String prodId,
-                                                                    @RequestParam(value = "index", required = false) Integer index,
-                                                                    @RequestParam(value = "size", required = false) Integer size) {
+                                                                        Pageable pageable,
+                                                                        HttpServletResponse response) {
         if (prodId == null || prodId.isEmpty()) throw new BadRequestException("id不能为空！");
-        if (index != null && index < 0) throw new BadRequestException("Index必须为不小于0的值");
-        if (size != null && size < 0) throw new BadRequestException("Size必须为不小于0的值");
 
-        if(index != null){
-            Page<UserProductBaseFollowingEntity>   list = userProductBaseFollowingRepository.findByProductBaseId(prodId, new PageRequest(index, size));
-            return list.getContent().stream().map(this::toUserProductFollowingObject).collect(Collectors.toList());
+        Page<UserProductBaseFollowingEntity> entityPage = userProductBaseFollowingRepository.findByProductBaseId(prodId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
-        else{
-            List<UserProductBaseFollowingEntity>  list = userProductBaseFollowingRepository.findByProductBaseId(prodId);
-            return list.stream().map(this::toUserProductFollowingObject).collect(Collectors.toList());
-        }
-
-
-
+        return entityPage.getContent().stream().map(this::toUserProductFollowingObject).collect(Collectors.toList());
     }
 
     //Check whether the user - org link exists or not.
-    @RequestMapping(value = "/who/{id}/product/{prodid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/who/{id}/product/{productid}", method = RequestMethod.GET)
     public UserProductBaseFollowingObject getFollowingRecord(@PathVariable(value = "id") String userId,
-                                                              @PathVariable(value = "prodid") String productId) {
+                                                              @PathVariable(value = "productid") String productId) {
         if (userId == null || userId.isEmpty()) throw new BadRequestException("id不能为空！");
-        if (productId == null || productId.isEmpty()) throw new BadRequestException("prodid不能为空！");
+        if (productId == null || productId.isEmpty()) throw new BadRequestException("productid不能为空！");
 
-        List<UserProductBaseFollowingEntity> userOrganizationFollowingList = userProductBaseFollowingRepository.findByUserIdAndProductBaseId(userId, productId);
-        if (userOrganizationFollowingList == null || userOrganizationFollowingList.size() < 1) {
+        List<UserProductBaseFollowingEntity> list = userProductBaseFollowingRepository.findByUserIdAndProductBaseId(userId, productId);
+        if (list == null || list.size() < 1) {
             return null;
         }
-        return toUserProductFollowingObject(userOrganizationFollowingList.get(0));
+        return toUserProductFollowingObject(list.get(0));
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public long userFollow(@RequestBody UserProductBaseFollowingObject object) {
+    public String userFollow(@RequestBody UserProductBaseFollowingObject object) {
         UserProductBaseFollowingEntity entity = this.toUserOrganizationFollowingEntity(object);
         entity.setCreatedDateTime(DateTime.now());  //set created datetime
-        entity.setModifiedDateTime(DateTime.now());
         userProductBaseFollowingRepository.save(entity);
         return entity.getId();
     }
 
-    @RequestMapping(value = "", method = RequestMethod.PATCH)
-    public void updateUserFollow(@RequestBody UserProductBaseFollowingObject object) {
-        UserProductBaseFollowingObject orignalObj = getFollowingProductsByFollowingId(object.getId());
-        if(orignalObj != null) {
-            UserProductBaseFollowingEntity entity = this.toUserOrganizationFollowingEntity(object);
-            entity.setCreatedDateTime(orignalObj.getCreatedDateTime());
-            entity.setModifiedDateTime(DateTime.now());
-            userProductBaseFollowingRepository.save(entity);
-        }
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUserFollow(@PathVariable(value = "id") String id) {
+
+        List<UserProductBaseFollowingEntity> entityList = userProductBaseFollowingRepository.findById(id);
+        if(entityList==null || entityList.size()==0)
+            throw new BadRequestException(40401, "删除失败！找不到关注的记录! ID = " + id);
+
+        userProductBaseFollowingRepository.delete(entityList.get(0));
 
     }
 
     private UserProductBaseFollowingEntity toUserOrganizationFollowingEntity(UserProductBaseFollowingObject object){
         UserProductBaseFollowingEntity entity = new UserProductBaseFollowingEntity();
-        if(object.getId()!=null && object.getId()>0)
+        if(object.getId()!=null)
             entity.setId(object.getId());
         entity.setUserId(object.getUserId());
-        entity.setIsFollowing(object.getIsFollowing());
         entity.setProductBaseId(object.getProductBaseId());
         return entity;
     }
@@ -125,9 +118,7 @@ public class UserProductionBaseFollowingController {
         obj.setId(entity.getId());
         obj.setUserId(entity.getUserId());
         obj.setProductBaseId(entity.getProductBaseId());
-        obj.setIsFollowing(entity.getIsFollowing());
         obj.setCreatedDateTime(entity.getCreatedDateTime());
-        obj.setModifiedDateTime(entity.getModifiedDateTime());
         return obj;
     }
 

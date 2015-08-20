@@ -7,12 +7,14 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 /**
  * Created by Zhe on 2015/4/21.
  */
 public class UserOrganizationFollowing {
     @JsonProperty("id")
-    private Long id;
+    private String id;
     @JsonProperty("user_id")
     private String userId;
     @JsonProperty("org_id")
@@ -30,13 +32,14 @@ public class UserOrganizationFollowing {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
     @JsonProperty("last_updated_datetime")
-    private String lastUpdatedDateTime;
+    private String modifiedDateTime;
 
-    public Long getId() {
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -96,11 +99,11 @@ public class UserOrganizationFollowing {
         this.createdDateTime = createdDateTime;
     }
 
-    public String getLastUpdatedDateTime() {
-        return lastUpdatedDateTime;
+    public String getModifiedDateTime() {
+        return modifiedDateTime;
     }
 
-    public void setLastUpdatedDateTime(String lastUpdatedDateTime) {
-        this.lastUpdatedDateTime = lastUpdatedDateTime;
+    public void setModifiedDateTime(String modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 }

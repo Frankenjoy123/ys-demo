@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 public class UserOrganizationFollowingObject implements Serializable {
     @JsonProperty("id")
-    private Long id;
+    private String id;
     @JsonProperty("user_id")
     private String userId;
     @JsonProperty("org_id")
@@ -30,11 +30,11 @@ public class UserOrganizationFollowingObject implements Serializable {
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

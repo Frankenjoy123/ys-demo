@@ -121,8 +121,8 @@ public class ScanController {
         UserOrganizationFollowing userFollowing = new UserOrganizationFollowing();
         userFollowing.setUserId(currentUser.getId());
         userFollowing.setOrgId(organizationObject.getId());
-        userFollowDomain.ensureFollow(userFollowing, false);
-        UserOrganizationFollowing userFollowingResult = userFollowDomain.getUserFollowing(currentUser.getId(), organizationObject.getId());
+        userFollowDomain.ensureFollow(userFollowing);
+        UserOrganizationFollowing userFollowingResult = userFollowDomain.getUserOrganizationFollowing(currentUser.getId(), organizationObject.getId());
         if (userFollowingResult != null) {
             scanResult.setFollowed_org(userFollowingResult.getIsFollowing());
         } else {
@@ -133,7 +133,7 @@ public class ScanController {
         UserProductFollowing userProductFollowing = new UserProductFollowing();
         userProductFollowing.setUserId(currentUser.getId());
         userProductFollowing.setProductId(currentExistProduct.getProductBaseId());
-        userFollowDomain.ensureFollow(userProductFollowing, false);
+        userFollowDomain.ensureFollow(userProductFollowing);
 
         //8, set validation result by our validation strategy.
         scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), currentUser, scanRecordList));

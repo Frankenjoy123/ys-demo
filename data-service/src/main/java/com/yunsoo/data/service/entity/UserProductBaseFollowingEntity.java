@@ -1,5 +1,6 @@
 package com.yunsoo.data.service.entity;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -11,10 +12,12 @@ import javax.persistence.*;
 @Entity
 @Table(name = "user_product_following")
 public class UserProductBaseFollowingEntity {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
-    private Long id;
+    private String id;
 
     @Column(name = "user_id")
     private String userId;
@@ -22,24 +25,9 @@ public class UserProductBaseFollowingEntity {
     @Column(name = "product_base_id")
     private String productBaseId;
 
-    @Column(name = "is_following")
-    private Boolean isFollowing;
-
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
-
-    @Column(name = "modified_datetime", nullable = true)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime modifiedDateTime;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getUserId() {
         return userId;
@@ -47,6 +35,14 @@ public class UserProductBaseFollowingEntity {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getProductBaseId() {
@@ -57,14 +53,6 @@ public class UserProductBaseFollowingEntity {
         this.productBaseId = productBaseId;
     }
 
-    public Boolean getIsFollowing() {
-        return isFollowing;
-    }
-
-    public void setIsFollowing(Boolean isFollowing) {
-        this.isFollowing = isFollowing;
-    }
-
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
@@ -73,15 +61,7 @@ public class UserProductBaseFollowingEntity {
         this.createdDateTime = createdDateTime;
     }
 
-    public DateTime getModifiedDateTime() {
-        return modifiedDateTime;
-    }
-
-    public void setModifiedDateTime(DateTime modifiedDateTime) {
-        this.modifiedDateTime = modifiedDateTime;
-    }
-
-    @Override
+   @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UserProductBaseFollowingEntity)) return false;

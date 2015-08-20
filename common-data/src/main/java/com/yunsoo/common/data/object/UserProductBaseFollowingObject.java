@@ -12,28 +12,24 @@ import org.joda.time.DateTime;
  */
 public class UserProductBaseFollowingObject {
     @JsonProperty("id")
-    private Long id;
+    private String id;
     @JsonProperty("user_id")
     private String userId;
     @JsonProperty("product_base_id")
     private String productBaseId;
-    @JsonProperty("is_following")
-    private Boolean isFollowing;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("modified_datetime")
-    private DateTime modifiedDateTime;
 
 
-    public Long getId() {
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -53,14 +49,6 @@ public class UserProductBaseFollowingObject {
         this.productBaseId = productBaseId;
     }
 
-    public Boolean getIsFollowing() {
-        return isFollowing;
-    }
-
-    public void setIsFollowing(Boolean isFollowing) {
-        this.isFollowing = isFollowing;
-    }
-
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
@@ -69,11 +57,4 @@ public class UserProductBaseFollowingObject {
         this.createdDateTime = createdDateTime;
     }
 
-    public DateTime getModifiedDateTime() {
-        return modifiedDateTime;
-    }
-
-    public void setModifiedDateTime(DateTime modifiedDateTime) {
-        this.modifiedDateTime = modifiedDateTime;
-    }
 }
