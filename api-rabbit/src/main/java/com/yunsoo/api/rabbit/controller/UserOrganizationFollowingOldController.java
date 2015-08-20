@@ -83,9 +83,9 @@ public class UserOrganizationFollowingOldController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
-    public long userFollowingOrgs(@RequestBody UserOrganizationFollowing userFollowing) {
+    public String userFollowingOrgs(@RequestBody UserOrganizationFollowing userFollowing) {
         if (userFollowing == null) throw new BadRequestException("userFollowing 不能为空！");
-        return userFollowDomain.ensureFollow(userFollowing, true);
+        return userFollowDomain.ensureFollow(userFollowing);
 //        UserOrganizationFollowing existingUserFollowing = dataAPIClient.get("/useruserorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class, userFollowing.getUserId(), userFollowing.getOrgId());
 //        if (existingUserFollowing != null) {
 //            return existingUserFollowing.getId();

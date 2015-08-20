@@ -113,7 +113,7 @@ public class UserDomain {
         userFollowing.setUserId(id);
         userFollowing.setOrgId(Constants.Yunsoo.ORG_ID); //get Yunsu's orgID
         userFollowing.setIsFollowing(true);
-        userFollowDomain.ensureFollow(userFollowing, true);
+        userFollowDomain.ensureFollow(userFollowing);
         return newUser;
     }
 

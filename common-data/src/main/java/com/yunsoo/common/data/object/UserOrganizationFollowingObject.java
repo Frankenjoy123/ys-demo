@@ -19,16 +19,10 @@ public class UserOrganizationFollowingObject implements Serializable {
     private String userId;
     @JsonProperty("org_id")
     private String orgId;
-    @JsonProperty("is_following")
-    private Boolean isFollowing;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("modified_datetime")
-    private DateTime modifiedDateTime;
 
     public String getId() {
         return id;
@@ -54,14 +48,6 @@ public class UserOrganizationFollowingObject implements Serializable {
         this.orgId = orgId;
     }
 
-    public Boolean getIsFollowing() {
-        return isFollowing;
-    }
-
-    public void setIsFollowing(Boolean isFollowing) {
-        this.isFollowing = isFollowing;
-    }
-
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
@@ -70,11 +56,4 @@ public class UserOrganizationFollowingObject implements Serializable {
         this.createdDateTime = createdDateTime;
     }
 
-    public DateTime getModifiedDateTime() {
-        return modifiedDateTime;
-    }
-
-    public void setModifiedDateTime(DateTime modifiedDateTime) {
-        this.modifiedDateTime = modifiedDateTime;
-    }
 }
