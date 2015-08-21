@@ -64,9 +64,6 @@ public class UserController {
         UserEntity entity = toUserEntity(userObject);
         DateTime now = DateTime.now();
         entity.setId(null);
-        if (entity.getLastAccessDateTime() == null) {
-            entity.setLastAccessDateTime(now);
-        }
         if (entity.getCreatedDateTime() == null) {
             entity.setCreatedDateTime(now);
         }
@@ -101,9 +98,6 @@ public class UserController {
         if (userObject.getAddress() != null) {
             entity.setAddress(userObject.getAddress());
         }
-        if (userObject.getLastAccessDatetime() != null) {
-            entity.setLastAccessDateTime(userObject.getLastAccessDatetime());
-        }
         userRepository.save(entity);
     }
 
@@ -127,7 +121,6 @@ public class UserController {
         object.setStatusCode(entity.getStatusCode());
         object.setPoint(entity.getPoint());
         object.setAddress(entity.getAddress());
-        object.setLastAccessDatetime(entity.getLastAccessDateTime());
         object.setCreatedDatetime(entity.getCreatedDateTime());
         return object;
     }
@@ -144,7 +137,6 @@ public class UserController {
         entity.setStatusCode(object.getStatusCode());
         entity.setPoint(object.getPoint());
         entity.setAddress(object.getAddress());
-        entity.setLastAccessDateTime(object.getLastAccessDatetime());
         entity.setCreatedDateTime(object.getCreatedDatetime());
         return entity;
     }

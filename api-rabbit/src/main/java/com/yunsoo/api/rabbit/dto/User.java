@@ -1,47 +1,44 @@
-package com.yunsoo.data.service.entity;
+package com.yunsoo.api.rabbit.dto;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
-
-import javax.persistence.*;
 
 /**
  * Created by:   Lijian
- * Created on:   2015/8/20
+ * Created on:   2015/8/21
  * Descriptions:
  */
-@Entity
-@Table(name = "user")
-public class UserEntity {
+public class User {
 
-    @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
-    @Column(name = "id")
+    @JsonProperty("id")
     private String id;
 
-    @Column(name = "device_id")
+    @JsonProperty("device_id")
     private String deviceId;
 
-    @Column(name = "phone")
+    @JsonProperty("phone")
     private String phone;
 
-    @Column(name = "name")
+    @JsonProperty("name")
     private String name;
 
-    @Column(name = "status_code")
+    @JsonProperty("status_code")
     private String statusCode;
 
-    @Column(name = "point")
+    @JsonProperty("point")
     private Integer point;
 
-    @Column(name = "address")
+    @JsonProperty("address")
     private String address;
 
-    @Column(name = "created_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdDateTime;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
+    private DateTime createdDatetime;
 
 
     public String getId() {
@@ -100,11 +97,11 @@ public class UserEntity {
         this.address = address;
     }
 
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
+    public DateTime getCreatedDatetime() {
+        return createdDatetime;
     }
 
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
+    public void setCreatedDatetime(DateTime createdDatetime) {
+        this.createdDatetime = createdDatetime;
     }
 }

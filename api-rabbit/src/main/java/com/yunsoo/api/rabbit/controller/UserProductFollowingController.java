@@ -4,24 +4,19 @@ import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
 import com.yunsoo.api.rabbit.dto.basic.UserProductFollowing;
 import com.yunsoo.api.rabbit.object.Constants;
-import com.yunsoo.common.data.object.ProductBaseObject;
-import com.yunsoo.common.data.object.UserProductBaseFollowingObject;
 import com.yunsoo.common.web.client.Page;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
 
 /**
