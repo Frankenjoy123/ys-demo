@@ -1,9 +1,8 @@
 #user_point
-DROP TABLE IF EXISTS user_point;
-CREATE TABLE user_point
+DROP TABLE IF EXISTS user_activity;
+CREATE TABLE user_activity
 (
   user_id                      VARCHAR(20) PRIMARY KEY NOT NULL,
-  point                        INT                     NOT NULL,
   last_sign_in_datetime        DATETIME,
   last_sign_in_continuous_days INT DEFAULT 0
 );

@@ -14,13 +14,10 @@ import java.io.Serializable;
  * Created on:   2015/8/17
  * Descriptions:
  */
-public class UserPointObject implements Serializable {
+public class UserActivityObject implements Serializable {
 
     @JsonProperty("user_id")
     private String userId;
-
-    @JsonProperty("point")
-    private Integer point;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -37,14 +34,6 @@ public class UserPointObject implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public Integer getPoint() {
-        return point;
-    }
-
-    public void setPoint(Integer point) {
-        this.point = point;
     }
 
     public DateTime getLastSignInDateTime() {

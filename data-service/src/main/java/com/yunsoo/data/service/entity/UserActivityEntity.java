@@ -14,15 +14,12 @@ import javax.persistence.Table;
  * Descriptions:
  */
 @Entity
-@Table(name = "user_point")
-public class UserPointEntity {
+@Table(name = "user_activity")
+public class UserActivityEntity {
 
     @Id
     @Column(name = "user_id")
     private String userId;
-
-    @Column(name = "point")
-    private Integer point;
 
     @Column(name = "last_sign_in_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -38,14 +35,6 @@ public class UserPointEntity {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public Integer getPoint() {
-        return point;
-    }
-
-    public void setPoint(Integer point) {
-        this.point = point;
     }
 
     public DateTime getLastSignInDateTime() {

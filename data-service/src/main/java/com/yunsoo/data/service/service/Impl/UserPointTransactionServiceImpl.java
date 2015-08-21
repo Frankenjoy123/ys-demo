@@ -1,10 +1,10 @@
 package com.yunsoo.data.service.service.Impl;
 
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.data.service.entity.UserPointEntity;
+import com.yunsoo.data.service.entity.UserEntity;
 import com.yunsoo.data.service.entity.UserPointTransactionEntity;
-import com.yunsoo.data.service.repository.UserPointRepository;
 import com.yunsoo.data.service.repository.UserPointTransactionRepository;
+import com.yunsoo.data.service.repository.UserRepository;
 import com.yunsoo.data.service.service.UserPointTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserPointTransactionServiceImpl implements UserPointTransactionService {
 
     @Autowired
-    private UserPointRepository userPointRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private UserPointTransactionRepository userPointTransactionRepository;
@@ -29,11 +29,11 @@ public class UserPointTransactionServiceImpl implements UserPointTransactionServ
     @Override
     public UserPointTransactionEntity commit(UserPointTransactionEntity entity) {
         if (!LookupCodes.UserPointTransactionStatus.COMMITTED.equals(entity.getStatusCode())) {
-            UserPointEntity upEntity = userPointRepository.findOne(entity.getUserId());
-            if (upEntity != null) {
-                upEntity.setPoint(upEntity.getPoint() + entity.getPoint());
+            UserEntity userEntity = userRepository.findOne(entity.getUserId());
+            if (userEntity != null) {
+                userEntity.setPoint(userEntity.getPoint() + entity.getPoint());
                 entity.setStatusCode(LookupCodes.UserPointTransactionStatus.COMMITTED);
-                userPointRepository.save(upEntity);
+                userRepository.save(userEntity);
                 return userPointTransactionRepository.save(entity);
             }
         }
@@ -44,11 +44,11 @@ public class UserPointTransactionServiceImpl implements UserPointTransactionServ
     @Override
     public UserPointTransactionEntity rollback(UserPointTransactionEntity entity) {
         if (LookupCodes.UserPointTransactionStatus.COMMITTED.equals(entity.getStatusCode())) {
-            UserPointEntity upEntity = userPointRepository.findOne(entity.getUserId());
-            if (upEntity != null) {
-                upEntity.setPoint(upEntity.getPoint() - entity.getPoint());
+            UserEntity userEntity = userRepository.findOne(entity.getUserId());
+            if (userEntity != null) {
+                userEntity.setPoint(userEntity.getPoint() - entity.getPoint());
                 entity.setStatusCode(LookupCodes.UserPointTransactionStatus.ROLLBACK);
-                userPointRepository.save(upEntity);
+                userRepository.save(userEntity);
                 return userPointTransactionRepository.save(entity);
             }
         }

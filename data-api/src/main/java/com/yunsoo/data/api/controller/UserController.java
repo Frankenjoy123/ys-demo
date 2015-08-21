@@ -4,13 +4,17 @@ import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.UserEntity;
 import com.yunsoo.data.service.repository.UserRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,18 +41,27 @@ public class UserController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<UserObject> getByFilter(@RequestParam(value = "id_in", required = false) List<String> idIn,
                                         @RequestParam(value = "phone", required = false) String phone,
-                                        @RequestParam(value = "device_id", required = false) String deviceId) {
-        List<UserEntity> entities;
+                                        @RequestParam(value = "device_id", required = false) String deviceId,
+                                        @RequestParam(value = "point_ge", required = false) Integer pointGE,
+                                        @RequestParam(value = "point_le", required = false) Integer pointLE,
+                                        Pageable pageable,
+                                        HttpServletResponse response) {
+        Page<UserEntity> entityPage;
         if (idIn != null && idIn.size() > 0) {
-            entities = userRepository.findByIdIn(idIn);
+            entityPage = userRepository.findByIdIn(idIn, pageable);
         } else if (!StringUtils.isEmpty(phone)) {
-            entities = userRepository.findByPhone(phone);
+            entityPage = userRepository.findByPhone(phone, pageable);
         } else if (!StringUtils.isEmpty(deviceId)) {
-            entities = userRepository.findByDeviceId(deviceId);
+            entityPage = userRepository.findByDeviceId(deviceId, pageable);
+        } else if (pointGE != null || pointLE != null) {
+            entityPage = userRepository.query(pointGE, pointLE, pageable);
         } else {
-            throw new BadRequestException("at least need one filter parameter [id_in, phone, device_id]");
+            throw new BadRequestException("at least need one filter parameter [id_in, phone, device_id, point_ge, point_le]");
         }
-        return entities.stream().map(this::toUserObject).collect(Collectors.toList());
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+        return entityPage.getContent().stream().map(this::toUserObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
