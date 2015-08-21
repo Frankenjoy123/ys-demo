@@ -110,7 +110,6 @@ public class UserOrganizationFollowingOldController {
         if (!userDomain.validateToken(token, userFollowing.getUserId())) {
             throw new UnauthorizedException("不能删除其他用户的收藏信息！");
         }
-        existingUserFollowing.setIsFollowing(false);
         dataAPIClient.patch("userorganization/following", existingUserFollowing); //just mark isFollowing as False.
     }
 }

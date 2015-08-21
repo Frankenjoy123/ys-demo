@@ -23,14 +23,11 @@ public class UserOrganizationFollowing {
     private String orgDescription;
     @JsonProperty("last_read_message_id")
     private Long lastReadMessageId;
-    @JsonProperty("is_following")
-    private Boolean isFollowing;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
-    @JsonProperty("last_updated_datetime")
-    private String modifiedDateTime;
 
 
     public String getId() {
@@ -81,14 +78,6 @@ public class UserOrganizationFollowing {
         this.lastReadMessageId = lastReadMessageId;
     }
 
-    public Boolean getIsFollowing() {
-        return isFollowing;
-    }
-
-    public void setIsFollowing(Boolean isFollowing) {
-        this.isFollowing = isFollowing;
-    }
-
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
@@ -97,11 +86,4 @@ public class UserOrganizationFollowing {
         this.createdDateTime = createdDateTime;
     }
 
-    public String getModifiedDateTime() {
-        return modifiedDateTime;
-    }
-
-    public void setModifiedDateTime(String modifiedDateTime) {
-        this.modifiedDateTime = modifiedDateTime;
-    }
 }

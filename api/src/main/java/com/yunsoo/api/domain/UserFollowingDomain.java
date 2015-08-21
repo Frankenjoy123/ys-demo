@@ -53,7 +53,7 @@ public class UserFollowingDomain {
                 .append(pageable)
                 .build();
 
-        Page<UserProductBaseFollowingObject> userFollowingList = dataAPIClient.getPaged("/userproduct/following/org/{0}" + query, new ParameterizedTypeReference<List<UserProductBaseFollowingObject>>() {
+        Page<UserProductBaseFollowingObject> userFollowingList = dataAPIClient.getPaged("/userproduct/following/product/{0}" + query, new ParameterizedTypeReference<List<UserProductBaseFollowingObject>>() {
         }, productId);
 
         List<String> userIds = new ArrayList<String>();

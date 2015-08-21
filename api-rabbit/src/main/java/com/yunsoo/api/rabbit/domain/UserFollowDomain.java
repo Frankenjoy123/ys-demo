@@ -36,8 +36,6 @@ public class UserFollowDomain {
         //check if exist in DB
         UserOrganizationFollowing existingUserFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class, userFollowing.getUserId(), userFollowing.getOrgId());
         if (existingUserFollowing == null) {
-            //user never follow org before, just add new record.
-            userFollowing.setIsFollowing(true);
             String id = dataAPIClient.post("/userorganization/following", userFollowing, String.class);
             return id;
         }
@@ -90,8 +88,6 @@ public class UserFollowDomain {
         if (existingUserFollowing != null) {
             return existingUserFollowing.getId();
         } else {
-            //user never follow org before, just add new record.
-            userFollowing.setIsFollowing(true);
             String id = dataAPIClient.post("/userproduct/following", userFollowing, String.class);
             return id;
         }
@@ -121,6 +117,7 @@ public class UserFollowDomain {
             if (object != null) {
                 userFollowing.setProductName(object.getName());
                 userFollowing.setProductDescription(object.getDescription());
+                userFollowing.setOrgId(object.getOrgId());
             }
             else{
                 //if the product is not exist, should remove the item from following list

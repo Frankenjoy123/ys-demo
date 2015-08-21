@@ -124,7 +124,7 @@ public class ScanController {
         userFollowDomain.ensureFollow(userFollowing);
         UserOrganizationFollowing userFollowingResult = userFollowDomain.getUserOrganizationFollowing(currentUser.getId(), organizationObject.getId());
         if (userFollowingResult != null) {
-            scanResult.setFollowed_org(userFollowingResult.getIsFollowing());
+            scanResult.setFollowed_org(true);
         } else {
             scanResult.setFollowed_org(false);
         }

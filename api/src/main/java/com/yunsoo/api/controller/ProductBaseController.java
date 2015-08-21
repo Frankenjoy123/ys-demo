@@ -74,7 +74,7 @@ public class ProductBaseController {
      * @throws IOException
      */
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.GET)
-  //  @PostAuthorize("hasPermission(returnObject, 'productbase:read')")
+    @PostAuthorize("hasPermission(returnObject, 'productbase:read')")
     public ProductBase getById(@PathVariable(value = "product_base_id") String productBaseId,
                                @RequestParam(value = "version", required = false) Integer version) throws IOException {
         ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
