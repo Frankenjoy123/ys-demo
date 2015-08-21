@@ -9,7 +9,6 @@ CREATE TABLE user
   status_code          VARCHAR(20)                        NOT NULL,
   point                INT                                NOT NULL,
   address              VARCHAR(100),
-  last_access_datetime DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   created_datetime     DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 CREATE INDEX phone ON user (phone);

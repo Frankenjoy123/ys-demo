@@ -39,10 +39,6 @@ public class UserEntity {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "last_access_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime lastAccessDateTime;
-
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
@@ -102,14 +98,6 @@ public class UserEntity {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public DateTime getLastAccessDateTime() {
-        return lastAccessDateTime;
-    }
-
-    public void setLastAccessDateTime(DateTime lastAccessDateTime) {
-        this.lastAccessDateTime = lastAccessDateTime;
     }
 
     public DateTime getCreatedDateTime() {
