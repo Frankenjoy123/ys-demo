@@ -1,4 +1,4 @@
-package com.yunsoo.common.data.object;
+package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -8,15 +8,13 @@ import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * Created by:   Lijian
- * Created on:   2015/8/20
- * Descriptions:
+ * Created by yan on 8/20/2015.
  */
-public class UserObject implements Serializable {
-
+public class User implements Serializable {
     @JsonProperty("id")
     private String id;
 
@@ -33,6 +31,7 @@ public class UserObject implements Serializable {
     @JsonProperty("status_code")
     private String statusCode;
 
+    @NotNull(message = "point must not be null")
     @JsonProperty("point")
     private Integer point;
 
@@ -42,7 +41,7 @@ public class UserObject implements Serializable {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
-    private DateTime createdDateTime;
+    private DateTime createdDatetime;
 
 
     public String getId() {
@@ -101,11 +100,11 @@ public class UserObject implements Serializable {
         this.address = address;
     }
 
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
+    public DateTime getCreatedDatetime() {
+        return createdDatetime;
     }
 
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
+    public void setCreatedDatetime(DateTime createdDatetime) {
+        this.createdDatetime = createdDatetime;
     }
 }

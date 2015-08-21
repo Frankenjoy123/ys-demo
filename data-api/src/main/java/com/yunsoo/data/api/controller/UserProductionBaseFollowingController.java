@@ -43,25 +43,19 @@ public class UserProductionBaseFollowingController {
         return toUserProductFollowingObject(userProductBaseFollowingEntities.get(0));
     }
 
-    @RequestMapping(value = "/who/{id}", method = RequestMethod.GET)
-    public List<UserProductBaseFollowingObject> getFollowingProductsByUserId(@PathVariable(value = "id") String userId,
-                                                                             Pageable pageable,
-                                                                             HttpServletResponse response) {
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<UserProductBaseFollowingObject> getByFilters(@RequestParam(value = "userid", required = false) String userId,
+                                                             @RequestParam(value = "productid", required = false) String productId,
+                                                             Pageable pageable, HttpServletResponse response) {
 
-        Page<UserProductBaseFollowingEntity> entityPage = userProductBaseFollowingRepository.findByUserId(userId, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
-        }
-        return entityPage.getContent().stream().map(this::toUserProductFollowingObject).collect(Collectors.toList());
-    }
+        Page<UserProductBaseFollowingEntity> entityPage = null;
+        if(userId!=null)
+            entityPage = userProductBaseFollowingRepository.findByUserId(userId, pageable);
+        else if(productId!=null)
+            entityPage = userProductBaseFollowingRepository.findByProductBaseId(productId, pageable);
+        else
+            throw new BadRequestException("userid或者productid不能为空！");
 
-    @RequestMapping(value = "/product/{id}", method = RequestMethod.GET)
-    public List<UserProductBaseFollowingObject> getFollowersByProductId(@PathVariable(value = "id") String prodId,
-                                                                        Pageable pageable,
-                                                                        HttpServletResponse response) {
-        if (prodId == null || prodId.isEmpty()) throw new BadRequestException("id不能为空！");
-
-        Page<UserProductBaseFollowingEntity> entityPage = userProductBaseFollowingRepository.findByProductBaseId(prodId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }

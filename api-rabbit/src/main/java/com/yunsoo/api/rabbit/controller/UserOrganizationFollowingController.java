@@ -37,7 +37,7 @@ public class UserOrganizationFollowingController {
     @PreAuthorize("hasPermission(#id, 'UserFollowing', 'userfollowing:read')")
     public List<UserOrganizationFollowing> getFollowingOrgsByUserId(@PathVariable(value = "id") String id,
                                                                     Pageable pageable,   HttpServletResponse response) {
-        if (id == null || id.isEmpty()) throw new BadRequestException("id?????");
+        if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
 
         Page<UserOrganizationFollowing> followingPage = userFollowDomain.getUserOrganizationFollowingsByUserId(id, pageable);
         if (pageable != null) {
@@ -54,7 +54,7 @@ public class UserOrganizationFollowingController {
 
         UserOrganizationFollowing userFollowing = userFollowDomain.getUserOrganizationFollowing(id, orgId);
         if (userFollowing == null) {
-            throw new NotFoundException("?????Follow?????");
+            throw new NotFoundException("找不到用户Follow的公司信息");
         }
         return userFollowing;
     }
@@ -71,9 +71,9 @@ public class UserOrganizationFollowingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
     public void userUnfollowOrg(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @PathVariable(value = "id") String id) {
-        if (id == null) throw new BadRequestException("userOrganizationFollowing id ?????");
+        if (id == null) throw new BadRequestException("userOrganizationFollowing id 不能为空");
         if (!userDomain.validateToken(token, id)) {
-            throw new UnauthorizedException("??????????????");
+            throw new UnauthorizedException("不能删除其他用户的收藏信息！");
         }
         userFollowDomain.deleteUserOrganizationFollowing(id);
     }

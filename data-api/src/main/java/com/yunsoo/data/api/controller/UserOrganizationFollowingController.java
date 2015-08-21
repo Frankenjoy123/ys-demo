@@ -41,25 +41,19 @@ public class UserOrganizationFollowingController {
         return toUserOrganizationFollowingObject(userOrganizationFollowingList.get(0));
     }
 
-    @RequestMapping(value = "/who/{id}", method = RequestMethod.GET)
-    public List<UserOrganizationFollowingObject> getFollowingOrgsByUserId(@PathVariable(value = "id") String userId,
-                                                                          Pageable pageable,
-                                                                          HttpServletResponse response) {
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<UserOrganizationFollowingObject> getByFilter(@RequestParam(value = "userid", required=false) String userId,
+                                                             @RequestParam(value = "orgid", required=false) String orgId,
+                                                             Pageable pageable,  HttpServletResponse response) {
 
-        Page<UserOrganizationFollowingEntity> entityPage = userOrganizationFollowingRepository.findByUserId(userId, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
-        }
-        return entityPage.getContent().stream().map(this::toUserOrganizationFollowingObject).collect(Collectors.toList());
-    }
+        Page<UserOrganizationFollowingEntity> entityPage = null;
+        if(userId!=null)
+            entityPage = userOrganizationFollowingRepository.findByUserId(userId, pageable);
+        else if (orgId !=null)
+            entityPage  = userOrganizationFollowingRepository.findByOrgId(orgId, pageable);
+        else
+            throw new BadRequestException("userid或者orgid不能为空！");
 
-    @RequestMapping(value = "/org/{id}", method = RequestMethod.GET)
-    public List<UserOrganizationFollowingObject> getFollowersByOrgId(@PathVariable(value = "id") String orgId,
-                                                                     Pageable pageable,
-                                                                     HttpServletResponse response) {
-        if (orgId == null || orgId.isEmpty()) throw new BadRequestException("id不能为空！");
-
-        Page<UserOrganizationFollowingEntity> entityPage  = userOrganizationFollowingRepository.findByOrgId(orgId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }

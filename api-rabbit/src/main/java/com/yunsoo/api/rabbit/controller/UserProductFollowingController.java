@@ -51,7 +51,7 @@ public class UserProductFollowingController {
                                                         @PathVariable(value = "productid") String productId) {
         UserProductFollowing userFollowing = userFollowDomain.getUserProductFollowing(id, productId);
         if (userFollowing == null) {
-            throw new NotFoundException("找不到用户Follow的公司信息");
+            throw new NotFoundException("找不到用户Follow的产品信息");
         }
         return userFollowing;
     }

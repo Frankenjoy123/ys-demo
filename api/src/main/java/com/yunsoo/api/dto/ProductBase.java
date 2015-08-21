@@ -83,7 +83,8 @@ public class ProductBase {
 
     @JsonProperty("product_base_versions")
     private List<ProductBaseVersions> productBaseVersions;
-
+    @JsonProperty("following_users")
+    private List<User> followingUsers;
 
     public String getId() {
         return id;
@@ -251,6 +252,14 @@ public class ProductBase {
 
     public void setProductBaseVersions(List<ProductBaseVersions> productBaseVersions) {
         this.productBaseVersions = productBaseVersions;
+    }
+
+    public List<User> getFollowingUsers() {
+        return followingUsers;
+    }
+
+    public void setFollowingUsers(List<User> followingUsers) {
+        this.followingUsers = followingUsers;
     }
 
     public ProductBase() {

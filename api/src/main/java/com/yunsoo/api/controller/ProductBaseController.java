@@ -1,9 +1,6 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.AccountPermissionDomain;
-import com.yunsoo.api.domain.LookupDomain;
-import com.yunsoo.api.domain.ProductBaseDomain;
-import com.yunsoo.api.domain.ProductCategoryDomain;
+import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
@@ -61,6 +58,9 @@ public class ProductBaseController {
     private LookupDomain lookupDomain;
 
     @Autowired
+    private UserFollowingDomain followingDomain;
+
+    @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductBaseController.class);
@@ -93,6 +93,7 @@ public class ProductBaseController {
         productBase.setCategory(new ProductCategory(productCategoryDomain.getById(productBase.getCategoryId())));
         productBase.setProductKeyTypes(LookupObject.fromCodeList(lookupDomain.getProductKeyTypes(), productBaseObject.getProductKeyTypeCodes()));
         productBase.setDetails(productBaseDomain.getProductBaseDetails(orgId, productBaseId, version));
+        productBase.setFollowingUsers(followingDomain.getUserProductFollowingsByProductId(productBaseId, null).getContent());
         return productBase;
     }
 

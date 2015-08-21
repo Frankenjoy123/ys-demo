@@ -22,16 +22,15 @@ public class UserProductFollowing {
     private String productName;
     @JsonProperty("product_base_description")
     private String productDescription;
-    @JsonProperty("is_following")
-    private Boolean isFollowing;
+    @JsonProperty("org_id")
+    private String orgId;
+    @JsonProperty("comments_number")
+    private Long commentsNumber;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("modified_datetime")
-    private DateTime modifiedDateTime;
+
 
     public String getId() {
         return id;
@@ -73,14 +72,6 @@ public class UserProductFollowing {
         this.productDescription = productDescription;
     }
 
-    public Boolean getIsFollowing() {
-        return isFollowing;
-    }
-
-    public void setIsFollowing(Boolean isFollowing) {
-        this.isFollowing = isFollowing;
-    }
-
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
@@ -89,11 +80,19 @@ public class UserProductFollowing {
         this.createdDateTime = createdDateTime;
     }
 
-    public DateTime getModifiedDateTime() {
-        return modifiedDateTime;
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setModifiedDateTime(DateTime modifiedDateTime) {
-        this.modifiedDateTime = modifiedDateTime;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
+    public Long getCommentsNumber() {
+        return commentsNumber;
+    }
+
+    public void setCommentsNumber(Long commentsNumber) {
+        commentsNumber = commentsNumber;
     }
 }

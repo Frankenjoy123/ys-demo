@@ -12,7 +12,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,20 +35,20 @@ public class UserController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<UserObject> getByFilter(@RequestParam(value = "phone", required = false) String phone,
+    public List<UserObject> getByFilter(@RequestParam(value = "id_in", required = false) List<String> idIn,
+                                        @RequestParam(value = "phone", required = false) String phone,
                                         @RequestParam(value = "device_id", required = false) String deviceId) {
         List<UserEntity> entities;
-        if (!StringUtils.isEmpty(phone)) {
+        if (idIn != null && idIn.size() > 0) {
+            entities = userRepository.findByIdIn(idIn);
+        } else if (!StringUtils.isEmpty(phone)) {
             entities = userRepository.findByPhone(phone);
         } else if (!StringUtils.isEmpty(deviceId)) {
             entities = userRepository.findByDeviceId(deviceId);
         } else {
-            throw new BadRequestException("at least need one filter parameter of phone or device_id");
+            throw new BadRequestException("at least need one filter parameter [id_in, phone, device_id]");
         }
-        if (entities != null) {
-            return entities.stream().map(this::toUserObject).collect(Collectors.toList());
-        }
-        return new ArrayList<>();
+        return entities.stream().map(this::toUserObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -57,6 +56,9 @@ public class UserController {
         UserEntity entity = toUserEntity(userObject);
         DateTime now = DateTime.now();
         entity.setId(null);
+        if (entity.getPoint() == null) {
+            entity.setPoint(0);
+        }
         if (entity.getCreatedDateTime() == null) {
             entity.setCreatedDateTime(now);
         }
@@ -114,7 +116,7 @@ public class UserController {
         object.setStatusCode(entity.getStatusCode());
         object.setPoint(entity.getPoint());
         object.setAddress(entity.getAddress());
-        object.setCreatedDatetime(entity.getCreatedDateTime());
+        object.setCreatedDateTime(entity.getCreatedDateTime());
         return object;
     }
 
@@ -130,7 +132,7 @@ public class UserController {
         entity.setStatusCode(object.getStatusCode());
         entity.setPoint(object.getPoint());
         entity.setAddress(object.getAddress());
-        entity.setCreatedDateTime(object.getCreatedDatetime());
+        entity.setCreatedDateTime(object.getCreatedDateTime());
         return entity;
     }
 
