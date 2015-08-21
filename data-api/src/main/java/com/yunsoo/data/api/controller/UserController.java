@@ -53,10 +53,7 @@ public class UserController {
         } else {
             throw new BadRequestException("at least need one filter parameter of phone or device_id");
         }
-        if (entities != null) {
-            return entities.stream().map(this::toUserObject).collect(Collectors.toList());
-        }
-        return new ArrayList<>();
+        return entities.stream().map(this::toUserObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -64,6 +61,9 @@ public class UserController {
         UserEntity entity = toUserEntity(userObject);
         DateTime now = DateTime.now();
         entity.setId(null);
+        if (entity.getPoint() == null) {
+            entity.setPoint(0);
+        }
         if (entity.getCreatedDateTime() == null) {
             entity.setCreatedDateTime(now);
         }
@@ -121,7 +121,7 @@ public class UserController {
         object.setStatusCode(entity.getStatusCode());
         object.setPoint(entity.getPoint());
         object.setAddress(entity.getAddress());
-        object.setCreatedDatetime(entity.getCreatedDateTime());
+        object.setCreatedDateTime(entity.getCreatedDateTime());
         return object;
     }
 
@@ -137,7 +137,7 @@ public class UserController {
         entity.setStatusCode(object.getStatusCode());
         entity.setPoint(object.getPoint());
         entity.setAddress(object.getAddress());
-        entity.setCreatedDateTime(object.getCreatedDatetime());
+        entity.setCreatedDateTime(object.getCreatedDateTime());
         return entity;
     }
 

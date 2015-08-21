@@ -1,6 +1,6 @@
 package com.yunsoo.api.rabbit.security.permission;
 
-import com.yunsoo.api.rabbit.dto.basic.User;
+import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
 import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
 import com.yunsoo.api.rabbit.dto.basic.UserProductFollowing;

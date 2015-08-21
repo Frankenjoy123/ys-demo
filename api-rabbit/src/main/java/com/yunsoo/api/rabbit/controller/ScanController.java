@@ -3,6 +3,7 @@ package com.yunsoo.api.rabbit.controller;
 import com.yunsoo.api.rabbit.biz.ValidateProduct;
 import com.yunsoo.api.rabbit.domain.*;
 import com.yunsoo.api.rabbit.dto.LogisticsPath;
+import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.api.rabbit.dto.basic.*;
 import com.yunsoo.api.rabbit.object.Constants;
 import com.yunsoo.api.rabbit.object.TAccount;
@@ -71,7 +72,8 @@ public class ScanController {
         User currentUser = null;
         if (accessToken != null) {
             TAccount tAccount = tokenAuthenticationService.parseUser(accessToken);
-            currentUser = userDomain.ensureUser(tAccount.getId(), null, null);
+            currentUser = new User();
+            currentUser.setId(tAccount.getId());
         } else {
             currentUser = dataAPIClient.get("user/{id}", User.class, "2k64dcya672axp5jcgv"); //hardcode for web-scan
         }
