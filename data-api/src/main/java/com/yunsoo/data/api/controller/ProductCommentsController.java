@@ -62,6 +62,12 @@ public class ProductCommentsController {
                 .collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/count/{id}", method = RequestMethod.GET)
+    public Long getCommentsNumberByProductBaseId(@PathVariable(value = "id") String productBaseId) {
+        return productCommentsRepository.countByProductBaseId(productBaseId);
+    }
+
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ProductCommentsObject createProductComments(@RequestBody @Valid ProductCommentsObject productCommentsObject) {
         ProductCommentsEntity entity = toProductCommentsEntity(productCommentsObject);

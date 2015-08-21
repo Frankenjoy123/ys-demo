@@ -25,6 +25,8 @@ public interface ProductCommentsRepository extends FindOneAndSaveRepository<Prod
                                       @Param("lastCommentDatetimeGE") String lastCommentDatetimeGE,
                                       Pageable pageable);
 
+    Long countByProductBaseId(String productBaseId);
+
     void delete(String id);
 
 }
