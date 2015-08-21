@@ -137,7 +137,7 @@ public class LookupCodes {
         private UserStatus() {
         }
 
-        public static final String AVAILABLE = "available";
+        public static final String ENABLED = "enabled";
         public static final String DISABLED = "disabled";
     }
 }

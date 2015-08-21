@@ -136,7 +136,7 @@ public class UserDomain {
             newUser.setDeviceId(deviceCode);
             newUser.setPhone(cellular);
             if (!StringUtils.isEmpty(cellular)) {
-                newUser.setStatusCode(LookupCodes.UserStatus.AVAILABLE); //if cellular is not null
+                newUser.setStatusCode(LookupCodes.UserStatus.ENABLED); //if cellular is not null
             }
             return this.createNewUser(newUser);
         }
@@ -148,7 +148,7 @@ public class UserDomain {
         User newUser = new User();
         newUser.setPoint(100);  //set default properties.
         newUser.setName("求真名"); //default name is the time.
-        newUser.setStatusCode(LookupCodes.UserStatus.AVAILABLE); //default is enabled
+        newUser.setStatusCode(LookupCodes.UserStatus.ENABLED); //default is enabled
         return newUser;
     }
 
