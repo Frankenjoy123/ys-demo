@@ -34,7 +34,7 @@ public class UserFollowDomain {
             throw new BadRequestException("UserOrganizationFollowing 不能为空！");
         }
         //check if exist in DB
-        UserOrganizationFollowing existingUserFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class, userFollowing.getUserId(), userFollowing.getOrgId());
+        UserOrganizationFollowing existingUserFollowing = getUserOrganizationFollowing( userFollowing.getUserId(), userFollowing.getOrgId());
         if (existingUserFollowing == null) {
             String id = dataAPIClient.post("/userorganization/following", userFollowing, String.class);
             return id;
@@ -50,10 +50,10 @@ public class UserFollowDomain {
 
     public Page<UserOrganizationFollowing> getUserOrganizationFollowingsByUserId(String userId, Pageable pageable){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append(pageable)
+                .append(pageable).append("userid", userId)
                 .build();
 
-        Page<UserOrganizationFollowing> userFollowingList = dataAPIClient.getPaged("/userorganization/following/who/{0}" + query, new ParameterizedTypeReference<List<UserOrganizationFollowing>>() {
+        Page<UserOrganizationFollowing> userFollowingList = dataAPIClient.getPaged("/userorganization/following" + query, new ParameterizedTypeReference<List<UserOrganizationFollowing>>() {
         }, userId);
 
         //fill organization Name
@@ -101,10 +101,10 @@ public class UserFollowDomain {
 
     public Page<UserProductFollowing> getUserProductFollowingsByUserId(String userId, Pageable pageable){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append(pageable)
+                .append(pageable).append("userid", userId)
                 .build();
 
-        Page<UserProductFollowing> userFollowingList = dataAPIClient.getPaged("/userproduct/following/who/{0}" + query, new ParameterizedTypeReference<List<UserProductFollowing>>() {
+        Page<UserProductFollowing> userFollowingList = dataAPIClient.getPaged("/userproduct/following" + query, new ParameterizedTypeReference<List<UserProductFollowing>>() {
         }, userId);
 
         for (UserProductFollowing userFollowing : userFollowingList) {
@@ -124,6 +124,7 @@ public class UserFollowDomain {
                 userFollowing.setUserId(null);
             }
         }
+         userFollowingList.getContent().removeIf(following -> following.getUserId()==null);
         return userFollowingList;
     }
 

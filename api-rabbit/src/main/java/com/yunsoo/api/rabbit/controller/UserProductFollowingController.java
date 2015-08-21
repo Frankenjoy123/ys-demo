@@ -34,7 +34,7 @@ public class UserProductFollowingController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserProductFollowingController.class);
 
     @RequestMapping(value = "/who/{id}", method = RequestMethod.GET)
-   // @PreAuthorize("hasPermission(#id, 'UserFollowing', 'userfollowing:read')")
+    @PreAuthorize("hasPermission(#id, 'UserFollowing', 'userfollowing:read')")
     public List<UserProductFollowing> getFollowingProductsByUserId(@PathVariable(value = "id") String id,
                                                                    Pageable pageable,   HttpServletResponse response) {
         if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
@@ -51,7 +51,7 @@ public class UserProductFollowingController {
                                                         @PathVariable(value = "productid") String productId) {
         UserProductFollowing userFollowing = userFollowDomain.getUserProductFollowing(id, productId);
         if (userFollowing == null) {
-            throw new NotFoundException("找不到用户Follow的公司信息");
+            throw new NotFoundException("找不到用户Follow的产品信息");
         }
         return userFollowing;
     }

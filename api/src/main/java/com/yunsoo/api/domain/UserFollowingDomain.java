@@ -29,10 +29,10 @@ public class UserFollowingDomain {
 
     public Page<User> getUserOrganizationFollowingsByOrgId(String orgId, Pageable pageable){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append(pageable)
+                .append(pageable).append("orgid", orgId)
                 .build();
 
-        Page<UserOrganizationFollowingObject> userFollowingList = dataAPIClient.getPaged("/userorganization/following/org/{0}" + query, new ParameterizedTypeReference<List<UserOrganizationFollowingObject>>() {
+        Page<UserOrganizationFollowingObject> userFollowingList = dataAPIClient.getPaged("/userorganization/following" + query, new ParameterizedTypeReference<List<UserOrganizationFollowingObject>>() {
         }, orgId);
 
         List<String> userIds = new ArrayList<String>();
@@ -50,10 +50,10 @@ public class UserFollowingDomain {
 
     public Page<User> getUserProductFollowingsByProductId(String productId, Pageable pageable){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append(pageable)
+                .append(pageable).append("productid", productId)
                 .build();
 
-        Page<UserProductBaseFollowingObject> userFollowingList = dataAPIClient.getPaged("/userproduct/following/product/{0}" + query, new ParameterizedTypeReference<List<UserProductBaseFollowingObject>>() {
+        Page<UserProductBaseFollowingObject> userFollowingList = dataAPIClient.getPaged("/userproduct/following" + query, new ParameterizedTypeReference<List<UserProductBaseFollowingObject>>() {
         }, productId);
 
         List<String> userIds = new ArrayList<String>();

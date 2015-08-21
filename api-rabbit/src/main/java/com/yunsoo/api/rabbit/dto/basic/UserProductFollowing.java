@@ -22,14 +22,15 @@ public class UserProductFollowing {
     private String productName;
     @JsonProperty("product_base_description")
     private String productDescription;
+    @JsonProperty("org_id")
+    private String orgId;
+    @JsonProperty("comments_number")
+    private Long commentsNumber;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
-    @JsonProperty("org_id")
-    private String orgId;
-    @JsonProperty("comments_number")
-    private int CommentsNumber;
+
 
     public String getId() {
         return id;
@@ -87,11 +88,11 @@ public class UserProductFollowing {
         this.orgId = orgId;
     }
 
-    public int getCommentsNumber() {
-        return CommentsNumber;
+    public Long getCommentsNumber() {
+        return commentsNumber;
     }
 
-    public void setCommentsNumber(int commentsNumber) {
-        CommentsNumber = commentsNumber;
+    public void setCommentsNumber(Long commentsNumber) {
+        commentsNumber = commentsNumber;
     }
 }
