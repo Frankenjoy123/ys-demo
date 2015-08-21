@@ -2,7 +2,6 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.ProductCommentsObject;
 import com.yunsoo.common.util.DateTimeUtils;
-import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.ProductCommentsEntity;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -41,8 +39,7 @@ public class ProductCommentsController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductCommentsObject> getByFilter(
-            @RequestParam(value = "product_base_id", required = false) String productBaseId,
-            @RequestParam(value = "created_account_id", required = false) String createdAccountId,
+            @RequestParam(value = "product_base_id", required = true) String productBaseId,
             @RequestParam(value = "score_ge", required = false) Integer scoreGE,
             @RequestParam(value = "score_le", required = false) Integer scoreLE,
             @RequestParam(value = "last_comment_datetime_ge", required = false)
@@ -50,12 +47,8 @@ public class ProductCommentsController {
             DateTime lastCommentDatetimeGE,
             Pageable pageable,
             HttpServletResponse response) {
-        if (StringUtils.isEmpty(productBaseId) && StringUtils.isEmpty(createdAccountId)) {
-            throw new BadRequestException("at least need one filter parameter of product_base_id or created_account_id");
-        }
         Page<ProductCommentsEntity> entityPage = productCommentsRepository.query(
                 productBaseId,
-                createdAccountId,
                 scoreGE,
                 scoreLE,
                 DateTimeUtils.toDBString(lastCommentDatetimeGE),

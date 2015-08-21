@@ -15,13 +15,11 @@ import org.springframework.data.repository.query.Param;
 public interface ProductCommentsRepository extends FindOneAndSaveRepository<ProductCommentsEntity, String> {
 
     @Query("select o from #{#entityName} o where " +
-            "(:produtBaseId is null or o.productBaseId = :productBaseId) " +
-            "and (:createdAccountId is null or o.createdAccountId = :createdAccountId) " +
+            "(o.productBaseId = :productBaseId) " +
             "and (:scoreGE is null or o.score >= :scoreGE) " +
             "and (:scoreLE is null or o.score <= :scoreLE) " +
             "and (:lastCommentDatetimeGE is null or o.createdDateTime >= :lastCommentDatetimeGE)")
     Page<ProductCommentsEntity> query(@Param("productBaseId") String productBaseId,
-                                      @Param("createdAccountId") String createdAccountId,
                                       @Param("scoreGE") Integer scoreGE,
                                       @Param("scoreLE") Integer scoreLE,
                                       @Param("lastCommentDatetimeGE") String lastCommentDatetimeGE,
