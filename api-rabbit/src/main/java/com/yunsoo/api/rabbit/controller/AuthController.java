@@ -1,13 +1,11 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.UserDomain;
+import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.api.rabbit.dto.UserResult;
-import com.yunsoo.api.rabbit.dto.basic.Account;
-import com.yunsoo.api.rabbit.dto.basic.User;
 import com.yunsoo.api.rabbit.object.Constants;
 import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +24,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-    //    @Value("${yunsoo.token_header_name}")
-//    private String AUTH_HEADER_NAME;
     @Autowired
     private UserDomain userDomain;
-    @Autowired
-    private RestClient dataAPIClient;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
@@ -43,22 +38,22 @@ public class AuthController {
         if (user == null) {
             return new ResponseEntity<>("用户不能为空！", HttpStatus.FORBIDDEN);
         }
-        if (StringUtils.isEmpty(user.getDeviceCode())) {
-            throw new BadRequestException("device_code不能为空！");
+        if (StringUtils.isEmpty(user.getDeviceId())) {
+            throw new BadRequestException("device_id不能为空！");
         }
 
         User currentUser = null;
         if (!StringUtils.isEmpty(accessToken)) {
             TAccount tAccount = tokenAuthenticationService.parseUser(accessToken);
             //get user id from token. check if cellular exists, and update user
-            currentUser = userDomain.ensureUser(tAccount.getId(), user.getDeviceCode(), user.getCellular());
+            currentUser = userDomain.ensureUser(tAccount.getId(), user.getDeviceId(), user.getPhone());
         } else {
-            currentUser = userDomain.ensureUser(null, user.getDeviceCode(), user.getCellular());
+            currentUser = userDomain.ensureUser(null, user.getDeviceId(), user.getPhone());
         }
 
         TAccount currentAccount = new TAccount();
         currentAccount.setId(currentUser.getId());
-        currentAccount.setStatus(currentUser.getStatus()); //Status的编码与TAccountStatusEnum一致
+        currentAccount.setStatus(currentUser.getStatusCode()); //Status的编码与TAccountStatusEnum一致
         String token = tokenAuthenticationService.generateToken(currentAccount, false);
 
         //set token
@@ -73,11 +68,11 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> createUser(@RequestBody User user) throws Exception {
         //always create new user.
-        User currentUser = userDomain.createAnonymousUser(user.getDeviceCode());
+        User currentUser = userDomain.createAnonymousUser(user.getDeviceId());
 
         TAccount currentAccount = new TAccount();
         currentAccount.setId(currentUser.getId());
-        currentAccount.setStatus(currentUser.getStatus());  //Status的编码与TAccountStatusEnum一致  TAccountStatusEnum.ENABLED.value()
+        currentAccount.setStatus(currentUser.getStatusCode());  //Status的编码与TAccountStatusEnum一致  TAccountStatusEnum.ENABLED.value()
         String token = tokenAuthenticationService.generateToken(currentAccount, true); //stay long
 
         //set token
@@ -85,11 +80,6 @@ public class AuthController {
         headers.add(Constants.HttpHeaderName.ACCESS_TOKEN, token);
         UserResult userResult = new UserResult(token, currentUser.getId()); //generate result
         return new ResponseEntity<UserResult>(userResult, headers, HttpStatus.CREATED);
-    }
-
-    //@RequestMapping(value = "/updatepassword", method = RequestMethod.POST)
-    public ResponseEntity<?> updatePassword(@RequestBody Account account) {
-        return new ResponseEntity<String>(HttpStatus.OK);
     }
 
 }

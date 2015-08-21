@@ -8,7 +8,6 @@ import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -34,7 +33,6 @@ public class UserObject implements Serializable {
     @JsonProperty("status_code")
     private String statusCode;
 
-    @NotNull(message = "point must not be null")
     @JsonProperty("point")
     private Integer point;
 
@@ -44,7 +42,7 @@ public class UserObject implements Serializable {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
-    private DateTime createdDatetime;
+    private DateTime createdDateTime;
 
 
     public String getId() {
@@ -103,11 +101,11 @@ public class UserObject implements Serializable {
         this.address = address;
     }
 
-    public DateTime getCreatedDatetime() {
-        return createdDatetime;
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
     }
 
-    public void setCreatedDatetime(DateTime createdDatetime) {
-        this.createdDatetime = createdDatetime;
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 }
