@@ -40,11 +40,6 @@ public class User implements Serializable {
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("last_access_datetime")
-    private DateTime lastAccessDatetime;
-
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDatetime;
 
@@ -103,14 +98,6 @@ public class User implements Serializable {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public DateTime getLastAccessDatetime() {
-        return lastAccessDatetime;
-    }
-
-    public void setLastAccessDatetime(DateTime lastAccessDatetime) {
-        this.lastAccessDatetime = lastAccessDatetime;
     }
 
     public DateTime getCreatedDatetime() {
