@@ -1,10 +1,10 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.dto.User;
-import com.yunsoo.common.data.object.*;
+import com.yunsoo.common.data.object.UserOrganizationFollowingObject;
+import com.yunsoo.common.data.object.UserProductBaseFollowingObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -27,7 +26,7 @@ public class UserFollowingDomain {
     private RestClient dataAPIClient;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserFollowingDomain.class);
 
-    public Page<User> getUserOrganizationFollowingsByOrgId(String orgId, Pageable pageable){
+    public Page<User> getUserOrganizationFollowingsByOrgId(String orgId, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append(pageable).append("orgid", orgId)
                 .build();
@@ -36,19 +35,17 @@ public class UserFollowingDomain {
         }, orgId);
 
         List<String> userIds = new ArrayList<String>();
-        for(UserOrganizationFollowingObject item : userFollowingList){
+        for (UserOrganizationFollowingObject item : userFollowingList) {
             userIds.add(item.getUserId());
         }
 
-        List<User> userList =  dataAPIClient.get("/user/multiple/{ids}", new ParameterizedTypeReference<List<User>>() {
+        List<User> userList = dataAPIClient.get("/user?id_in={ids}", new ParameterizedTypeReference<List<User>>() {
         }, userIds.toArray());
-
-
 
         return new Page<User>(userList, userFollowingList.getPage(), userFollowingList.getTotal());
     }
 
-    public Page<User> getUserProductFollowingsByProductId(String productId, Pageable pageable){
+    public Page<User> getUserProductFollowingsByProductId(String productId, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append(pageable).append("productid", productId)
                 .build();
@@ -57,17 +54,15 @@ public class UserFollowingDomain {
         }, productId);
 
         List<String> userIds = new ArrayList<String>();
-        for(UserProductBaseFollowingObject item : userFollowingList){
+        for (UserProductBaseFollowingObject item : userFollowingList) {
             userIds.add(item.getUserId());
         }
 
-        List<User> userList =  dataAPIClient.get("/user/multiple/{ids}", new ParameterizedTypeReference<List<User>>() {
+        List<User> userList = dataAPIClient.get("/user?id_in={ids}", new ParameterizedTypeReference<List<User>>() {
         }, userIds.toArray());
 
         return new Page<User>(userList, userFollowingList.getPage(), userFollowingList.getTotal());
     }
-
-
 
 
 }

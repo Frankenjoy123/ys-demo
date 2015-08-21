@@ -12,8 +12,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,22 +34,19 @@ public class UserController {
         return toUserObject(entity);
     }
 
-    @RequestMapping(value = "multiple/{ids}", method = RequestMethod.GET)
-    public List<UserObject> getByIds(@PathVariable(value = "ids")String[] ids) {
-        List<UserEntity> entities = userRepository.findByIdIn(Arrays.asList(ids));
-        return entities.stream().map(this::toUserObject).collect(Collectors.toList());
-    }
-
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<UserObject> getByFilter(@RequestParam(value = "phone", required = false) String phone,
+    public List<UserObject> getByFilter(@RequestParam(value = "id_in", required = false) List<String> idIn,
+                                        @RequestParam(value = "phone", required = false) String phone,
                                         @RequestParam(value = "device_id", required = false) String deviceId) {
         List<UserEntity> entities;
-        if (!StringUtils.isEmpty(phone)) {
+        if (idIn != null && idIn.size() > 0) {
+            entities = userRepository.findByIdIn(idIn);
+        } else if (!StringUtils.isEmpty(phone)) {
             entities = userRepository.findByPhone(phone);
         } else if (!StringUtils.isEmpty(deviceId)) {
             entities = userRepository.findByDeviceId(deviceId);
         } else {
-            throw new BadRequestException("at least need one filter parameter of phone or device_id");
+            throw new BadRequestException("at least need one filter parameter [id_in, phone, device_id]");
         }
         return entities.stream().map(this::toUserObject).collect(Collectors.toList());
     }
