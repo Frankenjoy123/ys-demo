@@ -93,6 +93,6 @@ public class UserProductFollowing {
     }
 
     public void setCommentsNumber(Long commentsNumber) {
-        commentsNumber = commentsNumber;
+        this.commentsNumber = commentsNumber;
     }
 }

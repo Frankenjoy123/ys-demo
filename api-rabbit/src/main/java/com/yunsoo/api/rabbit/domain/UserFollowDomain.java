@@ -27,6 +27,10 @@ public class UserFollowDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+
+    @Autowired
+    private ProductCommentsDomain productCommentsDomain;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UserFollowDomain.class);
 
     public String ensureFollow(UserOrganizationFollowing userFollowing) {
@@ -118,6 +122,7 @@ public class UserFollowDomain {
                 userFollowing.setProductName(object.getName());
                 userFollowing.setProductDescription(object.getDescription());
                 userFollowing.setOrgId(object.getOrgId());
+                userFollowing.setCommentsNumber(productCommentsDomain.getProductCommentsNumber(userFollowing.getProductId()));
             }
             else{
                 //if the product is not exist, should remove the item from following list
