@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,12 @@ public class UserController {
     public UserObject getById(@PathVariable(value = "id") String id) {
         UserEntity entity = findUserById(id);
         return toUserObject(entity);
+    }
+
+    @RequestMapping(value = "multiple/{ids}", method = RequestMethod.GET)
+    public List<UserObject> getByIds(@PathVariable(value = "ids")String[] ids) {
+        List<UserEntity> entities = userRepository.findByIdIn(Arrays.asList(ids));
+        return entities.stream().map(this::toUserObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)

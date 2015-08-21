@@ -16,4 +16,6 @@ public interface UserRepository extends FindOneAndSaveRepository<UserEntity, Str
 
     List<UserEntity> findByPhone(String phone);
 
+    List<UserEntity> findByIdIn(List<String> Ids);
+
 }
