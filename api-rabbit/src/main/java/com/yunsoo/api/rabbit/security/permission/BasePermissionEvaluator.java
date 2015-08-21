@@ -1,8 +1,8 @@
 package com.yunsoo.api.rabbit.security.permission;
 
 import com.yunsoo.api.rabbit.dto.basic.User;
-import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
 import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
+import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
 import com.yunsoo.api.rabbit.dto.basic.UserProductFollowing;
 import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.common.web.client.RestClient;

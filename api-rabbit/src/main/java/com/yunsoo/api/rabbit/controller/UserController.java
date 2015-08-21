@@ -1,6 +1,6 @@
 package com.yunsoo.api.rabbit.controller;
 
-import com.yunsoo.api.rabbit.dto.basic.User;
+import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.common.data.object.FileObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,9 +22,6 @@ import java.io.ByteArrayInputStream;
  * Created on:   2015/3/3
  * Descriptions: This controller manage end user.
  * Only authorized user can consume it.
- * <p>
- * ErrorCode
- * 40401    :   User not found!
  */
 @RestController
 @RequestMapping("/user")
@@ -33,7 +29,6 @@ public class UserController {
 
     @Autowired
     private RestClient dataAPIClient;
-//    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
@@ -75,7 +70,6 @@ public class UserController {
     }
 
     @RequestMapping(value = "/{id}/{name}", method = RequestMethod.GET)
-//    @PreAuthorize("hasPermission(#user, 'user:read')")
     public ResponseEntity<?> getThumbnail(
             @PathVariable(value = "id") String id,
             @PathVariable(value = "name") String name) {
@@ -95,19 +89,18 @@ public class UserController {
 
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.PATCH)
-//    @PreAuthorize("hasPermission(#user, 'authenticated')")
-    @PreAuthorize("hasPermission(#userId, 'User', 'user:update')")
+    @PreAuthorize("hasPermission(#userId, 'User', 'user:modify')")
     public void updateUser(@PathVariable(value = "userId") String userId,
                            @RequestBody User user) throws Exception {
         user.setId(userId);
         dataAPIClient.patch("user", user);
     }
 
-    @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasPermission(#user, 'authenticated')")
-    public void deleteUser(
-            @PathVariable(value = "userId") String userId) throws Exception {
-        dataAPIClient.delete("user/{id}", userId);
-    }
+//    @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    @PreAuthorize("hasPermission(#user, 'authenticated')")
+//    public void deleteUser(
+//            @PathVariable(value = "userId") String userId) throws Exception {
+//        dataAPIClient.delete("user/{id}", userId);
+//    }
 }

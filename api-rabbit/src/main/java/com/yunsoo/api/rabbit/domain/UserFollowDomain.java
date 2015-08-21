@@ -2,7 +2,9 @@ package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
 import com.yunsoo.api.rabbit.dto.basic.UserProductFollowing;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -10,12 +12,9 @@ import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.yunsoo.common.web.client.Page;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import com.yunsoo.common.data.object.OrganizationObject;
-import com.yunsoo.common.web.util.QueryStringBuilder;
 
 import java.util.HashMap;
 import java.util.List;

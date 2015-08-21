@@ -65,7 +65,7 @@ public class LookupCodes {
         public static final String CREATED = "created";
         public static final String DELETED = "deleted";
         public static final String APPROVED = "approved";
-        public static final String SUCCESSFULLY_PUSHED = "successfully pushed";
+        public static final String PUSHED = "pushed";
     }
 
     public static class MessageType {
@@ -131,5 +131,13 @@ public class LookupCodes {
         public static final String CREATED = "created";
         public static final String COMMITTED = "committed";
         public static final String ROLLBACK = "rollback";
+    }
+
+    public static class UserStatus {
+        private UserStatus() {
+        }
+
+        public static final String AVAILABLE = "available";
+        public static final String DISABLED = "disabled";
     }
 }

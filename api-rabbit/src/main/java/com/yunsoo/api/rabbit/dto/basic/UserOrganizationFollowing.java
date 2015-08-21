@@ -7,8 +7,6 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
-import java.util.List;
-
 /**
  * Created by Zhe on 2015/4/21.
  */
