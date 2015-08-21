@@ -9,6 +9,7 @@ import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +50,14 @@ public class TokenAuthenticationService {
         //support anonymous visit(for token is empty), or validate and parse from token
         TAccount tAccount = (token == null) ? tAccount = new TAccount(TAccountStatusEnum.ANONYMOUS) : tokenHandler.parseUserFromToken(token);
         return new AccountAuthentication(tAccount);
+    }
+
+    public AccountAuthentication getAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AccountAuthentication)) {
+            throw new UnauthorizedException();
+        }
+        return (AccountAuthentication) SecurityContextHolder.getContext().getAuthentication();
     }
 
     //Mainly used by Auth/Login action.
