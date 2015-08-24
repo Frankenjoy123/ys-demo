@@ -1,8 +1,8 @@
-package com.yunsoo.api.rabbit.controller;
+package com.yunsoo.api.controller;
 
-import com.yunsoo.api.rabbit.domain.ProductCommentsDomain;
-import com.yunsoo.api.rabbit.dto.basic.ProductComments;
-import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.api.domain.ProductCommentsDomain;
+import com.yunsoo.api.dto.ProductComments;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductCommentsObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -11,7 +11,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +18,7 @@ import java.util.List;
 
 /**
  * Created by  : Haitao
- * Created on  : 2015/8/21
+ * Created on  : 2015/8/24
  * Descriptions:
  */
 
@@ -30,10 +29,8 @@ public class ProductCommentsController {
     @Autowired
     private ProductCommentsDomain productCommentsDomain;
 
-
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
-
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductComments> getProductCommentsByFilter(@RequestParam(value = "product_base_id", required = true) String productBaseId,
@@ -63,30 +60,9 @@ public class ProductCommentsController {
         return new ProductComments(object);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public ProductCommentsObject createProductComments(@RequestBody ProductComments productComments) {
-        if (productComments == null) {
-            throw new BadRequestException("productComments can not be null");
-        }
-        ProductCommentsObject productCommentsObject = new ProductCommentsObject();
-        productCommentsObject.setProductBaseId(productComments.getProductBaseId());
-        productCommentsObject.setComments(productComments.getComments());
-        productCommentsObject.setScore(productComments.getScore());
-        if (productComments.getCreatedAccountId() == null) {
-            String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-            productCommentsObject.setCreatedAccountId(currentAccountId);
-        }
-        if (productComments.getCreatedDateTime() == null) {
-            productCommentsObject.setCreatedDateTime(DateTime.now());
-        }
-        return productCommentsDomain.createProductComments(productCommentsObject);
-    }
-
     @RequestMapping(value = "/count/{id}", method = RequestMethod.GET)
     public Long getCommentsNumberByProductBaseId(@PathVariable(value = "id") String productBaseId) {
         return productCommentsDomain.getProductCommentsNumber(productBaseId);
     }
-
 
 }
