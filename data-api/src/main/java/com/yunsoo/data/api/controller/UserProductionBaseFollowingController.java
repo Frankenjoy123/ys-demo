@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -95,6 +97,16 @@ public class UserProductionBaseFollowingController {
 
         userProductBaseFollowingRepository.delete(entityList.get(0));
 
+    }
+
+
+    @RequestMapping(value = "/count/{ids}", method = RequestMethod.GET)
+    public Map<String, Long> getCommentsNumberByProductBaseIds(@PathVariable(value = "ids") List<String> productBaseIds) {
+        Map<String, Long> resultMap = new HashMap<String, Long>();
+        productBaseIds.forEach(id->{
+            resultMap.put(id,userProductBaseFollowingRepository.countByProductBaseId(id));
+        });
+        return resultMap;
     }
 
     private UserProductBaseFollowingEntity toUserOrganizationFollowingEntity(UserProductBaseFollowingObject object){

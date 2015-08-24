@@ -124,6 +124,11 @@ public class ProductBaseController {
                 pb.setProductBaseVersions(productBaseVersionsObjects.stream().map(ProductBaseVersions::new).collect(Collectors.toList()));
             }
         }
+
+        Map<String, Long> followingNumber = followingDomain.getProductFollowingTotalNumber(productBaseIds);
+        productBases.forEach(productBase -> {
+            productBase.setFollowingUsersTotalNumber(followingNumber.get(productBase.getId()));
+        });
         return productBases;
     }
 

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by yan on 8/20/2015.
@@ -65,4 +66,8 @@ public class UserFollowingDomain {
     }
 
 
+
+    public Map<String, Long> getProductFollowingTotalNumber(List<String> productBaseIds) {
+        return dataAPIClient.get("userproduct/following/count/{productBaseIds}", new ParameterizedTypeReference<Map<String, Long>>(){}, productBaseIds);
+    }
 }

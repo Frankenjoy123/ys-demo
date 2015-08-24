@@ -22,5 +22,6 @@ public interface UserProductBaseFollowingRepository extends PagingAndSortingRepo
 
     Page<UserProductBaseFollowingEntity> findByProductBaseId(String productBaseId, Pageable pageable);
 
+    Long countByProductBaseId(String productBaseId);
 
 }

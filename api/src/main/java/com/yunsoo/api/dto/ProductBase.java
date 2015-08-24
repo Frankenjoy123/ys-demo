@@ -86,6 +86,17 @@ public class ProductBase {
     @JsonProperty("following_users")
     private List<User> followingUsers;
 
+    @JsonProperty("following_user_number")
+    private Long followingUsersTotalNumber;
+
+    public Long getFollowingUsersTotalNumber() {
+        return followingUsersTotalNumber;
+    }
+
+    public void setFollowingUsersTotalNumber(Long followingUsersTotalNumber) {
+        this.followingUsersTotalNumber = followingUsersTotalNumber;
+    }
+
     public String getId() {
         return id;
     }
