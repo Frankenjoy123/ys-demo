@@ -1,6 +1,6 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.common.data.object.ScanRecordObject;
+import com.yunsoo.common.data.object.UserScanRecordObject;
 import com.yunsoo.data.service.service.ScanRecordService;
 import com.yunsoo.data.service.service.contract.ScanRecord;
 import org.springframework.beans.BeanUtils;
@@ -27,13 +27,13 @@ public class ScanController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ScanRecordObject getNewMessagesByMessageId(@PathVariable(value = "id") Long id) {
+    public UserScanRecordObject getNewMessagesByMessageId(@PathVariable(value = "id") Long id) {
         return this.FromScanRecord(scanRecordService.get(id));
     }
 
     //General 的扫描记录filter
     @RequestMapping(value = "/filterby", method = RequestMethod.GET)
-    public List<ScanRecordObject> getScanRecordsByFilter(@RequestParam(value = "productKey", required = false) String productKey,
+    public List<UserScanRecordObject> getScanRecordsByFilter(@RequestParam(value = "productKey", required = false) String productKey,
                                                    @RequestParam(value = "baseProductId", required = false) Integer baseProductId,
                                                    @RequestParam(value = "userId", required = false) String userId,
                                                    @RequestParam(value = "createdDateTime", required = false, defaultValue = "") String createdDateTime,
@@ -46,7 +46,7 @@ public class ScanController {
 
     //找用户的扫描记录，根据某记录的id向前或者向后搜寻
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
-    public List<ScanRecordObject> filterScanRecords(@RequestParam(value = "Id", required = false) Long Id,
+    public List<UserScanRecordObject> filterScanRecords(@RequestParam(value = "Id", required = false) Long Id,
                                               @RequestParam(value = "userId", required = false) String userId,
                                               @RequestParam(value = "backward", required = false) Boolean backward,
                                               @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
@@ -57,40 +57,40 @@ public class ScanController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public long createScanRecord(@RequestBody ScanRecordObject scanRecordObject) {
-        ScanRecord scanRecord = this.ToScanRecord(scanRecordObject);
+    public long createScanRecord(@RequestBody UserScanRecordObject userScanRecordObject) {
+        ScanRecord scanRecord = this.ToScanRecord(userScanRecordObject);
         return scanRecordService.save(scanRecord);
     }
 
 
-    private ScanRecordObject FromScanRecord(ScanRecord scanRecord) {
-        ScanRecordObject scanRecordObject = new ScanRecordObject();
-        BeanUtils.copyProperties(scanRecord, scanRecordObject);
-        return scanRecordObject;
+    private UserScanRecordObject FromScanRecord(ScanRecord scanRecord) {
+        UserScanRecordObject userScanRecordObject = new UserScanRecordObject();
+        BeanUtils.copyProperties(scanRecord, userScanRecordObject);
+        return userScanRecordObject;
     }
 
-    private ScanRecord ToScanRecord(ScanRecordObject scanRecordObject) {
+    private ScanRecord ToScanRecord(UserScanRecordObject userScanRecordObject) {
         ScanRecord scanRecord = new ScanRecord();
-        BeanUtils.copyProperties(scanRecordObject, scanRecord);
+        BeanUtils.copyProperties(userScanRecordObject, scanRecord);
         return scanRecord;
     }
 
-    private List<ScanRecordObject> FromScanRecordList(List<ScanRecord> scanRecordList) {
+    private List<UserScanRecordObject> FromScanRecordList(List<ScanRecord> scanRecordList) {
         if (scanRecordList == null) return null;
 
-        List<ScanRecordObject> scanRecordObjectList = new ArrayList<>();
+        List<UserScanRecordObject> userScanRecordObjectList = new ArrayList<>();
         for (ScanRecord scanRecord : scanRecordList) {
-            scanRecordObjectList.add(this.FromScanRecord(scanRecord));
+            userScanRecordObjectList.add(this.FromScanRecord(scanRecord));
         }
-        return scanRecordObjectList;
+        return userScanRecordObjectList;
     }
 
-    private List<ScanRecord> ToScanRecordList(List<ScanRecordObject> scanRecordObjectList) {
-        if (scanRecordObjectList == null) return null;
+    private List<ScanRecord> ToScanRecordList(List<UserScanRecordObject> userScanRecordObjectList) {
+        if (userScanRecordObjectList == null) return null;
 
         List<ScanRecord> scanRecordList = new ArrayList<>();
-        for (ScanRecordObject scanRecordObject : scanRecordObjectList) {
-            scanRecordList.add(this.ToScanRecord(scanRecordObject));
+        for (UserScanRecordObject userScanRecordObject : userScanRecordObjectList) {
+            scanRecordList.add(this.ToScanRecord(userScanRecordObject));
         }
         return scanRecordList;
     }

@@ -11,7 +11,7 @@ import com.yunsoo.api.rabbit.object.ValidationResult;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
-import com.yunsoo.common.data.object.ScanRecordObject;
+import com.yunsoo.common.data.object.UserScanRecordObject;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -304,7 +304,7 @@ public class ScanController {
     }
 
     private long SaveScanRecord(User currentUser, Product currentProduct, ScanRequestBody scanRequestBody) {
-        ScanRecordObject scanRecord = new ScanRecordObject();
+        UserScanRecordObject scanRecord = new UserScanRecordObject();
         scanRecord.setUserId(currentUser.getId());
         scanRecord.setDeviceId(scanRequestBody.getDeviceCode());
         if (scanRequestBody.getAppId() != null && !scanRequestBody.getAppId().isEmpty()) {
@@ -313,11 +313,11 @@ public class ScanController {
             scanRecord.setAppId("未知");
         }
         scanRecord.setProductKey(currentProduct.getProductKey());
-        scanRecord.setBaseProductId(currentProduct.getProductBaseId());
+        scanRecord.setProductBaseId(currentProduct.getProductBaseId());
         if (scanRequestBody.getDetail() != null && !scanRequestBody.getDetail().isEmpty()) {
-            scanRecord.setDetail(scanRequestBody.getDetail()); //接受扫描的相关详情
+            scanRecord.setDetails(scanRequestBody.getDetail()); //接受扫描的相关详情
         } else {
-            scanRecord.setDetail("匿名用户扫描");
+            scanRecord.setDetails("匿名用户扫描");
         }
         scanRecord.setLongitude(scanRequestBody.getLongitude());
         scanRecord.setLatitude(scanRequestBody.getLatitude());
