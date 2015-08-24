@@ -19,14 +19,14 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Zhe
@@ -49,7 +49,7 @@ public class ScanController {
     @Autowired
     private LogisticsDomain logisticsDomain;
     @Autowired
-    private UserDomain userDomain;
+    private ScanDomain scanDomain;
     @Autowired
     private UserFollowDomain userFollowDomain;
     @Autowired
@@ -106,9 +106,10 @@ public class ScanController {
         }
 
         //4, retrieve scan records
-        List<ScanRecord> scanRecordList = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}",
-                new ParameterizedTypeReference<List<ScanRecord>>() {
-                }, scanRequestBody.getKey(), 20);  //hard code as top 20 (desc order by created time )
+        List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByProductKey(scanRequestBody.getKey(), new PageRequest(0, 20))
+                .stream()
+                .map(ScanRecord::new)
+                .collect(Collectors.toList());
         scanResult.setScanRecordList(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
@@ -168,9 +169,10 @@ public class ScanController {
         scanResult.setProduct(currentExistProduct);
 
         //3, retrieve scan records
-        List<ScanRecord> scanRecordList = dataAPIClient.get("scan/filterby?productKey={productKey}&pageSize={pageSize}",
-                new ParameterizedTypeReference<List<ScanRecord>>() {
-                }, key, 20);  //hard code as top 20 (desc order by created time )
+        List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByProductKey(key, new PageRequest(0, 20))
+                .stream()
+                .map(ScanRecord::new)
+                .collect(Collectors.toList());
         scanResult.setScanRecordList(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
@@ -211,8 +213,10 @@ public class ScanController {
             throw new BadRequestException("PageSize不应小于等于0！");
         }
 
-        ScanRecord[] scanRecords = dataAPIClient.get("scan/filterby?userId={userId}&pageIndex={pageIndex}&pageSize={pageSize}", ScanRecord[].class, userId, pageIndex, pageSize);
-        List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
+        List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByUserId(userId, new PageRequest(pageIndex, pageSize))
+                .stream()
+                .map(ScanRecord::new)
+                .collect(Collectors.toList());
         this.fillProductInfor(scanRecordList);
         return scanRecordList;
     }
@@ -249,9 +253,10 @@ public class ScanController {
             throw new BadRequestException("PageSize不应小于等于0！");
         }
 
-        ScanRecord[] scanRecords = dataAPIClient.get("scan/filter?userId={userId}&Id={Id}&backward={backward}&pageIndex={pageIndex}&pageSize={pageSize}",
-                ScanRecord[].class, userId, Id, isbackward, pageIndex, pageSize);
-        List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
+        List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByUserId(userId, new PageRequest(pageIndex, pageSize))
+                .stream()
+                .map(ScanRecord::new)
+                .collect(Collectors.toList());
         this.fillProductInfor(scanRecordList);
         return scanRecordList;
     }
@@ -274,11 +279,10 @@ public class ScanController {
             throw new BadRequestException("PageSize不应小于等于0！");
         }
 
-        List<ScanRecord> scanRecordList = dataAPIClient.get("scan/filterby?productKey={key}&pageIndex={pageIndex}&pageSize={pageSize}",
-                new ParameterizedTypeReference<List<ScanRecord>>() {
-                }, key, pageIndex, pageSize);
-        //List<ScanRecord> scanRecordList = Arrays.asList(scanRecords == null ? new ScanRecord[0] : scanRecords);
-        return scanRecordList;
+        return scanDomain.getScanRecordsByProductKey(key, new PageRequest(pageIndex, pageSize))
+                .stream()
+                .map(ScanRecord::new)
+                .collect(Collectors.toList());
     }
 
     private List<Logistics> getLogisticsInfo(String key) {
@@ -333,16 +337,16 @@ public class ScanController {
         //fill product name
         HashMap<String, ProductBaseObject> productHashMap = new HashMap<>();
         for (ScanRecord scanRecord : scanRecordList) {
-            if (!productHashMap.containsKey(scanRecord.getBaseProductId())) {
-                ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, scanRecord.getBaseProductId());
+            if (!productHashMap.containsKey(scanRecord.getProductBaseId())) {
+                ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, scanRecord.getProductBaseId());
                 if (productBaseObject != null) {
-                    productHashMap.put(scanRecord.getBaseProductId(), productBaseObject);
+                    productHashMap.put(scanRecord.getProductBaseId(), productBaseObject);
                     scanRecord.setProductName(productBaseObject.getName());
                     scanRecord.setProductComment(productBaseObject.getComments());
                 }
             } else {
-                scanRecord.setProductName(productHashMap.get(scanRecord.getBaseProductId()).getName());
-                scanRecord.setProductComment(productHashMap.get(scanRecord.getBaseProductId()).getComments());
+                scanRecord.setProductName(productHashMap.get(scanRecord.getProductBaseId()).getName());
+                scanRecord.setProductComment(productHashMap.get(scanRecord.getProductBaseId()).getComments());
             }
         }
     }
