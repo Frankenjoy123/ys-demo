@@ -1,14 +1,18 @@
 package com.yunsoo.api.rabbit.domain;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.rabbit.dto.ProductKeyType;
 import com.yunsoo.api.rabbit.dto.basic.Product;
 import com.yunsoo.api.rabbit.dto.basic.ProductBase;
+import com.yunsoo.api.rabbit.dto.basic.ProductBaseDetails;
 import com.yunsoo.api.rabbit.dto.basic.ProductCategory;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +34,11 @@ public class ProductDomain {
 
     @Autowired
     private LookupDomain lookupDomain;
+
+    @Autowired
+    private ProductCommentsDomain commentsDomain;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductDomain.class);
 
     //Retrieve Product key, ProductBase entry and Product-Category entry from Backend.
     public Product getProductByKey(String key) {
@@ -77,8 +86,20 @@ public class ProductDomain {
         if (productBaseObject == null) {
             return null;
         }
-        ProductBase productBase = convertFromProductBaseObject(productBaseObject, lookupDomain.getAllProductKeyTypes(null));
-//        productBase.setThumbnailURL(yunsooYamlConfig.getDataapi_productbase_picture_basepath() + "id" + productBase.getId() + ".jpg");
+        ProductBase productBase = convertFromProductBaseObject(productBaseObject);
+        //set the average score
+        productBase.setCommentsScore(dataAPIClient.get("productcomments/avgscore/{id}", Long.class, productBaseId));
+        //set the hotline and purchase info
+        ResourceInputStream stream =  dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json", productBase.getOrgId(), productBaseId, productBase.getVersion());
+        try {
+            ProductBaseDetails detail = new ObjectMapper().readValue(stream, ProductBaseDetails.class);
+            productBase.setDetail(detail);
+        }
+        catch (Exception ex){
+            LOGGER.error("get detail data from s3 failed.", ex);
+        }
+
+        //todo set detailUrl property
         return productBase;
     }
 
@@ -125,27 +146,20 @@ public class ProductDomain {
             return null;
         }
         List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes(null);
-        return Arrays.stream(objects).map(p -> convertFromProductBaseObject(p, productKeyTypes)).collect((Collectors.toList()));
+        return Arrays.stream(objects).map(p -> convertFromProductBaseObject(p)).collect((Collectors.toList()));
     }
 
-    public ProductBase convertFromProductBaseObject(ProductBaseObject productBaseObject, List<ProductKeyType> productKeyTypes) {
+    public ProductBase convertFromProductBaseObject(ProductBaseObject productBaseObject) {
         ProductBase productBase = new ProductBase();
         productBase.setId(productBaseObject.getId());
         productBase.setVersion(productBaseObject.getVersion());
         productBase.setName(productBaseObject.getName());
-        productBase.setBarcode(productBaseObject.getBarcode());
-        productBase.setStatus(productBaseObject.getStatusCode());
-        productBase.setComment(productBaseObject.getComments());
+        productBase.setDescription(productBaseObject.getComments());
         productBase.setOrgId(productBaseObject.getOrgId());
         productBase.setShelfLife(productBaseObject.getShelfLife());
         productBase.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
-        productBase.setCreatedDateTime(productBaseObject.getCreatedDateTime());
-        productBase.setModifiedDateTime(productBaseObject.getModifiedDateTime());
-
         productBase.setCategory(getProductCategoryById(productBaseObject.getCategoryId()));
-        if (productBaseObject.getProductKeyTypeCodes() != null) {
-            productBase.setProductKeyTypeCodes(productBaseObject.getProductKeyTypeCodes());
-        }
+
         return productBase;
     }
 }

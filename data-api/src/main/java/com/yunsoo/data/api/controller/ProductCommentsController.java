@@ -67,6 +67,10 @@ public class ProductCommentsController {
         return productCommentsRepository.countByProductBaseId(productBaseId);
     }
 
+    @RequestMapping(value = "/avgscore/{id}", method = RequestMethod.GET)
+    public Long getCommentsAverageScoreByProductBaseId(@PathVariable(value = "id") String productBaseId) {
+        return productCommentsRepository.averageScoreByProductBaseId(productBaseId);
+    }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ProductCommentsObject createProductComments(@RequestBody @Valid ProductCommentsObject productCommentsObject) {

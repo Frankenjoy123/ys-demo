@@ -1,10 +1,6 @@
 package com.yunsoo.api.rabbit.dto.basic;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -23,32 +19,44 @@ public class ProductBase {
     private ProductCategory category;
     @JsonProperty("org_id")
     private String orgId;
-    @JsonProperty("barcode")
-    private String barcode;
     @JsonProperty("name")
     private String name;
-    @JsonProperty("comment")
-    private String comment;
+    @JsonProperty("description")
+    private String description;
     @JsonProperty("shelf_life")
     private Integer shelfLife;
     @JsonProperty("shelf_life_interval")
     private String shelfLifeInterval;
-    @JsonProperty("product_Key_type_codes")
-    private List<String> productKeyTypeCodes;
-    @JsonProperty("child_product_count")
-    private Integer childProductCount;
-    @JsonProperty("status")
-    private String status;
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("created_datetime")
-    private DateTime createdDateTime;
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("modified_datetime")
-    private DateTime modifiedDateTime;
-    @JsonProperty("thumbnail_url")
-    private String thumbnailURL;
+    @JsonProperty("comments_score")
+    private Long commentsScore;
+    @JsonProperty("detail")
+    private ProductBaseDetails detail;
+    @JsonProperty("detail_url")
+    private String detailUrl;
+
+    public String getDetailUrl() {
+        return detailUrl;
+    }
+
+    public void setDetailUrl(String detailUrl) {
+        this.detailUrl = detailUrl;
+    }
+
+    public Long getCommentsScore() {
+        return commentsScore;
+    }
+
+    public void setCommentsScore(Long commentsScore) {
+        this.commentsScore = commentsScore;
+    }
+
+    public ProductBaseDetails getDetail() {
+        return detail;
+    }
+
+    public void setDetail(ProductBaseDetails detail) {
+        this.detail = detail;
+    }
 
     public String getId() {
         return id;
@@ -82,13 +90,6 @@ public class ProductBase {
         this.orgId = orgId;
     }
 
-    public String getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(String barcode) {
-        this.barcode = barcode;
-    }
 
     public String getName() {
         return name;
@@ -98,12 +99,12 @@ public class ProductBase {
         this.name = name;
     }
 
-    public String getComment() {
-        return comment;
+    public String getDescription() {
+        return description;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Integer getShelfLife() {
@@ -120,54 +121,6 @@ public class ProductBase {
 
     public void setShelfLifeInterval(String shelfLifeInterval) {
         this.shelfLifeInterval = shelfLifeInterval;
-    }
-
-    public List<String> getProductKeyTypeCodes() {
-        return productKeyTypeCodes;
-    }
-
-    public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
-        this.productKeyTypeCodes = productKeyTypeCodes;
-    }
-
-    public Integer getChildProductCount() {
-        return childProductCount;
-    }
-
-    public void setChildProductCount(Integer childProductCount) {
-        this.childProductCount = childProductCount;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(DateTime createdDate) {
-        this.createdDateTime = createdDate;
-    }
-
-    public DateTime getModifiedDateTime() {
-        return modifiedDateTime;
-    }
-
-    public void setModifiedDateTime(DateTime modifiedDateTime) {
-        this.modifiedDateTime = modifiedDateTime;
-    }
-
-    public String getThumbnailURL() {
-        return this.thumbnailURL;
-    }
-
-    public void setThumbnailURL(String thumbnailURL) {
-        this.thumbnailURL = thumbnailURL;
     }
 
 }

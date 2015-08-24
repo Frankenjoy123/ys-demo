@@ -33,9 +33,9 @@ public class UserOrganizationFollowingController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserLikedProductController.class);
 
-    @RequestMapping(value = "/who/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#id, 'UserFollowing', 'userfollowing:read')")
-    public List<UserOrganizationFollowing> getFollowingOrgsByUserId(@PathVariable(value = "id") String id,
+    public List<UserOrganizationFollowing> getByFilter(@RequestParam(value = "userid") String id,
                                                                     Pageable pageable,   HttpServletResponse response) {
         if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
 

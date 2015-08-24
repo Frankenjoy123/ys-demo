@@ -29,4 +29,7 @@ public interface ProductCommentsRepository extends FindOneAndSaveRepository<Prod
 
     void delete(String id);
 
+    @Query("select avg(entity.score) from ProductCommentsEntity entity where entity.productBaseId = :productBaseId ")
+    Long averageScoreByProductBaseId(@Param("productBaseId") String productBaseId);
+
 }
