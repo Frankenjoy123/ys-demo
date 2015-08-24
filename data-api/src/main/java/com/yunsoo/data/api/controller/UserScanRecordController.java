@@ -1,6 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.UserScanRecordObject;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.UserScanRecordEntity;
@@ -9,6 +10,8 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -50,11 +53,19 @@ public class UserScanRecordController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<UserScanRecordObject> getByFilter(@RequestParam(value = "product_key", required = false) String productKey,
+                                                  @RequestParam(value = "user_id", required = false) String userId,
+                                                  @PageableDefault(sort = {"createdDateTime"})
                                                   Pageable pageable,
                                                   HttpServletResponse response) {
+        Page<UserScanRecordEntity> entityPage;
+        if (!StringUtils.isEmpty(productKey)) {
+            entityPage = userScanRecordRepository.findByProductKey(productKey, pageable);
+        } else if (!StringUtils.isEmpty(userId)) {
+            entityPage = userScanRecordRepository.findByUserId(userId, pageable);
+        } else {
+            throw new BadRequestException("at least one filter parameter required [product_key, user_id]");
+        }
 
-
-        Page<UserScanRecordEntity> entityPage = userScanRecordRepository.findByProductKey(productKey, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }

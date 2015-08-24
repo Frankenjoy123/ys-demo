@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.UserScanRecordObject;
 import org.joda.time.DateTime;
 
 import java.util.Comparator;
@@ -17,11 +18,11 @@ import java.util.Comparator;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ScanRecord implements Comparator<ScanRecord> {
     @JsonProperty("id")
-    private Long Id;
+    private String id;
     @JsonProperty("product_key")
     private String productKey;
-    @JsonProperty("base_product_id")
-    private String baseProductId;
+    @JsonProperty("product_base_id")
+    private String productBaseId;
     @JsonProperty("product_name")
     private String productName;
     @JsonProperty("product_comment")
@@ -32,21 +33,21 @@ public class ScanRecord implements Comparator<ScanRecord> {
     private String deviceId;
     @JsonProperty("user_id")
     private String userId;
-    @JsonProperty("detail")
-    private String detail;
+    @JsonProperty("details")
+    private String details;
+    @JsonProperty("location")
+    private String location;
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
-    @JsonProperty("location")
-    private String location;
 
-    public Long getId() {
-        return Id;
+    public String getId() {
+        return id;
     }
 
-    public void setId(Long id) {
-        Id = id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     @JsonIgnore
@@ -58,12 +59,12 @@ public class ScanRecord implements Comparator<ScanRecord> {
         this.productKey = productKey;
     }
 
-    public String getBaseProductId() {
-        return baseProductId;
+    public String getProductBaseId() {
+        return productBaseId;
     }
 
-    public void setBaseProductId(String baseProductId) {
-        this.baseProductId = baseProductId;
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
     public String getProductName() {
@@ -106,12 +107,12 @@ public class ScanRecord implements Comparator<ScanRecord> {
         this.userId = userId;
     }
 
-    public String getDetail() {
-        return detail;
+    public String getDetails() {
+        return details;
     }
 
-    public void setDetail(String detail) {
-        this.detail = detail;
+    public void setDetails(String details) {
+        this.details = details;
     }
 
     public DateTime getCreatedDateTime() {
@@ -175,6 +176,23 @@ public class ScanRecord implements Comparator<ScanRecord> {
         Long o1Tick = o1.getCreatedDateTime() == null ? 0L : o1.getCreatedDateTime().getMillis();
         Long o2Tick = o2.getCreatedDateTime() == null ? 0L : o2.getCreatedDateTime().getMillis();
         return Long.compare(o1Tick, o2Tick);
+    }
+
+    public ScanRecord() {
+    }
+
+    public ScanRecord(UserScanRecordObject object) {
+        if (object != null) {
+            this.setId(object.getId());
+            this.setUserId(object.getUserId());
+            this.setProductKey(object.getProductKey());
+            this.setProductBaseId(object.getProductBaseId());
+            this.setAppId(object.getAppId());
+            this.setDeviceId(object.getDeviceId());
+            this.setDetails(object.getDetails());
+            this.setLocation(object.getLocation());
+            this.setCreatedDateTime(object.getCreatedDateTime());
+        }
     }
 
 

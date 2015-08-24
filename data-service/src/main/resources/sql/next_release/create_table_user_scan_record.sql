@@ -15,3 +15,4 @@ CREATE TABLE user_scan_record
   created_datetime DATETIME             NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX product_key ON user_scan_record (product_key);
+CREATE INDEX user_id ON user_scan_record (user_id);
