@@ -20,7 +20,7 @@ public final class IdGenerator {
     private static final AtomicInteger NEXT_COUNTER = new AtomicInteger(new SecureRandom().nextInt());
 
     /**
-     * @return id, 10 length string
+     * @return id, 19 length string, Example: 2kqkwehe64b29xb6gl9
      */
     public static String getNew() {
         return toBase36String(generateBytes());
