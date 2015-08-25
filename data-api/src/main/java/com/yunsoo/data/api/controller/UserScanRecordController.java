@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +42,7 @@ public class UserScanRecordController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public UserScanRecordObject create(@RequestBody @Valid UserScanRecordObject object) {
         UserScanRecordEntity entity = toUserScanRecordEntity(object);
         entity.setId(null);

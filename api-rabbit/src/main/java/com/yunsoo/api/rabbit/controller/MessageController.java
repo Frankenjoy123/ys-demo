@@ -4,12 +4,9 @@ import com.yunsoo.api.rabbit.domain.MessageDomain;
 import com.yunsoo.api.rabbit.dto.basic.Message;
 import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -30,20 +27,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/message")
 public class MessageController {
-    @Autowired
-    private RestClient dataAPIClient;
-    //    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
 
     @Autowired
     private MessageDomain messageDomain;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
-
-    @Autowired
-    MessageController(RestClient dataAPIClient) {
-        this.dataAPIClient = dataAPIClient;
-    }
-
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#message, 'message:read')")

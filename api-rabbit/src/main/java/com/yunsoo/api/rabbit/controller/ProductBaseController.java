@@ -3,7 +3,6 @@ package com.yunsoo.api.rabbit.controller;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.basic.ProductBase;
 import com.yunsoo.common.web.client.ResourceInputStream;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/productbase")
 public class ProductBaseController {
-
-    @Autowired
-    private RestClient dataAPIClient;
 
     @Autowired
     private ProductDomain productDomain;
