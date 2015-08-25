@@ -6,6 +6,6 @@ CREATE TABLE product_comments
   product_base_id   VARCHAR(20)             NOT NULL,
   comments           VARCHAR(500)           NOT NULL,
   score               INT                    NOT NULL,
-  created_account_id VARCHAR(20),          NOT NULL,
+  created_account_id VARCHAR(20)          NOT NULL,
   created_datetime   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

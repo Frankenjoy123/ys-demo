@@ -7,6 +7,6 @@ CREATE TABLE location
   longitude           DOUBLE             NOT NULL,
   name                VARCHAR(100)        NOT NULL,
   type_code          VARCHAR(100)        NOT NULL,
-  parent_id          VARCHAR(20),          DEFAULT NULL,
-  description      VARCHAR(255),       DEFAULT NULL
+  parent_id          VARCHAR(20)          DEFAULT NULL,
+  description      VARCHAR(255)       DEFAULT NULL
 );
