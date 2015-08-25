@@ -5,7 +5,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.yunsoo.common.util.KeyGenerator;
-import com.yunsoo.data.service.config.AWSConfigProperties;
+import com.yunsoo.data.service.config.AWSProperties;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
 import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
@@ -46,7 +46,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     private S3ItemDao s3ItemDao;
 
     @Autowired
-    private AWSConfigProperties awsConfigProperties;
+    private AWSProperties awsProperties;
 
 
     @Override
@@ -163,7 +163,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
             byteArrayOutputStream.write(DELIMITER2, 0, 1);
         }
 
-        String bucketName = awsConfigProperties.getS3().getBucketName();
+        String bucketName = awsProperties.getS3().getBucketName();
         String key = String.format("organization/%s/product_key_batch/%s", orgId, batchId);
         InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         ObjectMetadata metadata = new ObjectMetadata();

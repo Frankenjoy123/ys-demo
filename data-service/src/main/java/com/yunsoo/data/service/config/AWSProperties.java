@@ -15,12 +15,12 @@ import javax.validation.constraints.NotNull;
 @Configuration
 @EnableConfigurationProperties()
 @ConfigurationProperties(prefix = "yunsoo.aws")
-public class AWSConfigProperties {
+public class AWSProperties {
 
     @NotNull(message = "region not configured")
     private String region;
 
-    private DynamoDB dynamoDB;
+    private DynamoDB dynamodb;
 
     @NotNull(message = "s3 not configured")
     private S3 s3;
@@ -34,12 +34,12 @@ public class AWSConfigProperties {
         this.region = region;
     }
 
-    public DynamoDB getDynamoDB() {
-        return dynamoDB;
+    public DynamoDB getDynamodb() {
+        return dynamodb;
     }
 
-    public void setDynamoDB(DynamoDB dynamoDB) {
-        this.dynamoDB = dynamoDB;
+    public void setDynamodb(DynamoDB dynamodb) {
+        this.dynamodb = dynamodb;
     }
 
     public S3 getS3() {

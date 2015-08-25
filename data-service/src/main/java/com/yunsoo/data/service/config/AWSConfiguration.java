@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  * Created by:   Lijian
@@ -18,19 +19,20 @@ import org.springframework.context.annotation.Configuration;
  * Descriptions:
  */
 @Configuration
-public class AWSConfig {
+@Import(AWSProperties.class)
+public class AWSConfiguration {
 
     @Value("${yunsoo.environment}")
     private String environment;
 
     @Autowired
-    private AWSConfigProperties awsConfigProperties;
+    private AWSProperties awsProperties;
 
     @Bean
     public AmazonDynamoDBClient amazonDynamoDBClient() throws AmazonClientException {
         AmazonDynamoDBClient dynamoDB = new AmazonDynamoDBClient();
-        String endpoint = awsConfigProperties.getDynamoDB() != null ? awsConfigProperties.getDynamoDB().getEndpoint() : null;
-        String region = awsConfigProperties.getRegion();
+        String endpoint = awsProperties.getDynamodb() != null ? awsProperties.getDynamodb().getEndpoint() : null;
+        String region = awsProperties.getRegion();
 
         if (endpoint != null && endpoint.length() > 0) {
             dynamoDB.setEndpoint(endpoint);
@@ -56,7 +58,7 @@ public class AWSConfig {
 
     @Bean
     public AmazonS3Client amazonS3Client() {
-        String region = awsConfigProperties.getRegion();
+        String region = awsProperties.getRegion();
         AmazonS3Client amazonS3Client = new AmazonS3Client();
         amazonS3Client.setRegion(Region.getRegion(Regions.fromName(region)));
         return amazonS3Client;

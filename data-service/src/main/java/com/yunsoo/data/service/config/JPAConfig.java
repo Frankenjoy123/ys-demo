@@ -1,7 +1,6 @@
 package com.yunsoo.data.service.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -21,13 +20,12 @@ import javax.sql.DataSource;
  * Descriptions:
  */
 @Configuration
-@Import(DALConfig.class)
+@Import(DataSourceConfiguration.class)
 @EnableJpaRepositories(basePackages = "com.yunsoo.data.service.repository")
 @EnableTransactionManagement
 public class JPAConfig {
 
     @Autowired
-    @Qualifier(value = "datasource.primary")
     DataSource dataSource;
 
     @Bean
@@ -52,13 +50,5 @@ public class JPAConfig {
         txManager.setEntityManagerFactory(entityManagerFactory().getObject());
         return txManager;
     }
-//
-//    @Bean
-//    public JpaVendorAdapter jpaVendorAdapter() {
-//        HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
-//        hibernateJpaVendorAdapter.setShowSql(false);
-//        hibernateJpaVendorAdapter.setGenerateDdl(false);
-//        hibernateJpaVendorAdapter.setDatabase(Database.MYSQL);
-//        return hibernateJpaVendorAdapter;
-//    }
+
 }
