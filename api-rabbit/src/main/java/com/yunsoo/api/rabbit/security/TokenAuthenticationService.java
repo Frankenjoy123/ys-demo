@@ -1,6 +1,6 @@
 package com.yunsoo.api.rabbit.security;
 
-import com.yunsoo.api.rabbit.object.Constants;
+import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.api.rabbit.object.TAccountStatusEnum;
 import com.yunsoo.common.web.client.RestClient;

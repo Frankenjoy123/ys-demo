@@ -1,8 +1,8 @@
 package com.yunsoo.api.rabbit.domain;
 
+import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
-import com.yunsoo.api.rabbit.object.Constants;
 import com.yunsoo.api.rabbit.object.TAccountStatusEnum;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
@@ -168,7 +168,7 @@ public class UserDomain {
         //force following 云溯科技
         UserOrganizationFollowing userFollowing = new UserOrganizationFollowing();
         userFollowing.setUserId(id);
-        userFollowing.setOrgId(Constants.Yunsoo.ORG_ID); //get Yunsu's orgID
+        userFollowing.setOrgId(Constants.Ids.YUNSU_ORG_ID); //get Yunsu's orgID
         userFollowDomain.ensureFollow(userFollowing);
         return newUser;
     }
