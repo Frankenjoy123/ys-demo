@@ -3,7 +3,6 @@ package com.yunsoo.api.rabbit.domain;
 import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
-import com.yunsoo.api.rabbit.object.TAccountStatusEnum;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.api.rabbit.security.UserAuthentication;
 import com.yunsoo.common.data.LookupCodes;
@@ -157,7 +156,7 @@ public class UserDomain {
     public User createAnonymousUser(String deviceCode) {
         User newUser = this.generateDefaultUser();
         newUser.setDeviceId(deviceCode);
-        newUser.setStatusCode(TAccountStatusEnum.ENABLED.value());
+        newUser.setStatusCode(LookupCodes.UserStatus.ENABLED);
         return createNewUser(newUser);
     }
 

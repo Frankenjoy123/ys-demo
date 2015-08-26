@@ -30,6 +30,13 @@ public class TokenAuthenticationFilter extends GenericFilterBean {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         // try get token from HttpHeader
         String token = ((HttpServletRequest) req).getHeader(Constants.HttpHeaderName.ACCESS_TOKEN);
+
+        // compatible with last app
+        //todo: to be removed after new version of app released.
+        if (token == null) {
+            ((HttpServletRequest) req).getHeader(Constants.HttpHeaderName.OLD_ACCESS_TOKEN);
+        }
+
         if (token == null) {
             token = req.getParameter("access_token"); // try get token from query string
         }

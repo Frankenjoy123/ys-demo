@@ -62,7 +62,7 @@ public class ScanController {
 
     //能够访问所有的Key,为移动客户端调用，因此每次Scan都save扫描记录。
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ScanResult getDetail(@RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
+    public ScanResult getDetail(@RequestHeader(value = Constants.HttpHeaderName.OLD_ACCESS_TOKEN, required = false) String accessToken,
                                 @RequestBody ScanRequestBody scanRequestBody) {
         //0，validate input
         scanRequestBody.validateForScan();

@@ -2,7 +2,6 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.domain.UserDomain;
-import com.yunsoo.api.rabbit.dto.Token;
 import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.api.rabbit.dto.UserResult;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
@@ -11,9 +10,7 @@ import com.yunsoo.common.web.exception.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,12 +33,12 @@ public class AuthController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<?> authUser(@RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
-                                      @RequestBody User user) {
-        if (user == null) {
-            return new ResponseEntity<>("用户不能为空！", HttpStatus.FORBIDDEN);
-        }
+    public UserResult authUser(
+            @RequestHeader(value = Constants.HttpHeaderName.OLD_ACCESS_TOKEN, required = false) String accessToken,
+            @RequestBody User user,
+            HttpServletResponse response) {
         if (StringUtils.isEmpty(user.getDeviceId())) {
             throw new BadRequestException("device_id不能为空！");
         }
@@ -62,10 +59,9 @@ public class AuthController {
         String token = tokenAuthenticationService.generateAccessToken(currentUser.getId()).getToken();
 
         //set token
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(Constants.HttpHeaderName.ACCESS_TOKEN, token);
-        UserResult userResult = new UserResult(token, currentUser.getId()); //generate result
-        return new ResponseEntity<UserResult>(userResult, headers, HttpStatus.OK);
+        response.setHeader(Constants.HttpHeaderName.OLD_ACCESS_TOKEN, token);
+
+        return new UserResult(token, currentUser.getId());
     }
 
     //Always create new anonymous user.
@@ -76,11 +72,11 @@ public class AuthController {
         //always create new user.
         User currentUser = userDomain.createAnonymousUser(user.getDeviceId());
 
-        Token token = tokenAuthenticationService.generateAccessToken(currentUser.getId());
+        String token = tokenAuthenticationService.generateAccessToken(currentUser.getId()).getToken();
 
-        response.setHeader(Constants.HttpHeaderName.ACCESS_TOKEN, token.getToken());
+        response.setHeader(Constants.HttpHeaderName.OLD_ACCESS_TOKEN, token);
 
-        return new UserResult(token.getToken(), currentUser.getId());
+        return new UserResult(token, currentUser.getId());
     }
 
 }
