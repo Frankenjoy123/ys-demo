@@ -52,6 +52,11 @@ public class UserFollowDomain {
         return userFollowing;
     }
 
+    public UserOrganizationFollowing getUserOrganizationFollowing(String id) {
+        UserOrganizationFollowing userFollowing = dataAPIClient.get("/userorganization/following/{id}", UserOrganizationFollowing.class, id);
+        return userFollowing;
+    }
+
     public Page<UserOrganizationFollowing> getUserOrganizationFollowingsByUserId(String userId, Pageable pageable){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append(pageable).append("userid", userId)

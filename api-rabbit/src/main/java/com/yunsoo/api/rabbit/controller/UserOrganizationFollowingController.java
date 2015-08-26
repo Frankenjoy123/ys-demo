@@ -62,19 +62,31 @@ public class UserOrganizationFollowingController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
-    public String userFollowingOrgs(@RequestBody UserOrganizationFollowing userFollowing) {
-        if (userFollowing == null) throw new BadRequestException("userFollowing ?????");
-        return userFollowDomain.ensureFollow(userFollowing);
+    public List<UserOrganizationFollowing> userFollowingOrgs(@RequestBody UserOrganizationFollowing userFollowing) {
+        if (userFollowing == null)
+            throw new BadRequestException("userFollowing 不能为空");
+
+        userFollowDomain.ensureFollow(userFollowing);
+        //return all the following organization list according to api requirement
+        return userFollowDomain.getUserOrganizationFollowingsByUserId(userFollowing.getUserId(), null).getContent();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    //@ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
-    public void userUnfollowOrg(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @PathVariable(value = "id") String id) {
+    public List<UserOrganizationFollowing>  userUnfollowOrg(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @PathVariable(value = "id") String id) {
         if (id == null) throw new BadRequestException("userOrganizationFollowing id 不能为空");
+
         if (!userDomain.validateToken(token, id)) {
             throw new UnauthorizedException("不能删除其他用户的收藏信息！");
         }
+
+        UserOrganizationFollowing following = userFollowDomain.getUserOrganizationFollowing(id);
+
         userFollowDomain.deleteUserOrganizationFollowing(id);
+
+        //return all the following organization list according to api requirement
+        return userFollowDomain.getUserOrganizationFollowingsByUserId(following.getUserId(), null).getContent();
+
     }
 }
