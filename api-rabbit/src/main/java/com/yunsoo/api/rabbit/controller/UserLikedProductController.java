@@ -1,6 +1,5 @@
 package com.yunsoo.api.rabbit.controller;
 
-import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserLikedProductDomain;
 import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
@@ -99,8 +98,7 @@ public class UserLikedProductController {
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
 //    @PreAuthorize("hasPermission(#userLikedProduct, 'authenticated')")
-    public void deleteUserLikedProduct(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token,
-                                       @RequestBody UserLikedProduct userLikedProduct) throws Exception {
+    public void deleteUserLikedProduct(@RequestBody UserLikedProduct userLikedProduct) throws Exception {
         if (userLikedProduct == null) {
             throw new BadRequestException("userLikedProduct不能为空！");
         }
@@ -109,7 +107,7 @@ public class UserLikedProductController {
         if (productToDelete == null) {
             throw new NotFoundException(40401, "UserLikedProduct not found!");
         }
-        if (!userDomain.validateToken(token, productToDelete.getUserId())) {
+        if (!userDomain.validateUser(productToDelete.getUserId())) {
             throw new UnauthorizedException("不能删除其他用户的收藏信息！");
         }
         productToDelete.setActive(false); //just mark as inactive

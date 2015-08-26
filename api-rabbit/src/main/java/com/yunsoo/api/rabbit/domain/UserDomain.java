@@ -5,6 +5,7 @@ import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
 import com.yunsoo.api.rabbit.object.TAccountStatusEnum;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.api.rabbit.security.UserAuthentication;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.util.ImageProcessor;
@@ -147,7 +148,7 @@ public class UserDomain {
     public User generateDefaultUser() {
         User newUser = new User();
         newUser.setPoint(100);  //set default properties.
-        newUser.setName("求真名"); //default name is the time.
+        newUser.setName("游客");
         newUser.setStatusCode(LookupCodes.UserStatus.ENABLED); //default is enabled
         return newUser;
     }
@@ -173,10 +174,9 @@ public class UserDomain {
         return newUser;
     }
 
-    public Boolean validateToken(String token, String userId) {
-        if (token == null || token.isEmpty()) return false;
-        if (userId == null || userId.isEmpty()) return false;
-        return tokenAuthenticationService.checkIdentity(token, userId, true);
+    public Boolean validateUser(String userId) {
+        UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication();
+        return userAuthentication != null && userAuthentication.getDetails().getId().equals(userId);
     }
 
 }

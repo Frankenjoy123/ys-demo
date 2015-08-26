@@ -23,8 +23,9 @@ yunsoo:
     client:
         dataapi:
             baseurl: http://localhost:3080/
-    #token secret issued to client who can consume our Business API
-    token_secret: 9SyECk96oDsTmXfogIieDI0cD/8FpnojlYSUJT5U9I/FGVmBz5oskmjOR8cbXTvoPjX+Pq/T/b1PqpHX0lYm0oCBjXWICA==
+    access_token:
+        expires_minutes: 5256000
+        hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
 
 ---
 spring:
@@ -45,5 +46,6 @@ yunsoo:
     client:
         dataapi:
             baseurl: http://localhost:3080/
-    #token secret issued to client who can consume our Business API
-    token_secret: 9SyECk96oDsTmXfogIieDI0cD/8FpnojlYSUJT5U9I/FGVmBz5oskmjOR8cbXTvoPjX+Pq/T/b1PqpHX0lYm0oCBjXWICA==
+    access_token:
+        expires_minutes: 5256000
+        hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU

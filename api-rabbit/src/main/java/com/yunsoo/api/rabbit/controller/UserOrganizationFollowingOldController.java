@@ -1,6 +1,5 @@
 package com.yunsoo.api.rabbit.controller;
 
-import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
 import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
@@ -98,7 +97,7 @@ public class UserOrganizationFollowingOldController {
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
-    public void userUnfollowOrg(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @RequestBody UserOrganizationFollowing userFollowing) {
+    public void userUnfollowOrg(@RequestBody UserOrganizationFollowing userFollowing) {
         if (userFollowing == null) throw new BadRequestException("userFollowing 不能为空！");
 
         UserOrganizationFollowing existingUserFollowing = dataAPIClient.get("/userorganization/following/who/{id}/org/{orgid}", UserOrganizationFollowing.class,
@@ -107,7 +106,7 @@ public class UserOrganizationFollowingOldController {
             throw new NotFoundException(40401, "找不到用户follow记录！");
         }
 //        UserOrganizationFollowing userFollowing = dataAPIClient.get("/userorganization/following/{id}", UserOrganizationFollowing.class, Id);
-        if (!userDomain.validateToken(token, userFollowing.getUserId())) {
+        if (!userDomain.validateUser(userFollowing.getUserId())) {
             throw new UnauthorizedException("不能删除其他用户的收藏信息！");
         }
         dataAPIClient.patch("userorganization/following", existingUserFollowing); //just mark isFollowing as False.

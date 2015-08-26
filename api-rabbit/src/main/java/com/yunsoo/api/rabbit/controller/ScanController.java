@@ -4,11 +4,10 @@ import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.biz.ValidateProduct;
 import com.yunsoo.api.rabbit.domain.*;
 import com.yunsoo.api.rabbit.dto.LogisticsPath;
-import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.api.rabbit.dto.basic.*;
-import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.api.rabbit.object.ValidationResult;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.api.rabbit.security.UserAuthentication;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.UserScanRecordObject;
@@ -69,22 +68,16 @@ public class ScanController {
         scanRequestBody.validateForScan();
 
         //1, get user
-        User currentUser = null;
-        if (accessToken != null) {
-            TAccount tAccount = tokenAuthenticationService.parseUser(accessToken);
-            currentUser = new User();
-            currentUser.setId(tAccount.getId());
+        String userId = null;
+        UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication(accessToken);
+        if (userAuthentication != null) {
+            userId = userAuthentication.getDetails().getId();
         } else {
-            currentUser = dataAPIClient.get("user/{id}", User.class, "2k64dcya672axp5jcgv"); //hardcode for web-scan
-        }
-
-        if (currentUser == null) {
-//            LOGGER.error("User not found by userId ={0}, deviceCode = {1}", scanRequestBody.getUserId(), scanRequestBody.getDeviceCode());
-            throw new NotFoundException(40401, "User not found deviceCode = " + scanRequestBody.getDeviceCode());
+            userId = Constants.Ids.ANONYMOUS_USER_ID;
         }
 
         ScanResult scanResult = new ScanResult();
-        scanResult.setUserId(currentUser.getId());
+        scanResult.setUserId(userId);
         scanResult.setKey(scanRequestBody.getKey());
 
         //2, set product information
@@ -98,7 +91,7 @@ public class ScanController {
         scanResult.setProduct(currentExistProduct);
 
         //3, set if user liked this product
-        UserLikedProduct userLikedProduct = this.userLikedProductDomain.getUserLikedProduct(currentUser.getId(), currentExistProduct.getProductBaseId());
+        UserLikedProduct userLikedProduct = this.userLikedProductDomain.getUserLikedProduct(userId, currentExistProduct.getProductBaseId());
         if (userLikedProduct != null) {
             scanResult.setLiked_product(userLikedProduct.getActive());
         } else {
@@ -122,10 +115,10 @@ public class ScanController {
 
         //7，ensure user following the company, and set the followed status in result.
         UserOrganizationFollowing userFollowing = new UserOrganizationFollowing();
-        userFollowing.setUserId(currentUser.getId());
+        userFollowing.setUserId(userId);
         userFollowing.setOrgId(organizationObject.getId());
         userFollowDomain.ensureFollow(userFollowing);
-        UserOrganizationFollowing userFollowingResult = userFollowDomain.getUserOrganizationFollowing(currentUser.getId(), organizationObject.getId());
+        UserOrganizationFollowing userFollowingResult = userFollowDomain.getUserOrganizationFollowing(userId, organizationObject.getId());
         if (userFollowingResult != null) {
             scanResult.setFollowed_org(true);
         } else {
@@ -134,15 +127,15 @@ public class ScanController {
 
         //7.2, ensure user following the product
         UserProductFollowing userProductFollowing = new UserProductFollowing();
-        userProductFollowing.setUserId(currentUser.getId());
+        userProductFollowing.setUserId(userId);
         userProductFollowing.setProductId(currentExistProduct.getProductBaseId());
         userFollowDomain.ensureFollow(userProductFollowing);
 
         //8, set validation result by our validation strategy.
-        scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), currentUser, scanRecordList));
+        scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), userId, scanRecordList));
 
         //9, save scan Record
-        long scanSave = SaveScanRecord(currentUser, currentExistProduct, scanRequestBody);
+        long scanSave = SaveScanRecord(userId, currentExistProduct, scanRequestBody);
         return scanResult;
     }
 
@@ -307,9 +300,9 @@ public class ScanController {
         return logisticsList;
     }
 
-    private long SaveScanRecord(User currentUser, Product currentProduct, ScanRequestBody scanRequestBody) {
+    private long SaveScanRecord(String userId, Product currentProduct, ScanRequestBody scanRequestBody) {
         UserScanRecordObject scanRecord = new UserScanRecordObject();
-        scanRecord.setUserId(currentUser.getId());
+        scanRecord.setUserId(userId);
         scanRecord.setDeviceId(scanRequestBody.getDeviceCode());
         if (scanRequestBody.getAppId() != null && !scanRequestBody.getAppId().isEmpty()) {
             scanRecord.setAppId(scanRequestBody.getAppId()); //记录扫描客户端

@@ -33,12 +33,12 @@ public final class TokenHandler {
     public TAccount parseToken(String token) {
         String src = decodeToken(token);
         if (src == null) {
-            LOGGER.error("AccessToken invalid [token: {}]", token);
+            LOGGER.error("Token invalid [token: {}]", token);
             return null;
         }
         final String[] parts = src.split(SPLITTER);
         if (parts.length < 2) {
-            LOGGER.error("AccessToken invalid [token: {}]", token);
+            LOGGER.error("Token invalid [token: {}]", token);
             return null;
         }
         DateTime expires = new DateTime(Long.parseLong(parts[0]));
@@ -46,7 +46,7 @@ public final class TokenHandler {
         String orgId = parts.length >= 3 ? parts[2] : null; //orgId is nullable
 
         if (expires.isBeforeNow()) {
-            LOGGER.error("AccessToken expired [token: {}, expires: {}]", token, expires.toString());
+            LOGGER.error("Token expired [token: {}, expires: {}]", token, expires.toString());
             return null;
         }
 

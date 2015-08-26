@@ -2,10 +2,11 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.domain.UserDomain;
+import com.yunsoo.api.rabbit.dto.Token;
 import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.api.rabbit.dto.UserResult;
-import com.yunsoo.api.rabbit.object.TAccount;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.api.rabbit.security.UserAuthentication;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +17,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Created by Zhe on 2015/3/5.
- */
+import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Created by:   Zhe
+ * Created on:   2015/3/5
+ * Descriptions:
+ */
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -44,17 +48,18 @@ public class AuthController {
 
         User currentUser = null;
         if (!StringUtils.isEmpty(accessToken)) {
-            TAccount tAccount = tokenAuthenticationService.parseUser(accessToken);
-            //get user id from token. check if cellular exists, and update user
-            currentUser = userDomain.ensureUser(tAccount.getId(), user.getDeviceId(), user.getPhone());
+            UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication(accessToken);
+            if (userAuthentication != null) {
+                //get user id from token. check if cellular exists, and update user
+                currentUser = userDomain.ensureUser(userAuthentication.getDetails().getId(), user.getDeviceId(), user.getPhone());
+            } else {
+                currentUser = userDomain.ensureUser(null, user.getDeviceId(), user.getPhone());
+            }
         } else {
             currentUser = userDomain.ensureUser(null, user.getDeviceId(), user.getPhone());
         }
 
-        TAccount currentAccount = new TAccount();
-        currentAccount.setId(currentUser.getId());
-        currentAccount.setStatus(currentUser.getStatusCode()); //Status的编码与TAccountStatusEnum一致
-        String token = tokenAuthenticationService.generateToken(currentAccount, false);
+        String token = tokenAuthenticationService.generateAccessToken(currentUser.getId()).getToken();
 
         //set token
         HttpHeaders headers = new HttpHeaders();
@@ -66,20 +71,16 @@ public class AuthController {
     //Always create new anonymous user.
     @RequestMapping(value = "create", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> createUser(@RequestBody User user) throws Exception {
+    public UserResult createUser(@RequestBody User user,
+                                 HttpServletResponse response) throws Exception {
         //always create new user.
         User currentUser = userDomain.createAnonymousUser(user.getDeviceId());
 
-        TAccount currentAccount = new TAccount();
-        currentAccount.setId(currentUser.getId());
-        currentAccount.setStatus(currentUser.getStatusCode());  //Status的编码与TAccountStatusEnum一致  TAccountStatusEnum.ENABLED.value()
-        String token = tokenAuthenticationService.generateToken(currentAccount, true); //stay long
+        Token token = tokenAuthenticationService.generateAccessToken(currentUser.getId());
 
-        //set token
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(Constants.HttpHeaderName.ACCESS_TOKEN, token);
-        UserResult userResult = new UserResult(token, currentUser.getId()); //generate result
-        return new ResponseEntity<UserResult>(userResult, headers, HttpStatus.CREATED);
+        response.setHeader(Constants.HttpHeaderName.ACCESS_TOKEN, token.getToken());
+
+        return new UserResult(token.getToken(), currentUser.getId());
     }
 
 }

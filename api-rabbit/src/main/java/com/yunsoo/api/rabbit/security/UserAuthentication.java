@@ -1,46 +1,48 @@
 package com.yunsoo.api.rabbit.security;
 
-import com.yunsoo.api.rabbit.object.TAccount;
+import com.yunsoo.api.rabbit.object.TUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
 /**
- * Created by Zhe on 2015/3/5.
+ * Created by:   Zhe
+ * Created on:   2015/3/5
+ * Descriptions:
  */
-public class AccountAuthentication implements Authentication {
+public class UserAuthentication implements Authentication {
 
-    private final TAccount tAccount;
+    private final TUser tUser;
     private boolean authenticated = true;
 
-    public AccountAuthentication(TAccount user) {
-        this.tAccount = user;
+    public UserAuthentication(TUser user) {
+        this.tUser = user;
     }
 
     @Override
     public String getName() {
-        return tAccount.getUsername();
+        return tUser.getUsername();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return tAccount.getAuthorities();
+        return tUser.getAuthorities();
     }
 
     @Override
     public Object getCredentials() {
-        return tAccount.getPassword();
+        return tUser.getPassword();
     }
 
     @Override
-    public TAccount getDetails() {
-        return tAccount;
+    public TUser getDetails() {
+        return tUser;
     }
 
     @Override
     public Object getPrincipal() {
-        return tAccount.getUsername();
+        return tUser.getUsername();
     }
 
     @Override
