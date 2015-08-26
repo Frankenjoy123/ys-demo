@@ -18,10 +18,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class TokenAuthenticationService {
 
-    @Value("${yunsoo.api.access_token.expires_minutes}")
+    @Value("${yunsoo.access_token.expires_minutes}")
     private int accessTokenExpiresMinutes;
 
-    @Value("${yunsoo.api.login_token.expires_minutes}")
+    @Value("${yunsoo.login_token.expires_minutes}")
     private int loginTokenExpiresMinutes;
 
     private String accessTokenHashSalt = "lvtHDkfIUxJ2bLWHc0MNztUqCJSVPSJO";

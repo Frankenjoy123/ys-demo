@@ -60,7 +60,7 @@ public class ProductKeyDomain {
     private ProductKeyTransactionDomain productKeyTransactionDomain;
 
 
-    @Value("${yunsoo.api.product_key_base_url}")
+    @Value("${yunsoo.product_key_base_url}")
     private String productKeyBaseUrl;
 
 

@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
  * Descriptions:
  */
 @Configuration
-@ComponentScan(basePackages = "com.yunsoo.api.domain")
+@ComponentScan(basePackages = "com.yunsoo.api.rabbit.domain")
 public class DomainConfiguration {
 }

@@ -19,7 +19,7 @@ import java.util.UUID;
 @Component
 public class AccountTokenDomain {
 
-    @Value("${yunsoo.api.permanent_token.expires_minutes}")
+    @Value("${yunsoo.permanent_token.expires_minutes}")
     private int permanent_token_expires_minutes;
 
     @Autowired

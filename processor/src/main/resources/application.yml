@@ -17,23 +17,20 @@ spring:
 spring:
     profiles: dev
 
-
 yunsoo:
-    environment: dev
     debug: true
-    processor:
-        client:
-            dataapi:
-                baseurl: http://localhost:3080/
+    environment: dev
+    client:
+        dataapi:
+            baseurl: http://localhost:3080/
 
 ---
 spring:
     profiles: test
 
 yunsoo:
-    environment: test
     debug: true
-    processor:
-        client:
-            dataapi:
-                baseurl: http://localhost:3080/
+    environment: test
+    client:
+        dataapi:
+            baseurl: http://localhost:3080/
