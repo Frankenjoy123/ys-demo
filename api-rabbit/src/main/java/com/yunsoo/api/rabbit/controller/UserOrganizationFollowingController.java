@@ -1,6 +1,5 @@
 package com.yunsoo.api.rabbit.controller;
 
-import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
 import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
@@ -74,7 +73,7 @@ public class UserOrganizationFollowingController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     //@ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
-    public void userUnfollowOrg(@PathVariable(value = "id") String id) {
+    public List<UserOrganizationFollowing> userUnfollowOrg(@PathVariable(value = "id") String id) {
         if (id == null) throw new BadRequestException("userOrganizationFollowing id 不能为空");
         if (!userDomain.validateUser(id)) {
             throw new UnauthorizedException("不能删除其他用户的收藏信息！");
