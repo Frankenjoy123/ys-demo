@@ -2,11 +2,13 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.domain.UserDomain;
-import com.yunsoo.api.rabbit.dto.User;
-import com.yunsoo.api.rabbit.dto.UserResult;
+import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.api.rabbit.security.UserAuthentication;
+import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,101 @@ public class AuthController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
+    /**
+     * login with phone, phone must have been registered already
+     *
+     * @param deviceId     deviceId from RequestHeader
+     * @param loginRequest UserLoginRequest
+     * @param response     current HttpServletResponse
+     * @return UserLoginResponse include user and access_token
+     */
+    @RequestMapping(value = "login/phone", method = RequestMethod.POST)
+    public UserLoginResponse loginWithPhone(
+            @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
+            @RequestBody UserLoginRequest loginRequest,
+            HttpServletResponse response) {
+        if (!StringUtils.isEmpty(loginRequest.getDeviceId())) {
+            deviceId = loginRequest.getDeviceId();
+        }
 
+        //check user
+        UserObject userObject = userDomain.getUserByPhone(loginRequest.getPhone());
+        if (userObject == null) {
+            throw new UnauthorizedException("phone not exists");
+        }
+        if (LookupCodes.UserStatus.DISABLED.equals(userObject.getStatusCode())) {
+            throw new UnauthorizedException("user is disabled");
+        }
+
+        //update deviceId of the user
+        if (deviceId != null && !deviceId.equals(userObject.getDeviceId())) {
+            UserObject newUserObject = new UserObject();
+            newUserObject.setId(userObject.getId());
+            newUserObject.setDeviceId(deviceId);
+            userDomain.patchUpdateUser(newUserObject);
+        }
+
+        //generate response
+        Token accessToken = tokenAuthenticationService.generateAccessToken(userObject.getId());
+        UserLoginResponse loginResponse = new UserLoginResponse();
+        loginResponse.setUser(new User(userObject));
+        loginResponse.setAccessToken(accessToken);
+
+        //set token to the response header
+        response.setHeader(Constants.HttpHeaderName.ACCESS_TOKEN, accessToken.getToken());
+
+        return loginResponse;
+    }
+
+    /**
+     * 1. if access_token is null, register new user
+     * 2. if access_token is available, register phone to the exist user (phone is not null)
+     *
+     * @param deviceId        deviceId from RequestHeader
+     * @param accessToken     accessToken from RequestHeader
+     * @param registerRequest UserRegisterRequest
+     * @param response        current HttpServletResponse
+     * @return UserLoginResponse include user and access_token
+     */
+    @RequestMapping(value = "register", method = RequestMethod.POST)
+    public UserLoginResponse registerUser(
+            @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
+            @RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
+            @RequestBody UserRegisterRequest registerRequest,
+            HttpServletResponse response) {
+        if (StringUtils.isEmpty(registerRequest.getDeviceId())) {
+            registerRequest.setDeviceId(deviceId);
+        }
+        UserObject userObject = registerRequest.toUserObject();
+
+        if (StringUtils.isEmpty(accessToken)) {
+            //register new user
+            userObject = userDomain.createUser(userObject);
+        } else {
+            //register phone to the exist user
+            UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication(accessToken);
+            if (userAuthentication == null) {
+                throw new UnauthorizedException("access_token not valid");
+            }
+            userObject.setId(userAuthentication.getDetails().getId());
+            userDomain.patchUpdateUser(userObject);
+            userObject = userDomain.getUserById(userObject.getId());
+        }
+
+        //generate response
+        Token newAccessToken = tokenAuthenticationService.generateAccessToken(userObject.getId());
+        UserLoginResponse loginResponse = new UserLoginResponse();
+        loginResponse.setUser(new User(userObject));
+        loginResponse.setAccessToken(newAccessToken);
+
+        //set token to the response header
+        response.setHeader(Constants.HttpHeaderName.ACCESS_TOKEN, newAccessToken.getToken());
+
+        return loginResponse;
+    }
+
+
+    @Deprecated
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public UserResult authUser(
             @RequestHeader(value = Constants.HttpHeaderName.OLD_ACCESS_TOKEN, required = false) String accessToken,
@@ -64,6 +160,7 @@ public class AuthController {
         return new UserResult(token, currentUser.getId());
     }
 
+    @Deprecated
     //Always create new anonymous user.
     @RequestMapping(value = "create", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)

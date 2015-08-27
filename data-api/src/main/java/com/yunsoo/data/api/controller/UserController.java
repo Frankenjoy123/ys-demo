@@ -70,6 +70,12 @@ public class UserController {
     public UserObject create(@RequestBody @Valid UserObject userObject) {
         UserEntity entity = toUserEntity(userObject);
         DateTime now = DateTime.now();
+
+        //check phone
+        if (entity.getPhone() != null) {
+            checkPhoneExists(entity.getPhone());
+        }
+
         entity.setId(null);
         if (entity.getPoint() == null) {
             entity.setPoint(0);
@@ -87,9 +93,7 @@ public class UserController {
         String newPhone = userObject.getPhone();
         if (newPhone != null) {
             if (!newPhone.equals(entity.getPhone())) {
-                if (userRepository.findByPhone(newPhone).size() > 0) {
-                    throw new ConflictException("phone already used by another user");
-                }
+                checkPhoneExists(newPhone);
                 entity.setPhone(userObject.getPhone());
             }
         }
@@ -117,6 +121,12 @@ public class UserController {
             throw new NotFoundException("User not found by [id: " + id + "]");
         }
         return entity;
+    }
+
+    private void checkPhoneExists(String phone) {
+        if (userRepository.findByPhone(phone).size() > 0) {
+            throw new ConflictException("phone already registered by another user");
+        }
     }
 
     private UserObject toUserObject(UserEntity entity) {

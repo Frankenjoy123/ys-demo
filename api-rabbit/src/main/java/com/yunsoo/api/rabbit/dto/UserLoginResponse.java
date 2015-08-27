@@ -9,26 +9,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class UserLoginResponse {
 
-    @JsonProperty("token")
-    private Token token;
+    @JsonProperty("user")
+    private User user;
 
-    @JsonProperty("user_id")
-    private String userId;
+    @JsonProperty("access_token")
+    private Token accessToken;
 
 
-    public Token getToken() {
-        return token;
+    public User getUser() {
+        return user;
     }
 
-    public void setToken(Token token) {
-        this.token = token;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public String getUserId() {
-        return userId;
+    public Token getAccessToken() {
+        return accessToken;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setAccessToken(Token accessToken) {
+        this.accessToken = accessToken;
     }
 }
