@@ -69,6 +69,8 @@ public class AuthController {
             userDomain.patchUpdateUser(newUserObject);
         }
 
+        LOGGER.info("user login with phone [userId: {}]", userObject.getId());
+
         //generate response
         Token accessToken = tokenAuthenticationService.generateAccessToken(userObject.getId());
         UserLoginResponse loginResponse = new UserLoginResponse();
@@ -95,8 +97,11 @@ public class AuthController {
     public UserLoginResponse registerUser(
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
             @RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
-            @RequestBody UserRegisterRequest registerRequest,
+            @RequestBody(required = false) UserRegisterRequest registerRequest,
             HttpServletResponse response) {
+        if (registerRequest == null) {
+            registerRequest = new UserRegisterRequest();
+        }
         if (StringUtils.isEmpty(registerRequest.getDeviceId())) {
             registerRequest.setDeviceId(deviceId);
         }
@@ -105,6 +110,8 @@ public class AuthController {
         if (StringUtils.isEmpty(accessToken)) {
             //register new user
             userObject = userDomain.createUser(userObject);
+
+            LOGGER.info("new user registered [userId: {}]", userObject.getId());
         } else {
             //register phone to the exist user
             UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication(accessToken);
@@ -114,6 +121,8 @@ public class AuthController {
             userObject.setId(userAuthentication.getDetails().getId());
             userDomain.patchUpdateUser(userObject);
             userObject = userDomain.getUserById(userObject.getId());
+
+            LOGGER.info("exist user registered [userId: {}]", userObject.getId());
         }
 
         //generate response
