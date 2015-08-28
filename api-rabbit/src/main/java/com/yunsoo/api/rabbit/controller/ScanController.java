@@ -12,6 +12,7 @@ import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.UserScanRecordObject;
 import com.yunsoo.common.util.DateTimeUtils;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -19,13 +20,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * Created by:   Zhe
@@ -45,16 +51,25 @@ public class ScanController {
 
     @Autowired
     private RestClient dataAPIClient;
+
     @Autowired
     private LogisticsDomain logisticsDomain;
+
     @Autowired
     private ScanDomain scanDomain;
+
     @Autowired
     private UserFollowDomain userFollowDomain;
+
     @Autowired
     private ProductDomain productDomain;
+
+    @Autowired
+    private ProductBaseDomain productBaseDomain;
+
     @Autowired
     private UserLikedProductDomain userLikedProductDomain;
+
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
@@ -100,9 +115,8 @@ public class ScanController {
 
         //4, retrieve scan records
         List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByProductKey(scanRequestBody.getKey(), new PageRequest(0, 20))
-                .stream()
                 .map(ScanRecord::new)
-                .collect(Collectors.toList());
+                .getContent();
         scanResult.setScanRecordList(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
@@ -163,9 +177,8 @@ public class ScanController {
 
         //3, retrieve scan records
         List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByProductKey(key, new PageRequest(0, 20))
-                .stream()
                 .map(ScanRecord::new)
-                .collect(Collectors.toList());
+                .getContent();
         scanResult.setScanRecordList(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
@@ -182,6 +195,31 @@ public class ScanController {
         return scanResult;
     }
 
+    @RequestMapping(value = "/record", method = RequestMethod.GET)
+    public List<ScanRecord> getScanRecordsByFilter(
+            @RequestParam(value = "product_key", required = false) String productKey,
+            @PageableDefault(page = 0, size = 10, sort = "createdDateTime", direction = Sort.Direction.DESC)
+            Pageable pageable,
+            HttpServletResponse response) {
+        Page<UserScanRecordObject> page;
+        if (!StringUtils.isEmpty(productKey)) {
+            //get the scan records by product key include other user's
+            page = scanDomain.getScanRecordsByProductKey(productKey, pageable);
+        } else {
+            //get the scan records for current user only
+            String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+            page = scanDomain.getScanRecordsByUserId(userId, pageable);
+        }
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", page.toContentRange());
+        }
+        List<ScanRecord> scanRecords = page.map(ScanRecord::new).getContent();
+        fillProductInfo(scanRecords);
+        return scanRecords;
+    }
+
+    @Deprecated
     @RequestMapping(value = "/history/user/{userId}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
     public List<ScanRecord> getUserScanRecordsByFilter(
@@ -207,13 +245,13 @@ public class ScanController {
         }
 
         List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByUserId(userId, new PageRequest(pageIndex, pageSize))
-                .stream()
                 .map(ScanRecord::new)
-                .collect(Collectors.toList());
-        this.fillProductInfor(scanRecordList);
+                .getContent();
+        this.fillProductInfo(scanRecordList);
         return scanRecordList;
     }
 
+    @Deprecated
     @RequestMapping(value = "/searchback/{isbackward}/user/{userId}/from/{Id}/paging/{pageIndex}/{pageSize}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
     public List<ScanRecord> getUserScanRecordsByFilter(
@@ -247,13 +285,13 @@ public class ScanController {
         }
 
         List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByUserId(userId, new PageRequest(pageIndex, pageSize))
-                .stream()
                 .map(ScanRecord::new)
-                .collect(Collectors.toList());
-        this.fillProductInfor(scanRecordList);
+                .getContent();
+        this.fillProductInfo(scanRecordList);
         return scanRecordList;
     }
 
+    @Deprecated
     @RequestMapping(value = "/record/{key}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
 //    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
     public List<ScanRecord> getScanRecordsByFilter(
@@ -273,9 +311,8 @@ public class ScanController {
         }
 
         return scanDomain.getScanRecordsByProductKey(key, new PageRequest(pageIndex, pageSize))
-                .stream()
                 .map(ScanRecord::new)
-                .collect(Collectors.toList());
+                .getContent();
     }
 
     private List<Logistics> getLogisticsInfo(String key) {
@@ -326,21 +363,21 @@ public class ScanController {
         return dataAPIClient.post("scan", scanRecord, long.class);
     }
 
-    private void fillProductInfor(List<ScanRecord> scanRecordList) {
-        //fill product name
-        HashMap<String, ProductBaseObject> productHashMap = new HashMap<>();
-        for (ScanRecord scanRecord : scanRecordList) {
-            if (!productHashMap.containsKey(scanRecord.getProductBaseId())) {
-                ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, scanRecord.getProductBaseId());
+    private void fillProductInfo(List<ScanRecord> scanRecords) {
+        Map<String, ProductBaseObject> map = new HashMap<>();
+        for (ScanRecord scanRecord : scanRecords) {
+            ProductBaseObject productBaseObject = map.get(scanRecord.getProductBaseId());
+            if (productBaseObject == null) {
+                productBaseObject = productBaseDomain.getProductBaseById(scanRecord.getProductBaseId());
                 if (productBaseObject != null) {
-                    productHashMap.put(scanRecord.getProductBaseId(), productBaseObject);
-                    scanRecord.setProductName(productBaseObject.getName());
-                    scanRecord.setProductComment(productBaseObject.getComments());
+                    map.put(productBaseObject.getId(), productBaseObject);
                 }
-            } else {
-                scanRecord.setProductName(productHashMap.get(scanRecord.getProductBaseId()).getName());
-                scanRecord.setProductComment(productHashMap.get(scanRecord.getProductBaseId()).getComments());
+            }
+            if (productBaseObject != null) {
+                scanRecord.setProductName(productBaseObject.getName());
+                scanRecord.setProductDescription(productBaseObject.getDescription());
             }
         }
     }
+
 }

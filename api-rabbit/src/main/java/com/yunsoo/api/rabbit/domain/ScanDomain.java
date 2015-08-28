@@ -33,9 +33,9 @@ public class ScanDomain {
     /**
      * @param productKey not null or empty
      * @param pageable   not null
-     * @return top 20 records sort by created_datetime,desc
+     * @return page of UserScanRecordObject
      */
-    public List<UserScanRecordObject> getScanRecordsByProductKey(String productKey, Pageable pageable) {
+    public Page<UserScanRecordObject> getScanRecordsByProductKey(String productKey, Pageable pageable) {
         Assert.hasText(productKey, "productKey must not be null or empty");
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("product_key", productKey)
@@ -43,15 +43,15 @@ public class ScanDomain {
                 .build();
         Page<UserScanRecordObject> page = dataAPIClient.getPaged("UserScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
         });
-        return page.getContent();
+        return page;
     }
 
     /**
      * @param userId   not null or empty
      * @param pageable not null
-     * @return top 20 records sort by created_datetime,desc
+     * @return page of UserScanRecordObject
      */
-    public List<UserScanRecordObject> getScanRecordsByUserId(String userId, Pageable pageable) {
+    public Page<UserScanRecordObject> getScanRecordsByUserId(String userId, Pageable pageable) {
         Assert.hasText(userId, "userId must not be null or empty");
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("user_id", userId)
@@ -59,7 +59,7 @@ public class ScanDomain {
                 .build();
         Page<UserScanRecordObject> page = dataAPIClient.getPaged("UserScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
         });
-        return page.getContent();
+        return page;
     }
 
 }

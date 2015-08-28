@@ -10,7 +10,8 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +57,7 @@ public class UserScanRecordController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<UserScanRecordObject> getByFilter(@RequestParam(value = "product_key", required = false) String productKey,
                                                   @RequestParam(value = "user_id", required = false) String userId,
-                                                  @PageableDefault(sort = {"createdDateTime"})
+                                                  @SortDefault(sort = "createdDateTime", direction = Sort.Direction.DESC)
                                                   Pageable pageable,
                                                   HttpServletResponse response) {
         Page<UserScanRecordEntity> entityPage;
