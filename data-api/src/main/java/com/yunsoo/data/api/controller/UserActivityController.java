@@ -36,7 +36,7 @@ public class UserActivityController {
         if (entity == null) {
             throw new NotFoundException("user activity not found by [user_id: " + userId + "]");
         }
-        return toUserPointObject(entity);
+        return toUserActivityObject(entity);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -62,33 +62,33 @@ public class UserActivityController {
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
-        return entityPage.getContent().stream().map(this::toUserPointObject).collect(Collectors.toList());
+        return entityPage.getContent().stream().map(this::toUserActivityObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "{userId}", method = RequestMethod.PUT)
-    public void createOrUpdateByUserId(@PathVariable("userId") String userId, @RequestBody UserActivityObject userPoint) {
-        UserActivityEntity entity = toUserPointEntity(userPoint);
+    public void createOrUpdateByUserId(@PathVariable("userId") String userId, @RequestBody UserActivityObject userActivity) {
+        UserActivityEntity entity = toUserActivityEntity(userActivity);
         entity.setUserId(userId);
         userActivityRepository.save(entity);
     }
 
     @RequestMapping(value = "{userId}", method = RequestMethod.PATCH)
-    public void patchUpdateByUserId(@PathVariable("userId") String userId, @RequestBody UserActivityObject userPoint) {
+    public void patchUpdateByUserId(@PathVariable("userId") String userId, @RequestBody UserActivityObject userActivity) {
         UserActivityEntity entity = userActivityRepository.findOne(userId);
         if (entity == null) {
             entity = new UserActivityEntity();
             entity.setUserId(userId);
         }
-        if (userPoint.getLastSignInDateTime() != null) {
-            entity.setLastSignInDateTime(userPoint.getLastSignInDateTime());
+        if (userActivity.getLastSignInDateTime() != null) {
+            entity.setLastSignInDateTime(userActivity.getLastSignInDateTime());
         }
-        if (userPoint.getLastSignInContinuousDays() != null) {
-            entity.setLastSignInContinuousDays(userPoint.getLastSignInContinuousDays());
+        if (userActivity.getLastSignInContinuousDays() != null) {
+            entity.setLastSignInContinuousDays(userActivity.getLastSignInContinuousDays());
         }
         userActivityRepository.save(entity);
     }
 
-    private UserActivityObject toUserPointObject(UserActivityEntity entity) {
+    private UserActivityObject toUserActivityObject(UserActivityEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -99,7 +99,7 @@ public class UserActivityController {
         return object;
     }
 
-    private UserActivityEntity toUserPointEntity(UserActivityObject object) {
+    private UserActivityEntity toUserActivityEntity(UserActivityObject object) {
         if (object == null) {
             return null;
         }

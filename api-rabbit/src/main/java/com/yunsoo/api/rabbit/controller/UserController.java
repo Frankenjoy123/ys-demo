@@ -1,5 +1,6 @@
 package com.yunsoo.api.rabbit.controller;
 
+import com.yunsoo.api.rabbit.domain.UserActivityDomain;
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.common.data.object.UserObject;
@@ -28,6 +29,9 @@ public class UserController {
     @Autowired
     private UserDomain userDomain;
 
+    @Autowired
+    private UserActivityDomain userActivityDomain;
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#id, 'User', 'user:read')")
     public User getById(@PathVariable(value = "id") String id) {
@@ -38,7 +42,7 @@ public class UserController {
         return new User(user);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#userId, 'User', 'user:modify')")
     public void updateUser(@PathVariable(value = "id") String userId,
                            @RequestBody User user) {
@@ -69,6 +73,18 @@ public class UserController {
         if (imageDataBytes != null && imageDataBytes.length > 0) {
             userDomain.saveUserGravatar(userId, imageName, imageDataBytes);
         }
+    }
+
+    @RequestMapping(value = "{id}/signin/continuousdays", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#id, 'User', 'user:read')")
+    public int getSignInContinuousDays(@PathVariable(value = "id") String id) {
+        return userActivityDomain.getSignInContinuousDays(id);
+    }
+
+    @RequestMapping(value = "{id}/signin", method = RequestMethod.POST)
+    @PreAuthorize("hasPermission(#id, 'User', 'user:read')")
+    public int signIn(@PathVariable(value = "id") String id) {
+        return userActivityDomain.signIn(id);
     }
 
 

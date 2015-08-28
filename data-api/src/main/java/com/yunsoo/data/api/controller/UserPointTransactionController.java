@@ -1,5 +1,6 @@
 package com.yunsoo.data.api.controller;
 
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserPointTransactionObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
@@ -61,6 +62,7 @@ public class UserPointTransactionController {
     public UserPointTransactionObject createTransaction(@RequestBody @Valid UserPointTransactionObject userPointTransactionObject) {
         UserPointTransactionEntity entity = toUserPointTransactionEntity(userPointTransactionObject);
         entity.setId(null);
+        entity.setStatusCode(LookupCodes.UserPointTransactionStatus.CREATED);
         if (entity.getCreatedDateTime() == null) {
             entity.setCreatedDateTime(DateTime.now());
         }

@@ -18,7 +18,7 @@ public class UserPointDomain {
     @Autowired
     private DataAPIClient dataAPIClient;
 
-    public void addPointToUser(String userId, Integer point, String typeCode) {
+    public void addPointToUser(String userId, int point, String typeCode) {
         String createdAccountId = Constants.Ids.SYSTEM_ACCOUNT_ID;
         DateTime createdDateTime = DateTime.now();
         UserPointTransactionObject tranObject = new UserPointTransactionObject();
