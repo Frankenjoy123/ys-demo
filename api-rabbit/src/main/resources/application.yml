@@ -1,17 +1,16 @@
 server:
     port: 6088
+management:
+    port: 6089
 
-multipart.maxFileSize: 20MB
-multipart.maxRequestSize: 20MB
+multipart.maxFileSize: 10MB
+multipart.maxRequestSize: 10MB
 
 spring:
     profiles.active: dev
 ---
 spring:
     profiles: dev
-management:
-    port: 6089
-    address: 127.0.0.1
 
 logging:
 #    file: c:/logs/yunsoo-api.log
@@ -20,15 +19,14 @@ logging:
         org.hibernate: 'ERROR'
 
 yunsoo:
-    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
-    #token secret issued to client whoc can consume our Business API
-    token_secret: 9SyECk96oDsTmXfogIieDI0cD/8FpnojlYSUJT5U9I/FGVmBz5oskmjOR8cbXTvoPjX+Pq/T/b1PqpHX0lYm0oCBjXWICA==
-    token_header_name: YS_RABBIT_AUTH_TOKEN
     debug: true
-    api:
-        client:
-            dataapi:
-                baseurl: http://localhost:3080/
+    client:
+        dataapi:
+            baseurl: http://localhost:3080/
+    access_token:
+        expires_minutes: 5256000
+        hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
+
 ---
 spring:
     profiles: test
@@ -44,12 +42,10 @@ logging:
         org.hibernate: 'INFO'
 
 yunsoo:
-#    dataapi_productbase_picture_basepath: https://s3.cn-north-1.amazonaws.com.cn/yunsudev/photo/coms/products/
-    #token secret issued to client whoc can consume our Business API
-    token_secret: 9SyECk96oDsTmXfogIieDI0cD/8FpnojlYSUJT5U9I/FGVmBz5oskmjOR8cbXTvoPjX+Pq/T/b1PqpHX0lYm0oCBjXWICA==
-#    token_header_name: YS_RABBIT_AUTH_TOKEN
     debug: true
-    api:
-        client:
-            dataapi:
-                baseurl: http://localhost:3080/
+    client:
+        dataapi:
+            baseurl: http://localhost:3080/
+    access_token:
+        expires_minutes: 5256000
+        hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU

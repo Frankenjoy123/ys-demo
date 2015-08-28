@@ -9,10 +9,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by Zhe on 2015/3/5.
+ * Created by:   Zhe
+ * Created on:   2015/3/5
+ * Descriptions:
  */
 @Service
-public class AccountDetailService implements org.springframework.security.core.userdetails.UserDetailsService {
+public class AccountDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
 
     @Autowired
     private AccountDomain accountDomain;
@@ -23,16 +25,16 @@ public class AccountDetailService implements org.springframework.security.core.u
     @Override
     public final TAccount loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("AccountDetailService.loadUserByUsername is invoked");
-        String accountId = username; //username is accountId
-        AccountObject accountObject = accountDomain.getById(accountId);
-        if (accountObject == null) {
-            throw new UsernameNotFoundException("user not found");
-        }
-        TAccount account = new TAccount();
-        account.setId(accountObject.getId());
-        account.setOrgId(accountObject.getOrgId());
 
-        detailsChecker.check(account);
-        return account;
+        AccountObject accountObject = accountDomain.getById(username);
+        if (accountObject == null) {
+            throw new UsernameNotFoundException("account not found");
+        }
+        TAccount tAccount = new TAccount();
+        tAccount.setId(accountObject.getId());
+        tAccount.setOrgId(accountObject.getOrgId());
+
+        detailsChecker.check(tAccount);
+        return tAccount;
     }
 }

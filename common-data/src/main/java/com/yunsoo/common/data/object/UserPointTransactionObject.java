@@ -33,7 +33,6 @@ public class UserPointTransactionObject implements Serializable {
     @JsonProperty("type_code")
     private String typeCode;
 
-    @NotEmpty(message = "status_code must not be null or empty")
     @JsonProperty("status_code")
     private String statusCode;
 

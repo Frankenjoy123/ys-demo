@@ -11,16 +11,16 @@ import javax.validation.constraints.NotNull;
 public class TAccountAuthority implements GrantedAuthority {
 
     @NotNull
-    private TAccount account;
+    private TUser account;
 
     @NotNull
     private String authority;
 
-    public TAccount getAccount() {
+    public TUser getAccount() {
         return account;
     }
 
-    public void setAccount(TAccount account) {
+    public void setAccount(TUser account) {
         this.account = account;
     }
 

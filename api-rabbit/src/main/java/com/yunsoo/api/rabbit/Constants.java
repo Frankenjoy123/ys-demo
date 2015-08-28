@@ -16,7 +16,10 @@ public final class Constants {
     }
 
     public static class HttpHeaderName {
-        public static final String ACCESS_TOKEN = "YS_RABBIT_AUTH_TOKEN";
+        public static final String OLD_ACCESS_TOKEN = "YS_RABBIT_AUTH_TOKEN";
+        public static final String ACCESS_TOKEN = "X-YS-AccessToken";
+        public static final String APP_ID = "X-YS-AppId";
+        public static final String DEVICE_ID = "X-YS-DeviceId";
     }
 
 }

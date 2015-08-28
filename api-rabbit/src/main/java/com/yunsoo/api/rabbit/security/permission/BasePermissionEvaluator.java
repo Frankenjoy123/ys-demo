@@ -4,11 +4,7 @@ import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
 import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
 import com.yunsoo.api.rabbit.dto.basic.UserProductFollowing;
-import com.yunsoo.api.rabbit.object.TAccount;
-import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.ForbiddenException;
-import com.yunsoo.common.web.exception.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.yunsoo.api.rabbit.object.TUser;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,39 +12,28 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.io.Serializable;
 
 /**
- * Created by Zhe on 2015/3/6.
+ * Created by:   Zhe
+ * Created on:   2015/3/6
+ * Descriptions:
  */
 public class BasePermissionEvaluator implements PermissionEvaluator {
-
-    @Autowired
-    private RestClient dataAPIClient;
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         boolean hasPermission = false;
         if (authentication != null && permission instanceof String) {
 
-            TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
-            if (!account.isAnonymous()) {
-                throw new ForbiddenException(40301, "Anonymous user is denied!");
-            } else if (!account.isAccountNonExpired()) {
-                throw new UnauthorizedException(40101, "Account is expired");
-            } else if (!account.isAccountNonLocked()) {
-                throw new UnauthorizedException(40102, "Account is locked!");
-            } else if (account.isCredentialsInvalid()) {
-                throw new UnauthorizedException(40103, "Account token is invalid!");
-            } else if (!account.isEnabled()) {
-                throw new UnauthorizedException(40104, "Account is disabled!");
-            }
+            TUser tUser = (TUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+
 
             if (targetDomainObject instanceof User) {
-                hasPermission = ((User) targetDomainObject).getId().equals(account.getId());
+                hasPermission = ((User) targetDomainObject).getId().equals(tUser.getId());
             } else if (targetDomainObject instanceof UserLikedProduct) {
-                hasPermission = ((UserLikedProduct) targetDomainObject).getUserId().equals(account.getId());
+                hasPermission = ((UserLikedProduct) targetDomainObject).getUserId().equals(tUser.getId());
             } else if (targetDomainObject instanceof UserOrganizationFollowing) {
-                hasPermission = ((UserOrganizationFollowing) targetDomainObject).getUserId().equals(account.getId());
+                hasPermission = ((UserOrganizationFollowing) targetDomainObject).getUserId().equals(tUser.getId());
             } else if (targetDomainObject instanceof UserProductFollowing) {
-                hasPermission = ((UserProductFollowing) targetDomainObject).getUserId().equals(account.getId());
+                hasPermission = ((UserProductFollowing) targetDomainObject).getUserId().equals(tUser.getId());
             }else {
                 hasPermission = true;
             }
@@ -74,28 +59,17 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         boolean hasPermission = false;
         if (authentication != null && permission instanceof String) {
 
-            TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
-            if (!account.isAnonymous()) {
-                throw new ForbiddenException(40301, "Anonymous user is denied!");
-            } else if (!account.isAccountNonExpired()) {
-                throw new UnauthorizedException(40101, "Account is expired");
-            } else if (!account.isAccountNonLocked()) {
-                throw new UnauthorizedException(40102, "Account is locked!");
-            } else if (account.isCredentialsInvalid()) {
-                throw new UnauthorizedException(40103, "Account token is invalid!");
-            } else if (!account.isEnabled()) {
-                throw new UnauthorizedException(40104, "Account is disabled!");
-            }
+            TUser tUser = (TUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
             //check if user's permission for target id
             if (targetType.compareToIgnoreCase("User") == 0) {
-                hasPermission = account.getId().equals(targetId) ? true : false;
+                hasPermission = tUser.getId().equals(targetId);
             } else if (targetType.compareToIgnoreCase("UserLikedProduct") == 0) {
-                hasPermission = account.getId().equals(targetId) ? true : false;
+                hasPermission = tUser.getId().equals(targetId);
             } else if (targetType.compareToIgnoreCase("UserFollowing") == 0) {
-                hasPermission = account.getId().equals(targetId) ? true : false;
+                hasPermission = tUser.getId().equals(targetId);
             } else if (targetType.compareToIgnoreCase("UserInToken") == 0) {
-                hasPermission = account.getId().equals(targetId) ? true : false;
+                hasPermission = tUser.getId().equals(targetId);
             } else {
                 hasPermission = false;
             }

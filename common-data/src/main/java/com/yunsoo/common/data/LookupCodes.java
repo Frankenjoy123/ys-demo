@@ -19,7 +19,7 @@ public class LookupCodes {
         public static final String CREATED = "created";
         public static final String ACTIVE = "active";
         public static final String UPDATABLE = "updatable";
-        public static final String FORCEUPDATABLE = "force updatable";
+        public static final String FORCE_UPDATE = "force_update";
         public static final String INACTIVE = "inactive";
     }
 
@@ -48,6 +48,10 @@ public class LookupCodes {
         private ProductKeyType() {
         }
 
+        public static final String PACKAGE = "package";
+        public static final String QR_PUBLIC = "qr_public";
+        public static final String QR_SECURE = "qr_secure";
+        public static final String RFID = "rfid";
     }
 
     public static class AccountStatus {
@@ -131,6 +135,13 @@ public class LookupCodes {
         public static final String CREATED = "created";
         public static final String COMMITTED = "committed";
         public static final String ROLLBACK = "rollback";
+    }
+
+    public static class UserPointTransactionType {
+        private UserPointTransactionType() {
+        }
+
+        public static final String SIGN_IN_REWARDS = "sign_in_rewards";
     }
 
     public static class UserStatus {

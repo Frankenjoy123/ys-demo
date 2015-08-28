@@ -3,15 +3,17 @@ package com.yunsoo.api.rabbit.domain;
 import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
-import com.yunsoo.api.rabbit.object.TAccountStatusEnum;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.api.rabbit.security.UserAuthentication;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +24,13 @@ import org.springframework.util.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 个人用户的业务域。
- * This is the User business layer that consumes multi-dataAPI services.
- * Created by Zhe on 2015/3/17.
+ * Created by:   Zhe
+ * Created on:   2015/3/17
+ * Descriptions:
  */
 @Component
 public class UserDomain {
@@ -43,26 +46,45 @@ public class UserDomain {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDomain.class);
 
+
     public UserObject getUserById(String userId) {
         try {
-            return dataAPIClient.get("user/{id}", UserObject.class, userId);
+            return userId != null ? dataAPIClient.get("user/{id}", UserObject.class, userId) : null;
         } catch (NotFoundException ex) {
             return null;
         }
     }
 
-    public List<UserObject> getUsersByPhone(String phone) {
-        return dataAPIClient.get("user?phone={phone}", new ParameterizedTypeReference<List<UserObject>>() {
+    public UserObject getUserByPhone(String phone) {
+        if (StringUtils.isEmpty(phone)) {
+            return null;
+        }
+        List<UserObject> userObjects = dataAPIClient.get("user?phone={phone}", new ParameterizedTypeReference<List<UserObject>>() {
         }, phone);
+        if (userObjects.size() == 0) {
+            return null;
+        } else {
+            return userObjects.get(userObjects.size() - 1);
+        }
     }
 
     public List<UserObject> getUsersByDeviceId(String deviceId) {
+        if (StringUtils.isEmpty(deviceId)) {
+            return new ArrayList<>();
+        }
         return dataAPIClient.get("user?device_id={deviceId}", new ParameterizedTypeReference<List<UserObject>>() {
         }, deviceId);
     }
 
-    public void patchUpdateUser(UserObject user) {
-        dataAPIClient.patch("user/{id}", user, user.getId());
+    public void patchUpdateUser(UserObject userObject) {
+        String userId = userObject.getId();
+        if (!StringUtils.isEmpty(userId)) {
+            //check phone
+            if (userObject.getPhone() != null) {
+                checkPhoneExists(userObject.getPhone());
+            }
+            dataAPIClient.patch("user/{id}", userObject, userId);
+        }
     }
 
     public ResourceInputStream getUserGravatar(String userId, String imageName) {
@@ -86,7 +108,38 @@ public class UserDomain {
         }
     }
 
+    public UserObject createUser(UserObject userObject) {
+        //check phone
+        if (userObject.getPhone() != null) {
+            checkPhoneExists(userObject.getPhone());
+        }
 
+        //create user
+        userObject.setId(null);
+        userObject.setStatusCode(LookupCodes.UserStatus.ENABLED);
+        if (userObject.getPoint() == null || userObject.getPoint() < 0) {
+            userObject.setPoint(0);
+        }
+        userObject.setCreatedDateTime(DateTime.now());
+        UserObject newUserObject = dataAPIClient.post("user", userObject, UserObject.class);
+
+        //force following Yunsu
+        UserOrganizationFollowing userFollowing = new UserOrganizationFollowing();
+        userFollowing.setUserId(newUserObject.getId());
+        userFollowing.setOrgId(Constants.Ids.YUNSU_ORG_ID);
+        userFollowDomain.ensureFollow(userFollowing);
+
+        return newUserObject;
+    }
+
+    private void checkPhoneExists(String phone) {
+        if (getUserByPhone(phone) != null) {
+            throw new ConflictException("phone already registered by another user");
+        }
+    }
+
+
+    @Deprecated
     //call dataAPI to get current User
     public User ensureUser(String userId, String deviceCode, String cellular) {
         User user = null;
@@ -143,23 +196,26 @@ public class UserDomain {
         return null;
     }
 
+    @Deprecated
     //Always create new User
     public User generateDefaultUser() {
         User newUser = new User();
         newUser.setPoint(100);  //set default properties.
-        newUser.setName("求真名"); //default name is the time.
+        newUser.setName("游客");
         newUser.setStatusCode(LookupCodes.UserStatus.ENABLED); //default is enabled
         return newUser;
     }
 
+    @Deprecated
     //Always create new anonymous User
     public User createAnonymousUser(String deviceCode) {
         User newUser = this.generateDefaultUser();
         newUser.setDeviceId(deviceCode);
-        newUser.setStatusCode(TAccountStatusEnum.ENABLED.value());
+        newUser.setStatusCode(LookupCodes.UserStatus.ENABLED);
         return createNewUser(newUser);
     }
 
+    @Deprecated
     //Just create new User - call data-api
     public User createNewUser(User newUser) {
         String id = dataAPIClient.post("user", newUser, String.class); //save user
@@ -173,10 +229,9 @@ public class UserDomain {
         return newUser;
     }
 
-    public Boolean validateToken(String token, String userId) {
-        if (token == null || token.isEmpty()) return false;
-        if (userId == null || userId.isEmpty()) return false;
-        return tokenAuthenticationService.checkIdentity(token, userId, true);
+    public Boolean validateUser(String userId) {
+        UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication();
+        return userAuthentication != null && userAuthentication.getDetails().getId().equals(userId);
     }
 
 }

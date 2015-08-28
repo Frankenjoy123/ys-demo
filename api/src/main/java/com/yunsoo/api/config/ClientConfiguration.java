@@ -17,10 +17,10 @@ import org.springframework.context.annotation.Import;
 @Import(PropertyPlaceholderAutoConfiguration.class)
 public class ClientConfiguration {
 
-    @Value("${yunsoo.api.client.dataapi.baseurl}")
+    @Value("${yunsoo.client.dataapi.baseurl}")
     private String dataAPIBaseUrl;
 
-    @Value("${yunsoo.api.client.processor.baseurl}")
+    @Value("${yunsoo.client.processor.baseurl}")
     private String processorBaseUrl;
 
 

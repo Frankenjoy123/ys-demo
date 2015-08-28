@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ClientConfiguration {
 
-    @Value("${yunsoo.processor.client.dataapi.baseurl}")
+    @Value("${yunsoo.client.dataapi.baseurl}")
     private String dataAPIBaseUrl;
 
 
