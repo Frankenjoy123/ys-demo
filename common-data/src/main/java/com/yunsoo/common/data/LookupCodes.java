@@ -48,6 +48,10 @@ public class LookupCodes {
         private ProductKeyType() {
         }
 
+        public static final String PACKAGE = "package";
+        public static final String QR_PUBLIC = "qr_public";
+        public static final String QR_SECURE = "qr_secure";
+        public static final String RFID = "rfid";
     }
 
     public static class AccountStatus {
