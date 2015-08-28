@@ -109,19 +109,9 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
     @Override
     public void patchUpdate(ProductKeyBatch batch) {
-        ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(batch.getId());
-        if (entity != null) {
-            if (batch.getOrgId() != null) {
-                entity.setOrgId(batch.getOrgId());
-            }
-            if (batch.getProductBaseId() != null) {
-                entity.setProductBaseId(batch.getProductBaseId());
-            }
-            if (batch.getStatusCode() != null) {
-                entity.setStatusCode(batch.getStatusCode());
-            }
-            productKeyBatchRepository.save(entity);
-        }
+        ProductKeyBatchEntity entity = toProductKeyBatchEntity(batch);
+        productKeyBatchRepository.save(entity);
+
     }
 
 
@@ -214,6 +204,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         batch.setCreatedAppId(entity.getCreatedAppId());
         batch.setCreatedAccountId(entity.getCreatedAccountId());
         batch.setCreatedDateTime(entity.getCreatedDateTime());
+        batch.setRestQuantity(entity.getRestQuantity());
         String codes = entity.getProductKeyTypeCodes();
         if (codes != null) {
             batch.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
@@ -235,6 +226,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         entity.setCreatedAppId(batch.getCreatedAppId());
         entity.setCreatedAccountId(batch.getCreatedAccountId());
         entity.setCreatedDateTime(batch.getCreatedDateTime());
+        entity.setRestQuantity(batch.getRestQuantity());
         List<String> codes = batch.getProductKeyTypeCodes();
         if (codes != null) {
             entity.setProductKeyTypeCodes(StringUtils.collectionToDelimitedString(codes, ","));

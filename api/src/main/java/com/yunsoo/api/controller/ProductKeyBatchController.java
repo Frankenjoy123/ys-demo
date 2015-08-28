@@ -145,7 +145,7 @@ public class ProductKeyBatchController {
         batchObj.setCreatedAppId(appId);
         batchObj.setCreatedAccountId(accountId);
         batchObj.setCreatedDateTime(createdDateTime);
-
+        batchObj.setRestQuantity(quantity);
         LOGGER.info("ProductKeyBatch creating started [quantity: {}]", batchObj.getQuantity());
         ProductKeyBatch newBatch = productKeyDomain.createProductKeyBatch(batchObj);
         LOGGER.info("ProductKeyBatch created [id: {}, quantity: {}]", newBatch.getId(), newBatch.getQuantity());
