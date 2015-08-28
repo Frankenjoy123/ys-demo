@@ -12,6 +12,7 @@ import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.UserScanRecordObject;
 import com.yunsoo.common.util.DateTimeUtils;
+import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -77,25 +78,21 @@ public class ScanController {
 
     //能够访问所有的Key,为移动客户端调用，因此每次Scan都save扫描记录。
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ScanResult getDetail(@RequestHeader(value = Constants.HttpHeaderName.OLD_ACCESS_TOKEN, required = false) String accessToken,
+    public ScanResult getDetail(@RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
+                                @RequestHeader(value = Constants.HttpHeaderName.OLD_ACCESS_TOKEN, required = false) String oldAccessToken,
                                 @RequestBody ScanRequestBody scanRequestBody) {
-        //0，validate input
+        //validate input
         scanRequestBody.validateForScan();
 
-        //1, get user
-        String userId = null;
-        UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication(accessToken);
-        if (userAuthentication != null) {
-            userId = userAuthentication.getDetails().getId();
-        } else {
-            userId = Constants.Ids.ANONYMOUS_USER_ID;
-        }
+        //1. get user
+        UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication(accessToken != null ? accessToken : oldAccessToken);
+        String userId = userAuthentication != null ? userAuthentication.getDetails().getId() : Constants.Ids.ANONYMOUS_USER_ID;
 
         ScanResult scanResult = new ScanResult();
         scanResult.setUserId(userId);
         scanResult.setKey(scanRequestBody.getKey());
 
-        //2, set product information
+        //2. set product information
         Product currentExistProduct = productDomain.getProductByKey(scanRequestBody.getKey());
         if (currentExistProduct == null) {
             //Not found by the product Key
@@ -105,7 +102,7 @@ public class ScanController {
         }
         scanResult.setProduct(currentExistProduct);
 
-        //3, set if user liked this product
+        //3. set if user liked this product
         UserLikedProduct userLikedProduct = this.userLikedProductDomain.getUserLikedProduct(userId, currentExistProduct.getProductBaseId());
         if (userLikedProduct != null) {
             scanResult.setLiked_product(userLikedProduct.getActive());
@@ -113,21 +110,21 @@ public class ScanController {
             scanResult.setLiked_product(false);
         }
 
-        //4, retrieve scan records
+        //4. retrieve scan records
         List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByProductKey(scanRequestBody.getKey(), new PageRequest(0, 20))
                 .map(ScanRecord::new)
                 .getContent();
         scanResult.setScanRecordList(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
-        //5, retrieve logistics information
+        //5. retrieve logistics information
         scanResult.setLogisticsList(getLogisticsInfo(scanRequestBody.getKey()));
 
-        //6, get company information.
+        //6. get company information.
         OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, scanResult.getProduct().getOrgId());
         scanResult.setManufacturer(new Organization(organizationObject));
 
-        //7，ensure user following the company, and set the followed status in result.
+        //7. ensure user following the company, and set the followed status in result.
         UserOrganizationFollowing userFollowing = new UserOrganizationFollowing();
         userFollowing.setUserId(userId);
         userFollowing.setOrgId(organizationObject.getId());
@@ -139,33 +136,33 @@ public class ScanController {
             scanResult.setFollowed_org(false);
         }
 
-        //7.2, ensure user following the product
+        //7.2. ensure user following the product
         UserProductFollowing userProductFollowing = new UserProductFollowing();
         userProductFollowing.setUserId(userId);
         userProductFollowing.setProductId(currentExistProduct.getProductBaseId());
         userFollowDomain.ensureFollow(userProductFollowing);
 
-        //8, set validation result by our validation strategy.
+        //8. set validation result by our validation strategy.
         scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), userId, scanRecordList));
 
-        //9, save scan Record
-        long scanSave = SaveScanRecord(userId, currentExistProduct, scanRequestBody);
+        //9. save scan Record
+        saveScanRecord(userId, currentExistProduct, scanRequestBody);
+
         return scanResult;
     }
 
     //能够访问所有的Key,为WebScan调用，因此每次Scan都!!不会save扫描记录。
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
     public ScanResult getDetailWithoutSaveScanRecord(@PathVariable(value = "key") String key) {
-
-        //1，validate input
-        if (key == null || key.isEmpty()) {
-            throw new BadRequestException("Key不能为空！");
+        //1. validate input
+        if (!KeyGenerator.validate(key)) {
+            throw new BadRequestException("key not valid");
         }
 
         ScanResult scanResult = new ScanResult();
         scanResult.setKey(key);
 
-        //2, set product information
+        //2. set product information
         Product currentExistProduct = productDomain.getProductByKey(key);
         if (currentExistProduct == null) {
             //Not found by the product Key
@@ -175,21 +172,21 @@ public class ScanController {
         }
         scanResult.setProduct(currentExistProduct);
 
-        //3, retrieve scan records
+        //3. retrieve scan records
         List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByProductKey(key, new PageRequest(0, 20))
                 .map(ScanRecord::new)
                 .getContent();
         scanResult.setScanRecordList(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
-        //4, retrieve logistics information
+        //4. retrieve logistics information
         scanResult.setLogisticsList(getLogisticsInfo(key));
 
-        //5, get company information.
+        //5. get company information.
         OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, scanResult.getProduct().getOrgId());
         scanResult.setManufacturer(new Organization(organizationObject));
 
-        //6, set validation result by our validation strategy.
+        //6. set validation result by our validation strategy.
         scanResult.setValidationResult(scanRecordList.size() == 0 ? ValidationResult.Real : ValidationResult.Uncertain);
 
         return scanResult;
@@ -337,7 +334,7 @@ public class ScanController {
         return logisticsList;
     }
 
-    private long SaveScanRecord(String userId, Product currentProduct, ScanRequestBody scanRequestBody) {
+    private UserScanRecordObject saveScanRecord(String userId, Product currentProduct, ScanRequestBody scanRequestBody) {
         UserScanRecordObject scanRecord = new UserScanRecordObject();
         scanRecord.setUserId(userId);
         scanRecord.setDeviceId(scanRequestBody.getDeviceCode());
@@ -355,12 +352,11 @@ public class ScanController {
         }
         scanRecord.setLongitude(scanRequestBody.getLongitude());
         scanRecord.setLatitude(scanRequestBody.getLatitude());
-        if (scanRequestBody.getLocation() != null && !scanRequestBody.getLocation().isEmpty()) {
+        if (!StringUtils.isEmpty(scanRequestBody.getLocation())) {
             scanRecord.setLocation(scanRequestBody.getLocation());
-        } else {
-            scanRecord.setLocation("Address:未公开;"); //用户选择不公开隐私地址信息
         }
-        return dataAPIClient.post("scan", scanRecord, long.class);
+
+        return scanDomain.createScanRecord(scanRecord);
     }
 
     private void fillProductInfo(List<ScanRecord> scanRecords) {

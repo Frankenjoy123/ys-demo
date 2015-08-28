@@ -85,7 +85,7 @@ public class ScanRequestBody {
             throw new BadRequestException("Key不能为空！");
         }
         if (deviceCode == null || deviceCode.isEmpty()) {
-            throw new BadRequestException("需要指定device_code！");
+            throw new BadRequestException("需要指定device_id！");
         }
         return true;
     }

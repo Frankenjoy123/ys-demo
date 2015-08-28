@@ -41,9 +41,8 @@ public class ScanDomain {
                 .append("product_key", productKey)
                 .append(pageable)
                 .build();
-        Page<UserScanRecordObject> page = dataAPIClient.getPaged("UserScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
+        return dataAPIClient.getPaged("UserScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
         });
-        return page;
     }
 
     /**
@@ -57,9 +56,8 @@ public class ScanDomain {
                 .append("user_id", userId)
                 .append(pageable)
                 .build();
-        Page<UserScanRecordObject> page = dataAPIClient.getPaged("UserScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
+        return dataAPIClient.getPaged("UserScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
         });
-        return page;
     }
 
 }
