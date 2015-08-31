@@ -70,6 +70,16 @@ public class ProductSalesTerritoryController {
                 .collect(Collectors.toList());
     }
 
+    //delete
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable(value = "id") String id) {
+        ProductSalesTerritoryEntity entity = productSalesTerritoryRepository.findOne(id);
+        if (entity != null) {
+            productSalesTerritoryRepository.delete(id);
+        }
+    }
+
     private ProductSalesTerritoryObject toProductSalesTerritoryObject(ProductSalesTerritoryEntity entity) {
         if (entity == null) {
             return null;

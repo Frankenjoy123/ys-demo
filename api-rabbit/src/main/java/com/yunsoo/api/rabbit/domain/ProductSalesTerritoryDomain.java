@@ -43,4 +43,8 @@ public class ProductSalesTerritoryDomain {
         dataAPIClient.put("productsalesterritory/{id}", productSalesTerritoryObject, productSalesTerritoryObject.getId());
     }
 
+    public void deleteProductSalesTerritory(String id) {
+        dataAPIClient.delete("productsalesterritory/{id}", id);
+    }
+
 }

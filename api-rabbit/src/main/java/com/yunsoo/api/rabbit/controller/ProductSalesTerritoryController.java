@@ -74,6 +74,16 @@ public class ProductSalesTerritoryController {
         return productSalesTerritoryDomain.createProductSalesTerritory(productSalesTerritoryObject);
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    public void deleteProductSalesTerritoryById(@PathVariable(value = "id") String id) {
+        ProductSalesTerritoryObject object = productSalesTerritoryDomain.getProductSalesTerritoryById(id);
+        if (object == null) {
+            throw new NotFoundException("product comment not found by [id: " + id + "]");
+        }
+        productSalesTerritoryDomain.deleteProductSalesTerritory(id);
+    }
+
+
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public void updateProductSalesTerritory(@PathVariable(value = "id") String id,
                                             @RequestBody ProductSalesTerritory productSalesTerritory) {
