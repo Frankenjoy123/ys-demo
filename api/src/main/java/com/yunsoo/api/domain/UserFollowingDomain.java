@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ public class UserFollowingDomain {
         }
 
         List<User> userList = dataAPIClient.get("/user?id_in={ids}", new ParameterizedTypeReference<List<User>>() {
-        }, userIds.toArray());
+        }, StringUtils.arrayToCommaDelimitedString(userIds.toArray()));
 
         return new Page<User>(userList, userFollowingList.getPage(), userFollowingList.getTotal());
     }
@@ -60,7 +61,7 @@ public class UserFollowingDomain {
         }
 
         List<User> userList = dataAPIClient.get("/user?id_in={ids}", new ParameterizedTypeReference<List<User>>() {
-        }, userIds.toArray());
+        }, StringUtils.arrayToCommaDelimitedString(userIds.toArray()));
 
         return new Page<User>(userList, userFollowingList.getPage(), userFollowingList.getTotal());
     }
@@ -68,6 +69,6 @@ public class UserFollowingDomain {
 
 
     public Map<String, Long> getProductFollowingTotalNumber(List<String> productBaseIds) {
-        return dataAPIClient.get("userproduct/following/count/{productBaseIds}", new ParameterizedTypeReference<Map<String, Long>>(){}, productBaseIds);
+        return dataAPIClient.get("userproduct/following/count/{productBaseIds}", new ParameterizedTypeReference<Map<String, Long>>(){}, StringUtils.arrayToCommaDelimitedString(productBaseIds.toArray()));
     }
 }

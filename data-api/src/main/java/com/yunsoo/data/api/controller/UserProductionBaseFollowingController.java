@@ -101,7 +101,7 @@ public class UserProductionBaseFollowingController {
 
 
     @RequestMapping(value = "/count/{ids}", method = RequestMethod.GET)
-    public Map<String, Long> getCommentsNumberByProductBaseIds(@PathVariable(value = "ids") List<String> productBaseIds) {
+    public Map<String, Long> getFollowingsNumberByProductBaseIds(@PathVariable(value = "ids") List<String> productBaseIds) {
         Map<String, Long> resultMap = new HashMap<String, Long>();
         productBaseIds.forEach(id->{
             resultMap.put(id,userProductBaseFollowingRepository.countByProductBaseId(id));
