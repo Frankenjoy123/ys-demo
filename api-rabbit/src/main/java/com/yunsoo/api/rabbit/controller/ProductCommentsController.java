@@ -83,6 +83,16 @@ public class ProductCommentsController {
         return productCommentsDomain.createProductComments(productCommentsObject);
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    public void deleteProductCommentsById(@PathVariable(value = "id") String id) {
+        ProductCommentsObject object = productCommentsDomain.getById(id);
+        if (object == null) {
+            throw new NotFoundException("product comment not found by [id: " + id + "]");
+        }
+        productCommentsDomain.deleteProductComments(id);
+    }
+
+
     @RequestMapping(value = "/count/{id}", method = RequestMethod.GET)
     public Long getCommentsNumberByProductBaseId(@PathVariable(value = "id") String productBaseId) {
         return productCommentsDomain.getProductCommentsNumber(productBaseId);

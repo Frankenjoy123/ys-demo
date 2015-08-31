@@ -50,4 +50,8 @@ public class ProductCommentsDomain {
         return dataAPIClient.get("productcomments/count/{productBaseId}", Long.class, productBaseId);
     }
 
+    public void deleteProductComments(String id) {
+        dataAPIClient.delete("productcomments/{id}", id);
+    }
+
 }
