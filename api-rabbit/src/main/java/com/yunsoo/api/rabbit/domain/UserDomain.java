@@ -218,12 +218,12 @@ public class UserDomain {
     @Deprecated
     //Just create new User - call data-api
     public User createNewUser(User newUser) {
-        String id = dataAPIClient.post("user", newUser, String.class); //save user
-        newUser.setId(id);
+        UserObject userObject = dataAPIClient.post("user", newUser, UserObject.class); //save user
+        newUser.setId(userObject.getId());
 
         //force following 云溯科技
         UserOrganizationFollowing userFollowing = new UserOrganizationFollowing();
-        userFollowing.setUserId(id);
+        userFollowing.setUserId(userObject.getId());
         userFollowing.setOrgId(Constants.Ids.YUNSU_ORG_ID); //get Yunsu's orgID
         userFollowDomain.ensureFollow(userFollowing);
         return newUser;
