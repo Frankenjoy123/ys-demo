@@ -94,6 +94,8 @@ public class ProductSalesTerritory {
         this.modifiedDateTime = modifiedDateTime;
     }
 
+    public ProductSalesTerritory() {
+    }
     public ProductSalesTerritory(ProductSalesTerritoryObject object) {
         if (object != null) {
             this.setId(object.getId());

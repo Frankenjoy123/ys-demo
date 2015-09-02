@@ -2,6 +2,7 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.ProductSalesTerritoryObject;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.ProductSalesTerritoryEntity;
 import com.yunsoo.data.service.repository.ProductSalesTerritoryRepository;
 import org.joda.time.DateTime;
@@ -70,6 +71,13 @@ public class ProductSalesTerritoryController {
                 .collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public ProductSalesTerritoryObject getById(@PathVariable String id) {
+        ProductSalesTerritoryEntity entity = findById(id);
+        return toProductSalesTerritoryObject(entity);
+    }
+
+
     //delete
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -79,6 +87,15 @@ public class ProductSalesTerritoryController {
             productSalesTerritoryRepository.delete(id);
         }
     }
+
+    private ProductSalesTerritoryEntity findById(String id) {
+        ProductSalesTerritoryEntity entity = productSalesTerritoryRepository.findOne(id);
+        if (entity == null) {
+            throw new NotFoundException("product comments not found by [id: " + id + ']');
+        }
+        return entity;
+    }
+
 
     private ProductSalesTerritoryObject toProductSalesTerritoryObject(ProductSalesTerritoryEntity entity) {
         if (entity == null) {

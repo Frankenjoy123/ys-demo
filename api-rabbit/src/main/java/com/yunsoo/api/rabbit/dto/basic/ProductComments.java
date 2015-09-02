@@ -84,6 +84,9 @@ public class ProductComments {
         this.createdDateTime = createdDateTime;
     }
 
+    public ProductComments() {
+    }
+
     public ProductComments(ProductCommentsObject object) {
         if (object != null) {
             this.setId(object.getId());
