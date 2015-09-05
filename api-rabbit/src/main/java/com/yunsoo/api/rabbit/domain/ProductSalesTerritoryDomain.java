@@ -26,9 +26,9 @@ public class ProductSalesTerritoryDomain {
         }, productKey);
     }
 
-    public List<ProductSalesTerritoryObject> getProductSalesTerritoryByLocationId(String locationId) {
-        return dataAPIClient.get("productsalesterritory?location_id={locationId}", new ParameterizedTypeReference<List<ProductSalesTerritoryObject>>() {
-        }, locationId);
+    public List<ProductSalesTerritoryObject> getProductSalesTerritoryByOrgAgencyId(String orgAgencyId) {
+        return dataAPIClient.get("productsalesterritory?org_agency_id={orgAgencyId}", new ParameterizedTypeReference<List<ProductSalesTerritoryObject>>() {
+        }, orgAgencyId);
     }
 
     public ProductSalesTerritoryObject getProductSalesTerritoryById(String id) {

@@ -19,8 +19,8 @@ public class ProductSalesTerritory {
     @JsonProperty("product_key")
     private String productKey;
 
-    @JsonProperty("location_id")
-    private String locationId;
+    @JsonProperty("org_agency_id")
+    private String orgAgencyId;
 
     @JsonProperty("created_account_id")
     private String createdAccountId;
@@ -54,12 +54,12 @@ public class ProductSalesTerritory {
         this.productKey = productKey;
     }
 
-    public String getLocationId() {
-        return locationId;
+    public String getOrgAgencyId() {
+        return orgAgencyId;
     }
 
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
+    public void setOrgAgencyId(String orgAgencyId) {
+        this.orgAgencyId = orgAgencyId;
     }
 
     public String getCreatedAccountId() {
@@ -100,7 +100,7 @@ public class ProductSalesTerritory {
         if (object != null) {
             this.setId(object.getId());
             this.setProductKey(object.getProductKey());
-            this.setLocationId(object.getLocationId());
+            this.setOrgAgencyId(object.getOrgAgencyId());
             this.setCreatedAccountId(object.getCreatedAccountId());
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
@@ -112,7 +112,7 @@ public class ProductSalesTerritory {
         ProductSalesTerritoryObject object = new ProductSalesTerritoryObject();
         object.setId(this.getId());
         object.setProductKey(this.getProductKey());
-        object.setLocationId(this.getLocationId());
+        object.setOrgAgencyId(this.getOrgAgencyId());
         object.setCreatedAccountId(this.getCreatedAccountId());
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());

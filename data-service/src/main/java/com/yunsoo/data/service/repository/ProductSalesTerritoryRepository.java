@@ -14,7 +14,7 @@ public interface ProductSalesTerritoryRepository extends FindOneAndSaveRepositor
 
     List<ProductSalesTerritoryEntity> findByProductKey(String productKey);
 
-    List<ProductSalesTerritoryEntity> findByLocationId(String locationId);
+    List<ProductSalesTerritoryEntity> findByOrgAgencyId(String orgAgencyId);
 
 
     void delete(String id);

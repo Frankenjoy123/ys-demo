@@ -33,15 +33,15 @@ public class ProductSalesTerritoryController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductSalesTerritory> getProductSalesTerritoryByFilter(@RequestParam(value = "product_key", required = false) String productKey,
-                                                                        @RequestParam(value = "location_id", required = false) String locationId) {
+                                                                        @RequestParam(value = "org_agency_id", required = false) String orgAgencyId) {
 
         List<ProductSalesTerritoryObject> productSalesTerritoryObjects;
         if (!StringUtils.isEmpty(productKey)) {
             productSalesTerritoryObjects = productSalesTerritoryDomain.getProductSalesTerritoryByProductKey(productKey);
-        } else if (!StringUtils.isEmpty(locationId)) {
-            productSalesTerritoryObjects = productSalesTerritoryDomain.getProductSalesTerritoryByLocationId(locationId);
+        } else if (!StringUtils.isEmpty(orgAgencyId)) {
+            productSalesTerritoryObjects = productSalesTerritoryDomain.getProductSalesTerritoryByOrgAgencyId(orgAgencyId);
         } else {
-            throw new BadRequestException("at least need one filter parameter of product_key or location_id");
+            throw new BadRequestException("at least need one filter parameter of product_key or org_agency_id");
         }
         return productSalesTerritoryObjects.stream().map(ProductSalesTerritory::new).collect(Collectors.toList());
     }
@@ -63,7 +63,7 @@ public class ProductSalesTerritoryController {
         }
         ProductSalesTerritoryObject productSalesTerritoryObject = new ProductSalesTerritoryObject();
         productSalesTerritoryObject.setProductKey(productSalesTerritory.getProductKey());
-        productSalesTerritoryObject.setLocationId(productSalesTerritory.getLocationId());
+        productSalesTerritoryObject.setOrgAgencyId(productSalesTerritory.getOrgAgencyId());
         if (productSalesTerritory.getCreatedAccountId() == null) {
             String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
             productSalesTerritoryObject.setCreatedAccountId(currentAccountId);
@@ -94,7 +94,7 @@ public class ProductSalesTerritoryController {
         }
 
         productSalesTerritoryObject.setProductKey(productSalesTerritory.getProductKey());
-        productSalesTerritoryObject.setLocationId(productSalesTerritory.getLocationId());
+        productSalesTerritoryObject.setOrgAgencyId(productSalesTerritory.getOrgAgencyId());
         if (productSalesTerritory.getModifiedAccountId() == null) {
             String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
             productSalesTerritoryObject.setModifiedAccountId(currentAccountId);

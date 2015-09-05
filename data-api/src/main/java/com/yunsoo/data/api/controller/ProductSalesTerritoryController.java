@@ -56,15 +56,15 @@ public class ProductSalesTerritoryController {
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductSalesTerritoryObject> getByFilter(@RequestParam(value = "product_key", required = false) String productKey,
-                                                         @RequestParam(value = "location_id", required = false) String locationId) {
+                                                         @RequestParam(value = "org_agency_id", required = false) String orgAgencyId) {
         List<ProductSalesTerritoryEntity> productSalesTerritoryEntities = new ArrayList<ProductSalesTerritoryEntity>();
-        if ((productKey == null) && (locationId == null)) {
-            throw new BadRequestException("at least need one filter parameter [product_key, location_id]");
+        if ((productKey == null) && (orgAgencyId == null)) {
+            throw new BadRequestException("at least need one filter parameter [product_key, org_agency_id]");
         }
         if ((productKey != null) && !StringUtils.isEmpty(productKey)) {
             productSalesTerritoryEntities = productSalesTerritoryRepository.findByProductKey(productKey);
-        } else if ((locationId != null) && !StringUtils.isEmpty(locationId)) {
-            productSalesTerritoryEntities = productSalesTerritoryRepository.findByLocationId(locationId);
+        } else if ((orgAgencyId != null) && !StringUtils.isEmpty(orgAgencyId)) {
+            productSalesTerritoryEntities = productSalesTerritoryRepository.findByOrgAgencyId(orgAgencyId);
         }
         return productSalesTerritoryEntities.stream()
                 .map(this::toProductSalesTerritoryObject)
@@ -104,7 +104,7 @@ public class ProductSalesTerritoryController {
         ProductSalesTerritoryObject object = new ProductSalesTerritoryObject();
         object.setId(entity.getId());
         object.setProductKey(entity.getProductKey());
-        object.setLocationId(entity.getLocationId());
+        object.setOrgAgencyId(entity.getOrgAgencyId());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
@@ -119,7 +119,7 @@ public class ProductSalesTerritoryController {
         ProductSalesTerritoryEntity entity = new ProductSalesTerritoryEntity();
         entity.setId(object.getId());
         entity.setProductKey(object.getProductKey());
-        entity.setLocationId(object.getLocationId());
+        entity.setOrgAgencyId(object.getOrgAgencyId());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
