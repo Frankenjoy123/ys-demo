@@ -24,7 +24,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -216,101 +215,6 @@ public class ScanController {
         return scanRecords;
     }
 
-    @Deprecated
-    @RequestMapping(value = "/history/user/{userId}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
-//    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
-    public List<ScanRecord> getUserScanRecordsByFilter(
-            @PathVariable(value = "userId") String userId,
-            @PathVariable(value = "pageIndex") Integer pageIndex,
-            @PathVariable(value = "pageSize") Integer pageSize) {
-
-        //验证输入参数
-        if (userId == null || userId.isEmpty()) {
-            throw new BadRequestException(40001, "用户ID不应为空！");
-        }
-        if (pageIndex == null) {
-            pageIndex = 0;
-        }
-        if (pageSize == null) {
-            pageSize = 10;
-        }
-        if (pageIndex < 0) {
-            throw new BadRequestException("pageIndex不应小于0！");
-        }
-        if (pageSize <= 0) {
-            throw new BadRequestException("PageSize不应小于等于0！");
-        }
-
-        List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByUserId(userId, new PageRequest(pageIndex, pageSize))
-                .map(ScanRecord::new)
-                .getContent();
-        this.fillProductInfo(scanRecordList);
-        return scanRecordList;
-    }
-
-    @Deprecated
-    @RequestMapping(value = "/searchback/{isbackward}/user/{userId}/from/{Id}/paging/{pageIndex}/{pageSize}", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
-    public List<ScanRecord> getUserScanRecordsByFilter(
-            @PathVariable(value = "Id") Long Id,
-            @PathVariable(value = "userId") String userId,
-            @PathVariable(value = "isbackward") Boolean isbackward,
-            @PathVariable(value = "pageIndex") Integer pageIndex,
-            @PathVariable(value = "pageSize") Integer pageSize) {
-
-        //验证输入参数
-        if (userId == null || userId.isEmpty()) {
-            throw new BadRequestException(40001, "用户ID不应为空！");
-        }
-        if (Id == null || Id <= 0) {
-            Id = 0L; //default value
-        }
-        if (isbackward == null) {
-            throw new BadRequestException(40001, "isbackward未赋值！");
-        }
-        if (pageIndex == null) {
-            pageIndex = 0;
-        }
-        if (pageSize == null) {
-            pageSize = 10;
-        }
-        if (pageIndex < 0) {
-            throw new BadRequestException("pageIndex不应小于0！");
-        }
-        if (pageSize <= 0) {
-            throw new BadRequestException("PageSize不应小于等于0！");
-        }
-
-        List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByUserId(userId, new PageRequest(pageIndex, pageSize))
-                .map(ScanRecord::new)
-                .getContent();
-        this.fillProductInfo(scanRecordList);
-        return scanRecordList;
-    }
-
-    @Deprecated
-    @RequestMapping(value = "/record/{key}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
-//    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
-    public List<ScanRecord> getScanRecordsByFilter(
-            @PathVariable(value = "key") String key,
-            @PathVariable(value = "pageIndex") Integer pageIndex,
-            @PathVariable(value = "pageSize") Integer pageSize) {
-
-        //验证输入参数
-        if (key.isEmpty()) {
-            throw new BadRequestException(40001, "Key不应为空！");
-        }
-        if (pageIndex < 0) {
-            throw new BadRequestException("pageIndex不应小于0！");
-        }
-        if (pageSize <= 0) {
-            throw new BadRequestException("PageSize不应小于等于0！");
-        }
-
-        return scanDomain.getScanRecordsByProductKey(key, new PageRequest(pageIndex, pageSize))
-                .map(ScanRecord::new)
-                .getContent();
-    }
 
     private List<Logistics> getLogisticsInfo(String key) {
         List<LogisticsPath> logisticsPaths;

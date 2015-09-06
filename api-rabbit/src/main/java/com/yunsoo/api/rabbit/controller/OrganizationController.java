@@ -26,24 +26,12 @@ public class OrganizationController {
     private OrganizationDomain organizationDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public Organization getOrganizationById(@PathVariable(value = "id") String id) {
+    public Organization getById(@PathVariable(value = "id") String id) {
         OrganizationObject object = organizationDomain.getById(id);
         if (object == null) {
             throw new NotFoundException("organization not found by [id: " + id + "]");
         }
         return new Organization(object);
-    }
-
-    @Deprecated //todo: to be removed, replace by getLogo
-    @RequestMapping(value = "/{id}/{imageKey}", method = RequestMethod.GET)
-    public ResponseEntity<?> getThumbnail(
-            @PathVariable(value = "id") String id,
-            @PathVariable(value = "imageKey") String imageKey) {
-        String imageName = "image-128x128"; //hard coded, this method should not be used anymore
-        if ("logo-mobile".equals(imageKey)) {
-            imageName = "image-200x200";
-        }
-        return getLogo(id, imageName);
     }
 
     @RequestMapping(value = "{id}/logo/{imageName}", method = RequestMethod.GET)

@@ -31,9 +31,20 @@ public class ProductSalesTerritoryController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
+
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public ProductSalesTerritory getProductSalesTerritoryById(@PathVariable(value = "id") String id) {
+        ProductSalesTerritoryObject object = productSalesTerritoryDomain.getProductSalesTerritoryById(id);
+        if (object == null) {
+            throw new NotFoundException("product sales territory not found by [id: " + id + "]");
+        }
+        return new ProductSalesTerritory(object);
+    }
+
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductSalesTerritory> getProductSalesTerritoryByFilter(@RequestParam(value = "product_key", required = false) String productKey,
-                                                                        @RequestParam(value = "org_agency_id", required = false) String orgAgencyId) {
+    public List<ProductSalesTerritory> getProductSalesTerritoryByFilter(
+            @RequestParam(value = "product_key", required = false) String productKey,
+            @RequestParam(value = "org_agency_id", required = false) String orgAgencyId) {
 
         List<ProductSalesTerritoryObject> productSalesTerritoryObjects;
         if (!StringUtils.isEmpty(productKey)) {
@@ -44,15 +55,6 @@ public class ProductSalesTerritoryController {
             throw new BadRequestException("at least need one filter parameter of product_key or org_agency_id");
         }
         return productSalesTerritoryObjects.stream().map(ProductSalesTerritory::new).collect(Collectors.toList());
-    }
-
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ProductSalesTerritory getProductSalesTerritoryById(@PathVariable(value = "id") String id) {
-        ProductSalesTerritoryObject object = productSalesTerritoryDomain.getProductSalesTerritoryById(id);
-        if (object == null) {
-            throw new NotFoundException("product sales territory not found by [id: " + id + "]");
-        }
-        return new ProductSalesTerritory(object);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -84,7 +86,7 @@ public class ProductSalesTerritoryController {
     }
 
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public void updateProductSalesTerritory(@PathVariable(value = "id") String id,
                                             @RequestBody ProductSalesTerritory productSalesTerritory) {
 
