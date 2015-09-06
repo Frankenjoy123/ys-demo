@@ -1,6 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.OrgAgencyDomain;
+import com.yunsoo.api.dto.Location;
 import com.yunsoo.api.dto.OrgAgency;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Haitao
@@ -65,6 +67,13 @@ public class OrgAgencyController {
         }).getContent();
 
         return orgAgencys;
+    }
+
+    //query locations
+    @RequestMapping(value = "location", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'orgagency:read')")
+    public List<Location> getLocationsByFilter(@RequestParam(value = "parent_id", required = false) String parentId) {
+        return orgAgencyDomain.getLocationsByFilter(parentId).stream().map(Location::new).collect(Collectors.toList());
     }
 
     //create organization agency

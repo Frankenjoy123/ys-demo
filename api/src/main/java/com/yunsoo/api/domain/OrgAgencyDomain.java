@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.common.data.object.LocationObject;
 import com.yunsoo.common.data.object.OrgAgencyObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
@@ -41,6 +42,15 @@ public class OrgAgencyDomain {
         return dataAPIClient.getPaged("organizationagency" + query, new ParameterizedTypeReference<List<OrgAgencyObject>>() {
         });
     }
+
+    public List<LocationObject> getLocationsByFilter(String parentId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("parent_id", parentId)
+                .build();
+        return dataAPIClient.get("organizationagency/location" + query, new ParameterizedTypeReference<List<LocationObject>>() {
+        });
+    }
+
 
     public OrgAgencyObject createOrgAgency(OrgAgencyObject orgAgencyObject) {
         orgAgencyObject.setId(null);
