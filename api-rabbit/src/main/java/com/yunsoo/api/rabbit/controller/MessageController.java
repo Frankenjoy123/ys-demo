@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Zhe on 2015/3/9.
@@ -37,6 +37,13 @@ public class MessageController {
         Message message = new Message(messageObject);
         message.setDetails(messageDomain.getMessageDetails(messageObject.getOrgId(), id));
         return message;
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<Message> getMessagesByFilter(@RequestParam(value = "org_id", required = true) String orgId) {
+        List<MessageObject> messageObjects = messageDomain.getMessageByOrgId(orgId);
+        List<Message> messages = messageObjects.stream().map(Message::new).collect(Collectors.toList());
+        return messages;
     }
 
     @RequestMapping(value = "{id}/image/{image_name}", method = RequestMethod.GET)
