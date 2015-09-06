@@ -5,38 +5,33 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.UserOrganizationFollowingObject;
 import org.joda.time.DateTime;
 
 /**
- * Created by Zhe on 2015/4/21.
+ * Created by:   Zhe
+ * Created on:   2015/4/21
+ * Descriptions:
  */
 public class UserOrganizationFollowing {
-    @JsonProperty("id")
-    private String id;
+
     @JsonProperty("user_id")
     private String userId;
+
     @JsonProperty("org_id")
     private String orgId;
+
     @JsonProperty("org_name")
     private String orgName;
+
     @JsonProperty("org_desc")
-    private String orgDescription;
-    @JsonProperty("last_read_message_id")
-    private Long lastReadMessageId;
+    private String orgDesc;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getUserId() {
         return userId;
@@ -62,20 +57,12 @@ public class UserOrganizationFollowing {
         this.orgName = orgName;
     }
 
-    public String getOrgDescription() {
-        return orgDescription;
+    public String getOrgDesc() {
+        return orgDesc;
     }
 
-    public void setOrgDescription(String orgDescription) {
-        this.orgDescription = orgDescription;
-    }
-
-    public Long getLastReadMessageId() {
-        return lastReadMessageId;
-    }
-
-    public void setLastReadMessageId(Long lastReadMessageId) {
-        this.lastReadMessageId = lastReadMessageId;
+    public void setOrgDesc(String orgDesc) {
+        this.orgDesc = orgDesc;
     }
 
     public DateTime getCreatedDateTime() {
@@ -86,4 +73,15 @@ public class UserOrganizationFollowing {
         this.createdDateTime = createdDateTime;
     }
 
+
+    public UserOrganizationFollowing() {
+    }
+
+    public UserOrganizationFollowing(UserOrganizationFollowingObject object) {
+        if (object != null) {
+            this.userId = object.getUserId();
+            this.orgId = object.getOrgId();
+            this.createdDateTime = object.getCreatedDateTime();
+        }
+    }
 }

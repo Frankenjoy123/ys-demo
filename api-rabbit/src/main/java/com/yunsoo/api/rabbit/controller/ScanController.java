@@ -123,23 +123,15 @@ public class ScanController {
         OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, scanResult.getProduct().getOrgId());
         scanResult.setManufacturer(new Organization(organizationObject));
 
-        //7. ensure user following the company, and set the followed status in result.
-        UserOrganizationFollowing userFollowing = new UserOrganizationFollowing();
-        userFollowing.setUserId(userId);
-        userFollowing.setOrgId(organizationObject.getId());
-        userFollowDomain.ensureFollow(userFollowing);
-        UserOrganizationFollowing userFollowingResult = userFollowDomain.getUserOrganizationFollowing(userId, organizationObject.getId());
-        if (userFollowingResult != null) {
+        //7.1 ensure user following the company, and set the followed status in result.
+        if (userFollowDomain.ensureUserOrganizationFollowing(userId, organizationObject.getId()) != null) {
             scanResult.setFollowed_org(true);
         } else {
             scanResult.setFollowed_org(false);
         }
 
         //7.2. ensure user following the product
-        UserProductFollowing userProductFollowing = new UserProductFollowing();
-        userProductFollowing.setUserId(userId);
-        userProductFollowing.setProductId(currentExistProduct.getProductBaseId());
-        userFollowDomain.ensureFollow(userProductFollowing);
+        userFollowDomain.ensureUserProductFollowing(userId, currentExistProduct.getProductBaseId());
 
         //8. set validation result by our validation strategy.
         scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), userId, scanRecordList));
@@ -225,7 +217,7 @@ public class ScanController {
             return null;
         }
 
-        List<Logistics> logisticsList = new ArrayList<Logistics>();
+        List<Logistics> logisticsList = new ArrayList<>();
         for (LogisticsPath path : logisticsPaths) {
             Logistics logistics = new Logistics();
             logistics.setOrgId(path.getStartCheckPointObject().getOrgId());

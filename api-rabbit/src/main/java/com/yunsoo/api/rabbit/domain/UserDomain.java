@@ -1,8 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.Constants;
-import com.yunsoo.api.rabbit.dto.User;
-import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.api.rabbit.security.UserAuthentication;
 import com.yunsoo.common.data.LookupCodes;
@@ -124,109 +122,9 @@ public class UserDomain {
         UserObject newUserObject = dataAPIClient.post("user", userObject, UserObject.class);
 
         //force following Yunsu
-        UserOrganizationFollowing userFollowing = new UserOrganizationFollowing();
-        userFollowing.setUserId(newUserObject.getId());
-        userFollowing.setOrgId(Constants.Ids.YUNSU_ORG_ID);
-        userFollowDomain.ensureFollow(userFollowing);
+        userFollowDomain.ensureUserOrganizationFollowing(newUserObject.getId(), Constants.Ids.YUNSU_ORG_ID);
 
         return newUserObject;
-    }
-
-    private void checkPhoneExists(String phone) {
-        if (getUserByPhone(phone) != null) {
-            throw new ConflictException("phone already registered by another user");
-        }
-    }
-
-
-    @Deprecated
-    //call dataAPI to get current User
-    public User ensureUser(String userId, String deviceCode, String cellular) {
-        User user = null;
-        //Step 1: try ensure user by cellphone!
-        if (!StringUtils.isEmpty(cellular)) {
-            try {
-                user = dataAPIClient.get("user/cellular/{cellular}", User.class, cellular);
-                if (user != null) {
-                    //update device code if has new value. e.g. : rebind cellphone to new device
-                    if (deviceCode != null && !deviceCode.equals(user.getDeviceId())) {
-                        user.setDeviceId(deviceCode);
-                        dataAPIClient.patch("user", user);
-                    }
-                    return user; //find and return user by cellphone
-                }
-            } catch (NotFoundException ex) {
-                LOGGER.info("Notfound user for cellular = {0}", cellular);
-            }
-        }
-
-        //Step 2: try ensure user by existing user Id!
-        if (!StringUtils.isEmpty(userId)) {
-            try {
-                user = dataAPIClient.get("user/{id}", User.class, userId);
-                if (user != null) {
-                    //update cellular and device code if has new value.
-                    if (user.getPhone() != cellular || user.getDeviceId() != deviceCode) {
-                        if (!StringUtils.isEmpty(cellular)) {
-                            user.setPhone(cellular);
-                        }
-                        if (!StringUtils.isEmpty(deviceCode)) {
-                            user.setDeviceId(deviceCode);
-                        }
-                        dataAPIClient.patch("user", user);
-                    }
-                    return user;  //return existing user.
-                }
-
-            } catch (NotFoundException ex) {
-                LOGGER.info("Notfound user id = {0}", userId);
-            }
-        }
-
-        //Step 3: ensure user if still can't get it!
-        if (user == null) {
-            User newUser = this.generateDefaultUser();
-            newUser.setDeviceId(deviceCode);
-            newUser.setPhone(cellular);
-            if (!StringUtils.isEmpty(cellular)) {
-                newUser.setStatusCode(LookupCodes.UserStatus.ENABLED); //if cellular is not null
-            }
-            return this.createNewUser(newUser);
-        }
-        return null;
-    }
-
-    @Deprecated
-    //Always create new User
-    public User generateDefaultUser() {
-        User newUser = new User();
-        newUser.setPoint(100);  //set default properties.
-        newUser.setName("游客");
-        newUser.setStatusCode(LookupCodes.UserStatus.ENABLED); //default is enabled
-        return newUser;
-    }
-
-    @Deprecated
-    //Always create new anonymous User
-    public User createAnonymousUser(String deviceCode) {
-        User newUser = this.generateDefaultUser();
-        newUser.setDeviceId(deviceCode);
-        newUser.setStatusCode(LookupCodes.UserStatus.ENABLED);
-        return createNewUser(newUser);
-    }
-
-    @Deprecated
-    //Just create new User - call data-api
-    public User createNewUser(User newUser) {
-        UserObject userObject = dataAPIClient.post("user", newUser, UserObject.class); //save user
-        newUser.setId(userObject.getId());
-
-        //force following 云溯科技
-        UserOrganizationFollowing userFollowing = new UserOrganizationFollowing();
-        userFollowing.setUserId(userObject.getId());
-        userFollowing.setOrgId(Constants.Ids.YUNSU_ORG_ID); //get Yunsu's orgID
-        userFollowDomain.ensureFollow(userFollowing);
-        return newUser;
     }
 
     public Boolean validateUser(String userId) {
@@ -234,4 +132,10 @@ public class UserDomain {
         return userAuthentication != null && userAuthentication.getDetails().getId().equals(userId);
     }
 
+
+    private void checkPhoneExists(String phone) {
+        if (getUserByPhone(phone) != null) {
+            throw new ConflictException("phone already registered by another user");
+        }
+    }
 }

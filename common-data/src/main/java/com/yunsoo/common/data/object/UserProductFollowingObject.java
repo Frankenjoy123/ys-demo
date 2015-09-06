@@ -5,16 +5,24 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 /**
- * Created by yan on 8/17/2015.
+ * Created by:   yan
+ * Created on:   8/17/2015
+ * Descriptions:
  */
-public class UserProductBaseFollowingObject {
+public class UserProductFollowingObject {
+
     @JsonProperty("id")
     private String id;
+
+    @NotEmpty(message = "user_id must not be null or empty")
     @JsonProperty("user_id")
     private String userId;
+
+    @NotEmpty(message = "product_base_id must not be null or empty")
     @JsonProperty("product_base_id")
     private String productBaseId;
 
@@ -22,7 +30,6 @@ public class UserProductBaseFollowingObject {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
-
 
 
     public String getId() {

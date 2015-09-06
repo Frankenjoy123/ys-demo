@@ -93,7 +93,7 @@ public class ProductBaseController {
         productBase.setCategory(new ProductCategory(productCategoryDomain.getById(productBase.getCategoryId())));
         productBase.setProductKeyTypes(LookupObject.fromCodeList(lookupDomain.getProductKeyTypes(), productBaseObject.getProductKeyTypeCodes()));
         productBase.setDetails(productBaseDomain.getProductBaseDetails(orgId, productBaseId, version));
-        productBase.setFollowingUsers(followingDomain.getUserProductFollowingsByProductId(productBaseId, null).getContent());
+        productBase.setFollowingUsers(followingDomain.getFollowingUsersByProductBaseId(productBaseId, null).getContent());
         return productBase;
     }
 
@@ -125,10 +125,8 @@ public class ProductBaseController {
             }
         }
 
-        Map<String, Long> followingNumber = followingDomain.getProductFollowingTotalNumber(productBaseIds);
-        productBases.forEach(productBase -> {
-            productBase.setFollowingUsersTotalNumber(followingNumber.get(productBase.getId()));
-        });
+        productBases.forEach(productBase -> productBase.setFollowingUsersTotalNumber(followingDomain.getFollowingUsersCountByProductBaseId(productBase.getId())));
+
         return productBases;
     }
 
@@ -313,6 +311,7 @@ public class ProductBaseController {
             productBaseDomain.patchUpdate(productBaseVersionsObject);
         }
     }
+
     /**
      * delete product base or specified editable version
      *

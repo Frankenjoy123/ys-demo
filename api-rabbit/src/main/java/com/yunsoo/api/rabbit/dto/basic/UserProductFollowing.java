@@ -5,40 +5,39 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.UserProductFollowingObject;
 import org.joda.time.DateTime;
 
 /**
- * Created by yan on 8/18/2015.
+ * Created by:   yan
+ * Created on:   8/18/2015
+ * Descriptions:
  */
 public class UserProductFollowing {
 
-    @JsonProperty("id")
-    private String id;
     @JsonProperty("user_id")
     private String userId;
+
     @JsonProperty("product_base_id")
-    private String productId;
+    private String productBaseId;
+
     @JsonProperty("product_base_name")
     private String productName;
-    @JsonProperty("product_base_description")
-    private String productDescription;
+
+    @JsonProperty("product_base_desc")
+    private String productBaseDesc;
+
     @JsonProperty("org_id")
     private String orgId;
-    @JsonProperty("comments_number")
-    private Long commentsNumber;
+
+    @JsonProperty("comments_count")
+    private Long commentsCount;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getUserId() {
         return userId;
@@ -48,12 +47,12 @@ public class UserProductFollowing {
         this.userId = userId;
     }
 
-    public String getProductId() {
-        return productId;
+    public String getProductBaseId() {
+        return productBaseId;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
     public String getProductName() {
@@ -64,20 +63,12 @@ public class UserProductFollowing {
         this.productName = productName;
     }
 
-    public String getProductDescription() {
-        return productDescription;
+    public String getProductBaseDesc() {
+        return productBaseDesc;
     }
 
-    public void setProductDescription(String productDescription) {
-        this.productDescription = productDescription;
-    }
-
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
+    public void setProductBaseDesc(String productBaseDesc) {
+        this.productBaseDesc = productBaseDesc;
     }
 
     public String getOrgId() {
@@ -88,11 +79,31 @@ public class UserProductFollowing {
         this.orgId = orgId;
     }
 
-    public Long getCommentsNumber() {
-        return commentsNumber;
+    public Long getCommentsCount() {
+        return commentsCount;
     }
 
-    public void setCommentsNumber(Long commentsNumber) {
-        this.commentsNumber = commentsNumber;
+    public void setCommentsCount(Long commentsCount) {
+        this.commentsCount = commentsCount;
+    }
+
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+
+    public UserProductFollowing() {
+    }
+
+    public UserProductFollowing(UserProductFollowingObject object) {
+        if (object != null) {
+            this.userId = object.getUserId();
+            this.productBaseId = object.getProductBaseId();
+            this.createdDateTime = object.getCreatedDateTime();
+        }
     }
 }

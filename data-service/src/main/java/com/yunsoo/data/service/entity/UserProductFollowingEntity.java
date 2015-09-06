@@ -7,11 +7,13 @@ import org.joda.time.DateTime;
 import javax.persistence.*;
 
 /**
- * Created by yan on 8/7/2015.
+ * Created by:   yan
+ * Created on:   8/7/2015
+ * Descriptions:
  */
 @Entity
 @Table(name = "user_product_following")
-public class UserProductBaseFollowingEntity {
+public class UserProductFollowingEntity {
 
     @Id
     @GeneratedValue(generator = "idGenerator")
@@ -61,24 +63,4 @@ public class UserProductBaseFollowingEntity {
         this.createdDateTime = createdDateTime;
     }
 
-   @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UserProductBaseFollowingEntity)) return false;
-
-        UserProductBaseFollowingEntity entity = (UserProductBaseFollowingEntity) o;
-
-        if (id != null ? !id.equals(entity.id) : entity.id != null) return false;
-        if (!userId.equals(entity.userId)) return false;
-        return productBaseId.equals(entity.productBaseId);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + userId.hashCode();
-        result = 31 * result + productBaseId.hashCode();
-        return result;
-    }
 }

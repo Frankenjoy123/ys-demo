@@ -46,7 +46,7 @@ public class ProductCommentsDomain {
         return dataAPIClient.post("productcomments", productCommentsObject, ProductCommentsObject.class);
     }
 
-    public Long getProductCommentsNumber(String productBaseId) {
+    public Long getProductCommentsCount(String productBaseId) {
         return dataAPIClient.get("productcomments/count/{productBaseId}", Long.class, productBaseId);
     }
 
