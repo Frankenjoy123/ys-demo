@@ -39,7 +39,7 @@ public class ApplicationController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ApplicationObject> getByTypeId(@RequestParam(value = "type_code", required = false) String typeCode,
+    public List<ApplicationObject> getByFilter(@RequestParam(value = "type_code", required = false) String typeCode,
                                                @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
                                                Pageable pageable,
                                                HttpServletResponse response) {
