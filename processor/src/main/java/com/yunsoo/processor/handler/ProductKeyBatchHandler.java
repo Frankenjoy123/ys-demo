@@ -8,13 +8,13 @@ import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import com.yunsoo.processor.common.LogicalQueueName;
+import com.yunsoo.processor.config.HandlerConfiguration;
 import com.yunsoo.processor.domain.SqsDomain;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,9 +27,15 @@ import java.util.List;
 @Component
 public class ProductKeyBatchHandler {
 
-    private static final Integer SUB_BATCH_LIMIT = 1000;
-    private static final int MAX_BATCH_LIMIT = 5000;
-    private static final int delaySeconds = 600;  //10min
+    @Value("${yunsoo.sqs.handler.batch}")
+    private int SUB_BATCH_LIMIT;
+
+    @Value("${yunsoo.sqs.handler.max}")
+    private int MAX_BATCH_LIMIT;
+
+    @Value("${yunsoo.sqs.message.delayseconds}")
+    private int DELAY_SECONDS;  //10min
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductKeyBatchHandler.class);
 
     @Autowired
@@ -37,7 +43,6 @@ public class ProductKeyBatchHandler {
 
     @Autowired
     private SqsDomain domain;
-
 
     public void execute(ProductKeyBatchMassage message) {
         String batchId = message.getProductKeyBatchId();
@@ -88,7 +93,7 @@ public class ProductKeyBatchHandler {
 
             if( restQuantity > 0 && loopRestQuantity<=0 && exists(restQuantity)){
                 loopRestQuantity = MAX_BATCH_LIMIT;
-                domain.sendMessage(message, (long)delaySeconds);
+                domain.sendMessage(message, (long) DELAY_SECONDS);
                 batch.setRestQuantity(restQuantity );
                 dataAPIClient.patch("productkeybatch/{id}", batch, batchId);
 

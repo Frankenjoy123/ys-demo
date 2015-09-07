@@ -23,6 +23,13 @@ yunsoo:
     client:
         dataapi:
             baseurl: http://localhost:3080/
+    sqs:
+        message:
+            delayseconds: 600
+        handler:
+            max: 5000
+            batch: 1000
+
 
 ---
 spring:
@@ -34,3 +41,9 @@ yunsoo:
     client:
         dataapi:
             baseurl: http://localhost:3080/
+    sqs:
+        message:
+            delayseconds: 600
+        handler:
+            max: 5000
+            batch: 1000
