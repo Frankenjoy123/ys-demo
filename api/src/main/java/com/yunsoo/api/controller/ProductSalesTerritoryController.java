@@ -1,8 +1,8 @@
-package com.yunsoo.api.rabbit.controller;
+package com.yunsoo.api.controller;
 
-import com.yunsoo.api.rabbit.domain.ProductSalesTerritoryDomain;
-import com.yunsoo.api.rabbit.dto.ProductSalesTerritory;
-import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.api.domain.ProductSalesTerritoryDomain;
+import com.yunsoo.api.dto.ProductSalesTerritory;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductSalesTerritoryObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;

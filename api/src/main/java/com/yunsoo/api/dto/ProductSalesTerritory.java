@@ -1,4 +1,4 @@
-package com.yunsoo.api.rabbit.dto;
+package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -9,7 +9,9 @@ import com.yunsoo.common.data.object.ProductSalesTerritoryObject;
 import org.joda.time.DateTime;
 
 /**
- * Created by admin on 2015/8/26.
+ * Created by:   Haitao
+ * Created on:   2015/8/26
+ * Descriptions:
  */
 public class ProductSalesTerritory {
 
@@ -96,6 +98,7 @@ public class ProductSalesTerritory {
 
     public ProductSalesTerritory() {
     }
+
     public ProductSalesTerritory(ProductSalesTerritoryObject object) {
         if (object != null) {
             this.setId(object.getId());

@@ -1,4 +1,4 @@
-package com.yunsoo.api.rabbit.domain;
+package com.yunsoo.api.domain;
 
 import com.yunsoo.common.data.object.ProductSalesTerritoryObject;
 import com.yunsoo.common.web.client.RestClient;
@@ -13,7 +13,6 @@ import java.util.List;
  * Created on  : 2015/8/26
  * Descriptions:
  */
-
 @Component
 public class ProductSalesTerritoryDomain {
 
