@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yunsoo.api.rabbit.dto.basic.MessageDetails;
+import com.yunsoo.api.rabbit.dto.MessageDetails;
 import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;

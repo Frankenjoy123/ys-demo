@@ -7,12 +7,10 @@ import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.api.rabbit.security.UserAuthentication;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserObject;
-import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -135,54 +133,6 @@ public class AuthController {
         response.setHeader(Constants.HttpHeaderName.ACCESS_TOKEN, newAccessToken.getToken());
 
         return loginResponse;
-    }
-
-
-    @Deprecated
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public UserResult authUser(
-            @RequestHeader(value = Constants.HttpHeaderName.OLD_ACCESS_TOKEN, required = false) String accessToken,
-            @RequestBody User user,
-            HttpServletResponse response) {
-        if (StringUtils.isEmpty(user.getDeviceId())) {
-            throw new BadRequestException("device_id不能为空！");
-        }
-
-        User currentUser = null;
-        if (!StringUtils.isEmpty(accessToken)) {
-            UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication(accessToken);
-            if (userAuthentication != null) {
-                //get user id from token. check if cellular exists, and update user
-                currentUser = userDomain.ensureUser(userAuthentication.getDetails().getId(), user.getDeviceId(), user.getPhone());
-            } else {
-                currentUser = userDomain.ensureUser(null, user.getDeviceId(), user.getPhone());
-            }
-        } else {
-            currentUser = userDomain.ensureUser(null, user.getDeviceId(), user.getPhone());
-        }
-
-        String token = tokenAuthenticationService.generateAccessToken(currentUser.getId()).getToken();
-
-        //set token
-        response.setHeader(Constants.HttpHeaderName.OLD_ACCESS_TOKEN, token);
-
-        return new UserResult(token, currentUser.getId());
-    }
-
-    @Deprecated
-    //Always create new anonymous user.
-    @RequestMapping(value = "create", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserResult createUser(@RequestBody User user,
-                                 HttpServletResponse response) throws Exception {
-        //always create new user.
-        User currentUser = userDomain.createAnonymousUser(user.getDeviceId());
-
-        String token = tokenAuthenticationService.generateAccessToken(currentUser.getId()).getToken();
-
-        response.setHeader(Constants.HttpHeaderName.OLD_ACCESS_TOKEN, token);
-
-        return new UserResult(token, currentUser.getId());
     }
 
 }

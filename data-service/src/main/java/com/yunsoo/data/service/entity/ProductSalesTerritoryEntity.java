@@ -24,8 +24,8 @@ public class ProductSalesTerritoryEntity {
     @Column(name = "product_key")
     private String productKey;
 
-    @Column(name = "location_id")
-    private String locationId;
+    @Column(name = "org_agency_id")
+    private String orgAgencyId;
 
     @Column(name = "created_account_id")
     private String createdAccountId;
@@ -57,12 +57,12 @@ public class ProductSalesTerritoryEntity {
         this.productKey = productKey;
     }
 
-    public String getLocationId() {
-        return locationId;
+    public String getOrgAgencyId() {
+        return orgAgencyId;
     }
 
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
+    public void setOrgAgencyId(String orgAgencyId) {
+        this.orgAgencyId = orgAgencyId;
     }
 
     public String getCreatedAccountId() {

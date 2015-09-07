@@ -151,4 +151,13 @@ public class LookupCodes {
         public static final String ENABLED = "enabled";
         public static final String DISABLED = "disabled";
     }
+
+    public static class OrgAgencyStatus {
+        private OrgAgencyStatus() {
+        }
+
+        public static final String ACTIVATED = "activated";
+        public static final String DEACTIVATED = "deactivated";
+    }
+
 }

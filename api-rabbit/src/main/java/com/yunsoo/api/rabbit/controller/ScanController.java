@@ -3,8 +3,7 @@ package com.yunsoo.api.rabbit.controller;
 import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.biz.ValidateProduct;
 import com.yunsoo.api.rabbit.domain.*;
-import com.yunsoo.api.rabbit.dto.LogisticsPath;
-import com.yunsoo.api.rabbit.dto.basic.*;
+import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.object.ValidationResult;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.api.rabbit.security.UserAuthentication;
@@ -24,7 +23,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -124,23 +122,15 @@ public class ScanController {
         OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, scanResult.getProduct().getOrgId());
         scanResult.setManufacturer(new Organization(organizationObject));
 
-        //7. ensure user following the company, and set the followed status in result.
-        UserOrganizationFollowing userFollowing = new UserOrganizationFollowing();
-        userFollowing.setUserId(userId);
-        userFollowing.setOrgId(organizationObject.getId());
-        userFollowDomain.ensureFollow(userFollowing);
-        UserOrganizationFollowing userFollowingResult = userFollowDomain.getUserOrganizationFollowing(userId, organizationObject.getId());
-        if (userFollowingResult != null) {
+        //7.1 ensure user following the company, and set the followed status in result.
+        if (userFollowDomain.ensureUserOrganizationFollowing(userId, organizationObject.getId()) != null) {
             scanResult.setFollowed_org(true);
         } else {
             scanResult.setFollowed_org(false);
         }
 
         //7.2. ensure user following the product
-        UserProductFollowing userProductFollowing = new UserProductFollowing();
-        userProductFollowing.setUserId(userId);
-        userProductFollowing.setProductId(currentExistProduct.getProductBaseId());
-        userFollowDomain.ensureFollow(userProductFollowing);
+        userFollowDomain.ensureUserProductFollowing(userId, currentExistProduct.getProductBaseId());
 
         //8. set validation result by our validation strategy.
         scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), userId, scanRecordList));
@@ -216,101 +206,6 @@ public class ScanController {
         return scanRecords;
     }
 
-    @Deprecated
-    @RequestMapping(value = "/history/user/{userId}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
-//    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
-    public List<ScanRecord> getUserScanRecordsByFilter(
-            @PathVariable(value = "userId") String userId,
-            @PathVariable(value = "pageIndex") Integer pageIndex,
-            @PathVariable(value = "pageSize") Integer pageSize) {
-
-        //验证输入参数
-        if (userId == null || userId.isEmpty()) {
-            throw new BadRequestException(40001, "用户ID不应为空！");
-        }
-        if (pageIndex == null) {
-            pageIndex = 0;
-        }
-        if (pageSize == null) {
-            pageSize = 10;
-        }
-        if (pageIndex < 0) {
-            throw new BadRequestException("pageIndex不应小于0！");
-        }
-        if (pageSize <= 0) {
-            throw new BadRequestException("PageSize不应小于等于0！");
-        }
-
-        List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByUserId(userId, new PageRequest(pageIndex, pageSize))
-                .map(ScanRecord::new)
-                .getContent();
-        this.fillProductInfo(scanRecordList);
-        return scanRecordList;
-    }
-
-    @Deprecated
-    @RequestMapping(value = "/searchback/{isbackward}/user/{userId}/from/{Id}/paging/{pageIndex}/{pageSize}", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
-    public List<ScanRecord> getUserScanRecordsByFilter(
-            @PathVariable(value = "Id") Long Id,
-            @PathVariable(value = "userId") String userId,
-            @PathVariable(value = "isbackward") Boolean isbackward,
-            @PathVariable(value = "pageIndex") Integer pageIndex,
-            @PathVariable(value = "pageSize") Integer pageSize) {
-
-        //验证输入参数
-        if (userId == null || userId.isEmpty()) {
-            throw new BadRequestException(40001, "用户ID不应为空！");
-        }
-        if (Id == null || Id <= 0) {
-            Id = 0L; //default value
-        }
-        if (isbackward == null) {
-            throw new BadRequestException(40001, "isbackward未赋值！");
-        }
-        if (pageIndex == null) {
-            pageIndex = 0;
-        }
-        if (pageSize == null) {
-            pageSize = 10;
-        }
-        if (pageIndex < 0) {
-            throw new BadRequestException("pageIndex不应小于0！");
-        }
-        if (pageSize <= 0) {
-            throw new BadRequestException("PageSize不应小于等于0！");
-        }
-
-        List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByUserId(userId, new PageRequest(pageIndex, pageSize))
-                .map(ScanRecord::new)
-                .getContent();
-        this.fillProductInfo(scanRecordList);
-        return scanRecordList;
-    }
-
-    @Deprecated
-    @RequestMapping(value = "/record/{key}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
-//    @PreAuthorize("hasPermission(#scanrecord, 'scanrecord:read')")
-    public List<ScanRecord> getScanRecordsByFilter(
-            @PathVariable(value = "key") String key,
-            @PathVariable(value = "pageIndex") Integer pageIndex,
-            @PathVariable(value = "pageSize") Integer pageSize) {
-
-        //验证输入参数
-        if (key.isEmpty()) {
-            throw new BadRequestException(40001, "Key不应为空！");
-        }
-        if (pageIndex < 0) {
-            throw new BadRequestException("pageIndex不应小于0！");
-        }
-        if (pageSize <= 0) {
-            throw new BadRequestException("PageSize不应小于等于0！");
-        }
-
-        return scanDomain.getScanRecordsByProductKey(key, new PageRequest(pageIndex, pageSize))
-                .map(ScanRecord::new)
-                .getContent();
-    }
 
     private List<Logistics> getLogisticsInfo(String key) {
         List<LogisticsPath> logisticsPaths;
@@ -321,7 +216,7 @@ public class ScanController {
             return null;
         }
 
-        List<Logistics> logisticsList = new ArrayList<Logistics>();
+        List<Logistics> logisticsList = new ArrayList<>();
         for (LogisticsPath path : logisticsPaths) {
             Logistics logistics = new Logistics();
             logistics.setOrgId(path.getStartCheckPointObject().getOrgId());

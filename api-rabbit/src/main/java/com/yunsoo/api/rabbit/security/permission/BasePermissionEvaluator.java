@@ -1,9 +1,9 @@
 package com.yunsoo.api.rabbit.security.permission;
 
 import com.yunsoo.api.rabbit.dto.User;
-import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
-import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
-import com.yunsoo.api.rabbit.dto.basic.UserProductFollowing;
+import com.yunsoo.api.rabbit.dto.UserLikedProduct;
+import com.yunsoo.api.rabbit.dto.UserOrganizationFollowing;
+import com.yunsoo.api.rabbit.dto.UserProductFollowing;
 import com.yunsoo.api.rabbit.object.TUser;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;

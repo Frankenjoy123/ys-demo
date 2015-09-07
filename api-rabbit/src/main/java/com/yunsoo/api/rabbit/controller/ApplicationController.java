@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.controller;
 
+import com.yunsoo.api.rabbit.dto.Application;
 import com.yunsoo.api.rabbit.dto.ApplicationResult;
-import com.yunsoo.api.rabbit.dto.basic.Application;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.slf4j.Logger;

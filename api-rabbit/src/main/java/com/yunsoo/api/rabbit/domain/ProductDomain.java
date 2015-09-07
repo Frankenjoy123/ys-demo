@@ -1,11 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yunsoo.api.rabbit.dto.ProductKeyType;
-import com.yunsoo.api.rabbit.dto.basic.Product;
-import com.yunsoo.api.rabbit.dto.basic.ProductBase;
-import com.yunsoo.api.rabbit.dto.basic.ProductBaseDetails;
-import com.yunsoo.api.rabbit.dto.basic.ProductCategory;
+import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.ResourceInputStream;

@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.config.ClientConfiguration;
-import com.yunsoo.api.rabbit.dto.basic.User;
+import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.common.web.client.RestClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;

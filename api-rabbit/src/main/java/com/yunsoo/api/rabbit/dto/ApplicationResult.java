@@ -1,7 +1,6 @@
 package com.yunsoo.api.rabbit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yunsoo.api.rabbit.dto.basic.Application;
 
 /**
  * Created by Zhe on 2015/6/15.

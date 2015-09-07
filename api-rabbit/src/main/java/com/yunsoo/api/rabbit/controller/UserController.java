@@ -13,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 
 /**
  * Created by:   Zhe
@@ -31,6 +29,7 @@ public class UserController {
 
     @Autowired
     private UserActivityDomain userActivityDomain;
+
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#id, 'User', 'user:read')")
@@ -85,37 +84,6 @@ public class UserController {
     @PreAuthorize("hasPermission(#id, 'User', 'user:read')")
     public int signIn(@PathVariable(value = "id") String id) {
         return userActivityDomain.signIn(id);
-    }
-
-
-    @Deprecated
-    @RequestMapping(value = "/cellular/{cellular}", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#token, 'authenticated')")
-    public User getByPhone(@PathVariable(value = "cellular") String cellular) {
-        UserObject userObject = userDomain.getUserByPhone(cellular);
-        if (userObject == null) {
-            throw new NotFoundException("user not found by cellular");
-        }
-        return new User(userObject);
-    }
-
-    @Deprecated
-    @RequestMapping(value = "/device/{deviceId}", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#token, 'authenticated')")
-    public User getByDeviceId(@PathVariable(value = "deviceId") String deviceId) {
-        List<UserObject> userObjects = userDomain.getUsersByDeviceId(deviceId);
-        if (userObjects.size() == 0) {
-            throw new NotFoundException("user not found by cellular");
-        }
-        return new User(userObjects.get(0));
-    }
-
-    @Deprecated
-    @RequestMapping(value = "/{id}/{name}", method = RequestMethod.GET)
-    public ResponseEntity<?> getThumbnail(
-            @PathVariable(value = "id") String userId,
-            @PathVariable(value = "name") String name) {
-        return getGravatar(userId, "image-400x400");
     }
 
 }

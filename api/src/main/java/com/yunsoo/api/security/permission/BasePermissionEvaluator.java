@@ -7,7 +7,6 @@ import com.yunsoo.api.object.TAccount;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
 import com.yunsoo.common.data.object.LogisticsCheckPointObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,6 +53,8 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
                 currentPermission.setOrgId(((ProductKeyOrder) targetDomainObject).getOrgId());
             } else if (targetDomainObject instanceof Group) {
                 currentPermission.setOrgId(((Group) targetDomainObject).getOrgId());
+            } else if (targetDomainObject instanceof OrgAgency) {
+                currentPermission.setOrgId(((OrgAgency) targetDomainObject).getOrgId());
             }
 
             if (StringUtils.isEmpty(currentPermission.getOrgId())) {

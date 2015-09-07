@@ -20,8 +20,8 @@ public class ProductSalesTerritoryObject {
     @JsonProperty("product_key")
     private String productKey;
 
-    @JsonProperty("location_id")
-    private String locationId;
+    @JsonProperty("org_agency_id")
+    private String orgAgencyId;
 
     @JsonProperty("created_account_id")
     private String createdAccountId;
@@ -55,12 +55,12 @@ public class ProductSalesTerritoryObject {
         this.productKey = productKey;
     }
 
-    public String getLocationId() {
-        return locationId;
+    public String getOrgAgencyId() {
+        return orgAgencyId;
     }
 
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
+    public void setOrgAgencyId(String orgAgencyId) {
+        this.orgAgencyId = orgAgencyId;
     }
 
     public String getCreatedAccountId() {

@@ -7,7 +7,9 @@ import org.joda.time.DateTime;
 import javax.persistence.*;
 
 /**
- * Created by Zhe on 2015/4/15.
+ * Created by:   Zhe
+ * Created on:   2015/4/15
+ * Descriptions:
  */
 @Entity
 @Table(name = "user_organization_following")
@@ -38,7 +40,6 @@ public class UserOrganizationFollowingEntity {
         this.id = id;
     }
 
-
     public String getUserId() {
         return userId;
     }
@@ -63,24 +64,4 @@ public class UserOrganizationFollowingEntity {
         this.createdDateTime = createdDateTime;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UserOrganizationFollowingEntity)) return false;
-
-        UserOrganizationFollowingEntity that = (UserOrganizationFollowingEntity) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (!userId.equals(that.userId)) return false;
-        return orgId.equals(that.orgId);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + userId.hashCode();
-        result = 31 * result + orgId.hashCode();
-        return result;
-    }
 }
