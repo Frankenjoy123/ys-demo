@@ -95,8 +95,8 @@ public class ProductCommentsController {
     }
 
 
-    @RequestMapping(value = "/count/{id}", method = RequestMethod.GET)
-    public Long getCommentsCountByProductBaseId(@PathVariable(value = "id") String productBaseId) {
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public Long getCommentsCountByProductBaseId(@RequestParam(value = "product_base_id", required = true) String productBaseId) {
         return productCommentsDomain.getProductCommentsCount(productBaseId);
     }
 
