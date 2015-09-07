@@ -1,6 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.dto.basic.UserLikedProduct;
+import com.yunsoo.api.rabbit.dto.UserLikedProduct;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.slf4j.Logger;

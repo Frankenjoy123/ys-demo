@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.OrganizationDomain;
-import com.yunsoo.api.rabbit.dto.basic.Organization;
+import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;

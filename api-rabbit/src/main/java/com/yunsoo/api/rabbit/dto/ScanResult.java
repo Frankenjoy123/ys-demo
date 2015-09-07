@@ -1,4 +1,4 @@
-package com.yunsoo.api.rabbit.dto.basic;
+package com.yunsoo.api.rabbit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yunsoo.api.rabbit.object.ValidationResult;

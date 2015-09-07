@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
-import com.yunsoo.api.rabbit.dto.basic.UserProductFollowing;
+import com.yunsoo.api.rabbit.dto.UserOrganizationFollowing;
+import com.yunsoo.api.rabbit.dto.UserProductFollowing;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.UserOrganizationFollowingObject;

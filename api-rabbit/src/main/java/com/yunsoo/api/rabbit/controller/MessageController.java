@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.MessageDomain;
-import com.yunsoo.api.rabbit.dto.basic.Message;
+import com.yunsoo.api.rabbit.dto.Message;
 import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;

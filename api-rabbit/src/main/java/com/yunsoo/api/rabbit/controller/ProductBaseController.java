@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.ProductDomain;
-import com.yunsoo.api.rabbit.dto.basic.ProductBase;
+import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

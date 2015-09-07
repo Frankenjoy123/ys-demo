@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.ProductCommentsDomain;
-import com.yunsoo.api.rabbit.dto.basic.ProductComments;
+import com.yunsoo.api.rabbit.dto.ProductComments;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductCommentsObject;
 import com.yunsoo.common.web.client.Page;

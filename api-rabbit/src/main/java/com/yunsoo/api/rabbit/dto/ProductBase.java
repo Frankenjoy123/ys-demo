@@ -1,9 +1,6 @@
-package com.yunsoo.api.rabbit.dto.basic;
+package com.yunsoo.api.rabbit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.joda.time.DateTime;
-
-import java.util.List;
 
 /**
  * Created by:   Zhe

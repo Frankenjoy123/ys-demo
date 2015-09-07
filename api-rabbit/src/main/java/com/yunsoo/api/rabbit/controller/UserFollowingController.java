@@ -1,8 +1,8 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
-import com.yunsoo.api.rabbit.dto.basic.UserOrganizationFollowing;
-import com.yunsoo.api.rabbit.dto.basic.UserProductFollowing;
+import com.yunsoo.api.rabbit.dto.UserOrganizationFollowing;
+import com.yunsoo.api.rabbit.dto.UserProductFollowing;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.web.client.Page;
 import org.springframework.beans.factory.annotation.Autowired;

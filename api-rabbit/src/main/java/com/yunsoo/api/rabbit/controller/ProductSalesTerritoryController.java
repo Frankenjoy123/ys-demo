@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.ProductSalesTerritoryDomain;
-import com.yunsoo.api.rabbit.dto.basic.ProductSalesTerritory;
+import com.yunsoo.api.rabbit.dto.ProductSalesTerritory;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductSalesTerritoryObject;
 import com.yunsoo.common.web.exception.BadRequestException;

@@ -1,9 +1,9 @@
 package com.yunsoo.api.rabbit.biz;
 
+import com.yunsoo.api.rabbit.dto.Logistics;
+import com.yunsoo.api.rabbit.dto.Product;
+import com.yunsoo.api.rabbit.dto.ScanRecord;
 import com.yunsoo.api.rabbit.dto.User;
-import com.yunsoo.api.rabbit.dto.basic.Logistics;
-import com.yunsoo.api.rabbit.dto.basic.Product;
-import com.yunsoo.api.rabbit.dto.basic.ScanRecord;
 import com.yunsoo.api.rabbit.object.ValidationResult;
 
 import java.util.Comparator;
