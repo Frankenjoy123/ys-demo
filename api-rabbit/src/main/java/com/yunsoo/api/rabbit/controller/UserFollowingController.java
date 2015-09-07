@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -43,8 +44,9 @@ public class UserFollowingController {
     }
 
     @RequestMapping(value = "organization", method = RequestMethod.POST)
-    public UserOrganizationFollowing followOrganization(@RequestParam(value = "org_id", required = true) String orgId) {
+    public UserOrganizationFollowing followOrganization(@RequestBody @Valid UserOrganizationFollowing userOrganizationFollowing) {
         String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String orgId = userOrganizationFollowing.getOrgId();
         return new UserOrganizationFollowing(userFollowDomain.ensureUserOrganizationFollowing(userId, orgId));
     }
 
@@ -71,8 +73,9 @@ public class UserFollowingController {
     }
 
     @RequestMapping(value = "product", method = RequestMethod.POST)
-    public UserProductFollowing followProduct(@RequestParam(value = "product_base_id", required = true) String productBaseId) {
+    public UserProductFollowing followProduct(@RequestBody @Valid UserProductFollowing userProductFollowing) {
         String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String productBaseId = userProductFollowing.getProductBaseId();
         return new UserProductFollowing(userFollowDomain.ensureUserProductFollowing(userId, productBaseId));
     }
 
