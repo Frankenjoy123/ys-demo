@@ -1,14 +1,12 @@
 package com.yunsoo.api.rabbit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
-import org.joda.time.DateTime;
+import com.yunsoo.common.data.object.ApplicationObject;
 
 /**
- * Created by Zhe on 2015/6/15.
+ * Created by:   Zhe
+ * Created on:   2015/6/15
+ * Descriptions:
  */
 public class Application {
 
@@ -30,21 +28,6 @@ public class Application {
     @JsonProperty("description")
     private String description;
 
-    @JsonProperty("created_account_id")
-    private String createdAccountId;
-
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("created_datetime")
-    private DateTime createdDateTime;
-
-    @JsonProperty("modified_account_id")
-    private String modifiedAccountId;
-
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("modified_datetime")
-    private DateTime modifiedDatetime;
 
     public String getId() {
         return id;
@@ -94,35 +77,17 @@ public class Application {
         this.description = description;
     }
 
-    public String getCreatedAccountId() {
-        return createdAccountId;
+    public Application() {
     }
 
-    public void setCreatedAccountId(String createdAccountId) {
-        this.createdAccountId = createdAccountId;
-    }
-
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
-    public String getModifiedAccountId() {
-        return modifiedAccountId;
-    }
-
-    public void setModifiedAccountId(String modifiedAccountId) {
-        this.modifiedAccountId = modifiedAccountId;
-    }
-
-    public DateTime getModifiedDatetime() {
-        return modifiedDatetime;
-    }
-
-    public void setModifiedDatetime(DateTime modifiedDatetime) {
-        this.modifiedDatetime = modifiedDatetime;
+    public Application(ApplicationObject object) {
+        if (object != null) {
+            this.id = object.getId();
+            this.name = object.getName();
+            this.version = object.getVersion();
+            this.typeCode = object.getTypeCode();
+            this.statusCode = object.getStatusCode();
+            this.description = object.getDescription();
+        }
     }
 }
