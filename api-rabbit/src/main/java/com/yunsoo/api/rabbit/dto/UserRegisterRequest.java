@@ -10,9 +10,6 @@ import com.yunsoo.common.data.object.UserObject;
  */
 public class UserRegisterRequest {
 
-    @JsonProperty("device_id")
-    private String deviceId;
-
     @JsonProperty("phone")
     private String phone;
 
@@ -22,14 +19,6 @@ public class UserRegisterRequest {
     @JsonProperty("address")
     private String address;
 
-
-    public String getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
 
     public String getPhone() {
         return phone;
@@ -57,7 +46,6 @@ public class UserRegisterRequest {
 
     public UserObject toUserObject() {
         UserObject userObject = new UserObject();
-        userObject.setDeviceId(deviceId);
         userObject.setPhone(phone);
         userObject.setName(name);
         userObject.setAddress(address);

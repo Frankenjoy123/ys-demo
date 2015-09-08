@@ -74,9 +74,9 @@ public class ProductCommentsController {
         productCommentsObject.setProductBaseId(productComments.getProductBaseId());
         productCommentsObject.setComments(productComments.getComments());
         productCommentsObject.setScore(productComments.getScore());
-        if (productComments.getCreatedAccountId() == null) {
+        if (productComments.getUserId() == null) {
             String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-            productCommentsObject.setCreatedAccountId(currentAccountId);
+            productCommentsObject.setUserId(currentAccountId);
         }
         if (productComments.getCreatedDateTime() == null) {
             productCommentsObject.setCreatedDateTime(DateTime.now());

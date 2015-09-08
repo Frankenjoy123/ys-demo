@@ -1,21 +1,20 @@
-package com.yunsoo.common.data.object;
+package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.ApplicationObject;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
-import java.io.Serializable;
-
 /**
- * Created by:   Zhe
- * Created on:   2015/6/15
+ * Created by:   Lijian
+ * Created on:   2015/9/7
  * Descriptions:
  */
-public class ApplicationObject implements Serializable {
+public class Application {
 
     @JsonProperty("id")
     private String id;
@@ -32,14 +31,12 @@ public class ApplicationObject implements Serializable {
     @JsonProperty("type_code")
     private String typeCode;
 
-    @NotEmpty(message = "name must not be null or empty")
     @JsonProperty("status_code")
     private String statusCode;
 
     @JsonProperty("description")
     private String description;
 
-    @NotEmpty(message = "name must not be null or empty")
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -134,5 +131,38 @@ public class ApplicationObject implements Serializable {
 
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
+    }
+
+    public Application() {
+    }
+
+    public Application(ApplicationObject object) {
+        if (object != null) {
+            this.id = object.getId();
+            this.name = object.getName();
+            this.version = object.getVersion();
+            this.typeCode = object.getTypeCode();
+            this.statusCode = object.getStatusCode();
+            this.description = object.getDescription();
+            this.createdAccountId = object.getCreatedAccountId();
+            this.createdDateTime = object.getCreatedDateTime();
+            this.modifiedAccountId = object.getModifiedAccountId();
+            this.modifiedDateTime = object.getModifiedDateTime();
+        }
+    }
+
+    public ApplicationObject toApplicationObject() {
+        ApplicationObject object = new ApplicationObject();
+        object.setId(this.id);
+        object.setName(this.name);
+        object.setVersion(this.version);
+        object.setTypeCode(this.typeCode);
+        object.setStatusCode(this.statusCode);
+        object.setDescription(this.description);
+        object.setCreatedAccountId(this.createdAccountId);
+        object.setCreatedDateTime(this.createdDateTime);
+        object.setModifiedAccountId(this.modifiedAccountId);
+        object.setModifiedDateTime(this.modifiedDateTime);
+        return object;
     }
 }

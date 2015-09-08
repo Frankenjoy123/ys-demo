@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.UserOrganizationFollowingObject;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 /**
@@ -18,6 +19,7 @@ public class UserOrganizationFollowing {
     @JsonProperty("user_id")
     private String userId;
 
+    @NotEmpty(message = "org_id must not be null or empty")
     @JsonProperty("org_id")
     private String orgId;
 

@@ -19,7 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @EnableWebSecurity
 @Configuration
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Order(1)
 public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -43,11 +42,12 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .authorizeRequests()
 
                 .antMatchers("/").permitAll()
+                .antMatchers("/favicon.ico").permitAll()
+                .antMatchers("/application/**").permitAll()
                 .antMatchers("/auth/**").permitAll()
-                //.antMatchers("/favicon.ico").permitAll()
+                .antMatchers("/organization/**").permitAll()
                 .antMatchers("/productbase/**").permitAll()
                 .antMatchers("/scan/**").permitAll()
-                .antMatchers("/organization/**").permitAll()
                 .anyRequest().authenticated().and()
                 //.antMatchers("/**").permitAll()
 

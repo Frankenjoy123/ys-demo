@@ -26,8 +26,8 @@ public class ProductCommentsObject implements Serializable {
     @JsonProperty("score")
     private Integer score;
 
-    @JsonProperty("created_account_id")
-    private String createdAccountId;
+    @JsonProperty("user_id")
+    private String userId;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -66,12 +66,12 @@ public class ProductCommentsObject implements Serializable {
         this.score = score;
     }
 
-    public String getCreatedAccountId() {
-        return createdAccountId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setCreatedAccountId(String createdAccountId) {
-        this.createdAccountId = createdAccountId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public DateTime getCreatedDateTime() {
