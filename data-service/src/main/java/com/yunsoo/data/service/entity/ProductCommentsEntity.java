@@ -29,8 +29,8 @@ public class ProductCommentsEntity {
     @Column(name = "score")
     private Integer score;
 
-    @Column(name = "created_account_id")
-    private String createdAccountId;
+    @Column(name = "user_id")
+    private String userId;
 
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -68,12 +68,12 @@ public class ProductCommentsEntity {
         this.score = score;
     }
 
-    public String getCreatedAccountId() {
-        return createdAccountId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setCreatedAccountId(String createdAccountId) {
-        this.createdAccountId = createdAccountId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public DateTime getCreatedDateTime() {

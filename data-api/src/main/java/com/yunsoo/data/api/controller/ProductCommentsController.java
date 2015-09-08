@@ -110,7 +110,7 @@ public class ProductCommentsController {
         object.setProductBaseId(entity.getProductBaseId());
         object.setComments(entity.getComments());
         object.setScore(entity.getScore());
-        object.setCreatedAccountId(entity.getCreatedAccountId());
+        object.setUserId(entity.getUserId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         return object;
     }
@@ -124,7 +124,7 @@ public class ProductCommentsController {
         entity.setProductBaseId(object.getProductBaseId());
         entity.setComments(object.getComments());
         entity.setScore(object.getScore());
-        entity.setCreatedAccountId(object.getCreatedAccountId());
+        entity.setUserId(object.getUserId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         return entity;
     }

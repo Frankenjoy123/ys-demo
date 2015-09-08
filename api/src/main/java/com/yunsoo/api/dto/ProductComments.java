@@ -27,8 +27,8 @@ public class ProductComments {
     @JsonProperty("score")
     private Integer score;
 
-    @JsonProperty("created_account_id")
-    private String createdAccountId;
+    @JsonProperty("user_id")
+    private String userId;
 
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
@@ -68,12 +68,12 @@ public class ProductComments {
         this.score = score;
     }
 
-    public String getCreatedAccountId() {
-        return createdAccountId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setCreatedAccountId(String createdAccountId) {
-        this.createdAccountId = createdAccountId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public DateTime getCreatedDateTime() {
@@ -90,7 +90,7 @@ public class ProductComments {
             this.setProductBaseId(object.getProductBaseId());
             this.setComments(object.getComments());
             this.setScore(object.getScore());
-            this.setCreatedAccountId(object.getCreatedAccountId());
+            this.setUserId(object.getUserId());
             this.setCreatedDateTime(object.getCreatedDateTime());
         }
     }
@@ -101,7 +101,7 @@ public class ProductComments {
         object.setProductBaseId(this.getProductBaseId());
         object.setComments(this.getComments());
         object.setScore(this.getScore());
-        object.setCreatedAccountId(this.getCreatedAccountId());
+        object.setUserId(this.getUserId());
         object.setCreatedDateTime(this.getCreatedDateTime());
         return object;
     }
