@@ -79,7 +79,7 @@ public class UserDomain {
         if (!StringUtils.isEmpty(userId)) {
             //check phone
             if (userObject.getPhone() != null) {
-                checkPhoneExists(userObject.getPhone());
+                checkPhoneExists(userObject.getPhone(), userId);
             }
             dataAPIClient.patch("user/{id}", userObject, userId);
         }
@@ -109,7 +109,7 @@ public class UserDomain {
     public UserObject createUser(UserObject userObject) {
         //check phone
         if (userObject.getPhone() != null) {
-            checkPhoneExists(userObject.getPhone());
+            checkPhoneExists(userObject.getPhone(), null);
         }
 
         //create user
@@ -133,8 +133,9 @@ public class UserDomain {
     }
 
 
-    private void checkPhoneExists(String phone) {
-        if (getUserByPhone(phone) != null) {
+    private void checkPhoneExists(String phone, String userId) {
+        UserObject userObject = getUserByPhone(phone);
+        if (userObject != null && !userObject.getId().equals(userId)) {
             throw new ConflictException("phone already registered by another user");
         }
     }

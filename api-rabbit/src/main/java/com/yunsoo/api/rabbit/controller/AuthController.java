@@ -83,7 +83,11 @@ public class AuthController {
         //update deviceId of the user
         if (deviceId != null && !deviceId.equals(userObject.getDeviceId())) {
             userObject.setDeviceId(deviceId);
-            userDomain.patchUpdateUser(userObject);
+            //create another object for patch update to avoid phone check logic
+            UserObject newUserObject = new UserObject();
+            newUserObject.setId(userObject.getId());
+            newUserObject.setDeviceId(deviceId);
+            userDomain.patchUpdateUser(newUserObject);
         }
 
         LOGGER.info("user login with phone [userId: {}]", userObject.getId());
