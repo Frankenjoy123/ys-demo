@@ -10,21 +10,10 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 public class UserLoginRequest {
 
-    @JsonProperty("device_id")
-    private String deviceId;
-
     @NotEmpty(message = "phone must not be null or empty")
     @JsonProperty("phone")
     private String phone;
 
-
-    public String getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
 
     public String getPhone() {
         return phone;

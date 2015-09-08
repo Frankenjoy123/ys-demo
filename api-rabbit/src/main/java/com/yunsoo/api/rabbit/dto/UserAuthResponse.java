@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created on:   2015/8/26
  * Descriptions:
  */
-public class UserLoginResponse {
+public class UserAuthResponse {
 
     @JsonProperty("user")
     private User user;

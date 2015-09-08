@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * Created by:   Zhe
  * Created on:   2015/3/5
@@ -34,82 +32,92 @@ public class AuthController {
     private TokenAuthenticationService tokenAuthenticationService;
 
     /**
-     * login with phone, phone must have been registered already
+     * scenario 1. user find by phone, login with phone
+     * scenario 2. anonymous user (phone is null) exists, register with phone
+     * scenario 3. no user exists, create new user with phone
      *
      * @param deviceId     deviceId from RequestHeader
-     * @param loginRequest UserLoginRequest
-     * @param response     current HttpServletResponse
+     * @param accessToken  accessToken from RequestHeader
+     * @param loginRequest UserLoginRequest [phone must not be null or empty]
      * @return UserLoginResponse include user and access_token
      */
     @RequestMapping(value = "login/phone", method = RequestMethod.POST)
-    public UserLoginResponse loginWithPhone(
+    public UserAuthResponse loginWithPhone(
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
-            @RequestBody UserLoginRequest loginRequest,
-            HttpServletResponse response) {
-        if (!StringUtils.isEmpty(loginRequest.getDeviceId())) {
-            deviceId = loginRequest.getDeviceId();
+            @RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
+            @RequestBody UserLoginRequest loginRequest) {
+        //scenario 1. user find by phone, login with phone
+        //find user by phone
+        UserObject userObject = userDomain.getUserByPhone(loginRequest.getPhone());
+
+        if (userObject == null) { //phone not found
+            UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication(accessToken);
+            if (userAuthentication != null) { //accessToken is valid
+                //find user by accessToken
+                userObject = userDomain.getUserById(userAuthentication.getDetails().getId());
+                if (userObject.getPhone() == null) {
+                    //scenario 2. anonymous user exists, register with phone
+                    userObject.setPhone(loginRequest.getPhone());
+                    if (!StringUtils.isEmpty(deviceId)) {
+                        userObject.setDeviceId(deviceId);
+                    }
+                    userDomain.patchUpdateUser(userObject);
+                }
+            }
+
+            if (userObject == null) {
+                //scenario 3. no user exists, create new user with phone
+                //create an new user
+                userObject = new UserObject();
+                userObject.setPhone(loginRequest.getPhone());
+                userObject.setDeviceId(deviceId);
+                userObject = userDomain.createUser(userObject);
+            }
+
         }
 
-        //check user
-        UserObject userObject = userDomain.getUserByPhone(loginRequest.getPhone());
-        if (userObject == null) {
-            throw new UnauthorizedException("phone not exists");
-        }
         if (LookupCodes.UserStatus.DISABLED.equals(userObject.getStatusCode())) {
             throw new UnauthorizedException("user is disabled");
         }
 
         //update deviceId of the user
         if (deviceId != null && !deviceId.equals(userObject.getDeviceId())) {
-            UserObject newUserObject = new UserObject();
-            newUserObject.setId(userObject.getId());
-            newUserObject.setDeviceId(deviceId);
-            userDomain.patchUpdateUser(newUserObject);
+            userObject.setDeviceId(deviceId);
+            userDomain.patchUpdateUser(userObject);
         }
 
         LOGGER.info("user login with phone [userId: {}]", userObject.getId());
 
         //generate response
-        Token accessToken = tokenAuthenticationService.generateAccessToken(userObject.getId());
-        UserLoginResponse loginResponse = new UserLoginResponse();
-        loginResponse.setUser(new User(userObject));
-        loginResponse.setAccessToken(accessToken);
-
-        //set token to the response header
-        response.setHeader(Constants.HttpHeaderName.ACCESS_TOKEN, accessToken.getToken());
-
-        return loginResponse;
+        return generateUserAuthResponse(userObject);
     }
 
     /**
-     * 1. if access_token is null, register new user
-     * 2. if access_token is available, register phone to the exist user (phone is not null)
+     * 1. if access_token is invalid, register new user
+     * 2. if access_token is valid, register phone to the exist user (phone is not null)
      *
      * @param deviceId        deviceId from RequestHeader
      * @param accessToken     accessToken from RequestHeader
      * @param registerRequest UserRegisterRequest
-     * @param response        current HttpServletResponse
      * @return UserLoginResponse include user and access_token
      */
     @RequestMapping(value = "register", method = RequestMethod.POST)
-    public UserLoginResponse registerUser(
+    public UserAuthResponse registerUser(
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
             @RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
-            @RequestBody(required = false) UserRegisterRequest registerRequest,
-            HttpServletResponse response) {
+            @RequestBody(required = false) UserRegisterRequest registerRequest) {
         if (registerRequest == null) {
             registerRequest = new UserRegisterRequest();
         }
-        if (StringUtils.isEmpty(registerRequest.getDeviceId())) {
-            registerRequest.setDeviceId(deviceId);
-        }
+
         UserObject userObject = registerRequest.toUserObject();
+        userObject.setDeviceId(deviceId);
 
         if (StringUtils.isEmpty(accessToken)) {
             //register new user
             userObject = userDomain.createUser(userObject);
 
-            LOGGER.info("new user registered [userId: {}]", userObject.getId());
+            LOGGER.info("new user created [userId: {}]", userObject.getId());
         } else {
             //register phone to the exist user
             UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication(accessToken);
@@ -124,14 +132,14 @@ public class AuthController {
         }
 
         //generate response
-        Token newAccessToken = tokenAuthenticationService.generateAccessToken(userObject.getId());
-        UserLoginResponse loginResponse = new UserLoginResponse();
+        return generateUserAuthResponse(userObject);
+    }
+
+    private UserAuthResponse generateUserAuthResponse(UserObject userObject) {
+        Token accessToken = tokenAuthenticationService.generateAccessToken(userObject.getId());
+        UserAuthResponse loginResponse = new UserAuthResponse();
         loginResponse.setUser(new User(userObject));
-        loginResponse.setAccessToken(newAccessToken);
-
-        //set token to the response header
-        response.setHeader(Constants.HttpHeaderName.ACCESS_TOKEN, newAccessToken.getToken());
-
+        loginResponse.setAccessToken(accessToken);
         return loginResponse;
     }
 
