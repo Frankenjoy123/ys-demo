@@ -7,8 +7,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class MessageToApp {
 
-    @JsonProperty("org")
-    private String org;
+    @JsonProperty("message_id")
+    private String messageId;
+
+    @JsonProperty("org_id")
+    private String orgId;
+
+    @JsonProperty("org_name")
+    private String orgName;
 
     @JsonProperty("title")
     private String title;
@@ -16,12 +22,28 @@ public class MessageToApp {
     @JsonProperty("body")
     private String body;
 
-    public String getOrg() {
-        return org;
+    public String getMessageId() {
+        return messageId;
     }
 
-    public void setOrg(String org) {
-        this.org = org;
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
     }
 
     public String getTitle() {

@@ -157,7 +157,9 @@ public class MessageController {
         MessageToApp messageToApp = new MessageToApp();
         String orgId = organizationObject.getId();
         String orgName = organizationObject.getName();
-        messageToApp.setOrg(orgName);
+        messageToApp.setMessageId(id);
+        messageToApp.setOrgId(orgId);
+        messageToApp.setOrgName(orgName);
         messageToApp.setTitle(message.getTitle());
         messageToApp.setBody(message.getDetails().getBody());
         messageDomain.pushMessageToApp(orgId, id, messageToApp);
