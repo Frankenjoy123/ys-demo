@@ -48,7 +48,7 @@ public class ProductBase {
     private List<String> productKeyTypeCodes;
 
     @JsonProperty("product_key_types")
-    private List<ProductKeyType> productKeyTypes;
+    private List<Lookup> productKeyTypes;
 
     @JsonProperty("shelf_life")
     private Integer shelfLife;
@@ -177,11 +177,11 @@ public class ProductBase {
         this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
-    public List<ProductKeyType> getProductKeyTypes() {
+    public List<Lookup> getProductKeyTypes() {
         return productKeyTypes;
     }
 
-    public void setProductKeyTypes(List<ProductKeyType> productKeyTypes) {
+    public void setProductKeyTypes(List<Lookup> productKeyTypes) {
         this.productKeyTypes = productKeyTypes;
     }
 

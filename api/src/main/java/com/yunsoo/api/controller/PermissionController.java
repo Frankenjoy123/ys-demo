@@ -1,10 +1,13 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.client.DataAPIClient;
+import com.yunsoo.api.domain.LookupDomain;
 import com.yunsoo.api.domain.PermissionDomain;
+import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.PermissionAction;
 import com.yunsoo.api.dto.PermissionPolicy;
 import com.yunsoo.api.dto.PermissionResource;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,9 @@ public class PermissionController {
 
     @Autowired
     private PermissionDomain permissionDomain;
+
+    @Autowired
+    private LookupDomain lookupDomain;
 
 
     @RequestMapping(value = "/policy", method = RequestMethod.GET)
@@ -59,13 +65,13 @@ public class PermissionController {
 
 
     @RequestMapping(value = "/resource", method = RequestMethod.GET)
-    public List<PermissionResource> getResources(@RequestParam(value = "all", required = false) Boolean all) {
-        return permissionDomain.getPermissionResources(all != null && all ? null : true);
+    public List<Lookup> getResources(@RequestParam(value = "all", required = false) Boolean all) {
+        return lookupDomain.getLookupListByType(LookupCodes.LookupType.PermissionResource, all != null && all ? null : true);
     }
 
     @RequestMapping(value = "/action", method = RequestMethod.GET)
-    public List<PermissionAction> getActions(@RequestParam(value = "all", required = false) Boolean all) {
-        return permissionDomain.getPermissionActions(all != null && all ? null : true);
+    public List<Lookup> getActions(@RequestParam(value = "all", required = false) Boolean all) {
+        return lookupDomain.getLookupListByType(LookupCodes.LookupType.PermissionAction, all != null && all ? null : true);
     }
 
 }

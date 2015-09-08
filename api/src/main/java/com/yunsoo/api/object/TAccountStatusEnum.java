@@ -11,7 +11,7 @@ public enum TAccountStatusEnum {
 
     private int value = 0;
 
-    private TAccountStatusEnum(int value) {
+    TAccountStatusEnum(int value) {
         this.value = value;
     }
 

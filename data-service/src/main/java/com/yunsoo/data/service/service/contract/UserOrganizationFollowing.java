@@ -79,7 +79,7 @@ public class UserOrganizationFollowing {
         if (userOrganizationFollowing == null) return null;
 
         UserOrganizationFollowingEntity entity = new UserOrganizationFollowingEntity();
-        BeanUtils.copyProperties(userOrganizationFollowing, entity, new String[]{"createdDateTime"});
+        BeanUtils.copyProperties(userOrganizationFollowing, entity, "createdDateTime");
 //        if (userOrganizationFollowing.getId() != null && userOrganizationFollowing.getId() != 0) {
 //            entity.setId(userOrganizationFollowing.getId());
 //        }
@@ -93,7 +93,7 @@ public class UserOrganizationFollowing {
         if (entity == null) return null;
 
         UserOrganizationFollowing userOrganizationFollowing = new UserOrganizationFollowing();
-        BeanUtils.copyProperties(entity, userOrganizationFollowing, new String[]{"createdDateTime"});
+        BeanUtils.copyProperties(entity, userOrganizationFollowing, "createdDateTime");
         if (entity.getCreatedDateTime() != null) {
             userOrganizationFollowing.setCreatedDateTime(entity.getCreatedDateTime());
         }
@@ -102,7 +102,7 @@ public class UserOrganizationFollowing {
 
     public static List<UserOrganizationFollowing> FromEntityList(Iterable<UserOrganizationFollowingEntity> entityList) {
         if (entityList == null) return null;
-        List<UserOrganizationFollowing> userOrganizationFollowingList = new ArrayList<UserOrganizationFollowing>();
+        List<UserOrganizationFollowing> userOrganizationFollowingList = new ArrayList<>();
         for (UserOrganizationFollowingEntity entity : entityList) {
             userOrganizationFollowingList.add(UserOrganizationFollowing.FromEntity(entity));
         }
@@ -111,7 +111,7 @@ public class UserOrganizationFollowing {
 
     public static List<UserOrganizationFollowingEntity> ToEntityList(Iterable<UserOrganizationFollowing> userFollowings) {
         if (userFollowings == null) return null;
-        List<UserOrganizationFollowingEntity> entityList = new ArrayList<UserOrganizationFollowingEntity>();
+        List<UserOrganizationFollowingEntity> entityList = new ArrayList<>();
         for (UserOrganizationFollowing userOrganizationFollowing : userFollowings) {
             entityList.add(UserOrganizationFollowing.ToEntity(userOrganizationFollowing));
         }

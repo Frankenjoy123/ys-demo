@@ -79,7 +79,7 @@ public class OperationRecord {
         if (operationRecord == null) return null;
 
         OperationRecordEntity entity = new OperationRecordEntity();
-        BeanUtils.copyProperties(operationRecord, entity, new String[]{"createdDateTime", "id"});
+        BeanUtils.copyProperties(operationRecord, entity, "createdDateTime", "id");
         if (operationRecord.getId() != null && operationRecord.getId() != 0) {
             entity.setId(operationRecord.getId());
         }
@@ -95,7 +95,7 @@ public class OperationRecord {
         if (entity == null) return null;
 
         OperationRecord operationRecord = new OperationRecord();
-        BeanUtils.copyProperties(entity, operationRecord, new String[]{"createdDateTime"});
+        BeanUtils.copyProperties(entity, operationRecord, "createdDateTime");
         if (entity.getCreatedDateTime() != null) {
             operationRecord.setCreatedDateTime(entity.getCreatedDateTime().toString());
         }

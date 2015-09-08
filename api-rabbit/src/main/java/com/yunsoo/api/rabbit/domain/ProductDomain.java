@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.rabbit.dto.*;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -141,7 +142,7 @@ public class ProductDomain {
         if (objects == null) {
             return null;
         }
-        List<ProductKeyType> productKeyTypes = lookupDomain.getAllProductKeyTypes(null);
+       // List<Lookup> productKeyTypes = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
         return Arrays.stream(objects).map(p -> convertFromProductBaseObject(p)).collect((Collectors.toList()));
     }
 

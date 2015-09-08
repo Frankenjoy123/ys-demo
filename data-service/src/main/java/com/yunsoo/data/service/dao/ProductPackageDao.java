@@ -13,15 +13,15 @@ import java.util.Set;
  */
 public interface ProductPackageDao {
 
-    public ProductPackageModel getByKey(String key);
+    ProductPackageModel getByKey(String key);
 
-    public DaoStatus save(ProductPackageModel productKeyModel);
+    DaoStatus save(ProductPackageModel productKeyModel);
 
-    public DaoStatus update(ProductPackageModel productKeyModel);
+    DaoStatus update(ProductPackageModel productKeyModel);
     
-    public List<ProductPackageModel> batchLoad(Set<String> keys);
+    List<ProductPackageModel> batchLoad(Set<String> keys);
     
-    public DaoStatus batchSave(List<ProductPackageModel> packages);
+    DaoStatus batchSave(List<ProductPackageModel> packages);
     
             
 }

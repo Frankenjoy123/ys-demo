@@ -160,4 +160,24 @@ public class LookupCodes {
         public static final String DEACTIVATED = "deactivated";
     }
 
+
+    public enum LookupType {
+
+        ProductStatus("product_status"),
+
+        ProductKeyType("product_key_type"),
+
+        ProductKeyBatchStatus("product_key_batch_status"),
+
+        PermissionResource("permission_resource"),
+
+        PermissionAction("permission_action");
+
+        private String type;
+
+        LookupType(String type) {
+            this.type = type;
+        }
+    }
+
 }

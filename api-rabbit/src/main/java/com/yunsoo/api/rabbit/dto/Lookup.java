@@ -1,30 +1,25 @@
-package com.yunsoo.data.service.entity;
+package com.yunsoo.api.rabbit.dto;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Created by:   Lijian
- * Created on:   2015/3/23
- * Descriptions:
+ * Created by yan on 9/8/2015.
  */
-@MappedSuperclass
-public abstract class AbstractLookupEntity {
-
-    @Id
-    @Column(name = "code")
+public class Lookup {
+    @JsonProperty("code")
     private String code;
 
-    @Column(name = "name")
+    @JsonProperty("name")
     private String name;
 
-    @Column(name = "description")
+    @JsonProperty("description")
     private String description;
 
-    @Column(name = "active")
-    private boolean active;
+    @JsonProperty("active")
+    private Boolean active;
 
+    @JsonProperty("type_code")
+    private String typeCode;
 
     public String getCode() {
         return code;
@@ -50,11 +45,19 @@ public abstract class AbstractLookupEntity {
         this.description = description;
     }
 
-    public boolean isActive() {
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 }

@@ -1,15 +1,12 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.PermissionObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.data.api.wrap.LookupServiceWrap;
 import com.yunsoo.data.service.entity.PermissionPolicyEntity;
 import com.yunsoo.data.service.repository.PermissionPolicyRepository;
-import com.yunsoo.data.service.service.LookupType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -31,10 +28,6 @@ public class PermissionController {
 
     @Autowired
     private PermissionPolicyRepository permissionPolicyRepository;
-
-    @Autowired
-    private LookupServiceWrap lookupServiceWrap;
-
 
     @RequestMapping(value = "policy", method = RequestMethod.GET)
     public List<PermissionPolicyObject> getAllPolicies() {
@@ -89,32 +82,6 @@ public class PermissionController {
             throw new NotFoundException("permission policy not found by [code: " + code + "]");
         }
         permissionPolicyRepository.delete(currentEntities);
-    }
-
-
-    //resource
-
-    @RequestMapping(value = "resource", method = RequestMethod.GET)
-    public List<LookupObject> getAllResource(@RequestParam(value = "active", required = false) Boolean active) {
-        return lookupServiceWrap.getAll(LookupType.PermissionResource, active);
-    }
-
-    @RequestMapping(value = "resource", method = RequestMethod.PUT)
-    public LookupObject createResource(@RequestBody LookupObject resource) {
-        if (resource.getCode() == null) {
-            throw new BadRequestException("code must not be null");
-        }
-        if (resource.isActive() == null) {
-            resource.setActive(true);
-        }
-        return lookupServiceWrap.save(LookupType.PermissionResource, resource);
-    }
-
-    //action
-
-    @RequestMapping(value = "action", method = RequestMethod.GET)
-    public List<LookupObject> getAllAction(@RequestParam(value = "active", required = false) Boolean active) {
-        return lookupServiceWrap.getAll(LookupType.PermissionAction, active);
     }
 
     private List<PermissionPolicyObject> toPermissionPolicyObjectList(List<PermissionPolicyEntity> entities) {

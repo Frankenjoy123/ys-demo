@@ -29,7 +29,7 @@ public class OperationRecordController {
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public long addOperationRecord(@RequestBody OperationRecord operationRecord) {
-        OperationRecordEntity newEntity = operationRecordRepository.save(operationRecord.ToEntity(operationRecord));
+        OperationRecordEntity newEntity = operationRecordRepository.save(OperationRecord.ToEntity(operationRecord));
         return newEntity.getId();
     }
 

@@ -1,10 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.ProcessorClient;
-import com.yunsoo.api.dto.ProductKeyBatch;
-import com.yunsoo.api.dto.ProductKeyBatchStatus;
-import com.yunsoo.api.dto.ProductKeyCredit;
-import com.yunsoo.api.dto.ProductKeyType;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.common.data.object.LookupObject;
@@ -80,8 +77,8 @@ public class ProductKeyDomain {
     public ProductKeyBatch getProductKeyBatchById(String id) {
         return toProductKeyBatch(
                 dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id),
-                lookupDomain.getProductKeyTypes(),
-                lookupDomain.getProductKeyBatchStatuses());
+                lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType),
+                lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus));
     }
 
     public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Pageable pageable) {
@@ -99,8 +96,8 @@ public class ProductKeyDomain {
         Page<ProductKeyBatchObject> objectsPage = dataAPIClient.getPaged("productkeybatch" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
         });
 
-        List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
-        List<ProductKeyBatchStatus> productKeyBatchStatuses = lookupDomain.getProductKeyBatchStatuses();
+        List<Lookup> productKeyTypes = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
+        List<Lookup> productKeyBatchStatuses = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus);
         return objectsPage.map(i -> toProductKeyBatch(i, productKeyTypes, productKeyBatchStatuses));
     }
 
@@ -159,7 +156,7 @@ public class ProductKeyDomain {
             LOGGER.error("ProductKeyBatchMassage posting to sqs failed [exceptionMessage: {}]", ex.getMessage());
         }
 
-        return toProductKeyBatch(newBatchObj, lookupDomain.getProductKeyTypes(), lookupDomain.getProductKeyBatchStatuses());
+        return toProductKeyBatch(newBatchObj, lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType), lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus));
     }
 
     public byte[] getProductKeysByBatchId(String id) {
@@ -188,7 +185,7 @@ public class ProductKeyDomain {
     }
 
     public boolean validateProductKeyTypeCodes(List<String> productKeyTypeCodes) {
-        List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
+        List<Lookup> productKeyTypes = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
         return productKeyTypeCodes != null
                 && productKeyTypeCodes.size() > 0
                 && productKeyTypeCodes.stream().allMatch(c -> productKeyTypes.stream().anyMatch(t -> t.getCode().equals(c)));
@@ -196,8 +193,8 @@ public class ProductKeyDomain {
 
 
     private ProductKeyBatch toProductKeyBatch(ProductKeyBatchObject object,
-                                              List<ProductKeyType> productKeyTypes,
-                                              List<ProductKeyBatchStatus> productKeyBatchStatuses) {
+                                              List<Lookup> productKeyTypes,
+                                              List<Lookup> productKeyBatchStatuses) {
         if (object == null) {
             return null;
         }
@@ -205,9 +202,9 @@ public class ProductKeyDomain {
         batch.setId(object.getId());
         batch.setQuantity(object.getQuantity());
         batch.setStatusCode(object.getStatusCode());
-        batch.setStatus(LookupObject.fromCode(productKeyBatchStatuses, object.getStatusCode()));
+        batch.setStatus(Lookup.fromCode(productKeyBatchStatuses, object.getStatusCode()));
         batch.setProductKeyTypeCodes(object.getProductKeyTypeCodes());
-        batch.setProductKeyTypes(LookupObject.fromCodeList(productKeyTypes, object.getProductKeyTypeCodes()));
+        batch.setProductKeyTypes(Lookup.fromCodeList(productKeyTypes, object.getProductKeyTypeCodes()));
         batch.setProductBaseId(object.getProductBaseId());
         batch.setOrgId(object.getOrgId());
         batch.setCreatedAppId(object.getCreatedAppId());

@@ -1,7 +1,8 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.LookupDomain;
-import com.yunsoo.api.dto.ProductStatus;
+import com.yunsoo.api.dto.Lookup;
+import com.yunsoo.common.data.LookupCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,8 +23,8 @@ public class ProductStatusController {
     private LookupDomain lookDomain;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductStatus> getAllActive() {
-        return lookDomain.getProductStatuses(true);
+    public List<Lookup> getAllActive() {
+        return lookDomain.getLookupListByType(LookupCodes.LookupType.ProductStatus);
     }
 
 //    @RequestMapping(value = "search", method = RequestMethod.GET)

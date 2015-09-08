@@ -91,7 +91,7 @@ public class ProductBaseController {
 
         ProductBase productBase = new ProductBase(productBaseObject);
         productBase.setCategory(new ProductCategory(productCategoryDomain.getById(productBase.getCategoryId())));
-        productBase.setProductKeyTypes(LookupObject.fromCodeList(lookupDomain.getProductKeyTypes(), productBaseObject.getProductKeyTypeCodes()));
+        productBase.setProductKeyTypes(Lookup.fromCodeList(lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType), productBaseObject.getProductKeyTypeCodes()));
         productBase.setDetails(productBaseDomain.getProductBaseDetails(orgId, productBaseId, version));
         productBase.setFollowingUsers(followingDomain.getFollowingUsersByProductBaseId(productBaseId, null).getContent());
         return productBase;
@@ -108,11 +108,11 @@ public class ProductBaseController {
             response.setHeader("Content-Range", productBasePage.toContentRange());
         }
         Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
-        List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
+        List<Lookup> lookupList = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
         List<ProductBase> productBases = productBasePage.map(p -> {
             ProductBase pb = new ProductBase(p);
             pb.setCategory(new ProductCategory(productCategoryDomain.getById(p.getCategoryId(), productCategoryObjectMap)));
-            pb.setProductKeyTypes(LookupObject.fromCodeList(productKeyTypes, p.getProductKeyTypeCodes()));
+            pb.setProductKeyTypes(Lookup.fromCodeList(lookupList, p.getProductKeyTypeCodes()));
             return pb;
         }).getContent();
 
