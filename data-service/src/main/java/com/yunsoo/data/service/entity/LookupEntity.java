@@ -7,7 +7,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "lookup_code")
-@IdClass(LookupPK2.class)
+@IdClass(LookupPK.class)
 public class LookupEntity {
 
     @Id
