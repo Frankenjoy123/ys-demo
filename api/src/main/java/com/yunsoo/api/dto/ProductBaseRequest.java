@@ -47,7 +47,7 @@ public class ProductBaseRequest {
     private List<String> productKeyTypeCodes;
 
     @JsonProperty("product_key_types")
-    private List<ProductKeyType> productKeyTypes;
+    private List<Lookup> productKeyTypes;
 
     @JsonProperty("child_product_count")
     private Integer childProductCount;
@@ -151,11 +151,11 @@ public class ProductBaseRequest {
         this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
-    public List<ProductKeyType> getProductKeyTypes() {
+    public List<Lookup> getProductKeyTypes() {
         return productKeyTypes;
     }
 
-    public void setProductKeyTypes(List<ProductKeyType> productKeyTypes) {
+    public void setProductKeyTypes(List<Lookup> productKeyTypes) {
         this.productKeyTypes = productKeyTypes;
     }
 

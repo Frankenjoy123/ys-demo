@@ -1,11 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.dto.Lookup;
-import com.yunsoo.api.rabbit.dto.ProductKeyBatchStatus;
-import com.yunsoo.api.rabbit.dto.ProductKeyType;
-import com.yunsoo.api.rabbit.dto.ProductStatus;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +46,6 @@ public class LookupDomain {
 
     public List<Lookup> getLookupListByType(LookupCodes.LookupType type){
         return getLookupListByType(type, null);
-    }
-
-
-    public List<ProductKeyType> getAllProductKeyTypes(Boolean active) {
-        ProductKeyType[] objects = dataAPIClient.get("productkeytype?active={active}", ProductKeyType[].class, active);
-        return Arrays.asList(objects);
     }
 
 }

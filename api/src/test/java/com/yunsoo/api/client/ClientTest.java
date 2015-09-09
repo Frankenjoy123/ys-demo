@@ -1,7 +1,6 @@
 package com.yunsoo.api.client;
 
 import com.yunsoo.api.config.ClientConfiguration;
-import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.common.web.client.RestClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,10 +32,5 @@ public class ClientTest {
         System.out.println(processorClient.getBaseURL());
     }
 
-    @Test
-    public void testGet() {
-        ProductKeyType[] array = dataAPIClient.get("productkeytype?active={active}", ProductKeyType[].class, true);
-        System.out.println(Arrays.asList(array));
-    }
 
 }

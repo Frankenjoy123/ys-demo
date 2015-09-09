@@ -2,7 +2,6 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.LookupDomain;
 import com.yunsoo.api.dto.Lookup;
-import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.common.data.LookupCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
