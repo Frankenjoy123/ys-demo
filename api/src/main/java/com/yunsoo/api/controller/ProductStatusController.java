@@ -15,6 +15,7 @@ import java.util.List;
  * Created on:   2015/2/27
  * Descriptions:
  */
+@Deprecated
 @RestController
 @RequestMapping(value = "/productstatus")
 public class ProductStatusController {

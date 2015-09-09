@@ -1,15 +1,13 @@
 package com.yunsoo.data.service.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by yan on 9/7/2015.
  */
 @Entity
 @Table(name = "lookup_code")
+@IdClass(LookupPK.class)
 public class LookupEntity {
 
     @Id
@@ -26,6 +24,7 @@ public class LookupEntity {
     private boolean active;
 
     @Column(name = "type_code")
+    @Id
     private String typeCode;
 
     public String getCode() {

@@ -75,7 +75,7 @@ public class LookupObject implements Serializable {
 
     @Override
     public String toString() {
-        return this.name + " (" + this.code + ")";
+        return this.name + " (" + this.code + ", " + this.typeCode + ")";
     }
 
     @Override

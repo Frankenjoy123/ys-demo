@@ -77,6 +77,15 @@ public class Lookup {
 
     public Lookup(){}
 
+    public static LookupObject toLookupObj(Lookup lookup){
+        LookupObject obj = new LookupObject();
+        obj.setActive(lookup.getActive());
+        obj.setTypeCode(lookup.getTypeCode());
+        obj.setDescription(lookup.getDescription());
+        obj.setName(lookup.getName());
+        obj.setCode(lookup.getCode());
+        return obj;
+    }
 
     public static Lookup fromCode(List<Lookup> lookup, String code) {
         if (lookup == null) {

@@ -178,6 +178,17 @@ public class LookupCodes {
         LookupType(String type) {
             this.type = type;
         }
+
+        public static LookupType toLookupType(String typeCode){
+            if(typeCode == null)
+                return  null;
+           for(LookupType type : LookupType.values()){
+               if(typeCode.equals(type.type))
+                   return type;
+           }
+            return null;
+        }
+
     }
 
 }

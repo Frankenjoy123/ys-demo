@@ -52,9 +52,8 @@ public class LookupController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.PUT)
-    public LookupObject save(@RequestBody LookupObject lookupObject){
+    public void save(@RequestBody LookupObject lookupObject){
         repository.save(toLookupEntity(lookupObject));
-        return lookupObject;
     }
 
     @RequestMapping(value = "", method = RequestMethod.DELETE)
