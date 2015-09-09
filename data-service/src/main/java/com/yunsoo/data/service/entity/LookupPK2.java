@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by yan on 9/9/2015.
  */
-public class lookupPK implements Serializable{
+public class LookupPK2 implements Serializable{
     private String code;
     private String typeCode;
 
