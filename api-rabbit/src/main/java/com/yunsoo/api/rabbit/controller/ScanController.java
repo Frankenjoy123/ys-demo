@@ -156,7 +156,7 @@ public class ScanController {
         Product currentExistProduct = productDomain.getProductByKey(key);
         if (currentExistProduct == null) {
             //Not found by the product Key
-            LOGGER.warn("Key = {0} 不存在！", key);
+            LOGGER.warn("product not found by [key: {}]", key);
             scanResult.setValidationResult(ValidationResult.Fake);  //no such key in our Yunsoo Platform.
             return scanResult;
         }
