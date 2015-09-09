@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,8 +42,7 @@ public class UserFollowingDomain {
                 });
 
         List<String> userIds = userFollowingList.getContent().stream().map(UserOrganizationFollowingObject::getUserId).collect(Collectors.toList());
-        List<User> userList = dataAPIClient.get("/user?id_in={ids}", new ParameterizedTypeReference<List<User>>() {
-        }, StringUtils.collectionToCommaDelimitedString(userIds));
+        List<User> userList = getUsers(userIds);
 
         return new Page<>(userList, userFollowingList.getPage(), userFollowingList.getTotal());
     }
@@ -57,8 +57,7 @@ public class UserFollowingDomain {
                 });
 
         List<String> userIds = userFollowingList.getContent().stream().map(UserProductFollowingObject::getUserId).collect(Collectors.toList());
-        List<User> userList = dataAPIClient.get("/user?id_in={ids}", new ParameterizedTypeReference<List<User>>() {
-        }, StringUtils.collectionToCommaDelimitedString(userIds));
+        List<User> userList = getUsers(userIds);
 
         return new Page<>(userList, userFollowingList.getPage(), userFollowingList.getTotal());
     }
@@ -70,5 +69,15 @@ public class UserFollowingDomain {
     public Map<String, Long> getProductFollowingTotalNumber(List<String> productBaseIds) {
         return dataAPIClient.get("userproduct/following/count/{productBaseIds}", new ParameterizedTypeReference<Map<String, Long>>() {
         }, StringUtils.arrayToCommaDelimitedString(productBaseIds.toArray()));
+    }
+
+
+    private List<User> getUsers(List<String> userIds) {
+        if (userIds == null || userIds.size() == 0) {
+            return new ArrayList<>();
+        } else {
+            return dataAPIClient.get("/user?id_in={ids}", new ParameterizedTypeReference<List<User>>() {
+            }, StringUtils.collectionToCommaDelimitedString(userIds));
+        }
     }
 }

@@ -15,6 +15,8 @@ import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +44,8 @@ public class ProductBaseDomain {
 
     private static ObjectMapper mapper = new ObjectMapper();
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductBaseDomain.class);
+
     @Autowired
     private RestClient dataAPIClient;
 
@@ -64,6 +68,7 @@ public class ProductBaseDomain {
         try {
             return mapper.readValue(resourceInputStream, ProductBaseDetails.class);
         } catch (IOException e) {
+            LOGGER.error("product details json read exception", e);
             return null;
         }
     }
@@ -239,6 +244,7 @@ public class ProductBaseDomain {
         productBaseObject.setModifiedDateTime(productBaseVersionsObject.getModifiedDateTime());
         return productBaseObject;
     }
+
     private void copyProductBaseImageFromPreviousVersion(String orgId, String productBaseId, Integer version) {
         try {
             if (version > 1) {
