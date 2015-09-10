@@ -53,11 +53,10 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .authorizeRequests()
 
                 .antMatchers("/").permitAll()
+                .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/auth/login/**").permitAll()
                 .antMatchers("/auth/accesstoken/**").permitAll()
                 .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
-                //.antMatchers("/favicon.ico").permitAll()
-                //.antMatchers("/resources/**").permitAll()
                 .anyRequest().authenticated().and()
                 //.antMatchers("/**").permitAll()
 
