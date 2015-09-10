@@ -7,24 +7,23 @@ import org.springframework.context.annotation.ConfigurationCondition;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
- * Created by:   yan
- * Created on:   7/30/2015
- * Descriptions:
+ * Created by yan on 9/10/2015.
  */
-public class NotOnAwsCloudEnvironmentCondition implements ConfigurationCondition {
+public class EnableElastiCacheCondition implements ConfigurationCondition {
 
     @Override
-    public ConfigurationPhase getConfigurationPhase() {
-        return ConfigurationPhase.PARSE_CONFIGURATION;
+    public ConfigurationCondition.ConfigurationPhase getConfigurationPhase() {
+        return ConfigurationCondition.ConfigurationPhase.PARSE_CONFIGURATION;
     }
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         String enableElastiCache = context.getEnvironment().getProperty("yunsoo.elasticache");
-        if(enableElastiCache == null || !Boolean.valueOf(enableElastiCache))
-            return true;
+        if(enableElastiCache != null &&  Boolean.valueOf(enableElastiCache)) {
+            OnAwsCloudEnvironmentCondition condition = new OnAwsCloudEnvironmentCondition();
+            return condition.matches(context, metadata);
+        }
 
-        OnAwsCloudEnvironmentCondition condition = new OnAwsCloudEnvironmentCondition();
-        return !condition.matches(context, metadata);
+        return false;
     }
 }

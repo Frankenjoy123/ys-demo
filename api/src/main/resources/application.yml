@@ -21,7 +21,6 @@ yunsoo:
         expires_minutes: 60
     login_token:
         expires_minutes: 5
-
 spring:
     profiles.active: dev
 ---
@@ -44,6 +43,7 @@ yunsoo:
         processor:
             baseurl: http://localhost:4080/
     product_key_base_url: http://d.m.yunsu.co:9080/
+    elasticache: false
 
 ---
 spring:

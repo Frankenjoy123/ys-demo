@@ -1,6 +1,7 @@
 package com.yunsoo.api.config;
 
 import com.yunsoo.api.cache.CustomKeyGenerator;
+import com.yunsoo.api.cache.EnableElastiCacheCondition;
 import com.yunsoo.api.cache.NotOnAwsCloudEnvironmentCondition;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -22,7 +23,7 @@ public class CacheConfiguration {
 
     @Configuration
     @EnableElastiCache(value = {@CacheClusterConfig(name = CACHE_NAME)}, defaultExpiration = 3600)
-    @ConditionalOnAwsCloudEnvironment
+    @Conditional(EnableElastiCacheCondition.class)
     public static class ElastiCacheConfiguration {
 
         @Bean
