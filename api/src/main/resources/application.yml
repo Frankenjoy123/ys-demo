@@ -43,7 +43,8 @@ yunsoo:
         processor:
             baseurl: http://localhost:4080/
     product_key_base_url: http://d.m.yunsu.co:9080/
-    elasticache: false
+    cache:
+        type: local
 
 ---
 spring:
@@ -68,3 +69,5 @@ yunsoo:
         processor:
             baseurl: http://localhost:4080/
     product_key_base_url: http://t.m.yunsu.co:9080/
+    cache:
+        type: elasticache
