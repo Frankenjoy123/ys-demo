@@ -1,6 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.UserProductFollowingObject;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.UserProductFollowingEntity;
 import com.yunsoo.data.service.repository.UserProductFollowingRepository;
@@ -49,10 +50,15 @@ public class UserProductFollowingController {
             entityPage = userProductFollowingRepository.findByProductBaseId(productBaseId, pageable);
         }
 
-        if (pageable != null && entityPage != null) {
-            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        if(entityPage != null ) {
+            if (pageable != null) {
+                response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+            }
+            return entityPage.getContent().stream().map(this::toUserProductFollowingObject).collect(Collectors.toList());
+        } else{
+            throw new BadRequestException("at least one parameter need to be specified: user_id, product_base_id");
+
         }
-        return entityPage.getContent().stream().map(this::toUserProductFollowingObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
