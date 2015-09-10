@@ -26,6 +26,7 @@ import java.util.List;
  * * ErrorCode
  * 40401    :   UserLikedProduct not found!
  */
+@Deprecated
 @RestController
 @RequestMapping("/user/collection")
 public class UserLikedProductController {
