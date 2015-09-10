@@ -1,8 +1,10 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yunsoo.api.rabbit.dto.*;
-import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.api.rabbit.dto.Product;
+import com.yunsoo.api.rabbit.dto.ProductBase;
+import com.yunsoo.api.rabbit.dto.ProductBaseDetails;
+import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -46,7 +48,6 @@ public class ProductDomain {
         try {
             productObject = dataAPIClient.get("product/{key}", ProductObject.class, key);
         } catch (NotFoundException ex) {
-            //log ...该产品码对应的产品不存在！
             return null;
         }
 

@@ -53,7 +53,7 @@ public class OrgAgencyController {
     //query by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'orgagency:read')")
-    public List<OrgAgency> getByFilter(@RequestParam(value = "org_id", required = true) String orgId,
+    public List<OrgAgency> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                        Pageable pageable,
                                        HttpServletResponse response) {
         orgId = fixOrgId(orgId);

@@ -12,7 +12,7 @@ import java.util.List;
 public class ProductBaseDetails {
 
     @JsonProperty("version")
-    private Integer version;
+    private String version;
 
     @JsonProperty("details")
     private List<Item> details;
@@ -27,11 +27,11 @@ public class ProductBaseDetails {
     private List<TCommerce> tCommerce;
 
 
-    public Integer getVersion() {
+    public String getVersion() {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(String version) {
         this.version = version;
     }
 
