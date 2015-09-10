@@ -88,10 +88,9 @@ public class ProductCommentsController {
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public void deleteProductCommentsById(@PathVariable(value = "id") String id) {
         ProductCommentsObject object = productCommentsDomain.getById(id);
-        if (object == null) {
-            throw new NotFoundException("product comment not found by [id: " + id + "]");
+        if (object != null) {
+            productCommentsDomain.deleteProductComments(id);
         }
-        productCommentsDomain.deleteProductComments(id);
     }
 
 
