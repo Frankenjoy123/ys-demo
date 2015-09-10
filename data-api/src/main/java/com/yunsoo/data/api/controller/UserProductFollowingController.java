@@ -37,17 +37,19 @@ public class UserProductFollowingController {
             Pageable pageable,
             HttpServletResponse response) {
 
-        Page<UserProductFollowingEntity> entityPage;
-        if (!StringUtils.isEmpty(userId)) {
-            entityPage = userProductFollowingRepository.findByUserId(userId, pageable);
-        } else if (!StringUtils.isEmpty(productBaseId)) {
-            entityPage = userProductFollowingRepository.findByProductBaseId(productBaseId, pageable);
-        } else {
+        Page<UserProductFollowingEntity> entityPage = null;
+        if (!StringUtils.isEmpty(userId) && !StringUtils.isEmpty(productBaseId)) {
             return userProductFollowingRepository.findByUserIdAndProductBaseId(userId, productBaseId).stream()
                     .map(this::toUserProductFollowingObject)
                     .collect(Collectors.toList());
         }
-        if (pageable != null) {
+        else if (!StringUtils.isEmpty(userId)){
+            entityPage = userProductFollowingRepository.findByUserId(userId, pageable);
+        } else if (!StringUtils.isEmpty(productBaseId)) {
+            entityPage = userProductFollowingRepository.findByProductBaseId(productBaseId, pageable);
+        }
+
+        if (pageable != null && entityPage != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
         return entityPage.getContent().stream().map(this::toUserProductFollowingObject).collect(Collectors.toList());

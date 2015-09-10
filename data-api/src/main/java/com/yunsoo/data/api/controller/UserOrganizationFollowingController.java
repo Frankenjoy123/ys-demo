@@ -36,18 +36,20 @@ public class UserOrganizationFollowingController {
             @RequestParam(value = "org_id", required = false) String orgId,
             Pageable pageable,
             HttpServletResponse response) {
-        Page<UserOrganizationFollowingEntity> entityPage;
-        if (!StringUtils.isEmpty(userId)) {
-            entityPage = userOrganizationFollowingRepository.findByUserId(userId, pageable);
-        } else if (!StringUtils.isEmpty(orgId)) {
-            entityPage = userOrganizationFollowingRepository.findByOrgId(orgId, pageable);
-        } else {
+        Page<UserOrganizationFollowingEntity> entityPage = null;
+        if (!StringUtils.isEmpty(userId) && !StringUtils.isEmpty(orgId)) {
             return userOrganizationFollowingRepository.findByUserIdAndOrgId(userId, orgId)
                     .stream()
                     .map(this::toUserOrganizationFollowingObject)
                     .collect(Collectors.toList());
         }
-        if (pageable != null) {
+        else if (!StringUtils.isEmpty(userId)){
+            entityPage = userOrganizationFollowingRepository.findByUserId(userId, pageable);
+        } else if (!StringUtils.isEmpty(orgId)) {
+            entityPage = userOrganizationFollowingRepository.findByOrgId(orgId, pageable);
+        }
+
+        if (pageable != null && entityPage != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
         return entityPage.getContent().stream().map(this::toUserOrganizationFollowingObject).collect(Collectors.toList());
