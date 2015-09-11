@@ -40,17 +40,23 @@ public class UserScanRecordObject implements Serializable {
     @JsonProperty("device_id")
     private String deviceId;
 
-    @JsonProperty("details")
-    private String details;
-
     @JsonProperty("longitude")
     private Double longitude;
 
     @JsonProperty("latitude")
     private Double latitude;
 
-    @JsonProperty("location")
-    private String location;
+    @JsonProperty("state")
+    private String state;
+
+    @JsonProperty("city")
+    private String city;
+
+    @JsonProperty("address")
+    private String address;
+
+    @JsonProperty("details")
+    private String details;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -106,14 +112,6 @@ public class UserScanRecordObject implements Serializable {
         this.deviceId = deviceId;
     }
 
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
     public Double getLongitude() {
         return longitude;
     }
@@ -130,12 +128,36 @@ public class UserScanRecordObject implements Serializable {
         this.latitude = latitude;
     }
 
-    public String getLocation() {
-        return location;
+    public String getState() {
+        return state;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 
     public DateTime getCreatedDateTime() {

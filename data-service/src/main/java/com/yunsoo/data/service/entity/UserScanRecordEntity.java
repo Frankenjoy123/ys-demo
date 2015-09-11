@@ -36,20 +36,26 @@ public class UserScanRecordEntity {
     @Column(name = "device_id")
     private String deviceId;
 
-    @Column(name = "details")
-    private String details;
-
     @Column(name = "longitude")
     private Double longitude;
 
     @Column(name = "latitude")
     private Double latitude;
 
-    @Column(name = "location")
-    private String location;
+    @Column(name = "state")
+    private String state;
 
-    @Column(name = "created_datetime")
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "details")
+    private String details;
+
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @Column(name = "created_datetime")
     private DateTime createdDateTime;
 
 
@@ -101,14 +107,6 @@ public class UserScanRecordEntity {
         this.deviceId = deviceId;
     }
 
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
     public Double getLongitude() {
         return longitude;
     }
@@ -125,12 +123,36 @@ public class UserScanRecordEntity {
         this.latitude = latitude;
     }
 
-    public String getLocation() {
-        return location;
+    public String getState() {
+        return state;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 
     public DateTime getCreatedDateTime() {
