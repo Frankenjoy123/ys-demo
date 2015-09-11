@@ -50,9 +50,9 @@ public class UserController {
         userDomain.patchUpdateUser(userObject);
     }
 
-    @RequestMapping(value = "{id}/gravatar/{image_name}", method = RequestMethod.GET)
+    @RequestMapping(value = "{id}/gravatar", method = RequestMethod.GET)
     public ResponseEntity<?> getGravatar(@PathVariable(value = "id") String userId,
-                                         @PathVariable(value = "image_name") String imageName) {
+                                         @RequestParam(value = "image_name", required = false) String imageName) {
         ResourceInputStream resourceInputStream = userDomain.getUserGravatar(userId, imageName);
         if (resourceInputStream == null) {
             throw new NotFoundException("gravatar not found");
@@ -65,12 +65,11 @@ public class UserController {
         return builder.body(new InputStreamResource(resourceInputStream));
     }
 
-    @RequestMapping(value = "{id}/gravatar/{image_name}", method = RequestMethod.PUT)
+    @RequestMapping(value = "{id}/gravatar", method = RequestMethod.PUT)
     public void saveGravatar(@PathVariable(value = "id") String userId,
-                             @PathVariable(value = "image_name") String imageName,
                              @RequestBody byte[] imageDataBytes) {
         if (imageDataBytes != null && imageDataBytes.length > 0) {
-            userDomain.saveUserGravatar(userId, imageName, imageDataBytes);
+            userDomain.saveUserGravatar(userId, imageDataBytes);
         }
     }
 

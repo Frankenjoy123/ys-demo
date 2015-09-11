@@ -43,7 +43,7 @@ public class UserDomain {
     private UserFollowDomain userFollowDomain;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDomain.class);
-
+    private static final String DEFAULT_GRAVATAR_IMAGE_NAME = "image-400x400";
 
     public UserObject getUserById(String userId) {
         try {
@@ -86,6 +86,9 @@ public class UserDomain {
     }
 
     public ResourceInputStream getUserGravatar(String userId, String imageName) {
+        if (StringUtils.isEmpty(imageName)) {
+            imageName = DEFAULT_GRAVATAR_IMAGE_NAME;
+        }
         try {
             return dataAPIClient.getResourceInputStream("file/s3?path=user/{userId}/gravatar/{imageName}", userId, imageName);
         } catch (NotFoundException ex) {
@@ -93,7 +96,8 @@ public class UserDomain {
         }
     }
 
-    public void saveUserGravatar(String userId, String imageName, byte[] imageDataBytes) {
+    public void saveUserGravatar(String userId, byte[] imageDataBytes) {
+        String imageName = DEFAULT_GRAVATAR_IMAGE_NAME;
         try {
             ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
             ByteArrayOutputStream image400x400OutputStream = new ByteArrayOutputStream();
@@ -102,7 +106,7 @@ public class UserDomain {
                     new ResourceInputStream(new ByteArrayInputStream(image400x400OutputStream.toByteArray()), image400x400OutputStream.size(), "image/png"),
                     userId, imageName);
         } catch (IOException e) {
-            throw new InternalServerErrorException("gravatar upload failed [userId: " + userId + ", imageName: " + imageName + "]");
+            throw new InternalServerErrorException("gravatar upload failed [userId: " + userId + "]");
         }
     }
 
