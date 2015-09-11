@@ -102,16 +102,6 @@ public class LookupCodes {
         public static final List<String> EDITABLE_STATUS = Arrays.asList("draft", "rejected", "submitted");
     }
 
-    public static class ProductBaseVersionsApprovalStatus {
-
-        private ProductBaseVersionsApprovalStatus() {
-        }
-
-        public static final String APPROVED = "approved";
-        public static final String REJECTED = "rejected";
-    }
-
-
     public static class ProductKeyTransactionStatus {
         private ProductKeyTransactionStatus() {
         }

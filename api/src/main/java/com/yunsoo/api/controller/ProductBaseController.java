@@ -5,7 +5,6 @@ import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductBaseVersionsObject;
 import com.yunsoo.common.data.object.ProductCategoryObject;
@@ -64,6 +63,9 @@ public class ProductBaseController {
     private TokenAuthenticationService tokenAuthenticationService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductBaseController.class);
+
+    public static final String APPROVED = "approved";
+    public static final String REJECTED = "rejected";
 
     //region product base
 
@@ -294,7 +296,7 @@ public class ProductBaseController {
         if (!LookupCodes.ProductBaseVersionsStatus.SUBMITTED.equals(productBaseVersionsObject.getStatusCode())) {
             throw new UnprocessableEntityException("illegal operation");
         }
-        if (LookupCodes.ProductBaseVersionsApprovalStatus.APPROVED.equals(approvalStatus)) {
+        if (APPROVED.equals(approvalStatus)) {
             productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.ACTIVATED);
             if (reviewComments != null) {
                 productBaseVersionsObject.setReviewComments(reviewComments);
@@ -303,7 +305,7 @@ public class ProductBaseController {
             ProductBaseObject productBaseObject = productBaseDomain.copyFromProductBaseVersionsObject(productBaseVersionsObject);
             productBaseDomain.updateProductBase(productBaseObject);
         }
-        if (LookupCodes.ProductBaseVersionsApprovalStatus.REJECTED.equals(approvalStatus)) {
+        if (REJECTED.equals(approvalStatus)) {
             productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.REJECTED);
             if (reviewComments != null) {
                 productBaseVersionsObject.setReviewComments(reviewComments);
