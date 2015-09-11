@@ -42,7 +42,7 @@ yunsoo:
             baseurl: http://localhost:3080/
         processor:
             baseurl: http://localhost:4080/
-    product_key_base_url: http://d.m.yunsu.co:9080/
+    product_key_base_url: http://dev.yunsu.co:7080/
     cache:
         type: local
 
