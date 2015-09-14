@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.ProductCommentsDomain;
+import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.dto.ProductComments;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductCommentsObject;
@@ -29,6 +30,9 @@ public class ProductCommentsController {
 
     @Autowired
     private ProductCommentsDomain productCommentsDomain;
+
+    @Autowired
+    private UserDomain userDomain;
 
 
     @Autowired
@@ -61,7 +65,10 @@ public class ProductCommentsController {
         if (pageable != null) {
             response.setHeader("Content-Range", productCommentsPage.toContentRange());
         }
-        return productCommentsPage.map(ProductComments::new).getContent();
+        List<ProductComments> productCommentsList = productCommentsPage.map(ProductComments::new).getContent();
+        productCommentsList.forEach(productComments -> productComments.setUserName(userDomain.getUserById(productComments.getUserId()).getName()));
+
+        return productCommentsList;
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

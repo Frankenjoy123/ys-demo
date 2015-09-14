@@ -30,6 +30,9 @@ public class ProductComments {
     @JsonProperty("user_id")
     private String userId;
 
+    @JsonProperty("user_name")
+    private String userName;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
@@ -73,6 +76,14 @@ public class ProductComments {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public DateTime getCreatedDateTime() {
