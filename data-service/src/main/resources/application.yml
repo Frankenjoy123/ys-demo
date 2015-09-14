@@ -1,25 +1,24 @@
 yunsoo:
-    environment: dev
-    aws:
-        region: cn-north-1
-        dynamodb:
-            endpoint:
-        s3:
-            bucket_name: dev-yunsoo
+  environment: dev
+  aws:
+    region: cn-north-1
+    dynamodb:
+      endpoint:
+    s3:
+      bucket_name: dev-yunsoo
 
 jdbc:
-    master:
-        driver_class_name: com.mysql.jdbc.Driver
-        url: jdbc:mysql://dev-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
-        username: root
-        password: admin201512
-        initial_size: 1
-        max_idle: 100
-    read1:
-        driver_class_name: com.mysql.jdbc.Driver
-        url: jdbc:mysql://dev-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
-        username: root
-        password: admin201512
-        initial_size: 1
-        max_idle: 100
-
+  master:
+    driver_class_name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://dev-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: admin201512
+    initial_size: 1
+    max_idle: 100
+  read1:
+    driver_class_name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://dev-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: admin201512
+    initial_size: 1
+    max_idle: 100
