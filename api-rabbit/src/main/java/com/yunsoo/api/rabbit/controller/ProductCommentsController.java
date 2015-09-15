@@ -93,6 +93,7 @@ public class ProductCommentsController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProductCommentsById(@PathVariable(value = "id") String id) {
         productCommentsDomain.deleteProductComments(id);
     }
