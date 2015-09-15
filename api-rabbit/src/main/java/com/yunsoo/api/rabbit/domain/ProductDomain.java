@@ -90,8 +90,8 @@ public class ProductDomain {
         //set the hotline and purchase info
         ResourceInputStream stream =  dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json", productBase.getOrgId(), productBaseId, productBase.getVersion());
         try {
-            ProductBaseDetails detail = new ObjectMapper().readValue(stream, ProductBaseDetails.class);
-            productBase.setDetail(detail);
+            ProductBaseDetails details = new ObjectMapper().readValue(stream, ProductBaseDetails.class);
+            productBase.setDetails(details);
         }
         catch (Exception ex){
             LOGGER.error("get detail data from s3 failed.", ex);

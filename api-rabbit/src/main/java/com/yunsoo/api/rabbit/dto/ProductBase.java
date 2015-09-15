@@ -26,8 +26,8 @@ public class ProductBase {
     private String shelfLifeInterval;
     @JsonProperty("comments_score")
     private Long commentsScore;
-    @JsonProperty("detail")
-    private ProductBaseDetails detail;
+    @JsonProperty("details")
+    private ProductBaseDetails details;
     @JsonProperty("detail_url")
     private String detailUrl;
 
@@ -47,12 +47,12 @@ public class ProductBase {
         this.commentsScore = commentsScore;
     }
 
-    public ProductBaseDetails getDetail() {
-        return detail;
+    public ProductBaseDetails getDetails() {
+        return details;
     }
 
-    public void setDetail(ProductBaseDetails detail) {
-        this.detail = detail;
+    public void setDetails(ProductBaseDetails details) {
+        this.details = details;
     }
 
     public String getId() {
