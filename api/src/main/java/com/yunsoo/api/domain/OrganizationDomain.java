@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -8,6 +9,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -20,11 +22,13 @@ import java.util.List;
  * Descriptions:
  */
 @Component
+@ElastiCacheConfig
 public class OrganizationDomain {
 
     @Autowired
     private RestClient dataAPIClient;
 
+    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
     public OrganizationObject getOrganizationById(String id) {
         try {
             return dataAPIClient.get("organization/{id}", OrganizationObject.class, id);
@@ -59,5 +63,6 @@ public class OrganizationDomain {
         } catch (NotFoundException ex) {
             return null;
         }
+
     }
 }

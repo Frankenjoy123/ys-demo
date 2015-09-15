@@ -1,11 +1,13 @@
 package com.yunsoo.api.rabbit.domain;
 
+import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,7 @@ import java.util.List;
  * Descriptions:
  */
 @Component
+@ElastiCacheConfig
 public class ProductBaseDomain {
 
 //    private static final String DETAILS_FILE_NAME = "details.json";
@@ -27,6 +30,7 @@ public class ProductBaseDomain {
     @Autowired
     private RestClient dataAPIClient;
 
+    @Cacheable(key="T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId )")
     public ProductBaseObject getProductBaseById(String productBaseId) {
         try {
             return dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);

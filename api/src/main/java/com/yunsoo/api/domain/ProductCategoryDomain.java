@@ -30,14 +30,14 @@ public class ProductCategoryDomain {
     private DataAPIClient dataAPIClient;
 
 
-    @Cacheable
+    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTCATEGORY.toString(), 'list')")
     public List<ProductCategoryObject> getProductCategories() {
         LOGGER.debug("cache missed [name: productcategory, key: 'list']");
         return dataAPIClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {
         });
     }
 
-    @Cacheable
+    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTCATEGORY.toString(), 'map')")
     public Map<String, ProductCategoryObject> getProductCategoryMap() {
         LOGGER.debug("cache missed [name: productcategory, key: 'map']");
         List<ProductCategoryObject> categoryObjects =  dataAPIClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {});

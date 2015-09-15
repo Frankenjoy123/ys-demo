@@ -1,6 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.common.data.CacheType;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.util.HashUtils;
@@ -35,9 +36,9 @@ public class AccountDomain {
     private RestClient dataAPIClient;
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountDomain.class);
 
-    @Cacheable
+    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
     public AccountObject getById(String accountId) {
-        LOGGER.debug("missed cache: AccountDomain.getById");
+        LOGGER.debug("missed cache: account." + accountId);
         if (StringUtils.isEmpty(accountId)) {
             return null;
         }
@@ -46,6 +47,8 @@ public class AccountDomain {
         } catch (NotFoundException ex) {
             return null;
         }
+
+
     }
 
     public AccountObject getByOrgIdAndIdentifier(String orgId, String identifier) {
@@ -88,7 +91,7 @@ public class AccountDomain {
         return dataAPIClient.post("account", accountObject, AccountObject.class);
     }
 
-    @CacheEvict(key="T(com.yunsoo.api.cache.CustomKeyGenerator).getKey(#root.targetClass.getName(), 'getById', #accountId)")
+    @CacheEvict(key="T(com.yunsoo.api.cache.CustomKeyGenerator).getKey(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
     public void updatePassword(String accountId, String rawNewPassword) {
         if (!StringUtils.isEmpty(accountId)) {
             String hashSalt = RandomUtils.generateString(8);

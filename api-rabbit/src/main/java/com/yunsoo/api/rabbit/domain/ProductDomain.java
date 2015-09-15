@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
 import com.yunsoo.api.rabbit.dto.Product;
 import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.api.rabbit.dto.ProductBaseDetails;
@@ -13,6 +14,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
  * Descriptions:
  */
 @Component
+@ElastiCacheConfig
 public class ProductDomain {
 
     @Autowired
@@ -79,6 +82,7 @@ public class ProductDomain {
     }
 
     //获取基本产品信息 - ProductBase
+    @Cacheable(key="T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT.toString(),#productBaseId )")
     public ProductBase getProductBaseById(String productBaseId) {
         ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         if (productBaseObject == null) {

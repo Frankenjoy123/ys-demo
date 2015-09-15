@@ -42,14 +42,14 @@ public class PermissionDomain {
     @Autowired
     private LookupDomain lookupDomain;
 
-    @Cacheable
+    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'list')")
     public List<PermissionPolicyObject> getPermissionPolicies() {
         LOGGER.debug("cache missed [name: permission, key: 'policylist']");
         return dataAPIClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
         });
     }
 
-    @Cacheable
+    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'map')")
     public Map<String, PermissionPolicyObject> getPermissionPolicyMap() {
         LOGGER.debug("cache missed [name: permission, key: 'policymap']");
         Map<String, PermissionPolicyObject> permissionPolicies = new HashMap<>();

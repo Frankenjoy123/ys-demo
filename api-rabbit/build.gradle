@@ -24,5 +24,9 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.springframework.boot:spring-boot-starter-logging")
 
+    compile 'org.springframework.cloud:spring-cloud-aws-autoconfigure:1.0.2.RELEASE'
+    compile 'org.springframework.data:spring-data-redis:1.5.0.RELEASE'
+    compile 'redis.clients:jedis:2.7.0'
+
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }

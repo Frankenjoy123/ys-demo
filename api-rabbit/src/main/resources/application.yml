@@ -26,6 +26,8 @@ yunsoo:
     access_token:
         expires_minutes: 5256000
         hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
+    cache:
+        type: local
 
 ---
 spring:

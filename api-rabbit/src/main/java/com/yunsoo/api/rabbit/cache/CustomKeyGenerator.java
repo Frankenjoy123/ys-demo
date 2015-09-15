@@ -1,4 +1,4 @@
-package com.yunsoo.api.cache;
+package com.yunsoo.api.rabbit.cache;
 
 import org.springframework.cache.interceptor.KeyGenerator;
 

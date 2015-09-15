@@ -28,14 +28,14 @@ public class LookupCacheDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    @Cacheable
+    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).LOOKUP.toString(), 'all')")
     public List<LookupObject> getAllLookupList(){
         LOGGER.debug("cache not hit for getAllLookupList");
         return dataAPIClient.get("lookup", new ParameterizedTypeReference<List<LookupObject>>() {
         });
     }
 
-    @CacheEvict(key="T(com.yunsoo.api.cache.CustomKeyGenerator).getKey(#root.targetClass.getName(), 'getAllLookupList', null)")
+    @CacheEvict(key="T(com.yunsoo.api.cache.CustomKeyGenerator).getKey(T(com.yunsoo.common.data.CacheType).LOOKUP.toString(), 'all')")
     public void saveLookup(LookupObject lookup){
        dataAPIClient.put("lookup",lookup, LookupObject.class);
     }
