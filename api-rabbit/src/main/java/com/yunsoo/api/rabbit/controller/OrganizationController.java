@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by Zhe on 2015/4/2.
@@ -34,10 +31,10 @@ public class OrganizationController {
         return new Organization(object);
     }
 
-    @RequestMapping(value = "{id}/logo/{imageName}", method = RequestMethod.GET)
+    @RequestMapping(value = "{id}/logo", method = RequestMethod.GET)
     public ResponseEntity<?> getLogo(
             @PathVariable(value = "id") String id,
-            @PathVariable(value = "imageName") String imageName) {
+            @RequestParam(value = "image_name", required = false) String imageName) {
         ResourceInputStream resourceInputStream = organizationDomain.getLogoImage(id, imageName);
         if (resourceInputStream == null) {
             throw new NotFoundException("logo not found");

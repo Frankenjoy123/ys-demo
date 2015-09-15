@@ -6,6 +6,7 @@ import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * Created by  : Lijian
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class OrganizationDomain {
+
+    private static final String DEFAULT_LOGO_IMAGE_NAME = "image-128x128";
 
     @Autowired
     private RestClient dataAPIClient;
@@ -27,6 +30,9 @@ public class OrganizationDomain {
     }
 
     public ResourceInputStream getLogoImage(String orgId, String imageName) {
+        if (StringUtils.isEmpty(imageName)) {
+            imageName = DEFAULT_LOGO_IMAGE_NAME;
+        }
         try {
             return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/logo/{imageName}", orgId, imageName);
         } catch (NotFoundException ex) {
