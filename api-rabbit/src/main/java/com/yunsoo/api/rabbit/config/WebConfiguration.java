@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.config;
 
 import com.yunsoo.common.web.util.CaseInsensitiveAntPathMatcher;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
@@ -18,6 +19,9 @@ import java.util.List;
  */
 @Configuration
 public class WebConfiguration extends WebMvcConfigurationSupport {
+
+    @Value("${yunsoo.debug}")
+    private Boolean debug;
 
     @Bean
     public CaseInsensitiveAntPathMatcher caseInsensitiveAntPathMatcher() {
@@ -41,6 +45,12 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/favicon.ico")
                 .addResourceLocations("classpath:/resources/favicon.ico")
                 .setCachePeriod(604800); //1 week
+
+        if (debug != null && debug) {
+            registry.addResourceHandler("/**")
+                    .addResourceLocations("classpath:/META-INF/resources/")
+                    .setCachePeriod(Integer.MAX_VALUE);
+        }
     }
 
 }

@@ -42,12 +42,20 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .authorizeRequests()
 
                 .antMatchers("/").permitAll()
-                .antMatchers("/favicon.ico").permitAll()
+                //.antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/application/**").permitAll()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/organization/**").permitAll()
                 .antMatchers("/productbase/**").permitAll()
                 .antMatchers("/scan/**").permitAll()
+
+                .antMatchers("/v2/api-docs").permitAll()
+                .antMatchers("/configuration/ui").permitAll()
+                .antMatchers("/configuration/security").permitAll()
+                .antMatchers("/swagger-resources").permitAll()
+                .antMatchers("/swagger-ui.html").permitAll()
+                .antMatchers("/webjars/**").permitAll()
+
                 .anyRequest().authenticated().and()
                 //.antMatchers("/**").permitAll()
 

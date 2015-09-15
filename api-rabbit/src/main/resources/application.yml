@@ -24,7 +24,7 @@ yunsoo:
     dataapi:
       baseurl: http://localhost:3080/
   access_token:
-    expires_minutes: 5256000
+    expires_minutes: 5256000 #10 years
     hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
 
 ---
