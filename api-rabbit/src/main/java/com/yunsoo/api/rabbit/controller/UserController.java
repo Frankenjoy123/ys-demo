@@ -3,8 +3,10 @@ package com.yunsoo.api.rabbit.controller;
 import com.yunsoo.api.rabbit.domain.UserActivityDomain;
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.dto.User;
+import com.yunsoo.api.rabbit.dto.UserConfig;
 import com.yunsoo.api.rabbit.object.TUser;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.common.data.object.UserConfigObject;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -56,6 +58,8 @@ public class UserController {
         userDomain.patchUpdateUser(userObject);
     }
 
+    //region gravatar
+
     @RequestMapping(value = "{id}/gravatar", method = RequestMethod.GET)
     public ResponseEntity<?> getUserGravatar(@PathVariable(value = "id") String userId,
                                              @RequestParam(value = "image_name", required = false) String imageName) {
@@ -82,6 +86,10 @@ public class UserController {
         }
     }
 
+    //endregion
+
+    //region sign in
+
     @RequestMapping(value = "{id}/signin/continuousdays", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#userId, 'userId', 'user:read')")
     public int getSignInContinuousDays(@PathVariable(value = "id") String userId) {
@@ -96,6 +104,27 @@ public class UserController {
         return userActivityDomain.signIn(userId);
     }
 
+    //endregion
+
+    //region config
+    @RequestMapping(value = "{id}/config", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#userId, 'userId', 'user:read')")
+    public UserConfig getUserConfigByUserId(@PathVariable(value = "id") String userId) {
+        userId = fixUserId(userId);
+        UserConfigObject userConfigObject = userDomain.getUserConfigByUserId(userId);
+        return new UserConfig(userConfigObject);
+    }
+
+    @RequestMapping(value = "{id}/config", method = RequestMethod.PUT)
+    @PreAuthorize("hasPermission(#userId, 'userId', 'user:modify')")
+    public void saveUserConfig(@PathVariable(value = "id") String userId,
+                               @RequestBody UserConfigObject userConfigObject) {
+        userId = fixUserId(userId);
+        userConfigObject.setUserId(userId);
+        userDomain.saveUserConfig(userConfigObject);
+    }
+
+    //endregion
 
     private String fixUserId(String userId) {
         if (userId == null || "current".equals(userId)) {
