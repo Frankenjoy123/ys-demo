@@ -46,6 +46,7 @@ public class SwaggerConfig {
                         .title("api-rabbit")
                         .description("documentation for api-rabbit")
                         .version("1.0")
+                        .license("None")
                         .build())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.yunsoo.api.rabbit.controller"))//.paths(PathSelectors.any())
