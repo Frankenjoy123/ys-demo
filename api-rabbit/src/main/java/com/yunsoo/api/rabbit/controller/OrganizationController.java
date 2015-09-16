@@ -23,7 +23,7 @@ public class OrganizationController {
     private OrganizationDomain organizationDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public Organization getById(@PathVariable(value = "id") String id) {
+    public Organization getOrganizationById(@PathVariable(value = "id") String id) {
         OrganizationObject object = organizationDomain.getById(id);
         if (object == null) {
             throw new NotFoundException("organization not found by [id: " + id + "]");
@@ -32,7 +32,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "{id}/logo", method = RequestMethod.GET)
-    public ResponseEntity<?> getLogo(
+    public ResponseEntity<?> getOrganizationLogo(
             @PathVariable(value = "id") String id,
             @RequestParam(value = "image_name", required = false) String imageName) {
         ResourceInputStream resourceInputStream = organizationDomain.getLogoImage(id, imageName);

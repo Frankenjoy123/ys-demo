@@ -79,7 +79,7 @@ public class ScanController {
 
     //能够访问所有的Key,为移动客户端调用，因此每次Scan都save扫描记录。
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ScanResult getDetail(
+    public ScanResult scan(
             @RequestHeader(value = Constants.HttpHeaderName.APP_ID, required = false) String appId,
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
             @RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
@@ -159,7 +159,7 @@ public class ScanController {
 
     //能够访问所有的Key,为WebScan调用，因此每次Scan都!!不会save扫描记录。
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
-    public ScanResult getDetailWithoutSaveScanRecord(@PathVariable(value = "key") String key) {
+    public ScanResult getScanResult(@PathVariable(value = "key") String key) {
         //1. validate input
         if (!KeyGenerator.validate(key)) {
             throw new BadRequestException("key not valid");

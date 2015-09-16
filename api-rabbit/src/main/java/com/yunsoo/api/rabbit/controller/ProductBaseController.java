@@ -26,7 +26,7 @@ public class ProductBaseController {
     private ProductDomain productDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ProductBase getById(@PathVariable(value = "id") String id) {
+    public ProductBase getProductBaseById(@PathVariable(value = "id") String id) {
         ProductBase productBase = productDomain.getProductBaseById(id);
         if (productBase == null) {
             throw new NotFoundException("找不到产品");

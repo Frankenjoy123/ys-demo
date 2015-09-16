@@ -33,7 +33,7 @@ public class UserController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#id, 'User', 'user:read')")
-    public User getById(@PathVariable(value = "id") String id) {
+    public User getUserById(@PathVariable(value = "id") String id) {
         UserObject user = userDomain.getUserById(id);
         if (user == null) {
             throw new NotFoundException(40401, "user not found by [id:" + id + "]");
@@ -43,7 +43,7 @@ public class UserController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#userId, 'User', 'user:modify')")
-    public void updateUser(@PathVariable(value = "id") String userId,
+    public void patchUpdateUser(@PathVariable(value = "id") String userId,
                            @RequestBody User user) {
         UserObject userObject = user.toUserObject();
         userObject.setId(userId);
@@ -51,7 +51,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "{id}/gravatar", method = RequestMethod.GET)
-    public ResponseEntity<?> getGravatar(@PathVariable(value = "id") String userId,
+    public ResponseEntity<?> getUserGravatar(@PathVariable(value = "id") String userId,
                                          @RequestParam(value = "image_name", required = false) String imageName) {
         ResourceInputStream resourceInputStream = userDomain.getUserGravatar(userId, imageName);
         if (resourceInputStream == null) {
@@ -66,7 +66,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "{id}/gravatar", method = RequestMethod.PUT)
-    public void saveGravatar(@PathVariable(value = "id") String userId,
+    public void saveUserGravatar(@PathVariable(value = "id") String userId,
                              @RequestBody byte[] imageDataBytes) {
         if (imageDataBytes != null && imageDataBytes.length > 0) {
             userDomain.saveUserGravatar(userId, imageDataBytes);

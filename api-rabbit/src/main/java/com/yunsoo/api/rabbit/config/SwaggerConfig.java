@@ -11,15 +11,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.async.DeferredResult;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.builders.ResponseMessageBuilder;
+import springfox.documentation.builders.*;
 import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.schema.WildcardType;
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
+import springfox.documentation.service.Parameter;
 import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
@@ -57,7 +55,8 @@ public class SwaggerConfig {
                 .alternateTypeRules(
                         AlternateTypeRules.newRule(typeResolver.resolve(DeferredResult.class, typeResolver.resolve(ResponseEntity.class, WildcardType.class)),
                                 typeResolver.resolve(WildcardType.class)))
-                .useDefaultResponseMessages(false)
+                        //.useDefaultResponseMessages(false)
+                .globalOperationParameters(globalOperationParameters())
                 .globalResponseMessage(RequestMethod.GET,
                         Lists.newArrayList(new ResponseMessageBuilder()
                                 .code(500)
@@ -67,6 +66,31 @@ public class SwaggerConfig {
                 .securitySchemes(Lists.newArrayList(apiKey()))
                 .securityContexts(Lists.newArrayList(securityContext()))
                 .enableUrlTemplating(true);
+    }
+
+    private List<Parameter> globalOperationParameters() {
+        return Lists.newArrayList(
+                new ParameterBuilder()
+                        .name(Constants.HttpHeaderName.APP_ID)
+                        .description("appId")
+                        .modelRef(new ModelRef("string"))
+                        .parameterType("header")
+                        .required(false)
+                        .build(),
+                new ParameterBuilder()
+                        .name(Constants.HttpHeaderName.DEVICE_ID)
+                        .description("deviceId")
+                        .modelRef(new ModelRef("string"))
+                        .parameterType("header")
+                        .required(false)
+                        .build(),
+                new ParameterBuilder()
+                        .name(Constants.HttpHeaderName.ACCESS_TOKEN)
+                        .description("deviceId")
+                        .modelRef(new ModelRef("string"))
+                        .parameterType("header")
+                        .required(false)
+                        .build());
     }
 
     private ApiKey apiKey() {
