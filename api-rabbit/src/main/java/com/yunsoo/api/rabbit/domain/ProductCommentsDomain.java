@@ -1,10 +1,8 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductCommentsObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +46,8 @@ public class ProductCommentsDomain {
     }
 
     public ProductCommentsObject createProductComments(ProductCommentsObject productCommentsObject) {
-        String productBaseId = productCommentsObject.getProductBaseId();
-        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
-        if (productBaseObject == null) {
-            throw new NotFoundException("product base not found");
-        }
+        productCommentsObject.setId(null);
+        productCommentsObject.setCreatedDateTime(DateTime.now());
         return dataAPIClient.post("productcomments", productCommentsObject, ProductCommentsObject.class);
     }
 

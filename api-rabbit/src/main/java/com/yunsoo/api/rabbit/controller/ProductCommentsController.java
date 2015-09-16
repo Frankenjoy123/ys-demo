@@ -1,9 +1,11 @@
 package com.yunsoo.api.rabbit.controller;
 
+import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductCommentsDomain;
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.dto.ProductComments;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductCommentsObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -37,6 +39,8 @@ public class ProductCommentsController {
     @Autowired
     private UserDomain userDomain;
 
+    @Autowired
+    private ProductBaseDomain productBaseDomain;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -90,17 +94,15 @@ public class ProductCommentsController {
         if (productComments == null) {
             throw new BadRequestException("productComments can not be null");
         }
-        ProductCommentsObject productCommentsObject = new ProductCommentsObject();
-        productCommentsObject.setProductBaseId(productComments.getProductBaseId());
-        productCommentsObject.setComments(productComments.getComments());
-        productCommentsObject.setScore(productComments.getScore());
-        if (productComments.getUserId() == null) {
-            String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-            productCommentsObject.setUserId(currentAccountId);
+        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productComments.getProductBaseId());
+        if (productBaseObject == null) {
+            throw new BadRequestException("product base not found");
         }
-        if (productComments.getCreatedDateTime() == null) {
-            productCommentsObject.setCreatedDateTime(DateTime.now());
-        }
+
+        ProductCommentsObject productCommentsObject = productComments.toProductCommentsObject();
+        String currentUserId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        productCommentsObject.setUserId(currentUserId);
+
         ProductCommentsObject newPCObject = productCommentsDomain.createProductComments(productCommentsObject);
         return new ProductComments(newPCObject);
     }
