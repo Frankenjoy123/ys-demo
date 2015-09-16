@@ -2,12 +2,14 @@ package com.yunsoo.api.rabbit.config;
 
 import com.fasterxml.classmate.TypeResolver;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.yunsoo.api.rabbit.Constants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -46,16 +48,14 @@ public class SwaggerConfig {
                         .version("1.0")
                         .build())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.yunsoo.api.rabbit.controller"))
-                .paths(PathSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("com.yunsoo.api.rabbit.controller"))//.paths(PathSelectors.any())
                 .build()
                 .pathMapping("/")
                 .directModelSubstitute(DateTime.class, String.class)
                 .genericModelSubstitutes(ResponseEntity.class)
                 .alternateTypeRules(
-                        AlternateTypeRules.newRule(typeResolver.resolve(DeferredResult.class, typeResolver.resolve(ResponseEntity.class, WildcardType.class)),
-                                typeResolver.resolve(WildcardType.class)))
-                        //.useDefaultResponseMessages(false)
+                        AlternateTypeRules.newRule(typeResolver.resolve(DeferredResult.class, typeResolver.resolve(ResponseEntity.class, WildcardType.class)), typeResolver.resolve(WildcardType.class)))
+                .useDefaultResponseMessages(false)
                 .globalOperationParameters(globalOperationParameters())
                 .globalResponseMessage(RequestMethod.GET,
                         Lists.newArrayList(new ResponseMessageBuilder()
@@ -64,7 +64,8 @@ public class SwaggerConfig {
                                 .responseModel(new ModelRef("ErrorResult"))
                                 .build()))
                 .securitySchemes(Lists.newArrayList(apiKey()))
-                .securityContexts(Lists.newArrayList(securityContext()))
+                .securityContexts(securityContexts())
+                .produces(Sets.newHashSet(MediaType.APPLICATION_JSON_VALUE))
                 .enableUrlTemplating(true);
     }
 
@@ -97,17 +98,12 @@ public class SwaggerConfig {
         return new ApiKey(Constants.HttpHeaderName.ACCESS_TOKEN, "accessToken", "header");
     }
 
-    private SecurityContext securityContext() {
-        AuthorizationScope authorizationScope
-                = new AuthorizationScope("global", "accessEverything");
-        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-        authorizationScopes[0] = authorizationScope;
-        List<SecurityReference> securityReferences = Lists.newArrayList(new SecurityReference("mykey", authorizationScopes));
-
-        return SecurityContext.builder()
-                .securityReferences(securityReferences)
+    private List<SecurityContext> securityContexts() {
+        return Lists.newArrayList(SecurityContext.builder()
+                .securityReferences(Lists.newArrayList(
+                        new SecurityReference(Constants.HttpHeaderName.ACCESS_TOKEN, new AuthorizationScope[]{new AuthorizationScope("global", "accessEverything")})))
                 .forPaths(PathSelectors.regex("/user.*"))
-                .build();
+                .build());
     }
 
 //    @Bean

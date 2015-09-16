@@ -8,12 +8,15 @@ import com.yunsoo.common.data.object.ProductCommentsObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -48,6 +51,16 @@ public class ProductCommentsController {
         return new ProductComments(object);
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Results page you want to retrieve (0..N)"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Number of records per page."),
+            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+                    value = "Sorting criteria in the format: property(,asc|desc). " +
+                            "Default sort order is ascending. " +
+                            "Multiple sort criteria are supported.")
+    })
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductComments> getProductCommentsByFilter(
             @RequestParam(value = "product_base_id", required = true) String productBaseId,
@@ -55,7 +68,7 @@ public class ProductCommentsController {
             @RequestParam(value = "score_le", required = false) Integer scoreLE,
             @RequestParam(value = "last_comment_datetime_ge", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime lastCommentDatetimeGE,
-            Pageable pageable,
+            @ApiIgnore Pageable pageable,
             HttpServletResponse response) {
         if (productBaseId == null || productBaseId.isEmpty()) {
             throw new BadRequestException("product base id is not valid");

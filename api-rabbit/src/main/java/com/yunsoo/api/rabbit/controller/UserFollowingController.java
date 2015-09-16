@@ -5,10 +5,13 @@ import com.yunsoo.api.rabbit.dto.UserOrganizationFollowing;
 import com.yunsoo.api.rabbit.dto.UserProductFollowing;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.web.client.Page;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -30,9 +33,18 @@ public class UserFollowingController {
     private TokenAuthenticationService tokenAuthenticationService;
 
     //organization
-
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Results page you want to retrieve (0..N)"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Number of records per page."),
+            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+                    value = "Sorting criteria in the format: property(,asc|desc). " +
+                            "Default sort order is ascending. " +
+                            "Multiple sort criteria are supported.")
+    })
     @RequestMapping(value = "organization", method = RequestMethod.GET)
-    public List<UserOrganizationFollowing> getUserOrganizationFollowing(Pageable pageable,
+    public List<UserOrganizationFollowing> getUserOrganizationFollowing(@ApiIgnore Pageable pageable,
                                                                         HttpServletResponse response) {
         String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
@@ -59,9 +71,18 @@ public class UserFollowingController {
 
 
     //product
-
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Results page you want to retrieve (0..N)"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Number of records per page."),
+            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+                    value = "Sorting criteria in the format: property(,asc|desc). " +
+                            "Default sort order is ascending. " +
+                            "Multiple sort criteria are supported.")
+    })
     @RequestMapping(value = "product", method = RequestMethod.GET)
-    public List<UserProductFollowing> getUserProductFollowing(Pageable pageable,
+    public List<UserProductFollowing> getUserProductFollowing(@ApiIgnore Pageable pageable,
                                                               HttpServletResponse response) {
         String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
 

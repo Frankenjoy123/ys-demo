@@ -47,8 +47,11 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
                 .setCachePeriod(604800); //1 week
 
         if (debug != null && debug) {
-            registry.addResourceHandler("/**")
-                    .addResourceLocations("classpath:/META-INF/resources/")
+            registry.addResourceHandler("/swagger-ui.html")
+                    .addResourceLocations("classpath:/META-INF/resources/swagger-ui.html")
+                    .setCachePeriod(Integer.MAX_VALUE);
+            registry.addResourceHandler("/webjars/**")
+                    .addResourceLocations("classpath:/META-INF/resources/webjars/")
                     .setCachePeriod(Integer.MAX_VALUE);
         }
     }
