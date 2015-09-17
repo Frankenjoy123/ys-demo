@@ -7,7 +7,16 @@ multipart.maxFileSize: 10MB
 multipart.maxRequestSize: 10MB
 
 spring:
-    profiles.active: dev
+    profiles.active: test
+
+cloud:
+    aws:
+        stack:
+            auto: false
+        region:
+            auto: false
+            static: cn-north-1
+
 ---
 spring:
     profiles: dev
@@ -28,6 +37,7 @@ yunsoo:
         hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
     cache:
         type: local
+    environment: dev
 
 ---
 spring:
