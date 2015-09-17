@@ -99,6 +99,17 @@ public class OrganizationController {
         return builder.body(new InputStreamResource(resourceInputStream));
     }
 
+    @RequestMapping(value = "{id}/logo", method = RequestMethod.PUT)
+    @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
+    public void saveOrgLogo(@PathVariable(value = "id") String orgId,
+                            @RequestBody byte[] imageDataBytes) {
+        if (imageDataBytes != null && imageDataBytes.length > 0) {
+            orgId = fixOrgId(orgId);
+            organizationDomain.saveOrgLogo(orgId, imageDataBytes);
+        }
+    }
+
+
     private String fixOrgId(String orgId) {
         if (orgId == null || "current".equals(orgId)) {
             //current orgId
