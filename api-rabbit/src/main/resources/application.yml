@@ -7,7 +7,7 @@ multipart.maxFileSize: 10MB
 multipart.maxRequestSize: 10MB
 
 spring:
-    profiles.active: test
+    profiles.active: dev
 
 cloud:
     aws:
