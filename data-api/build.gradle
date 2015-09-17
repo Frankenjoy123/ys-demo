@@ -26,5 +26,4 @@ dependencies {
     compile 'log4j:log4j:1.2.17'
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
-    testCompile("junit:junit")
 }

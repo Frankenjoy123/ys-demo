@@ -1,9 +1,7 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.common.util.IdGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -32,8 +30,6 @@ public class DebugController {
         //common info
         result.put("debug", debug);
         result.put("environment", environment);
-
-
 
         return result;
     }
