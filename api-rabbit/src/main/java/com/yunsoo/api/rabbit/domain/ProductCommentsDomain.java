@@ -24,6 +24,9 @@ public class ProductCommentsDomain {
     @Autowired
     private RestClient dataAPIClient;
 
+    @Autowired
+    private ProductBaseDomain productBaseDomain;
+
     public Page<ProductCommentsObject> getProductCommentsByFilter(String productBaseId, Integer scoreGE, Integer scoreLE, DateTime lastCommentDatetimeGE, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("product_base_id", productBaseId)
@@ -43,6 +46,8 @@ public class ProductCommentsDomain {
     }
 
     public ProductCommentsObject createProductComments(ProductCommentsObject productCommentsObject) {
+        productCommentsObject.setId(null);
+        productCommentsObject.setCreatedDateTime(DateTime.now());
         return dataAPIClient.post("productcomments", productCommentsObject, ProductCommentsObject.class);
     }
 

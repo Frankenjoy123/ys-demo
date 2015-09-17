@@ -10,11 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.List;
 
@@ -25,8 +24,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
-@IntegrationTest({"server.port=0"})
+@WebIntegrationTest({"server.port=0", "management.port=0"})
 public class GroupControllerTest {
 
     @Value("${local.server.port}")
@@ -68,7 +66,7 @@ public class GroupControllerTest {
             dataAPIClient.get("group/{id}", GroupObject.class, id);
             assert false : "delete failed";
         } catch (NotFoundException ex) {
-            System.out.println("group deleted:  [id: " + id + "]");
+            System.out.println("group deleted: [id: " + id + "]");
         }
 
     }

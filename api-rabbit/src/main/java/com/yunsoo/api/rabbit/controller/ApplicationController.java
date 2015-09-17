@@ -23,7 +23,7 @@ public class ApplicationController {
 
 
     @RequestMapping(value = "{appId}", method = RequestMethod.GET)
-    public Application getById(@PathVariable("appId") String appId) {
+    public Application getApplicationById(@PathVariable("appId") String appId) {
         ApplicationObject applicationObject = applicationDomain.getApplicationById(appId);
         if (applicationObject == null) {
             throw new NotFoundException("application not found by [id:" + appId + "]");

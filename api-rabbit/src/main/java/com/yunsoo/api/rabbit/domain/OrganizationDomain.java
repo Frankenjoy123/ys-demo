@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * Created by  : Lijian
@@ -21,6 +22,9 @@ import org.springframework.stereotype.Component;
 public class OrganizationDomain {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationDomain.class);
+
+    private static final String DEFAULT_LOGO_IMAGE_NAME = "image-128x128";
+
     @Autowired
     private RestClient dataAPIClient;
 
@@ -35,6 +39,9 @@ public class OrganizationDomain {
     }
 
     public ResourceInputStream getLogoImage(String orgId, String imageName) {
+        if (StringUtils.isEmpty(imageName)) {
+            imageName = DEFAULT_LOGO_IMAGE_NAME;
+        }
         try {
             return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/logo/{imageName}", orgId, imageName);
         } catch (NotFoundException ex) {

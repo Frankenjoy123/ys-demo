@@ -2,8 +2,8 @@ package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
-import com.yunsoo.api.rabbit.security.UserAuthentication;
 import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.UserConfigObject;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
@@ -43,6 +44,7 @@ public class UserDomain {
     private UserFollowDomain userFollowDomain;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDomain.class);
+    private static final String DEFAULT_GRAVATAR_IMAGE_NAME = "image-400x400";
 
 
     public UserObject getUserById(String userId) {
@@ -86,6 +88,9 @@ public class UserDomain {
     }
 
     public ResourceInputStream getUserGravatar(String userId, String imageName) {
+        if (StringUtils.isEmpty(imageName)) {
+            imageName = DEFAULT_GRAVATAR_IMAGE_NAME;
+        }
         try {
             return dataAPIClient.getResourceInputStream("file/s3?path=user/{userId}/gravatar/{imageName}", userId, imageName);
         } catch (NotFoundException ex) {
@@ -93,7 +98,8 @@ public class UserDomain {
         }
     }
 
-    public void saveUserGravatar(String userId, String imageName, byte[] imageDataBytes) {
+    public void saveUserGravatar(String userId, byte[] imageDataBytes) {
+        String imageName = DEFAULT_GRAVATAR_IMAGE_NAME;
         try {
             ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
             ByteArrayOutputStream image400x400OutputStream = new ByteArrayOutputStream();
@@ -102,7 +108,7 @@ public class UserDomain {
                     new ResourceInputStream(new ByteArrayInputStream(image400x400OutputStream.toByteArray()), image400x400OutputStream.size(), "image/png"),
                     userId, imageName);
         } catch (IOException e) {
-            throw new InternalServerErrorException("gravatar upload failed [userId: " + userId + ", imageName: " + imageName + "]");
+            throw new InternalServerErrorException("gravatar upload failed [userId: " + userId + "]");
         }
     }
 
@@ -127,16 +133,31 @@ public class UserDomain {
         return newUserObject;
     }
 
-    public Boolean validateUser(String userId) {
-        UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication();
-        return userAuthentication != null && userAuthentication.getDetails().getId().equals(userId);
+    public UserConfigObject getUserConfigByUserId(String userId) {
+        try {
+            return dataAPIClient.get("userConfig/{userId}", UserConfigObject.class, userId);
+        } catch (NotFoundException ignored) {
+            return defaultUserConfig(userId);
+        }
     }
 
+    public void saveUserConfig(UserConfigObject userConfigObject) {
+        Assert.hasText(userConfigObject.getUserId());
+        userConfigObject.setModifiedDateTime(DateTime.now());
+        dataAPIClient.put("userConfig/{userId}", userConfigObject, userConfigObject.getUserId());
+    }
 
     private void checkPhoneExists(String phone, String userId) {
         UserObject userObject = getUserByPhone(phone);
         if (userObject != null && !userObject.getId().equals(userId)) {
             throw new ConflictException("phone already registered by another user");
         }
+    }
+
+    private UserConfigObject defaultUserConfig(String userId) {
+        UserConfigObject object = new UserConfigObject();
+        object.setUserId(userId);
+        object.setAutoFollowing(true);
+        return object;
     }
 }

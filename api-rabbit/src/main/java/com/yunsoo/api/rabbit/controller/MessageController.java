@@ -28,7 +28,7 @@ public class MessageController {
     private MessageDomain messageDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public Message getById(@PathVariable(value = "id") String id) throws NotFoundException {
+    public Message getMessageById(@PathVariable(value = "id") String id) throws NotFoundException {
         if (id == null) throw new BadRequestException("Id can not be null！");
         MessageObject messageObject = messageDomain.getById(id);
         if (messageObject == null) {

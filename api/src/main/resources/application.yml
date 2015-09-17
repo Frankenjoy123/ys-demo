@@ -1,73 +1,73 @@
 server:
-    port: 6080
+  port: 6080
 management:
-    port: 6081
-
+  port: 6081
+  
 multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
 cloud:
-    aws:
-        stack:
-            auto: false
-        region:
-            auto: false
-            static: cn-north-1
+  aws:
+    stack:
+      auto: false
+    region:
+      auto: false
+      static: cn-north-1
 
 yunsoo:
-    permanent_token:
-        expires_minutes: 4320 #three days
-    access_token:
-        expires_minutes: 60
-    login_token:
-        expires_minutes: 5
+  permanent_token:
+    expires_minutes: 4320 #three days
+  access_token:
+    expires_minutes: 60
+  login_token:
+    expires_minutes: 5
 spring:
-    profiles.active: dev
+  profiles.active: dev
 ---
 spring:
-    profiles: dev
+  profiles: dev
 
 
 logging:
-#    file: c:/logs/yunsoo-api.log
-    level:
-        org.springframework: 'INFO'
-        org.hibernate: 'ERROR'
+#  file: c:/logs/yunsoo-api.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'ERROR'
 
 yunsoo:
-    debug: true
-    environment: dev
-    client:
-        dataapi:
-            baseurl: http://localhost:3080/
-        processor:
-            baseurl: http://localhost:4080/
-    product_key_base_url: http://d.m.yunsu.co:9080/
-    cache:
-        type: local
+  debug: true
+  environment: dev
+  client:
+    dataapi:
+      baseurl: http://localhost:3080/
+    processor:
+      baseurl: http://localhost:4080/
+  product_key_base_url: http://dev.yunsu.co:7080/
+  cache:
+    type: local
 
 ---
 spring:
-    profiles: test
+  profiles: test
 management:
-    port: 6081
-    address: 127.0.0.1
+  port: 6081
+  address: 127.0.0.1
 
 logging:
-    path: /var/log
-    file: yunsoo-api.log
-    level:
-        org.springframework: 'INFO'
-        org.hibernate: 'INFO'
+  path: /var/log
+  file: yunsoo-api.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'INFO'
 
 yunsoo:
-    debug: true
-    environment: test
-    client:
-        dataapi:
-            baseurl: http://localhost:3080/
-        processor:
-            baseurl: http://localhost:4080/
-    product_key_base_url: http://t.m.yunsu.co:9080/
-    cache:
-        type: elasticache
+  debug: true
+  environment: test
+  client:
+    dataapi:
+      baseurl: http://localhost:3080/
+    processor:
+      baseurl: http://localhost:4080/
+  product_key_base_url: http://t.m.yunsu.co:9080/
+  cache:
+    type: elasticache

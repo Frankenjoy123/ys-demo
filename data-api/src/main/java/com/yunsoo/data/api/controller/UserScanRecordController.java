@@ -87,10 +87,12 @@ public class UserScanRecordController {
         object.setProductBaseId(entity.getProductBaseId());
         object.setAppId(entity.getAppId());
         object.setDeviceId(entity.getDeviceId());
-        object.setDetails(entity.getDetails());
         object.setLongitude(entity.getLongitude());
         object.setLatitude(entity.getLatitude());
-        object.setLocation(entity.getLocation());
+        object.setState(entity.getState());
+        object.setCity(entity.getCity());
+        object.setAddress(entity.getAddress());
+        object.setDetails(entity.getDetails());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         return object;
     }
@@ -106,10 +108,12 @@ public class UserScanRecordController {
         entity.setProductBaseId(object.getProductBaseId());
         entity.setAppId(object.getAppId());
         entity.setDeviceId(object.getDeviceId());
-        entity.setDetails(object.getDetails());
         entity.setLongitude(object.getLongitude());
         entity.setLatitude(object.getLatitude());
-        entity.setLocation(object.getLocation());
+        entity.setState(object.getState());
+        entity.setCity(object.getCity());
+        entity.setAddress(object.getAddress());
+        entity.setDetails(object.getDetails());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         return entity;
     }

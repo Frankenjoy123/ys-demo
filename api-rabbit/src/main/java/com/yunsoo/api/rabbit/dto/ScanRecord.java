@@ -39,11 +39,17 @@ public class ScanRecord {
     @JsonProperty("user_id")
     private String userId;
 
+    @JsonProperty("state")
+    private String state;
+
+    @JsonProperty("city")
+    private String city;
+
+    @JsonProperty("address")
+    private String address;
+
     @JsonProperty("details")
     private String details;
-
-    @JsonProperty("location")
-    private String location;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -115,20 +121,36 @@ public class ScanRecord {
         this.userId = userId;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public String getDetails() {
         return details;
     }
 
     public void setDetails(String details) {
         this.details = details;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public DateTime getCreatedDateTime() {
@@ -151,8 +173,10 @@ public class ScanRecord {
             this.setProductBaseId(object.getProductBaseId());
             this.setAppId(object.getAppId());
             this.setDeviceId(object.getDeviceId());
+            this.setState(object.getState());
+            this.setCity(object.getCity());
+            this.setAddress(object.getAddress());
             this.setDetails(object.getDetails());
-            this.setLocation(object.getLocation());
             this.setCreatedDateTime(object.getCreatedDateTime());
         }
     }

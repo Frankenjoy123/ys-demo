@@ -2,9 +2,11 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
 import com.yunsoo.common.data.object.OrganizationObject;
+import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
@@ -16,6 +18,9 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -30,6 +35,11 @@ public class OrganizationDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+
+    private static final String ORG_LOGO_IMAGE_128X128 = "image-128x128";
+
+    private static final String ORG_LOGO_IMAGE_200X200 = "image-200x200";
+
 
     @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
     public OrganizationObject getOrganizationById(String id) {
@@ -69,4 +79,27 @@ public class OrganizationDomain {
         }
 
     }
+
+    public void saveOrgLogo(String orgId, byte[] imageDataBytes) {
+        String logoImage128x128 = ORG_LOGO_IMAGE_128X128;
+        String logoImage200x200 = ORG_LOGO_IMAGE_200X200;
+        try {
+            //128x128
+            ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
+            ByteArrayOutputStream logo128x128OutputStream = new ByteArrayOutputStream();
+            imageProcessor.resize(128, 128).write(logo128x128OutputStream, "png");
+            dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
+                    new ResourceInputStream(new ByteArrayInputStream(logo128x128OutputStream.toByteArray()), logo128x128OutputStream.size(), "image/png"),
+                    orgId, logoImage128x128);
+            //200x200
+            ByteArrayOutputStream logo200x200OutputStream = new ByteArrayOutputStream();
+            imageProcessor.resize(200, 200).write(logo200x200OutputStream, "png");
+            dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
+                    new ResourceInputStream(new ByteArrayInputStream(logo200x200OutputStream.toByteArray()), logo200x200OutputStream.size(), "image/png"),
+                    orgId, logoImage200x200);
+        } catch (IOException e) {
+            throw new InternalServerErrorException("logo upload failed [orgId: " + orgId + "]");
+        }
+    }
+
 }
