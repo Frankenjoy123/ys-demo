@@ -1,7 +1,9 @@
 package com.yunsoo.api.rabbit.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.ProductBase;
+import com.yunsoo.api.rabbit.dto.ProductBaseDetails;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +28,16 @@ public class ProductBaseController {
     private ProductDomain productDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ProductBase getProductBaseById(@PathVariable(value = "id") String id) {
+    public ProductBase getProductBaseById(@PathVariable(value = "id") String id) throws Exception{
         ProductBase productBase = productDomain.getProductBaseById(id);
         if (productBase == null) {
             throw new NotFoundException("找不到产品");
         }
+        //set detail info
+        productBase.setCommentsScore(productDomain.getCommentsScore(id));
+        //set pageable to null
+        productBase.setFollowingUsers(productDomain.getFollowingUsersByProductBaseId(id, null).getContent());
+
         return productBase;
     }
 
@@ -52,17 +59,13 @@ public class ProductBaseController {
     }
 
     @RequestMapping(value = "{product_base_id}/details", method = RequestMethod.GET)
-    public ResponseEntity<?> getProductBaseDetails(
+    public ProductBaseDetails getProductBaseDetails(
             @PathVariable(value = "product_base_id") String productBaseId) {
-        ResourceInputStream resourceInputStream = productDomain.getProductBaseDetailsById(productBaseId);
-        if (resourceInputStream == null) {
-            throw new NotFoundException("product details not found");
+        ProductBase productBase = productDomain.getProductBaseById(productBaseId);
+        if (productBase == null) {
+            throw new NotFoundException("找不到产品");
         }
-        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
-        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
-        if (resourceInputStream.getContentLength() > 0) {
-            builder.contentLength(resourceInputStream.getContentLength());
-        }
-        return builder.body(new InputStreamResource(resourceInputStream));
+
+        return  productBase.getDetails();
     }
 }

@@ -2,21 +2,25 @@ package com.yunsoo.api.rabbit.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
-import com.yunsoo.api.rabbit.dto.Product;
-import com.yunsoo.api.rabbit.dto.ProductBase;
-import com.yunsoo.api.rabbit.dto.ProductBaseDetails;
-import com.yunsoo.api.rabbit.dto.ProductCategory;
+import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
+import com.yunsoo.common.data.object.UserOrganizationFollowingObject;
+import com.yunsoo.common.data.object.UserProductFollowingObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -35,10 +39,7 @@ public class ProductDomain {
     private RestClient dataAPIClient;
 
     @Autowired
-    private LookupDomain lookupDomain;
-
-    @Autowired
-    private ProductCommentsDomain commentsDomain;
+    private UserDomain userDomain;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductDomain.class);
 
@@ -82,15 +83,14 @@ public class ProductDomain {
     }
 
     //获取基本产品信息 - ProductBase
-    @Cacheable(key="T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT.toString(),#productBaseId )")
+    @Cacheable(key="T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId )")
     public ProductBase getProductBaseById(String productBaseId) {
         ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         if (productBaseObject == null) {
             return null;
         }
         ProductBase productBase = convertFromProductBaseObject(productBaseObject);
-        //set the average score
-        productBase.setCommentsScore(dataAPIClient.get("productcomments/avgscore/{id}", Long.class, productBaseId));
+
         //set the hotline and purchase info
         ResourceInputStream stream =  dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json", productBase.getOrgId(), productBaseId, productBase.getVersion());
         try {
@@ -123,6 +123,28 @@ public class ProductDomain {
         } catch (NotFoundException ex) {
             return null;
         }
+    }
+
+    public Long getCommentsScore(String productBaseId){
+        return dataAPIClient.get("productcomments/avgscore/{id}", Long.class, productBaseId);
+    }
+
+    public Page<User> getFollowingUsersByProductBaseId(String productBaseId, Pageable pageable){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("product_base_id", productBaseId)
+                .append(pageable)
+                .build();
+
+        Page<UserProductFollowingObject> userFollowingList = dataAPIClient.getPaged("UserProductFollowing" + query,
+                new ParameterizedTypeReference<List<UserProductFollowingObject>>() {
+                });
+
+         List<User> userList = new ArrayList<>();
+         userFollowingList.forEach(item -> {
+             userList.add(new User(userDomain.getUserById(item.getUserId())));
+         });
+
+        return new Page<>(userList, userFollowingList.getPage(), userFollowingList.getTotal());
     }
 
     //获取基本产品信息 - ProductBase

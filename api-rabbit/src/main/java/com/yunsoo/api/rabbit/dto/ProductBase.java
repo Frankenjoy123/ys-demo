@@ -2,6 +2,8 @@ package com.yunsoo.api.rabbit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 /**
  * Created by:   Zhe
  * Created on:   2015/3/19
@@ -30,6 +32,9 @@ public class ProductBase {
     private ProductBaseDetails details;
     @JsonProperty("detail_url")
     private String detailUrl;
+    @JsonProperty("following_users")
+    private List<User> followingUsers;
+
 
     public String getDetailUrl() {
         return detailUrl;
@@ -120,4 +125,11 @@ public class ProductBase {
         this.shelfLifeInterval = shelfLifeInterval;
     }
 
+    public List<User> getFollowingUsers() {
+        return followingUsers;
+    }
+
+    public void setFollowingUsers(List<User> followingUsers) {
+        this.followingUsers = followingUsers;
+    }
 }
