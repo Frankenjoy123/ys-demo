@@ -29,7 +29,6 @@ logging:
     org.hibernate: 'ERROR'
 
 yunsoo:
-<<<<<<< HEAD
     debug: true
     client:
         dataapi:
@@ -40,15 +39,6 @@ yunsoo:
     cache:
         type: local
     environment: dev
-=======
-  debug: true
-  client:
-    dataapi:
-      baseurl: http://localhost:3080/
-  access_token:
-    expires_minutes: 5256000 #10 years
-    hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
->>>>>>> 4d4b1de975c2843cf092b336e5b31149fdd8520c
 
 ---
 spring:
