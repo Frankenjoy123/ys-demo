@@ -42,8 +42,8 @@ public class UserScanRecordEntity {
     @Column(name = "latitude")
     private Double latitude;
 
-    @Column(name = "state")
-    private String state;
+    @Column(name = "province")
+    private String province;
 
     @Column(name = "city")
     private String city;
@@ -123,12 +123,12 @@ public class UserScanRecordEntity {
         this.latitude = latitude;
     }
 
-    public String getState() {
-        return state;
+    public String getProvince() {
+        return province;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setProvince(String province) {
+        this.province = province;
     }
 
     public String getCity() {
