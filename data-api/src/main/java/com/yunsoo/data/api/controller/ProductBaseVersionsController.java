@@ -45,7 +45,7 @@ public class ProductBaseVersionsController {
     //query
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.GET)
     public List<ProductBaseVersionsObject> getByProductBaseId(@PathVariable(value = "product_base_id") String productBaseId) {
-        return productBaseVersionsRepository.findByProductBaseIdOrderByVersion(productBaseId).stream()
+        return productBaseVersionsRepository.findByProductBaseIdOrderByVersionAsc(productBaseId).stream()
                 .map(this::toProductBaseVersionsObject)
                 .collect(Collectors.toList());
     }
@@ -78,7 +78,7 @@ public class ProductBaseVersionsController {
             throw new NotFoundException("product base not found by id");
         }
         ProductBaseVersionsEntity entity = toProductBaseVersionsEntity(productBaseVersionsObject);
-        List<ProductBaseVersionsEntity> currentVersions = productBaseVersionsRepository.findByProductBaseIdOrderByVersion(productBaseId);
+        List<ProductBaseVersionsEntity> currentVersions = productBaseVersionsRepository.findByProductBaseIdOrderByVersionAsc(productBaseId);
         int latestVersion = currentVersions.size() == 0 ? 0 : currentVersions.get(currentVersions.size() - 1).getVersion();
         entity.setId(null);
         entity.setProductBaseId(productBaseId);
