@@ -33,6 +33,5 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.9'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'junit:junit'
 
 }
