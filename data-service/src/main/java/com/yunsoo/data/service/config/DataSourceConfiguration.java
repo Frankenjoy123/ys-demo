@@ -1,14 +1,15 @@
 package com.yunsoo.data.service.config;
 
-import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.commons.dbcp2.BasicDataSourceFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 
-import java.util.Properties;
+import javax.sql.DataSource;
 
 /**
  * Created by:   Lijian
@@ -16,22 +17,25 @@ import java.util.Properties;
  * Descriptions:
  */
 @Configuration
-@Import(DataSourceProperties.class)
 public class DataSourceConfiguration {
 
-    @Autowired
-    private DataSourceProperties dataSourceProperties;
+    private static Log log = LogFactory.getLog(DataSourceConfiguration.class);
 
-    @Bean(name = "dataSource.primary")
-    public BasicDataSource dataSource() throws Exception {
-        Properties props = new Properties();
-        props.put("driverClassName", dataSourceProperties.getDriverClassName());
-        props.put("url", dataSourceProperties.getUrl());
-        props.put("username", dataSourceProperties.getUsername());
-        props.put("password", dataSourceProperties.getPassword());
-        props.put("initialSize", dataSourceProperties.getInitialSize());
-        props.put("maxIdle", dataSourceProperties.getMaxIdle());
-        return BasicDataSourceFactory.createDataSource(props);
+    @Bean
+    @Primary
+    @ConfigurationProperties(prefix = "jdbc.master")
+    public DataSource dataSource() throws Exception {
+//        Properties props = new Properties();
+//        props.put("driverClassName", dataSourceProperties.getDriverClassName());
+//        props.put("url", dataSourceProperties.getUrl());
+//        props.put("username", dataSourceProperties.getUsername());
+//        props.put("password", dataSourceProperties.getPassword());
+//        props.put("initialSize", dataSourceProperties.getInitialSize());
+//        props.put("maxIdle", dataSourceProperties.getMaxIdle());
+//        return BasicDataSourceFactory.createDataSource(props);
+        DataSource dataSource = DataSourceBuilder.create().build();
+        log.info("dataSource created. " + dataSource.toString());
+        return dataSource;
     }
 
     // Bean used to translate Hibernate exceptions into Spring ones

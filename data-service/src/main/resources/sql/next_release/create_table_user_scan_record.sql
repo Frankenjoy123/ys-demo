@@ -10,10 +10,10 @@ CREATE TABLE user_scan_record
   device_id        VARCHAR(40)          NOT NULL,
   latitude         DOUBLE,
   longitude        DOUBLE,
-  state   VARCHAR(20),
-  city    VARCHAR(20),
-  address VARCHAR(100),
-  details VARCHAR(100),
+  province VARCHAR(20),
+  city     VARCHAR(20),
+  address  VARCHAR(100),
+  details  VARCHAR(100),
   created_datetime DATETIME             NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX product_key ON user_scan_record (product_key);

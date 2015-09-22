@@ -19,8 +19,8 @@ public class ScanRequest {
     @JsonProperty("latitude")
     private Double latitude;
 
-    @JsonProperty("state")
-    private String state;
+    @JsonProperty("province")
+    private String province;
 
     @JsonProperty("city")
     private String city;
@@ -72,12 +72,12 @@ public class ScanRequest {
         this.details = details;
     }
 
-    public String getState() {
-        return state;
+    public String getProvince() {
+        return province;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setProvince(String province) {
+        this.province = province;
     }
 
     public String getCity() {
@@ -93,7 +93,7 @@ public class ScanRequest {
         userScanRecordObject.setProductKey(this.key);
         userScanRecordObject.setLongitude(this.longitude);
         userScanRecordObject.setLatitude(this.latitude);
-        userScanRecordObject.setState(this.state);
+        userScanRecordObject.setProvince(this.province);
         userScanRecordObject.setCity(this.city);
         userScanRecordObject.setAddress(this.address);
         userScanRecordObject.setDeviceId(this.details);

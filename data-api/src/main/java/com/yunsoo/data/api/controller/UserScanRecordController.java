@@ -89,7 +89,7 @@ public class UserScanRecordController {
         object.setDeviceId(entity.getDeviceId());
         object.setLongitude(entity.getLongitude());
         object.setLatitude(entity.getLatitude());
-        object.setState(entity.getState());
+        object.setProvince(entity.getProvince());
         object.setCity(entity.getCity());
         object.setAddress(entity.getAddress());
         object.setDetails(entity.getDetails());
@@ -110,7 +110,7 @@ public class UserScanRecordController {
         entity.setDeviceId(object.getDeviceId());
         entity.setLongitude(object.getLongitude());
         entity.setLatitude(object.getLatitude());
-        entity.setState(object.getState());
+        entity.setProvince(object.getProvince());
         entity.setCity(object.getCity());
         entity.setAddress(object.getAddress());
         entity.setDetails(object.getDetails());

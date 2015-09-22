@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.EnvironmentTestUtils;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -38,7 +37,6 @@ public class DebugControllerTest {
     @Before
     public void before() {
         dataAPIClient = new RestClient("http://localhost:" + port, new RestResponseErrorHandler());
-        EnvironmentTestUtils.addEnvironment(env, "yunsoo.environment=local");
     }
 
     @Test

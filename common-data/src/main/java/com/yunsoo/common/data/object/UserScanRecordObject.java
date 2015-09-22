@@ -46,8 +46,8 @@ public class UserScanRecordObject implements Serializable {
     @JsonProperty("latitude")
     private Double latitude;
 
-    @JsonProperty("state")
-    private String state;
+    @JsonProperty("province")
+    private String province;
 
     @JsonProperty("city")
     private String city;
@@ -128,12 +128,12 @@ public class UserScanRecordObject implements Serializable {
         this.latitude = latitude;
     }
 
-    public String getState() {
-        return state;
+    public String getProvince() {
+        return province;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setProvince(String province) {
+        this.province = province;
     }
 
     public String getCity() {

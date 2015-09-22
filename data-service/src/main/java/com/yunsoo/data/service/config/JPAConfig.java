@@ -1,17 +1,17 @@
 package com.yunsoo.data.service.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.Database;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 /**
@@ -19,36 +19,41 @@ import javax.sql.DataSource;
  * Created on:   2015/3/23
  * Descriptions:
  */
-@Configuration
 @Import(DataSourceConfiguration.class)
 @EnableJpaRepositories(basePackages = "com.yunsoo.data.service.repository")
 @EnableTransactionManagement
+@Configuration
 public class JPAConfig {
 
     @Autowired
-    DataSource dataSource;
+    private DataSource dataSource;
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
-        hibernateJpaVendorAdapter.setShowSql(false);
-        hibernateJpaVendorAdapter.setGenerateDdl(false);
-        hibernateJpaVendorAdapter.setDatabase(Database.MYSQL);
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder factoryBuilder) {
+//        HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
+//        hibernateJpaVendorAdapter.setShowSql(false);
+//        hibernateJpaVendorAdapter.setGenerateDdl(false);
+//        hibernateJpaVendorAdapter.setDatabase(Database.MYSQL);
 
-        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-        factory.setJpaVendorAdapter(hibernateJpaVendorAdapter);
-        factory.setDataSource(dataSource);
-        factory.setPackagesToScan("com.yunsoo.data.service.entity");
-        factory.setPersistenceUnitName("master");
-        factory.afterPropertiesSet();
-        return factory;
+//        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+//        factory.setJpaVendorAdapter(jpaVendorAdapter);
+//        factory.setDataSource(dataSource);
+//        factory.setPackagesToScan("com.yunsoo.data.service.entity");
+//        factory.setPersistenceUnitName("master");
+//        factory.afterPropertiesSet();
+//        return factory;
+        return factoryBuilder
+                .dataSource(dataSource)
+                .packages("com.yunsoo.data.service.entity")
+                .persistenceUnit("master")
+                .build();
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager() {
-        JpaTransactionManager txManager = new JpaTransactionManager();
-        txManager.setEntityManagerFactory(entityManagerFactory().getObject());
-        return txManager;
+    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
+        jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);
+        return jpaTransactionManager;
     }
 
 }

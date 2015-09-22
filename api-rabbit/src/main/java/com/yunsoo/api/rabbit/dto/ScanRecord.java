@@ -39,8 +39,8 @@ public class ScanRecord {
     @JsonProperty("user_id")
     private String userId;
 
-    @JsonProperty("state")
-    private String state;
+    @JsonProperty("province")
+    private String province;
 
     @JsonProperty("city")
     private String city;
@@ -121,12 +121,12 @@ public class ScanRecord {
         this.userId = userId;
     }
 
-    public String getState() {
-        return state;
+    public String getProvince() {
+        return province;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setProvince(String province) {
+        this.province = province;
     }
 
     public String getCity() {
@@ -173,7 +173,7 @@ public class ScanRecord {
             this.setProductBaseId(object.getProductBaseId());
             this.setAppId(object.getAppId());
             this.setDeviceId(object.getDeviceId());
-            this.setState(object.getState());
+            this.setProvince(object.getProvince());
             this.setCity(object.getCity());
             this.setAddress(object.getAddress());
             this.setDetails(object.getDetails());
