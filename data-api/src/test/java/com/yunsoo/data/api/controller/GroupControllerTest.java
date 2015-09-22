@@ -24,7 +24,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
-@WebIntegrationTest({"server.port=0", "management.port=0"})
+@WebIntegrationTest
 public class GroupControllerTest {
 
     @Value("${local.server.port}")
@@ -38,7 +38,7 @@ public class GroupControllerTest {
     }
 
     @Test
-    public void test_All() {
+    public void test_GroupController_All() {
         GroupObject groupObject = new GroupObject();
         groupObject.setName("[UnitTest]测试组名");
         groupObject.setDescription("[UnitTest]测试描述");

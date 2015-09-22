@@ -1,7 +1,6 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
-import com.yunsoo.common.data.CacheType;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.util.HashUtils;
@@ -21,6 +20,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
 import java.util.List;
 
 /**
@@ -67,7 +67,7 @@ public class AccountDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("account/pageable" + query, new ParameterizedTypeReference<List<AccountObject>>() {
+        return dataAPIClient.getPaged("account" + query, new ParameterizedTypeReference<List<AccountObject>>() {
         });
     }
 

@@ -1,5 +1,6 @@
-package com.yunsoo.data.api;
+package com.yunsoo.data.api.controller;
 
+import com.yunsoo.data.api.Application;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
