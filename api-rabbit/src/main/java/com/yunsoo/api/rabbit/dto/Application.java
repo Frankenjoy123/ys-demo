@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ApplicationObject;
 
 /**
@@ -28,6 +29,11 @@ public class Application {
     @JsonProperty("description")
     private String description;
 
+    @JsonProperty("force_update")
+    private boolean forceUpdate;
+
+    @JsonProperty("system_version")
+    private String systemVersion;
 
     public String getId() {
         return id;
@@ -88,6 +94,16 @@ public class Application {
             this.typeCode = object.getTypeCode();
             this.statusCode = object.getStatusCode();
             this.description = object.getDescription();
+            this.systemVersion = object.getSystemVersion();
+            this.forceUpdate = LookupCodes.ApplicationStatus.FORCE_UPDATE.equals(this.statusCode)? true: false;
         }
+    }
+
+    public boolean isForceUpdate() {
+        return forceUpdate;
+    }
+
+    public void setForceUpdate(boolean forceUpdate) {
+        this.forceUpdate = forceUpdate;
     }
 }

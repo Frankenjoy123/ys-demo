@@ -33,6 +33,8 @@ public class ProductBaseController {
         if (productBase == null) {
             throw new NotFoundException("找不到产品");
         }
+        //set details
+        productBase.setDetails(productDomain.getProductBaseDetailsById(id));
         //set detail info
         productBase.setCommentsScore(productDomain.getCommentsScore(id));
         //set pageable to null
@@ -61,11 +63,11 @@ public class ProductBaseController {
     @RequestMapping(value = "{product_base_id}/details", method = RequestMethod.GET)
     public ProductBaseDetails getProductBaseDetails(
             @PathVariable(value = "product_base_id") String productBaseId) {
-        ProductBase productBase = productDomain.getProductBaseById(productBaseId);
-        if (productBase == null) {
-            throw new NotFoundException("找不到产品");
+        ProductBaseDetails details = productDomain.getProductBaseDetailsById(productBaseId);
+        if (details == null) {
+            throw new NotFoundException("找不到产品详细信息");
         }
 
-        return  productBase.getDetails();
+        return  details;
     }
 }

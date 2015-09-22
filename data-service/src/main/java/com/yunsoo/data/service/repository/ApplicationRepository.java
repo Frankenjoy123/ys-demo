@@ -22,4 +22,6 @@ public interface ApplicationRepository extends FindOneAndSaveRepository<Applicat
 
     Page<ApplicationEntity> findByTypeCodeAndStatusCodeIn(String type_code, List<String> statusCodes, Pageable pageable);
 
+    ApplicationEntity findFirstByTypeCodeAndSystemVersionLessThanEqualOrderByCreatedDateTimeDesc(String typeCode, String systemVersion);
+
 }

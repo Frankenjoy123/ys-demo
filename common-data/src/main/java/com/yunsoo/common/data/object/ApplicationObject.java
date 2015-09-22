@@ -24,22 +24,26 @@ public class ApplicationObject implements Serializable {
     @JsonProperty("name")
     private String name;
 
-    @NotEmpty(message = "name must not be null or empty")
+    @NotEmpty(message = "version must not be null or empty")
     @JsonProperty("version")
     private String version;
 
-    @NotEmpty(message = "name must not be null or empty")
+    @NotEmpty(message = "type_code must not be null or empty")
     @JsonProperty("type_code")
     private String typeCode;
 
-    @NotEmpty(message = "name must not be null or empty")
+    @NotEmpty(message = "status_code must not be null or empty")
     @JsonProperty("status_code")
     private String statusCode;
 
     @JsonProperty("description")
     private String description;
 
-    @NotEmpty(message = "name must not be null or empty")
+    @NotEmpty(message = "system_version must not be null or empty")
+    @JsonProperty("system_version")
+    private String systemVersion;
+
+    @NotEmpty(message = "created_account_id must not be null or empty")
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -55,6 +59,14 @@ public class ApplicationObject implements Serializable {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
+
+    public String getSystemVersion() {
+        return systemVersion;
+    }
+
+    public void setSystemVersion(String systemVersion) {
+        this.systemVersion = systemVersion;
+    }
 
     public String getId() {
         return id;

@@ -29,6 +29,16 @@ public class ApplicationController {
     @Autowired
     private ApplicationRepository applicationRepository;
 
+    @RequestMapping(value = "/latest", method = RequestMethod.GET)
+    public ApplicationObject getLatestVersion(@RequestParam(value = "type_code") String typeCode,
+                                              @RequestParam(value = "system_version") String systemVersion) {
+        ApplicationEntity entity = applicationRepository.findFirstByTypeCodeAndSystemVersionLessThanEqualOrderByCreatedDateTimeDesc(typeCode, systemVersion);
+        if (entity == null) {
+            throw new NotFoundException("application not found by [type code: " + typeCode + "]");
+        }
+        return toApplicationObject(entity);
+    }
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ApplicationObject getById(@PathVariable String id) {
         ApplicationEntity entity = applicationRepository.findOne(id);
@@ -118,6 +128,7 @@ public class ApplicationController {
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
+        object.setSystemVersion(entity.getSystemVersion());
         return object;
     }
 
@@ -136,6 +147,7 @@ public class ApplicationController {
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());
+        entity.setSystemVersion(object.getSystemVersion());
         return entity;
     }
 

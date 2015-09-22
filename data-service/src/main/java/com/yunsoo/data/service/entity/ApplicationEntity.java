@@ -50,6 +50,17 @@ public class ApplicationEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modifiedDateTime;
 
+    @Column(name = "system_version")
+    private String systemVersion;
+
+    public String getSystemVersion() {
+        return systemVersion;
+    }
+
+    public void setSystemVersion(String systemVersion) {
+        this.systemVersion = systemVersion;
+    }
+
     public String getId() {
         return id;
     }

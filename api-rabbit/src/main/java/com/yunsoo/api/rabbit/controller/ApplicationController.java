@@ -5,10 +5,7 @@ import com.yunsoo.api.rabbit.dto.Application;
 import com.yunsoo.common.data.object.ApplicationObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by Zhe on 2015/6/15.
@@ -27,6 +24,16 @@ public class ApplicationController {
         ApplicationObject applicationObject = applicationDomain.getApplicationById(appId);
         if (applicationObject == null) {
             throw new NotFoundException("application not found by [id:" + appId + "]");
+        }
+        return new Application(applicationObject);
+    }
+
+    @RequestMapping(value = "/latest", method = RequestMethod.GET)
+    public Application getLatestVersion(@RequestParam(value = "type_code") String typeCode,
+                                        @RequestParam(value = "system_version") String systemVersion) {
+        ApplicationObject applicationObject = applicationDomain.getLatestApplicationByTypeCode(typeCode, systemVersion);
+        if (applicationObject == null) {
+            throw new NotFoundException("application not found by [typeCode:" + typeCode + "]");
         }
         return new Application(applicationObject);
     }

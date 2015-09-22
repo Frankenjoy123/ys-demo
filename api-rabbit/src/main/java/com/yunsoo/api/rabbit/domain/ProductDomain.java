@@ -89,28 +89,19 @@ public class ProductDomain {
         if (productBaseObject == null) {
             return null;
         }
-        ProductBase productBase = convertFromProductBaseObject(productBaseObject);
+        return  convertFromProductBaseObject(productBaseObject);
 
-        //set the hotline and purchase info
-        ResourceInputStream stream =  dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json", productBase.getOrgId(), productBaseId, productBase.getVersion());
-        try {
-            ProductBaseDetails details = new ObjectMapper().readValue(stream, ProductBaseDetails.class);
-            productBase.setDetails(details);
-        }
-        catch (Exception ex){
-            LOGGER.error("get detail data from s3 failed.", ex);
-        }
-
-        //todo set detailUrl property
-        return productBase;
     }
 
-    // get product details
-    public ResourceInputStream getProductBaseDetailsById(String productBaseId) {
+    @Cacheable(key="T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId, 'details' )")
+    public ProductBaseDetails getProductBaseDetailsById(String productBaseId) {
         try {
             ProductBase productBase = getProductBaseById(productBaseId);
-            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json", productBase.getOrgId(), productBaseId, productBase.getVersion());
-        } catch (NotFoundException ex) {
+            ResourceInputStream stream =  dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json", productBase.getOrgId(), productBaseId, productBase.getVersion());
+            ProductBaseDetails details = new ObjectMapper().readValue(stream, ProductBaseDetails.class);
+            return details;
+        } catch (Exception ex) {
+            LOGGER.error("get detail data from s3 failed.", ex);
             return null;
         }
     }
