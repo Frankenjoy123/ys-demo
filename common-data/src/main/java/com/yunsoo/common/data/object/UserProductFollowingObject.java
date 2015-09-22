@@ -8,12 +8,14 @@ import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 /**
  * Created by:   yan
  * Created on:   8/17/2015
  * Descriptions:
  */
-public class UserProductFollowingObject {
+public class UserProductFollowingObject implements Serializable {
 
     @JsonProperty("id")
     private String id;
