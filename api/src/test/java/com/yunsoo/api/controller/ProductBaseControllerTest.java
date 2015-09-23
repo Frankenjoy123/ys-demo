@@ -30,4 +30,24 @@ public class ProductBaseControllerTest {
             System.out.println("getById works");
         }
     }
+
+    @Test
+    public void test_create() throws Exception {
+    }
+
+    @Test
+    public void test_getByFilter() throws Exception {
+    }
+
+    @Test
+    public void test_approveProductBaseVersions() throws Exception {
+    }
+
+    @Test
+    public void test_updateProductBaseVersions() throws Exception {
+    }
+
+
+
+
 }
