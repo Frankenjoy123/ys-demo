@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @WebIntegrationTest()
-public class HomeControllerITest {
+public class HomeControllerTest {
 
     @Value("${local.server.port}")
     private int port;
