@@ -1,6 +1,6 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.common.data.object.OrganizationObject;
+import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.client.RestResponseErrorHandler;
 import com.yunsoo.data.api.Application;
@@ -15,13 +15,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * Created by:   Lijian
- * Created on:   2015/9/22
+ * Created on:   2015/9/23
  * Descriptions:
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @WebIntegrationTest
-public class OrganizationControllerTest {
+public class UserControllerTest {
 
     @Value("${local.server.port}")
     private int port;
@@ -34,9 +34,9 @@ public class OrganizationControllerTest {
     }
 
     @Test
-    public void test_YunsuOrg() {
-        OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, Constants.Ids.YUNSU_ORG_ID);
-        assert organizationObject.getId().equals(Constants.Ids.YUNSU_ORG_ID);
+    public void test_AnonymousUser() {
+        UserObject userObject = dataAPIClient.get("user/{id}", UserObject.class, Constants.Ids.ANONYMOUS_USER_ID);
+        assert userObject.getId().equals(Constants.Ids.ANONYMOUS_USER_ID);
 
     }
 }

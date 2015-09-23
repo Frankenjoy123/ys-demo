@@ -6,11 +6,9 @@ import com.yunsoo.data.api.Application;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -23,14 +21,11 @@ import java.util.Map;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
-@WebIntegrationTest({"server.port=0", "management.port=0"})
+@WebIntegrationTest()
 public class DebugControllerTest {
 
     @Value("${local.server.port}")
     private int port;
-
-    @Autowired
-    private ConfigurableApplicationContext env;
 
     private RestClient dataAPIClient;
 

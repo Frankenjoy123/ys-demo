@@ -39,7 +39,13 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void test_AccountController_All() {
+    public void test_SystemAccount() {
+        AccountObject accountObject = dataAPIClient.get("account/{id}", AccountObject.class, Constants.Ids.SYSTEM_ACCOUNT_ID);
+        assert accountObject.getOrgId().equals(Constants.Ids.YUNSU_ORG_ID);
+    }
+
+    @Test
+    public void test_All() {
         AccountObject accountObject = new AccountObject();
         accountObject.setOrgId(Constants.Ids.YUNSU_ORG_ID);
         accountObject.setIdentifier("unitTest");
@@ -69,6 +75,11 @@ public class AccountControllerTest {
         System.out.println("Account count: " + count);
         assert count > 0;
 
+        accountObject.setPhone("987654321");
+        dataAPIClient.patch("account/{id}", accountObject, accountObject.getId());
+
+        accountObject = dataAPIClient.get("account/{id}", AccountObject.class, accountId);
+        assert accountObject.getPhone().equals("987654321");
 
     }
 
