@@ -1,8 +1,9 @@
 dependencies {
-    compile('joda-time:joda-time:2.8.1')
-    compile('com.fasterxml.jackson.core:jackson-annotations:2.5.1')
-    compile('commons-codec:commons-codec:1.10')
-    compile('log4j:log4j:1.2.17')
+    compile 'joda-time:joda-time:2.8.1'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.5.1'
+    compile 'commons-codec:commons-codec:1.10'
 
-    testCompile("junit:junit:4+")
+    compile 'log4j:log4j:1.2.17'
+
+    testCompile 'junit:junit:4.12'
 }

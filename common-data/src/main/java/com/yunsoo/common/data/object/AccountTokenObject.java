@@ -1,5 +1,6 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
@@ -15,17 +16,32 @@ import java.io.Serializable;
  */
 public class AccountTokenObject implements Serializable {
 
+    @JsonProperty("id")
     private String id;
+
+    @JsonProperty("account_id")
     private String accountId;
+
+    @JsonProperty("app_id")
     private String appId;
+
+    @JsonProperty("device_id")
     private String deviceId;
+
+    @JsonProperty("permanent_token")
     private String permanentToken;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("permanent_token_expires_datetime")
     private DateTime permanentTokenExpiresDateTime;
+
+    @JsonProperty("created_account_id")
     private String createdAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
 

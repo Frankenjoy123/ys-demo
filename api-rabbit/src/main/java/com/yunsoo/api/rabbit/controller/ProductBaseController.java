@@ -1,9 +1,10 @@
 package com.yunsoo.api.rabbit.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.api.rabbit.dto.ProductBaseDetails;
+import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +28,21 @@ public class ProductBaseController {
     @Autowired
     private ProductDomain productDomain;
 
+    @Autowired
+    private ProductBaseDomain productBaseDomain;
+
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductBase getProductBaseById(@PathVariable(value = "id") String id) throws Exception{
-        ProductBase productBase = productDomain.getProductBaseById(id);
-        if (productBase == null) {
-            throw new NotFoundException("找不到产品");
+        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(id);
+        if (productBaseObject == null) {
+            throw new NotFoundException("product base not found.");
         }
+        ProductBase productBase = new ProductBase(productBaseObject);
+        productBase.setCategory(productBaseDomain.getProductCategoryById(productBaseObject.getCategoryId()));
+
         //set details
-        productBase.setDetails(productDomain.getProductBaseDetailsById(id));
+        productBase.setDetails(productBaseDomain.getProductBaseDetailsById(id));
         //set detail info
         productBase.setCommentsScore(productDomain.getCommentsScore(id));
         //set pageable to null
@@ -47,7 +55,7 @@ public class ProductBaseController {
     public ResponseEntity<?> getProductBaseImage(
             @PathVariable(value = "product_base_id") String productBaseId,
             @PathVariable(value = "image_name") String imageName) {
-        ResourceInputStream resourceInputStream = productDomain.getProductBaseImage(productBaseId, imageName);
+        ResourceInputStream resourceInputStream = productBaseDomain.getProductBaseImage(productBaseId, imageName);
         if (resourceInputStream == null) {
             throw new NotFoundException("product image found");
         }
@@ -63,7 +71,7 @@ public class ProductBaseController {
     @RequestMapping(value = "{product_base_id}/details", method = RequestMethod.GET)
     public ProductBaseDetails getProductBaseDetails(
             @PathVariable(value = "product_base_id") String productBaseId) {
-        ProductBaseDetails details = productDomain.getProductBaseDetailsById(productBaseId);
+        ProductBaseDetails details = productBaseDomain.getProductBaseDetailsById(productBaseId);
         if (details == null) {
             throw new NotFoundException("找不到产品详细信息");
         }

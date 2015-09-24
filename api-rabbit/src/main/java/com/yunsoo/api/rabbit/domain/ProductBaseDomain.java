@@ -1,11 +1,17 @@
 package com.yunsoo.api.rabbit.domain;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.rabbit.dto.ProductBaseDetails;
+import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -29,6 +35,8 @@ public class ProductBaseDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductDomain.class);
 
     @Cacheable(key="T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId )")
     public ProductBaseObject getProductBaseById(String productBaseId) {
@@ -63,5 +71,39 @@ public class ProductBaseDomain {
         return dataAPIClient.getPaged("productbase" + query, new ParameterizedTypeReference<List<ProductBaseObject>>() {
         });
     }
+
+    // get product images
+    public ResourceInputStream getProductBaseImage(String productBaseId, String imageName) {
+        try {
+            ProductBaseObject productBaseObject = getProductBaseById(productBaseId);
+            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}", productBaseObject.getOrgId(), productBaseId, productBaseObject.getVersion(), imageName);
+        } catch (NotFoundException ex) {
+            return null;
+        }
+    }
+
+    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId, 'details' )")
+    public ProductBaseDetails getProductBaseDetailsById(String productBaseId) {
+        try {
+            ProductBaseObject productBaseObject = getProductBaseById(productBaseId);
+            ResourceInputStream stream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json", productBaseObject.getOrgId(), productBaseId, productBaseObject.getVersion());
+            ProductBaseDetails details = new ObjectMapper().readValue(stream, ProductBaseDetails.class);
+            return details;
+        } catch (Exception ex) {
+            LOGGER.error("get detail data from s3 failed.", ex);
+            return null;
+        }
+    }
+
+    public ProductCategory getProductCategoryById(String id) {
+        if (id == null) {
+            return null;
+        }
+        return dataAPIClient.get("productcategory/{id}", ProductCategory.class, id);
+    }
+
+
+
+
 
 }

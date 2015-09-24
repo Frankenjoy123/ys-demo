@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yunsoo.common.data.object.ProductBaseObject;
 
 import java.util.List;
 
@@ -132,4 +133,33 @@ public class ProductBase {
     public void setFollowingUsers(List<User> followingUsers) {
         this.followingUsers = followingUsers;
     }
+
+    public ProductBase() {
+    }
+
+    public ProductBase(ProductBaseObject object) {
+        if (object != null) {
+            this.setId(object.getId());
+            this.setVersion(object.getVersion());
+            this.setName(object.getName());
+            this.setDescription(object.getDescription());
+            this.setOrgId(object.getOrgId());
+            this.setShelfLife(object.getShelfLife());
+            this.setShelfLifeInterval(object.getOrgId());
+        }
+    }
+
+    public ProductBaseObject toProductBaseObject() {
+        ProductBaseObject object = new ProductBaseObject();
+        object.setId(this.getId());
+        object.setVersion(this.getVersion());
+        object.setName(this.getName());
+        object.setDescription(this.getDescription());
+        object.setOrgId(this.getOrgId());
+        object.setShelfLife(this.getShelfLife());
+        object.setShelfLifeInterval(this.getShelfLifeInterval());
+        object.setCategoryId(this.getCategory().getId());
+        return object;
+    }
+
 }
