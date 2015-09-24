@@ -81,13 +81,18 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyBatch> getByFilterPaged(@RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                  @RequestParam(value = "is_package", required = false) Boolean isPackage,
                                                   @PageableDefault(page = 0, size = 20)
                                                   @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                                   Pageable pageable,
                                                   HttpServletResponse response) {
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        Page<ProductKeyBatch> productKeyBatchPage = null;
 
-        Page<ProductKeyBatch> productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, pageable);
+        if(isPackage != null)
+            productKeyBatchPage = productKeyDomain.getPackageProductKeyBatchesPaged(orgId, isPackage, pageable);
+        else
+            productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", productKeyBatchPage.toContentRange());
         }

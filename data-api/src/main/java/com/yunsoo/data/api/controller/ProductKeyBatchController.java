@@ -1,5 +1,6 @@
 package com.yunsoo.data.api.controller;
 
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
@@ -66,12 +67,16 @@ public class ProductKeyBatchController {
             @RequestParam(value = "org_id") String orgId,
             @RequestParam(value = "product_base_id", required = false) String productBaseId,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+            @RequestParam(value = "is_package", required = false) Boolean isPackage,
             @PageableDefault(size = 1000)
             Pageable pageable,
             HttpServletResponse response) {
         Page<ProductKeyBatchEntity> entityPage;
 
-        if (productBaseId == null) {
+        if(isPackage != null) {
+            entityPage = productKeyBatchRepository.findByProductKeyTypeCodes(LookupCodes.ProductKeyType.PACKAGE, pageable);
+        }
+        else if (productBaseId == null) {
             entityPage = productKeyBatchRepository.findByOrgIdAndStatusCodeIn(orgId, statusCodeIn, pageable);
 
         } else {

@@ -101,6 +101,22 @@ public class ProductKeyDomain {
         return objectsPage.map(i -> toProductKeyBatch(i, productKeyTypes, productKeyBatchStatuses));
     }
 
+    public Page<ProductKeyBatch> getPackageProductKeyBatchesPaged(String orgId, Boolean isPackage, Pageable pageable) {
+
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("is_package", isPackage)
+                .append(pageable)
+                .build();
+        Page<ProductKeyBatchObject> objectsPage = dataAPIClient.getPaged("productkeybatch" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
+        });
+
+        List<Lookup> productKeyTypes = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
+        List<Lookup> productKeyBatchStatuses = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus);
+        return objectsPage.map(i -> toProductKeyBatch(i, productKeyTypes, productKeyBatchStatuses));
+    }
+
+
     public Long sumQuantity(String orgId, String productBaseId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
