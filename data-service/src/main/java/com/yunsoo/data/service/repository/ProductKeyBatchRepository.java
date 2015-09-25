@@ -36,6 +36,6 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
 
     Integer countByRestQuantityLessThanAndStatusCodeIn(Integer quantity,  List<String> statusCodeIn);
 
-    Page<ProductKeyBatchEntity> findByProductKeyTypeCodes(String typeCode, Pageable pageable);
+    Page<ProductKeyBatchEntity> findByProductKeyTypeCodesAndStatusCodeIn(String typeCode, List<String> statusCodeIn, Pageable pageable);
 
 }

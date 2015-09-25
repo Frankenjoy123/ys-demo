@@ -88,11 +88,8 @@ public class ProductKeyBatchController {
                                                   HttpServletResponse response) {
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         Page<ProductKeyBatch> productKeyBatchPage = null;
+        productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, isPackage, pageable);
 
-        if(isPackage != null)
-            productKeyBatchPage = productKeyDomain.getPackageProductKeyBatchesPaged(orgId, isPackage, pageable);
-        else
-            productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", productKeyBatchPage.toContentRange());
         }

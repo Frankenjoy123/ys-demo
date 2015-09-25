@@ -74,7 +74,7 @@ public class ProductKeyBatchController {
         Page<ProductKeyBatchEntity> entityPage;
 
         if(isPackage != null) {
-            entityPage = productKeyBatchRepository.findByProductKeyTypeCodes(LookupCodes.ProductKeyType.PACKAGE, pageable);
+            entityPage = productKeyBatchRepository.findByProductKeyTypeCodesAndStatusCodeIn(LookupCodes.ProductKeyType.PACKAGE, statusCodeIn, pageable);
         }
         else if (productBaseId == null) {
             entityPage = productKeyBatchRepository.findByOrgIdAndStatusCodeIn(orgId, statusCodeIn, pageable);

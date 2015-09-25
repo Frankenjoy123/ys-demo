@@ -81,34 +81,23 @@ public class ProductKeyDomain {
                 lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus));
     }
 
-    public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Pageable pageable) {
+    public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Boolean isPackage, Pageable pageable) {
         String[] statusCodes = new String[]{
                 LookupCodes.ProductKeyBatchStatus.CREATING,
                 LookupCodes.ProductKeyBatchStatus.AVAILABLE
         };
-
-        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId)
+        QueryStringBuilder query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK);
+        if(isPackage != null)
+             query = query.append("org_id", orgId)
+                    .append("is_package", isPackage)
+                    .append("status_code_in", statusCodes)
+                    .append(pageable);
+        else
+            query = query.append("org_id", orgId)
                 .append("product_base_id", productBaseId)
                 .append("status_code_in", statusCodes)
-                .append(pageable)
-                .build();
-        Page<ProductKeyBatchObject> objectsPage = dataAPIClient.getPaged("productkeybatch" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
-        });
-
-        List<Lookup> productKeyTypes = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
-        List<Lookup> productKeyBatchStatuses = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus);
-        return objectsPage.map(i -> toProductKeyBatch(i, productKeyTypes, productKeyBatchStatuses));
-    }
-
-    public Page<ProductKeyBatch> getPackageProductKeyBatchesPaged(String orgId, Boolean isPackage, Pageable pageable) {
-
-        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId)
-                .append("is_package", isPackage)
-                .append(pageable)
-                .build();
-        Page<ProductKeyBatchObject> objectsPage = dataAPIClient.getPaged("productkeybatch" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
+                .append(pageable);
+        Page<ProductKeyBatchObject> objectsPage = dataAPIClient.getPaged("productkeybatch" + query.build(), new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
         });
 
         List<Lookup> productKeyTypes = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
