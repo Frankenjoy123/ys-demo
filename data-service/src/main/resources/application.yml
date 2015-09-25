@@ -23,4 +23,3 @@ jdbc:
     max_idle: 5
     test_on_borrow: true
     validation_query: select 1
-    validation_interval: 600000 # 600 seconds
