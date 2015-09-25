@@ -49,7 +49,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "{id}/products", method = RequestMethod.GET)
-    public List<ProductBase> getProductsByOrgId(String orgId, Pageable pageable, HttpServletResponse response){
+    public List<ProductBase> getProductsByOrgId(@PathVariable(value = "id")String orgId, Pageable pageable, HttpServletResponse response){
         Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", productBasePage.toContentRange());
