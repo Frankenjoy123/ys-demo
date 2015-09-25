@@ -6,14 +6,18 @@ import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.common.data.object.OrganizationObject;
+import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +32,9 @@ public class OrganizationController {
     @Autowired
     private OrganizationDomain organizationDomain;
 
+    @Autowired
+    private ProductBaseDomain productBaseDomain;
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Organization getOrganizationById(@PathVariable(value = "id") String id) {
         OrganizationObject object = organizationDomain.getById(id);
@@ -39,6 +46,15 @@ public class OrganizationController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<Organization> getByFilter(){
         return  organizationDomain.getOrganizationList();
+    }
+
+    @RequestMapping(value = "{id}/products", method = RequestMethod.GET)
+    public List<ProductBase> getProductsByOrgId(String orgId, Pageable pageable, HttpServletResponse response){
+        Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", productBasePage.toContentRange());
+        }
+        return productBasePage.map(ProductBase::new).getContent();
     }
 
 
