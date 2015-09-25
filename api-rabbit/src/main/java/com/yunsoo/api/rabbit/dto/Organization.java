@@ -8,6 +8,8 @@ import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.OrganizationObject;
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 /**
  * Created by  : Zhe
  * Created on  : 2015/2/27
@@ -38,7 +40,16 @@ public class Organization {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
+    @JsonProperty("products")
+    private List<ProductBase> productBaseList;
 
+    public List<ProductBase> getProductBaseList() {
+        return productBaseList;
+    }
+
+    public void setProductBaseList(List<ProductBase> productBaseList) {
+        this.productBaseList = productBaseList;
+    }
     public String getId() {
         return id;
     }

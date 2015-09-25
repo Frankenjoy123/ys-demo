@@ -42,18 +42,24 @@ public class ProductBaseController {
 
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductBaseObject> getByFilter(@RequestParam(value = "org_id") String orgId,
+    public List<ProductBaseObject> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                                Pageable pageable,
                                                HttpServletResponse response) {
-        Page<ProductBaseEntity> entityPage = productBaseRepository.findByOrgIdAndDeleted(orgId, false, pageable);
+        if(orgId != null) {
+            Page<ProductBaseEntity> entityPage = productBaseRepository.findByOrgIdAndDeleted(orgId, false, pageable);
 
-        if (pageable != null) {
-            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+            if (pageable != null) {
+                response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+            }
+
+            return entityPage.getContent().stream()
+                    .map(this::toProductBaseObject)
+                    .collect(Collectors.toList());
         }
-
-        return entityPage.getContent().stream()
-                .map(this::toProductBaseObject)
-                .collect(Collectors.toList());
+        else{
+            List<ProductBaseEntity> list = productBaseRepository.findByDeleted(false);
+            return list.stream().map(this::toProductBaseObject).collect(Collectors.toList());
+        }
     }
 
     //create

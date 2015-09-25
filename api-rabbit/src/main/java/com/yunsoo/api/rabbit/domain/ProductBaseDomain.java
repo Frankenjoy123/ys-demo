@@ -2,8 +2,11 @@ package com.yunsoo.api.rabbit.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.rabbit.dto.Organization;
+import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.api.rabbit.dto.ProductBaseDetails;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -18,7 +21,10 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Lijian
@@ -35,6 +41,9 @@ public class ProductBaseDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+    @Autowired
+    private OrganizationDomain organizationDomain;
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductDomain.class);
 
@@ -46,6 +55,35 @@ public class ProductBaseDomain {
             return null;
         }
     }
+
+
+    public List<ProductBase> getAllProductBases() {
+        try {
+            List<ProductBaseObject> baseObjects = dataAPIClient.get("productbase", new ParameterizedTypeReference<List<ProductBaseObject>>() {});
+            List<ProductBase> productList =  new ArrayList<>();
+            HashMap<String, Organization> organizationMap = new HashMap<>();
+            baseObjects.forEach(item -> {
+                ProductBase productBase = new ProductBase(item);
+                String orgId = item.getOrgId();
+                if(organizationMap.containsKey(orgId))
+                    productBase.setOrganization(organizationMap.get(orgId));
+                else{
+                    Organization org = new Organization(organizationDomain.getById(orgId));
+                    organizationMap.put(orgId, org);
+                    productBase.setOrganization(org);
+                }
+                productList.add(productBase);
+            });
+
+            productList.removeIf(item->item.getOrganization().getName() == null);
+
+            return  productList;
+
+        } catch (NotFoundException ignored) {
+            return null;
+        }
+    }
+
 
 //    public ProductBaseDetails getProductBaseDetails(String orgId, String productBaseId, Integer version) {
 //        ResourceInputStream resourceInputStream;

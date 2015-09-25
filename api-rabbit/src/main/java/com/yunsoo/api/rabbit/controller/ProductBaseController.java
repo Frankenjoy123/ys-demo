@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
+import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.api.rabbit.dto.ProductBaseDetails;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -31,6 +34,10 @@ public class ProductBaseController {
     @Autowired
     private ProductBaseDomain productBaseDomain;
 
+    @RequestMapping( method = RequestMethod.GET)
+    public List<ProductBase> getByFilter(){
+        return productBaseDomain.getAllProductBases();
+    }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductBase getProductBaseById(@PathVariable(value = "id") String id) throws Exception{

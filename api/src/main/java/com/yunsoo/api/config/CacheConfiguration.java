@@ -20,7 +20,7 @@ public class CacheConfiguration {
 
 
     @Configuration
-    @EnableElastiCache(value = {@CacheClusterConfig(name = CACHE_NAME)}, defaultExpiration = 3600)
+    @EnableElastiCache(value = {@CacheClusterConfig(name = CACHE_NAME)})
     @ConditionalOnAwsCloudEnvironment
     @ConditionalOnProperty(value = "yunsoo.cache.type", havingValue = "elasticache")
     public static class ElastiCacheConfiguration {
