@@ -34,7 +34,7 @@ public class DataSourceConfiguration {
 //        props.put("maxIdle", dataSourceProperties.getMaxIdle());
 //        return BasicDataSourceFactory.createDataSource(props);
         DataSource dataSource = DataSourceBuilder.create().build();
-        log.info("dataSource created. " + dataSource.toString());
+        log.info("dataSource created. " + dataSource.getClass());
         return dataSource;
     }
 
