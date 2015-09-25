@@ -1,16 +1,29 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.rabbit.dto.Organization;
+import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.common.data.object.OrganizationObject;
+import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by  : Lijian
@@ -36,6 +49,25 @@ public class OrganizationDomain {
         } catch (NotFoundException ex) {
             return null;
         }
+    }
+
+
+    public List<Organization> getOrganizationList() {
+        List<OrganizationObject> orgObjList = dataAPIClient.get("organization", new ParameterizedTypeReference<List<OrganizationObject>>() { });
+        List<ProductBaseObject> productBaseList = dataAPIClient.get("productbase", new ParameterizedTypeReference<List<ProductBaseObject>>() {});
+        if(orgObjList != null && productBaseList != null){
+            List<Organization> orgList = new ArrayList<>();
+            orgObjList.forEach(item -> {
+                Organization organization = new Organization(item);
+                organization.setProductBaseList(productBaseList.stream().filter(product->product.getOrgId().equals(item.getId())).map(ProductBase::new).collect(Collectors.toList()));
+                orgList.add(organization);
+            });
+
+            orgList.removeIf( item -> item.getProductBaseList().size()==0);
+
+           return orgList;
+        }
+       return null;
     }
 
     public ResourceInputStream getLogoImage(String orgId, String imageName) {

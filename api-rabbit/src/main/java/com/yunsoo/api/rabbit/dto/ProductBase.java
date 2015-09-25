@@ -35,16 +35,6 @@ public class ProductBase {
     private String detailUrl;
     @JsonProperty("following_users")
     private List<User> followingUsers;
-    @JsonProperty("organization")
-    private Organization organization;
-
-    public Organization getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
-    }
 
     public String getDetailUrl() {
         return detailUrl;
@@ -155,11 +145,6 @@ public class ProductBase {
             this.setOrgId(object.getOrgId());
             this.setShelfLife(object.getShelfLife());
             this.setShelfLifeInterval(object.getOrgId());
-
-            Organization org =new Organization();
-            org.setId(object.getId());
-            this.setOrganization(org);
-
         }
     }
 

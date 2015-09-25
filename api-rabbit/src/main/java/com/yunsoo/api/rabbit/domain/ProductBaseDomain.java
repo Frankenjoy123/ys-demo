@@ -56,35 +56,6 @@ public class ProductBaseDomain {
         }
     }
 
-
-    public List<ProductBase> getAllProductBases() {
-        try {
-            List<ProductBaseObject> baseObjects = dataAPIClient.get("productbase", new ParameterizedTypeReference<List<ProductBaseObject>>() {});
-            List<ProductBase> productList =  new ArrayList<>();
-            HashMap<String, Organization> organizationMap = new HashMap<>();
-            baseObjects.forEach(item -> {
-                ProductBase productBase = new ProductBase(item);
-                String orgId = item.getOrgId();
-                if(organizationMap.containsKey(orgId))
-                    productBase.setOrganization(organizationMap.get(orgId));
-                else{
-                    Organization org = new Organization(organizationDomain.getById(orgId));
-                    organizationMap.put(orgId, org);
-                    productBase.setOrganization(org);
-                }
-                productList.add(productBase);
-            });
-
-            productList.removeIf(item->item.getOrganization().getName() == null);
-
-            return  productList;
-
-        } catch (NotFoundException ignored) {
-            return null;
-        }
-    }
-
-
 //    public ProductBaseDetails getProductBaseDetails(String orgId, String productBaseId, Integer version) {
 //        ResourceInputStream resourceInputStream;
 //        try {

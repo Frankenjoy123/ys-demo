@@ -28,9 +28,6 @@ public class OrganizationController {
     @Autowired
     private OrganizationDomain organizationDomain;
 
-    @Autowired
-    private ProductBaseDomain productBaseDomain;
-
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Organization getOrganizationById(@PathVariable(value = "id") String id) {
         OrganizationObject object = organizationDomain.getById(id);
@@ -40,21 +37,8 @@ public class OrganizationController {
         return new Organization(object);
     }
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public Collection<Organization> getByFilter(){
-        List<ProductBase> productBaseList = productBaseDomain.getAllProductBases();
-        HashMap<String, Organization> orgList = new HashMap<>();
-        productBaseList.forEach(item->{
-            String orgId = item.getOrganization().getId();
-            if(!orgList.containsKey(orgId)) {
-                Organization org = item.getOrganization();
-                org.setProductBaseList(new ArrayList<ProductBase>());
-                orgList.put(orgId, org);
-            }
-            item.setOrganization(null);
-            orgList.get(orgId).getProductBaseList().add(item);
-        });
-
-        return orgList.values();
+    public List<Organization> getByFilter(){
+        return  organizationDomain.getOrganizationList();
     }
 
 

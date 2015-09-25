@@ -34,11 +34,6 @@ public class ProductBaseController {
     @Autowired
     private ProductBaseDomain productBaseDomain;
 
-    @RequestMapping( method = RequestMethod.GET)
-    public List<ProductBase> getByFilter(){
-        return productBaseDomain.getAllProductBases();
-    }
-
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductBase getProductBaseById(@PathVariable(value = "id") String id) throws Exception{
         ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(id);
