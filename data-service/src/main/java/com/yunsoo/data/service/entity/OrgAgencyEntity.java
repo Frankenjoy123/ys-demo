@@ -27,8 +27,8 @@ public class OrgAgencyEntity {
     @Column(name = "org_id")
     private String orgId;
 
-    @Column(name = "location_id")
-    private String locationId;
+    @Column(name = "location_ids")
+    private String locationIds;
 
     @Column(name = "parent_id")
     private String parentId;
@@ -80,12 +80,12 @@ public class OrgAgencyEntity {
         this.orgId = orgId;
     }
 
-    public String getLocationId() {
-        return locationId;
+    public String getLocationIds() {
+        return locationIds;
     }
 
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
+    public void setLocationIds(String locationIds) {
+        this.locationIds = locationIds;
     }
 
     public String getParentId() {

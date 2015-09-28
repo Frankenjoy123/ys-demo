@@ -11,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -102,7 +104,7 @@ public class OrgAgencyController {
         object.setId(entity.getId());
         object.setName(entity.getName());
         object.setOrgId(entity.getOrgId());
-        object.setLocationId(entity.getLocationId());
+        object.setLocationIds(Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getLocationIds())));
         object.setParentId(entity.getParentId());
         object.setAddress(entity.getAddress());
         object.setDescription(entity.getDescription());
@@ -122,7 +124,7 @@ public class OrgAgencyController {
         entity.setId(object.getId());
         entity.setName(object.getName());
         entity.setOrgId(object.getOrgId());
-        entity.setLocationId(object.getLocationId());
+        entity.setLocationIds(StringUtils.collectionToCommaDelimitedString(object.getLocationIds()));
         entity.setParentId(object.getParentId());
         entity.setAddress(object.getAddress());
         entity.setDescription(object.getDescription());
