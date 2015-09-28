@@ -227,7 +227,8 @@ public class MessageDomain {
             payload.setCategory("default");
             APNPayload.DictionaryAlertMsg alertMsg = new APNPayload.DictionaryAlertMsg();
             alertMsg.setTitle(messageToApp.getTitle());
-            alertMsg.setBody(messageToApp.getBody());
+            //  alertMsg.setBody(messageToApp.getBody());
+            alertMsg.setBody(messageToApp.getTitle());
             payload.setAlertMsg(alertMsg);
             //payload.setAlertMsg(new APNPayload.SimpleAlertMsg("hello"));
             iostransmissionTemplate.setAPNInfo(payload);
