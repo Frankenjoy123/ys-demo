@@ -13,9 +13,14 @@ cloud:
 
 spring:
   profiles.active: dev
+
 ---
 spring:
   profiles: dev
+
+management:
+  port: 4081
+  address: 127.0.0.1
 
 yunsoo:
   debug: true
@@ -29,7 +34,6 @@ yunsoo:
     handler:
       max: 5000
       batch: 1000
-
 
 ---
 spring:
