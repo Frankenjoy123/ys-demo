@@ -2,7 +2,6 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.OrganizationDomain;
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
-import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.common.data.object.OrganizationObject;
@@ -18,8 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * Created by Zhe on 2015/4/2.
@@ -48,7 +46,7 @@ public class OrganizationController {
         return  organizationDomain.getOrganizationList();
     }
 
-    @RequestMapping(value = "{id}/products", method = RequestMethod.GET)
+    @RequestMapping(value = "{id}/productbase", method = RequestMethod.GET)
     public List<ProductBase> getProductsByOrgId(@PathVariable(value = "id")String orgId, Pageable pageable, HttpServletResponse response){
         Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable);
         if (pageable != null) {
