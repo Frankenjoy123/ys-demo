@@ -6,39 +6,38 @@ management:
 multipart.maxFileSize: 10MB
 multipart.maxRequestSize: 10MB
 
+cloud:
+  aws:
+    stack:
+      auto: false
+    region:
+      auto: false
+      static: cn-north-1
+
 spring:
   profiles.active: dev
-
-cloud:
-    aws:
-        stack:
-            auto: false
-        region:
-            auto: false
-            static: cn-north-1
-
 
 ---
 spring:
   profiles: dev
 
 logging:
-#    file: c:/logs/yunsoo-api.log
+  file: c:/logs/api-rabbit.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'ERROR'
 
 yunsoo:
-    debug: true
-    client:
-        dataapi:
-            baseurl: http://localhost:3080/
-    access_token:
-        expires_minutes: 5256000
-        hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
-    cache:
-        type: local
-    environment: dev
+  debug: true
+  environment: dev
+  client:
+    dataapi:
+      baseurl: http://localhost:3080/
+  access_token:
+    expires_minutes: 5256000
+    hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
+  cache:
+    type: local
 
 ---
 spring:
@@ -49,16 +48,19 @@ management:
 
 logging:
   path: /var/log
-  file: yunsoo-api-rabbit.log
+  file: api-rabbit.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'
 
 yunsoo:
   debug: true
+  environment: test
   client:
     dataapi:
       baseurl: http://localhost:3080/
   access_token:
     expires_minutes: 5256000
     hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
+  cache:
+    type: elasticache

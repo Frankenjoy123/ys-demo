@@ -7,6 +7,8 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 /**
  * Created by  : Haitao
  * Created on  : 2015/9/2
@@ -23,8 +25,8 @@ public class OrgAgencyObject {
     @JsonProperty("org_id")
     private String orgId;
 
-    @JsonProperty("location_id")
-    private String locationId;
+    @JsonProperty("location_ids")
+    private List<String> locationIds;
 
     @JsonProperty("parent_id")
     private String parentId;
@@ -70,12 +72,12 @@ public class OrgAgencyObject {
         this.orgId = orgId;
     }
 
-    public String getLocationId() {
-        return locationId;
+    public List<String> getLocationIds() {
+        return locationIds;
     }
 
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
+    public void setLocationIds(List<String> locationIds) {
+        this.locationIds = locationIds;
     }
 
     public String getParentId() {
