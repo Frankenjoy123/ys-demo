@@ -28,6 +28,15 @@ public class ProductKeyBatchObject implements Serializable {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
 
+    private Integer restQuantity;
+
+    public Integer getRestQuantity() {
+        return restQuantity;
+    }
+
+    public void setRestQuantity(Integer restQuantity) {
+        this.restQuantity = restQuantity;
+    }
 
     public String getId() {
         return id;

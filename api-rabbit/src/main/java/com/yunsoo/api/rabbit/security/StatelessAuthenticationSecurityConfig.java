@@ -1,32 +1,29 @@
 package com.yunsoo.api.rabbit.security;
 
-import com.yunsoo.api.rabbit.security.filter.StatelessAuthenticationFilter;
+import com.yunsoo.api.rabbit.security.filter.TokenAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Created by Zhe on 2015/3/4.
+ * Created by:   Zhe
+ * Created on:   2015/3/4
+ * Descriptions:
  */
-
 @EnableWebSecurity
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Order(1)
 public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private AccountDetailService accountDetailService;
+    private UserDetailsService userDetailsService;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -37,20 +34,28 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.exceptionHandling().and()
+        http.exceptionHandling().authenticationEntryPoint(new TokenInvalidAuthenticationEntryPoint())
+                .and()
                 .anonymous().and()
                 .servletApi().and()
                 .headers().cacheControl().and()
                 .authorizeRequests()
 
-                        //allow anonymous resource requests
+                .antMatchers("/").permitAll()
+                //.antMatchers("/favicon.ico").permitAll()
+                .antMatchers("/application/**").permitAll()
                 .antMatchers("/auth/**").permitAll()
-                .antMatchers("/home/**").permitAll()
-//                .antMatchers("/favicon.ico").permitAll()
-//                .antMatchers("/resources/**").permitAll()
+                .antMatchers("/organization/**").permitAll()
                 .antMatchers("/productbase/**").permitAll()
                 .antMatchers("/scan/**").permitAll()
-                .antMatchers("/organization/**").permitAll()
+
+                .antMatchers("/v2/api-docs").permitAll()
+                .antMatchers("/configuration/ui").permitAll()
+                .antMatchers("/configuration/security").permitAll()
+                .antMatchers("/swagger-resources").permitAll()
+                .antMatchers("/swagger-ui.html").permitAll()
+                .antMatchers("/webjars/**").permitAll()
+
                 .anyRequest().authenticated().and()
                 //.antMatchers("/**").permitAll()
 
@@ -67,7 +72,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 //.addFilterBefore(new StatelessLoginFilter("/auth/login", tokenAuthenticationService, accountDetailService, authenticationManager()), UsernamePasswordAuthenticationFilter.class)
 
                 // custom Token based authentication based on the header previously given to the client
-                .addFilterBefore(new StatelessAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new TokenAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
@@ -78,11 +83,11 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(accountDetailService).passwordEncoder(new BCryptPasswordEncoder());
+        auth.userDetailsService(userDetailsService);
     }
 
     @Override
-    protected AccountDetailService userDetailsService() {
-        return accountDetailService;
+    protected UserDetailsService userDetailsService() {
+        return userDetailsService;
     }
 }

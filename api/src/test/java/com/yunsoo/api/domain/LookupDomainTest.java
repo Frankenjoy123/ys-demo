@@ -20,11 +20,4 @@ public class LookupDomainTest {
     @Autowired
     private LookupDomain lookupDomain;
 
-    @Test
-    public void test_getProductKeyTypes() {
-        lookupDomain.getProductKeyTypes();
-        lookupDomain.getProductKeyTypes();
-        lookupDomain.getProductKeyTypes(true);
-        lookupDomain.getProductKeyTypes(true);
-    }
 }

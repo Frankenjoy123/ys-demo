@@ -110,11 +110,6 @@ public class RestClient {
         return restTemplate.postForObject(createURL(url), request, responseType, uriVariables);
     }
 
-    @Deprecated //it should be removed, keep POST always has return value
-    public void post(String url, Object request, Object... uriVariables) {
-        restTemplate.postForObject(createURL(url), request, String.class, uriVariables);
-    }
-
     //PUT
     public void put(String url, Object request, Object... uriVariables) {
         restTemplate.put(createURL(url), request, uriVariables);

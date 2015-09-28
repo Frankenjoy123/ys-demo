@@ -9,7 +9,7 @@ import com.yunsoo.common.data.object.S3FileObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.data.service.config.AWSConfigProperties;
+import com.yunsoo.data.service.config.AWSProperties;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class FileController {
     private S3ItemDao s3ItemDao;
 
     @Autowired
-    private AWSConfigProperties awsConfigProperties;
+    private AWSProperties awsProperties;
 
 
     @RequestMapping(value = "s3", method = RequestMethod.GET)
@@ -51,7 +51,7 @@ public class FileController {
         if (StringUtils.isEmpty(path)) {
             throw new BadRequestException("path must not be null or empty");
         }
-        String bucketName = awsConfigProperties.getS3().getBucketName();
+        String bucketName = awsProperties.getS3().getBucketName();
         S3Object s3Object = fileService.getFile(bucketName, path);
         if (s3Object == null) {
             throw new NotFoundException("file not found [bucket: " + bucketName + ", path: " + path + "]");
@@ -79,7 +79,7 @@ public class FileController {
         if (StringUtils.isEmpty(path)) {
             throw new BadRequestException("path must not be null or empty");
         }
-        String bucketName = awsConfigProperties.getS3().getBucketName();
+        String bucketName = awsProperties.getS3().getBucketName();
         String contentType = request.getContentType();
         long contentLength = request.getContentLengthLong();
         ServletInputStream inputStream = request.getInputStream();
@@ -99,7 +99,7 @@ public class FileController {
         if (StringUtils.isEmpty(path)) {
             throw new BadRequestException("path must not be null or empty");
         }
-        String bucketName = awsConfigProperties.getS3().getBucketName();
+        String bucketName = awsProperties.getS3().getBucketName();
         try {
             S3Object s3Object = fileService.getFile(bucketName, path);
             if (s3Object == null) {
@@ -122,7 +122,7 @@ public class FileController {
         if (StringUtils.isEmpty(fileObject.getS3Path())) {
             throw new BadRequestException("path must not be null or empty");
         }
-        String bucketName = awsConfigProperties.getS3().getBucketName();
+        String bucketName = awsProperties.getS3().getBucketName();
         try {
             fileObject.setContentType(fileObject.getContentType());
             fileService.putFile(bucketName, fileObject.getS3Path(), fileObject, true);

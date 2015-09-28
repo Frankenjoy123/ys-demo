@@ -7,5 +7,5 @@ public enum ValidationResult {
 
     Real,
     Fake,
-    Uncertain;
+    Uncertain
 }

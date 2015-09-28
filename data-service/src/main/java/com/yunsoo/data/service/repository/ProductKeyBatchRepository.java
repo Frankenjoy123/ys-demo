@@ -33,4 +33,11 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
     Long sumQuantity(@Param("orgId") String orgId,
                      @Param("productBaseId") String productBaseId,
                      @Param("statusCodeIn") List<String> statusCodeIn);
+
+    Integer countByRestQuantityLessThanAndStatusCodeIn(Integer quantity,  List<String> statusCodeIn);
+
+    Page<ProductKeyBatchEntity> findByOrgIdAndProductKeyTypeCodesAndStatusCodeIn(String orgId, String typeCode, List<String> statusCodeIn, Pageable pageable);
+
+    Page<ProductKeyBatchEntity> findByOrgIdAndProductKeyTypeCodesNotAndStatusCodeIn(String orgId, String typeCode, List<String> statusCodeIn, Pageable pageable);
+
 }

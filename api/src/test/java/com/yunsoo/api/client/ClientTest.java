@@ -1,15 +1,12 @@
 package com.yunsoo.api.client;
 
 import com.yunsoo.api.config.ClientConfiguration;
-import com.yunsoo.api.dto.ProductKeyType;
 import com.yunsoo.common.web.client.RestClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.Arrays;
 
 /**
  * Created by:   Lijian
@@ -33,10 +30,5 @@ public class ClientTest {
         System.out.println(processorClient.getBaseURL());
     }
 
-    @Test
-    public void testGet() {
-        ProductKeyType[] array = dataAPIClient.get("productkeytype?active={active}", ProductKeyType[].class, true);
-        System.out.println(Arrays.asList(array));
-    }
 
 }

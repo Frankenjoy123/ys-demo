@@ -5,33 +5,45 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
 
 /**
- * Created by Zhe on 2015/6/15.
+ * Created by:   Zhe
+ * Created on:   2015/6/15
+ * Descriptions:
  */
 public class ApplicationObject implements Serializable {
 
     @JsonProperty("id")
     private String id;
 
+    @NotEmpty(message = "name must not be null or empty")
     @JsonProperty("name")
     private String name;
 
+    @NotEmpty(message = "version must not be null or empty")
     @JsonProperty("version")
     private String version;
 
+    @NotEmpty(message = "type_code must not be null or empty")
     @JsonProperty("type_code")
     private String typeCode;
 
+    @NotEmpty(message = "status_code must not be null or empty")
     @JsonProperty("status_code")
     private String statusCode;
 
     @JsonProperty("description")
     private String description;
 
+    @NotEmpty(message = "system_version must not be null or empty")
+    @JsonProperty("system_version")
+    private String systemVersion;
+
+    @NotEmpty(message = "created_account_id must not be null or empty")
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -46,7 +58,15 @@ public class ApplicationObject implements Serializable {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
-    private DateTime modifiedDatetime;
+    private DateTime modifiedDateTime;
+
+    public String getSystemVersion() {
+        return systemVersion;
+    }
+
+    public void setSystemVersion(String systemVersion) {
+        this.systemVersion = systemVersion;
+    }
 
     public String getId() {
         return id;
@@ -120,11 +140,11 @@ public class ApplicationObject implements Serializable {
         this.modifiedAccountId = modifiedAccountId;
     }
 
-    public DateTime getModifiedDatetime() {
-        return modifiedDatetime;
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
     }
 
-    public void setModifiedDatetime(DateTime modifiedDatetime) {
-        this.modifiedDatetime = modifiedDatetime;
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 }

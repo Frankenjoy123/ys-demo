@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -28,7 +27,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
     private Boolean debug;
 
     @Autowired
-    private AccountDetailService accountDetailService;
+    private AccountDetailsService accountDetailsService;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -54,12 +53,10 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .authorizeRequests()
 
                 .antMatchers("/").permitAll()
-                .antMatchers("/home/**").permitAll()
+                .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/auth/login/**").permitAll()
                 .antMatchers("/auth/accesstoken/**").permitAll()
                 .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
-//                .antMatchers("/favicon.ico").permitAll()
-//                .antMatchers("/resources/**").permitAll()
                 .anyRequest().authenticated().and()
                 //.antMatchers("/**").permitAll()
 
@@ -75,11 +72,11 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(accountDetailService);
+        auth.userDetailsService(accountDetailsService);
     }
 
     @Override
-    protected AccountDetailService userDetailsService() {
-        return accountDetailService;
+    protected AccountDetailsService userDetailsService() {
+        return accountDetailsService;
     }
 }

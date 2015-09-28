@@ -1,7 +1,6 @@
 package com.yunsoo.common.data.databind;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.yunsoo.common.util.DateTimeUtils;
@@ -18,7 +17,8 @@ public class DateTimeJsonSerializer extends JsonSerializer<DateTime> {
 
     @Override
     public void serialize(DateTime value, JsonGenerator gen, SerializerProvider serializers)
-            throws IOException, JsonProcessingException {
+            throws IOException {
         gen.writeString(DateTimeUtils.toUTCString(value));
     }
+
 }

@@ -19,7 +19,7 @@ public class LookupCodes {
         public static final String CREATED = "created";
         public static final String ACTIVE = "active";
         public static final String UPDATABLE = "updatable";
-        public static final String FORCEUPDATABLE = "force updatable";
+        public static final String FORCE_UPDATE = "force_update";
         public static final String INACTIVE = "inactive";
     }
 
@@ -48,6 +48,10 @@ public class LookupCodes {
         private ProductKeyType() {
         }
 
+        public static final String PACKAGE = "package";
+        public static final String QR_PUBLIC = "qr_public";
+        public static final String QR_SECURE = "qr_secure";
+        public static final String RFID = "rfid";
     }
 
     public static class AccountStatus {
@@ -65,6 +69,14 @@ public class LookupCodes {
         public static final String CREATED = "created";
         public static final String DELETED = "deleted";
         public static final String APPROVED = "approved";
+        public static final String PUSHED = "pushed";
+    }
+
+    public static class MessageType {
+        private MessageType() {
+        }
+
+        public static final String BUSINESS = "business";
     }
 
     public static class ProductBaseStatus {
@@ -90,16 +102,6 @@ public class LookupCodes {
         public static final List<String> EDITABLE_STATUS = Arrays.asList("draft", "rejected", "submitted");
     }
 
-    public static class ProductBaseVersionsApprovalStatus {
-
-        private ProductBaseVersionsApprovalStatus() {
-        }
-
-        public static final String APPROVED = "approved";
-        public static final String REJECTED = "rejected";
-    }
-
-
     public static class ProductKeyTransactionStatus {
         private ProductKeyTransactionStatus() {
         }
@@ -115,4 +117,68 @@ public class LookupCodes {
 
         public static final String ACTIVATED = "activated";
     }
+
+    public static class UserPointTransactionStatus {
+        private UserPointTransactionStatus() {
+        }
+
+        public static final String CREATED = "created";
+        public static final String COMMITTED = "committed";
+        public static final String ROLLBACK = "rollback";
+    }
+
+    public static class UserPointTransactionType {
+        private UserPointTransactionType() {
+        }
+
+        public static final String SIGN_IN_REWARDS = "sign_in_rewards";
+    }
+
+    public static class UserStatus {
+        private UserStatus() {
+        }
+
+        public static final String ENABLED = "enabled";
+        public static final String DISABLED = "disabled";
+    }
+
+    public static class OrgAgencyStatus {
+        private OrgAgencyStatus() {
+        }
+
+        public static final String ACTIVATED = "activated";
+        public static final String DEACTIVATED = "deactivated";
+    }
+
+
+    public enum LookupType {
+
+        ProductStatus("product_status"),
+
+        ProductKeyType("product_key_type"),
+
+        ProductKeyBatchStatus("product_key_batch_status"),
+
+        PermissionResource("permission_resource"),
+
+        PermissionAction("permission_action");
+
+        private String type;
+
+        LookupType(String type) {
+            this.type = type;
+        }
+
+        public static LookupType toLookupType(String typeCode){
+            if(typeCode == null)
+                return  null;
+           for(LookupType type : LookupType.values()){
+               if(typeCode.equals(type.type))
+                   return type;
+           }
+            return null;
+        }
+
+    }
+
 }

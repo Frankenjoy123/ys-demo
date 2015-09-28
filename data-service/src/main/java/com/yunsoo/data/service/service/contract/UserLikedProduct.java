@@ -91,7 +91,7 @@ public class UserLikedProduct {
 //        UserLikedProductEntity entity = new UserLikedProductEntity(userLikedProduct.getUserId(), userLikedProduct.getBaseProductId(),
 //                userLikedProduct.getLocation(), userLikedProduct.getActive());
         UserLikedProductEntity entity = new UserLikedProductEntity();
-        BeanUtils.copyProperties(userLikedProduct, entity, new String[]{"createdDateTime", "id"});
+        BeanUtils.copyProperties(userLikedProduct, entity, "createdDateTime", "id");
         if (userLikedProduct.getId() != null && userLikedProduct.getId() != 0) {
             entity.setId(userLikedProduct.getId());
         }
@@ -112,7 +112,7 @@ public class UserLikedProduct {
         if (entity == null) return null;
 
         UserLikedProduct userLikedProduct = new UserLikedProduct();
-        BeanUtils.copyProperties(entity, userLikedProduct, new String[]{"createdDateTime"});
+        BeanUtils.copyProperties(entity, userLikedProduct, "createdDateTime");
         if (entity.getCreatedDateTime() != null) {
             userLikedProduct.setCreatedDateTime(entity.getCreatedDateTime());
         }

@@ -1,12 +1,14 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.dto.ProductKeyBatchStatus;
-import com.yunsoo.api.rabbit.dto.ProductKeyType;
-import com.yunsoo.api.rabbit.dto.ProductStatus;
+import com.yunsoo.api.rabbit.dto.Lookup;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,20 +23,29 @@ public class LookupDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    public List<ProductKeyType> getAllProductKeyTypes(Boolean active) {
-        ProductKeyType[] objects = dataAPIClient.get("productkeytype?active={active}", ProductKeyType[].class, active);
-        return Arrays.asList(objects);
+    public List<Lookup> getAllLookupList(Boolean active){
+        return dataAPIClient.get("lookup" + formatActive(active), new ParameterizedTypeReference<List<Lookup>>() {
+        });
     }
 
-    //ProductKeyBatchStatus
-    public List<ProductKeyBatchStatus> getAllProductKeyBatchStatuses(Boolean active) {
-        ProductKeyBatchStatus[] objects = dataAPIClient.get("productstatus?active={active}", ProductKeyBatchStatus[].class, active);
-        return Arrays.asList(objects);
+    private String formatActive(Boolean active) {
+        return new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("active", active).build();
     }
 
-    //ProductStatus
-    public List<ProductStatus> getAllProductStatuses(Boolean active) {
-        ProductStatus[] objects = dataAPIClient.get("productstatus?active={active}", ProductStatus[].class, active);
-        return Arrays.asList(objects);
+
+    public List<Lookup> getLookupListByType(LookupCodes.LookupType type, Boolean active){
+        List<Lookup> allList = getAllLookupList(active);
+        List<Lookup> returnList = new ArrayList<>();
+        allList.forEach(item -> {
+            if(LookupCodes.LookupType.valueOf(item.getTypeCode()).equals(type))
+                returnList.add(item);
+        });
+
+        return returnList;
     }
+
+    public List<Lookup> getLookupListByType(LookupCodes.LookupType type){
+        return getLookupListByType(type, null);
+    }
+
 }

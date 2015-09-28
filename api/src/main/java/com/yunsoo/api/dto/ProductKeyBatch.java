@@ -26,13 +26,13 @@ public class ProductKeyBatch {
     private String statusCode;
 
     @JsonProperty("status")
-    private ProductKeyBatchStatus status;
+    private Lookup status;
 
     @JsonProperty("product_key_type_codes")
     private List<String> productKeyTypeCodes;
 
     @JsonProperty("product_key_types")
-    private List<ProductKeyType> productKeyTypes;
+    private List<Lookup> productKeyTypes;
 
     @JsonProperty("product_base_id")
     private String productBaseId;
@@ -76,11 +76,11 @@ public class ProductKeyBatch {
         this.statusCode = statusCode;
     }
 
-    public ProductKeyBatchStatus getStatus() {
+    public Lookup getStatus() {
         return status;
     }
 
-    public void setStatus(ProductKeyBatchStatus status) {
+    public void setStatus(Lookup status) {
         this.status = status;
     }
 
@@ -92,11 +92,11 @@ public class ProductKeyBatch {
         this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
-    public List<ProductKeyType> getProductKeyTypes() {
+    public List<Lookup> getProductKeyTypes() {
         return productKeyTypes;
     }
 
-    public void setProductKeyTypes(List<ProductKeyType> productKeyTypes) {
+    public void setProductKeyTypes(List<Lookup> productKeyTypes) {
         this.productKeyTypes = productKeyTypes;
     }
 

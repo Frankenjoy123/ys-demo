@@ -1,7 +1,6 @@
 package com.yunsoo.common.data.databind;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.yunsoo.common.util.DateTimeUtils;
@@ -17,8 +16,9 @@ import java.io.IOException;
 public class DateTimeJsonDeserializer extends JsonDeserializer<DateTime> {
 
     @Override
-    public DateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public DateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String str = p.getText();
         return DateTimeUtils.parse(str);
     }
+
 }

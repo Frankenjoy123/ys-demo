@@ -1,95 +1,150 @@
 package com.yunsoo.api.rabbit.controller;
 
+import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.domain.UserDomain;
-import com.yunsoo.api.rabbit.dto.UserResult;
-import com.yunsoo.api.rabbit.dto.basic.Account;
-import com.yunsoo.api.rabbit.dto.basic.User;
-import com.yunsoo.api.rabbit.object.Constants;
-import com.yunsoo.api.rabbit.object.TAccount;
+import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
-import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.api.rabbit.security.UserAuthentication;
+import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.UserObject;
+import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Created by Zhe on 2015/3/5.
+ * Created by:   Zhe
+ * Created on:   2015/3/5
+ * Descriptions:
  */
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    //    @Value("${yunsoo.token_header_name}")
-//    private String AUTH_HEADER_NAME;
     @Autowired
     private UserDomain userDomain;
-    @Autowired
-    private RestClient dataAPIClient;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<?> authUser(@RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
-                                      @RequestBody User user) {
-        if (user == null) {
-            return new ResponseEntity<>("用户不能为空！", HttpStatus.FORBIDDEN);
-        }
-        if (StringUtils.isEmpty(user.getDeviceCode())) {
-            throw new BadRequestException("device_code不能为空！");
+    /**
+     * scenario 1. user find by phone, login with phone
+     * scenario 2. anonymous user (phone is null) exists, register with phone
+     * scenario 3. no user exists, create new user with phone
+     *
+     * @param deviceId     deviceId from RequestHeader
+     * @param accessToken  accessToken from RequestHeader
+     * @param loginRequest UserLoginRequest [phone must not be null or empty]
+     * @return UserLoginResponse include user and access_token
+     */
+    @RequestMapping(value = "login/phone", method = RequestMethod.POST)
+    public UserAuthResponse loginWithPhone(
+            @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
+            @RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
+            @RequestBody UserLoginRequest loginRequest) {
+        //scenario 1. user find by phone, login with phone
+        //find user by phone
+        UserObject userObject = userDomain.getUserByPhone(loginRequest.getPhone());
+
+        if (userObject == null) { //phone not found
+            UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication(accessToken);
+            if (userAuthentication != null) { //accessToken is valid
+                //find user by accessToken
+                userObject = userDomain.getUserById(userAuthentication.getDetails().getId());
+                if (userObject.getPhone() == null) {
+                    //scenario 2. anonymous user exists, register with phone
+                    userObject.setPhone(loginRequest.getPhone());
+                    if (!StringUtils.isEmpty(deviceId)) {
+                        userObject.setDeviceId(deviceId);
+                    }
+                    userDomain.patchUpdateUser(userObject);
+                }
+            }
+
+            if (userObject == null) {
+                //scenario 3. no user exists, create new user with phone
+                //create an new user
+                userObject = new UserObject();
+                userObject.setPhone(loginRequest.getPhone());
+                userObject.setDeviceId(deviceId);
+                userObject = userDomain.createUser(userObject);
+            }
+
         }
 
-        User currentUser = null;
-        if (!StringUtils.isEmpty(accessToken)) {
-            TAccount tAccount = tokenAuthenticationService.parseUser(accessToken);
-            //get user id from token. check if cellular exists, and update user
-            currentUser = userDomain.ensureUser(tAccount.getId(), user.getDeviceCode(), user.getCellular());
+        if (LookupCodes.UserStatus.DISABLED.equals(userObject.getStatusCode())) {
+            throw new UnauthorizedException("user is disabled");
+        }
+
+        //update deviceId of the user
+        if (deviceId != null && !deviceId.equals(userObject.getDeviceId())) {
+            userObject.setDeviceId(deviceId);
+            //create another object for patch update to avoid phone check logic
+            UserObject newUserObject = new UserObject();
+            newUserObject.setId(userObject.getId());
+            newUserObject.setDeviceId(deviceId);
+            userDomain.patchUpdateUser(newUserObject);
+        }
+
+        LOGGER.info("user login with phone [userId: {}]", userObject.getId());
+
+        //generate response
+        return generateUserAuthResponse(userObject);
+    }
+
+    /**
+     * 1. if access_token is invalid, register new user
+     * 2. if access_token is valid, register phone to the exist user (phone is not null)
+     *
+     * @param deviceId        deviceId from RequestHeader
+     * @param accessToken     accessToken from RequestHeader
+     * @param registerRequest UserRegisterRequest
+     * @return UserLoginResponse include user and access_token
+     */
+    @RequestMapping(value = "register", method = RequestMethod.POST)
+    public UserAuthResponse registerUser(
+            @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
+            @RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
+            @RequestBody(required = false) UserRegisterRequest registerRequest) {
+        if (registerRequest == null) {
+            registerRequest = new UserRegisterRequest();
+        }
+
+        UserObject userObject = registerRequest.toUserObject();
+        userObject.setDeviceId(deviceId);
+
+        if (StringUtils.isEmpty(accessToken)) {
+            //register new user
+            userObject = userDomain.createUser(userObject);
+
+            LOGGER.info("new user created [userId: {}]", userObject.getId());
         } else {
-            currentUser = userDomain.ensureUser(null, user.getDeviceCode(), user.getCellular());
+            //register phone to the exist user
+            UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication(accessToken);
+            if (userAuthentication == null) {
+                throw new UnauthorizedException("access_token not valid");
+            }
+            userObject.setId(userAuthentication.getDetails().getId());
+            userDomain.patchUpdateUser(userObject);
+            userObject = userDomain.getUserById(userObject.getId());
+
+            LOGGER.info("exist user registered [userId: {}]", userObject.getId());
         }
 
-        TAccount currentAccount = new TAccount();
-        currentAccount.setId(currentUser.getId());
-        currentAccount.setStatus(currentUser.getStatus()); //Status的编码与TAccountStatusEnum一致
-        String token = tokenAuthenticationService.generateToken(currentAccount, false);
-
-        //set token
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(Constants.HttpHeaderName.ACCESS_TOKEN, token);
-        UserResult userResult = new UserResult(token, currentUser.getId()); //generate result
-        return new ResponseEntity<UserResult>(userResult, headers, HttpStatus.OK);
+        //generate response
+        return generateUserAuthResponse(userObject);
     }
 
-    //Always create new anonymous user.
-    @RequestMapping(value = "create", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> createUser(@RequestBody User user) throws Exception {
-        //always create new user.
-        User currentUser = userDomain.createAnonymousUser(user.getDeviceCode());
-
-        TAccount currentAccount = new TAccount();
-        currentAccount.setId(currentUser.getId());
-        currentAccount.setStatus(currentUser.getStatus());  //Status的编码与TAccountStatusEnum一致  TAccountStatusEnum.ENABLED.value()
-        String token = tokenAuthenticationService.generateToken(currentAccount, true); //stay long
-
-        //set token
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(Constants.HttpHeaderName.ACCESS_TOKEN, token);
-        UserResult userResult = new UserResult(token, currentUser.getId()); //generate result
-        return new ResponseEntity<UserResult>(userResult, headers, HttpStatus.CREATED);
-    }
-
-    //@RequestMapping(value = "/updatepassword", method = RequestMethod.POST)
-    public ResponseEntity<?> updatePassword(@RequestBody Account account) {
-        return new ResponseEntity<String>(HttpStatus.OK);
+    private UserAuthResponse generateUserAuthResponse(UserObject userObject) {
+        Token accessToken = tokenAuthenticationService.generateAccessToken(userObject.getId());
+        UserAuthResponse loginResponse = new UserAuthResponse();
+        loginResponse.setUser(new User(userObject));
+        loginResponse.setAccessToken(accessToken);
+        return loginResponse;
     }
 
 }

@@ -8,17 +8,20 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/6/15.
+ * Created by:   Zhe
+ * Created on:   2015/6/15
+ * Descriptions:
  */
 public interface ApplicationRepository extends FindOneAndSaveRepository<ApplicationEntity, String> {
 
-    Page<ApplicationEntity> findById(String id, Pageable pageable);
+    Page<ApplicationEntity> findAll(Pageable pageable);
 
-    Page<ApplicationEntity> findByIdAndStatusCodeIn(String id, List<String> statusCodes, Pageable pageable);
+    Page<ApplicationEntity> findByTypeCode(String type_code, Pageable pageable);
+
+    Page<ApplicationEntity> findByStatusCodeIn(List<String> statusCodes, Pageable pageable);
 
     Page<ApplicationEntity> findByTypeCodeAndStatusCodeIn(String type_code, List<String> statusCodes, Pageable pageable);
 
-    Page<ApplicationEntity> findByIdAndTypeCodeAndStatusCodeIn(String id, String type_code, List<String> statusCodes, Pageable pageable);
-
+    ApplicationEntity findFirstByTypeCodeAndSystemVersionLessThanEqualOrderByCreatedDateTimeDesc(String typeCode, String systemVersion);
 
 }

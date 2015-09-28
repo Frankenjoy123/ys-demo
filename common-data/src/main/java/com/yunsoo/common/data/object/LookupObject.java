@@ -1,6 +1,7 @@
 package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yunsoo.common.data.LookupCodes;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,6 +26,8 @@ public class LookupObject implements Serializable {
     @JsonProperty("active")
     private Boolean active;
 
+    @JsonProperty("type_code")
+    private String typeCode;
 
     public String getName() {
         return name;
@@ -58,63 +61,40 @@ public class LookupObject implements Serializable {
         this.active = active;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+
     @Override
     public String toString() {
-        return this.name + " (" + this.code + ")";
+        return this.name + " (" + this.code + ", " + this.typeCode + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LookupObject)) return false;
+
+        LookupObject that = (LookupObject) o;
+
+        if (!code.equals(that.code)) return false;
+        return typeCode.equals(that.typeCode);
+
     }
 
     @Override
     public int hashCode() {
-        return code == null ? 0 : this.getCode().hashCode();
+        int result = code.hashCode();
+        result = 31 * result + typeCode.hashCode();
+        return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return this == obj
-                || (obj != null
-                && this.getCode() != null
-                && this.getClass().equals(obj.getClass())
-                && this.getCode().equals(((LookupObject) obj).getCode()));
-    }
-
-    public static <T extends LookupObject> T fromCode(List<T> lookup, String code) {
-        if (lookup == null) {
-            throw new IllegalArgumentException("lookup is null");
-        }
-        if (code == null) {
-            return null;
-        }
-        for (T item : lookup) {
-            if (code.equals(item.getCode())) {
-                return item;
-            }
-        }
-        return null;
-    }
-
-    public static <T extends LookupObject> List<T> fromCodeList(List<T> lookup, List<String> codeList) {
-        if (lookup == null) {
-            throw new IllegalArgumentException("lookup is null");
-        }
-        if (codeList == null) {
-            throw new IllegalArgumentException("list is null");
-        }
-        return codeList.stream().map(code -> {
-            if (code != null) {
-                for (T i : lookup) {
-                    if (code.equals(i.getCode())) {
-                        return i;
-                    }
-                }
-            }
-            throw new IllegalArgumentException("invalid code: " + code);
-        }).collect(Collectors.toList());
-    }
-
-    public static <T extends LookupObject> List<String> toCodeList(List<T> lookup) {
-        if (lookup == null) {
-            throw new IllegalArgumentException("lookup is null");
-        }
-        return lookup.stream().map(LookupObject::getCode).collect(Collectors.toList());
-    }
 }

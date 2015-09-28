@@ -15,73 +15,44 @@ import java.io.Serializable;
  * Descriptions:
  */
 public class MessageObject  implements Serializable {
+
     @JsonProperty("id")
-    private Long Id;
-    @JsonProperty("title")
-    private String title;
-    @JsonProperty("body")
-    private String body;
-    @JsonProperty("digest")
-    private String digest;
+    private String id;
+
     @JsonProperty("org_id")
     private String orgId;
+
+    @JsonProperty("title")
+    private String title;
+
+    @JsonProperty("status_code")
+    private String statusCode;
+
+    @JsonProperty("type_code")
+    private String typeCode;
+
+    @JsonProperty("created_account_id")
+    private String createdAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
-    @JsonProperty("created_by")
-    private String createdBy; //associate to company's accountId
+
+    @JsonProperty("modified_account_id")
+    private String modifiedAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("expired_datetime")
-    private DateTime expiredDateTime;
-    @JsonProperty("link")
-    private String link;
-    @JsonProperty("type")
-    private String type;
-    @JsonProperty("status")
-    private String status;
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("last_updated_datetime")
-    private DateTime lastUpdatedDateTime;
-    @JsonProperty("last_updated_by")
-    private String lastUpdatedBy; //associate to company's accountId
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("post_show_time")
-    private DateTime postShowTime;
+    @JsonProperty("modified_datetime")
+    private DateTime modifiedDateTime;
 
-    public Long getId() {
-        return Id;
+    public String getId() {
+        return id;
     }
 
-    public void setId(Long id) {
-        Id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public String getDigest() {
-        return digest;
-    }
-
-    public void setDigest(String digest) {
-        this.digest = digest;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getOrgId() {
@@ -92,6 +63,38 @@ public class MessageObject  implements Serializable {
         this.orgId = orgId;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+
+    public String getCreatedAccountId() {
+        return createdAccountId;
+    }
+
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
+    }
+
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
@@ -100,68 +103,19 @@ public class MessageObject  implements Serializable {
         this.createdDateTime = createdDateTime;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public String getModifiedAccountId() {
+        return modifiedAccountId;
     }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
+    public void setModifiedAccountId(String modifiedAccountId) {
+        this.modifiedAccountId = modifiedAccountId;
     }
 
-    public DateTime getExpiredDateTime() {
-        return expiredDateTime;
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
     }
 
-    public void setExpiredDateTime(DateTime expiredDateTime) {
-        this.expiredDateTime = expiredDateTime;
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public DateTime getLastUpdatedDateTime() {
-        return lastUpdatedDateTime;
-    }
-
-    public void setLastUpdatedDateTime(DateTime lastUpdatedDateTime) {
-        this.lastUpdatedDateTime = lastUpdatedDateTime;
-    }
-
-    public String getLastUpdatedBy() {
-        return lastUpdatedBy;
-    }
-
-    public void setLastUpdatedBy(String lastUpdatedBy) {
-        this.lastUpdatedBy = lastUpdatedBy;
-    }
-
-    public DateTime getPostShowTime() {
-        return postShowTime;
-    }
-
-    public void setPostShowTime(DateTime postShowTime) {
-        this.postShowTime = postShowTime;
-    }
-
 }

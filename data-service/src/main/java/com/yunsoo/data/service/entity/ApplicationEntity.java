@@ -7,7 +7,9 @@ import org.joda.time.DateTime;
 import javax.persistence.*;
 
 /**
- * Created by Zhe on 2015/6/15.
+ * Created by:   Zhe
+ * Created on:   2015/6/15
+ * Descriptions:
  */
 @Entity
 @Table(name = "application")
@@ -46,7 +48,18 @@ public class ApplicationEntity {
 
     @Column(name = "modified_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime modifiedDatetime;
+    private DateTime modifiedDateTime;
+
+    @Column(name = "system_version")
+    private String systemVersion;
+
+    public String getSystemVersion() {
+        return systemVersion;
+    }
+
+    public void setSystemVersion(String systemVersion) {
+        this.systemVersion = systemVersion;
+    }
 
     public String getId() {
         return id;
@@ -120,11 +133,11 @@ public class ApplicationEntity {
         this.modifiedAccountId = modifiedAccountId;
     }
 
-    public DateTime getModifiedDatetime() {
-        return modifiedDatetime;
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
     }
 
-    public void setModifiedDatetime(DateTime modifiedDatetime) {
-        this.modifiedDatetime = modifiedDatetime;
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 }

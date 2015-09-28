@@ -1,5 +1,6 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
@@ -14,16 +15,31 @@ import java.io.Serializable;
  * Descriptions:
  */
 public class OrganizationObject implements Serializable {
+
+    @JsonProperty("id")
     private String id;
+
+    @JsonProperty("name")
     private String name;
+
+    @JsonProperty("type_code")
     private String typeCode;
+
+    @JsonProperty("status_code")
     private String statusCode;
+
+    @JsonProperty("description")
     private String description;
-    //    private String imageUri;
+
+    @JsonProperty("details")
     private String details;
+
+    @JsonProperty("created_account_id")
     private String createdAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
 

@@ -2,6 +2,8 @@ package com.yunsoo.api.rabbit;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.interceptor.SimpleCacheResolver;
+import org.springframework.cloud.aws.autoconfigure.cache.ElastiCacheAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -11,7 +13,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import javax.servlet.Filter;
 
 @ComponentScan(basePackages = "com.yunsoo")
-@SpringBootApplication
+@SpringBootApplication(exclude = ElastiCacheAutoConfiguration.class)
 //@Import(StatelessAuthenticationSecurityConfig.class)
 public class Application {
 

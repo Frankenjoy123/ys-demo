@@ -48,7 +48,7 @@ public class ProductBase {
     private List<String> productKeyTypeCodes;
 
     @JsonProperty("product_key_types")
-    private List<ProductKeyType> productKeyTypes;
+    private List<Lookup> productKeyTypes;
 
     @JsonProperty("shelf_life")
     private Integer shelfLife;
@@ -83,7 +83,19 @@ public class ProductBase {
 
     @JsonProperty("product_base_versions")
     private List<ProductBaseVersions> productBaseVersions;
+    @JsonProperty("following_users")
+    private List<User> followingUsers;
 
+    @JsonProperty("following_user_number")
+    private Long followingUsersTotalNumber;
+
+    public Long getFollowingUsersTotalNumber() {
+        return followingUsersTotalNumber;
+    }
+
+    public void setFollowingUsersTotalNumber(Long followingUsersTotalNumber) {
+        this.followingUsersTotalNumber = followingUsersTotalNumber;
+    }
 
     public String getId() {
         return id;
@@ -165,11 +177,11 @@ public class ProductBase {
         this.productKeyTypeCodes = productKeyTypeCodes;
     }
 
-    public List<ProductKeyType> getProductKeyTypes() {
+    public List<Lookup> getProductKeyTypes() {
         return productKeyTypes;
     }
 
-    public void setProductKeyTypes(List<ProductKeyType> productKeyTypes) {
+    public void setProductKeyTypes(List<Lookup> productKeyTypes) {
         this.productKeyTypes = productKeyTypes;
     }
 
@@ -251,6 +263,14 @@ public class ProductBase {
 
     public void setProductBaseVersions(List<ProductBaseVersions> productBaseVersions) {
         this.productBaseVersions = productBaseVersions;
+    }
+
+    public List<User> getFollowingUsers() {
+        return followingUsers;
+    }
+
+    public void setFollowingUsers(List<User> followingUsers) {
+        this.followingUsers = followingUsers;
     }
 
     public ProductBase() {

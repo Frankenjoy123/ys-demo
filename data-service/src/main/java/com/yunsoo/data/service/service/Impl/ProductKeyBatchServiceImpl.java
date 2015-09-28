@@ -5,7 +5,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import com.yunsoo.common.util.KeyGenerator;
-import com.yunsoo.data.service.config.AWSConfigProperties;
+import com.yunsoo.data.service.config.AWSProperties;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
 import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
@@ -46,7 +46,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     private S3ItemDao s3ItemDao;
 
     @Autowired
-    private AWSConfigProperties awsConfigProperties;
+    private AWSProperties awsProperties;
 
 
     @Override
@@ -109,19 +109,9 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
     @Override
     public void patchUpdate(ProductKeyBatch batch) {
-        ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(batch.getId());
-        if (entity != null) {
-            if (batch.getOrgId() != null) {
-                entity.setOrgId(batch.getOrgId());
-            }
-            if (batch.getProductBaseId() != null) {
-                entity.setProductBaseId(batch.getProductBaseId());
-            }
-            if (batch.getStatusCode() != null) {
-                entity.setStatusCode(batch.getStatusCode());
-            }
-            productKeyBatchRepository.save(entity);
-        }
+        ProductKeyBatchEntity entity = toProductKeyBatchEntity(batch);
+        productKeyBatchRepository.save(entity);
+
     }
 
 
@@ -163,7 +153,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
             byteArrayOutputStream.write(DELIMITER2, 0, 1);
         }
 
-        String bucketName = awsConfigProperties.getS3().getBucketName();
+        String bucketName = awsProperties.getS3().getBucketName();
         String key = String.format("organization/%s/product_key_batch/%s", orgId, batchId);
         InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         ObjectMetadata metadata = new ObjectMetadata();
@@ -214,6 +204,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         batch.setCreatedAppId(entity.getCreatedAppId());
         batch.setCreatedAccountId(entity.getCreatedAccountId());
         batch.setCreatedDateTime(entity.getCreatedDateTime());
+        batch.setRestQuantity(entity.getRestQuantity());
         String codes = entity.getProductKeyTypeCodes();
         if (codes != null) {
             batch.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
@@ -235,6 +226,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         entity.setCreatedAppId(batch.getCreatedAppId());
         entity.setCreatedAccountId(batch.getCreatedAccountId());
         entity.setCreatedDateTime(batch.getCreatedDateTime());
+        entity.setRestQuantity(batch.getRestQuantity());
         List<String> codes = batch.getProductKeyTypeCodes();
         if (codes != null) {
             entity.setProductKeyTypeCodes(StringUtils.collectionToDelimitedString(codes, ","));

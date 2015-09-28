@@ -19,7 +19,7 @@ import java.util.List;
 public class QueryStringBuilder {
 
     private StringBuilder query = new StringBuilder();
-    private boolean hasParameter;
+    private boolean hasParameter = false;
 
     public QueryStringBuilder() {
     }

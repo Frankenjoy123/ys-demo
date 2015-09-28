@@ -1,14 +1,10 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.AccountPermissionDomain;
-import com.yunsoo.api.domain.LookupDomain;
-import com.yunsoo.api.domain.ProductBaseDomain;
-import com.yunsoo.api.domain.ProductCategoryDomain;
+import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductBaseVersionsObject;
 import com.yunsoo.common.data.object.ProductCategoryObject;
@@ -61,9 +57,15 @@ public class ProductBaseController {
     private LookupDomain lookupDomain;
 
     @Autowired
+    private UserFollowingDomain followingDomain;
+
+    @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductBaseController.class);
+
+    public static final String APPROVED = "approved";
+    public static final String REJECTED = "rejected";
 
     //region product base
 
@@ -91,8 +93,9 @@ public class ProductBaseController {
 
         ProductBase productBase = new ProductBase(productBaseObject);
         productBase.setCategory(new ProductCategory(productCategoryDomain.getById(productBase.getCategoryId())));
-        productBase.setProductKeyTypes(LookupObject.fromCodeList(lookupDomain.getProductKeyTypes(), productBaseObject.getProductKeyTypeCodes()));
+        productBase.setProductKeyTypes(Lookup.fromCodeList(lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType), productBaseObject.getProductKeyTypeCodes()));
         productBase.setDetails(productBaseDomain.getProductBaseDetails(orgId, productBaseId, version));
+        productBase.setFollowingUsers(followingDomain.getFollowingUsersByProductBaseId(productBaseId, null).getContent());
         return productBase;
     }
 
@@ -107,11 +110,11 @@ public class ProductBaseController {
             response.setHeader("Content-Range", productBasePage.toContentRange());
         }
         Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
-        List<ProductKeyType> productKeyTypes = lookupDomain.getProductKeyTypes();
+        List<Lookup> lookupList = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
         List<ProductBase> productBases = productBasePage.map(p -> {
             ProductBase pb = new ProductBase(p);
             pb.setCategory(new ProductCategory(productCategoryDomain.getById(p.getCategoryId(), productCategoryObjectMap)));
-            pb.setProductKeyTypes(LookupObject.fromCodeList(productKeyTypes, p.getProductKeyTypeCodes()));
+            pb.setProductKeyTypes(Lookup.fromCodeList(lookupList, p.getProductKeyTypeCodes()));
             return pb;
         }).getContent();
 
@@ -123,6 +126,9 @@ public class ProductBaseController {
                 pb.setProductBaseVersions(productBaseVersionsObjects.stream().map(ProductBaseVersions::new).collect(Collectors.toList()));
             }
         }
+
+        productBases.forEach(productBase -> productBase.setFollowingUsersTotalNumber(followingDomain.getFollowingUsersCountByProductBaseId(productBase.getId())));
+
         return productBases;
     }
 
@@ -290,7 +296,7 @@ public class ProductBaseController {
         if (!LookupCodes.ProductBaseVersionsStatus.SUBMITTED.equals(productBaseVersionsObject.getStatusCode())) {
             throw new UnprocessableEntityException("illegal operation");
         }
-        if (LookupCodes.ProductBaseVersionsApprovalStatus.APPROVED.equals(approvalStatus)) {
+        if (APPROVED.equals(approvalStatus)) {
             productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.ACTIVATED);
             if (reviewComments != null) {
                 productBaseVersionsObject.setReviewComments(reviewComments);
@@ -299,7 +305,7 @@ public class ProductBaseController {
             ProductBaseObject productBaseObject = productBaseDomain.copyFromProductBaseVersionsObject(productBaseVersionsObject);
             productBaseDomain.updateProductBase(productBaseObject);
         }
-        if (LookupCodes.ProductBaseVersionsApprovalStatus.REJECTED.equals(approvalStatus)) {
+        if (REJECTED.equals(approvalStatus)) {
             productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.REJECTED);
             if (reviewComments != null) {
                 productBaseVersionsObject.setReviewComments(reviewComments);
@@ -307,6 +313,7 @@ public class ProductBaseController {
             productBaseDomain.patchUpdate(productBaseVersionsObject);
         }
     }
+
     /**
      * delete product base or specified editable version
      *

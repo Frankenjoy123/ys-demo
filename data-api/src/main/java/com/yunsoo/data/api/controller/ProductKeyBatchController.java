@@ -1,5 +1,6 @@
 package com.yunsoo.data.api.controller;
 
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
@@ -66,12 +67,19 @@ public class ProductKeyBatchController {
             @RequestParam(value = "org_id") String orgId,
             @RequestParam(value = "product_base_id", required = false) String productBaseId,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+            @RequestParam(value = "is_package", required = false) Boolean isPackage,
             @PageableDefault(size = 1000)
             Pageable pageable,
             HttpServletResponse response) {
         Page<ProductKeyBatchEntity> entityPage;
 
-        if (productBaseId == null) {
+        if(isPackage != null) {
+            if(isPackage)
+                entityPage = productKeyBatchRepository.findByOrgIdAndProductKeyTypeCodesAndStatusCodeIn(orgId, LookupCodes.ProductKeyType.PACKAGE, statusCodeIn, pageable);
+            else
+                entityPage = productKeyBatchRepository.findByOrgIdAndProductKeyTypeCodesNotAndStatusCodeIn(orgId, LookupCodes.ProductKeyType.PACKAGE, statusCodeIn, pageable);
+        }
+        else if (productBaseId == null) {
             entityPage = productKeyBatchRepository.findByOrgIdAndStatusCodeIn(orgId, statusCodeIn, pageable);
 
         } else {
@@ -100,6 +108,15 @@ public class ProductKeyBatchController {
         return sum == null ? 0L : sum;
     }
 
+    @RequestMapping(value = "/exists", method = RequestMethod.GET)
+    public boolean existsProductKeyBatch(@RequestParam(value = "quantity", required = false) Integer quantity,
+                                         @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
+
+        Integer count = productKeyBatchRepository.countByRestQuantityLessThanAndStatusCodeIn(quantity, statusCodeIn);
+        return count > 0 ? true : false;
+    }
+
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ProductKeyBatchObject create(@RequestBody ProductKeyBatchObject batchObj) {
@@ -126,6 +143,9 @@ public class ProductKeyBatchController {
         if (batchObj.getStatusCode() != null) {
             batch.setStatusCode(batchObj.getStatusCode());
         }
+        if(batchObj.getRestQuantity() != null)
+            batch.setRestQuantity(batchObj.getRestQuantity());
+
         productKeyBatchService.patchUpdate(batch);
     }
 
@@ -144,6 +164,7 @@ public class ProductKeyBatchController {
         batchObj.setCreatedAccountId(batch.getCreatedAccountId());
         batchObj.setCreatedDateTime(batch.getCreatedDateTime());
         batchObj.setProductKeyTypeCodes(batch.getProductKeyTypeCodes());
+        batchObj.setRestQuantity(batch.getRestQuantity());
         return batchObj;
     }
 
@@ -160,6 +181,7 @@ public class ProductKeyBatchController {
         batchObj.setCreatedAppId(entity.getCreatedAppId());
         batchObj.setCreatedAccountId(entity.getCreatedAccountId());
         batchObj.setCreatedDateTime(entity.getCreatedDateTime());
+        batchObj.setRestQuantity(entity.getRestQuantity());
         String codes = entity.getProductKeyTypeCodes();
         if (codes != null) {
             batchObj.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
@@ -181,6 +203,7 @@ public class ProductKeyBatchController {
         batch.setCreatedAccountId(batchObj.getCreatedAccountId());
         batch.setCreatedDateTime(batchObj.getCreatedDateTime());
         batch.setProductKeyTypeCodes(batchObj.getProductKeyTypeCodes());
+        batch.setRestQuantity(batchObj.getRestQuantity());
         return batch;
     }
 }

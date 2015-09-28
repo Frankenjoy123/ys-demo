@@ -1,18 +1,23 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.OrganizationDomain;
-import com.yunsoo.api.rabbit.dto.basic.Organization;
+import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
+import com.yunsoo.api.rabbit.dto.Organization;
+import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.common.data.object.OrganizationObject;
+import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Created by Zhe on 2015/4/2.
@@ -25,6 +30,9 @@ public class OrganizationController {
     @Autowired
     private OrganizationDomain organizationDomain;
 
+    @Autowired
+    private ProductBaseDomain productBaseDomain;
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Organization getOrganizationById(@PathVariable(value = "id") String id) {
         OrganizationObject object = organizationDomain.getById(id);
@@ -33,23 +41,25 @@ public class OrganizationController {
         }
         return new Organization(object);
     }
-
-    @Deprecated //todo: to be removed, replace by getLogo
-    @RequestMapping(value = "/{id}/{imageKey}", method = RequestMethod.GET)
-    public ResponseEntity<?> getThumbnail(
-            @PathVariable(value = "id") String id,
-            @PathVariable(value = "imageKey") String imageKey) {
-        String imageName = "image-128x128"; //hard coded, this method should not be used anymore
-        if ("logo-mobile".equals(imageKey)) {
-            imageName = "image-200x200";
-        }
-        return getLogo(id, imageName);
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<Organization> getByFilter(){
+        return  organizationDomain.getOrganizationList();
     }
 
-    @RequestMapping(value = "{id}/logo/{imageName}", method = RequestMethod.GET)
-    public ResponseEntity<?> getLogo(
+    @RequestMapping(value = "{id}/productbase", method = RequestMethod.GET)
+    public List<ProductBase> getProductsByOrgId(@PathVariable(value = "id")String orgId, Pageable pageable, HttpServletResponse response){
+        Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", productBasePage.toContentRange());
+        }
+        return productBasePage.map(ProductBase::new).getContent();
+    }
+
+
+    @RequestMapping(value = "{id}/logo", method = RequestMethod.GET)
+    public ResponseEntity<?> getOrganizationLogo(
             @PathVariable(value = "id") String id,
-            @PathVariable(value = "imageName") String imageName) {
+            @RequestParam(value = "image_name", required = false) String imageName) {
         ResourceInputStream resourceInputStream = organizationDomain.getLogoImage(id, imageName);
         if (resourceInputStream == null) {
             throw new NotFoundException("logo not found");

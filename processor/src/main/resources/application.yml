@@ -1,39 +1,54 @@
 server:
-    port: 4080
+  port: 4080
 management:
-    port: 4081
+  port: 4081
+  address: 127.0.0.1
 
 cloud:
-    aws:
-        stack:
-            auto: false
-        region:
-            auto: true
-            static: cn-north-1
+  aws:
+    stack:
+      auto: false
+    region:
+      auto: true
+      static: cn-north-1
 
 spring:
-    profiles.active: dev
----
-spring:
-    profiles: dev
-
-
-yunsoo:
-    environment: dev
-    debug: true
-    processor:
-        client:
-            dataapi:
-                baseurl: http://localhost:3080/
+  profiles.active: dev
 
 ---
 spring:
-    profiles: test
+  profiles: dev
+
+management:
+  port: 4081
+  address: 127.0.0.1
 
 yunsoo:
-    environment: test
-    debug: true
-    processor:
-        client:
-            dataapi:
-                baseurl: http://localhost:3080/
+  debug: true
+  environment: dev
+  client:
+    dataapi:
+      baseurl: http://localhost:3080/
+  sqs:
+    message:
+      delayseconds: 60
+    handler:
+      max: 5000
+      batch: 1000
+
+---
+spring:
+  profiles: test
+
+yunsoo:
+  debug: true
+  environment: test
+  client:
+    dataapi:
+      baseurl: http://localhost:3080/
+  sqs:
+    message:
+      delayseconds: 60
+    handler:
+      max: 5000
+      batch: 1000

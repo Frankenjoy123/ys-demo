@@ -49,6 +49,16 @@ public class ProductKeyBatchEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
+    @Column(name="rest_quantity")
+    private int restQuantity;
+
+    public int getRestQuantity() {
+        return restQuantity;
+    }
+
+    public void setRestQuantity(int restQuantity) {
+        this.restQuantity = restQuantity;
+    }
 
     public String getId() {
         return id;

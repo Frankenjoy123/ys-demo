@@ -33,10 +33,5 @@ public class ClientTest {
         System.out.println(processorClient.getBaseURL());
     }
 
-    @Test
-    public void testGet() {
-//        ProductKeyType[] array = dataAPIClient.get("productkeytype?active={active}", ProductKeyType[].class, true);
-//        System.out.println(Arrays.asList(array));
-    }
 
 }

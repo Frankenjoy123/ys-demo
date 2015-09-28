@@ -1,19 +1,11 @@
 package com.yunsoo.api.rabbit.controller;
 
-import com.yunsoo.api.rabbit.dto.ApplicationResult;
-import com.yunsoo.api.rabbit.dto.basic.Application;
-import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.BadRequestException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.yunsoo.api.rabbit.domain.ApplicationDomain;
+import com.yunsoo.api.rabbit.dto.Application;
+import com.yunsoo.common.data.object.ApplicationObject;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by Zhe on 2015/6/15.
@@ -22,34 +14,28 @@ import java.util.List;
 @RestController
 @RequestMapping("/application")
 public class ApplicationController {
+
     @Autowired
-    private RestClient dataAPIClient;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationController.class);
+    private ApplicationDomain applicationDomain;
 
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ApplicationResult getById(@PathVariable String id) {
-        if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
 
-        ApplicationResult result = new ApplicationResult();
-
-        //set current application
-        Application application = dataAPIClient.get("application/{id}", Application.class, id);
-        result.setCurrentApplication(application);
-
-        //set latest application version
-        List<Application> applicationList = dataAPIClient.get("/application/type/{0}", new ParameterizedTypeReference<List<Application>>() {
-        }, application.getTypeCode());
-        result.setLatestApplication(applicationList.get(applicationList.size() - 1));
-
-        return result;
+    @RequestMapping(value = "{appId}", method = RequestMethod.GET)
+    public Application getApplicationById(@PathVariable("appId") String appId) {
+        ApplicationObject applicationObject = applicationDomain.getApplicationById(appId);
+        if (applicationObject == null) {
+            throw new NotFoundException("application not found by [id:" + appId + "]");
+        }
+        return new Application(applicationObject);
     }
 
-    @RequestMapping(value = "type/{typeid}", method = RequestMethod.GET)
-    public List<Application> getByTypeId(@PathVariable String typeid) {
-        if (typeid == null || typeid.isEmpty()) throw new BadRequestException("typeid不能为空！");
-
-        List<Application> applicationList = dataAPIClient.get("/application/type/{0}", new ParameterizedTypeReference<List<Application>>() {
-        }, typeid);
-        return applicationList;
+    @RequestMapping(value = "/latest", method = RequestMethod.GET)
+    public Application getLatestVersion(@RequestParam(value = "type_code") String typeCode,
+                                        @RequestParam(value = "system_version") String systemVersion) {
+        ApplicationObject applicationObject = applicationDomain.getLatestApplicationByTypeCode(typeCode, systemVersion);
+        if (applicationObject == null) {
+            throw new NotFoundException("application not found by [typeCode:" + typeCode + "]");
+        }
+        return new Application(applicationObject);
     }
+
 }

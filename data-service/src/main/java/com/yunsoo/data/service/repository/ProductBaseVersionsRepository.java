@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface ProductBaseVersionsRepository extends FindOneAndSaveRepository<ProductBaseVersionsEntity, String> {
 
-    List<ProductBaseVersionsEntity> findByProductBaseIdOrderByVersion(String productBaseId);
+    List<ProductBaseVersionsEntity> findByProductBaseIdOrderByVersionAsc(String productBaseId);
 
     List<ProductBaseVersionsEntity> findByProductBaseIdAndVersion(String productBaseId, Integer version);
 

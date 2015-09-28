@@ -1,115 +1,110 @@
 package com.yunsoo.api.rabbit.controller;
 
-import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
-import com.yunsoo.api.rabbit.dto.basic.UserFollowing;
-import com.yunsoo.api.rabbit.object.Constants;
-import com.yunsoo.common.data.object.OrganizationObject;
-import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.common.web.exception.UnauthorizedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.yunsoo.api.rabbit.dto.UserOrganizationFollowing;
+import com.yunsoo.api.rabbit.dto.UserProductFollowing;
+import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.common.web.client.Page;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/4/21.
+ * Created by:   Lijian
+ * Created on:   2015/8/28
+ * Descriptions:
  */
 @RestController
-@RequestMapping("/user/following")
+@RequestMapping("/userfollowing")
 public class UserFollowingController {
-    @Autowired
-    private RestClient dataAPIClient;
-    @Autowired
-    private UserDomain userDomain;
+
     @Autowired
     private UserFollowDomain userFollowDomain;
-    //    private final String AUTH_HEADER_NAME = "YS_RABBIT_AUTH_TOKEN";
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserLikedProductController.class);
 
-    @RequestMapping(value = "/who/{id}", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#id, 'UserFollowing', 'userfollowing:read')")
-    public List<UserFollowing> getFollowingOrgsByUserId(@PathVariable(value = "id") String id,
-                                                        @RequestParam(value = "index") Integer index,
-                                                        @RequestParam(value = "size") Integer size) {
-        if (id == null || id.isEmpty()) throw new BadRequestException("id不能为空！");
-        if (index == null || index < 0) throw new BadRequestException("Index必须为不小于0的值！");
-        if (size == null || size < 0) throw new BadRequestException("Size必须为不小于0的值！");
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
 
+    //organization
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Results page you want to retrieve (0..N)"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Number of records per page."),
+            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+                    value = "Sorting criteria in the format: property(,asc|desc). " +
+                            "Default sort order is ascending. " +
+                            "Multiple sort criteria are supported.")
+    })
+    @RequestMapping(value = "organization", method = RequestMethod.GET)
+    public List<UserOrganizationFollowing> getUserOrganizationFollowing(@ApiIgnore Pageable pageable,
+                                                                        HttpServletResponse response) {
+        String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
-        List<UserFollowing> userFollowingList = dataAPIClient.get("/user/following/who/{0}?index={1}&size={2}", new ParameterizedTypeReference<List<UserFollowing>>() {
-        }, id, index, size);
-
-        //fill organization Name
-        HashMap<String, OrganizationObject> orgMap = new HashMap<>();
-        for (UserFollowing userFollowing : userFollowingList) {
-            if (!orgMap.containsKey(userFollowing.getOrganizationId())) {
-                OrganizationObject object = dataAPIClient.get("organization/{id}", OrganizationObject.class, userFollowing.getOrganizationId());
-                if (object != null) {
-                    orgMap.put(userFollowing.getOrganizationId(), object);
-                    userFollowing.setOrganizationName(object.getName());
-                    userFollowing.setOrganizationDescription(object.getDescription());
-                } else {
-                    userFollowing.setOrganizationName(orgMap.get(userFollowing.getOrganizationId()).getName());
-                    userFollowing.setOrganizationDescription(orgMap.get(userFollowing.getOrganizationId()).getDescription());
-                }
-            }
+        Page<UserOrganizationFollowing> followingPage = userFollowDomain.getUserOrganizationFollowingsByUserId(userId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", followingPage.toContentRange());
         }
-
-        return userFollowingList;
-
+        return followingPage.getContent();
     }
 
-    @RequestMapping(value = "/who/{id}/org/{orgid}", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#id, 'UserFollowing', 'userfollowing:read')")
-    public UserFollowing getFollowingRecord(@PathVariable(value = "id") String id,
-                                            @PathVariable(value = "orgid") String orgId) {
-        UserFollowing userFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class, id, orgId);
-        if (userFollowing == null) {
-            throw new NotFoundException("找不到用户Follow的公司信息");
-        }
-        return userFollowing;
+    @RequestMapping(value = "organization", method = RequestMethod.POST)
+    public UserOrganizationFollowing followOrganization(@RequestBody @Valid UserOrganizationFollowing userOrganizationFollowing) {
+        String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String orgId = userOrganizationFollowing.getOrgId();
+        return new UserOrganizationFollowing(userFollowDomain.ensureUserOrganizationFollowing(userId, orgId));
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
-    public long userFollowingOrgs(@RequestBody UserFollowing userFollowing) {
-        if (userFollowing == null) throw new BadRequestException("userFollowing 不能为空！");
-        return userFollowDomain.ensureFollow(userFollowing, true);
-//        UserFollowing existingUserFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class, userFollowing.getUserId(), userFollowing.getOrganizationId());
-//        if (existingUserFollowing != null) {
-//            return existingUserFollowing.getId();
-//        } else {
-//            Long id = dataAPIClient.post("/user/following/link", userFollowing, long.class);
-//            return id;
-//        }
-    }
-
-    @RequestMapping(value = "", method = RequestMethod.DELETE)
+    @RequestMapping(value = "organization", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-//    @PreAuthorize("hasPermission(#userFollowing, 'authenticated')")
-    public void userUnfollowOrg(@RequestHeader(Constants.HttpHeaderName.ACCESS_TOKEN) String token, @RequestBody UserFollowing userFollowing) {
-        if (userFollowing == null) throw new BadRequestException("userFollowing 不能为空！");
-
-        UserFollowing existingUserFollowing = dataAPIClient.get("/user/following/who/{id}/org/{orgid}", UserFollowing.class,
-                userFollowing.getUserId(), userFollowing.getOrganizationId());
-        if (existingUserFollowing == null) {
-            throw new NotFoundException(40401, "找不到用户follow记录！");
-        }
-//        UserFollowing userFollowing = dataAPIClient.get("/user/following/{id}", UserFollowing.class, Id);
-        if (!userDomain.validateToken(token, userFollowing.getUserId())) {
-            throw new UnauthorizedException("不能删除其他用户的收藏信息！");
-        }
-        existingUserFollowing.setIsFollowing(false);
-        dataAPIClient.patch("user/following", existingUserFollowing); //just mark isFollowing as False.
+    public void unfollowOrganization(@RequestParam(value = "org_id", required = true) String orgId) {
+        String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        userFollowDomain.deleteUserOrganizationFollowing(userId, orgId);
     }
+
+
+    //product
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Results page you want to retrieve (0..N)"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Number of records per page."),
+            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+                    value = "Sorting criteria in the format: property(,asc|desc). " +
+                            "Default sort order is ascending. " +
+                            "Multiple sort criteria are supported.")
+    })
+    @RequestMapping(value = "product", method = RequestMethod.GET)
+    public List<UserProductFollowing> getUserProductFollowing(@ApiIgnore Pageable pageable,
+                                                              HttpServletResponse response) {
+        String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+
+        Page<UserProductFollowing> followingPage = userFollowDomain.getUserProductFollowingsByUserId(userId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", followingPage.toContentRange());
+        }
+        return followingPage.getContent();
+    }
+
+    @RequestMapping(value = "product", method = RequestMethod.POST)
+    public UserProductFollowing followProduct(@RequestBody @Valid UserProductFollowing userProductFollowing) {
+        String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String productBaseId = userProductFollowing.getProductBaseId();
+        return new UserProductFollowing(userFollowDomain.ensureUserProductFollowing(userId, productBaseId));
+    }
+
+    @RequestMapping(value = "product", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void unfollowProduct(@RequestParam(value = "product_base_id", required = true) String productBaseId) {
+        String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        userFollowDomain.deleteUserProductFollowing(userId, productBaseId);
+    }
+
 }

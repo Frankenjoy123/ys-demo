@@ -3,26 +3,59 @@ version = '1.0'
 buildscript {
     repositories {
         mavenCentral()
-        //maven { url "https://repo.spring.io/libs-release" }
+        jcenter()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
-//        classpath 'se.transmode.gradle:gradle-docker:1.2'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE'
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.2'
     }
 }
 
 apply plugin: 'spring-boot'
+apply plugin: 'org.asciidoctor.convert'
 
 dependencies {
-    compile project(":common-web")
-    compile project(":common-data")
-    compile("org.springframework.boot:spring-boot-starter-web") {
-        exclude module: "spring-boot-starter-tomcat"
+    compile project(':common-web')
+    compile project(':common-data')
+    compile('org.springframework.boot:spring-boot-starter-web') {
+        exclude module: 'spring-boot-starter-tomcat'
     }
-    compile("org.springframework.boot:spring-boot-starter-jetty")
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-starter-security")
-    compile("org.springframework.boot:spring-boot-starter-logging")
+    compile 'org.springframework.boot:spring-boot-starter-jetty'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile 'org.springframework.boot:spring-boot-starter-logging'
+    compile 'io.springfox:springfox-swagger2:2.2.2'
+    compile 'io.springfox:springfox-swagger-ui:2.2.2'
 
-    testCompile("org.springframework.boot:spring-boot-starter-test")
+    compile 'org.springframework.cloud:spring-cloud-aws-autoconfigure:1.0.2.RELEASE'
+    compile 'org.springframework.data:spring-data-redis:1.5.0.RELEASE'
+    compile 'redis.clients:jedis:2.7.0'
+
+    testCompile 'io.springfox:springfox-staticdocs:2.2.2'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
+
+ext {
+    generatedAsciidoc = file("${buildDir}/docs/asciidoc/generated")
+}
+
+asciidoctor {
+    dependsOn test
+    sources {
+        include 'index.adoc'
+    }
+    backends = ['html5']
+    outputDir = new File("${buildDir}/docs")
+    options = [
+            doctype   : 'book',
+            attributes: [
+                    toc        : 'left',
+                    toclevels  : '2',
+                    numbered   : '',
+                    sectlinks  : '',
+                    sectanchors: '',
+                    hardbreaks : '',
+                    generated  : generatedAsciidoc
+            ]
+    ]
 }

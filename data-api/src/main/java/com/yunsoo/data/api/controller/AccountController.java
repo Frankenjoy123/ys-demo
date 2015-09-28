@@ -12,16 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
- * Created by  : KB
- * Created on  : 3/13/2015
+ * Created by  : Lijian
+ * Created on  : 2015/3/13
  * Descriptions:
  */
 @RestController
@@ -45,26 +45,22 @@ public class AccountController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<AccountObject> getByFilter(@RequestParam("org_id") String orgId,
-                                           @RequestParam(value = "identifier", required = false) String identifier) {
-        List<AccountEntity> entities = identifier == null
-                ? accountRepository.findByOrgId(orgId)
-                : accountRepository.findByOrgIdAndIdentifier(orgId, identifier);
-
-        return entities.stream().map(this::toAccountObject).collect(Collectors.toList());
-    }
-
-    @RequestMapping(value = "pageable", method = RequestMethod.GET) //todo: merge it to above getByFilter
-    public List<AccountObject> getByFilter(@RequestParam("org_id") String orgId,
+                                           @RequestParam(value = "identifier", required = false) String identifier,
                                            Pageable pageable,
                                            HttpServletResponse response) {
+        List<AccountEntity> entities;
 
-        Page<AccountEntity> entityPage = accountRepository.findByOrgId(orgId, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        if (StringUtils.isEmpty(identifier)) {
+            Page<AccountEntity> entityPage = accountRepository.findByOrgId(orgId, pageable);
+            if (pageable != null) {
+                response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+            }
+            entities = entityPage.getContent();
+        } else {
+            entities = accountRepository.findByOrgIdAndIdentifier(orgId, identifier);
         }
-        return StreamSupport.stream(entityPage.spliterator(), false)
-                .map(this::toAccountObject)
-                .collect(Collectors.toList());
+
+        return entities.stream().map(this::toAccountObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "count", method = RequestMethod.GET)

@@ -1,14 +1,12 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
-import com.yunsoo.api.dto.PermissionAction;
+import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.PermissionInstance;
-import com.yunsoo.api.dto.PermissionResource;
 import com.yunsoo.api.util.WildcardMatcher;
-import com.yunsoo.common.data.object.LookupObject;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,14 +39,17 @@ public class PermissionDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    @Cacheable
+    @Autowired
+    private LookupDomain lookupDomain;
+
+    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'list')")
     public List<PermissionPolicyObject> getPermissionPolicies() {
         LOGGER.debug("cache missed [name: permission, key: 'policylist']");
         return dataAPIClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
         });
     }
 
-    @Cacheable
+    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'map')")
     public Map<String, PermissionPolicyObject> getPermissionPolicyMap() {
         LOGGER.debug("cache missed [name: permission, key: 'policymap']");
         Map<String, PermissionPolicyObject> permissionPolicies = new HashMap<>();
@@ -73,30 +74,10 @@ public class PermissionDomain {
         return permissionPolicies;
     }
 
-    //PermissionResource
-    public List<PermissionResource> getPermissionResources() {
-        return getPermissionResources(null);
-    }
-
-    public List<PermissionResource> getPermissionResources(Boolean active) {
-        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("active", active).build();
-        return dataAPIClient.get("permission/resource" + query, new ParameterizedTypeReference<List<PermissionResource>>() {
-        });
-    }
-
-    //PermissionAction
-    public List<PermissionAction> getPermissionActions() {
-        return getPermissionActions(null);
-    }
-
-    public List<PermissionAction> getPermissionActions(Boolean active) {
-        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("active", active).build();
-        return dataAPIClient.get("permission/action" + query, new ParameterizedTypeReference<List<PermissionAction>>() {
-        });
-    }
 
     public List<PermissionInstance> extendPermissions(List<PermissionInstance> permissions) {
-        List<String> resources = getPermissionResources(true).stream().map(LookupObject::getCode).collect(Collectors.toList());
+        List<String> resources = lookupDomain.getLookupListByType(LookupCodes.LookupType.PermissionResource, true)
+                .stream().map(Lookup::getCode).collect(Collectors.toList());
         List<PermissionInstance> result = new ArrayList<>();
         permissions.forEach(p -> {
             String resourceCode = p.getResourceCode();

@@ -1,7 +1,7 @@
 package com.yunsoo.api.config;
 
 import com.yunsoo.api.cache.CustomKeyGenerator;
-import com.yunsoo.api.cache.NotOnAwsCloudEnvironmentCondition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -10,7 +10,6 @@ import org.springframework.cloud.aws.cache.config.annotation.CacheClusterConfig;
 import org.springframework.cloud.aws.cache.config.annotation.EnableElastiCache;
 import org.springframework.cloud.aws.context.annotation.ConditionalOnAwsCloudEnvironment;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 
@@ -21,8 +20,9 @@ public class CacheConfiguration {
 
 
     @Configuration
-    @EnableElastiCache(value = {@CacheClusterConfig(name = CACHE_NAME)}, defaultExpiration = 3600)
+    @EnableElastiCache(value = {@CacheClusterConfig(name = CACHE_NAME)})
     @ConditionalOnAwsCloudEnvironment
+    @ConditionalOnProperty(value = "yunsoo.cache.type", havingValue = "elasticache")
     public static class ElastiCacheConfiguration {
 
         @Bean
@@ -34,7 +34,7 @@ public class CacheConfiguration {
 
     @Configuration
     @EnableCaching
-    @Conditional(NotOnAwsCloudEnvironmentCondition.class)
+    @ConditionalOnProperty(value = "yunsoo.cache.type", havingValue = "local")
     public static class LocalCacheConfiguration {
 
         @Bean
