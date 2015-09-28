@@ -21,15 +21,16 @@ yunsoo:
     expires_minutes: 60
   login_token:
     expires_minutes: 5
+
 spring:
   profiles.active: dev
+
 ---
 spring:
   profiles: dev
 
-
 logging:
-#  file: c:/logs/yunsoo-api.log
+  file: c:/logs/api.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'ERROR'
@@ -55,7 +56,7 @@ management:
 
 logging:
   path: /var/log
-  file: yunsoo-api.log
+  file: api.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'

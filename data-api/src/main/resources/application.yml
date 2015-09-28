@@ -42,14 +42,6 @@ jdbc:
     max_idle: 5
     test_on_borrow: true
     validation_query: select 1
-#  read1:
-#    driver_class_name: com.mysql.jdbc.Driver
-#    url: jdbc:mysql://dev-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
-#    username: root
-#    password: admin201512
-#    initial_size: 1
-#    max_idle: 100
-
 
 ---
 spring:
@@ -63,7 +55,7 @@ logging:
     org.hibernate: 'INFO'
 
 yunsoo:
-  debug: false
+  debug: true
   environment: test
   aws:
     region: cn-north-1
@@ -76,14 +68,7 @@ jdbc:
     url: jdbc:mysql://test-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
     username: root
     password: admin201512
-    initial_size: 2
+    initial_size: 10
     max_idle: 20
     test_on_borrow: true
     validation_query: select 1
-#  read1:
-#    driver_class_name: com.mysql.jdbc.Driver
-#    url: jdbc:mysql://test-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
-#    username: root
-#    password: admin201512
-#    initial_size: 1
-#    max_idle: 100
