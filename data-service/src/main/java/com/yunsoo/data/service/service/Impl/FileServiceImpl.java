@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Zhe
@@ -61,6 +63,24 @@ public class FileServiceImpl implements FileService {
     @Override
     public URL getPresignedUrl(String bucketName, String key, DateTime expiration) {
         return s3ItemDao.generatePresignedUrl(bucketName, key, expiration, HttpMethod.GET);
+    }
+    @Override
+    public List<String> getFileNamesByFolderName(String bucketName, String folderName){
+        try {
+            List<String> nameList = s3ItemDao.getItemNameByFolderName(bucketName, folderName);
+            return nameList.stream().map(this::getFileShortName).collect(Collectors.toList());
+        } catch (AmazonS3Exception s3ex) {
+            if (s3ex.getStatusCode() == 404) {
+                return null;
+            } else {
+                throw s3ex;
+            }
+        }
+    }
+
+    private String getFileShortName(String fileFullName){
+        String[] names = fileFullName.split("/");
+        return names[names.length -1];
     }
 
 }

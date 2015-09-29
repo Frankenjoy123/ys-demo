@@ -1,4 +1,4 @@
-package com.yunsoo.api.rabbit.dto;
+package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -18,11 +18,11 @@ public class UserReport {
     @JsonProperty("id")
     private String Id;
 
-    @JsonProperty("user_id")
-    private String userId;
+    @JsonProperty("user")
+    private User user;
 
-    @JsonProperty("product_base_id")
-    private String productBaseId;
+    @JsonProperty("product_base")
+    private ProductBase productBase;
 
     @JsonProperty("store_name")
     private String storeName;
@@ -38,8 +38,16 @@ public class UserReport {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
+    @JsonProperty("images_name")
+    public List<String> imageNames;
 
-    public List<byte[]> images;
+    public List<String> getImageNames() {
+        return imageNames;
+    }
+
+    public void setImageNames(List<String> imageNames) {
+        this.imageNames = imageNames;
+    }
 
     public String getId() {
         return Id;
@@ -49,20 +57,20 @@ public class UserReport {
         Id = id;
     }
 
-    public String getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public String getProductBaseId() {
-        return productBaseId;
+    public ProductBase getProductBase() {
+        return productBase;
     }
 
-    public void setProductBaseId(String productBaseId) {
-        this.productBaseId = productBaseId;
+    public void setProductBase(ProductBase productBase) {
+        this.productBase = productBase;
     }
 
     public String getStoreName() {
@@ -106,8 +114,6 @@ public class UserReport {
             return;
         this.createdDateTime = object.getCreatedDateTime();
         this.Id = object.getId();
-        this.userId = object.getUserId();
-        this.productBaseId = object.getProductBaseId();
         this.storeAddress = object.getStoreAddress();
         this.storeName = object.getStoreName();
         this.reportDetails = object.getReportDetails();
@@ -117,10 +123,10 @@ public class UserReport {
         if(userReport == null)
             return null;
         UserReportObject object =new UserReportObject();
-        object.setUserId(userReport.getUserId());
+        object.setUserId(userReport.getUser().getId());
         object.setCreatedDateTime(userReport.getCreatedDateTime());
         object.setId(userReport.getId());
-        object.setProductBaseId(userReport.getProductBaseId());
+        object.setProductBaseId(userReport.getProductBase().getId());
         object.setReportDetails(userReport.getReportDetails());
         object.setStoreAddress(userReport.getStoreAddress());
         object.setStoreName(userReport.getStoreName());

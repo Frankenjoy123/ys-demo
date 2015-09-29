@@ -40,7 +40,9 @@ public class UserReportDomain {
         return objectPage;
     }
 
-
+    public UserReportObject getReportById(String id){
+        return dataAPIClient.get("userReport/{id}", UserReportObject.class, id);
+    }
 
     public void saveReportImage(String userId,String reportId, byte[] imageDataBytes) {
         String imageName = IdGenerator.getNew();
@@ -55,4 +57,5 @@ public class UserReportDomain {
             throw new InternalServerErrorException("report Image upload failed [userId: " + userId + "], [reportId: " + reportId +"]");
         }
     }
+
 }

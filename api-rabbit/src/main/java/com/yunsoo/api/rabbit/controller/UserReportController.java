@@ -28,6 +28,14 @@ public class UserReportController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
+    @RequestMapping(method = RequestMethod.GET, value = "{id}")
+    public UserReport getById(@PathVariable(value = "id") String id){
+        UserReport report = new UserReport(domain.getReportById(id));
+
+        return report;
+    }
+
+
     @RequestMapping(method = RequestMethod.POST)
     public UserReport saveUserReport (@RequestBody UserReport report){
         String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();

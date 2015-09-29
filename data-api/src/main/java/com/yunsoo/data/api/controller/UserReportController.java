@@ -25,6 +25,12 @@ public class UserReportController {
     @Autowired
     private UserReportRepository repository;
 
+    @RequestMapping(method = RequestMethod.GET, value = "{id}")
+    public UserReportObject getById(@PathVariable(value = "id") String id){
+        return toUserReportObject(repository.findOne(id));
+    }
+
+
     @RequestMapping(method = RequestMethod.GET)
     public List<UserReportObject> getByFilter(@RequestParam(value = "user_id", required = false)String userId,
                                               @RequestParam(value = "product_base_id", required = false)String productBaseId,
@@ -34,7 +40,6 @@ public class UserReportController {
             userReportEntityPage = repository.findByProductBaseId(productBaseId, pageable);
         else if(userId != null )
             userReportEntityPage = repository.findByUserId(userId, pageable);
-
         if(pageable != null && userReportEntityPage != null)
             response.setHeader("Content-Range", PageableUtils.formatPages(userReportEntityPage.getNumber(), userReportEntityPage.getTotalPages()));
 

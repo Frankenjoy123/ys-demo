@@ -1,10 +1,12 @@
 package com.yunsoo.data.service.service;
 
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.yunsoo.common.data.object.FileObject;
 import org.joda.time.DateTime;
 
 import java.net.URL;
+import java.util.List;
 
 /**
  * Created by  : Zhe
@@ -18,5 +20,7 @@ public interface FileService {
     void putFile(String bucketName, String key, FileObject fileObject, Boolean override);
 
     URL getPresignedUrl(String bucketName, String key, DateTime expiration);
+
+    public List<String> getFileNamesByFolderName(String bucketName, String folderName);
 
 }

@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Created by:   Zhe
@@ -31,4 +32,6 @@ public interface S3ItemDao {
     <T> void putItem(String bucketName, String key, T item);
 
     <T> T getItem(String bucketName, String key, Class<T> clazz);
+
+    public List<String> getItemNameByFolderName(String bucketName, String folderName);
 }

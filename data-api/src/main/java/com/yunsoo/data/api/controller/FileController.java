@@ -12,6 +12,8 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.config.AWSProperties;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.service.FileService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by  : Zhe
@@ -35,6 +39,8 @@ import java.net.URL;
 @RestController
 @RequestMapping("/file")
 public class FileController {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(FileController.class);
 
     @Autowired
     private FileService fileService;
@@ -72,6 +78,22 @@ public class FileController {
         s3ObjectInputStream.close();
         return bodyBuilder.body(new InputStreamResource(resultInputStream));
     }
+
+    @RequestMapping(value = "s3/list", method = RequestMethod.GET)
+    public List<String> getS3FileNamesByFolderPath(@RequestParam(value = "path", required = true) String path) throws IOException {
+        if (StringUtils.isEmpty(path)) {
+            throw new BadRequestException("path must not be null or empty");
+        }
+        String bucketName = awsProperties.getS3().getBucketName();
+        List<String> s3NameList = fileService.getFileNamesByFolderName(bucketName, path);
+        if (s3NameList == null) {
+            throw new NotFoundException("files not found [bucket: " + bucketName + ", path: " + path + "]");
+        }
+
+        return s3NameList;
+    }
+
+
 
     @RequestMapping(value = "s3", method = RequestMethod.PUT)
     public void putS3FileByPath(@RequestParam(value = "path", required = true) String path,
