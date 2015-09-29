@@ -2,7 +2,6 @@ package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
 import com.yunsoo.api.rabbit.dto.Product;
-import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -38,6 +37,9 @@ public class ProductDomain {
     @Autowired
     private UserDomain userDomain;
 
+    @Autowired
+    ProductBaseDomain productBaseDomain;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductDomain.class);
 
     //Retrieve Product key, ProductBase entry and Product-Category entry from Backend.
@@ -58,17 +60,18 @@ public class ProductDomain {
 
         //fill with ProductBase information.
         String productBaseId = productObject.getProductBaseId();
-        ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
-        product.setProductBaseId(productBaseId);
-        product.setBarcode(productBaseObject.getBarcode());
-        product.setComment(productBaseObject.getComments());
-        product.setName(productBaseObject.getName());
-        product.setOrgId(productBaseObject.getOrgId());
+        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
+        if (productBaseObject != null) {
+            product.setProductBaseId(productBaseId);
+            product.setBarcode(productBaseObject.getBarcode());
+            product.setComment(productBaseObject.getComments());
+            product.setName(productBaseObject.getName());
+            product.setOrgId(productBaseObject.getOrgId());
 
-        //fill with ProductCategory information.
-        ProductCategory productCategory = getProductCategoryById(productBaseObject.getCategoryId());
-        product.setProductCategory(productCategory);
-
+            //fill with ProductCategory information.
+            ProductCategory productCategory = getProductCategoryById(productBaseObject.getCategoryId());
+            product.setProductCategory(productCategory);
+        }
         return product;
     }
 
@@ -80,11 +83,11 @@ public class ProductDomain {
     }
 
 
-    public Long getCommentsScore(String productBaseId){
+    public Long getCommentsScore(String productBaseId) {
         return dataAPIClient.get("productcomments/avgscore/{id}", Long.class, productBaseId);
     }
 
-    public Page<User> getFollowingUsersByProductBaseId(String productBaseId, Pageable pageable){
+    public Page<User> getFollowingUsersByProductBaseId(String productBaseId, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("product_base_id", productBaseId)
                 .append(pageable)
@@ -94,10 +97,10 @@ public class ProductDomain {
                 new ParameterizedTypeReference<List<UserProductFollowingObject>>() {
                 });
 
-         List<User> userList = new ArrayList<>();
-         userFollowingList.forEach(item -> {
-             userList.add(new User(userDomain.getUserById(item.getUserId())));
-         });
+        List<User> userList = new ArrayList<>();
+        userFollowingList.forEach(item -> {
+            userList.add(new User(userDomain.getUserById(item.getUserId())));
+        });
 
         return new Page<>(userList, userFollowingList.getPage(), userFollowingList.getTotal());
     }
@@ -119,17 +122,4 @@ public class ProductDomain {
         }
     }
 
-    public ProductBase convertFromProductBaseObject(ProductBaseObject productBaseObject) {
-        ProductBase productBase = new ProductBase();
-        productBase.setId(productBaseObject.getId());
-        productBase.setVersion(productBaseObject.getVersion());
-        productBase.setName(productBaseObject.getName());
-        productBase.setDescription(productBaseObject.getComments());
-        productBase.setOrgId(productBaseObject.getOrgId());
-        productBase.setShelfLife(productBaseObject.getShelfLife());
-        productBase.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
-        productBase.setCategory(getProductCategoryById(productBaseObject.getCategoryId()));
-
-        return productBase;
-    }
 }

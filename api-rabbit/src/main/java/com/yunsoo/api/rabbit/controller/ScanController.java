@@ -7,9 +7,7 @@ import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.object.ValidationResult;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.api.rabbit.security.UserAuthentication;
-import com.yunsoo.common.data.object.OrganizationObject;
-import com.yunsoo.common.data.object.ProductBaseObject;
-import com.yunsoo.common.data.object.UserScanRecordObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.web.client.Page;
@@ -70,9 +68,6 @@ public class ScanController {
     private ProductBaseDomain productBaseDomain;
 
     @Autowired
-    private UserLikedProductDomain userLikedProductDomain;
-
-    @Autowired
     private OrganizationDomain organizationDomain;
 
     @Autowired
@@ -110,46 +105,39 @@ public class ScanController {
         }
         scanResult.setProduct(product);
 
-        //3. set if user liked this product
-        UserLikedProduct userLikedProduct = this.userLikedProductDomain.getUserLikedProduct(userId, product.getProductBaseId());
-        if (userLikedProduct != null) {
-            scanResult.setLiked_product(userLikedProduct.getActive());
-        } else {
-            scanResult.setLiked_product(false);
-        }
-
-        //4. retrieve scan records
+        //3. retrieve scan records
         List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByProductKey(scanRequest.getKey(), new PageRequest(0, 20))
                 .map(ScanRecord::new)
                 .getContent();
         scanResult.setScanRecordList(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
-        //5. retrieve logistics information
+        //4. retrieve logistics information
         scanResult.setLogisticsList(getLogisticsInfo(scanRequest.getKey()));
 
-        //6. get company information.
+        //5. get company information.
         OrganizationObject organizationObject = organizationDomain.getById(product.getOrgId());
         scanResult.setManufacturer(new Organization(organizationObject));
 
+        //6. following info
         if (scanRequest.getAutoFollowing() != null && scanRequest.getAutoFollowing()) {
-            //7.1 ensure user following the company, and set the followed status in result.
-            if (userFollowDomain.ensureUserOrganizationFollowing(userId, organizationObject.getId()) != null) {
-                scanResult.setFollowed_org(true);
-            } else {
-                scanResult.setFollowed_org(false);
-            }
-
-            //7.2. ensure user following the product
+            // ensure user following the company, and set the followed status in result.
+            userFollowDomain.ensureUserOrganizationFollowing(userId, organizationObject.getId());
+            // ensure user following the product
             userFollowDomain.ensureUserProductFollowing(userId, product.getProductBaseId());
+            scanResult.setFollowedOrg(true);
+            scanResult.setLikedProduct(true);
         } else {
-            scanResult.setFollowed_org(false);
+            UserOrganizationFollowingObject userOrganizationFollowingObject = userFollowDomain.getUserOrganizationFollowingByUserIdAndOrgId(userId, organizationObject.getId());
+            UserProductFollowingObject userProductFollowingObject = userFollowDomain.getUserProductFollowingByUserIdAndProductBaseId(userId, product.getProductBaseId());
+            scanResult.setFollowedOrg(userOrganizationFollowingObject != null);
+            scanResult.setLikedProduct(userProductFollowingObject != null);
         }
 
-        //8. set validation result by our validation strategy.
+        //7. set validation result by our validation strategy.
         scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), userId, scanRecordList));
 
-        //9. save scan Record
+        //8. save scan Record
         UserScanRecordObject userScanRecordObject = scanRequest.toUserScanRecordObject();
         userScanRecordObject.setProductKey(productKey);
         userScanRecordObject.setUserId(userId);
