@@ -15,6 +15,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -47,6 +49,7 @@ public class UserDomain {
     private static final String DEFAULT_GRAVATAR_IMAGE_NAME = "image-400x400";
 
 
+    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #userId)")
     public UserObject getUserById(String userId) {
         try {
             return userId != null ? dataAPIClient.get("user/{id}", UserObject.class, userId) : null;
@@ -76,6 +79,7 @@ public class UserDomain {
         }, deviceId);
     }
 
+    @CacheEvict(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #userObject.getId())")
     public void patchUpdateUser(UserObject userObject) {
         String userId = userObject.getId();
         if (!StringUtils.isEmpty(userId)) {
