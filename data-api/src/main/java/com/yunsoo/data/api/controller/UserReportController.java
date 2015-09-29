@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by yan on 9/28/2015.
@@ -25,7 +26,7 @@ public class UserReportController {
     private UserReportRepository repository;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<UserReportEntity> getByFilter(@RequestParam(value = "user_id", required = false)String userId,
+    public List<UserReportObject> getByFilter(@RequestParam(value = "user_id", required = false)String userId,
                                               @RequestParam(value = "product_base_id", required = false)String productBaseId,
                                               Pageable pageable, HttpServletResponse response){
         Page<UserReportEntity> userReportEntityPage = null;
@@ -37,7 +38,7 @@ public class UserReportController {
         if(pageable != null && userReportEntityPage != null)
             response.setHeader("Content-Range", PageableUtils.formatPages(userReportEntityPage.getNumber(), userReportEntityPage.getTotalPages()));
 
-        return userReportEntityPage == null? null : userReportEntityPage.getContent();
+        return userReportEntityPage == null? null : userReportEntityPage.getContent().stream().map(this::toUserReportObject).collect(Collectors.toList());
 
     }
 
