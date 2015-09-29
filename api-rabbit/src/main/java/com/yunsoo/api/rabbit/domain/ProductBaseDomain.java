@@ -2,11 +2,8 @@ package com.yunsoo.api.rabbit.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
-import com.yunsoo.api.rabbit.dto.Organization;
-import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.api.rabbit.dto.ProductBaseDetails;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
-import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -21,10 +18,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by  : Lijian
@@ -41,9 +35,6 @@ public class ProductBaseDomain {
 
     @Autowired
     private RestClient dataAPIClient;
-    @Autowired
-    private OrganizationDomain organizationDomain;
-
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductDomain.class);
 
@@ -91,13 +82,12 @@ public class ProductBaseDomain {
         }
     }
 
-    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId, 'details' )")
+    //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId, 'details' )")
     public ProductBaseDetails getProductBaseDetailsById(String productBaseId) {
         try {
             ProductBaseObject productBaseObject = getProductBaseById(productBaseId);
             ResourceInputStream stream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json", productBaseObject.getOrgId(), productBaseId, productBaseObject.getVersion());
-            ProductBaseDetails details = new ObjectMapper().readValue(stream, ProductBaseDetails.class);
-            return details;
+            return new ObjectMapper().readValue(stream, ProductBaseDetails.class);
         } catch (Exception ex) {
             LOGGER.error("get detail data from s3 failed.", ex);
             return null;

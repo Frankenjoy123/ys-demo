@@ -5,7 +5,7 @@ CREATE TABLE org_agency
   id                  CHAR(19) PRIMARY KEY   NOT NULL,
   name                VARCHAR(100)           NOT NULL,
   org_id              CHAR(19)               NOT NULL,
-  location_ids         CHAR(255)               NOT NULL,
+  location_ids VARCHAR(500) NOT NULL,
   parent_id           CHAR(19),
   address             VARCHAR(100),
   description         VARCHAR(500),
