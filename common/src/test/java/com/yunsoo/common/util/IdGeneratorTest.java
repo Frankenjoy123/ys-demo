@@ -25,6 +25,13 @@ public class IdGeneratorTest {
     }
 
     @Test
+    public void test_getNewIds() {
+        for (int i = 0; i < 34; i++) {
+            System.out.println(IdGenerator.getNew());
+        }
+    }
+
+    @Test
     public void test_getNew100m() {
         Date date = new Date();
         Set<String> set = new HashSet<>();
