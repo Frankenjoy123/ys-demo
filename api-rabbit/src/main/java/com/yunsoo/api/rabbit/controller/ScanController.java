@@ -68,9 +68,6 @@ public class ScanController {
     private ProductBaseDomain productBaseDomain;
 
     @Autowired
-    private UserLikedProductDomain userLikedProductDomain;
-
-    @Autowired
     private OrganizationDomain organizationDomain;
 
     @Autowired
