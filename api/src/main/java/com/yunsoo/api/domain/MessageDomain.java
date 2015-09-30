@@ -136,10 +136,6 @@ public class MessageDomain {
 
     public void saveMessageDetails(MessageDetails messageDetails, String orgId, String id) {
         try {
-            if (messageDetails.getCover() == null) {
-                String coverPath = "organization/" + orgId + "/message/" + id + "/" + COVER_IMAGE_NAME;
-                messageDetails.setCover(coverPath);
-            }
             if (messageDetails.getBody() != null) {
                 saveMessageBodyText(messageDetails.getBody(), orgId, id);
                 //     String bodyPath = "organization/" + orgId + "/message/" + id + "/" + BODY_FILE_NAME;
