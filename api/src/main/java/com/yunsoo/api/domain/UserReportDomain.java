@@ -32,8 +32,9 @@ public class UserReportDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    public Page<UserReportObject> getUserReportsByProductBaseId(String productBaseId, Pageable pageable){
-        QueryStringBuilder builder = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("product_base_id", productBaseId);
+    public Page<UserReportObject> getUserReportsByProductBaseId(List<String> productBaseIds, Pageable pageable){
+        QueryStringBuilder builder = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("product_base_id_in", productBaseIds).append(pageable);
 
         Page<UserReportObject> objectPage = dataAPIClient.getPaged("userReport" + builder.toString(), new ParameterizedTypeReference<List<UserReportObject>>() {
         });

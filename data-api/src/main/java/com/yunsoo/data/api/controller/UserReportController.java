@@ -33,11 +33,11 @@ public class UserReportController {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<UserReportObject> getByFilter(@RequestParam(value = "user_id", required = false)String userId,
-                                              @RequestParam(value = "product_base_id", required = false)String productBaseId,
+                                              @RequestParam(value = "product_base_id_in", required = false)List<String> productBaseIds,
                                               Pageable pageable, HttpServletResponse response){
         Page<UserReportEntity> userReportEntityPage = null;
-        if(productBaseId != null)
-            userReportEntityPage = repository.findByProductBaseId(productBaseId, pageable);
+        if(productBaseIds != null)
+            userReportEntityPage = repository.findByProductBaseIdIn(productBaseIds, pageable);
         else if(userId != null )
             userReportEntityPage = repository.findByUserId(userId, pageable);
         if(pageable != null && userReportEntityPage != null)

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface UserReportRepository extends FindOneAndSaveRepository<UserReportEntity, String> {
 
-    Page<UserReportEntity> findByProductBaseId(String productBaseId, Pageable pageable);
+    Page<UserReportEntity> findByProductBaseIdIn(List<String> productBaseIds, Pageable pageable);
 
     Page<UserReportEntity> findByUserId(String userId, Pageable pageable);
 }

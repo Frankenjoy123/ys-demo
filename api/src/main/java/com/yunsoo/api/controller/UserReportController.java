@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.UserReportDomain;
 import com.yunsoo.api.dto.ProductBase;
@@ -35,6 +36,8 @@ public class UserReportController {
     @Autowired
     private ProductBaseDomain productBaseDomain;
 
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(method = RequestMethod.GET, value = "{id}")
     public UserReport getById(@PathVariable(value = "id") String id){
@@ -45,7 +48,16 @@ public class UserReportController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<UserReport> getByFilter(@RequestParam(value = "product_base_id", required = false) String productBaseId, Pageable pageable, HttpServletResponse response){
-        Page<UserReportObject> objectPage = domain.getUserReportsByProductBaseId(productBaseId, pageable);
+        String orgId= tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        List<String> productBaseIds = new ArrayList<>();
+        if(productBaseId == null){
+            productBaseIds = productBaseDomain.getProductBaseByOrgId(orgId, null).getContent().stream().map(item-> item.getId()).collect(Collectors.toList());
+        }
+        else
+            productBaseIds.add(productBaseId);
+
+        Page<UserReportObject>  objectPage = domain.getUserReportsByProductBaseId(productBaseIds, pageable);
+
         if(pageable != null)
             response.setHeader("Content-Range", objectPage.toContentRange());
 

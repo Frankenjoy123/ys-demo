@@ -32,7 +32,7 @@ public class UserReportDomain {
     }
 
     public Page<UserReportObject> getUserReportsByUserId(String userId, Pageable pageable){
-        QueryStringBuilder builder = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("user_id", userId);
+        QueryStringBuilder builder = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("user_id", userId).append(pageable);
 
         Page<UserReportObject> objectPage = dataAPIClient.getPaged("userReport" + builder.toString(), new ParameterizedTypeReference<List<UserReportObject>>() {
         });
