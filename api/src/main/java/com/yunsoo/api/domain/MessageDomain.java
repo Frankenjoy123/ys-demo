@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gexin.rp.sdk.base.IIGtPush;
 import com.gexin.rp.sdk.base.IPushResult;
 import com.gexin.rp.sdk.base.impl.AppMessage;
+import com.gexin.rp.sdk.base.payload.APNPayload;
 import com.gexin.rp.sdk.http.IGtPush;
 import com.gexin.rp.sdk.template.TransmissionTemplate;
 import com.yunsoo.api.Constants;
@@ -193,9 +194,11 @@ public class MessageDomain {
             // define app and message tag
             List appIdList = new ArrayList();
             List tagList = new ArrayList<>();
+            List phoneTypeList = new ArrayList();
             appIdList.add(Constants.PushBase.APPID);
             tagList.add("yunsu");
             tagList.add(orgId);
+            phoneTypeList.add("ANDROID");
 
             // message content
             AppMessage appMessage = new AppMessage();
@@ -203,6 +206,7 @@ public class MessageDomain {
             appMessage.setOffline(true);
             appMessage.setAppIdList(appIdList);
             appMessage.setTagList(tagList);
+            appMessage.setPhoneTypeList(phoneTypeList);
 
             //push message to users
             iiGtPush.connect();
@@ -210,30 +214,34 @@ public class MessageDomain {
 //            iiGtPush.close();
 
             //push message to ios users
-//            TransmissionTemplate iostransmissionTemplate = new TransmissionTemplate();
-//            iostransmissionTemplate.setAppId(Constants.PushBase.APPID);
-//            iostransmissionTemplate.setAppkey(Constants.PushBase.APPKEY);
-//            iostransmissionTemplate.setTransmissionType(2);
-//            iostransmissionTemplate.setTransmissionContent(content);
-//            APNPayload payload = new APNPayload();
-//            payload.setBadge(1);
-//            payload.setContentAvailable(1);
-//            payload.setSound("default");
-//            payload.setCategory("default");
-//            APNPayload.DictionaryAlertMsg alertMsg = new APNPayload.DictionaryAlertMsg();
-//            alertMsg.setTitle(messageToApp.getTitle());
-//            //  alertMsg.setBody(messageToApp.getBody());
-//            alertMsg.setBody(messageToApp.getTitle());
-//            payload.setAlertMsg(alertMsg);
-//            //payload.setAlertMsg(new APNPayload.SimpleAlertMsg("hello"));
-//            iostransmissionTemplate.setAPNInfo(payload);
-//            AppMessage iosappMessage = new AppMessage();
-//            iosappMessage.setData(iostransmissionTemplate);
-//            iosappMessage.setOffline(true);
-//            iosappMessage.setAppIdList(appIdList);
-//            iosappMessage.setTagList(tagList);
-////            iiGtPush.connect();
-//            IPushResult iosPushResult = iiGtPush.pushMessageToApp(iosappMessage);
+            TransmissionTemplate iostransmissionTemplate = new TransmissionTemplate();
+            iostransmissionTemplate.setAppId(Constants.PushBase.APPID);
+            iostransmissionTemplate.setAppkey(Constants.PushBase.APPKEY);
+            iostransmissionTemplate.setTransmissionType(2);
+            iostransmissionTemplate.setTransmissionContent(content);
+            APNPayload payload = new APNPayload();
+            payload.setBadge(1);
+            payload.setContentAvailable(1);
+            payload.setSound("default");
+            payload.setCategory("default");
+            payload.addCustomMsg("message_id", messageToApp.getMessageId());
+            payload.addCustomMsg("org_id", messageToApp.getOrgId());
+            payload.addCustomMsg("org_name", messageToApp.getOrgName());
+            payload.addCustomMsg("title", messageToApp.getTitle());
+            payload.addCustomMsg("body", messageToApp.getBody());
+            APNPayload.DictionaryAlertMsg alertMsg = new APNPayload.DictionaryAlertMsg();
+            //    alertMsg.setTitle(messageToApp.getTitle());
+            //  alertMsg.setBody(messageToApp.getBody());
+            alertMsg.setBody(messageToApp.getTitle());
+            payload.setAlertMsg(alertMsg);
+            iostransmissionTemplate.setAPNInfo(payload);
+            AppMessage iosappMessage = new AppMessage();
+            iosappMessage.setData(iostransmissionTemplate);
+            iosappMessage.setOffline(true);
+            iosappMessage.setAppIdList(appIdList);
+            iosappMessage.setTagList(tagList);
+//            iiGtPush.connect();
+            IPushResult iosPushResult = iiGtPush.pushMessageToApp(iosappMessage);
             iiGtPush.close();
 
             return iPushResult;
