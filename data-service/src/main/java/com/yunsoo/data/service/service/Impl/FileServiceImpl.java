@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,11 +68,11 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<String> getFileNamesByFolderName(String bucketName, String folderName){
         try {
-            List<String> nameList = s3ItemDao.getItemNameByFolderName(bucketName, folderName);
+            List<String> nameList = s3ItemDao.getItemNamesByFolderName(bucketName, folderName);
             return nameList.stream().map(this::getFileShortName).collect(Collectors.toList());
         } catch (AmazonS3Exception s3ex) {
             if (s3ex.getStatusCode() == 404) {
-                return null;
+                return new ArrayList<>();
             } else {
                 throw s3ex;
             }

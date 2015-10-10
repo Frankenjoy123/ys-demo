@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,8 +86,7 @@ public class S3ItemDaoImpl implements S3ItemDao {
     }
 
     @Override
-    public List<String> getItemNameByFolderName(String bucketName, String folderName){
-        List<S3Object> s3Objects = new ArrayList<>();
+    public List<String> getItemNamesByFolderName(String bucketName, String folderName) {
         ObjectListing objects = amazonS3Client.listObjects(bucketName, folderName);
         return objects.getObjectSummaries().stream().map(this::getKey).collect(Collectors.toList());
 

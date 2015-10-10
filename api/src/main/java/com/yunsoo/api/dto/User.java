@@ -109,16 +109,19 @@ public class User implements Serializable {
         this.createdDatetime = createdDatetime;
     }
 
-    public User(){}
+    public User() {
+    }
 
-    public User(UserObject object){
-        this.id = object.getId();
-        this.statusCode = object.getStatusCode();
-        this.phone = object.getPhone();
-        this.address = object.getAddress();
-        this.deviceId = object.getDeviceId();
-        this.createdDatetime = object.getCreatedDateTime();
-        this.point = object.getPoint();
+    public User(UserObject object) {
+        if (object != null) {
+            this.id = object.getId();
+            this.statusCode = object.getStatusCode();
+            this.phone = object.getPhone();
+            this.address = object.getAddress();
+            this.deviceId = object.getDeviceId();
+            this.createdDatetime = object.getCreatedDateTime();
+            this.point = object.getPoint();
+        }
     }
 
 }
