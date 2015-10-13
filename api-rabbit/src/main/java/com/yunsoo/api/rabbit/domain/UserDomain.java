@@ -35,6 +35,7 @@ import java.util.List;
  * Descriptions:
  */
 @Component
+@ElastiCacheConfig
 public class UserDomain {
 
     @Autowired

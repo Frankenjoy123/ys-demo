@@ -1,7 +1,6 @@
 package com.yunsoo.data.service.service;
 
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.yunsoo.common.data.object.FileObject;
 import org.joda.time.DateTime;
 
@@ -21,6 +20,6 @@ public interface FileService {
 
     URL getPresignedUrl(String bucketName, String key, DateTime expiration);
 
-    public List<String> getFileNamesByFolderName(String bucketName, String folderName);
+    List<String> getFileNamesByFolderName(String bucketName, String folderName);
 
 }

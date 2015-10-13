@@ -1,15 +1,11 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
-import com.yunsoo.api.dto.User;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.data.object.UserReportObject;
-import com.yunsoo.common.util.IdGenerator;
-import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +14,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -32,7 +25,7 @@ public class UserReportDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    public Page<UserReportObject> getUserReportsByProductBaseId(List<String> productBaseIds, Pageable pageable){
+    public Page<UserReportObject> getUserReportsByProductBaseId(List<String> productBaseIds, Pageable pageable) {
         QueryStringBuilder builder = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("product_base_id_in", productBaseIds).append(pageable);
 
@@ -42,17 +35,13 @@ public class UserReportDomain {
         return objectPage;
     }
 
-    public UserReportObject getReportById(String id){
+    public UserReportObject getReportById(String id) {
         return dataAPIClient.get("userReport/{id}", UserReportObject.class, id);
     }
 
-    public List<String> getReportImageNames(String userId, String reportId){
-        try {
-            return dataAPIClient.get("file/s3/list?path=user/{uerId}/report/{reportId}", new ParameterizedTypeReference<List<String>>() {
-            }, userId, reportId);
-        } catch (NotFoundException ex) {
-            return null;
-        }
+    public List<String> getReportImageNames(String userId, String reportId) {
+        return dataAPIClient.get("file/s3/list?path=user/{uerId}/report/{reportId}", new ParameterizedTypeReference<List<String>>() {
+        }, userId, reportId);
     }
 
     public ResourceInputStream getReportImage(String userId, String reportId, String imageName) {
@@ -63,9 +52,13 @@ public class UserReportDomain {
         }
     }
 
-    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #id )")
-    public UserObject getUserById(String id){
-        return dataAPIClient.get("user/{id}", UserObject.class, id);
+    @Cacheable(key = "T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #id )")
+    public UserObject getUserById(String id) {
+        try {
+            return dataAPIClient.get("user/{id}", UserObject.class, id);
+        } catch (NotFoundException ex) {
+            return null;
+        }
     }
 
 }

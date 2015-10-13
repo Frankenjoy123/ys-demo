@@ -1,12 +1,13 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.UserReportDomain;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.User;
 import com.yunsoo.api.dto.UserReport;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.data.object.UserReportObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -40,32 +41,37 @@ public class UserReportController {
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(method = RequestMethod.GET, value = "{id}")
-    public UserReport getById(@PathVariable(value = "id") String id){
+    public UserReport getById(@PathVariable(value = "id") String id) {
         UserReport report = new UserReport(domain.getReportById(id));
 
         return report;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<UserReport> getByFilter(@RequestParam(value = "product_base_id", required = false) String productBaseId, Pageable pageable, HttpServletResponse response){
-        String orgId= tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+    public List<UserReport> getByFilter(@RequestParam(value = "product_base_id", required = false) String productBaseId, Pageable pageable, HttpServletResponse response) {
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
         List<String> productBaseIds = new ArrayList<>();
-        if(productBaseId == null){
-            productBaseIds = productBaseDomain.getProductBaseByOrgId(orgId, null).getContent().stream().map(item-> item.getId()).collect(Collectors.toList());
-        }
-        else
+        if (productBaseId == null) {
+            productBaseIds = productBaseDomain.getProductBaseByOrgId(orgId, null).getContent().stream().map(item -> item.getId()).collect(Collectors.toList());
+        } else
             productBaseIds.add(productBaseId);
 
-        Page<UserReportObject>  objectPage = domain.getUserReportsByProductBaseId(productBaseIds, pageable);
+        Page<UserReportObject> objectPage = domain.getUserReportsByProductBaseId(productBaseIds, pageable);
 
-        if(pageable != null)
+        if (pageable != null)
             response.setHeader("Content-Range", objectPage.toContentRange());
 
         List<UserReport> reportList = new ArrayList<>();
         objectPage.getContent().forEach(object -> {
             UserReport report = new UserReport(object);
-            report.setProductBase(new ProductBase(productBaseDomain.getProductBaseById(object.getProductBaseId())));
-            report.setUser(new User(domain.getUserById(object.getUserId())));
+            ProductBaseObject pbo = productBaseDomain.getProductBaseById(object.getProductBaseId());
+            if (pbo != null) {
+                report.setProductBase(new ProductBase(pbo));
+            }
+            UserObject uo = domain.getUserById(object.getUserId());
+            if (uo != null) {
+                report.setUser(new User(uo));
+            }
             report.setImageNames(domain.getReportImageNames(object.getUserId(), object.getId()));
             reportList.add(report);
         });

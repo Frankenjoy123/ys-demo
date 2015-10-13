@@ -33,5 +33,5 @@ public interface S3ItemDao {
 
     <T> T getItem(String bucketName, String key, Class<T> clazz);
 
-    public List<String> getItemNameByFolderName(String bucketName, String folderName);
+    List<String> getItemNamesByFolderName(String bucketName, String folderName);
 }

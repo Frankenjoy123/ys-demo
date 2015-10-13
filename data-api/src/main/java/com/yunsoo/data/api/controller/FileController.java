@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -85,12 +84,7 @@ public class FileController {
             throw new BadRequestException("path must not be null or empty");
         }
         String bucketName = awsProperties.getS3().getBucketName();
-        List<String> s3NameList = fileService.getFileNamesByFolderName(bucketName, path);
-        if (s3NameList == null) {
-            throw new NotFoundException("files not found [bucket: " + bucketName + ", path: " + path + "]");
-        }
-
-        return s3NameList;
+        return fileService.getFileNamesByFolderName(bucketName, path);
     }
 
 
