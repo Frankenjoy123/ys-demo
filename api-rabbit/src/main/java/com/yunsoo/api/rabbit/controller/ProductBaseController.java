@@ -2,9 +2,11 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
+import com.yunsoo.api.rabbit.domain.UserFollowDomain;
 import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.api.rabbit.dto.ProductBaseDetails;
+import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -34,8 +36,15 @@ public class ProductBaseController {
     @Autowired
     private ProductBaseDomain productBaseDomain;
 
+    @Autowired
+    private UserFollowDomain followDomain;
+
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductBase getProductBaseById(@PathVariable(value = "id") String id) throws Exception{
+        String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(id);
         if (productBaseObject == null) {
             throw new NotFoundException("product base not found.");
@@ -48,8 +57,8 @@ public class ProductBaseController {
         //set detail info
         productBase.setCommentsScore(productDomain.getCommentsScore(id));
         //set pageable to null
-        productBase.setFollowingUsers(productDomain.getFollowingUsersByProductBaseId(id, null).getContent());
-
+       // productBase.setFollowingUsers(productDomain.getFollowingUsersByProductBaseId(id, null).getContent());
+        productBase.setIsFollowing(followDomain.getUserProductFollowingByUserIdAndProductBaseId(userId, id) == null? false : true);
         return productBase;
     }
 

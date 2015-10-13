@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.Constants;
+import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserConfigObject;

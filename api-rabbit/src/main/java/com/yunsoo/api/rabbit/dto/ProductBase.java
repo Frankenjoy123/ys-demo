@@ -35,6 +35,8 @@ public class ProductBase {
     private String detailUrl;
     @JsonProperty("following_users")
     private List<User> followingUsers;
+    @JsonProperty("is_following")
+    private boolean isFollowing;
 
     public String getDetailUrl() {
         return detailUrl;
@@ -131,6 +133,14 @@ public class ProductBase {
 
     public void setFollowingUsers(List<User> followingUsers) {
         this.followingUsers = followingUsers;
+    }
+
+    public boolean isFollowing() {
+        return isFollowing;
+    }
+
+    public void setIsFollowing(boolean isFollowing) {
+        this.isFollowing = isFollowing;
     }
 
     public ProductBase() {
