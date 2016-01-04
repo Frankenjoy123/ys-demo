@@ -1,7 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.ProductKeyTransactionObject;
-import com.yunsoo.common.util.IdGenerator;
+import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.ProductKeyTransactionDetailEntity;
@@ -68,7 +68,7 @@ public class ProductKeyTransactionController {
     @ResponseStatus(HttpStatus.CREATED)
     public ProductKeyTransactionObject create(@RequestBody ProductKeyTransactionObject object) {
         if (object.getId() == null) {
-            object.setId(IdGenerator.getNew());
+            object.setId(ObjectIdGenerator.getNew());
         }
         if (object.getCreatedDateTime() == null) {
             object.setCreatedDateTime(DateTime.now());

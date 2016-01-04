@@ -11,23 +11,23 @@ import java.util.Set;
  * Created on:   2015/4/15
  * Descriptions:
  */
-public class IdGeneratorTest {
+public class ObjectIdGeneratorTest {
 
     @Test
     public void test_getNew(){
-        String id = IdGenerator.getNew();
+        String id = ObjectIdGenerator.getNew();
         System.out.println(id);
-        System.out.println(IdGenerator.getNew());
-        System.out.println(IdGenerator.getNew());
-        System.out.println(IdGenerator.getNew());
-        System.out.println(IdGenerator.getNew());
-        System.out.println(IdGenerator.getGeneratedDateFromId(id));
+        System.out.println(ObjectIdGenerator.getNew());
+        System.out.println(ObjectIdGenerator.getNew());
+        System.out.println(ObjectIdGenerator.getNew());
+        System.out.println(ObjectIdGenerator.getNew());
+        System.out.println(ObjectIdGenerator.getGeneratedDateFromId(id));
     }
 
     @Test
     public void test_getNewIds() {
         for (int i = 0; i < 34; i++) {
-            System.out.println(IdGenerator.getNew());
+            System.out.println(ObjectIdGenerator.getNew());
         }
     }
 
@@ -36,7 +36,7 @@ public class IdGeneratorTest {
         Date date = new Date();
         Set<String> set = new HashSet<>();
         for (int i = 0; i < 1000000; i++) {
-            String id = IdGenerator.getNew();
+            String id = ObjectIdGenerator.getNew();
             if (set.contains(id)) {
                 throw new RuntimeException("Id duplicated: " + id);
             }

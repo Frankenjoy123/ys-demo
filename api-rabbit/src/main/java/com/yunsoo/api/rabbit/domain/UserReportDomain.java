@@ -1,8 +1,8 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.common.data.object.UserReportObject;
-import com.yunsoo.common.util.IdGenerator;
 import com.yunsoo.common.util.ImageProcessor;
+import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
@@ -16,11 +16,12 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * Created by yan on 9/28/2015.
+ * Created by:   yan
+ * Created on:   9/28/2015
+ * Descriptions:
  */
 @Component
 public class UserReportDomain {
@@ -45,7 +46,7 @@ public class UserReportDomain {
     }
 
     public void saveReportImage(String userId,String reportId, byte[] imageDataBytes) {
-        String imageName = IdGenerator.getNew();
+        String imageName = ObjectIdGenerator.getNew();
         try {
             ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
             ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();

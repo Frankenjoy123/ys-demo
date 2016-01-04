@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created on:   2015/4/15
  * Descriptions:
  */
-public final class IdGenerator {
+public final class ObjectIdGenerator {
     private static final int MACHINE_IDENTIFIER;
     private static final short PROCESS_IDENTIFIER;
     private static final AtomicInteger NEXT_COUNTER = new AtomicInteger(new SecureRandom().nextInt());

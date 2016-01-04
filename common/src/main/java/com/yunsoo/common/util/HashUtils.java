@@ -58,21 +58,13 @@ public class HashUtils {
         MessageDigest mdInstance;
         try {
             mdInstance = MessageDigest.getInstance(algorithm);
-            mdInstance.update(src);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("hash algorithm not found: " + algorithm);
         }
-        return mdInstance.digest();
+        return mdInstance.digest(src);
     }
 
     private static String toHexString(byte[] bytes) {
-        char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-        char chars[] = new char[bytes.length * 2];
-        int index = 0;
-        for (byte b : bytes) {
-            chars[index++] = hexDigits[b >> 4 & 0xf];
-            chars[index++] = hexDigits[b & 0xf];
-        }
-        return new String(chars);
+        return HexStringUtils.encode(bytes);
     }
 }
