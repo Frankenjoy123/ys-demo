@@ -8,10 +8,9 @@ package com.yunsoo.common.web.util;
 public class PageableUtils {
 
     public static String formatPages(Integer page, Integer total) {
-        return "pages "
-                + (page == null || page < 0 ? "0" : page.toString())
-                + "/"
-                + (total == null || total < 1 ? "*" : total.toString());
+        return String.format("pages %s/%s",
+                (page == null || page < 0 ? "0" : page.toString()),
+                (total == null || total < 1 ? "*" : total.toString()));
     }
 
     public static Integer[] parsePages(String contentRange) {

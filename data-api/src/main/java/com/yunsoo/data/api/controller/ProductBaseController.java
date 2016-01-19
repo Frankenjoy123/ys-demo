@@ -34,7 +34,7 @@ public class ProductBaseController {
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductBaseObject getById(@PathVariable(value = "id") String id) {
         ProductBaseEntity entity = productBaseRepository.findOne(id);
-        if (entity == null || entity.isDeleted()) {
+        if (entity == null) {
             throw new NotFoundException("product base not found by [id:" + id + "]");
         }
         return toProductBaseObject(entity);
@@ -45,21 +45,19 @@ public class ProductBaseController {
     public List<ProductBaseObject> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                                Pageable pageable,
                                                HttpServletResponse response) {
-        if(orgId != null) {
-            Page<ProductBaseEntity> entityPage = productBaseRepository.findByOrgIdAndDeleted(orgId, false, pageable);
-
-            if (pageable != null) {
-                response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
-            }
-
-            return entityPage.getContent().stream()
-                    .map(this::toProductBaseObject)
-                    .collect(Collectors.toList());
+        Page<ProductBaseEntity> entityPage;
+        if (orgId != null) {
+            entityPage = productBaseRepository.findByDeletedFalseAndOrgId(orgId, pageable);
+        } else {
+            entityPage = productBaseRepository.findByDeletedFalse(pageable);
         }
-        else{
-            List<ProductBaseEntity> list = productBaseRepository.findByDeleted(false);
-            return list.stream().map(this::toProductBaseObject).collect(Collectors.toList());
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
+        return entityPage.getContent().stream()
+                .map(this::toProductBaseObject)
+                .collect(Collectors.toList());
     }
 
     //create
@@ -73,17 +71,22 @@ public class ProductBaseController {
         }
         entity.setModifiedAccountId(null);
         entity.setModifiedDateTime(null);
-        ProductBaseEntity newEntity = productBaseRepository.save(entity);
-        return toProductBaseObject(newEntity);
+        return toProductBaseObject(productBaseRepository.save(entity));
     }
 
     //update
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public void update(@PathVariable(value = "id") String id,
                        @RequestBody ProductBaseObject productBaseObject) {
-        ProductBaseEntity oldentity = productBaseRepository.findOne(id);
-        if (oldentity != null && !oldentity.isDeleted()) {
+        ProductBaseEntity oldEntity = productBaseRepository.findOne(id);
+        if (oldEntity != null && !oldEntity.isDeleted()) {
             ProductBaseEntity entity = toProductBaseEntity(productBaseObject);
+            entity.setId(id);
+            entity.setCreatedAccountId(oldEntity.getCreatedAccountId());
+            entity.setCreatedDateTime(oldEntity.getCreatedDateTime());
+            if (entity.getModifiedDateTime() == null) {
+                entity.setModifiedDateTime(DateTime.now());
+            }
             productBaseRepository.save(entity);
         }
     }
@@ -97,81 +100,6 @@ public class ProductBaseController {
             productBaseRepository.save(entity);
         }
     }
-
-
-//    //todo
-//    @RequestMapping(value = "/{id}/{client}", method = RequestMethod.GET)
-//    public ResponseEntity getThumbnail(
-//            @PathVariable(value = "id") String id,
-//            @PathVariable(value = "client") String client) {
-//        if (id == null || id.isEmpty()) throw new BadRequestException("ID不能为空！");
-//        if (client == null || client.isEmpty()) throw new BadRequestException("client不能为空！");
-//        S3Object s3Object;
-//        try {
-//            s3Object = productBaseService.getProductS3Object(amazonSetting.getS3_basebucket(), amazonSetting.getS3_productbaseurl() + "/" + id + "/" + client);
-//            if (s3Object == null) {
-//                s3Object = productBaseService.getProductS3Object(amazonSetting.getS3_basebucket(), amazonSetting.getS3_product_default_image_url());
-//            }
-//
-//            FileObject fileObject = new FileObject();
-////            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
-//            fileObject.setContentType(s3Object.getObjectMetadata().getContentType());
-//            fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
-//            fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
-//            return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
-//
-//        } catch (AmazonS3Exception s3ex) {
-//            if (s3ex.getErrorCode() == "NoSuchKey") {
-//                throw new NotFoundException(40402, "找不到图片 id = " + id + "  client = " + client);
-//            }
-//            throw new InternalServerErrorException(50001, s3ex.getErrorMessage());
-//        } catch (IOException ex) {
-//            //to-do: log
-//            throw new InternalServerErrorException(50002, "图片获取出错！");
-//        }
-//    }
-//
-//    //todo
-//    @RequestMapping(value = "/{id}/{key}/json", method = RequestMethod.GET)
-//    public ResponseEntity getNotes(
-//            @PathVariable(value = "id") String id,
-//            @PathVariable(value = "key") String key) {
-//        if (id == null || id.isEmpty()) throw new BadRequestException("ID不能为空！");
-//        if (key == null || key.isEmpty()) throw new BadRequestException("key不能为空！");
-//        S3Object s3Object;
-//        try {
-//            s3Object = productBaseService.getProductS3Object(amazonSetting.getS3_basebucket(), amazonSetting.getS3_productbaseurl() + "/" + id + "/" + key + ".json");
-//            if (s3Object == null) {
-//                throw new NotFoundException("找不到产品相关的文件（json描述）");
-//            }
-//            FileObject fileObject = new FileObject();
-//            fileObject.setSuffix(s3Object.getObjectMetadata().getContentType());
-//            fileObject.setData(IOUtils.toByteArray(s3Object.getObjectContent()));
-//            fileObject.setLength(s3Object.getObjectMetadata().getContentLength());
-//            return new ResponseEntity<FileObject>(fileObject, HttpStatus.OK);
-////            return new ResponseEntity<S3Object>(s3Object, HttpStatus.OK);
-//
-//        } catch (AmazonS3Exception s3ex) {
-//            if (s3ex.getErrorCode() == "NoSuchKey") {
-//                throw new NotFoundException(40402, "找不到Notes.json id = " + id);
-//            }
-//            throw new InternalServerErrorException(50001, s3ex.getErrorMessage());
-//        } catch (IOException ex) {
-//            //to-do: log
-//            throw new InternalServerErrorException(50002, "S3文件获取出错！");
-//        }
-//    }
-
-//
-//    //todo
-//    //patch update, we don't provide functions like update with set null properties.
-//    @RequestMapping(value = "", method = RequestMethod.PATCH)
-//    public void patchUpdate(@RequestBody ProductBaseObject productBase) {
-//        productBase.setModifiedDateTime(DateTime.now());
-//        ProductBase p = new ProductBase();
-//        BeanUtils.copyProperties(productBase, p);
-//        productBaseService.patchUpdate(p);
-//    }
 
 
     private ProductBaseObject toProductBaseObject(ProductBaseEntity entity) {
