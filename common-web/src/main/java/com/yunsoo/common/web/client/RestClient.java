@@ -124,8 +124,7 @@ public class RestClient {
             OutputStream outputStream = request.getBody();
             StreamUtils.copy(resourceInputStream, outputStream);
         };
-        ResponseExtractor<?> responseExtractor = response -> null;
-        restTemplate.execute(createURL(url), HttpMethod.PUT, requestCallback, responseExtractor, uriVariables);
+        restTemplate.execute(createURL(url), HttpMethod.PUT, requestCallback, null, uriVariables);
     }
 
 
