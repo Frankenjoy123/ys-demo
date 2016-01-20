@@ -2,7 +2,6 @@ package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
-import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserConfigObject;
 import com.yunsoo.common.data.object.UserObject;
@@ -13,8 +12,6 @@ import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -42,12 +39,8 @@ public class UserDomain {
     private RestClient dataAPIClient;
 
     @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
-
-    @Autowired
     private UserFollowDomain userFollowDomain;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserDomain.class);
     private static final String DEFAULT_GRAVATAR_IMAGE_NAME = "image-400x400";
 
 

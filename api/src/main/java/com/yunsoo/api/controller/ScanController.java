@@ -7,8 +7,8 @@ import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +37,7 @@ public class ScanController {
     @Autowired
     private ProductDomain productDomain;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
 
     //仅仅能够访问属于特定组织的Key
@@ -87,7 +87,7 @@ public class ScanController {
             logisticsPaths = logisticsDomain.getLogisticsPathsOrderByStartDateTime(key);
         } catch (NotFoundException ex) {
             //to do: log
-            LOGGER.warn("物流信息找不到 - Key = " + key);
+            log.warn("物流信息找不到 - Key = " + key);
             return null;
         }
 

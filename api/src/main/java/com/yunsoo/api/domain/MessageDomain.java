@@ -192,9 +192,9 @@ public class MessageDomain {
             transmissionTemplate.setTransmissionType(2);
             transmissionTemplate.setTransmissionContent(content);
             // define app and message tag
-            List appIdList = new ArrayList();
-            List tagList = new ArrayList<>();
-            List phoneTypeList = new ArrayList();
+            List<String> appIdList = new ArrayList<>();
+            List<String> tagList = new ArrayList<>();
+            List<String> phoneTypeList = new ArrayList<>();
             appIdList.add(Constants.PushBase.APPID);
             tagList.add("yunsu");
             tagList.add(orgId);
@@ -254,11 +254,11 @@ public class MessageDomain {
     public static String getRandomString() {
         String base = "abcdefghijklmnopqrstuvwxyz0123456789";
         Random random = new Random();
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 10; i++) {
             int number = random.nextInt(base.length());
-            buffer.append(base.charAt(number));
+            sb.append(base.charAt(number));
         }
-        return buffer.toString();
+        return sb.toString();
     }
 }

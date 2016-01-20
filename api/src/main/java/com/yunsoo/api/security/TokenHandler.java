@@ -3,9 +3,9 @@ package com.yunsoo.api.security;
 import com.yunsoo.api.object.TAccount;
 import com.yunsoo.common.util.HashUtils;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -20,7 +20,7 @@ public final class TokenHandler {
 
     private static final String SPLITTER = ",";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TokenHandler.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     private byte[] hashSalt;
 
@@ -33,12 +33,12 @@ public final class TokenHandler {
     public TAccount parseToken(String token) {
         String src = decodeToken(token);
         if (src == null) {
-            LOGGER.error("Token invalid [token: {}]", token);
+            log.error(String.format("Token invalid [token: %s]", token));
             return null;
         }
         final String[] parts = src.split(SPLITTER);
         if (parts.length < 2) {
-            LOGGER.error("Token invalid [token: {}]", token);
+            log.error(String.format("Token invalid [token: %s]", token));
             return null;
         }
         DateTime expires = new DateTime(Long.parseLong(parts[0]));
@@ -46,7 +46,7 @@ public final class TokenHandler {
         String orgId = parts.length >= 3 ? parts[2] : null; //orgId is nullable
 
         if (expires.isBeforeNow()) {
-            LOGGER.error("Token expired [token: {}, expires: {}]", token, expires.toString());
+            log.error(String.format("Token expired [token: %s, expires: %s]", token, expires.toString()));
             return null;
         }
 

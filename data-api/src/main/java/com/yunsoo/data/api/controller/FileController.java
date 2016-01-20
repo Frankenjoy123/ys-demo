@@ -12,8 +12,8 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.config.AWSProperties;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.service.FileService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -39,7 +39,7 @@ import java.util.List;
 @RequestMapping("/file")
 public class FileController {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(FileController.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private FileService fileService;

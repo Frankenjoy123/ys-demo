@@ -9,8 +9,8 @@ import com.yunsoo.common.data.object.UserProductFollowingObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +39,7 @@ public class UserFollowDomain {
     @Autowired
     private ProductCommentsDomain productCommentsDomain;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserFollowDomain.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
 
     public UserOrganizationFollowingObject ensureUserOrganizationFollowing(String userId, String orgId) {

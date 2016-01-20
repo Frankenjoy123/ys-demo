@@ -4,8 +4,6 @@ import com.yunsoo.api.dto.OperationRecord;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
@@ -15,14 +13,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Created by Zhe on 2015/4/8.
+ * Created by:   Zhe
+ * Created on:   2015/4/8
+ * Descriptions:
  */
 @RestController
 @RequestMapping("/operation/record")
 public class OperationRecordController {
     @Autowired
     private RestClient dataAPIClient;
-    private static final Logger LOGGER = LoggerFactory.getLogger(OperationRecordController.class);
 
     @RequestMapping(value = "/type/{typeid}/account/{accountid}", method = RequestMethod.GET)
     public List<OperationRecord> filterOperationRecord(@PathVariable(value = "typeid") Integer typeid,
@@ -47,6 +46,6 @@ public class OperationRecordController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> createRecord(@RequestBody OperationRecord operationRecord) throws Exception {
         long id = dataAPIClient.post("/operation/record/insert", operationRecord, long.class);
-        return new ResponseEntity<Long>(id, HttpStatus.OK);
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 }

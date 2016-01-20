@@ -7,8 +7,8 @@ import com.yunsoo.common.web.error.RestErrorResultCode;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
+    private Log log = LogFactory.getLog(this.getClass());
     private static final String FROM = "api-rabbit";
 
     @Value("${yunsoo.debug}")
@@ -47,7 +47,7 @@ public class GlobalControllerExceptionHandler {
     public ResponseEntity<ErrorResult> handleRestError(HttpServletRequest req, RestErrorResultException ex) {
         HttpStatus status = ex.getHttpStatus();
         ErrorResult result = ex.getErrorResult();
-        LOGGER.info("[from: {}, status: {}, message: {}]", FROM, status, result);
+        log.info(String.format("[from: %s, status: %s, message: %s]", FROM, status, result));
         return new ResponseEntity<>(appendTraceInfo(result, ex), status);
     }
 
@@ -71,7 +71,7 @@ public class GlobalControllerExceptionHandler {
             message = ex.getMessage();
         }
         ErrorResult result = new ErrorResult(RestErrorResultCode.BAD_REQUEST, message);
-        LOGGER.warn("[from: {}, status: 400, message: {}]", FROM, message);
+        log.warn(String.format("[from: %s, status: 400, message: %s]", FROM, message));
         return appendTraceInfo(result, ex);
     }
 
@@ -81,7 +81,7 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResult handleUnauthorized(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.UNAUTHORIZED, "unauthorized request");
-        LOGGER.info("[from: {}, status: 401, message: {}]", FROM, ex.getMessage());
+        log.info(String.format("[from: %s, status: 401, message: %s]", FROM, ex.getMessage()));
         return appendTraceInfo(result, ex);
     }
 
@@ -91,7 +91,7 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResult handleForbiddenException(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.FORBIDDEN, "forbidden request");
-        LOGGER.info("[from: {}, status: 403, message: {}]", FROM, ex.getMessage());
+        log.info(String.format("[from: %s, status: 403, message: %s]", FROM, ex.getMessage()));
         return appendTraceInfo(result, ex);
     }
 
@@ -101,7 +101,7 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResult handleNoHandlerFound(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.NOT_FOUND, "no handler found");
-        LOGGER.info("[from: {}, status: 404, message: {}]", FROM, ex.getMessage());
+        log.info(String.format("[from: %s, status: 404, message: %s]", FROM, ex.getMessage()));
         return appendTraceInfo(result, ex);
     }
 
@@ -111,7 +111,7 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     public ErrorResult handleMethodNotSupported(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.METHOD_NOT_ALLOWED, "method not allowed");
-        LOGGER.info("[from: {}, status: 405, message: {}]", FROM, ex.getMessage());
+        log.info(String.format("[from: %s, status: 405, message: %s]", FROM, ex.getMessage()));
         return appendTraceInfo(result, ex);
     }
 
@@ -121,7 +121,7 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResult handleServerError(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.INTERNAL_SERVER_ERROR, "server error");
-        LOGGER.error("[from: " + FROM + ", status: 500, message: " + ex.getMessage() + "]", ex);
+        log.error(String.format("[from: %s, status: 500, message: %s]", FROM, ex.getMessage()), ex);
         return appendTraceInfo(result, ex);
     }
 

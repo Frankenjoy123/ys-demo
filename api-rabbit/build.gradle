@@ -47,15 +47,15 @@ asciidoctor {
     backends = ['html5']
     outputDir = new File("${buildDir}/docs")
     options = [
-            doctype   : 'book',
-            attributes: [
-                    toc        : 'left',
-                    toclevels  : '2',
-                    numbered   : '',
-                    sectlinks  : '',
-                    sectanchors: '',
-                    hardbreaks : '',
-                    generated  : generatedAsciidoc
-            ]
+            doctype: 'book'
+    ]
+    attributes = [
+            toc        : 'left',
+            toclevels  : '2',
+            numbered   : '',
+            sectlinks  : '',
+            sectanchors: '',
+            hardbreaks : '',
+            generated  : generatedAsciidoc
     ]
 }

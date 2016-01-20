@@ -1,25 +1,24 @@
 package com.yunsoo.processor.config;
 
 import com.amazonaws.services.sqs.AmazonSQS;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.aws.core.env.ResourceIdResolver;
 import org.springframework.cloud.aws.messaging.core.QueueMessageChannel;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessagingException;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 /**
- * Created by yan on 8/28/2015.
+ * Created by:   yan
+ * Created on:   8/28/2015
+ * Descriptions:
  */
-
 public class CustomQueueMessagingTemplate extends QueueMessagingTemplate {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomQueueMessagingTemplate.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     public CustomQueueMessagingTemplate(AmazonSQS amazonSqs, ResourceIdResolver resourceIdResolver) {
         super(amazonSqs, resourceIdResolver);
@@ -32,7 +31,7 @@ public class CustomQueueMessagingTemplate extends QueueMessagingTemplate {
 
         boolean success = channel.send(message, delaySeconds);
         if(!success){
-            LOGGER.error("Send message to SQS failed. message body: " + String.valueOf(message.getPayload()));
+            log.error("Send message to SQS failed. message body: " + String.valueOf(message.getPayload()));
         }
 
     }

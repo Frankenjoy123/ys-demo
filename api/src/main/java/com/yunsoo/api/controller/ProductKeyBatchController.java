@@ -14,9 +14,9 @@ import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +44,7 @@ import java.util.List;
 @RequestMapping(value = "/productkeybatch")
 public class ProductKeyBatchController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductKeyBatchController.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private ProductBaseDomain productBaseDomain;
@@ -87,7 +87,7 @@ public class ProductKeyBatchController {
                                                   Pageable pageable,
                                                   HttpServletResponse response) {
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        Page<ProductKeyBatch> productKeyBatchPage = null;
+        Page<ProductKeyBatch> productKeyBatchPage;
         productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, isPackage, pageable);
 
         if (pageable != null) {
@@ -148,9 +148,9 @@ public class ProductKeyBatchController {
         batchObj.setCreatedAccountId(accountId);
         batchObj.setCreatedDateTime(createdDateTime);
         batchObj.setRestQuantity(quantity);
-        LOGGER.info("ProductKeyBatch creating started [quantity: {}]", batchObj.getQuantity());
+        log.info(String.format("ProductKeyBatch creating started [quantity: %s]", batchObj.getQuantity()));
         ProductKeyBatch newBatch = productKeyDomain.createProductKeyBatch(batchObj);
-        LOGGER.info("ProductKeyBatch created [id: {}, quantity: {}]", newBatch.getId(), newBatch.getQuantity());
+        log.info(String.format("ProductKeyBatch created [id: %s, quantity: %s]", newBatch.getId(), newBatch.getQuantity()));
 
         return newBatch;
     }

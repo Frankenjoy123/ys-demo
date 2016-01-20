@@ -11,8 +11,8 @@ import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
@@ -40,14 +40,14 @@ public class ProductDomain {
     @Autowired
     ProductBaseDomain productBaseDomain;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductDomain.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     //Retrieve Product key, ProductBase entry and Product-Category entry from Backend.
     public Product getProductByKey(String key) {
         Product product = new Product();
         product.setProductKey(key);
 
-        ProductObject productObject = null;
+        ProductObject productObject;
         try {
             productObject = dataAPIClient.get("product/{key}", ProductObject.class, key);
         } catch (NotFoundException ex) {
@@ -98,9 +98,7 @@ public class ProductDomain {
                 });
 
         List<User> userList = new ArrayList<>();
-        userFollowingList.forEach(item -> {
-            userList.add(new User(userDomain.getUserById(item.getUserId())));
-        });
+        userFollowingList.forEach(item -> userList.add(new User(userDomain.getUserById(item.getUserId()))));
 
         return new Page<>(userList, userFollowingList.getPage(), userFollowingList.getTotal());
     }

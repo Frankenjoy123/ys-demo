@@ -16,8 +16,8 @@ import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -73,7 +73,7 @@ public class ScanController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     //能够访问所有的Key,为移动客户端调用，因此每次Scan都save扫描记录。
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -99,7 +99,7 @@ public class ScanController {
         //2. get product information
         Product product = productDomain.getProductByKey(productKey);
         if (product == null) {
-            LOGGER.warn("product not found by [key: {}]", productKey);
+            log.warn(String.format("product not found by [key: %s]", productKey));
             scanResult.setValidationResult(ValidationResult.Fake);
             return scanResult;
         }
@@ -166,7 +166,7 @@ public class ScanController {
         //2. get product information
         Product product = productDomain.getProductByKey(key);
         if (product == null) {
-            LOGGER.warn("product not found by [key: {}]", key);
+            log.warn(String.format("product not found by [key: %s]", key));
             scanResult.setValidationResult(ValidationResult.Fake);
             return scanResult;
         }

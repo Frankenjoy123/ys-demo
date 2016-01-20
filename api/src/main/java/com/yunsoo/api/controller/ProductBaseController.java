@@ -14,9 +14,9 @@ import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
@@ -62,7 +62,7 @@ public class ProductBaseController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductBaseController.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     public static final String APPROVED = "approved";
     public static final String REJECTED = "rejected";
@@ -379,7 +379,7 @@ public class ProductBaseController {
         }
 
         productBaseDomain.saveProductBaseImage(imageRequest, orgId, productBaseId, version);
-        LOGGER.info("image saved [orgId: {}, productBaseId:{}, version:{}]", orgId, productBaseId, version);
+        log.info(String.format("image saved [orgId: %s, productBaseId:%s, version:%s]", orgId, productBaseId, version));
     }
 
     /**

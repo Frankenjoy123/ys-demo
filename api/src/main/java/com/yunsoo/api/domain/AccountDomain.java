@@ -10,9 +10,9 @@ import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -34,11 +34,11 @@ public class AccountDomain {
 
     @Autowired
     private RestClient dataAPIClient;
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountDomain.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
     public AccountObject getById(String accountId) {
-        LOGGER.debug("missed cache: account." + accountId);
+        log.debug("missed cache: account." + accountId);
         if (StringUtils.isEmpty(accountId)) {
             return null;
         }

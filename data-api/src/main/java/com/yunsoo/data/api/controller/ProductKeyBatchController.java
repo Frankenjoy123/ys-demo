@@ -9,8 +9,8 @@ import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
 import com.yunsoo.data.service.service.ProductKeyBatchService;
 import com.yunsoo.data.service.service.contract.ProductKeyBatch;
 import com.yunsoo.data.service.service.contract.ProductKeys;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +35,7 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/productkeybatch")
 public class ProductKeyBatchController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductKeyBatchController.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private ProductKeyBatchService productKeyBatchService;
@@ -73,13 +73,12 @@ public class ProductKeyBatchController {
             HttpServletResponse response) {
         Page<ProductKeyBatchEntity> entityPage;
 
-        if(isPackage != null) {
-            if(isPackage)
+        if (isPackage != null) {
+            if (isPackage)
                 entityPage = productKeyBatchRepository.findByOrgIdAndProductKeyTypeCodesAndStatusCodeIn(orgId, LookupCodes.ProductKeyType.PACKAGE, statusCodeIn, pageable);
             else
                 entityPage = productKeyBatchRepository.findByOrgIdAndProductKeyTypeCodesNotAndStatusCodeIn(orgId, LookupCodes.ProductKeyType.PACKAGE, statusCodeIn, pageable);
-        }
-        else if (productBaseId == null) {
+        } else if (productBaseId == null) {
             entityPage = productKeyBatchRepository.findByOrgIdAndStatusCodeIn(orgId, statusCodeIn, pageable);
 
         } else {
@@ -113,7 +112,7 @@ public class ProductKeyBatchController {
                                          @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
 
         Integer count = productKeyBatchRepository.countByRestQuantityLessThanAndStatusCodeIn(quantity, statusCodeIn);
-        return count > 0 ? true : false;
+        return count > 0;
     }
 
 
@@ -123,9 +122,9 @@ public class ProductKeyBatchController {
         ProductKeyBatch batch = toProductKeyBatch(batchObj);
         batch.setId(null);
 
-        LOGGER.info("ProductKeyBatch creating started [quantity: {}]", batch.getQuantity());
+        log.info(String.format("ProductKeyBatch creating started [quantity: %d]", batch.getQuantity()));
         ProductKeyBatch newBatch = productKeyBatchService.create(batch);
-        LOGGER.info("ProductKeyBatch created [id: {}, quantity: {}]", newBatch.getId(), newBatch.getQuantity());
+        log.info(String.format("ProductKeyBatch created [id: %s, quantity: %d]", newBatch.getId(), newBatch.getQuantity()));
 
         return toProductKeyBatchObject(newBatch);
     }
@@ -143,7 +142,7 @@ public class ProductKeyBatchController {
         if (batchObj.getStatusCode() != null) {
             batch.setStatusCode(batchObj.getStatusCode());
         }
-        if(batchObj.getRestQuantity() != null)
+        if (batchObj.getRestQuantity() != null)
             batch.setRestQuantity(batchObj.getRestQuantity());
 
         productKeyBatchService.patchUpdate(batch);

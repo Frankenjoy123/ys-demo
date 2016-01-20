@@ -10,8 +10,8 @@ import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -36,7 +36,7 @@ public class ProductBaseDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductDomain.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Cacheable(key="T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId )")
     public ProductBaseObject getProductBaseById(String productBaseId) {
@@ -89,7 +89,7 @@ public class ProductBaseDomain {
             ResourceInputStream stream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json", productBaseObject.getOrgId(), productBaseId, productBaseObject.getVersion());
             return new ObjectMapper().readValue(stream, ProductBaseDetails.class);
         } catch (Exception ex) {
-            LOGGER.error("get detail data from s3 failed.", ex);
+            log.error("get detail data from s3 failed.", ex);
             return null;
         }
     }

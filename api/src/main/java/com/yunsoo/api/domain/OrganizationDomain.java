@@ -9,9 +9,9 @@ import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -31,7 +31,7 @@ import java.util.List;
 @Component
 @ElastiCacheConfig
 public class OrganizationDomain {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationDomain.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private RestClient dataAPIClient;
@@ -43,7 +43,7 @@ public class OrganizationDomain {
 
     @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
     public OrganizationObject getOrganizationById(String id) {
-        LOGGER.debug("cache missing on organization." + id );
+        log.debug("cache missing on organization." + id);
         try {
             return dataAPIClient.get("organization/{id}", OrganizationObject.class, id);
         } catch (NotFoundException ex) {
