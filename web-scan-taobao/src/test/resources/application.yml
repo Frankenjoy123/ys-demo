@@ -6,11 +6,6 @@ management:
   address: 127.0.0.1
 
 spring:
-  profiles.active: dev
-
----
-spring:
-  profiles: dev
   thymeleaf:
     cache: false
 

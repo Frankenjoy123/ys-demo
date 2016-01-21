@@ -26,7 +26,6 @@ public class ClientConfiguration {
         return new ApiRabbitClient(formatBaseUrl(apiRabbitBaseUrl));
     }
 
-
     private String formatBaseUrl(String baseUrl) {
         if (baseUrl == null) {
             baseUrl = "/";

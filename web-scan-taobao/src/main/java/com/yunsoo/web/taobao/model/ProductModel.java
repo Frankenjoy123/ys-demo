@@ -6,4 +6,15 @@ package com.yunsoo.web.taobao.model;
  * Descriptions:
  */
 public class ProductModel {
+
+    private String productKey;
+
+
+    public String getProductKey() {
+        return productKey;
+    }
+
+    public void setProductKey(String productKey) {
+        this.productKey = productKey;
+    }
 }
