@@ -1,6 +1,6 @@
 dependencies {
     compile project(':common')
-    compile project(':common-data')
+
     compile 'org.apache.httpcomponents:httpclient:4.4.1'
     compile 'org.springframework:spring-web:4.1.6.RELEASE'
     compile "org.springframework.data:spring-data-commons:1.10.0.RELEASE"

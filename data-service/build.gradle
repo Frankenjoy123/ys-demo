@@ -19,6 +19,7 @@ repositories {
 dependencies {
     compile project(':common')
     compile project(':common-data')
+
     runtime 'mysql:mysql-connector-java:5.1.36'
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
     compile 'org.springframework:spring-context:4.2.1.RELEASE'

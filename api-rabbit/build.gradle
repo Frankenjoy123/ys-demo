@@ -15,8 +15,10 @@ apply plugin: 'spring-boot'
 apply plugin: 'org.asciidoctor.convert'
 
 dependencies {
+    compile project(':common')
     compile project(':common-web')
     compile project(':common-data')
+
     compile('org.springframework.boot:spring-boot-starter-web') {
         exclude module: 'spring-boot-starter-tomcat'
     }

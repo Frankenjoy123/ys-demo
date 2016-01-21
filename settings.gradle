@@ -7,3 +7,5 @@ include 'data-api'
 include 'processor'
 include 'api'
 include 'api-rabbit'
+include 'web-scan-taobao'
+
