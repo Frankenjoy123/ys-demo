@@ -12,6 +12,12 @@ buildscript {
 
 apply plugin: 'spring-boot'
 
+bootRun {
+    addResources = true
+}
+
+apply plugin: 'war'
+
 dependencies {
     compile project(':common-web')
 
@@ -21,5 +27,7 @@ dependencies {
 
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
+
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 
 }
