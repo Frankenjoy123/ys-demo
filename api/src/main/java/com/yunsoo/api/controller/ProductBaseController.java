@@ -362,7 +362,7 @@ public class ProductBaseController {
     @RequestMapping(value = "{product_base_id}/image", method = RequestMethod.PUT)
     public void putProductBaseImage(@PathVariable(value = "product_base_id") String productBaseId,
                                     @RequestParam(value = "version", required = false) Integer version,
-                                    @RequestBody @Valid ImageRequest imageRequest) {
+                                    @RequestBody @Valid ImageRequest_removed imageRequest) {
         ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
         String orgId = productBaseObject.getOrgId();
         Integer currentVersion = productBaseObject.getVersion();

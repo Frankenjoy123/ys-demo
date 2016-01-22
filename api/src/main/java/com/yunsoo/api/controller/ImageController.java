@@ -1,12 +1,13 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.dto.ImageParameter;
+import com.yunsoo.api.dto.ImageRequest;
 import com.yunsoo.api.dto.ImageResponse;
 import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,39 +39,45 @@ public class ImageController {
     private Log log = LogFactory.getLog(this.getClass());
 
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    public ImageResponse uploadFile(@RequestParam("file") MultipartFile file,
-                                    @ModelAttribute ImageParameter imageParameter) throws IOException {
+    @RequestMapping(value = "form", method = RequestMethod.POST)
+    public ImageResponse uploadImage(@RequestParam("file") MultipartFile file,
+                                     @ModelAttribute ImageRequest.Options options) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new BadRequestException();
         }
-        long size = file.getSize();
+        //long size = file.getSize();
         //String contentType = file.getContentType();
+        byte[] imageDataBytes = file.getBytes();
+
+        ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
+
+        imageProcessor = corpImage(imageProcessor, options);
+
         String imageName = generateImageName();
-        byte[] bytes;
-        bytes = file.getBytes();
+        saveImage(imageProcessor, imageName);
 
-        ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(bytes));
-        if (imageParameter != null) {
-            int x = intValue(imageParameter.getX());
-            int y = intValue(imageParameter.getY());
-            int width = intValue(imageParameter.getWidth());
-            int height = intValue(imageParameter.getHeight());
-            int srcWidth = imageProcessor.getWidth();
-            int srcHeight = imageProcessor.getHeight();
-            width = width > 0 ? width : srcWidth - x;
-            height = height > 0 ? height : srcHeight - y;
-            if (width > 0 && height > 0 && x + width <= srcWidth && y + height <= srcHeight) {
-                //crop
-                imageProcessor = imageProcessor.crop(x, y, width, height);
-            }
-        }
+        ImageResponse imageResponse = new ImageResponse();
+        imageResponse.setName(imageName);
+        imageResponse.setUrl(String.format("/image/%s", imageName));
+        return imageResponse;
+    }
 
-        ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
-        imageProcessor.write(imageOutputStream, "jpg");
-        dataAPIClient.put("file/s3?path=image/{imageName}", new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/jpg"), imageName);
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public ImageResponse uploadImage(@RequestBody @Valid ImageRequest imageRequest) throws IOException {
 
-        log.info(String.format("image uploaded [name: %s]", imageName));
+        String imageData = imageRequest.getData(); //data:image/png;base64,
+        int splitIndex = imageData.indexOf(",");
+        //String metaHeader = imageData.substring(0, splitIndex);
+        //String contentType = metaHeader.split(";")[0].split(":")[1];
+        String imageDataBase64 = imageData.substring(splitIndex + 1);
+        byte[] imageDataBytes = Base64.decodeBase64(imageDataBase64);
+
+        ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
+
+        imageProcessor = corpImage(imageProcessor, imageRequest.getOptions());
+
+        String imageName = generateImageName();
+        saveImage(imageProcessor, imageName);
 
         ImageResponse imageResponse = new ImageResponse();
         imageResponse.setName(imageName);
@@ -99,6 +107,31 @@ public class ImageController {
 
     private int intValue(Integer value) {
         return value != null && value > 0 ? value : 0;
+    }
+
+    private ImageProcessor corpImage(ImageProcessor imageProcessor, ImageRequest.Options options) {
+        if (options != null) {
+            int x = intValue(options.getX());
+            int y = intValue(options.getY());
+            int width = intValue(options.getWidth());
+            int height = intValue(options.getHeight());
+            int srcWidth = imageProcessor.getWidth();
+            int srcHeight = imageProcessor.getHeight();
+            width = width > 0 ? width : srcWidth - x;
+            height = height > 0 ? height : srcHeight - y;
+            if (width > 0 && height > 0 && x + width <= srcWidth && y + height <= srcHeight) {
+                //crop
+                imageProcessor = imageProcessor.crop(x, y, width, height);
+            }
+        }
+        return imageProcessor;
+    }
+
+    private void saveImage(ImageProcessor imageProcessor, String imageName) throws IOException {
+        ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
+        imageProcessor.write(imageOutputStream, "jpg");
+        dataAPIClient.put("file/s3?path=image/{imageName}", new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/jpg"), imageName);
+        log.info(String.format("image uploaded [name: %s]", imageName));
     }
 
 }

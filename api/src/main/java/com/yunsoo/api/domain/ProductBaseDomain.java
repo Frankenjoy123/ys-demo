@@ -3,7 +3,7 @@ package com.yunsoo.api.domain;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
-import com.yunsoo.api.dto.ImageRequest;
+import com.yunsoo.api.dto.ImageRequest_removed;
 import com.yunsoo.api.dto.ProductBaseDetails;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductBaseVersionsObject;
@@ -164,7 +164,7 @@ public class ProductBaseDomain {
         }
     }
 
-    public void saveProductBaseImage(ImageRequest imageRequest, String orgId, String productBaseId, Integer version) {
+    public void saveProductBaseImage(ImageRequest_removed imageRequest, String orgId, String productBaseId, Integer version) {
         try {
             String imageData = imageRequest.getData();
             //data:image/png;base64,
@@ -189,7 +189,7 @@ public class ProductBaseDomain {
 
             //400x400
             if (imageRequest.getRange1x1() != null) {
-                ImageRequest.Range range = imageRequest.getRange1x1();
+                ImageRequest_removed.Range range = imageRequest.getRange1x1();
                 if (!checkRange(range, rawWidth, rawHeight)) {
                     throw new BadRequestException("crop range1x1 out of image range");
                 }
@@ -204,7 +204,7 @@ public class ProductBaseDomain {
 
             //800x400, 400x200
             if (imageRequest.getRange2x1() != null) {
-                ImageRequest.Range range = imageRequest.getRange2x1();
+                ImageRequest_removed.Range range = imageRequest.getRange2x1();
                 if (!checkRange(range, rawWidth, rawHeight)) {
                     throw new BadRequestException("crop range2x1 out of image range");
                 }
@@ -288,7 +288,7 @@ public class ProductBaseDomain {
     }
 
 
-    private boolean checkRange(ImageRequest.Range range, int rawWidth, int rawHeight) {
+    private boolean checkRange(ImageRequest_removed.Range range, int rawWidth, int rawHeight) {
         return range.getX() >= 0
                 && range.getY() >= 0
                 && range.getWidth() > 0
