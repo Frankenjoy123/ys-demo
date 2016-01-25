@@ -52,6 +52,9 @@ public class ProductKeyBatchEntity {
     @Column(name="rest_quantity")
     private int restQuantity;
 
+    @Column(name = "marketing_id")
+    private String marketingId;
+
     public int getRestQuantity() {
         return restQuantity;
     }
@@ -138,5 +141,13 @@ public class ProductKeyBatchEntity {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public String getMarketingId() {
+        return marketingId;
+    }
+
+    public void setMarketingId(String marketingId) {
+        this.marketingId = marketingId;
     }
 }

@@ -22,6 +22,7 @@ public class ProductKeyBatch {
     private List<String> productKeyTypeCodes;
     private String productKeysUri;
     private Integer restQuantity;
+    private String marketingId;
 
     public Integer getRestQuantity() {
         return restQuantity;
@@ -109,5 +110,13 @@ public class ProductKeyBatch {
 
     public void setProductKeysUri(String productKeysUri) {
         this.productKeysUri = productKeysUri;
+    }
+
+    public String getMarketingId() {
+        return marketingId;
+    }
+
+    public void setMarketingId(String marketingId) {
+        this.marketingId = marketingId;
     }
 }
