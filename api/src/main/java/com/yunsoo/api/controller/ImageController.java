@@ -1,15 +1,13 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.domain.FileDomain;
 import com.yunsoo.api.dto.ImageRequest;
 import com.yunsoo.api.dto.ImageResponse;
 import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.ResourceInputStream;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +32,7 @@ import java.io.IOException;
 public class ImageController {
 
     @Autowired
-    private RestClient dataAPIClient;
-
-    private Log log = LogFactory.getLog(this.getClass());
+    private FileDomain fileDomain;
 
 
     @RequestMapping(value = "form", method = RequestMethod.POST)
@@ -87,7 +83,7 @@ public class ImageController {
 
     @RequestMapping(value = "{imageName}", method = RequestMethod.GET)
     public ResponseEntity<?> getImage(@PathVariable("imageName") String imageName) {
-        ResourceInputStream resourceInputStream = dataAPIClient.getResourceInputStream("file/s3?path=image/{imageName}", imageName);
+        ResourceInputStream resourceInputStream = fileDomain.getFile(String.format("image/%s", imageName));
         String contentType = resourceInputStream.getContentType();
         long contentLength = resourceInputStream.getContentLength();
 
@@ -130,8 +126,7 @@ public class ImageController {
     private void saveImage(ImageProcessor imageProcessor, String imageName) throws IOException {
         ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
         imageProcessor.write(imageOutputStream, "jpg");
-        dataAPIClient.put("file/s3?path=image/{imageName}", new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/jpg"), imageName);
-        log.info(String.format("image uploaded [name: %s]", imageName));
+        fileDomain.putFile(String.format("image/%s", imageName), new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/jpg"));
     }
 
 }
