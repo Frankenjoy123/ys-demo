@@ -79,7 +79,7 @@ public class ProductBase {
     private DateTime modifiedDateTime;
 
     @JsonProperty("details")
-    private ProductBaseDetails details;
+    private ProductBaseDetails_removed details;
 
     @JsonProperty("product_base_versions")
     private List<ProductBaseVersions> productBaseVersions;
@@ -249,11 +249,11 @@ public class ProductBase {
         this.modifiedDateTime = modifiedDateTime;
     }
 
-    public ProductBaseDetails getDetails() {
+    public ProductBaseDetails_removed getDetails() {
         return details;
     }
 
-    public void setDetails(ProductBaseDetails details) {
+    public void setDetails(ProductBaseDetails_removed details) {
         this.details = details;
     }
 

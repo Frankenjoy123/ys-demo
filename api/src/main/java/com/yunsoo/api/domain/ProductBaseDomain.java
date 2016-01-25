@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
 import com.yunsoo.api.dto.ImageRequest_removed;
-import com.yunsoo.api.dto.ProductBaseDetails;
+import com.yunsoo.api.dto.ProductBaseDetails_removed;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductBaseVersionsObject;
 import com.yunsoo.common.util.ImageProcessor;
@@ -62,7 +62,7 @@ public class ProductBaseDomain {
         }
     }
 
-    public ProductBaseDetails getProductBaseDetails(String orgId, String productBaseId, Integer version) {
+    public ProductBaseDetails_removed getProductBaseDetails(String orgId, String productBaseId, Integer version) {
         ResourceInputStream resourceInputStream;
         try {
             resourceInputStream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{fileName}",
@@ -71,14 +71,14 @@ public class ProductBaseDomain {
             return null;
         }
         try {
-            return mapper.readValue(resourceInputStream, ProductBaseDetails.class);
+            return mapper.readValue(resourceInputStream, ProductBaseDetails_removed.class);
         } catch (IOException e) {
             log.error("product details json read exception", e);
             return null;
         }
     }
 
-    public void saveProductBaseDetails(ProductBaseDetails productBaseDetails, String orgId, String productBaseId, Integer version) {
+    public void saveProductBaseDetails(ProductBaseDetails_removed productBaseDetails, String orgId, String productBaseId, Integer version) {
         try {
             byte[] bytes = mapper.writeValueAsBytes(productBaseDetails);
             ResourceInputStream resourceInputStream = new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE);

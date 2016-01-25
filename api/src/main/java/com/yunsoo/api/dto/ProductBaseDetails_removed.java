@@ -9,7 +9,7 @@ import java.util.List;
  * Created on:  2015/7/22
  * Descriptions:
  */
-public class ProductBaseDetails {
+public class ProductBaseDetails_removed {
 
     @JsonProperty("version")
     private String version;
@@ -143,6 +143,6 @@ public class ProductBaseDetails {
         }
     }
 
-    public ProductBaseDetails() {
+    public ProductBaseDetails_removed() {
     }
 }

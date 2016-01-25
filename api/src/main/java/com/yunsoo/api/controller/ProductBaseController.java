@@ -352,6 +352,7 @@ public class ProductBaseController {
     //endregion
 
 
+
     //region product base image
 
     /**
@@ -410,6 +411,18 @@ public class ProductBaseController {
             builder.contentLength(resourceInputStream.getContentLength());
         }
         return builder.body(new InputStreamResource(resourceInputStream));
+    }
+
+
+    //endregion
+
+
+    //region product base template
+
+    @RequestMapping(value = "{product_base_id}/details", method = RequestMethod.PUT)
+    public void saveProductBaseTemplate(){
+
+
     }
 
 
