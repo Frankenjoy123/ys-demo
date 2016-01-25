@@ -8,6 +8,8 @@ import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ import java.io.IOException;
 @RequestMapping("/image")
 public class ImageController {
 
+    private Log log = LogFactory.getLog(this.getClass());
+
     @Autowired
     private FileDomain fileDomain;
 
@@ -46,6 +50,8 @@ public class ImageController {
         byte[] imageDataBytes = file.getBytes();
 
         ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
+
+        log.info(String.format("image read [width: %s, height: %s]", imageProcessor.getWidth(), imageProcessor.getHeight()));
 
         imageProcessor = corpImage(imageProcessor, options);
 
@@ -69,6 +75,8 @@ public class ImageController {
         byte[] imageDataBytes = Base64.decodeBase64(imageDataBase64);
 
         ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
+
+        log.info(String.format("image read [width: %s, height: %s]", imageProcessor.getWidth(), imageProcessor.getHeight()));
 
         imageProcessor = corpImage(imageProcessor, imageRequest.getOptions());
 
@@ -118,7 +126,12 @@ public class ImageController {
             if (width > 0 && height > 0 && x + width <= srcWidth && y + height <= srcHeight) {
                 //crop
                 imageProcessor = imageProcessor.crop(x, y, width, height);
+                log.info(String.format("image cropped [x: %s, y: %s, width: %s, height: %s]", x, y, width, height));
+            } else {
+                log.warn(String.format("cropping parameters out of range [x: %s, y: %s, width: %s, height: %s]", x, y, width, height));
             }
+        } else {
+            log.info("ignore cropping because of null options");
         }
         return imageProcessor;
     }
@@ -127,6 +140,7 @@ public class ImageController {
         ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
         imageProcessor.write(imageOutputStream, "jpg");
         fileDomain.putFile(String.format("image/%s", imageName), new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/jpg"));
+        log.info(String.format("image saved [imageName: %s]", imageName));
     }
 
 }
