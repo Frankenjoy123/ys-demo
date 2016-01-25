@@ -140,8 +140,8 @@ public class ImageController {
 
     private void saveImage(ImageProcessor imageProcessor, String imageName) throws IOException {
         ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
-        imageProcessor.write(imageOutputStream, "jpg");
-        fileDomain.putFile(String.format("image/%s", imageName), new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/jpg"));
+        imageProcessor.write(imageOutputStream, "png");
+        fileDomain.putFile(String.format("image/%s", imageName), new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/png"));
         log.info(String.format("image saved [imageName: %s]", imageName));
     }
 
