@@ -121,14 +121,16 @@ public class ImageController {
             int height = intValue(options.getHeight());
             int srcWidth = imageProcessor.getWidth();
             int srcHeight = imageProcessor.getHeight();
-            width = width > 0 ? width : srcWidth - x;
-            height = height > 0 ? height : srcHeight - y;
-            if (width > 0 && height > 0 && x + width <= srcWidth && y + height <= srcHeight) {
+            int maxWidth = srcWidth - x;
+            int maxHeight = srcHeight - y;
+            width = width <= maxWidth ? width : maxWidth;
+            height = height <= maxHeight ? height : maxHeight;
+            if (x < srcWidth && y < srcHeight && width > 0 && height > 0) {
                 //crop
                 imageProcessor = imageProcessor.crop(x, y, width, height);
                 log.info(String.format("image cropped [x: %s, y: %s, width: %s, height: %s]", x, y, width, height));
             } else {
-                log.warn(String.format("cropping parameters out of range [x: %s, y: %s, width: %s, height: %s]", x, y, width, height));
+                log.warn(String.format("cropping parameters out of range [x: %s, y: %s, width: %s, height: %s, srcWidth: %s, srcHeight: %s]", x, y, width, height, srcWidth, srcHeight));
             }
         } else {
             log.info("ignore cropping because of null options");
