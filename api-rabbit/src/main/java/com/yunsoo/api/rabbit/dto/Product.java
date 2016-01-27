@@ -15,35 +15,50 @@ import org.joda.time.DateTime;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
+
     @JsonProperty("product_key")
     private String productKey;
+
     @JsonProperty("product_category")
     private ProductCategory productCategory;
+
     @JsonProperty("product_base_id")
-    private String ProductBaseId;
+    private String productBaseId;
+
     @JsonProperty("product_name")
     private String productName;
+
     @JsonProperty("org_id")
     private String orgId;
+
     @JsonProperty("barcode")
     private String barcode;
+
     @JsonProperty("name")
     private String name;
+
     @JsonProperty("comment")
     private String comment;
+
     @JsonProperty("shelf_life")
     private int shelfLife;
+
     @JsonProperty("shelf_life_interval")
     private String shelfLifeInterval;
+
+    @JsonProperty("created_datetime")
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
+
     @JsonProperty("status_code")
     private String statusCode;
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
+
     @JsonProperty("manufacturing_datetime")
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime manufacturingDateTime;
+
 
     public String getProductKey() {
         return productKey;
@@ -62,11 +77,11 @@ public class Product {
     }
 
     public String getProductBaseId() {
-        return ProductBaseId;
+        return productBaseId;
     }
 
     public void setProductBaseId(String productBaseId) {
-        ProductBaseId = productBaseId;
+        this.productBaseId = productBaseId;
     }
 
     public String getProductName() {

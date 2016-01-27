@@ -421,7 +421,7 @@ public class ProductBaseController {
     //endregion
 
 
-    //region product base template
+    //region product base details
 
     @RequestMapping(value = "{product_base_id}/details", method = RequestMethod.GET)
     public ResponseEntity<?> getProductBaseTemplate(@PathVariable(value = "product_base_id") String productBaseId,
