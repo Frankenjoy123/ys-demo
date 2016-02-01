@@ -3,8 +3,8 @@ package com.yunsoo.web.taobao.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import com.yunsoo.web.taobao.databind.DateTimeJsonDeserializer;
+import com.yunsoo.web.taobao.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
