@@ -59,6 +59,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .antMatchers("/auth/accesstoken/**").permitAll()
                 .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
                 .antMatchers(HttpMethod.GET, "/image/*").permitAll()
+                .antMatchers(HttpMethod.GET, "/organization/*/logo/*").permitAll()
                 .anyRequest().authenticated().and()
                 //.antMatchers("/**").permitAll()
 

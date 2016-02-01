@@ -1,6 +1,5 @@
 package com.yunsoo.api.security;
 
-import com.yunsoo.api.object.TAccount;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -11,18 +10,12 @@ import org.junit.Test;
  */
 public class TokenHandlerTest {
 
-    private TokenHandler tokenHandler = new TokenHandler("LEmrmtPfWc1txs9uC9A7PevSVSbBbQL0");
+    private TokenHandler tokenHandler = new TokenHandler("nC9UYPUupMaViIG3UBODY7B19IYW6Z0X");
 
     @Test
     public void test_createLoginToken() {
-        String accountId = "2kadmvn8uh248k5k7wa";
-        String token = tokenHandler.createToken(DateTime.now().plusMinutes(10), accountId, "test");
+        String accountId = "2lm7cm591fubaxwtdxk";
+        String token = tokenHandler.createToken(DateTime.now().plusMinutes(525600000), accountId);
         System.out.println(token);
-        TAccount account = tokenHandler.parseToken(token);
-        if (account != null) {
-            System.out.println(account.getId());
-            System.out.println(account.getOrgId());
-            System.out.println(account.getExpires());
-        }
     }
 }

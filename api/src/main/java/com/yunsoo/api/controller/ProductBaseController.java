@@ -30,7 +30,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,6 +60,9 @@ public class ProductBaseController {
 
     @Autowired
     private UserFollowingDomain followingDomain;
+
+    @Autowired
+    private FileDomain fileDomain;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -362,7 +367,7 @@ public class ProductBaseController {
     @RequestMapping(value = "{product_base_id}/image", method = RequestMethod.PUT)
     public void putProductBaseImage(@PathVariable(value = "product_base_id") String productBaseId,
                                     @RequestParam(value = "version", required = false) Integer version,
-                                    @RequestBody @Valid ImageRequest imageRequest) {
+                                    @RequestBody @Valid ImageRequest_removed imageRequest) {
         ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
         String orgId = productBaseObject.getOrgId();
         Integer currentVersion = productBaseObject.getVersion();
@@ -412,6 +417,48 @@ public class ProductBaseController {
         return builder.body(new InputStreamResource(resourceInputStream));
     }
 
+
+    //endregion
+
+
+    //region product base details
+
+    @RequestMapping(value = "{product_base_id}/details", method = RequestMethod.GET)
+    public ResponseEntity<?> getProductBaseTemplate(@PathVariable(value = "product_base_id") String productBaseId,
+                                                    @RequestParam(value = "version", required = false) Integer version) {
+        ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
+        if (version == null) {
+            version = productBaseObject.getVersion();
+        }
+        String orgId = fixOrgId("current");
+        String path = String.format("organization/%s/product_base/%s/%s/details.json", orgId, productBaseId, version);
+        ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+        if (resourceInputStream == null) {
+            throw new NotFoundException("product base details not found");
+        }
+        ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
+        bodyBuilder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
+        bodyBuilder.contentLength(resourceInputStream.getContentLength());
+        return bodyBuilder.body(new InputStreamResource(resourceInputStream));
+    }
+
+    @RequestMapping(value = "{product_base_id}/details", method = RequestMethod.PUT)
+    public void saveProductBaseTemplate(@PathVariable(value = "product_base_id") String productBaseId,
+                                        @RequestParam(value = "version", required = false) Integer version,
+                                        @RequestBody String details) {
+        ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
+        if (version == null) {
+            version = productBaseObject.getVersion();
+        }
+        String orgId = fixOrgId("current");
+        String path = String.format("organization/%s/product_base/%s/%s/details.json", orgId, productBaseId, version);
+        ProductBaseVersionsObject productBaseVersionsObject = productBaseDomain.getProductBaseVersionsByProductBaseIdAndVersion(productBaseId, version);
+        if (productBaseVersionsObject == null) {
+            throw new NotFoundException("specific version of product base not found");
+        }
+        byte[] bytes = details.getBytes(StandardCharsets.UTF_8);
+        fileDomain.putFile(path, new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE));
+    }
 
     //endregion
 

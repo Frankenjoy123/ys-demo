@@ -51,6 +51,8 @@ public class ProductKeyBatch {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
+    @JsonProperty("marketing_id")
+    private String marketingId;
 
     public String getId() {
         return id;
@@ -138,5 +140,13 @@ public class ProductKeyBatch {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public String getMarketingId() {
+        return marketingId;
+    }
+
+    public void setMarketingId(String marketingId) {
+        this.marketingId = marketingId;
     }
 }
