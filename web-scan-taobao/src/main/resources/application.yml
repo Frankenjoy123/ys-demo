@@ -1,8 +1,8 @@
 #shared properties
 server:
-  port: 7180
+  port: 7380
 management:
-  port: 7181
+  port: 7381
   address: 127.0.0.1
 
 spring:
@@ -13,8 +13,19 @@ spring:
   profiles: dev
   thymeleaf:
     cache: false
+    template:
+        cache: false
 
 yunsoo:
   client:
     api-rabbit:
       baseurl: http://dev.yunsu.co:5080/
+
+
+taobao:
+  appkey: 23299563
+  appsecret: 554afee89783cb3e1a773a6d014f3c63
+  api: http://gw.api.taobao.com/router/rest
+  redirect_url: http://yunsu.play.jaeapp.com
+  auth_url: https://oauth.tbsandbox.com/authorize
+  token_url: https://oauth.taobao.com/authorize

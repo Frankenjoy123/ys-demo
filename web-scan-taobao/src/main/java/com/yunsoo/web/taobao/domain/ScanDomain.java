@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,20 +23,27 @@ public class ScanDomain {
 
     private Log log = LogFactory.getLog(this.getClass());
 
-    @Autowired
-    private ApiRabbitClient apiRabbitClient;
+  //  @Autowired
+  //  private ApiRabbitClient apiRabbitClient;
+
 
     @Autowired
     private IpLookupDomain ipLookupDomain;
 
 
     public ScanResult getScanResult(String productKey) {
-        ScanResult scanResult = apiRabbitClient.get("scan/{key}", ScanResult.class, productKey);
+        /*
+        RestTemplate apiRabbitClient = new RestTemplate();
+        ScanResult scanResult = apiRabbitClient.getForObject("scan/{key}", ScanResult.class, productKey);
 
-        return scanResult;
+        return scanResult;*/
+
+        return null;
     }
 
     public ScanResult scan(String productKey, HttpServletRequest request) {
+        /*
+        RestTemplate apiRabbitClient = new RestTemplate();
         String ip = IpUtils.getIpFromRequest(request);
         BaiduIpLookupResult ipLookupResult = ipLookupDomain.ipLookup(ip);
 
@@ -49,9 +57,11 @@ public class ScanDomain {
             scanRequest.setDetails("淘宝满天星集成环境扫描");
         }
 
-        ScanResult scanResult = apiRabbitClient.post("scan", scanRequest, ScanResult.class);
+        ScanResult scanResult = apiRabbitClient.postForObject("scan", scanRequest, ScanResult.class);
 
-        return scanResult;
+        return scanResult;*/
+
+        return null;
     }
 
 
