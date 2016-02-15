@@ -1,8 +1,7 @@
 package com.yunsoo.processor.config;
 
-import com.yunsoo.common.web.util.CaseInsensitiveAntPathMatcher;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -15,14 +14,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 @Configuration
 public class WebConfiguration extends WebMvcConfigurationSupport {
 
-    @Bean
-    public CaseInsensitiveAntPathMatcher caseInsensitiveAntPathMatcher() {
-        return new CaseInsensitiveAntPathMatcher();
-    }
-
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
-        configurer.setPathMatcher(caseInsensitiveAntPathMatcher()); //make path case insensitive.
+        AntPathMatcher pathMatcher = new AntPathMatcher();
+        pathMatcher.setCaseSensitive(false); //make path case insensitive.
+        configurer.setPathMatcher(pathMatcher);
     }
 
     @Override

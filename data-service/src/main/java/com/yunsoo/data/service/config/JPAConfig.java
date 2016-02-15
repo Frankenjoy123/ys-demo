@@ -1,7 +1,7 @@
 package com.yunsoo.data.service.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.orm.jpa.EntityManagerFactoryBuilder;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -30,18 +30,6 @@ public class JPAConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder factoryBuilder) {
-//        HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
-//        hibernateJpaVendorAdapter.setShowSql(false);
-//        hibernateJpaVendorAdapter.setGenerateDdl(false);
-//        hibernateJpaVendorAdapter.setDatabase(Database.MYSQL);
-
-//        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-//        factory.setJpaVendorAdapter(jpaVendorAdapter);
-//        factory.setDataSource(dataSource);
-//        factory.setPackagesToScan("com.yunsoo.data.service.entity");
-//        factory.setPersistenceUnitName("master");
-//        factory.afterPropertiesSet();
-//        return factory;
         return factoryBuilder
                 .dataSource(dataSource)
                 .packages("com.yunsoo.data.service.entity")

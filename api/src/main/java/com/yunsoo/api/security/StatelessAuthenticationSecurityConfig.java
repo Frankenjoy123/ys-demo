@@ -50,7 +50,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .and()
                 .anonymous().and()
                 .servletApi().and()
-                .headers().cacheControl().and()
+                .headers().cacheControl().and().and()
                 .authorizeRequests()
 
                 .antMatchers("/").permitAll()
