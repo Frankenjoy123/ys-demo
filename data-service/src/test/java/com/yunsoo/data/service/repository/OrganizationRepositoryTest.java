@@ -1,6 +1,6 @@
 package com.yunsoo.data.service.repository;
 
-import com.yunsoo.data.service.config.JPAConfig;
+import com.yunsoo.data.service.Application;
 import com.yunsoo.data.service.entity.OrganizationEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +16,7 @@ import java.util.List;
  * Descriptions:
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = JPAConfig.class)
+@SpringApplicationConfiguration(classes = Application.class)
 public class OrganizationRepositoryTest {
 
     @Autowired
@@ -26,7 +26,6 @@ public class OrganizationRepositoryTest {
     public void test_findByName() {
         String name = "云溯科技";
         List<OrganizationEntity> organizationEntities = organizationRepository.findByName(name);
-        System.out.println(organizationEntities);
         assert organizationEntities.size() == 1 : "organization not found by [name: " + name + "]";
     }
 }
