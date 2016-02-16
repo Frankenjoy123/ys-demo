@@ -51,7 +51,7 @@ public class ProductKeyOrderController {
             Pageable pageable,
             HttpServletResponse response) {
 
-        Page<ProductKeyOrderEntity> entityPage = productKeyOrderRepository.query(orgId, active, remainGE, DateTimeUtils.toDBString(expireDateTimeGE), productBaseId, pageable);
+        Page<ProductKeyOrderEntity> entityPage = productKeyOrderRepository.query(orgId, active, remainGE, expireDateTimeGE, productBaseId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }

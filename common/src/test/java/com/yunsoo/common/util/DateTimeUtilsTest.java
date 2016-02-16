@@ -19,7 +19,6 @@ public class DateTimeUtilsTest {
 
         System.out.println("DateTimeUtils.toString     :\t" + DateTimeUtils.toString(now));
         System.out.println("DateTimeUtils.toUTCString  :\t" + DateTimeUtils.toUTCString(now));
-        System.out.println("DateTimeUtils.toDBString   :\t" + DateTimeUtils.toDBString(now));
         System.out.println("DateTimeUtils.toDateString :\t" + DateTimeUtils.toDateString(now));
 
     }

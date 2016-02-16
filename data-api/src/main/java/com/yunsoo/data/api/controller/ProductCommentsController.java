@@ -1,7 +1,6 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.ProductCommentsObject;
-import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.ProductCommentsEntity;
@@ -51,7 +50,7 @@ public class ProductCommentsController {
                 productBaseId,
                 scoreGE,
                 scoreLE,
-                DateTimeUtils.toDBString(lastCommentDatetimeGE),
+                lastCommentDatetimeGE,
                 pageable);
 
         if (pageable != null) {
