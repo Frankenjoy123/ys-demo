@@ -91,7 +91,7 @@ public class ProductController {
             batchResult = productDomain.batchDeleteProducts(dataArray, orgId);
 
         } catch (NotAcceptableException ex) {
-            throw new NotAcceptableException("ÎÄ¼şÖĞÓĞ²»¹æ·¶µÄ²úÆ·Âë£¬Çë¼ì²é¡£");
+            throw new NotAcceptableException("æ–‡ä»¶ä¸­æœ‰ä¸è§„èŒƒçš„äº§å“ç ï¼Œè¯·æ£€æŸ¥ã€‚");
         }
 
         return batchResult;
