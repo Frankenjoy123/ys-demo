@@ -1,6 +1,8 @@
 package com.yunsoo.data.api.controller;
 
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductObject;
+import com.yunsoo.common.web.exception.NotAcceptableException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.service.ProductService;
 import com.yunsoo.data.service.service.contract.Product;
@@ -44,6 +46,23 @@ public class ProductController {
         productService.patchUpdate(product);
     }
 
+    @RequestMapping(value = "/batchdelete/file", method = RequestMethod.POST)
+    public boolean batchDelete(@RequestBody String[] productKeysList) {
+        boolean batchResult = true;
+        if (productKeysList == null) {
+            return false;
+        }
+        try {
+            for (String productkey : productKeysList) {
+                Product product = productService.getByKey(productkey);
+                product.setProductStatusCode(LookupCodes.ProductStatus.DELETED);
+                productService.patchUpdate(product);
+            }
+        } catch (IllegalArgumentException e) {
+            throw new NotAcceptableException(e.getMessage());
+        }
+        return batchResult;
+    }
 
     private ProductObject toProductObject(Product product) {
         ProductObject object = new ProductObject();

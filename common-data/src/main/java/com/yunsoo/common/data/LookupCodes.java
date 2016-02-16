@@ -150,6 +150,17 @@ public class LookupCodes {
         public static final String DEACTIVATED = "deactivated";
     }
 
+    public static class MktDrawPrizeStatus {
+        private MktDrawPrizeStatus() {
+        }
+
+        public static final String CREATED = "created";
+        public static final String PAID = "paid";
+        public static final String INVALID = "invalid";
+
+    }
+
+
 
     public enum LookupType {
 
