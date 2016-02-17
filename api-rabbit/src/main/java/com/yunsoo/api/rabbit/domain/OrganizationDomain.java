@@ -36,7 +36,7 @@ public class OrganizationDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    @Cacheable(key="T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(),#id )")
+    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(),#id )")
     public OrganizationObject getById(String id) {
         log.debug("cache missing on organization." + id);
         try {
@@ -48,21 +48,23 @@ public class OrganizationDomain {
 
 
     public List<Organization> getOrganizationList() {
-        List<OrganizationObject> orgObjList = dataAPIClient.get("organization", new ParameterizedTypeReference<List<OrganizationObject>>() { });
-        List<ProductBaseObject> productBaseList = dataAPIClient.get("productbase", new ParameterizedTypeReference<List<ProductBaseObject>>() {});
-        if(orgObjList != null && productBaseList != null){
+        List<OrganizationObject> orgObjList = dataAPIClient.get("organization", new ParameterizedTypeReference<List<OrganizationObject>>() {
+        });
+        List<ProductBaseObject> productBaseList = dataAPIClient.get("productbase", new ParameterizedTypeReference<List<ProductBaseObject>>() {
+        });
+        if (orgObjList != null && productBaseList != null) {
             List<Organization> orgList = new ArrayList<>();
             orgObjList.forEach(item -> {
                 Organization organization = new Organization(item);
-                organization.setProductBaseList(productBaseList.stream().filter(product->product.getOrgId().equals(item.getId())).map(ProductBase::new).collect(Collectors.toList()));
+                organization.setProductBaseList(productBaseList.stream().filter(product -> product.getOrgId().equals(item.getId())).map(ProductBase::new).collect(Collectors.toList()));
                 orgList.add(organization);
             });
 
-            orgList.removeIf( item -> item.getProductBaseList().size()==0);
+            orgList.removeIf(item -> item.getProductBaseList().size() == 0);
 
-           return orgList;
+            return orgList;
         }
-       return null;
+        return null;
     }
 
     public ResourceInputStream getLogoImage(String orgId, String imageName) {

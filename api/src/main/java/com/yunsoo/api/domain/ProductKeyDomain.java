@@ -64,7 +64,7 @@ public class ProductKeyDomain {
 
     //ProductKey
 
-    public ProductKeyObject getProductKeyByKey(String productKey) {
+    public ProductKeyObject getProductKey(String productKey) {
         try {
             return dataAPIClient.get("productkey/{key}", ProductKeyObject.class, productKey);
         } catch (NotFoundException ex) {

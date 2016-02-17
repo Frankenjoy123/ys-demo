@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.MarketingObject;
 import org.joda.time.DateTime;
 
 /**
@@ -116,4 +117,19 @@ public class Marketing {
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
     }
+
+    public Marketing(MarketingObject object) {
+        if (object != null) {
+            this.setId(object.getId());
+            this.setOrgId(object.getOrgId());
+            this.setProductBaseId(object.getProductBaseId());
+            this.setTypeCode(object.getTypeCode());
+            this.setBalance(object.getBalance());
+            this.setCreatedAccountId(object.getCreatedAccountId());
+            this.setCreatedDateTime(object.getCreatedDateTime());
+            this.setModifiedAccountId(object.getModifiedAccountId());
+            this.setModifiedDateTime(object.getModifiedDateTime());
+        }
+    }
+
 }

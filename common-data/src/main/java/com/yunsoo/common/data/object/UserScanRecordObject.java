@@ -36,7 +36,6 @@ public class UserScanRecordObject implements Serializable {
     @JsonProperty("app_id")
     private String appId;
 
-    @NotEmpty(message = "device_id must not be null or empty")
     @JsonProperty("device_id")
     private String deviceId;
 

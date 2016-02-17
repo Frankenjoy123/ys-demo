@@ -2,10 +2,10 @@ package com.yunsoo.data.service.service.Impl;
 
 
 import com.yunsoo.data.service.dao.ProductDao;
+import com.yunsoo.data.service.dbmodel.dynamodb.ProductModel;
 import com.yunsoo.data.service.service.ProductService;
 import com.yunsoo.data.service.service.contract.Product;
 import com.yunsoo.data.service.service.exception.ServiceException;
-import com.yunsoo.data.service.dbmodel.dynamodb.ProductModel;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,11 @@ public class ProductServiceImpl implements ProductService {
                 || (productModel.getProductKeyDisabled() != null && productModel.getProductKeyDisabled())) {
             return null;
         }
+        String productKeyTypeCode = productModel.getProductKeyTypeCode();
+        String productKeyBatchId = productModel.getProductKeyBatchId();
+
         if (!productModel.isPrimary() && productModel.getPrimaryProductKey() != null) {
+            //get the primary product key
             productModel = productDao.getByKey(productModel.getPrimaryProductKey());
         }
         if (productModel == null || productModel.getProductBaseId() == null) {
@@ -35,10 +39,14 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = new Product();
         product.setProductKey(productKey);
+        product.setProductKeyTypeCode(productKeyTypeCode);
+        product.setProductKeyBatchId(productKeyBatchId);
+        product.setProductKeySet(productModel.getProductKeySet());
+        product.setCreatedDateTime(productModel.getCreatedDateTime());
+
         product.setProductBaseId(productModel.getProductBaseId());
         product.setProductStatusCode(productModel.getProductStatusCode());
         product.setManufacturingDateTime(productModel.getManufacturingDateTime());
-        product.setCreatedDateTime(productModel.getCreatedDateTime());
 
         return product;
     }

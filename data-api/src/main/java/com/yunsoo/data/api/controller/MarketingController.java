@@ -7,6 +7,7 @@ import com.yunsoo.common.data.object.MktDrawRecordObject;
 import com.yunsoo.common.data.object.MktDrawRuleObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.MarketingEntity;
 import com.yunsoo.data.service.entity.MktDrawPrizeEntity;
 import com.yunsoo.data.service.entity.MktDrawRecordEntity;
@@ -19,10 +20,14 @@ import com.yunsoo.data.service.service.ProductService;
 import com.yunsoo.data.service.service.contract.Product;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : haitao
@@ -53,6 +58,46 @@ public class MarketingController {
     public MarketingObject getMarketingById(@PathVariable String id) {
         MarketingEntity entity = findMarketingById(id);
         return toMarketingObject(entity);
+    }
+
+    //get mktDrawPrize by product key, provide API-Rabbit
+    @RequestMapping(value = "/drawprize/{key}", method = RequestMethod.GET)
+    public MktDrawPrizeObject getMktDrawPrizeByProductKey(@PathVariable String key) {
+        List<MktDrawPrizeEntity> entities = mktDrawPrizeRepository.findByProductKey(key);
+        if (entities.size() > 0) {
+            MktDrawPrizeEntity entity = entities.get(0);
+            return toMktDrawPrizeObject(entity);
+        } else {
+            return null;
+        }
+    }
+
+    //get mktDrawRecord by product key, provide API-Rabbit
+    @RequestMapping(value = "/draw/{key}", method = RequestMethod.GET)
+    public MktDrawRecordObject getMktDrawRecordByProductKey(@PathVariable String key) {
+        List<MktDrawRecordEntity> entities = mktDrawRecordRepository.findByProductKey(key);
+        if (entities.size() > 0) {
+            MktDrawRecordEntity entity = entities.get(0);
+            return toMktDrawRecordObject(entity);
+        } else {
+            return null;
+        }
+    }
+
+    //query marketing plan, provide API
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<MarketingObject> getByFilter(@RequestParam(value = "org_id") String orgId,
+                                             Pageable pageable,
+                                             HttpServletResponse response) {
+        Page<MarketingEntity> entityPage = marketingRepository.findByOrgId(orgId, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toMarketingObject)
+                .collect(Collectors.toList());
     }
 
     //create marketing plan, provide API
@@ -117,6 +162,22 @@ public class MarketingController {
         return toMktDrawPrizeObject(newEntity);
     }
 
+    //update marketing draw prize by product key, provide: API-Rabbit
+    @RequestMapping(value = "/drawPrize", method = RequestMethod.PUT)
+    public MktDrawPrizeObject updateDrawPrize(@RequestBody MktDrawPrizeObject mktDrawPrizeObject) {
+
+        String productKey = mktDrawPrizeObject.getProductKey();
+        List<MktDrawPrizeEntity> entities = mktDrawPrizeRepository.findByProductKey(productKey);
+        if (entities.size() == 0) {
+            throw new NotFoundException("This draw prize has not been found");
+        }
+        MktDrawPrizeEntity entity = toMktDrawPrizeEntity(mktDrawPrizeObject);
+        entity.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
+        MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
+
+        return toMktDrawPrizeObject(newEntity);
+    }
+
     //create marketing draw rule provide API
     @RequestMapping(value = "/drawRule", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -133,7 +194,6 @@ public class MarketingController {
         }
         return entity;
     }
-
 
     private MarketingObject toMarketingObject(MarketingEntity entity) {
         if (entity == null) {
@@ -235,7 +295,7 @@ public class MarketingController {
         entity.setAmount(object.getAmount());
         entity.setProbability(object.getProbability());
         entity.setComments(object.getComments());
-        entity.setCreatedAccountId(object.getModifiedAccountId());
+        entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());

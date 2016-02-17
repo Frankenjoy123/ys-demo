@@ -17,15 +17,23 @@ import java.util.Set;
 public class ProductKeyObject implements Serializable {
 
     private String productKey;
+
     private String productKeyTypeCode;
+
     private boolean productKeyDisabled;
+
     private boolean primary;
+
     private String productKeyBatchId;
+
     private String primaryProductKey;
+
     private Set<String> productKeySet;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
+
 
     public String getProductKey() {
         return productKey;

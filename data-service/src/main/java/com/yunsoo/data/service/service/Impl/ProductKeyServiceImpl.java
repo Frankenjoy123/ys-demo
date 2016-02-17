@@ -35,7 +35,7 @@ public class ProductKeyServiceImpl implements ProductKeyService {
         if (productModel == null) {
             return null;
         }
-        return ProductKey.fromModel(productModel);
+        return new ProductKey(productModel);
     }
 
     @Override

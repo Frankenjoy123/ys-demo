@@ -1,90 +1,116 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.LookupObject;
-import com.yunsoo.common.web.util.PageableUtils;
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.LookupEntity;
 import com.yunsoo.data.service.repository.LookupCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Created by yan on 9/7/2015.
+ * Created by:   yan
+ * Created on:   9/7/2015
+ * Descriptions:
  */
 @RestController
 @RequestMapping("/lookup")
 public class LookupController {
 
     @Autowired
-    private LookupCodeRepository repository;
+    private LookupCodeRepository lookupCodeRepository;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<LookupObject> getByFilter(@RequestParam(value = "type_code", required = false) String typeCode,
-                                          @RequestParam(value = "active", required = false) Boolean active,
-                                          Pageable pageable,
-                                          HttpServletResponse response){
-        List<LookupObject> lookupObjectList = new ArrayList<>();
-        Iterable<LookupEntity> entityList;
-        if( typeCode!=null && active != null )
-            entityList = repository.findByTypeCodeAndActive(typeCode, active);
-        else if(typeCode != null)
-            entityList = repository.findByTypeCode(typeCode);
-        else if(active != null )
-            entityList = repository.findByActive(active, pageable);
-        else
-            entityList = repository.findAll(pageable);
+                                          @RequestParam(value = "active", required = false) Boolean active) {
+        return searchLookup(typeCode, active).stream().map(this::toLookupObject).collect(Collectors.toList());
+    }
 
-        entityList.forEach(item-> lookupObjectList.add(toLookupObject(item)));
-        if (pageable != null) {
-            response.setHeader("Content-Range", PageableUtils.formatPages(((Page<LookupEntity>) entityList).getNumber(), ((Page<LookupEntity>) entityList).getTotalPages()));
+    @RequestMapping(value = "{typeCode}", method = RequestMethod.GET)
+    public List<LookupObject> getByTypeCode(@PathVariable(value = "typeCode") String typeCode,
+                                            @RequestParam(value = "active", required = false) Boolean active) {
+        return searchLookup(typeCode, active).stream().map(this::toLookupObject).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "typeCode", method = RequestMethod.GET)
+    public List<String> getTypeCodes() {
+        return lookupCodeRepository.findDistinctTypeCode();
+    }
+
+    @RequestMapping(value = "{typeCode}/{code}", method = RequestMethod.GET)
+    public LookupObject getByTypeCodeAndCode(@PathVariable(value = "typeCode") String typeCode,
+                                             @PathVariable(value = "code") String code) {
+        LookupEntity entity = lookupCodeRepository.findOne(new LookupEntity.LookupPK(typeCode, code));
+        if (entity == null) {
+            throw new NotFoundException("lookup item not found");
         }
-        return lookupObjectList;
-    }
-    @RequestMapping(value = "/typeCodes", method = RequestMethod.GET)
-    public List<String> getTypeCodes(){
-        return repository.findDistinctTypCode();
+        return toLookupObject(entity);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.PUT)
-    public void save(@RequestBody LookupObject lookupObject){
-        repository.save(toLookupEntity(lookupObject));
+    @RequestMapping(value = "{typeCode}/{code}", method = RequestMethod.PUT)
+    public void update(@PathVariable(value = "typeCode") String typeCode,
+                       @PathVariable(value = "code") String code,
+                       @RequestBody LookupObject lookupObject) {
+        LookupEntity entity = lookupCodeRepository.findOne(new LookupEntity.LookupPK(typeCode, code));
+        if (entity == null) {
+            throw new NotFoundException("lookup item not found");
+        }
+        if (lookupObject.getName() != null) {
+            entity.setName(lookupObject.getName());
+        }
+        if (lookupObject.getDescription() != null) {
+            entity.setDescription(lookupObject.getDescription());
+        }
+        if (lookupObject.getActive() != null) {
+            entity.setActive(lookupObject.getActive());
+        }
+        lookupCodeRepository.save(entity);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@RequestBody LookupObject lookupObject){
-        repository.delete(toLookupEntity(lookupObject));
+    private List<LookupEntity> searchLookup(String typeCode, Boolean active) {
+        List<LookupEntity> entityList;
+        if (typeCode != null && active != null) {
+            entityList = lookupCodeRepository.findByTypeCodeAndActive(typeCode, active);
+        } else if (typeCode != null) {
+            entityList = lookupCodeRepository.findByTypeCode(typeCode);
+        } else if (active != null) {
+            entityList = lookupCodeRepository.findByActive(active);
+        } else {
+            entityList = lookupCodeRepository.findAll();
+        }
+        return entityList;
     }
 
-
-    private LookupObject toLookupObject(LookupEntity entity){
-        if(entity == null)
+    private LookupObject toLookupObject(LookupEntity entity) {
+        if (entity == null) {
             return null;
+        }
         LookupObject obj = new LookupObject();
-        obj.setCode(entity.getCode());
-        obj.setActive(entity.isActive());
-        obj.setDescription(entity.getDescription());
-        obj.setName(entity.getName());
         obj.setTypeCode(entity.getTypeCode());
+        obj.setCode(entity.getCode());
+        obj.setName(entity.getName());
+        obj.setDescription(entity.getDescription());
+        obj.setActive(entity.isActive());
         return obj;
     }
 
-    private LookupEntity toLookupEntity(LookupObject lookupObject){
-        LookupEntity entity = new LookupEntity();
-        entity.setName(lookupObject.getName());
-        entity.setDescription(lookupObject.getDescription());
-        entity.setCode(lookupObject.getCode());
-        if(lookupObject.isActive() == null)
-            entity.setActive(true);
-        else
-            entity.setActive(lookupObject.isActive());
-        entity.setTypeCode(lookupObject.getTypeCode());
-        return entity;
-    }
+//    private LookupEntity toLookupEntity(LookupObject obj) {
+//        if (obj == null) {
+//            return null;
+//        }
+//        LookupEntity entity = new LookupEntity();
+//        entity.setTypeCode(obj.getTypeCode());
+//        entity.setCode(obj.getCode());
+//        entity.setName(obj.getName());
+//        entity.setDescription(obj.getDescription());
+//        if (obj.isActive() == null) {
+//            entity.setActive(true);
+//        } else {
+//            entity.setActive(obj.isActive());
+//        }
+//        return entity;
+//    }
+
 }

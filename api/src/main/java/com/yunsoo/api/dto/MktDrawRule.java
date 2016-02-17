@@ -129,6 +129,9 @@ public class MktDrawRule {
         this.modifiedDateTime = modifiedDateTime;
     }
 
+    public MktDrawRule() {
+    }
+
     public MktDrawRule(MktDrawRuleObject object) {
         if (object != null) {
             this.setId(object.getId());

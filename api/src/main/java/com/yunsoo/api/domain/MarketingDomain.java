@@ -2,11 +2,17 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.data.object.MktDrawRuleObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Created by  : Haitao
@@ -32,6 +38,17 @@ public class MarketingDomain {
             return null;
         }
     }
+
+    public Page<MarketingObject> getMarketingByOrgId(String orgId, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append(pageable)
+                .build();
+
+        return dataAPIClient.getPaged("marketing" + query, new ParameterizedTypeReference<List<MarketingObject>>() {
+        });
+    }
+
 
 
 }
