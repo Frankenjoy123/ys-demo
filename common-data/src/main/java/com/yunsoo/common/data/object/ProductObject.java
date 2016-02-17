@@ -8,6 +8,7 @@ import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Created by:   Lijian
@@ -18,6 +19,20 @@ public class ProductObject implements Serializable {
 
     @JsonProperty("product_key")
     private String productKey;
+
+    @JsonProperty("product_key_type_code")
+    private String productKeyTypeCode;
+
+    @JsonProperty("product_key_batch_id")
+    private String productKeyBatchId;
+
+    @JsonProperty("product_key_set")
+    private Set<String> productKeySet;
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
+    private DateTime createdDateTime;
 
     @JsonProperty("product_base_id")
     private String productBaseId;
@@ -30,11 +45,6 @@ public class ProductObject implements Serializable {
     @JsonProperty("manufacturing_datetime")
     private DateTime manufacturingDateTime;
 
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("created_datetime")
-    private DateTime createdDateTime;
-
 
     public String getProductKey() {
         return productKey;
@@ -42,6 +52,38 @@ public class ProductObject implements Serializable {
 
     public void setProductKey(String productKey) {
         this.productKey = productKey;
+    }
+
+    public String getProductKeyTypeCode() {
+        return productKeyTypeCode;
+    }
+
+    public void setProductKeyTypeCode(String productKeyTypeCode) {
+        this.productKeyTypeCode = productKeyTypeCode;
+    }
+
+    public String getProductKeyBatchId() {
+        return productKeyBatchId;
+    }
+
+    public void setProductKeyBatchId(String productKeyBatchId) {
+        this.productKeyBatchId = productKeyBatchId;
+    }
+
+    public Set<String> getProductKeySet() {
+        return productKeySet;
+    }
+
+    public void setProductKeySet(Set<String> productKeySet) {
+        this.productKeySet = productKeySet;
+    }
+
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 
     public String getProductBaseId() {
@@ -66,13 +108,5 @@ public class ProductObject implements Serializable {
 
     public void setManufacturingDateTime(DateTime manufacturingDateTime) {
         this.manufacturingDateTime = manufacturingDateTime;
-    }
-
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
     }
 }

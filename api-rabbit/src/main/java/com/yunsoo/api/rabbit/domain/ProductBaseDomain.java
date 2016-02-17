@@ -17,7 +17,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -29,17 +32,16 @@ import java.util.List;
 @ElastiCacheConfig
 public class ProductBaseDomain {
 
-//    private static final String DETAILS_FILE_NAME = "details.json";
-//
-//    private static ObjectMapper mapper = new ObjectMapper();
-
     @Autowired
     private RestClient dataAPIClient;
 
     private Log log = LogFactory.getLog(this.getClass());
 
-    @Cacheable(key="T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId )")
+    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId )")
     public ProductBaseObject getProductBaseById(String productBaseId) {
+        if (productBaseId == null) {
+            return null;
+        }
         try {
             return dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         } catch (NotFoundException ignored) {
@@ -47,20 +49,16 @@ public class ProductBaseDomain {
         }
     }
 
-//    public ProductBaseDetails getProductBaseDetails(String orgId, String productBaseId, Integer version) {
-//        ResourceInputStream resourceInputStream;
-//        try {
-//            resourceInputStream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{fileName}",
-//                    orgId, productBaseId, version, DETAILS_FILE_NAME);
-//        } catch (NotFoundException ex) {
-//            return null;
-//        }
-//        try {
-//            return mapper.readValue(resourceInputStream, ProductBaseDetails.class);
-//        } catch (IOException e) {
-//            return null;
-//        }
-//    }
+    public String getProductBaseDetails(String orgId, String productBaseId, int version) {
+        try {
+            ResourceInputStream resourceInputStream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json",
+                    orgId, productBaseId, version);
+            byte[] bytes = StreamUtils.copyToByteArray(resourceInputStream);
+            return new String(bytes, StandardCharsets.UTF_8);
+        } catch (NotFoundException | IOException ignored) {
+            return null;
+        }
+    }
 
     public Page<ProductBaseObject> getProductBaseByOrgId(String orgId, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -82,6 +80,7 @@ public class ProductBaseDomain {
         }
     }
 
+    @Deprecated
     //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId, 'details' )")
     public ProductBaseDetails getProductBaseDetailsById(String productBaseId) {
         try {
@@ -100,9 +99,5 @@ public class ProductBaseDomain {
         }
         return dataAPIClient.get("productcategory/{id}", ProductCategory.class, id);
     }
-
-
-
-
 
 }

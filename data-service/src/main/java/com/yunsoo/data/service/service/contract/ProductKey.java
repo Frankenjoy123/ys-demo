@@ -13,12 +13,19 @@ import java.util.Set;
 public class ProductKey {
 
     private String productKey;
+
     private String productKeyTypeCode;
+
     private boolean productKeyDisabled;
+
     private boolean primary;
+
     private String productKeyBatchId;
+
     private String primaryProductKey;
+
     private Set<String> productKeySet;
+
     private DateTime createdDateTime;
 
     public String getProductKey() {
@@ -85,32 +92,22 @@ public class ProductKey {
         this.createdDateTime = createdDateTime;
     }
 
-    public static ProductKey fromModel(ProductModel productModel) {
-        ProductKey productKey = new ProductKey();
-        productKey.setProductKey(productModel.getProductKey());
-        productKey.setProductKeyTypeCode(productModel.getProductKeyTypeCode());
-        Boolean isDisabled = productModel.getProductKeyDisabled();
-        productKey.setProductKeyDisabled(isDisabled != null && isDisabled);
-        productKey.setPrimary(productModel.isPrimary());
-        productKey.setProductKeyBatchId(productModel.getProductKeyBatchId());
-        productKey.setPrimaryProductKey(productModel.getPrimaryProductKey());
-        productKey.setProductKeySet(productModel.getProductKeySet());
-        productKey.setCreatedDateTime(productModel.getCreatedDateTime());
-        return productKey;
+    public ProductKey() {
+
     }
 
-    public static ProductModel toModel(ProductKey productKey) {
-        ProductModel productModel = new ProductModel();
-        productModel.setProductKey(productKey.getProductKey());
-        productModel.setProductKeyTypeCode(productKey.getProductKeyTypeCode());
-        if (productKey.isProductKeyDisabled()) {
-            productModel.setProductKeyDisabled(true);
+    public ProductKey(ProductModel productModel) {
+        if (productModel != null) {
+            this.setProductKey(productModel.getProductKey());
+            this.setProductKeyTypeCode(productModel.getProductKeyTypeCode());
+            Boolean isDisabled = productModel.getProductKeyDisabled();
+            this.setProductKeyDisabled(isDisabled != null && isDisabled);
+            this.setPrimary(productModel.isPrimary());
+            this.setProductKeyBatchId(productModel.getProductKeyBatchId());
+            this.setPrimaryProductKey(productModel.getPrimaryProductKey());
+            this.setProductKeySet(productModel.getProductKeySet());
+            this.setCreatedDateTime(productModel.getCreatedDateTime());
         }
-        productModel.setProductKeyBatchId(productKey.getProductKeyBatchId());
-        productModel.setPrimaryProductKey(productKey.getPrimaryProductKey());
-        productModel.setProductKeySet(productKey.getProductKeySet());
-        productModel.setCreatedDateTime(productKey.getCreatedDateTime());
-        return productModel;
     }
 
 }

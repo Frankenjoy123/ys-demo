@@ -46,7 +46,9 @@ public final class TokenHandler {
         String orgId = parts.length >= 3 ? parts[2] : null; //orgId is nullable
 
         if (expires.isBeforeNow()) {
-            log.error(String.format("Token expired [token: %s, expires: %s]", token, expires.toString()));
+            if (log.isDebugEnabled()) {
+                log.debug(String.format("Token expired [token: %s, expires: %s]", token, expires.toString()));
+            }
             return null;
         }
 
