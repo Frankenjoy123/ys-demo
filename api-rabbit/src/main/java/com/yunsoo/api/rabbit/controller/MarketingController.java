@@ -33,6 +33,32 @@ public class MarketingController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
+    @RequestMapping(value = "draw/{key}", method = RequestMethod.GET)
+    public MktDrawRecord getMktDrawRecordByProductKey(@PathVariable String key) {
+        if (key == null) {
+            throw new BadRequestException("product key can not be null");
+        }
+        MktDrawRecordObject mktDrawRecordObject = marketingDomain.getMktDrawRecordByProductKey(key);
+        if (mktDrawRecordObject != null) {
+            return new MktDrawRecord(mktDrawRecordObject);
+        } else {
+            return null;
+        }
+    }
+
+    @RequestMapping(value = "drawprize/{key}", method = RequestMethod.GET)
+    public MktDrawPrize getMktDrawPrizeByProductKey(@PathVariable String key) {
+        if (key == null) {
+            throw new BadRequestException("product key can not be null");
+        }
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKey(key);
+        if (mktDrawPrizeObject != null) {
+            return new MktDrawPrize(mktDrawPrizeObject);
+        } else {
+            return null;
+        }
+    }
+
     @RequestMapping(value = "draw", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public MktDrawRecord createMktDrawRecord(@RequestBody MktDrawRecord mktDrawRecord) {
@@ -68,5 +94,15 @@ public class MarketingController {
         MktDrawPrizeObject newMktDrawPrizeObject = marketingDomain.createMktDrawPrize(mktDrawPrizeObject);
         return new MktDrawPrize(newMktDrawPrizeObject);
     }
+
+    @RequestMapping(value = "drawPrize", method = RequestMethod.PUT)
+    public void updateMktDrawPrize(@RequestBody MktDrawPrize mktDrawPrize) {
+        if (mktDrawPrize == null) {
+            throw new BadRequestException("marketing draw record can not be null");
+        }
+        MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
+        marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+    }
+
 
 }
