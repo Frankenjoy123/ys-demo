@@ -8,23 +8,13 @@ multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
 spring:
-  profiles.active: dev
+  profiles.active: local
   jpa:
     show_sql: false
     database: MYSQL
     generate_ddl: false
   mvc:
     throw-exception-if-no-handler-found: true
-
----
-spring:
-  profiles: dev
-
-logging:
-  file: c:/logs/data-api.log
-  level:
-    org.springframework: 'INFO'
-    org.hibernate: 'INFO'
 
 yunsoo:
   debug: true
@@ -47,30 +37,20 @@ jdbc:
 
 ---
 spring:
-  profiles: test
+  profiles: local
 
 logging:
-  path: /var/log
-  file: data-api.log
+  file: c:/logs/data-api.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'
 
-yunsoo:
-  debug: true
-  environment: test
-  aws:
-    region: cn-north-1
-    s3:
-      bucket_name: test-yunsoo
+---
+spring:
+  profiles: dev
 
-jdbc:
-  master:
-    driver_class_name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://test-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
-    username: root
-    password: admin201512
-    initial_size: 10
-    max_idle: 20
-    test_on_borrow: true
-    validation_query: select 1
+logging:
+  file: var/log/data-api.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'INFO'
