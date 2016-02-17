@@ -2,19 +2,11 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
-import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.client.RestResponseErrorHandler;
-import com.yunsoo.data.api.Application;
 import com.yunsoo.data.api.Constants;
+import com.yunsoo.data.api.ControllerTestBase;
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
@@ -23,20 +15,7 @@ import java.util.List;
  * Created on:   2015/9/22
  * Descriptions:
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebIntegrationTest
-public class AccountControllerTest {
-
-    @Value("${local.server.port}")
-    private int port;
-
-    private RestClient dataAPIClient;
-
-    @Before
-    public void before() {
-        dataAPIClient = new RestClient("http://localhost:" + port, new RestResponseErrorHandler());
-    }
+public class AccountControllerTest extends ControllerTestBase {
 
     @Test
     public void test_SystemAccount() {

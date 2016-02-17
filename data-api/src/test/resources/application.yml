@@ -3,6 +3,8 @@ spring:
     show_sql: true
     database: H2
     generate_ddl: true
+  mvc:
+    throw-exception-if-no-handler-found: true
 
 server:
   port: 0
@@ -15,7 +17,7 @@ multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
 logging:
-  file: c:/logs/data-api.log
+  file: c:/logs/data-api.ut.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'

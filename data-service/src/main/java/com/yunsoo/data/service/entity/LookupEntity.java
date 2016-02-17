@@ -1,14 +1,21 @@
 package com.yunsoo.data.service.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
- * Created by yan on 9/7/2015.
+ * Created by:   yan
+ * Created on:   9/7/2015
+ * Descriptions:
  */
 @Entity
 @Table(name = "lookup_code")
-@IdClass(LookupPK.class)
+@IdClass(LookupEntity.LookupPK.class)
 public class LookupEntity {
+
+    @Id
+    @Column(name = "type_code")
+    private String typeCode;
 
     @Id
     @Column(name = "code")
@@ -23,9 +30,14 @@ public class LookupEntity {
     @Column(name = "active")
     private boolean active;
 
-    @Column(name = "type_code")
-    @Id
-    private String typeCode;
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
 
     public String getCode() {
         return code;
@@ -59,30 +71,52 @@ public class LookupEntity {
         this.active = active;
     }
 
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
-
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof LookupEntity)) return false;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || this.typeCode == null || this.code == null || !(obj instanceof LookupEntity)) {
+            return false;
+        }
 
-        LookupEntity entity = (LookupEntity) o;
+        LookupEntity entity = (LookupEntity) obj;
 
-        if (!code.equals(entity.code)) return false;
-        return typeCode.equals(entity.typeCode);
-
+        return this.typeCode.equals(entity.typeCode) && this.code.equals(entity.code);
     }
 
     @Override
     public int hashCode() {
-        int result = code.hashCode();
-        result = 31 * result + typeCode.hashCode();
-        return result;
+        return 31 * typeCode.hashCode() + code.hashCode();
     }
+
+    public static class LookupPK implements Serializable {
+
+        private String typeCode;
+
+        private String code;
+
+        public String getTypeCode() {
+            return typeCode;
+        }
+
+        public void setTypeCode(String typeCode) {
+            this.typeCode = typeCode;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public LookupPK() {
+        }
+
+        public LookupPK(String typeCode, String code) {
+            this.typeCode = typeCode;
+            this.code = code;
+        }
+    }
+
 }

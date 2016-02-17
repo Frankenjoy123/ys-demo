@@ -23,7 +23,7 @@ import javax.sql.DataSource;
 @EnableJpaRepositories(basePackages = "com.yunsoo.data.service.repository")
 @EnableTransactionManagement
 @Configuration
-public class JPAConfig {
+public class JPAConfiguration {
 
     @Autowired
     private DataSource dataSource;
