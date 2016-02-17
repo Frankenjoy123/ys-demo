@@ -13,13 +13,12 @@ cloud:
       static: cn-north-1
 
 spring:
-  profiles.active: local
   mvc:
     throw-exception-if-no-handler-found: true
 
 yunsoo:
-  debug: true
-  environment: dev
+  debug: false
+  environment: test
   client:
     dataapi:
       baseurl: http://localhost:3080/
@@ -29,23 +28,3 @@ yunsoo:
     handler:
       max: 5000
       batch: 1000
-
----
-spring:
-  profiles: local
-
-logging:
-  file: c:/logs/data-api.log
-  level:
-    org.springframework: 'INFO'
-    org.hibernate: 'INFO'
-
----
-spring:
-  profiles: dev
-
-logging:
-  file: /var/log/data-api.log
-  level:
-    org.springframework: 'INFO'
-    org.hibernate: 'INFO'

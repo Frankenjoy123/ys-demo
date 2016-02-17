@@ -3,7 +3,7 @@ server:
 management:
   port: 6081
   address: 127.0.0.1
-  
+
 multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
@@ -26,37 +26,8 @@ yunsoo:
     hash_salt: nC9UYPUupMaViIG3UBODY7B19IYW6Z0X
 
 spring:
-  profiles.active: local
   mvc:
     throw-exception-if-no-handler-found: true
-
-yunsoo:
-  debug: true
-  environment: dev
-  client:
-    dataapi:
-      baseurl: http://localhost:3080/
-    processor:
-      baseurl: http://localhost:4080/
-  product_key_base_url: http://dev.yunsu.co:7080/
-
----
-spring:
-  profiles: local
-
-logging:
-  file: c:/logs/api.log
-  level:
-    org.springframework: 'INFO'
-    org.hibernate: 'ERROR'
-
-yunsoo:
-  cache:
-    type: local
-
----
-spring:
-  profiles: dev
 
 logging:
   file: /var/log/api.log
@@ -65,5 +36,13 @@ logging:
     org.hibernate: 'INFO'
 
 yunsoo:
+  debug: false
+  environment: test
+  client:
+    dataapi:
+      baseurl: http://localhost:3080/
+    processor:
+      baseurl: http://localhost:4080/
+  product_key_base_url: http://t.m.yunsu.co:9080/
   cache:
     type: elasticache
