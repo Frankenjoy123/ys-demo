@@ -50,6 +50,8 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .antMatchers("/organization/**").permitAll()
                 .antMatchers("/productbase/**").permitAll()
                 .antMatchers("/scan/**").permitAll()
+                .antMatchers("/webScan/**").permitAll()
+                .antMatchers("/marketing/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/user/*/gravatar").permitAll()
 
                 .antMatchers("/v2/api-docs").permitAll()
@@ -60,21 +62,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .antMatchers("/webjars/**").permitAll()
 
                 .anyRequest().authenticated().and()
-                //.antMatchers("/**").permitAll()
 
-                //allow anonymous POSTs to login
-                // .antMatchers(HttpMethod.POST, "/auth/**").permitAll().and()
-
-                //allow anonymous GETs to API
-                // .antMatchers(HttpMethod.GET, "/api/**").permitAll()
-
-                //all other request need to be authenticated
-//               .anyRequest().hasRole("COM_USER").and()
-
-                // custom JSON based authentication by POST of {"username":"<name>","password":"<password>"} which sets the token header upon authentication
-                //.addFilterBefore(new StatelessLoginFilter("/auth/login", tokenAuthenticationService, accountDetailService, authenticationManager()), UsernamePasswordAuthenticationFilter.class)
-
-                // custom Token based authentication based on the header previously given to the client
                 .addFilterBefore(new TokenAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
     }
 
