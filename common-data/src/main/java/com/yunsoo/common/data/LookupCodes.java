@@ -155,6 +155,7 @@ public class LookupCodes {
         }
 
         public static final String CREATED = "created";
+        public static final String SUBMIT = "submit";
         public static final String PAID = "paid";
         public static final String INVALID = "invalid";
 
