@@ -26,6 +26,10 @@ public final class ObjectIdGenerator {
         return toBase36String(generateBytes());
     }
 
+    public static boolean validate(String id) {
+        return id != null && id.length() == 19;
+    }
+
     public static Date getGeneratedDateFromId(String id) {
         byte[] bytes = parseBase36String(id);
         int timestamp = ((bytes[0] << 24) | ((bytes[1] & 0xff) << 16) | ((bytes[2] & 0xff) << 8) | ((bytes[3] & 0xff)));
