@@ -16,6 +16,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -86,14 +87,21 @@ public class MarketingController {
         });
 
         return marketingList;
+    }
 
+    //create marketing plan
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public Marketing createMarketing(@RequestBody Marketing marketing) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        MarketingObject marketingObject = marketing.toMarketingObject();
+        marketingObject.setCreatedAccountId(currentAccountId);
+        marketingObject.setCreatedDateTime(DateTime.now());
+        if (StringUtils.hasText(marketing.getOrgId()))
+            marketingObject.setOrgId(marketing.getOrgId());
+        else
+            marketingObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
 
-//        List<Marketing> marketings = marketingPage.map(p -> {
-//            Marketing marketing = new Marketing(p);
-//            return marketing;
-//        }).getContent();
-//
-//        return marketings;
+        return new Marketing(marketingDomain.createMarketing(marketingObject));
     }
 
     //delete marketing plan by id

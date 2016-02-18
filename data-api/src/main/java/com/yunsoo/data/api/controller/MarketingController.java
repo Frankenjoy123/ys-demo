@@ -103,7 +103,7 @@ public class MarketingController {
     //create marketing plan, provide API
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public MarketingObject create(@RequestBody MarketingObject marketingObject) {
+    public MarketingObject createMarketing(@RequestBody MarketingObject marketingObject) {
         MarketingEntity entity = toMarketingEntity(marketingObject);
         entity.setId(null);
         if (entity.getCreatedDateTime() == null) {

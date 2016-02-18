@@ -130,6 +130,10 @@ public class Marketing {
         this.productBaseName = productBaseName;
     }
 
+    public Marketing() {
+
+    }
+
     public Marketing(MarketingObject object) {
         if (object != null) {
             this.setId(object.getId());
@@ -143,5 +147,20 @@ public class Marketing {
             this.setModifiedDateTime(object.getModifiedDateTime());
         }
     }
+
+    public MarketingObject toMarketingObject() {
+        MarketingObject object = new MarketingObject();
+        object.setId(this.getId());
+        object.setOrgId(this.getOrgId());
+        object.setProductBaseId(this.getProductBaseId());
+        object.setTypeCode(this.getTypeCode());
+        object.setBalance(this.getBalance());
+        object.setCreatedAccountId(this.getCreatedAccountId());
+        object.setCreatedDateTime(this.getCreatedDateTime());
+        object.setModifiedAccountId(this.getModifiedAccountId());
+        object.setModifiedDateTime(this.getModifiedDateTime());
+        return object;
+    }
+
 
 }
