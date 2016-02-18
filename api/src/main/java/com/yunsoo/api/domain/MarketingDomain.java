@@ -49,6 +49,9 @@ public class MarketingDomain {
         });
     }
 
-
+    public void deleteMarketingById(String id) {
+        dataAPIClient.delete("marketing/{id}", id);
+        dataAPIClient.delete("marketing/drawRule/{id}", id);
+    }
 
 }

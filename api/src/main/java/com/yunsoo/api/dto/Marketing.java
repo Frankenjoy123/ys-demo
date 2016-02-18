@@ -46,6 +46,10 @@ public class Marketing {
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
 
+    @JsonProperty("product_base_name")
+    private String productBaseName;
+
+
     public String getId() {
         return id;
     }
@@ -116,6 +120,14 @@ public class Marketing {
 
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
+    }
+
+    public String getProductBaseName() {
+        return productBaseName;
+    }
+
+    public void setProductBaseName(String productBaseName) {
+        this.productBaseName = productBaseName;
     }
 
     public Marketing(MarketingObject object) {
