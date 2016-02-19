@@ -16,4 +16,6 @@ public interface UserScanRecordRepository extends FindOneAndSaveRepository<UserS
 
     Page<UserScanRecordEntity> findByUserId(String userId, Pageable pageable);
 
+    Page<UserScanRecordEntity> findByYsid(String ysid, Pageable pageable);
+
 }

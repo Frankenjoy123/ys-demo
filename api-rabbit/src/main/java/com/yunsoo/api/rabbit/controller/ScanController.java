@@ -19,7 +19,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -56,7 +55,7 @@ public class ScanController {
     private LogisticsDomain logisticsDomain;
 
     @Autowired
-    private ScanDomain scanDomain;
+    private UserScanDomain userScanDomain;
 
     @Autowired
     private UserFollowDomain userFollowDomain;
@@ -106,7 +105,7 @@ public class ScanController {
         scanResult.setProduct(product);
 
         //3. retrieve scan records
-        List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByProductKey(scanRequest.getKey(), new PageRequest(0, 20))
+        List<ScanRecord> scanRecordList = userScanDomain.getScanRecordsByProductKey(scanRequest.getKey(), null)
                 .map(ScanRecord::new)
                 .getContent();
         scanResult.setScanRecordList(scanRecordList);
@@ -147,7 +146,7 @@ public class ScanController {
         if (userScanRecordObject.getDetails() == null) {
             userScanRecordObject.setDetails("匿名用户扫描");
         }
-        scanDomain.createScanRecord(userScanRecordObject);
+        userScanDomain.createScanRecord(userScanRecordObject);
 
         return scanResult;
     }
@@ -173,7 +172,7 @@ public class ScanController {
         scanResult.setProduct(product);
 
         //3. retrieve scan records
-        List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByProductKey(key, new PageRequest(0, 20))
+        List<ScanRecord> scanRecordList = userScanDomain.getScanRecordsByProductKey(key, null)
                 .map(ScanRecord::new)
                 .getContent();
         scanResult.setScanRecordList(scanRecordList);
@@ -212,11 +211,11 @@ public class ScanController {
         Page<UserScanRecordObject> page;
         if (!StringUtils.isEmpty(productKey)) {
             //get the scan records by product key include other user's
-            page = scanDomain.getScanRecordsByProductKey(productKey, pageable);
+            page = userScanDomain.getScanRecordsByProductKey(productKey, pageable);
         } else {
             //get the scan records for current user only
             String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-            page = scanDomain.getScanRecordsByUserId(userId, pageable);
+            page = userScanDomain.getScanRecordsByUserId(userId, pageable);
         }
 
         if (pageable != null) {
