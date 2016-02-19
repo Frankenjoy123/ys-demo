@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by:   Lijian
  * Created on:   2015/4/15
- * Descriptions:
+ * Descriptions: max value: 7oiylpimjg5u2ca1ypr, max time: 2106-02-07T06:28:15Z, max count per-second: 16777216
  */
 public final class ObjectIdGenerator {
     private static final int MACHINE_IDENTIFIER;
@@ -26,10 +26,14 @@ public final class ObjectIdGenerator {
         return toBase36String(generateBytes());
     }
 
+    public static boolean validate(String id) {
+        return id != null && id.length() == 19;
+    }
+
     public static Date getGeneratedDateFromId(String id) {
         byte[] bytes = parseBase36String(id);
-        int timestamp = ((bytes[0] << 24) | ((bytes[1] & 0xff) << 16) | ((bytes[2] & 0xff) << 8) | ((bytes[3] & 0xff)));
-        return new Date((long) timestamp * 1000);
+        long timestamp = ((bytes[0] & 0xff) << 24 | (bytes[1] & 0xff) << 16 | (bytes[2] & 0xff) << 8 | bytes[3] & 0xff) & 0xFFFFFFFFL;
+        return new Date(timestamp * 1000L);
     }
 
 
@@ -115,11 +119,18 @@ public final class ObjectIdGenerator {
     }
 
     private static String toBase36String(byte[] bytes) {
-        return new BigInteger(bytes).toString(36);
+        return new BigInteger(1, bytes).toString(36);
     }
 
     private static byte[] parseBase36String(String id) {
-        return new BigInteger(id, 36).toByteArray();
+        byte[] bytes = new BigInteger(id, 36).toByteArray();
+        if (bytes.length == 13 && bytes[0] == 0) {
+            byte[] stripped = new byte[12];
+            System.arraycopy(bytes, 1, stripped, 0, 12);
+            return stripped;
+        } else {
+            return bytes;
+        }
     }
 
 }

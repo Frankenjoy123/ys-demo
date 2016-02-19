@@ -29,6 +29,15 @@ public class ProductDomain {
 
     private Log log = LogFactory.getLog(this.getClass());
 
+    //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT.toString(),#key)")
+    public ProductObject getProduct(String key) {
+        try {
+            return dataAPIClient.get("product/{key}", ProductObject.class, key);
+        } catch (NotFoundException ex) {
+            return null;
+        }
+    }
+
     //Retrieve Product key, ProductBase entry and Product-Category entry from Backend.
     public Product getProductByKey(String key) {
         Product product = new Product();

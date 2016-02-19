@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * Descriptions:
  */
 @RestController
-@RequestMapping("/UserScanRecord")
+@RequestMapping("/userScanRecord")
 public class UserScanRecordController {
 
     @Autowired
@@ -37,7 +37,7 @@ public class UserScanRecordController {
     public UserScanRecordObject getById(@PathVariable(value = "id") String id) {
         UserScanRecordEntity entity = userScanRecordRepository.findOne(id);
         if (entity == null) {
-            throw new NotFoundException("user scan record not found by [id: " + id + "]");
+            throw new NotFoundException(String.format("scan record not found by [id: %s]", id));
         }
         return toUserScanRecordObject(entity);
     }
@@ -57,7 +57,8 @@ public class UserScanRecordController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<UserScanRecordObject> getByFilter(@RequestParam(value = "product_key", required = false) String productKey,
                                                   @RequestParam(value = "user_id", required = false) String userId,
-                                                  @SortDefault(sort = "createdDateTime", direction = Sort.Direction.DESC)
+                                                  @RequestParam(value = "ysid", required = false) String ysid,
+                                                  @SortDefault(sort = "createdDateTime", direction = Sort.Direction.ASC)
                                                   Pageable pageable,
                                                   HttpServletResponse response) {
         Page<UserScanRecordEntity> entityPage;
@@ -65,8 +66,10 @@ public class UserScanRecordController {
             entityPage = userScanRecordRepository.findByProductKey(productKey, pageable);
         } else if (!StringUtils.isEmpty(userId)) {
             entityPage = userScanRecordRepository.findByUserId(userId, pageable);
+        } else if (!StringUtils.isEmpty(ysid)) {
+            entityPage = userScanRecordRepository.findByYsid(ysid, pageable);
         } else {
-            throw new BadRequestException("at least one filter parameter required [product_key, user_id]");
+            throw new BadRequestException("at least one filter parameter required [product_key, user_id, ysid]");
         }
 
         if (pageable != null) {
@@ -86,6 +89,7 @@ public class UserScanRecordController {
         object.setProductKey(entity.getProductKey());
         object.setProductBaseId(entity.getProductBaseId());
         object.setAppId(entity.getAppId());
+        object.setYsid(entity.getYsid());
         object.setDeviceId(entity.getDeviceId());
         object.setLongitude(entity.getLongitude());
         object.setLatitude(entity.getLatitude());
@@ -93,6 +97,7 @@ public class UserScanRecordController {
         object.setCity(entity.getCity());
         object.setAddress(entity.getAddress());
         object.setDetails(entity.getDetails());
+        object.setUserAgent(entity.getUserAgent());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         return object;
     }
@@ -107,6 +112,7 @@ public class UserScanRecordController {
         entity.setProductKey(object.getProductKey());
         entity.setProductBaseId(object.getProductBaseId());
         entity.setAppId(object.getAppId());
+        entity.setYsid(object.getYsid());
         entity.setDeviceId(object.getDeviceId());
         entity.setLongitude(object.getLongitude());
         entity.setLatitude(object.getLatitude());
@@ -114,6 +120,7 @@ public class UserScanRecordController {
         entity.setCity(object.getCity());
         entity.setAddress(object.getAddress());
         entity.setDetails(object.getDetails());
+        entity.setUserAgent(object.getUserAgent());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         return entity;
     }
