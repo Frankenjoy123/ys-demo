@@ -93,6 +93,8 @@ public class MktDrawRecord {
         this.isPrized = isPrized;
     }
 
+    public MktDrawRecord(){}
+
     public MktDrawRecord(MktDrawRecordObject object) {
         if (object != null) {
             this.setId(object.getId());
