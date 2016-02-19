@@ -406,6 +406,9 @@ public class WebScanResponse {
         @JsonProperty("id")
         private String id;
 
+        @JsonProperty("type_code")
+        private String typeCode;
+
 
         public String getId() {
             return id;
@@ -413,6 +416,14 @@ public class WebScanResponse {
 
         public void setId(String id) {
             this.id = id;
+        }
+
+        public String getTypeCode() {
+            return typeCode;
+        }
+
+        public void setTypeCode(String typeCode) {
+            this.typeCode = typeCode;
         }
     }
 

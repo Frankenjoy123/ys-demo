@@ -8,6 +8,7 @@ import com.yunsoo.api.rabbit.domain.UserScanDomain;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.api.rabbit.dto.WebScanRequest;
 import com.yunsoo.api.rabbit.dto.WebScanResponse;
+import com.yunsoo.api.rabbit.util.YSIDGenerator;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.util.UUID;
 
 /**
  * Created by:   Lijian
@@ -45,31 +45,32 @@ public class WebScanController {
     private UserScanDomain userScanDomain;
 
 
+    //region 一物一码
+
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
-    public WebScanResponse getScan(@PathVariable(value = "key") String key) {
+    public WebScanResponse getKeyScan(@PathVariable(value = "key") String key) {
+
+        //search product by key
         ProductObject productObject = getProductByKey(key);
-        WebScanResponse response = getBasicInfo(productObject.getProductBaseId());
+        WebScanResponse webScanResponse = getBasicInfo(productObject.getProductBaseId());
 
-        response.getProduct().setKey(key);
-        if (productObject.getProductStatusCode() != null) {
-            response.getProduct().setStatusCode(productObject.getProductStatusCode());
-        }
-        response.getProduct().setManufacturingDatetime(productObject.getManufacturingDateTime());
+        //product info specific
+        WebScanResponse.Product product = webScanResponse.getProduct();
+        product.setKey(key);
+        product.setStatusCode(productObject.getProductStatusCode());
+        product.setManufacturingDatetime(productObject.getManufacturingDateTime());
 
-        if (LookupCodes.ProductKeyType.QR_SECURE.equals(productObject.getProductKeyTypeCode())) {
-            //防伪码
-            WebScanResponse.Security security = new WebScanResponse.Security();
+        //marketing info
+        webScanResponse.setMarketing(getMarketingInfo(productObject.getProductBaseId(), productObject.getProductKeyBatchId()));
 
+        //security info
+        webScanResponse.setSecurity(getSecurityInfo(productObject));
 
-            response.setSecurity(security);
-        }
-
-
-        return response;
+        return webScanResponse;
     }
 
     @RequestMapping(value = "{key}", method = RequestMethod.POST)
-    public WebScanResponse.ScanRecord postScan(
+    public WebScanResponse.ScanRecord postKeyScan(
             @PathVariable(value = "key") String key,
             @RequestHeader(value = "User-Agent", required = false) String userAgent,
             @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
@@ -78,29 +79,14 @@ public class WebScanController {
             @RequestBody WebScanRequest webScanRequest,
             HttpServletResponse httpServletResponse) {
 
-        if (webScanRequest.getYsid() == null) {
-            webScanRequest.setYsid(ysid != null ? ysid : UUID.randomUUID().toString().replace("-", ""));
-        }
-        if (webScanRequest.getUserAgent() == null) {
-            webScanRequest.setUserAgent(userAgent);
-        }
+        //validate request
+        validateWebScanRequest(webScanRequest, ysid, userAgent);
 
+        //search product by key
         ProductObject productObject = getProductByKey(key);
 
-        UserScanRecordObject userScanRecordObject = new UserScanRecordObject();
-        userScanRecordObject.setProductKey(key);
-        userScanRecordObject.setProductBaseId(productObject.getProductBaseId());
-        userScanRecordObject.setAppId(appId);
-        userScanRecordObject.setYsid(webScanRequest.getYsid());
-        userScanRecordObject.setDeviceId(deviceId);
-        userScanRecordObject.setLongitude(webScanRequest.getLongitude());
-        userScanRecordObject.setLatitude(webScanRequest.getLatitude());
-        userScanRecordObject.setProvince(webScanRequest.getProvince());
-        userScanRecordObject.setCity(webScanRequest.getCity());
-        userScanRecordObject.setAddress(webScanRequest.getAddress());
-        userScanRecordObject.setDetails(webScanRequest.getDetails());
-        userScanRecordObject.setUserAgent(webScanRequest.getUserAgent());
-        userScanRecordObject = userScanDomain.createScanRecord(userScanRecordObject);
+        //save scan record
+        UserScanRecordObject userScanRecordObject = saveScanRecord(key, productObject.getProductBaseId(), appId, webScanRequest, deviceId);
 
         if (userAgent != null && ysid == null) {
             //set cookie YSID
@@ -110,11 +96,60 @@ public class WebScanController {
         return toScanRecord(userScanRecordObject);
     }
 
+
+    //endregion
+
+    //region 产品码
+
     @RequestMapping(value = "productbase/{id}", method = RequestMethod.GET)
     public WebScanResponse getProductBaseScan(@PathVariable(value = "id") String productBaseId) {
-        return getBasicInfo(productBaseId);
+
+        //get basic info for product base by id
+        WebScanResponse webScanResponse = getBasicInfo(productBaseId);
+
+        //marketing info
+        webScanResponse.setMarketing(getMarketingInfo(productBaseId, null));
+
+        return webScanResponse;
     }
 
+    @RequestMapping(value = "productbase/{id}", method = RequestMethod.POST)
+    public WebScanResponse.ScanRecord postProductBaseScan(
+            @PathVariable(value = "id") String productBaseId,
+            @RequestHeader(value = "User-Agent", required = false) String userAgent,
+            @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
+            @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
+            @CookieValue(value = Constants.CookieName.YSID, required = false) String ysid,
+            @RequestBody WebScanRequest webScanRequest,
+            HttpServletResponse httpServletResponse) {
+
+        //validate request
+        validateWebScanRequest(webScanRequest, ysid, userAgent);
+
+        //search product base by id
+        ProductBaseObject productBaseObject = getProductBaseById(productBaseId);
+
+        //save scan record
+        UserScanRecordObject userScanRecordObject = saveScanRecord(null, productBaseObject.getId(), appId, webScanRequest, deviceId);
+
+        if (userAgent != null && ysid == null) {
+            //set cookie YSID
+            setCookie(httpServletResponse, webScanRequest.getYsid());
+        }
+
+        return toScanRecord(userScanRecordObject);
+    }
+
+    //endregion
+
+    private void validateWebScanRequest(WebScanRequest webScanRequest, String ysid, String userAgent) {
+        if (!YSIDGenerator.validate(webScanRequest.getYsid())) {
+            webScanRequest.setYsid(YSIDGenerator.validate(ysid) ? ysid : YSIDGenerator.getNew());
+        }
+        if (webScanRequest.getUserAgent() == null) {
+            webScanRequest.setUserAgent(userAgent);
+        }
+    }
 
     private ProductObject getProductByKey(String key) {
         if (!KeyGenerator.validate(key)) {
@@ -127,17 +162,21 @@ public class WebScanController {
         return productObject;
     }
 
-    private WebScanResponse getBasicInfo(String productBaseId) {
+    private ProductBaseObject getProductBaseById(String productBaseId) {
         if (!ObjectIdGenerator.validate(productBaseId)) {
             throw new NotFoundException("product not found");
         }
-
-        WebScanResponse response = new WebScanResponse();
-
         ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
         if (productBaseObject == null) {
             throw new NotFoundException("product not found");
         }
+        return productBaseObject;
+    }
+
+    private WebScanResponse getBasicInfo(String productBaseId) {
+        WebScanResponse response = new WebScanResponse();
+
+        ProductBaseObject productBaseObject = getProductBaseById(productBaseId);
         ProductCategory productCategory = productBaseDomain.getProductCategoryById(productBaseObject.getCategoryId());
         String productBaseDetails = productBaseDomain.getProductBaseDetails(productBaseObject.getOrgId(), productBaseObject.getId(), productBaseObject.getVersion());
         OrganizationObject organizationObject = organizationDomain.getById(productBaseObject.getOrgId());
@@ -163,6 +202,44 @@ public class WebScanController {
         }
 
         return response;
+    }
+
+    private WebScanResponse.Marketing getMarketingInfo(String productBaseId, String productKeyBatchId) {
+        //todo
+
+        return null;
+    }
+
+    private WebScanResponse.Security getSecurityInfo(ProductObject productObject) {
+        WebScanResponse.Security security = null;
+        if (LookupCodes.ProductKeyType.QR_SECURE.equals(productObject.getProductKeyTypeCode())) {
+            //防伪码
+            security = new WebScanResponse.Security();
+            //todo
+
+        }
+        return security;
+    }
+
+    private UserScanRecordObject saveScanRecord(String productKey,
+                                                String productBaseId,
+                                                String appId,
+                                                WebScanRequest webScanRequest,
+                                                String deviceId) {
+        UserScanRecordObject userScanRecordObject = new UserScanRecordObject();
+        userScanRecordObject.setProductKey(productKey);
+        userScanRecordObject.setProductBaseId(productBaseId);
+        userScanRecordObject.setAppId(appId);
+        userScanRecordObject.setYsid(webScanRequest.getYsid());
+        userScanRecordObject.setDeviceId(deviceId);
+        userScanRecordObject.setLongitude(webScanRequest.getLongitude());
+        userScanRecordObject.setLatitude(webScanRequest.getLatitude());
+        userScanRecordObject.setProvince(webScanRequest.getProvince());
+        userScanRecordObject.setCity(webScanRequest.getCity());
+        userScanRecordObject.setAddress(webScanRequest.getAddress());
+        userScanRecordObject.setDetails(webScanRequest.getDetails());
+        userScanRecordObject.setUserAgent(webScanRequest.getUserAgent());
+        return userScanDomain.createScanRecord(userScanRecordObject);
     }
 
     private void setCookie(HttpServletResponse httpServletResponse, String ysid) {
