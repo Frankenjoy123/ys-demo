@@ -205,9 +205,19 @@ public class WebScanController {
     }
 
     private WebScanResponse.Marketing getMarketingInfo(String productBaseId, String productKeyBatchId) {
-        //todo
+        WebScanResponse.Marketing marketing = null;
+        if (productKeyBatchId != null) {
+            //load marketing from product key batch
+            marketing = null; //todo
 
-        return null;
+        }
+        if (marketing == null && productBaseId != null) {
+            //load marketing from product base
+            marketing = null; //todo
+
+        }
+
+        return marketing;
     }
 
     private WebScanResponse.Security getSecurityInfo(ProductObject productObject) {
