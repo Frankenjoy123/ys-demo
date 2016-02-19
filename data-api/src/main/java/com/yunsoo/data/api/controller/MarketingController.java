@@ -103,7 +103,7 @@ public class MarketingController {
     //create marketing plan, provide API
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public MarketingObject create(@RequestBody MarketingObject marketingObject) {
+    public MarketingObject createMarketing(@RequestBody MarketingObject marketingObject) {
         MarketingEntity entity = toMarketingEntity(marketingObject);
         entity.setId(null);
         if (entity.getCreatedDateTime() == null) {
@@ -185,6 +185,31 @@ public class MarketingController {
         MktDrawRuleEntity entity = toMktDrawRuleEntity(mktDrawRuleObject);
         MktDrawRuleEntity newEntity = mktDrawRuleRepository.save(entity);
         return toMktDrawRuleObject(newEntity);
+    }
+
+    //delete marketing plan
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMarketing(@PathVariable(value = "id") String id) {
+        MarketingEntity entity = marketingRepository.findOne(id);
+        if (entity != null) {
+            marketingRepository.delete(id);
+        }
+    }
+
+    //delete marketing rule by marketing Id
+    @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMarketingRuleByMarketingId(@PathVariable(value = "id") String id) {
+        if (id != null) {
+            List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingId(id);
+            if (mktDrawRuleEntities.size() > 0) {
+                for (MktDrawRuleEntity entity : mktDrawRuleEntities) {
+                    String mktDrawRuleId = entity.getId();
+                    mktDrawRuleRepository.delete(mktDrawRuleId);
+                }
+            }
+        }
     }
 
     private MarketingEntity findMarketingById(String id) {

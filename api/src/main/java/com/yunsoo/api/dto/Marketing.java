@@ -46,6 +46,10 @@ public class Marketing {
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
 
+    @JsonProperty("product_base_name")
+    private String productBaseName;
+
+
     public String getId() {
         return id;
     }
@@ -118,6 +122,18 @@ public class Marketing {
         this.modifiedDateTime = modifiedDateTime;
     }
 
+    public String getProductBaseName() {
+        return productBaseName;
+    }
+
+    public void setProductBaseName(String productBaseName) {
+        this.productBaseName = productBaseName;
+    }
+
+    public Marketing() {
+
+    }
+
     public Marketing(MarketingObject object) {
         if (object != null) {
             this.setId(object.getId());
@@ -131,5 +147,20 @@ public class Marketing {
             this.setModifiedDateTime(object.getModifiedDateTime());
         }
     }
+
+    public MarketingObject toMarketingObject() {
+        MarketingObject object = new MarketingObject();
+        object.setId(this.getId());
+        object.setOrgId(this.getOrgId());
+        object.setProductBaseId(this.getProductBaseId());
+        object.setTypeCode(this.getTypeCode());
+        object.setBalance(this.getBalance());
+        object.setCreatedAccountId(this.getCreatedAccountId());
+        object.setCreatedDateTime(this.getCreatedDateTime());
+        object.setModifiedAccountId(this.getModifiedAccountId());
+        object.setModifiedDateTime(this.getModifiedDateTime());
+        return object;
+    }
+
 
 }
