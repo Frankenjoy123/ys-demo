@@ -159,6 +159,11 @@ public class MarketingController {
         entity.setProductKey(mktDrawRecordEntity.getProductKey());
         MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
 
+        MarketingEntity marketing = marketingRepository.findOne(mktDrawPrizeObject.getMarketingId());
+        marketing.setBalance(marketing.getBalance() - mktDrawPrizeObject.getAmount());
+        marketingRepository.save(marketing);
+
+
         return toMktDrawPrizeObject(newEntity);
     }
 

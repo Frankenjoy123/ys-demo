@@ -144,6 +144,7 @@ public class MktDrawRule {
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
             this.setModifiedDateTime(object.getModifiedDateTime());
+
         }
     }
 

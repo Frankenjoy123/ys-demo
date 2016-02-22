@@ -58,28 +58,28 @@ public class MarketingDomain {
 
     }
 
-    public int getMktRandomPrize(String marketId){
+    public MktDrawRuleObject getMktRandomPrize(String marketId){
         MarketingObject obj = dataAPIClient.get("marketing/{id}", MarketingObject.class, marketId);
+        if(obj.getBalance() <=0)
+            return null;
+
         List<MktDrawRuleObject> ruleList = getRuleList(marketId);
-        List<MktDrawPrizeObject> exitingPrizeList = dataAPIClient.get("marketing/drawPrize/{id}", new ParameterizedTypeReference<List<MktDrawPrizeObject>>(){}, marketId);
-
-        Map<Double, Integer> prizeArray = new HashMap<>();
-        Double buget = obj.getBudget();
-
         Long totalQuantity = dataAPIClient.get("productkeybatch/sum/quantity?marketing_id=" + marketId, Long.class);
+
+        Map<Double, MktDrawRuleObject> prizeArray = new HashMap<>();
 
         for(MktDrawRuleObject rule : ruleList){
             int ruleQuantity = (int)(rule.getProbability() * totalQuantity);
             for(int i=0; i<ruleQuantity; i++){
-                prizeArray.put(Math.floor(Math.random() * totalQuantity), rule.getAmount());
+                prizeArray.put(Math.floor(Math.random() * totalQuantity), rule);
             }
         }
 
         double index = Math.floor(Math.random() * totalQuantity);
-        if(prizeArray.containsKey(index) && obj.getBudget() >= prizeArray.get(index))
+        if(prizeArray.containsKey(index) && obj.getBalance() >= prizeArray.get(index).getAmount())
             return prizeArray.get(index);
         else
-            return 0;
+            return null;
 
     }
 }

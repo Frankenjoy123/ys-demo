@@ -9,6 +9,7 @@ import com.yunsoo.api.rabbit.dto.Product;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.MktDrawPrizeObject;
 import com.yunsoo.common.data.object.MktDrawRecordObject;
+import com.yunsoo.common.data.object.MktDrawRuleObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,11 +110,11 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "drawPrize/{id}/random", method = RequestMethod.GET)
-    public int getRandomPrizeAmount(@PathVariable(value = "id") String marketingId){
+    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId){
         if(marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        return marketingDomain.getMktRandomPrize(marketingId);
+        return new MktDrawRule(marketingDomain.getMktRandomPrize(marketingId));
     }
 
     @RequestMapping(value = "drawRule/{id}", method = RequestMethod.GET)
