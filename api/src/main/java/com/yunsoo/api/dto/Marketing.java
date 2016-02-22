@@ -27,6 +27,9 @@ public class Marketing {
     @JsonProperty("type_code")
     private String typeCode;
 
+    @JsonProperty("budget")
+    private Double budget;
+
     @JsonProperty("balance")
     private Double balance;
 
@@ -80,6 +83,14 @@ public class Marketing {
 
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public Double getBudget() {
+        return budget;
+    }
+
+    public void setBudget(Double budget) {
+        this.budget = budget;
     }
 
     public Double getBalance() {
@@ -140,6 +151,7 @@ public class Marketing {
             this.setOrgId(object.getOrgId());
             this.setProductBaseId(object.getProductBaseId());
             this.setTypeCode(object.getTypeCode());
+            this.setBudget(object.getBudget());
             this.setBalance(object.getBalance());
             this.setCreatedAccountId(object.getCreatedAccountId());
             this.setCreatedDateTime(object.getCreatedDateTime());
@@ -154,6 +166,7 @@ public class Marketing {
         object.setOrgId(this.getOrgId());
         object.setProductBaseId(this.getProductBaseId());
         object.setTypeCode(this.getTypeCode());
+        object.setBudget(this.getBudget());
         object.setBalance(this.getBalance());
         object.setCreatedAccountId(this.getCreatedAccountId());
         object.setCreatedDateTime(this.getCreatedDateTime());

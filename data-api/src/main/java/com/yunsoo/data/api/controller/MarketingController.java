@@ -229,6 +229,7 @@ public class MarketingController {
         object.setOrgId(entity.getOrgId());
         object.setProductBaseId(entity.getProductBaseId());
         object.setTypeCode(entity.getTypeCode());
+        object.setBudget(entity.getBudget());
         object.setBalance(entity.getBalance());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
@@ -301,6 +302,7 @@ public class MarketingController {
         entity.setOrgId(object.getOrgId());
         entity.setProductBaseId(object.getProductBaseId());
         entity.setTypeCode(object.getTypeCode());
+        entity.setBudget(object.getBudget());
         entity.setBalance(object.getBalance());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());

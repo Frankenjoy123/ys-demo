@@ -25,6 +25,9 @@ public class MarketingObject {
     @JsonProperty("type_code")
     private String typeCode;
 
+    @JsonProperty("budget")
+    private Double budget;
+
     @JsonProperty("balance")
     private Double balance;
 
@@ -74,6 +77,14 @@ public class MarketingObject {
 
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public Double getBudget() {
+        return budget;
+    }
+
+    public void setBudget(Double budget) {
+        this.budget = budget;
     }
 
     public Double getBalance() {

@@ -30,6 +30,9 @@ public class MarketingEntity {
     @Column(name = "type_code")
     private String typeCode;
 
+    @Column(name = "budget")
+    private Double budget;
+
     @Column(name = "balance")
     private Double balance;
 
@@ -77,6 +80,14 @@ public class MarketingEntity {
 
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public Double getBudget() {
+        return budget;
+    }
+
+    public void setBudget(Double budget) {
+        this.budget = budget;
     }
 
     public Double getBalance() {
