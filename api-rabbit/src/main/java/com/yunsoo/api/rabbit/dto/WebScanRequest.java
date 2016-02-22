@@ -12,6 +12,9 @@ public class WebScanRequest {
     @JsonProperty("ysid")
     private String ysid;
 
+    @JsonProperty("ip")
+    private String ip;
+
     @JsonProperty("longitude")
     private Double longitude;
 
@@ -39,6 +42,14 @@ public class WebScanRequest {
 
     public void setYsid(String ysid) {
         this.ysid = ysid;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     public Double getLongitude() {

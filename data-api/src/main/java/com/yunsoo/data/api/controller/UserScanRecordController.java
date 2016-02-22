@@ -91,6 +91,7 @@ public class UserScanRecordController {
         object.setAppId(entity.getAppId());
         object.setYsid(entity.getYsid());
         object.setDeviceId(entity.getDeviceId());
+        object.setIp(entity.getIp());
         object.setLongitude(entity.getLongitude());
         object.setLatitude(entity.getLatitude());
         object.setProvince(entity.getProvince());
@@ -114,6 +115,7 @@ public class UserScanRecordController {
         entity.setAppId(object.getAppId());
         entity.setYsid(object.getYsid());
         entity.setDeviceId(object.getDeviceId());
+        entity.setIp(object.getIp());
         entity.setLongitude(object.getLongitude());
         entity.setLatitude(object.getLatitude());
         entity.setProvince(object.getProvince());
