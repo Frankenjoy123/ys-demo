@@ -161,6 +161,8 @@ public class MktDrawPrize {
         this.comments = comments;
     }
 
+    public MktDrawPrize(){}
+
     public MktDrawPrize(MktDrawPrizeObject object) {
         if (object != null) {
             this.setDrawRecordId(object.getDrawRecordId());

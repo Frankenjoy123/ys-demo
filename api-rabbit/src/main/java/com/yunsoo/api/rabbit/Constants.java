@@ -21,4 +21,8 @@ public final class Constants {
         public static final String DEVICE_ID = "X-YS-DeviceId";
     }
 
+    public static class CookieName {
+        public static final String YSID = "YSID";
+    }
+
 }

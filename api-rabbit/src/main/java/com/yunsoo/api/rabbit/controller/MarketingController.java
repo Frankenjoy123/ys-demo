@@ -71,8 +71,8 @@ public class MarketingController {
             throw new NotFoundException("product can not be found by the key");
         }
         MktDrawRecordObject mktDrawRecordObject = mktDrawRecord.toMktDrawRecordObject();
-        String currentUserId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-        mktDrawRecordObject.setUserId(currentUserId);
+       // String currentUserId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+      //  mktDrawRecordObject.setUserId(currentUserId);
 
         MktDrawRecordObject newMktDrawRecordObject = marketingDomain.createMktDrawRecord(mktDrawRecordObject);
         return new MktDrawRecord(newMktDrawRecordObject);

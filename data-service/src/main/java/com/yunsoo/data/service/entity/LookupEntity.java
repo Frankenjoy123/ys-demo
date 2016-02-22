@@ -71,22 +71,6 @@ public class LookupEntity {
         this.active = active;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || this.typeCode == null || this.code == null || !(obj instanceof LookupEntity)) {
-            return false;
-        }
-
-        LookupEntity entity = (LookupEntity) obj;
-
-        return this.typeCode.equals(entity.typeCode) && this.code.equals(entity.code);
-    }
-
-    @Override
-    public int hashCode() {
-        return 31 * typeCode.hashCode() + code.hashCode();
-    }
 
     public static class LookupPK implements Serializable {
 
@@ -117,6 +101,24 @@ public class LookupEntity {
             this.typeCode = typeCode;
             this.code = code;
         }
+
+        @Override
+        public boolean equals(Object object) {
+            if (this == object) return true;
+            if (object == null || this.typeCode == null || this.code == null || !(object instanceof LookupPK)) {
+                return false;
+            }
+
+            LookupPK obj = (LookupPK) object;
+
+            return this.typeCode.equals(obj.typeCode) && this.code.equals(obj.code);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * typeCode.hashCode() + code.hashCode();
+        }
+
     }
 
 }
