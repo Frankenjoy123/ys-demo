@@ -23,6 +23,9 @@ public class MktDrawRecordEntity {
     @Column(name = "scan_record_id")
     private String scanRecordId;
 
+    @Column(name = "marketing_id")
+    private String marketingId;
+
     @Column(name = "product_base_id")
     private String productBaseId;
 
@@ -53,6 +56,14 @@ public class MktDrawRecordEntity {
 
     public void setScanRecordId(String scanRecordId) {
         this.scanRecordId = scanRecordId;
+    }
+
+    public String getMarketingId() {
+        return marketingId;
+    }
+
+    public void setMarketingId(String marketingId) {
+        this.marketingId = marketingId;
     }
 
     public String getProductBaseId() {

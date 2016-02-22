@@ -22,6 +22,12 @@ public class MktDrawPrizeObject {
     @JsonProperty("scan_record_id")
     private String scanRecordId;
 
+    @JsonProperty("marketing_id")
+    private String marketingId;
+
+    @JsonProperty("draw_rule_id")
+    private String drawRuleId;
+
     @JsonProperty("amount")
     private Integer amount;
 
@@ -78,6 +84,22 @@ public class MktDrawPrizeObject {
 
     public void setScanRecordId(String scanRecordId) {
         this.scanRecordId = scanRecordId;
+    }
+
+    public String getMarketingId() {
+        return marketingId;
+    }
+
+    public void setMarketingId(String marketingId) {
+        this.marketingId = marketingId;
+    }
+
+    public String getDrawRuleId() {
+        return drawRuleId;
+    }
+
+    public void setDrawRuleId(String drawRuleId) {
+        this.drawRuleId = drawRuleId;
     }
 
     public Integer getAmount() {

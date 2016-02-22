@@ -271,6 +271,7 @@ public class MarketingController {
         MktDrawRecordObject object = new MktDrawRecordObject();
         object.setId(entity.getId());
         object.setScanRecordId(entity.getScanRecordId());
+        object.setMarketingId(entity.getMarketingId());
         object.setProductBaseId(entity.getProductBaseId());
         object.setProductKey(entity.getProductKey());
         object.setCreatedDateTime(entity.getCreatedDateTime());
@@ -287,6 +288,8 @@ public class MarketingController {
         object.setDrawRecordId(entity.getDrawRecordId());
         object.setProductKey(entity.getProductKey());
         object.setScanRecordId(entity.getScanRecordId());
+        object.setMarketingId(entity.getMarketingId());
+        object.setDrawRuleId(entity.getDrawRuleId());
         object.setAmount(entity.getAmount());
         object.setMobile(entity.getMobile());
         object.setPrizeTypeCode(entity.getPrizeTypeCode());
@@ -346,6 +349,7 @@ public class MarketingController {
         MktDrawRecordEntity entity = new MktDrawRecordEntity();
         entity.setId(object.getId());
         entity.setScanRecordId(object.getScanRecordId());
+        entity.setMarketingId(object.getMarketingId());
         entity.setProductBaseId(object.getProductBaseId());
         entity.setProductKey(object.getProductKey());
         entity.setCreatedDateTime(object.getCreatedDateTime());
@@ -362,6 +366,8 @@ public class MarketingController {
         entity.setDrawRecordId(object.getDrawRecordId());
         entity.setProductKey(object.getProductKey());
         entity.setScanRecordId(object.getScanRecordId());
+        entity.setMarketingId(object.getMarketingId());
+        entity.setDrawRuleId(object.getDrawRuleId());
         entity.setAmount(object.getAmount());
         entity.setMobile(object.getMobile());
         entity.setPrizeTypeCode(object.getPrizeTypeCode());
