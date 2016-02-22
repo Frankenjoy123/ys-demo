@@ -210,6 +210,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
             batch.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
         }
         batch.setProductKeysUri(entity.getProductKeysUri());
+        batch.setMarketingId(entity.getMarketingId());
         return batch;
     }
 
@@ -232,6 +233,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
             entity.setProductKeyTypeCodes(StringUtils.collectionToDelimitedString(codes, ","));
         }
         entity.setProductKeysUri(batch.getProductKeysUri());
+        entity.setMarketingId(batch.getMarketingId());
         return entity;
     }
 

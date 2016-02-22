@@ -10,18 +10,18 @@ import com.yunsoo.api.rabbit.dto.WebScanRequest;
 import com.yunsoo.api.rabbit.dto.WebScanResponse;
 import com.yunsoo.api.rabbit.util.YSIDGenerator;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.OrganizationObject;
-import com.yunsoo.common.data.object.ProductBaseObject;
-import com.yunsoo.common.data.object.ProductObject;
-import com.yunsoo.common.data.object.UserScanRecordObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.util.ObjectIdGenerator;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -56,6 +56,7 @@ public class WebScanController {
 
         //product info specific
         WebScanResponse.Product product = webScanResponse.getProduct();
+        product.setBatchId(productObject.getProductKeyBatchId());
         product.setKey(key);
         product.setStatusCode(productObject.getProductStatusCode());
         product.setManufacturingDatetime(productObject.getManufacturingDateTime());
@@ -208,15 +209,12 @@ public class WebScanController {
         WebScanResponse.Marketing marketing = null;
         if (productKeyBatchId != null) {
             //load marketing from product key batch
-            marketing = null; //todo
-
+            ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(productKeyBatchId);
+            if (productKeyBatchObject != null && productKeyBatchObject.getMarketingId() != null) {
+                marketing = new WebScanResponse.Marketing();
+                marketing.setId(productKeyBatchObject.getMarketingId());
+            }
         }
-        if (marketing == null && productBaseId != null) {
-            //load marketing from product base
-            marketing = null; //todo
-
-        }
-
         return marketing;
     }
 
@@ -225,8 +223,12 @@ public class WebScanController {
         if (LookupCodes.ProductKeyType.QR_SECURE.equals(productObject.getProductKeyTypeCode())) {
             //防伪码
             security = new WebScanResponse.Security();
-            //todo
-
+            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 100));
+            List<UserScanRecordObject> userScanRecordObjects = userScanRecordObjectPage.getContent();
+            security.setScanCount(userScanRecordObjects.size());
+            if (userScanRecordObjects.size() > 0) {
+                security.setFirstScan(toScanRecord(userScanRecordObjects.get((1))));
+            }
         }
         return security;
     }

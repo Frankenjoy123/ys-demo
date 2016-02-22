@@ -164,6 +164,7 @@ public class ProductKeyBatchController {
         batchObj.setCreatedDateTime(batch.getCreatedDateTime());
         batchObj.setProductKeyTypeCodes(batch.getProductKeyTypeCodes());
         batchObj.setRestQuantity(batch.getRestQuantity());
+        batchObj.setMarketingId(batch.getMarketingId());
         return batchObj;
     }
 
@@ -185,6 +186,7 @@ public class ProductKeyBatchController {
         if (codes != null) {
             batchObj.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
         }
+        batchObj.setMarketingId(entity.getMarketingId());
         return batchObj;
     }
 
@@ -203,6 +205,7 @@ public class ProductKeyBatchController {
         batch.setCreatedDateTime(batchObj.getCreatedDateTime());
         batch.setProductKeyTypeCodes(batchObj.getProductKeyTypeCodes());
         batch.setRestQuantity(batchObj.getRestQuantity());
+        batch.setMarketingId(batchObj.getMarketingId());
         return batch;
     }
 }
