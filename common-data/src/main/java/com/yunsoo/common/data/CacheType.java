@@ -11,6 +11,7 @@ public enum CacheType {
     LOOKUP("lookup"),
     PRODUCTBASE("productbase"),
     PRODUCT("product"),
+    PRODUCT_BATCH("product_batch"),
     PRODUCTCATEGORY("product_category"),
     PERMISSION("permission");
 
