@@ -4,6 +4,7 @@ import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
 import com.yunsoo.api.rabbit.dto.Product;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -33,6 +34,14 @@ public class ProductDomain {
     public ProductObject getProduct(String key) {
         try {
             return dataAPIClient.get("product/{key}", ProductObject.class, key);
+        } catch (NotFoundException ex) {
+            return null;
+        }
+    }
+    //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT_BATCH.toString(),#productKeyBatchId)")
+    public ProductKeyBatchObject getProductKeyBatch(String productKeyBatchId) {
+        try {
+            return dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, productKeyBatchId);
         } catch (NotFoundException ex) {
             return null;
         }

@@ -42,6 +42,9 @@ public class UserScanRecordObject implements Serializable {
     @JsonProperty("device_id")
     private String deviceId;
 
+    @JsonProperty("ip")
+    private String ip;
+
     @JsonProperty("longitude")
     private Double longitude;
 
@@ -123,6 +126,14 @@ public class UserScanRecordObject implements Serializable {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     public Double getLongitude() {

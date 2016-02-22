@@ -39,6 +39,9 @@ public class UserScanRecordEntity {
     @Column(name = "device_id")
     private String deviceId;
 
+    @Column(name = "ip")
+    private String ip;
+
     @Column(name = "longitude")
     private Double longitude;
 
@@ -119,6 +122,14 @@ public class UserScanRecordEntity {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     public Double getLongitude() {

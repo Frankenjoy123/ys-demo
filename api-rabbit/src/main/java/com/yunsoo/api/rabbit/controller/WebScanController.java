@@ -8,20 +8,22 @@ import com.yunsoo.api.rabbit.domain.UserScanDomain;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.api.rabbit.dto.WebScanRequest;
 import com.yunsoo.api.rabbit.dto.WebScanResponse;
+import com.yunsoo.api.rabbit.util.IpUtils;
 import com.yunsoo.api.rabbit.util.YSIDGenerator;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.OrganizationObject;
-import com.yunsoo.common.data.object.ProductBaseObject;
-import com.yunsoo.common.data.object.ProductObject;
-import com.yunsoo.common.data.object.UserScanRecordObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.util.ObjectIdGenerator;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -56,6 +58,7 @@ public class WebScanController {
 
         //product info specific
         WebScanResponse.Product product = webScanResponse.getProduct();
+        product.setBatchId(productObject.getProductKeyBatchId());
         product.setKey(key);
         product.setStatusCode(productObject.getProductStatusCode());
         product.setManufacturingDatetime(productObject.getManufacturingDateTime());
@@ -77,10 +80,11 @@ public class WebScanController {
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
             @CookieValue(value = Constants.CookieName.YSID, required = false) String ysid,
             @RequestBody WebScanRequest webScanRequest,
+            HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse) {
 
         //validate request
-        validateWebScanRequest(webScanRequest, ysid, userAgent);
+        validateWebScanRequest(webScanRequest, httpServletRequest, ysid, userAgent);
 
         //search product by key
         ProductObject productObject = getProductByKey(key);
@@ -116,15 +120,16 @@ public class WebScanController {
     @RequestMapping(value = "productbase/{id}", method = RequestMethod.POST)
     public WebScanResponse.ScanRecord postProductBaseScan(
             @PathVariable(value = "id") String productBaseId,
-            @RequestHeader(value = "User-Agent", required = false) String userAgent,
             @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
+            @RequestHeader(value = "User-Agent", required = false) String userAgent,
             @CookieValue(value = Constants.CookieName.YSID, required = false) String ysid,
             @RequestBody WebScanRequest webScanRequest,
+            HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse) {
 
         //validate request
-        validateWebScanRequest(webScanRequest, ysid, userAgent);
+        validateWebScanRequest(webScanRequest, httpServletRequest, ysid, userAgent);
 
         //search product base by id
         ProductBaseObject productBaseObject = getProductBaseById(productBaseId);
@@ -142,9 +147,12 @@ public class WebScanController {
 
     //endregion
 
-    private void validateWebScanRequest(WebScanRequest webScanRequest, String ysid, String userAgent) {
+    private void validateWebScanRequest(WebScanRequest webScanRequest, HttpServletRequest httpServletRequest, String ysid, String userAgent) {
         if (!YSIDGenerator.validate(webScanRequest.getYsid())) {
             webScanRequest.setYsid(YSIDGenerator.validate(ysid) ? ysid : YSIDGenerator.getNew());
+        }
+        if (!IpUtils.validate(webScanRequest.getIp())) {
+            webScanRequest.setIp(IpUtils.getIpFromRequest(httpServletRequest));
         }
         if (webScanRequest.getUserAgent() == null) {
             webScanRequest.setUserAgent(userAgent);
@@ -208,15 +216,12 @@ public class WebScanController {
         WebScanResponse.Marketing marketing = null;
         if (productKeyBatchId != null) {
             //load marketing from product key batch
-            marketing = null; //todo
-
+            ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(productKeyBatchId);
+            if (productKeyBatchObject != null && productKeyBatchObject.getMarketingId() != null) {
+                marketing = new WebScanResponse.Marketing();
+                marketing.setId(productKeyBatchObject.getMarketingId());
+            }
         }
-        if (marketing == null && productBaseId != null) {
-            //load marketing from product base
-            marketing = null; //todo
-
-        }
-
         return marketing;
     }
 
@@ -225,8 +230,12 @@ public class WebScanController {
         if (LookupCodes.ProductKeyType.QR_SECURE.equals(productObject.getProductKeyTypeCode())) {
             //防伪码
             security = new WebScanResponse.Security();
-            //todo
-
+            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 100));
+            List<UserScanRecordObject> userScanRecordObjects = userScanRecordObjectPage.getContent();
+            security.setScanCount(userScanRecordObjects.size());
+            if (userScanRecordObjects.size() > 0) {
+                security.setFirstScan(toScanRecord(userScanRecordObjects.get((1))));
+            }
         }
         return security;
     }
@@ -242,6 +251,7 @@ public class WebScanController {
         userScanRecordObject.setAppId(appId);
         userScanRecordObject.setYsid(webScanRequest.getYsid());
         userScanRecordObject.setDeviceId(deviceId);
+        userScanRecordObject.setIp(webScanRequest.getIp());
         userScanRecordObject.setLongitude(webScanRequest.getLongitude());
         userScanRecordObject.setLatitude(webScanRequest.getLatitude());
         userScanRecordObject.setProvince(webScanRequest.getProvince());
@@ -275,4 +285,5 @@ public class WebScanController {
         scanRecord.setCreatedDateTime(userScanRecordObject.getCreatedDateTime());
         return scanRecord;
     }
+
 }

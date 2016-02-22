@@ -23,6 +23,12 @@ public class MktDrawPrize {
     @JsonProperty("scan_record_id")
     private String scanRecordId;
 
+    @JsonProperty("marketing_id")
+    private String marketingId;
+
+    @JsonProperty("draw_rule_id")
+    private String drawRuleId;
+
     @JsonProperty("amount")
     private Integer amount;
 
@@ -79,6 +85,22 @@ public class MktDrawPrize {
 
     public void setScanRecordId(String scanRecordId) {
         this.scanRecordId = scanRecordId;
+    }
+
+    public String getMarketingId() {
+        return marketingId;
+    }
+
+    public void setMarketingId(String marketingId) {
+        this.marketingId = marketingId;
+    }
+
+    public String getDrawRuleId() {
+        return drawRuleId;
+    }
+
+    public void setDrawRuleId(String drawRuleId) {
+        this.drawRuleId = drawRuleId;
     }
 
     public Integer getAmount() {
@@ -168,6 +190,8 @@ public class MktDrawPrize {
             this.setDrawRecordId(object.getDrawRecordId());
             this.setProductKey(object.getProductKey());
             this.setScanRecordId(object.getScanRecordId());
+            this.setMarketingId(object.getMarketingId());
+            this.setDrawRuleId(object.getDrawRuleId());
             this.setAmount(object.getAmount());
             this.setMobile(object.getMobile());
             this.setPrizeTypeCode(object.getPrizeTypeCode());
@@ -186,6 +210,8 @@ public class MktDrawPrize {
         object.setDrawRecordId(this.getDrawRecordId());
         object.setProductKey(this.getProductKey());
         object.setScanRecordId(this.getScanRecordId());
+        object.setMarketingId(this.getMarketingId());
+        object.setDrawRuleId(this.getDrawRuleId());
         object.setAmount(this.getAmount());
         object.setMobile(this.getMobile());
         object.setPrizeTypeCode(this.getPrizeTypeCode());

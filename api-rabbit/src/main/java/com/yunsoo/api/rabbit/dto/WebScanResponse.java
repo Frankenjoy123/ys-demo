@@ -70,6 +70,9 @@ public class WebScanResponse {
         @JsonProperty("id")
         private String id;
 
+        @JsonProperty("batch_id")
+        private String batchId;
+
         @JsonProperty("category")
         private ProductCategory category;
 
@@ -111,6 +114,14 @@ public class WebScanResponse {
 
         public void setId(String id) {
             this.id = id;
+        }
+
+        public String getBatchId() {
+            return batchId;
+        }
+
+        public void setBatchId(String batchId) {
+            this.batchId = batchId;
         }
 
         public ProductCategory getCategory() {
@@ -406,9 +417,6 @@ public class WebScanResponse {
         @JsonProperty("id")
         private String id;
 
-        @JsonProperty("type_code")
-        private String typeCode;
-
 
         public String getId() {
             return id;
@@ -416,14 +424,6 @@ public class WebScanResponse {
 
         public void setId(String id) {
             this.id = id;
-        }
-
-        public String getTypeCode() {
-            return typeCode;
-        }
-
-        public void setTypeCode(String typeCode) {
-            this.typeCode = typeCode;
         }
     }
 
