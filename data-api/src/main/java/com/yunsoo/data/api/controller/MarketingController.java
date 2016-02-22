@@ -233,6 +233,7 @@ public class MarketingController {
         }
         MarketingObject object = new MarketingObject();
         object.setId(entity.getId());
+        object.setName(entity.getName());
         object.setOrgId(entity.getOrgId());
         object.setProductBaseId(entity.getProductBaseId());
         object.setTypeCode(entity.getTypeCode());
@@ -306,6 +307,7 @@ public class MarketingController {
         }
         MarketingEntity entity = new MarketingEntity();
         entity.setId(object.getId());
+        entity.setName(object.getName());
         entity.setOrgId(object.getOrgId());
         entity.setProductBaseId(object.getProductBaseId());
         entity.setTypeCode(object.getTypeCode());

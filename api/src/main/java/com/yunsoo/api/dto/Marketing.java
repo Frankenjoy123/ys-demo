@@ -18,6 +18,9 @@ public class Marketing {
     @JsonProperty("id")
     private String id;
 
+    @JsonProperty("name")
+    private String name;
+
     @JsonProperty("org_id")
     private String orgId;
 
@@ -59,6 +62,14 @@ public class Marketing {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getOrgId() {
@@ -148,6 +159,7 @@ public class Marketing {
     public Marketing(MarketingObject object) {
         if (object != null) {
             this.setId(object.getId());
+            this.setName(object.getName());
             this.setOrgId(object.getOrgId());
             this.setProductBaseId(object.getProductBaseId());
             this.setTypeCode(object.getTypeCode());
@@ -163,6 +175,7 @@ public class Marketing {
     public MarketingObject toMarketingObject() {
         MarketingObject object = new MarketingObject();
         object.setId(this.getId());
+        object.setName(this.getName());
         object.setOrgId(this.getOrgId());
         object.setProductBaseId(this.getProductBaseId());
         object.setTypeCode(this.getTypeCode());
