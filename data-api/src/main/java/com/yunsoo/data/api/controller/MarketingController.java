@@ -219,6 +219,12 @@ public class MarketingController {
         }
     }
 
+    @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.GET)
+    public List<MktDrawRuleObject> findMarketingRulesById(@PathVariable(value = "id")String marketingId){
+        List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingId(marketingId);
+        return mktDrawRuleEntities.stream().map(this::toMktDrawRuleObject).collect(Collectors.toList());
+    }
+
     private MarketingEntity findMarketingById(String id) {
         MarketingEntity entity = marketingRepository.findOne(id);
         if (entity == null) {

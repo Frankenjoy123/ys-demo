@@ -97,12 +97,13 @@ public class ProductKeyBatchController {
     public Long sumQuantity(
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "product_base_id", required = false) String productBaseId,
-            @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
+            @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+            @RequestParam(value = "marketing_id", required = false) String marketingId) {
         Long sum;
         if (statusCodeIn != null && statusCodeIn.size() > 0) {
             sum = productKeyBatchRepository.sumQuantity(orgId, productBaseId, statusCodeIn);
         } else {
-            sum = productKeyBatchRepository.sumQuantity(orgId, productBaseId);
+            sum = productKeyBatchRepository.sumQuantity(orgId, productBaseId, marketingId);
         }
         return sum == null ? 0L : sum;
     }

@@ -109,10 +109,10 @@ public class ProductKeyDomain {
 
     public Long sumQuantity(String orgId, String productBaseId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId)
+                .append("marketing_id", orgId)
                 .append("product_base_id", productBaseId)
                 .build();
-        return dataAPIClient.get("productkeybatch/sum/quantity" + query, Long.class);
+        return dataAPIClient.get("productkeybatch/sum/quantity?" + query, Long.class);
     }
 
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {
