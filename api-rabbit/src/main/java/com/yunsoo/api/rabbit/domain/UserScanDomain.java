@@ -1,5 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
+import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.common.data.object.UserScanRecordObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
@@ -19,7 +20,7 @@ import java.util.List;
  * Descriptions:
  */
 @Component
-public class ScanDomain {
+public class UserScanDomain {
 
     @Autowired
     private RestClient dataAPIClient;
@@ -27,7 +28,10 @@ public class ScanDomain {
     public UserScanRecordObject createScanRecord(UserScanRecordObject userScanRecordObject) {
         userScanRecordObject.setId(null);
         userScanRecordObject.setCreatedDateTime(DateTime.now());
-        return dataAPIClient.post("UserScanRecord", userScanRecordObject, UserScanRecordObject.class);
+        if (userScanRecordObject.getUserId() == null) {
+            userScanRecordObject.setUserId(Constants.Ids.ANONYMOUS_USER_ID);
+        }
+        return dataAPIClient.post("userScanRecord", userScanRecordObject, UserScanRecordObject.class);
     }
 
     /**
@@ -37,11 +41,12 @@ public class ScanDomain {
      */
     public Page<UserScanRecordObject> getScanRecordsByProductKey(String productKey, Pageable pageable) {
         Assert.hasText(productKey, "productKey must not be null or empty");
+
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("product_key", productKey)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("UserScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
+        return dataAPIClient.getPaged("userScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
         });
     }
 
@@ -52,11 +57,28 @@ public class ScanDomain {
      */
     public Page<UserScanRecordObject> getScanRecordsByUserId(String userId, Pageable pageable) {
         Assert.hasText(userId, "userId must not be null or empty");
+
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("user_id", userId)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("UserScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
+        return dataAPIClient.getPaged("userScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
+        });
+    }
+
+    /**
+     * @param ysid     not null or empty
+     * @param pageable not null
+     * @return page of UserScanRecordObject
+     */
+    public Page<UserScanRecordObject> getScanRecordsByYsid(String ysid, Pageable pageable) {
+        Assert.hasText(ysid, "ysid must not be null or empty");
+
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("ysid", ysid)
+                .append(pageable)
+                .build();
+        return dataAPIClient.getPaged("userScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
         });
     }
 

@@ -21,6 +21,9 @@ public class MarketingEntity {
     @Column(name = "id")
     private String id;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "org_id")
     private String orgId;
 
@@ -29,6 +32,9 @@ public class MarketingEntity {
 
     @Column(name = "type_code")
     private String typeCode;
+
+    @Column(name = "budget")
+    private Double budget;
 
     @Column(name = "balance")
     private Double balance;
@@ -55,6 +61,14 @@ public class MarketingEntity {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getOrgId() {
         return orgId;
     }
@@ -77,6 +91,14 @@ public class MarketingEntity {
 
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public Double getBudget() {
+        return budget;
+    }
+
+    public void setBudget(Double budget) {
+        this.budget = budget;
     }
 
     public Double getBalance() {

@@ -17,8 +17,9 @@ import java.util.stream.Collectors;
 public class Page<T> implements Iterable<T>, Serializable {
 
     private List<T> content;
-    private Integer page;
-    private Integer total;
+    private Integer page; //page index, start from 0
+    private Integer total; //total pages
+    private Integer count; //total elements count
 
 
     public Page(List<T> content, Integer page, Integer total) {
@@ -26,6 +27,14 @@ public class Page<T> implements Iterable<T>, Serializable {
         this.content = content;
         this.page = page;
         this.total = total;
+    }
+
+    public Page(List<T> content, Integer page, Integer total, Integer count) {
+        Assert.notNull(content, "content must not be null");
+        this.content = content;
+        this.page = page;
+        this.total = total;
+        this.count = count;
     }
 
     public List<T> getContent() {
@@ -40,9 +49,13 @@ public class Page<T> implements Iterable<T>, Serializable {
         return total;
     }
 
+    public Integer getCount() {
+        return count;
+    }
+
     public <R> Page<R> map(Function<? super T, ? extends R> mapper) {
         List<R> contentR = content.stream().map(mapper).collect(Collectors.toList());
-        return new Page<>(contentR, page, total);
+        return new Page<>(contentR, page, total, count);
     }
 
     public String toContentRange() {
@@ -53,4 +66,5 @@ public class Page<T> implements Iterable<T>, Serializable {
     public Iterator<T> iterator() {
         return content.iterator();
     }
+
 }

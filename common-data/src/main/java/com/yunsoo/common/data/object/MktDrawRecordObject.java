@@ -19,6 +19,9 @@ public class MktDrawRecordObject {
     @JsonProperty("scan_record_id")
     private String scanRecordId;
 
+    @JsonProperty("marketing_id")
+    private String marketingId;
+
     @JsonProperty("product_base_id")
     private String productBaseId;
 
@@ -50,6 +53,14 @@ public class MktDrawRecordObject {
 
     public void setScanRecordId(String scanRecordId) {
         this.scanRecordId = scanRecordId;
+    }
+
+    public String getMarketingId() {
+        return marketingId;
+    }
+
+    public void setMarketingId(String marketingId) {
+        this.marketingId = marketingId;
     }
 
     public String getProductBaseId() {

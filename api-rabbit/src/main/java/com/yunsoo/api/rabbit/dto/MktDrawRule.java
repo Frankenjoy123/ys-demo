@@ -1,11 +1,11 @@
-package com.yunsoo.api.dto;
+package com.yunsoo.api.rabbit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
-import com.yunsoo.common.data.object.MarketingObject;
+import com.yunsoo.common.data.object.MktDrawRuleObject;
 import org.joda.time.DateTime;
 
 /**
@@ -13,28 +13,25 @@ import org.joda.time.DateTime;
  * Created on:  2015/1/25
  * Descriptions:
  */
-public class Marketing {
+public class MktDrawRule {
 
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("name")
-    private String name;
+    @JsonProperty("marketing_id")
+    private String marketingId;
 
-    @JsonProperty("org_id")
-    private String orgId;
+    @JsonProperty("prize_type_code")
+    private String prizeTypeCode;
 
-    @JsonProperty("product_base_id")
-    private String productBaseId;
+    @JsonProperty("amount")
+    private Integer amount;
 
-    @JsonProperty("type_code")
-    private String typeCode;
+    @JsonProperty("probability")
+    private double probability;
 
-    @JsonProperty("budget")
-    private Double budget;
-
-    @JsonProperty("balance")
-    private Double balance;
+    @JsonProperty("comments")
+    private String comments;
 
     @JsonProperty("created_account_id")
     private String createdAccountId;
@@ -52,10 +49,6 @@ public class Marketing {
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
 
-    @JsonProperty("product_base_name")
-    private String productBaseName;
-
-
     public String getId() {
         return id;
     }
@@ -64,52 +57,44 @@ public class Marketing {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getMarketingId() {
+        return marketingId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMarketingId(String marketingId) {
+        this.marketingId = marketingId;
     }
 
-    public String getOrgId() {
-        return orgId;
+    public String getPrizeTypeCode() {
+        return prizeTypeCode;
     }
 
-    public void setOrgId(String orgId) {
-        this.orgId = orgId;
+    public void setPrizeTypeCode(String prizeTypeCode) {
+        this.prizeTypeCode = prizeTypeCode;
     }
 
-    public String getProductBaseId() {
-        return productBaseId;
+    public Integer getAmount() {
+        return amount;
     }
 
-    public void setProductBaseId(String productBaseId) {
-        this.productBaseId = productBaseId;
+    public void setAmount(Integer amount) {
+        this.amount = amount;
     }
 
-    public String getTypeCode() {
-        return typeCode;
+    public double getProbability() {
+        return probability;
     }
 
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
+    public void setProbability(double probability) {
+        this.probability = probability;
     }
 
-    public Double getBudget() {
-        return budget;
+    public String getComments() {
+        return comments;
     }
 
-    public void setBudget(Double budget) {
-        this.budget = budget;
-    }
-
-    public Double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(Double balance) {
-        this.balance = balance;
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public String getCreatedAccountId() {
@@ -144,49 +129,37 @@ public class Marketing {
         this.modifiedDateTime = modifiedDateTime;
     }
 
-    public String getProductBaseName() {
-        return productBaseName;
+    public MktDrawRule() {
     }
 
-    public void setProductBaseName(String productBaseName) {
-        this.productBaseName = productBaseName;
-    }
-
-    public Marketing() {
-
-    }
-
-    public Marketing(MarketingObject object) {
+    public MktDrawRule(MktDrawRuleObject object) {
         if (object != null) {
             this.setId(object.getId());
-            this.setName(object.getName());
-            this.setOrgId(object.getOrgId());
-            this.setProductBaseId(object.getProductBaseId());
-            this.setTypeCode(object.getTypeCode());
-            this.setBudget(object.getBudget());
-            this.setBalance(object.getBalance());
+            this.setMarketingId(object.getMarketingId());
+            this.setPrizeTypeCode(object.getPrizeTypeCode());
+            this.setAmount(object.getAmount());
+            this.setProbability(object.getProbability());
+            this.setComments(object.getComments());
             this.setCreatedAccountId(object.getCreatedAccountId());
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
             this.setModifiedDateTime(object.getModifiedDateTime());
+
         }
     }
 
-    public MarketingObject toMarketingObject() {
-        MarketingObject object = new MarketingObject();
+    public MktDrawRuleObject toMktDrawRuleObject() {
+        MktDrawRuleObject object = new MktDrawRuleObject();
         object.setId(this.getId());
-        object.setName(this.getName());
-        object.setOrgId(this.getOrgId());
-        object.setProductBaseId(this.getProductBaseId());
-        object.setTypeCode(this.getTypeCode());
-        object.setBudget(this.getBudget());
-        object.setBalance(this.getBalance());
+        object.setMarketingId(this.getMarketingId());
+        object.setPrizeTypeCode(this.getPrizeTypeCode());
+        object.setAmount(this.getAmount());
+        object.setProbability(this.getProbability());
+        object.setComments(this.getComments());
         object.setCreatedAccountId(this.getCreatedAccountId());
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());
         object.setModifiedDateTime(this.getModifiedDateTime());
         return object;
     }
-
-
 }

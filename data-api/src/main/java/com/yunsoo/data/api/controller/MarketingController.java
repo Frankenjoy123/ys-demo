@@ -103,7 +103,7 @@ public class MarketingController {
     //create marketing plan, provide API
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public MarketingObject create(@RequestBody MarketingObject marketingObject) {
+    public MarketingObject createMarketing(@RequestBody MarketingObject marketingObject) {
         MarketingEntity entity = toMarketingEntity(marketingObject);
         entity.setId(null);
         if (entity.getCreatedDateTime() == null) {
@@ -159,6 +159,11 @@ public class MarketingController {
         entity.setProductKey(mktDrawRecordEntity.getProductKey());
         MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
 
+        MarketingEntity marketing = marketingRepository.findOne(mktDrawPrizeObject.getMarketingId());
+        marketing.setBalance(marketing.getBalance() - mktDrawPrizeObject.getAmount());
+        marketingRepository.save(marketing);
+
+
         return toMktDrawPrizeObject(newEntity);
     }
 
@@ -171,7 +176,14 @@ public class MarketingController {
         if (entities.size() == 0) {
             throw new NotFoundException("This draw prize has not been found");
         }
-        MktDrawPrizeEntity entity = toMktDrawPrizeEntity(mktDrawPrizeObject);
+
+        MktDrawPrizeEntity entity = entities.get(0);
+        if(!entity.getDrawRecordId().equals(mktDrawPrizeObject.getDrawRecordId()))
+            throw new NotFoundException("This draw prize has not been found");
+
+        entity.setAccountType(mktDrawPrizeObject.getAccountType());
+        entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
+        entity.setPrizeAccountName(mktDrawPrizeObject.getPrizeAccountName());
         entity.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
         MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
 
@@ -185,6 +197,37 @@ public class MarketingController {
         MktDrawRuleEntity entity = toMktDrawRuleEntity(mktDrawRuleObject);
         MktDrawRuleEntity newEntity = mktDrawRuleRepository.save(entity);
         return toMktDrawRuleObject(newEntity);
+    }
+
+    //delete marketing plan
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMarketing(@PathVariable(value = "id") String id) {
+        MarketingEntity entity = marketingRepository.findOne(id);
+        if (entity != null) {
+            marketingRepository.delete(id);
+        }
+    }
+
+    //delete marketing rule by marketing Id
+    @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMarketingRuleByMarketingId(@PathVariable(value = "id") String id) {
+        if (id != null) {
+            List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingId(id);
+            if (mktDrawRuleEntities.size() > 0) {
+                for (MktDrawRuleEntity entity : mktDrawRuleEntities) {
+                    String mktDrawRuleId = entity.getId();
+                    mktDrawRuleRepository.delete(mktDrawRuleId);
+                }
+            }
+        }
+    }
+
+    @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.GET)
+    public List<MktDrawRuleObject> findMarketingRulesById(@PathVariable(value = "id")String marketingId){
+        List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingId(marketingId);
+        return mktDrawRuleEntities.stream().map(this::toMktDrawRuleObject).collect(Collectors.toList());
     }
 
     private MarketingEntity findMarketingById(String id) {
@@ -201,9 +244,11 @@ public class MarketingController {
         }
         MarketingObject object = new MarketingObject();
         object.setId(entity.getId());
+        object.setName(entity.getName());
         object.setOrgId(entity.getOrgId());
         object.setProductBaseId(entity.getProductBaseId());
         object.setTypeCode(entity.getTypeCode());
+        object.setBudget(entity.getBudget());
         object.setBalance(entity.getBalance());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
@@ -237,6 +282,7 @@ public class MarketingController {
         MktDrawRecordObject object = new MktDrawRecordObject();
         object.setId(entity.getId());
         object.setScanRecordId(entity.getScanRecordId());
+        object.setMarketingId(entity.getMarketingId());
         object.setProductBaseId(entity.getProductBaseId());
         object.setProductKey(entity.getProductKey());
         object.setCreatedDateTime(entity.getCreatedDateTime());
@@ -253,6 +299,8 @@ public class MarketingController {
         object.setDrawRecordId(entity.getDrawRecordId());
         object.setProductKey(entity.getProductKey());
         object.setScanRecordId(entity.getScanRecordId());
+        object.setMarketingId(entity.getMarketingId());
+        object.setDrawRuleId(entity.getDrawRuleId());
         object.setAmount(entity.getAmount());
         object.setMobile(entity.getMobile());
         object.setPrizeTypeCode(entity.getPrizeTypeCode());
@@ -273,9 +321,11 @@ public class MarketingController {
         }
         MarketingEntity entity = new MarketingEntity();
         entity.setId(object.getId());
+        entity.setName(object.getName());
         entity.setOrgId(object.getOrgId());
         entity.setProductBaseId(object.getProductBaseId());
         entity.setTypeCode(object.getTypeCode());
+        entity.setBudget(object.getBudget());
         entity.setBalance(object.getBalance());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
@@ -310,6 +360,7 @@ public class MarketingController {
         MktDrawRecordEntity entity = new MktDrawRecordEntity();
         entity.setId(object.getId());
         entity.setScanRecordId(object.getScanRecordId());
+        entity.setMarketingId(object.getMarketingId());
         entity.setProductBaseId(object.getProductBaseId());
         entity.setProductKey(object.getProductKey());
         entity.setCreatedDateTime(object.getCreatedDateTime());
@@ -326,6 +377,8 @@ public class MarketingController {
         entity.setDrawRecordId(object.getDrawRecordId());
         entity.setProductKey(object.getProductKey());
         entity.setScanRecordId(object.getScanRecordId());
+        entity.setMarketingId(object.getMarketingId());
+        entity.setDrawRuleId(object.getDrawRuleId());
         entity.setAmount(object.getAmount());
         entity.setMobile(object.getMobile());
         entity.setPrizeTypeCode(object.getPrizeTypeCode());

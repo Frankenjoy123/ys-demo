@@ -4,15 +4,20 @@ import com.yunsoo.api.rabbit.domain.MarketingDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.MktDrawPrize;
 import com.yunsoo.api.rabbit.dto.MktDrawRecord;
+import com.yunsoo.api.rabbit.dto.MktDrawRule;
 import com.yunsoo.api.rabbit.dto.Product;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.MktDrawPrizeObject;
 import com.yunsoo.common.data.object.MktDrawRecordObject;
+import com.yunsoo.common.data.object.MktDrawRuleObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Haitao
@@ -46,7 +51,7 @@ public class MarketingController {
         }
     }
 
-    @RequestMapping(value = "drawprize/{key}", method = RequestMethod.GET)
+    @RequestMapping(value = "drawPrize/{key}", method = RequestMethod.GET)
     public MktDrawPrize getMktDrawPrizeByProductKey(@PathVariable String key) {
         if (key == null) {
             throw new BadRequestException("product key can not be null");
@@ -71,8 +76,8 @@ public class MarketingController {
             throw new NotFoundException("product can not be found by the key");
         }
         MktDrawRecordObject mktDrawRecordObject = mktDrawRecord.toMktDrawRecordObject();
-        String currentUserId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-        mktDrawRecordObject.setUserId(currentUserId);
+       // String currentUserId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+      //  mktDrawRecordObject.setUserId(currentUserId);
 
         MktDrawRecordObject newMktDrawRecordObject = marketingDomain.createMktDrawRecord(mktDrawRecordObject);
         return new MktDrawRecord(newMktDrawRecordObject);
@@ -104,5 +109,20 @@ public class MarketingController {
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
     }
 
+    @RequestMapping(value = "drawPrize/{id}/random", method = RequestMethod.GET)
+    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId){
+        if(marketingId == null)
+            throw new BadRequestException("marketing id can not be null");
+
+        return new MktDrawRule(marketingDomain.getMktRandomPrize(marketingId));
+    }
+
+    @RequestMapping(value = "drawRule/{id}", method = RequestMethod.GET)
+    public List<MktDrawRule> getMarketingRuleList(@PathVariable(value = "id") String marketingId){
+        if(marketingId == null)
+            throw new BadRequestException("marketing id can not be null");
+
+        return marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
+    }
 
 }

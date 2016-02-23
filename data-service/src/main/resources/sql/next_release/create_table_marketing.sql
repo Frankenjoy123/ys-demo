@@ -5,6 +5,7 @@ CREATE TABLE `marketing` (
   `org_id` varchar(20) NOT NULL,
   `product_base_id` varchar(20) NOT NULL,
   `type_code` varchar(20) NOT NULL,
+  `budget` double NOT NULL,
   `balance` double NOT NULL,
   `created_account_id` char(19) NOT NULL,
   `created_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,

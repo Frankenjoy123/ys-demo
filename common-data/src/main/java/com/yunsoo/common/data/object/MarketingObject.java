@@ -16,6 +16,9 @@ public class MarketingObject {
     @JsonProperty("id")
     private String id;
 
+    @JsonProperty("name")
+    private String name;
+
     @JsonProperty("org_id")
     private String orgId;
 
@@ -24,6 +27,9 @@ public class MarketingObject {
 
     @JsonProperty("type_code")
     private String typeCode;
+
+    @JsonProperty("budget")
+    private Double budget;
 
     @JsonProperty("balance")
     private Double balance;
@@ -52,6 +58,14 @@ public class MarketingObject {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getOrgId() {
         return orgId;
     }
@@ -74,6 +88,14 @@ public class MarketingObject {
 
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public Double getBudget() {
+        return budget;
+    }
+
+    public void setBudget(Double budget) {
+        this.budget = budget;
     }
 
     public Double getBalance() {

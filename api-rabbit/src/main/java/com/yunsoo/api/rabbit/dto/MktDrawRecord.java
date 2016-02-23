@@ -20,6 +20,9 @@ public class MktDrawRecord {
     @JsonProperty("scan_record_id")
     private String scanRecordId;
 
+    @JsonProperty("marketing_id")
+    private String marketingId;
+
     @JsonProperty("product_base_id")
     private String productBaseId;
 
@@ -51,6 +54,14 @@ public class MktDrawRecord {
 
     public void setScanRecordId(String scanRecordId) {
         this.scanRecordId = scanRecordId;
+    }
+
+    public String getMarketingId() {
+        return marketingId;
+    }
+
+    public void setMarketingId(String marketingId) {
+        this.marketingId = marketingId;
     }
 
     public String getProductBaseId() {
@@ -93,10 +104,13 @@ public class MktDrawRecord {
         this.isPrized = isPrized;
     }
 
+    public MktDrawRecord(){}
+
     public MktDrawRecord(MktDrawRecordObject object) {
         if (object != null) {
             this.setId(object.getId());
             this.setScanRecordId(object.getScanRecordId());
+            this.setMarketingId(object.getMarketingId());
             this.setProductBaseId(object.getProductBaseId());
             this.setProductKey(object.getProductKey());
             this.setCreatedDateTime(object.getCreatedDateTime());
@@ -109,6 +123,7 @@ public class MktDrawRecord {
         MktDrawRecordObject object = new MktDrawRecordObject();
         object.setId(this.getId());
         object.setScanRecordId(this.getScanRecordId());
+        object.setMarketingId(this.getMarketingId());
         object.setProductBaseId(this.getProductBaseId());
         object.setProductKey(this.getProductKey());
         object.setCreatedDateTime(this.getCreatedDateTime());

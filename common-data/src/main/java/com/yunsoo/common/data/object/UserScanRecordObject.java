@@ -3,8 +3,8 @@ package com.yunsoo.common.data.object;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
@@ -36,8 +36,14 @@ public class UserScanRecordObject implements Serializable {
     @JsonProperty("app_id")
     private String appId;
 
+    @JsonProperty("ysid")
+    private String ysid;
+
     @JsonProperty("device_id")
     private String deviceId;
+
+    @JsonProperty("ip")
+    private String ip;
 
     @JsonProperty("longitude")
     private Double longitude;
@@ -56,6 +62,9 @@ public class UserScanRecordObject implements Serializable {
 
     @JsonProperty("details")
     private String details;
+
+    @JsonProperty("user_agent")
+    private String userAgent;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -103,12 +112,28 @@ public class UserScanRecordObject implements Serializable {
         this.appId = appId;
     }
 
+    public String getYsid() {
+        return ysid;
+    }
+
+    public void setYsid(String ysid) {
+        this.ysid = ysid;
+    }
+
     public String getDeviceId() {
         return deviceId;
     }
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     public Double getLongitude() {
@@ -157,6 +182,14 @@ public class UserScanRecordObject implements Serializable {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 
     public DateTime getCreatedDateTime() {

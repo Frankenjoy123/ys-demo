@@ -79,15 +79,15 @@ public class RestClient {
     public <T> Page<T> getPaged(String url, ParameterizedTypeReference<List<T>> responseType, Object... uriVariables) {
         ResponseEntity<List<T>> result = restTemplate.exchange(createURL(url), HttpMethod.GET, null, responseType, uriVariables);
         List<T> resultContent = result.getBody();
-        Integer page = 0;
-        Integer total = null;
+        Integer page = 0, total = null, count = null;
         List<String> pagesValue = result.getHeaders().get("Content-Range");
         if (pagesValue != null && pagesValue.size() == 1) {
             Integer[] pagesArray = PageableUtils.parsePages(pagesValue.get(0));
             page = pagesArray[0];
             total = pagesArray[1];
+            count = pagesArray[2];
         }
-        return new Page<>(resultContent, page, total);
+        return new Page<>(resultContent, page, total, count);
     }
 
     public ResourceInputStream getResourceInputStream(String url, Object... uriVariables) {
