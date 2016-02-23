@@ -114,7 +114,7 @@ public class MarketingController {
                 productKeyDomain.updateProductKeyBatch(batchObject);
             }
         }
-        return new Marketing(marketingDomain.createMarketing(marketingObject));
+        return new Marketing(mktObject);
     }
 
     //delete marketing plan by id
