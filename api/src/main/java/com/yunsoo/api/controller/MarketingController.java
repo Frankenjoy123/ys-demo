@@ -3,12 +3,14 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.MarketingDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductDomain;
+import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.Marketing;
 import com.yunsoo.api.dto.MktDrawRule;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.data.object.MktDrawRuleObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -41,6 +43,8 @@ public class MarketingController {
     @Autowired
     private ProductBaseDomain productBaseDomain;
 
+    @Autowired
+    private ProductKeyDomain productKeyDomain;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -91,7 +95,8 @@ public class MarketingController {
 
     //create marketing plan
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public Marketing createMarketing(@RequestBody Marketing marketing) {
+    public Marketing createMarketing(@RequestParam(value = "batchId", required = false) String batchId,
+                                     @RequestBody Marketing marketing) {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         MarketingObject marketingObject = marketing.toMarketingObject();
         marketingObject.setCreatedAccountId(currentAccountId);
@@ -101,6 +106,14 @@ public class MarketingController {
         else
             marketingObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
 
+        MarketingObject mktObject = marketingDomain.createMarketing(marketingObject);
+        if (batchId != null) {
+            ProductKeyBatchObject batchObject = productKeyDomain.getPkBatchById(batchId);
+            if (batchObject != null) {
+                batchObject.setMarketingId(mktObject.getId());
+                productKeyDomain.updateProductKeyBatch(batchObject);
+            }
+        }
         return new Marketing(marketingDomain.createMarketing(marketingObject));
     }
 

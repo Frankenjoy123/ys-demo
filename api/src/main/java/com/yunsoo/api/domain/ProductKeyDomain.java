@@ -82,6 +82,10 @@ public class ProductKeyDomain {
                 lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus));
     }
 
+    public ProductKeyBatchObject getPkBatchById(String id) {
+        return dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id);
+    }
+
     public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Boolean isPackage, Pageable pageable) {
         String[] statusCodes = new String[]{
                 LookupCodes.ProductKeyBatchStatus.CREATING,
@@ -163,6 +167,10 @@ public class ProductKeyDomain {
         }
 
         return toProductKeyBatch(newBatchObj, lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType), lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus));
+    }
+
+    public void updateProductKeyBatch(ProductKeyBatchObject batchObj) {
+        dataAPIClient.patch("productkeybatch/{id}", batchObj, batchObj.getId());
     }
 
     public byte[] getProductKeysByBatchId(String id) {

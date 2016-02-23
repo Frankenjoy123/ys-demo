@@ -145,6 +145,9 @@ public class ProductKeyBatchController {
         }
         if (batchObj.getRestQuantity() != null)
             batch.setRestQuantity(batchObj.getRestQuantity());
+        if (batchObj.getMarketingId() != null) {
+            batch.setMarketingId(batchObj.getMarketingId());
+        }
 
         productKeyBatchService.patchUpdate(batch);
     }
