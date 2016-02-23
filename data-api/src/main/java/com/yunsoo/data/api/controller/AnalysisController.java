@@ -1,12 +1,14 @@
 package com.yunsoo.data.api.controller;
 
+import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ScanRecordAnalysisObject;
 import com.yunsoo.common.data.object.ScanRecordLocationAnalysisObject;
+import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
 import com.yunsoo.data.service.entity.ScanRecordAnalysisEntity;
 import com.yunsoo.data.service.entity.ScanRecordLocationAnalysisEntity;
+import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
 import com.yunsoo.data.service.repository.ScanRecordAnalysisRepository;
 import com.yunsoo.data.service.repository.ScanRecordLocationAnalysisRepository;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -33,6 +35,9 @@ public class AnalysisController {
 
     @Autowired
     private ScanRecordAnalysisRepository scanRecordAnalysisRepository;
+
+    @Autowired
+    private ProductKeyBatchRepository productKeyBatchRepository;
 
 
     @RequestMapping(value = "/scan_data", method = RequestMethod.GET)
@@ -66,6 +71,21 @@ public class AnalysisController {
 
         List<ScanRecordLocationAnalysisEntity> list = scanRecordLocationAnalysisRepository.query(orgId,  startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)), endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)), productBaseId, batchId);
         return list.stream().map(ScanRecordLocationAnalysisEntity::toDataObject).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/batch_key_report", method = RequestMethod.GET)
+    public List<ProductKeyBatchObject> queryBatchKeyReport(@RequestParam(value = "org_id") String orgId,
+                                                           @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                           @RequestParam(value = "start_time")
+                                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                           @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime
+
+    ) {
+        if (StringUtils.isEmpty(productBaseId))
+            productBaseId = null;
+
+        List<ProductKeyBatchEntity> list = productKeyBatchRepository.queryDailyKeyUsageReport(orgId, productBaseId, startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)), endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)));
+        return list.stream().map(ProductKeyBatchEntity::toDataObject).collect(Collectors.toList());
     }
 
 

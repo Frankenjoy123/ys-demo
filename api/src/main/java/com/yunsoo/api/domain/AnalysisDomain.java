@@ -1,15 +1,14 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ScanRecordAnalysisObject;
 import com.yunsoo.common.data.object.ScanRecordLocationAnalysisObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -38,6 +37,15 @@ public class AnalysisDomain {
         return dataAPIClient.get("analysis/scan_data_location" + query, new ParameterizedTypeReference<List<ScanRecordLocationAnalysisObject>>() {
         });
     }
+
+    public List<ProductKeyBatchObject> getDailyKeyUsageReport(String orgId, String productBaseId, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("product_base_id", productBaseId)
+                .build();
+        return dataAPIClient.get("analysis/batch_key_report" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
+        });
+    }
+
 
 
 }

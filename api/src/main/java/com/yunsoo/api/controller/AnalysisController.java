@@ -1,9 +1,11 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AnalysisDomain;
+import com.yunsoo.api.dto.KeyUsageReport;
 import com.yunsoo.api.dto.ScanAnalysisReport;
 import com.yunsoo.api.dto.ScanLocationAnalysisReport;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ScanRecordAnalysisObject;
 import com.yunsoo.common.data.object.ScanRecordLocationAnalysisObject;
 import org.joda.time.DateTime;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +47,8 @@ public class AnalysisController {
         if (endTime == null) {
             endTime = now;
         }
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        //String orgId = "2k0r1l55i2rs5544wz5";
+        //String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        String orgId = "2k0r1l55i2rs5544wz5";
         List<ScanRecordAnalysisObject> data = analysisDomain.getScanAnalysisReport(orgId, startTime, endTime, productBaseId, batchId);
         Map<DateTime, Integer> pvData = data.stream().collect(Collectors.groupingBy(ScanRecordAnalysisObject::getScanDate, Collectors.summingInt(ScanRecordAnalysisObject::getPv)))
                 .entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,  (k,v)->{throw new IllegalStateException();}, LinkedHashMap::new));
@@ -81,8 +82,8 @@ public class AnalysisController {
         if (endTime == null) {
             endTime = now;
         }
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        //String orgId = "2k0r1l55i2rs5544wz5";
+        //String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        String orgId = "2k0r1l55i2rs5544wz5";
         List<ScanRecordLocationAnalysisObject> data = analysisDomain.getScanLocationAnalysisReport(orgId, startTime, endTime, productBaseId, batchId);
 
         ScanLocationAnalysisReport report = new ScanLocationAnalysisReport();
@@ -108,6 +109,46 @@ public class AnalysisController {
 
         return report;
     }
+
+    @RequestMapping(value = "/key_usage_report", method = RequestMethod.GET)
+    public KeyUsageReport getKeyUsageReport(@RequestParam(value = "start_time", required = false) org.joda.time.LocalDate startTime,
+                                            @RequestParam(value = "end_time", required = false) org.joda.time.LocalDate endTime,
+                                            @RequestParam(value = "product_base_id", required = false) String productBaseId) {
+        //TODO for test purpose
+        LocalDate now = LocalDate.now();
+        if (startTime == null) {
+            startTime = now.plusDays(-500);
+        }
+        if (endTime == null) {
+            endTime = now;
+        }
+        //String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        String orgId = "2k0r1l55i2rs5544wz5";
+        List<ProductKeyBatchObject> list = analysisDomain.getDailyKeyUsageReport(orgId, productBaseId, startTime, endTime);
+        Map<String, Integer> quantityMap = list.stream()
+                .collect(Collectors.groupingBy(ProductKeyBatchObject::getCreatedDateString, Collectors.summingInt(ProductKeyBatchObject::getQuantity)))
+                .entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
+                    throw new IllegalStateException();
+                }, LinkedHashMap::new));
+
+        Map<String, Integer> restQuantityMap = list.stream()
+                .collect(Collectors.groupingBy(ProductKeyBatchObject::getCreatedDateString, Collectors.summingInt(ProductKeyBatchObject::getRestQuantity)))
+                .entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
+                    throw new IllegalStateException();
+                }, LinkedHashMap::new));
+
+        KeyUsageReport report = new KeyUsageReport();
+        report.setDate(quantityMap.keySet().toArray(new String[0]));
+        report.setQuantity(quantityMap.values().stream().mapToInt(Integer::intValue).toArray());
+        report.setRestQuantity(restQuantityMap.values().stream().mapToInt(Integer::intValue).toArray());
+
+        return report;
+
+
+    }
+
 
 
 }

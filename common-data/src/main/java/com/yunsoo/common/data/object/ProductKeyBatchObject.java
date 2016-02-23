@@ -31,6 +31,8 @@ public class ProductKeyBatchObject implements Serializable {
     private Integer restQuantity;
     private String marketingId;
 
+
+
     public Integer getRestQuantity() {
         return restQuantity;
     }
@@ -117,5 +119,10 @@ public class ProductKeyBatchObject implements Serializable {
 
     public void setMarketingId(String marketingId) {
         this.marketingId = marketingId;
+    }
+
+    public String getCreatedDateString()
+    {
+        return createdDateTime.toString("yyyy-MM-dd");
     }
 }

@@ -4,8 +4,7 @@ import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
-import com.yunsoo.api.dto.ProductKeyBatch;
-import com.yunsoo.api.dto.ProductKeyBatchRequest;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -33,7 +32,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -154,5 +155,27 @@ public class ProductKeyBatchController {
 
         return newBatch;
     }
+
+    public static Comparator<ProductKeyBatch> comparator = (s1, s2) -> s1.getCreatedDateTime().compareTo(s2.getCreatedDateTime());
+
+    @RequestMapping(value = "product_batch_group", method = RequestMethod.GET)
+    public List<ProductBatchCollection> getProductBatchCollection() {
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        Page<ProductBaseObject> pageProductBase = productBaseDomain.getProductBaseByOrgId(orgId, null);
+        Page<ProductKeyBatch> pageBatch = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, null, false, null);
+
+
+        return pageProductBase.getContent().stream().map(p -> {
+            ProductBatchCollection collection = new ProductBatchCollection();
+            collection.setProductBase(new ProductBase(p));
+            List<ProductKeyBatch> listBatchForProductBase = pageBatch.getContent().stream()
+                    .filter(b -> b.getProductBaseId().equals(p.getId())).sorted(comparator).collect(Collectors.toList());
+            collection.setBatches(listBatchForProductBase);
+
+            return collection;
+        }).collect(Collectors.toList());
+
+    }
+
 
 }
