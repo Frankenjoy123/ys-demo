@@ -73,7 +73,7 @@ public class UserScanRecordController {
         }
 
         if (pageable != null) {
-            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
         }
         return entityPage.getContent().stream().map(this::toUserScanRecordObject).collect(Collectors.toList());
     }

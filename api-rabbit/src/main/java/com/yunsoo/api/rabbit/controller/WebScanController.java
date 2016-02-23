@@ -230,11 +230,11 @@ public class WebScanController {
         if (LookupCodes.ProductKeyType.QR_SECURE.equals(productObject.getProductKeyTypeCode())) {
             //防伪码
             security = new WebScanResponse.Security();
-            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 100));
+            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 1));
             List<UserScanRecordObject> userScanRecordObjects = userScanRecordObjectPage.getContent();
-            security.setScanCount(userScanRecordObjects.size());
+            security.setScanCount(userScanRecordObjectPage.getCount());
             if (userScanRecordObjects.size() > 0) {
-                security.setFirstScan(toScanRecord(userScanRecordObjects.get((1))));
+                security.setFirstScan(toScanRecord(userScanRecordObjects.get(0)));
             }
         }
         return security;
