@@ -86,6 +86,11 @@ public class ProductKeyDomain {
         return dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id);
     }
 
+    public void updatePkBatch(ProductKeyBatchObject productKeyBatchObject) {
+        dataAPIClient.patch("productkeybatch/{id}", productKeyBatchObject, productKeyBatchObject.getId());
+    }
+
+
     public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Boolean isPackage, Pageable pageable) {
         String[] statusCodes = new String[]{
                 LookupCodes.ProductKeyBatchStatus.CREATING,

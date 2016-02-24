@@ -4,7 +4,10 @@ import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
-import com.yunsoo.api.dto.*;
+import com.yunsoo.api.dto.ProductBase;
+import com.yunsoo.api.dto.ProductBatchCollection;
+import com.yunsoo.api.dto.ProductKeyBatch;
+import com.yunsoo.api.dto.ProductKeyBatchRequest;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -176,6 +179,31 @@ public class ProductKeyBatchController {
         }).collect(Collectors.toList());
 
     }
+
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public void updateProductKeyBatch(
+            @Valid @RequestBody ProductKeyBatch productKeyBatch) {
+
+        if (productKeyBatch == null) {
+            throw new BadRequestException("marketing draw record can not be null");
+        }
+        ProductKeyBatchObject productKeyBatchObject = new ProductKeyBatchObject();
+
+        productKeyBatchObject.setId(productKeyBatch.getId());
+        productKeyBatchObject.setQuantity(productKeyBatch.getQuantity());
+        productKeyBatchObject.setStatusCode(productKeyBatch.getStatusCode());
+        productKeyBatchObject.setProductKeyTypeCodes(productKeyBatch.getProductKeyTypeCodes());
+        productKeyBatchObject.setProductBaseId(productKeyBatch.getProductBaseId());
+        productKeyBatchObject.setOrgId(productKeyBatch.getOrgId());
+        productKeyBatchObject.setCreatedAppId(productKeyBatch.getCreatedAppId());
+        productKeyBatchObject.setCreatedAccountId(productKeyBatch.getCreatedAccountId());
+        productKeyBatchObject.setCreatedDateTime(productKeyBatch.getCreatedDateTime());
+        productKeyBatchObject.setRestQuantity(productKeyBatch.getQuantity());
+        productKeyBatchObject.setMarketingId(productKeyBatch.getMarketingId());
+
+        productKeyDomain.updateProductKeyBatch(productKeyBatchObject);
+    }
+
 
 
 }
