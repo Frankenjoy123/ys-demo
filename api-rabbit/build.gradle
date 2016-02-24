@@ -27,7 +27,7 @@ dependencies {
 
     compile 'org.springframework.cloud:spring-cloud-aws-autoconfigure:1.0.4.RELEASE'
     compile 'org.springframework.data:spring-data-redis:1.6.2.RELEASE'
-    compile 'redis.clients:jedis:2.8.0'
+    compile 'redis.clients:jedis:2.7.3'
 
     testCompile 'io.springfox:springfox-staticdocs:2.2.2'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
