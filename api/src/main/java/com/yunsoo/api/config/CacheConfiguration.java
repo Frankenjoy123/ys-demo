@@ -1,6 +1,7 @@
 package com.yunsoo.api.config;
 
 import com.yunsoo.api.cache.CustomKeyGenerator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -39,6 +40,9 @@ public class CacheConfiguration {
     @ConditionalOnProperty(value = "yunsoo.cache.type", havingValue = "redis")
     public static class RedisCacheConfiguration {
 
+        @Value("${yunsoo.cache.default_expire_time:3600}")
+        private long defaultExpireTime;
+
         @Bean
         public KeyGenerator keyGenerator() {
             return new CustomKeyGenerator();
@@ -46,7 +50,11 @@ public class CacheConfiguration {
 
         @Bean
         public CacheManager cacheManager(RedisTemplate redisTemplate) {
-            return new RedisCacheManager(redisTemplate);
+            RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate);
+            if (defaultExpireTime > 0) {
+                redisCacheManager.setDefaultExpiration(defaultExpireTime);
+            }
+            return redisCacheManager;
         }
 
         @Bean(name = "org.springframework.autoconfigure.redis.RedisProperties")
