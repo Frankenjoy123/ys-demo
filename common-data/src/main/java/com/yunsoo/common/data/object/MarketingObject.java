@@ -137,4 +137,7 @@ public class MarketingObject {
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
     }
+
+    public MarketingObject() {
+    }
 }

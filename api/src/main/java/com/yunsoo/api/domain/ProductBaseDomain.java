@@ -55,6 +55,9 @@ public class ProductBaseDomain {
 
     @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseId )")
     public ProductBaseObject getProductBaseById(String productBaseId) {
+        if ((productBaseId == null) || (productBaseId.equals(""))) {
+            return null;
+        }
         try {
             return dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         } catch (NotFoundException ignored) {

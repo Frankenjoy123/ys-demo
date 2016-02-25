@@ -104,13 +104,23 @@ public class MarketingController {
         else
             marketingObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
 
-        MarketingObject mktObject = marketingDomain.createMarketing(marketingObject);
+        MarketingObject mktObject = new MarketingObject();
         if (batchId != null) {
             ProductKeyBatchObject batchObject = productKeyDomain.getPkBatchById(batchId);
             if (batchObject != null) {
+                marketingObject.setOrgId(batchObject.getOrgId());
+                marketingObject.setProductBaseId(batchObject.getProductBaseId());
+                mktObject = marketingDomain.createMarketing(marketingObject);
+
                 batchObject.setMarketingId(mktObject.getId());
+
                 productKeyDomain.updateProductKeyBatch(batchObject);
+
+            } else {
+                mktObject = marketingDomain.createMarketing(marketingObject);
             }
+        } else {
+            mktObject = marketingDomain.createMarketing(marketingObject);
         }
         return new Marketing(mktObject);
     }
@@ -129,7 +139,20 @@ public class MarketingController {
         if (pageable != null) {
             response.setHeader("Content-Range", mktDrawPrizePage.toContentRange());
         }
-        return mktDrawPrizePage.map(MktDrawPrize::new).getContent();
+
+        List<MktDrawPrize> mktDrawPrizeList = new ArrayList<>();
+        mktDrawPrizePage.getContent().forEach(object -> {
+            MktDrawPrize mktDrawPrize = new MktDrawPrize(object);
+            MarketingObject mkto = marketingDomain.getMarketingById(object.getMarketingId());
+            if (mkto != null) {
+                String productBaseId = mkto.getProductBaseId();
+                ProductBaseObject pbo = productBaseDomain.getProductBaseById(productBaseId);
+                mktDrawPrize.setProductBaseName(pbo.getName());
+            }
+            mktDrawPrizeList.add(mktDrawPrize);
+        });
+
+        return mktDrawPrizeList;
     }
 
 
