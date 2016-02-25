@@ -104,13 +104,23 @@ public class MarketingController {
         else
             marketingObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
 
-        MarketingObject mktObject = marketingDomain.createMarketing(marketingObject);
+        MarketingObject mktObject = new MarketingObject();
         if (batchId != null) {
             ProductKeyBatchObject batchObject = productKeyDomain.getPkBatchById(batchId);
             if (batchObject != null) {
+                marketingObject.setOrgId(batchObject.getOrgId());
+                marketingObject.setProductBaseId(batchObject.getProductBaseId());
+                mktObject = marketingDomain.createMarketing(marketingObject);
+
                 batchObject.setMarketingId(mktObject.getId());
+
                 productKeyDomain.updateProductKeyBatch(batchObject);
+
+            } else {
+                mktObject = marketingDomain.createMarketing(marketingObject);
             }
+        } else {
+            mktObject = marketingDomain.createMarketing(marketingObject);
         }
         return new Marketing(mktObject);
     }
