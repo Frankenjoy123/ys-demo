@@ -1,6 +1,5 @@
-package com.yunsoo.api.rabbit.cache.annotation;
+package com.yunsoo.api.cache.annotation;
 
-import com.yunsoo.api.rabbit.config.CacheConfiguration;
 import org.springframework.cache.annotation.CacheConfig;
 
 import java.lang.annotation.ElementType;
@@ -15,6 +14,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
-@CacheConfig(keyGenerator = "keyGenerator", cacheNames = {CacheConfiguration.CACHE_NAME})
-public @interface ElastiCacheConfig {
+@CacheConfig(keyGenerator = "keyGenerator", cacheNames = {"default"})
+public @interface DefaultCacheConfig {
 }

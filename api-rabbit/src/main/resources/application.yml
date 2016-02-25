@@ -7,14 +7,6 @@ management:
 multipart.maxFileSize: 10MB
 multipart.maxRequestSize: 10MB
 
-cloud:
-  aws:
-    stack:
-      auto: false
-    region:
-      auto: false
-      static: cn-north-1
-
 spring:
   profiles.active: local
   mvc:
@@ -56,4 +48,7 @@ logging:
 
 yunsoo:
   cache:
-    type: elasticache
+    type: redis
+    default_expire_time: 600 #seconds
+    redis:
+      host: dev-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn

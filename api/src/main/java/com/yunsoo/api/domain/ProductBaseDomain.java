@@ -2,7 +2,7 @@ package com.yunsoo.api.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.cache.annotation.DefaultCacheConfig;
 import com.yunsoo.api.dto.ImageRequest_removed;
 import com.yunsoo.api.dto.ProductBaseDetails_removed;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -38,7 +38,7 @@ import java.util.Map;
  * Descriptions:
  */
 @Component
-@ElastiCacheConfig
+@DefaultCacheConfig
 public class ProductBaseDomain {
 
     private static final String DETAILS_FILE_NAME = "details.json";

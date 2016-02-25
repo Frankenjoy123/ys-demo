@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.cache.annotation.DefaultCacheConfig;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.data.object.UserReportObject;
 import com.yunsoo.common.web.client.Page;
@@ -20,7 +20,7 @@ import java.util.List;
  * Created by yan on 9/28/2015.
  */
 @Component
-@ElastiCacheConfig
+@DefaultCacheConfig
 public class UserReportDomain {
     @Autowired
     private RestClient dataAPIClient;

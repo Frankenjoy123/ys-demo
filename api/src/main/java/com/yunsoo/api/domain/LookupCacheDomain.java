@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.cache.annotation.DefaultCacheConfig;
 import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
@@ -19,7 +19,7 @@ import java.util.List;
  * Created on:   9/8/2015
  * Descriptions:
  */
-@ElastiCacheConfig
+@DefaultCacheConfig
 @Component
 public class LookupCacheDomain {
 

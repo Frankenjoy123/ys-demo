@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.cache.annotation.DefaultCacheConfig;
 import com.yunsoo.api.client.DataAPIClient;
 import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * Created on  : 2015/7/1
  * Descriptions:
  */
-@ElastiCacheConfig
+@DefaultCacheConfig
 @Component
 public class ProductCategoryDomain {
 

@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.cache.annotation.DefaultCacheConfig;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.util.HashUtils;
@@ -29,7 +29,7 @@ import java.util.List;
  * Descriptions:
  */
 @Component
-@ElastiCacheConfig
+@DefaultCacheConfig
 public class AccountDomain {
 
     @Autowired
