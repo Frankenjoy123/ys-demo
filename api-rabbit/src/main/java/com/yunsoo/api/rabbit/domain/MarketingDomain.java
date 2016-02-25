@@ -58,6 +58,11 @@ public class MarketingDomain {
 
     }
 
+    public MarketingObject getMarketing(String marketingId){
+        return dataAPIClient.get("marketing/{id}", MarketingObject.class, marketingId);
+
+    }
+
     public MktDrawRuleObject getMktRandomPrize(String marketId){
         MarketingObject obj = dataAPIClient.get("marketing/{id}", MarketingObject.class, marketId);
         if(obj.getBalance() <=0)
