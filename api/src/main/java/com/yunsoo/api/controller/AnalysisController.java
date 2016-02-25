@@ -47,8 +47,8 @@ public class AnalysisController {
         if (endTime == null) {
             endTime = now;
         }
-        //String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        String orgId = "2k0r1l55i2rs5544wz5";
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        //String orgId = "2k0r1l55i2rs5544wz5";
         List<ScanRecordAnalysisObject> data = analysisDomain.getScanAnalysisReport(orgId, startTime, endTime, productBaseId, batchId);
         Map<DateTime, Integer> pvData = data.stream().collect(Collectors.groupingBy(ScanRecordAnalysisObject::getScanDate, Collectors.summingInt(ScanRecordAnalysisObject::getPv)))
                 .entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,  (k,v)->{throw new IllegalStateException();}, LinkedHashMap::new));
@@ -82,8 +82,8 @@ public class AnalysisController {
         if (endTime == null) {
             endTime = now;
         }
-        //String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        String orgId = "2k0r1l55i2rs5544wz5";
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        //String orgId = "2k0r1l55i2rs5544wz5";
         List<ScanRecordLocationAnalysisObject> data = analysisDomain.getScanLocationAnalysisReport(orgId, startTime, endTime, productBaseId, batchId);
 
         ScanLocationAnalysisReport report = new ScanLocationAnalysisReport();
@@ -122,8 +122,8 @@ public class AnalysisController {
         if (endTime == null) {
             endTime = now;
         }
-        //String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        String orgId = "2k0r1l55i2rs5544wz5";
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        //String orgId = "2k0r1l55i2rs5544wz5";
         List<ProductKeyBatchObject> list = analysisDomain.getDailyKeyUsageReport(orgId, productBaseId, startTime, endTime);
         Map<String, Integer> quantityMap = list.stream()
                 .collect(Collectors.groupingBy(ProductKeyBatchObject::getCreatedDateString, Collectors.summingInt(ProductKeyBatchObject::getQuantity)))
@@ -133,7 +133,7 @@ public class AnalysisController {
                 }, LinkedHashMap::new));
 
         Map<String, Integer> restQuantityMap = list.stream()
-                .collect(Collectors.groupingBy(ProductKeyBatchObject::getCreatedDateString, Collectors.summingInt(ProductKeyBatchObject::getRestQuantity)))
+                .collect(Collectors.groupingBy(o->o.getCreatedDateTime().toString("yyyy-MM-dd"), Collectors.summingInt(ProductKeyBatchObject::getRestQuantity)))
                 .entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
                     throw new IllegalStateException();
