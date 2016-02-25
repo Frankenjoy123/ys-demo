@@ -63,6 +63,9 @@ public class MktDrawPrize {
     @JsonProperty("comments")
     private String comments;
 
+    @JsonProperty("product_base_name")
+    private String productBaseName;
+
     public String getDrawRecordId() {
         return drawRecordId;
     }
@@ -181,6 +184,14 @@ public class MktDrawPrize {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public String getProductBaseName() {
+        return productBaseName;
+    }
+
+    public void setProductBaseName(String productBaseName) {
+        this.productBaseName = productBaseName;
     }
 
     public MktDrawPrize() {

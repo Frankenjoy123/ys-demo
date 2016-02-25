@@ -129,7 +129,20 @@ public class MarketingController {
         if (pageable != null) {
             response.setHeader("Content-Range", mktDrawPrizePage.toContentRange());
         }
-        return mktDrawPrizePage.map(MktDrawPrize::new).getContent();
+
+        List<MktDrawPrize> mktDrawPrizeList = new ArrayList<>();
+        mktDrawPrizePage.getContent().forEach(object -> {
+            MktDrawPrize mktDrawPrize = new MktDrawPrize(object);
+            MarketingObject mkto = marketingDomain.getMarketingById(object.getMarketingId());
+            if (mkto != null) {
+                String productBaseId = mkto.getProductBaseId();
+                ProductBaseObject pbo = productBaseDomain.getProductBaseById(productBaseId);
+                mktDrawPrize.setProductBaseName(pbo.getName());
+            }
+            mktDrawPrizeList.add(mktDrawPrize);
+        });
+
+        return mktDrawPrizeList;
     }
 
 
