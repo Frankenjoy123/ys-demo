@@ -100,6 +100,26 @@ public class MarketingController {
                 .collect(Collectors.toList());
     }
 
+    //query marketing prize, provide API
+    @RequestMapping(value = "/drawPrize/marketing", method = RequestMethod.GET)
+    public List<MktDrawPrizeObject> getMktDrawPrizeByMarketingId(
+            @RequestParam(value = "marketing_id") String marketingId,
+            @RequestParam(value = "account_type", required = false) String accountType,
+            @RequestParam(value = "status_code", required = false) String statusCode,
+            Pageable pageable,
+            HttpServletResponse response) {
+
+        Page<MktDrawPrizeEntity> entityPage = mktDrawPrizeRepository.query(marketingId, accountType, statusCode, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toMktDrawPrizeObject)
+                .collect(Collectors.toList());
+    }
+
     //create marketing plan, provide API
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
