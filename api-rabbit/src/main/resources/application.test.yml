@@ -16,6 +16,7 @@ logging:
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'
+    springfox.documentation: 'ERROR'
 
 yunsoo:
   debug: false

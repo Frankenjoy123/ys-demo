@@ -31,6 +31,7 @@ logging:
   level:
     org.springframework: 'INFO'
     org.hibernate: 'ERROR'
+    springfox.documentation: 'ERROR'
 
 yunsoo:
   cache:
@@ -45,6 +46,7 @@ logging:
   level:
     org.springframework: 'INFO'
     org.hibernate: 'ERROR'
+    springfox.documentation: 'ERROR'
 
 yunsoo:
   cache:

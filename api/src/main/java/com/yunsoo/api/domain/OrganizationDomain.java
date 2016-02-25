@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.cache.annotation.DefaultCacheConfig;
+import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.web.client.Page;
@@ -29,7 +29,7 @@ import java.util.List;
  * Descriptions:
  */
 @Component
-@DefaultCacheConfig
+@ObjectCacheConfig
 public class OrganizationDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
@@ -41,7 +41,7 @@ public class OrganizationDomain {
     private static final String ORG_LOGO_IMAGE_200X200 = "image-200x200";
 
 
-    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
+    @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
     public OrganizationObject getOrganizationById(String id) {
         log.debug("cache missing on organization." + id);
         try {

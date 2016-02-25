@@ -1,4 +1,4 @@
-package com.yunsoo.api.cache.annotation;
+package com.yunsoo.api.rabbit.cache.annotation;
 
 import org.springframework.cache.annotation.CacheConfig;
 
@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
-@CacheConfig(keyGenerator = "keyGenerator", cacheNames = {"default"})
-public @interface DefaultCacheConfig {
+@CacheConfig(keyGenerator = "objectKeyGenerator", cacheNames = {"objectCache"})
+public @interface ObjectCacheConfig {
 }

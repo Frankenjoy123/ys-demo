@@ -1,6 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.cache.annotation.DefaultCacheConfig;
+import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.rabbit.dto.Product;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  * Descriptions:
  */
 @Component
-@DefaultCacheConfig
+@ObjectCacheConfig
 public class ProductDomain {
 
     @Autowired

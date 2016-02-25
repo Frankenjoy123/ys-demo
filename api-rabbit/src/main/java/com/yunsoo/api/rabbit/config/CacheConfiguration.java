@@ -1,6 +1,6 @@
 package com.yunsoo.api.rabbit.config;
 
-import com.yunsoo.api.rabbit.cache.CustomKeyGenerator;
+import com.yunsoo.api.rabbit.cache.ObjectKeyGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -23,9 +23,9 @@ public class CacheConfiguration {
     @ConditionalOnProperty(value = "yunsoo.cache.type", havingValue = "local")
     public static class LocalCacheConfiguration {
 
-        @Bean
+        @Bean(name = "objectKeyGenerator")
         public KeyGenerator keyGenerator() {
-            return new CustomKeyGenerator();
+            return new ObjectKeyGenerator();
         }
 
         @Bean
@@ -43,9 +43,9 @@ public class CacheConfiguration {
         @Value("${yunsoo.cache.default_expire_time:3600}")
         private long defaultExpireTime;
 
-        @Bean
+        @Bean(name = "objectKeyGenerator")
         public KeyGenerator keyGenerator() {
-            return new CustomKeyGenerator();
+            return new ObjectKeyGenerator();
         }
 
         @Bean

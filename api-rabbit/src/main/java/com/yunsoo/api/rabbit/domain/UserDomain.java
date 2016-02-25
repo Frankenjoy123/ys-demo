@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.Constants;
-import com.yunsoo.api.rabbit.cache.annotation.DefaultCacheConfig;
+import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserConfigObject;
 import com.yunsoo.common.data.object.UserObject;
@@ -32,7 +32,7 @@ import java.util.List;
  * Descriptions:
  */
 @Component
-@DefaultCacheConfig
+@ObjectCacheConfig
 public class UserDomain {
 
     @Autowired
@@ -44,7 +44,7 @@ public class UserDomain {
     private static final String DEFAULT_GRAVATAR_IMAGE_NAME = "image-400x400";
 
 
-    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #userId)")
+    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #userId)")
     public UserObject getUserById(String userId) {
         try {
             return userId != null ? dataAPIClient.get("user/{id}", UserObject.class, userId) : null;
@@ -74,7 +74,7 @@ public class UserDomain {
         }, deviceId);
     }
 
-    @CacheEvict(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #userObject.getId())")
+    @CacheEvict(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #userObject.getId())")
     public void patchUpdateUser(UserObject userObject) {
         String userId = userObject.getId();
         if (!StringUtils.isEmpty(userId)) {

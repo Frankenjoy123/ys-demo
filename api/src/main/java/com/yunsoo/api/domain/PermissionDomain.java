@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.cache.annotation.DefaultCacheConfig;
+import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.PermissionInstance;
 import com.yunsoo.api.util.WildcardMatcher;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * Created on:   2015/4/14
  * Descriptions:
  */
-@DefaultCacheConfig
+@ObjectCacheConfig
 @Component
 public class PermissionDomain {
 
@@ -42,14 +42,14 @@ public class PermissionDomain {
     @Autowired
     private LookupDomain lookupDomain;
 
-    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'list')")
+    @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'list')")
     public List<PermissionPolicyObject> getPermissionPolicies() {
         log.debug("cache missed [name: permission, key: 'policylist']");
         return dataAPIClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
         });
     }
 
-    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'map')")
+    @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'map')")
     public Map<String, PermissionPolicyObject> getPermissionPolicyMap() {
         log.debug("cache missed [name: permission, key: 'policymap']");
         Map<String, PermissionPolicyObject> permissionPolicies = new HashMap<>();

@@ -1,6 +1,6 @@
 package com.yunsoo.api.config;
 
-import com.yunsoo.api.cache.CustomKeyGenerator;
+import com.yunsoo.api.cache.ObjectKeyGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -25,7 +25,7 @@ public class CacheConfiguration {
 
         @Bean
         public KeyGenerator keyGenerator() {
-            return new CustomKeyGenerator();
+            return new ObjectKeyGenerator();
         }
 
         @Bean
@@ -45,7 +45,7 @@ public class CacheConfiguration {
 
         @Bean
         public KeyGenerator keyGenerator() {
-            return new CustomKeyGenerator();
+            return new ObjectKeyGenerator();
         }
 
         @Bean
