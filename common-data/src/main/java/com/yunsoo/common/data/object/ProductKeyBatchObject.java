@@ -121,8 +121,4 @@ public class ProductKeyBatchObject implements Serializable {
         this.marketingId = marketingId;
     }
 
-    public String getCreatedDateString()
-    {
-        return createdDateTime.toString("yyyy-MM-dd");
-    }
 }

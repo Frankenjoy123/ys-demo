@@ -5,12 +5,10 @@ import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.Marketing;
+import com.yunsoo.api.dto.MktDrawPrize;
 import com.yunsoo.api.dto.MktDrawRule;
 import com.yunsoo.api.security.TokenAuthenticationService;
-import com.yunsoo.common.data.object.MarketingObject;
-import com.yunsoo.common.data.object.MktDrawRuleObject;
-import com.yunsoo.common.data.object.ProductBaseObject;
-import com.yunsoo.common.data.object.ProductKeyBatchObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -106,16 +104,57 @@ public class MarketingController {
         else
             marketingObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
 
-        MarketingObject mktObject = marketingDomain.createMarketing(marketingObject);
+        MarketingObject mktObject = new MarketingObject();
         if (batchId != null) {
             ProductKeyBatchObject batchObject = productKeyDomain.getPkBatchById(batchId);
             if (batchObject != null) {
+                marketingObject.setOrgId(batchObject.getOrgId());
+                marketingObject.setProductBaseId(batchObject.getProductBaseId());
+                mktObject = marketingDomain.createMarketing(marketingObject);
+
                 batchObject.setMarketingId(mktObject.getId());
+
                 productKeyDomain.updateProductKeyBatch(batchObject);
+
+            } else {
+                mktObject = marketingDomain.createMarketing(marketingObject);
             }
+        } else {
+            mktObject = marketingDomain.createMarketing(marketingObject);
         }
         return new Marketing(mktObject);
     }
+
+    @RequestMapping(value = "drawPrize/marketing", method = RequestMethod.GET)
+    public List<MktDrawPrize> getMktDrawPrizeByFilter(@RequestParam(value = "marketing_id") String marketingId,
+                                                      @RequestParam(value = "account_type", required = false) String accountType,
+                                                      @RequestParam(value = "status_code", required = false) String statusCode,
+                                                      Pageable pageable,
+                                                      HttpServletResponse response) {
+        if (marketingId == null || marketingId.isEmpty()) {
+            throw new BadRequestException("marketing id is not valid");
+        }
+
+        Page<MktDrawPrizeObject> mktDrawPrizePage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, statusCode, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", mktDrawPrizePage.toContentRange());
+        }
+
+        List<MktDrawPrize> mktDrawPrizeList = new ArrayList<>();
+        mktDrawPrizePage.getContent().forEach(object -> {
+            MktDrawPrize mktDrawPrize = new MktDrawPrize(object);
+            MarketingObject mkto = marketingDomain.getMarketingById(object.getMarketingId());
+            if (mkto != null) {
+                String productBaseId = mkto.getProductBaseId();
+                ProductBaseObject pbo = productBaseDomain.getProductBaseById(productBaseId);
+                mktDrawPrize.setProductBaseName(pbo.getName());
+            }
+            mktDrawPrizeList.add(mktDrawPrize);
+        });
+
+        return mktDrawPrizeList;
+    }
+
 
     //delete marketing plan by id
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)

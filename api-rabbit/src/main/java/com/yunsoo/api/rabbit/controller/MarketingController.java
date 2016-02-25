@@ -2,10 +2,7 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.MarketingDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
-import com.yunsoo.api.rabbit.dto.MktDrawPrize;
-import com.yunsoo.api.rabbit.dto.MktDrawRecord;
-import com.yunsoo.api.rabbit.dto.MktDrawRule;
-import com.yunsoo.api.rabbit.dto.Product;
+import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.MktDrawPrizeObject;
 import com.yunsoo.common.data.object.MktDrawRecordObject;
@@ -123,6 +120,14 @@ public class MarketingController {
             throw new BadRequestException("marketing id can not be null");
 
         return marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public Marketing getMarketing(@PathVariable(value = "id") String marketingId){
+        if(marketingId == null)
+            throw new BadRequestException("marketing id can not be null");
+
+        return new Marketing(marketingDomain.getMarketing(marketingId));
     }
 
 }

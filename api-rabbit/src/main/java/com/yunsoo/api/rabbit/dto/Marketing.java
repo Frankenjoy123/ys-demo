@@ -1,18 +1,20 @@
-package com.yunsoo.common.data.object;
+package com.yunsoo.api.rabbit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.MarketingObject;
 import org.joda.time.DateTime;
 
 /**
- * Created by  : haitao
- * Created on  : 2016/1/25
+ * Created by:  haitao
+ * Created on:  2015/1/25
  * Descriptions:
  */
-public class MarketingObject {
+public class Marketing {
+
     @JsonProperty("id")
     private String id;
 
@@ -49,6 +51,10 @@ public class MarketingObject {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
+
+    @JsonProperty("product_base_name")
+    private String productBaseName;
+
 
     public String getId() {
         return id;
@@ -138,6 +144,49 @@ public class MarketingObject {
         this.modifiedDateTime = modifiedDateTime;
     }
 
-    public MarketingObject() {
+    public String getProductBaseName() {
+        return productBaseName;
     }
+
+    public void setProductBaseName(String productBaseName) {
+        this.productBaseName = productBaseName;
+    }
+
+    public Marketing() {
+
+    }
+
+    public Marketing(MarketingObject object) {
+        if (object != null) {
+            this.setId(object.getId());
+            this.setName(object.getName());
+            this.setOrgId(object.getOrgId());
+            this.setProductBaseId(object.getProductBaseId());
+            this.setTypeCode(object.getTypeCode());
+            this.setBudget(object.getBudget());
+            this.setBalance(object.getBalance());
+            this.setCreatedAccountId(object.getCreatedAccountId());
+            this.setCreatedDateTime(object.getCreatedDateTime());
+            this.setModifiedAccountId(object.getModifiedAccountId());
+            this.setModifiedDateTime(object.getModifiedDateTime());
+        }
+    }
+
+    public MarketingObject toMarketingObject() {
+        MarketingObject object = new MarketingObject();
+        object.setId(this.getId());
+        object.setName(this.getName());
+        object.setOrgId(this.getOrgId());
+        object.setProductBaseId(this.getProductBaseId());
+        object.setTypeCode(this.getTypeCode());
+        object.setBudget(this.getBudget());
+        object.setBalance(this.getBalance());
+        object.setCreatedAccountId(this.getCreatedAccountId());
+        object.setCreatedDateTime(this.getCreatedDateTime());
+        object.setModifiedAccountId(this.getModifiedAccountId());
+        object.setModifiedDateTime(this.getModifiedDateTime());
+        return object;
+    }
+
+
 }

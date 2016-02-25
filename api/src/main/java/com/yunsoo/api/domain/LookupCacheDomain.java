@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
@@ -19,7 +19,7 @@ import java.util.List;
  * Created on:   9/8/2015
  * Descriptions:
  */
-@ElastiCacheConfig
+@ObjectCacheConfig
 @Component
 public class LookupCacheDomain {
 
@@ -28,14 +28,14 @@ public class LookupCacheDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).LOOKUP.toString(), 'all')")
+    @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).LOOKUP.toString(), 'all')")
     public List<LookupObject> getAllLookupList(){
         log.debug("cache not hit for getAllLookupList");
         return dataAPIClient.get("lookup", new ParameterizedTypeReference<List<LookupObject>>() {
         });
     }
 
-    @CacheEvict(key="T(com.yunsoo.api.cache.CustomKeyGenerator).getKey(T(com.yunsoo.common.data.CacheType).LOOKUP.toString(), 'all')")
+    @CacheEvict(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).LOOKUP.toString(), 'all')")
     public void saveLookup(LookupObject lookup){
        dataAPIClient.put("lookup",lookup, LookupObject.class);
     }

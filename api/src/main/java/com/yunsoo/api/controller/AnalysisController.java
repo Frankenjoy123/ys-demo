@@ -126,14 +126,14 @@ public class AnalysisController {
         //String orgId = "2k0r1l55i2rs5544wz5";
         List<ProductKeyBatchObject> list = analysisDomain.getDailyKeyUsageReport(orgId, productBaseId, startTime, endTime);
         Map<String, Integer> quantityMap = list.stream()
-                .collect(Collectors.groupingBy(ProductKeyBatchObject::getCreatedDateString, Collectors.summingInt(ProductKeyBatchObject::getQuantity)))
+                .collect(Collectors.groupingBy(o -> o.getCreatedDateTime().toString("yyyy-MM-dd"), Collectors.summingInt(ProductKeyBatchObject::getQuantity)))
                 .entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
                     throw new IllegalStateException();
                 }, LinkedHashMap::new));
 
         Map<String, Integer> restQuantityMap = list.stream()
-                .collect(Collectors.groupingBy(o->o.getCreatedDateTime().toString("yyyy-MM-dd"), Collectors.summingInt(ProductKeyBatchObject::getRestQuantity)))
+                .collect(Collectors.groupingBy(o -> o.getCreatedDateTime().toString("yyyy-MM-dd"), Collectors.summingInt(ProductKeyBatchObject::getRestQuantity)))
                 .entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
                     throw new IllegalStateException();

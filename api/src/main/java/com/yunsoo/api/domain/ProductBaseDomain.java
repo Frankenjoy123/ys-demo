@@ -2,7 +2,7 @@ package com.yunsoo.api.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.dto.ImageRequest_removed;
 import com.yunsoo.api.dto.ProductBaseDetails_removed;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -38,7 +38,7 @@ import java.util.Map;
  * Descriptions:
  */
 @Component
-@ElastiCacheConfig
+@ObjectCacheConfig
 public class ProductBaseDomain {
 
     private static final String DETAILS_FILE_NAME = "details.json";
@@ -53,8 +53,11 @@ public class ProductBaseDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseId )")
+    @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseId )")
     public ProductBaseObject getProductBaseById(String productBaseId) {
+        if ((productBaseId == null) || (productBaseId.equals(""))) {
+            return null;
+        }
         try {
             return dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         } catch (NotFoundException ignored) {
@@ -138,7 +141,7 @@ public class ProductBaseDomain {
         return dataAPIClient.post("productbaseversions/{product_base_id}", productBaseVersionsObject, ProductBaseVersionsObject.class, productBaseVersionsObject.getProductBaseId());
     }
 
-    @CacheEvict(key="T(com.yunsoo.api.cache.CustomKeyGenerator).getKey(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseObject.getId())")
+    @CacheEvict(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseObject.getId())")
     public void updateProductBase(ProductBaseObject productBaseObject) {
         dataAPIClient.put("productbase/{id}", productBaseObject, productBaseObject.getId());
     }
@@ -147,7 +150,7 @@ public class ProductBaseDomain {
         dataAPIClient.put("productbaseversions/{product_base_id}/{version}", productBaseVersionsObject, productBaseVersionsObject.getProductBaseId(), productBaseVersionsObject.getVersion());
     }
 
-    @CacheEvict(key="T(com.yunsoo.api.cache.CustomKeyGenerator).getKey(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseId)")
+    @CacheEvict(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseId)")
     public void deleteProductBase(String productBaseId) {
         dataAPIClient.delete("productbase/{product_base_id}", productBaseId);
     }

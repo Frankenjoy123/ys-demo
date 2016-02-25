@@ -52,8 +52,6 @@ public class ProductBaseController {
         ProductBase productBase = new ProductBase(productBaseObject);
         productBase.setCategory(productBaseDomain.getProductCategoryById(productBaseObject.getCategoryId()));
 
-        //set details
-        productBase.setDetails(productBaseDomain.getProductBaseDetailsById(id));
         //set detail info
         productBase.setCommentsScore(productDomain.getCommentsScore(id));
         //set pageable to null

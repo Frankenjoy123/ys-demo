@@ -1,6 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.common.data.object.OrganizationObject;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * Descriptions:
  */
 @Component
-@ElastiCacheConfig
+@ObjectCacheConfig
 public class OrganizationDomain {
 
     private Log log = LogFactory.getLog(this.getClass());
@@ -36,7 +36,7 @@ public class OrganizationDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(),#id )")
+    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(),#id )")
     public OrganizationObject getById(String id) {
         log.debug("cache missing on organization." + id);
         try {

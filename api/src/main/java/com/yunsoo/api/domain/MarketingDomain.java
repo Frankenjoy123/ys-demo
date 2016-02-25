@@ -1,6 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.common.data.object.MarketingObject;
+import com.yunsoo.common.data.object.MktDrawPrizeObject;
 import com.yunsoo.common.data.object.MktDrawRuleObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
@@ -58,5 +59,19 @@ public class MarketingDomain {
         dataAPIClient.delete("marketing/{id}", id);
         dataAPIClient.delete("marketing/drawRule/{id}", id);
     }
+
+    public Page<MktDrawPrizeObject> getMktDrawPrizeByFilter(String marketingId, String accountType, String statusCode, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("marketing_id", marketingId)
+                .append("account_type", accountType)
+                .append("status_code", statusCode)
+                .append(pageable)
+                .build();
+
+        return dataAPIClient.getPaged("marketing/drawPrize/marketing" + query, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
+        });
+
+    }
+
 
 }

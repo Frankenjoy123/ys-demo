@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.data.object.UserReportObject;
 import com.yunsoo.common.web.client.Page;
@@ -20,7 +20,7 @@ import java.util.List;
  * Created by yan on 9/28/2015.
  */
 @Component
-@ElastiCacheConfig
+@ObjectCacheConfig
 public class UserReportDomain {
     @Autowired
     private RestClient dataAPIClient;
@@ -52,7 +52,7 @@ public class UserReportDomain {
         }
     }
 
-    @Cacheable(key = "T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #id )")
+    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #id )")
     public UserObject getUserById(String id) {
         try {
             return dataAPIClient.get("user/{id}", UserObject.class, id);

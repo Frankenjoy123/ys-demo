@@ -7,14 +7,6 @@ management:
 multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
-cloud:
-  aws:
-    stack:
-      auto: false
-    region:
-      auto: false
-      static: cn-north-1
-
 yunsoo:
   permanent_token:
     expires_minutes: 4320 #three days
@@ -45,4 +37,6 @@ yunsoo:
       baseurl: http://localhost:4080/
   product_key_base_url: http://t.m.yunsu.co:9080/
   cache:
-    type: elasticache
+    type: redis
+    redis:
+      host: test-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn
