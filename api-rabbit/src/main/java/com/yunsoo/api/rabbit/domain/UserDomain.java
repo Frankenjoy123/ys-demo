@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.Constants;
-import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.rabbit.cache.annotation.DefaultCacheConfig;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserConfigObject;
 import com.yunsoo.common.data.object.UserObject;
@@ -32,7 +32,7 @@ import java.util.List;
  * Descriptions:
  */
 @Component
-@ElastiCacheConfig
+@DefaultCacheConfig
 public class UserDomain {
 
     @Autowired

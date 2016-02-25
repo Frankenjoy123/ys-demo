@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.rabbit.cache.annotation.DefaultCacheConfig;
 import com.yunsoo.api.rabbit.dto.ProductBaseDetails;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -29,7 +29,7 @@ import java.util.List;
  * Descriptions:
  */
 @Component
-@ElastiCacheConfig
+@DefaultCacheConfig
 public class ProductBaseDomain {
 
     @Autowired

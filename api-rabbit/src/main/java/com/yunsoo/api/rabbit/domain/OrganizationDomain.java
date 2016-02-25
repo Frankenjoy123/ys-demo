@@ -1,6 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.rabbit.cache.annotation.DefaultCacheConfig;
 import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.common.data.object.OrganizationObject;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * Descriptions:
  */
 @Component
-@ElastiCacheConfig
+@DefaultCacheConfig
 public class OrganizationDomain {
 
     private Log log = LogFactory.getLog(this.getClass());

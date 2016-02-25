@@ -7,14 +7,6 @@ management:
 multipart.maxFileSize: 10MB
 multipart.maxRequestSize: 10MB
 
-cloud:
-  aws:
-    stack:
-      auto: false
-    region:
-      auto: false
-      static: cn-north-1
-
 spring:
   mvc:
     throw-exception-if-no-handler-found: true
@@ -35,4 +27,6 @@ yunsoo:
     expires_minutes: 5256000
     hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
   cache:
-    type: elasticache
+    type: redis
+    redis:
+      host: test-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn
