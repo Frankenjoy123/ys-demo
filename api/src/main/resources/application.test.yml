@@ -8,6 +8,18 @@ multipart.maxFileSize: 20MB
 multipart.maxRequestSize: 20MB
 
 yunsoo:
+  debug: false
+  environment: test
+  client:
+    dataapi:
+      baseurl: http://localhost:3080/
+    processor:
+      baseurl: http://localhost:4080/
+  product_key_base_url: http://t.m.yunsu.co:9080/
+  cache:
+    type: redis
+    redis:
+      host: test-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn
   permanent_token:
     expires_minutes: 4320 #three days
   access_token:
@@ -26,17 +38,3 @@ logging:
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'
-
-yunsoo:
-  debug: false
-  environment: test
-  client:
-    dataapi:
-      baseurl: http://localhost:3080/
-    processor:
-      baseurl: http://localhost:4080/
-  product_key_base_url: http://t.m.yunsu.co:9080/
-  cache:
-    type: redis
-    redis:
-      host: test-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn
