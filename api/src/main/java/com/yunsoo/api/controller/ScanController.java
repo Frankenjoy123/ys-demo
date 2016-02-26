@@ -2,7 +2,9 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.LogisticsDomain;
 import com.yunsoo.api.domain.ProductDomain;
+import com.yunsoo.api.domain.UserScanDomain;
 import com.yunsoo.api.dto.*;
+import com.yunsoo.common.data.object.UserScanRecordObject;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -36,6 +38,8 @@ public class ScanController {
     private LogisticsDomain logisticsDomain;
     @Autowired
     private ProductDomain productDomain;
+    @Autowired
+    private UserScanDomain userScanDomain;
 
     private Log log = LogFactory.getLog(this.getClass());
 
@@ -79,6 +83,16 @@ public class ScanController {
         }
         return scanResult;
     }
+
+    @RequestMapping(value = "/userScanRecord/{id}", method = RequestMethod.GET)
+    public ScanRecord getUserScanRecordById(@PathVariable(value = "id") String id) {
+        UserScanRecordObject object = userScanDomain.getScanRecordById(id);
+        if (object == null) {
+            throw new NotFoundException("user scan record not found by [id: " + id + "]");
+        }
+        return new ScanRecord(object);
+    }
+
 
 
     private List<Logistics> getLogisticsInfo(String key) {

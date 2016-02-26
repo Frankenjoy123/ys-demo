@@ -3,6 +3,7 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yunsoo.common.data.object.UserScanRecordObject;
 import com.yunsoo.common.util.DateTimeUtils;
 
 import java.util.Comparator;
@@ -39,8 +40,15 @@ public class ScanRecord implements Comparator<ScanRecord> {
     @JsonProperty("created_datetime")
     private String createdDateTime;
 
+    @JsonProperty("ip")
+    private String ip;
+
+    @JsonProperty("city")
+    private String city;
+
     @JsonProperty("location")
     private String location;
+
 
     public Long getId() {
         return id;
@@ -114,6 +122,39 @@ public class ScanRecord implements Comparator<ScanRecord> {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public ScanRecord() {
+    }
+
+    public ScanRecord(UserScanRecordObject object) {
+        if (object != null) {
+            this.setProductKey(object.getProductKey());
+            this.setProductBaseId(object.getProductBaseId());
+            this.setAppId(object.getAppId());
+            this.setDeviceId(object.getId());
+            this.setUserId(object.getUserId());
+            this.setDetails(object.getDetails());
+            this.setIp(object.getIp());
+            this.setCity(object.getCity());
+        }
+    }
+
 
     /**
      * Compares its two arguments for order.  Returns a negative integer,
