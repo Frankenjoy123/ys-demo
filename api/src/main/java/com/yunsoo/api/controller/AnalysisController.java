@@ -11,6 +11,7 @@ import com.yunsoo.common.data.object.ScanRecordLocationAnalysisObject;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,8 +36,8 @@ public class AnalysisController {
 
 
     @RequestMapping(value = "/scan_report", method = RequestMethod.GET)
-    public ScanAnalysisReport getScanAnalysisReport(@RequestParam(value = "start_time", required = false) org.joda.time.LocalDate startTime,
-                                                    @RequestParam(value = "end_time", required = false) org.joda.time.LocalDate endTime,
+    public ScanAnalysisReport getScanAnalysisReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                    @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
                                                     @RequestParam(value = "product_base_id", required = false) String productBaseId, @RequestParam(value = "batch_id", required = false) String batchId
     ) {
         //TODO for test purpose
@@ -70,8 +71,8 @@ public class AnalysisController {
     }
 
     @RequestMapping(value = "/scan_location_report", method = RequestMethod.GET)
-    public ScanLocationAnalysisReport getScanLocationAnalysisReport(@RequestParam(value = "start_time", required = false) org.joda.time.LocalDate startTime,
-                                                                    @RequestParam(value = "end_time", required = false) org.joda.time.LocalDate endTime,
+    public ScanLocationAnalysisReport getScanLocationAnalysisReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                                    @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
                                                                     @RequestParam(value = "product_base_id", required = false) String productBaseId, @RequestParam(value = "batch_id", required = false) String batchId
     ) {
         //TODO for test purpose
@@ -83,11 +84,12 @@ public class AnalysisController {
             endTime = now;
         }
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        //String orgId = "2k0r1l55i2rs5544wz5";
         List<ScanRecordLocationAnalysisObject> data = analysisDomain.getScanLocationAnalysisReport(orgId, startTime, endTime, productBaseId, batchId);
 
         ScanLocationAnalysisReport report = new ScanLocationAnalysisReport();
         Map<String, Integer> provinceData = data.stream().collect(Collectors.groupingBy(ScanRecordLocationAnalysisObject::getProvince, Collectors.summingInt(ScanRecordLocationAnalysisObject::getPv)));
+        //Map<String, Integer> provinceUvData = data.stream().collect(Collectors.groupingBy(ScanRecordLocationAnalysisObject::getProvince, Collectors.summingInt(ScanRecordLocationAnalysisObject::get)));
+
 
         ScanLocationAnalysisReport.NameValue[] nvProvinceData = provinceData.entrySet().stream().map(e -> {
             ScanLocationAnalysisReport.NameValue nv = new ScanLocationAnalysisReport.NameValue();
@@ -111,8 +113,8 @@ public class AnalysisController {
     }
 
     @RequestMapping(value = "/key_usage_report", method = RequestMethod.GET)
-    public KeyUsageReport getKeyUsageReport(@RequestParam(value = "start_time", required = false) org.joda.time.LocalDate startTime,
-                                            @RequestParam(value = "end_time", required = false) org.joda.time.LocalDate endTime,
+    public KeyUsageReport getKeyUsageReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                            @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)org.joda.time.LocalDate endTime,
                                             @RequestParam(value = "product_base_id", required = false) String productBaseId) {
         //TODO for test purpose
         LocalDate now = LocalDate.now();
