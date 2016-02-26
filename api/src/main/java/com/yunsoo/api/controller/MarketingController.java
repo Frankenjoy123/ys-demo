@@ -1,12 +1,10 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.MarketingDomain;
-import com.yunsoo.api.domain.ProductBaseDomain;
-import com.yunsoo.api.domain.ProductDomain;
-import com.yunsoo.api.domain.ProductKeyDomain;
+import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.Marketing;
 import com.yunsoo.api.dto.MktDrawPrize;
 import com.yunsoo.api.dto.MktDrawRule;
+import com.yunsoo.api.dto.ScanRecord;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
@@ -43,6 +41,9 @@ public class MarketingController {
 
     @Autowired
     private ProductKeyDomain productKeyDomain;
+
+    @Autowired
+    private UserScanDomain userScanDomain;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -148,6 +149,11 @@ public class MarketingController {
                 String productBaseId = mkto.getProductBaseId();
                 ProductBaseObject pbo = productBaseDomain.getProductBaseById(productBaseId);
                 mktDrawPrize.setProductBaseName(pbo.getName());
+            }
+            String scanRecordId = object.getScanRecordId();
+            UserScanRecordObject userScanRecordObject = userScanDomain.getScanRecordById(scanRecordId);
+            if (userScanRecordObject != null) {
+                mktDrawPrize.setScanRecord(new ScanRecord(userScanRecordObject));
             }
             mktDrawPrizeList.add(mktDrawPrize);
         });

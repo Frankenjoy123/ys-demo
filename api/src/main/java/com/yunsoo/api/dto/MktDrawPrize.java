@@ -66,6 +66,9 @@ public class MktDrawPrize {
     @JsonProperty("product_base_name")
     private String productBaseName;
 
+    @JsonProperty("scan_record")
+    private ScanRecord scanRecord;
+
     public String getDrawRecordId() {
         return drawRecordId;
     }
@@ -192,6 +195,14 @@ public class MktDrawPrize {
 
     public void setProductBaseName(String productBaseName) {
         this.productBaseName = productBaseName;
+    }
+
+    public ScanRecord getScanRecord() {
+        return scanRecord;
+    }
+
+    public void setScanRecord(ScanRecord scanRecord) {
+        this.scanRecord = scanRecord;
     }
 
     public MktDrawPrize() {
