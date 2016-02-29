@@ -2,6 +2,7 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.ProductCommentsEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
+import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -22,7 +23,7 @@ public interface ProductCommentsRepository extends FindOneAndSaveRepository<Prod
     Page<ProductCommentsEntity> query(@Param("productBaseId") String productBaseId,
                                       @Param("scoreGE") Integer scoreGE,
                                       @Param("scoreLE") Integer scoreLE,
-                                      @Param("lastCommentDatetimeGE") String lastCommentDatetimeGE,
+                                      @Param("lastCommentDatetimeGE") DateTime lastCommentDatetimeGE,
                                       Pageable pageable);
 
     Long countByProductBaseId(String productBaseId);

@@ -1,11 +1,14 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.dto.LogisticsPath;
-import com.yunsoo.common.data.object.*;
+import com.yunsoo.common.data.object.LogisticsCheckActionObject;
+import com.yunsoo.common.data.object.LogisticsCheckPointObject;
+import com.yunsoo.common.data.object.LogisticsPathObject;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by Jerry on 3/16/2015.
+ * Created by:   Jerry
+ * Created on:   3/16/2015
+ * Descriptions:
  */
 @Component
 public class LogisticsDomain {
@@ -22,10 +27,10 @@ public class LogisticsDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogisticsDomain.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     public List<LogisticsPath> getLogisticsPathsOrderByStartDate(String key) {
-        List<LogisticsPath> logisticsPaths = new ArrayList<LogisticsPath>();
+        List<LogisticsPath> logisticsPaths = new ArrayList<>();
 
         LogisticsPathObject[] logisticsPathObjects = dataAPIClient.get("logisticspath/{key}", LogisticsPathObject[].class, key);
         if (logisticsPathObjects == null || logisticsPathObjects.length == 0)
@@ -46,7 +51,7 @@ public class LogisticsDomain {
                     logisticsPath.setActionObject(actionObject);
                 } catch (Exception ex) {
                     logisticsPath.setActionObject(null);
-                    LOGGER.error("getLogisticsPathsOrderByStartDate error", ex);
+                    log.error("getLogisticsPathsOrderByStartDate error", ex);
                 }
             } else {
                 logisticsPath.setActionObject(null);
@@ -59,7 +64,7 @@ public class LogisticsDomain {
                     logisticsPath.setStartCheckPointObject(startPointObject);
                 } catch (Exception ex) {
                     logisticsPath.setStartCheckPointObject(null);
-                    LOGGER.error("getLogisticsPathsOrderByStartDate error", ex);
+                    log.error("getLogisticsPathsOrderByStartDate error", ex);
                 }
 
                 if (startPointObject != null) {
@@ -69,7 +74,7 @@ public class LogisticsDomain {
                     }
                     catch (Exception ex) {
                         logisticsPath.setStartCheckPointOrgObject(null);
-                        LOGGER.error("getLogisticsPathsOrderByStartDate error", ex);
+                        log.error("getLogisticsPathsOrderByStartDate error", ex);
                     }
                 } else {
                     logisticsPath.setStartCheckPointOrgObject(null);
@@ -85,7 +90,7 @@ public class LogisticsDomain {
                 }
                 catch (Exception ex) {
                     logisticsPath.setEndCheckPointObject(null);
-                    LOGGER.error("getLogisticsPathsOrderByStartDate error", ex);
+                    log.error("getLogisticsPathsOrderByStartDate error", ex);
                 }
             } else {
                 logisticsPath.setEndCheckPointObject(null);

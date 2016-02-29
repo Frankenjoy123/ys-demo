@@ -8,8 +8,8 @@ import com.yunsoo.api.rabbit.security.UserAuthentication;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.web.exception.UnauthorizedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +26,7 @@ public class AuthController {
     @Autowired
     private UserDomain userDomain;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -90,7 +90,7 @@ public class AuthController {
             userDomain.patchUpdateUser(newUserObject);
         }
 
-        LOGGER.info("user login with phone [userId: {}]", userObject.getId());
+        log.info(String.format("user login with phone [userId: %s]", userObject.getId()));
 
         //generate response
         return generateUserAuthResponse(userObject);
@@ -121,7 +121,7 @@ public class AuthController {
             //register new user
             userObject = userDomain.createUser(userObject);
 
-            LOGGER.info("new user created [userId: {}]", userObject.getId());
+            log.info(String.format("new user created [userId: %s]", userObject.getId()));
         } else {
             //register phone to the exist user
             UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication(accessToken);
@@ -132,7 +132,7 @@ public class AuthController {
             userDomain.patchUpdateUser(userObject);
             userObject = userDomain.getUserById(userObject.getId());
 
-            LOGGER.info("exist user registered [userId: {}]", userObject.getId());
+            log.info(String.format("exist user registered [userId: %s]", userObject.getId()));
         }
 
         //generate response

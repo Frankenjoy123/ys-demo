@@ -2,6 +2,7 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
+import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -22,9 +23,11 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
 
     @Query("select sum(o.quantity) from #{#entityName} o where " +
             "(:orgId is null or o.orgId = :orgId) " +
-            "and (:productBaseId is null or o.productBaseId = :productBaseId)")
+            "and (:productBaseId is null or o.productBaseId = :productBaseId)" +
+            "and (:marketingId is null or o.marketingId = :marketingId)")
     Long sumQuantity(@Param("orgId") String orgId,
-                     @Param("productBaseId") String productBaseId);
+                     @Param("productBaseId") String productBaseId,
+                     @Param("marketingId") String marketingId);
 
     @Query("select sum(o.quantity) from #{#entityName} o where " +
             "(:orgId is null or o.orgId = :orgId) " +
@@ -39,5 +42,15 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
     Page<ProductKeyBatchEntity> findByOrgIdAndProductKeyTypeCodesAndStatusCodeIn(String orgId, String typeCode, List<String> statusCodeIn, Pageable pageable);
 
     Page<ProductKeyBatchEntity> findByOrgIdAndProductKeyTypeCodesNotAndStatusCodeIn(String orgId, String typeCode, List<String> statusCodeIn, Pageable pageable);
+
+    @Query("from #{#entityName} o where " +
+            "(o.orgId = :orgId) " +
+            "and productKeyTypeCodes != 'package'" +
+            "and statusCode in ('creating', 'available') " +
+            "and (:productBaseId is null or o.productBaseId = :productBaseId) " +
+            "and createdDateTime >=:startTime and createdDateTime <= :endTime" )
+    List<ProductKeyBatchEntity> queryDailyKeyUsageReport(@Param("orgId") String orgId,
+                     @Param("productBaseId") String productBaseId, @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime);
+
 
 }

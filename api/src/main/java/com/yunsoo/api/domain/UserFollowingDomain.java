@@ -6,8 +6,6 @@ import com.yunsoo.common.data.object.UserProductFollowingObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +27,6 @@ public class UserFollowingDomain {
 
     @Autowired
     private RestClient dataAPIClient;
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserFollowingDomain.class);
 
     public Page<User> getFollowingUsersByOrgId(String orgId, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)

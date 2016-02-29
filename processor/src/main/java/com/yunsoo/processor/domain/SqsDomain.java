@@ -4,8 +4,8 @@ import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.processor.common.LogicalQueueName;
 import com.yunsoo.processor.common.PayloadName;
 import com.yunsoo.processor.config.CustomQueueMessagingTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.aws.core.env.ResourceIdResolver;
 import org.springframework.stereotype.Component;
@@ -14,13 +14,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by yan on 8/27/2015.
+ * Created by:   yan
+ * Created on:   8/27/2015
+ * Descriptions:
  */
 @Component
 public class SqsDomain {
 
     private static final String HEADER_PAYLOAD_NAME = "PayloadName";
-    private static final Logger LOGGER = LoggerFactory.getLogger(SqsDomain.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
    // private QueueMessagingTemplate queueMessagingTemplate;
@@ -36,10 +38,10 @@ public class SqsDomain {
         Map<String, Object> headers = new HashMap<>();
         headers.put(HEADER_PAYLOAD_NAME, PayloadName.PRODUCT_KEY_BATCH);
         queueMessagingTemplate.convertAndSend(LogicalQueueName.PRODUCT_KEY_BATCH, message, headers, delaySecondes);
-        LOGGER.info("new payload [name: {}, message: {}] pushed to queue [{}]",
+        log.info(String.format("new payload [name: %s, message: %s] pushed to queue [%s]",
                 PayloadName.PRODUCT_KEY_BATCH,
                 message.toString(),
-                resourceIdResolver.resolveToPhysicalResourceId(LogicalQueueName.PRODUCT_KEY_BATCH));
+                resourceIdResolver.resolveToPhysicalResourceId(LogicalQueueName.PRODUCT_KEY_BATCH)));
 
     }
 

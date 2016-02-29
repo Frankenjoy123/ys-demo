@@ -1,0 +1,40 @@
+server:
+  port: 6080
+management:
+  port: 6081
+  address: 127.0.0.1
+
+multipart.maxFileSize: 20MB
+multipart.maxRequestSize: 20MB
+
+yunsoo:
+  debug: false
+  environment: test
+  client:
+    dataapi:
+      baseurl: http://localhost:3080/
+    processor:
+      baseurl: http://localhost:4080/
+  product_key_base_url: http://t.m.yunsu.co:9080/
+  cache:
+    type: redis
+    redis:
+      host: test-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn
+  permanent_token:
+    expires_minutes: 4320 #three days
+  access_token:
+    expires_minutes: 60
+    hash_salt: lvtHDkfIUxJ2bLWHc0MNztUqCJSVPSJO
+  login_token:
+    expires_minutes: 5
+    hash_salt: nC9UYPUupMaViIG3UBODY7B19IYW6Z0X
+
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+logging:
+  file: /var/log/api.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'INFO'

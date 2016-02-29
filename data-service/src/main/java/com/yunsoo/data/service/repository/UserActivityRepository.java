@@ -2,6 +2,7 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.UserActivityEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
+import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -20,8 +21,8 @@ public interface UserActivityRepository extends FindOneAndSaveRepository<UserAct
             "and (:lastSignInContinuousDaysGE is null or o.lastSignInContinuousDays >= :lastSignInContinuousDaysGE) " +
             "and (:lastSignInContinuousDaysLE is null or o.lastSignInContinuousDays <= :lastSignInContinuousDaysLE)")
     Page<UserActivityEntity> query(
-            @Param("lastSignInDatetimeGE") String lastSignInDatetimeGE,
-            @Param("lastSignInDatetimeLE") String lastSignInDatetimeLE,
+            @Param("lastSignInDatetimeGE") DateTime lastSignInDatetimeGE,
+            @Param("lastSignInDatetimeLE") DateTime lastSignInDatetimeLE,
             @Param("lastSignInContinuousDaysGE") Integer lastSignInContinuousDaysGE,
             @Param("lastSignInContinuousDaysLE") Integer lastSignInContinuousDaysLE,
             Pageable pageable);

@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.Constants;
-import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserConfigObject;
 import com.yunsoo.common.data.object.UserObject;
@@ -12,9 +12,9 @@ import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -32,21 +32,19 @@ import java.util.List;
  * Descriptions:
  */
 @Component
+@ObjectCacheConfig
 public class UserDomain {
 
     @Autowired
     private RestClient dataAPIClient;
 
     @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
-
-    @Autowired
     private UserFollowDomain userFollowDomain;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserDomain.class);
     private static final String DEFAULT_GRAVATAR_IMAGE_NAME = "image-400x400";
 
 
+    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #userId)")
     public UserObject getUserById(String userId) {
         try {
             return userId != null ? dataAPIClient.get("user/{id}", UserObject.class, userId) : null;
@@ -76,6 +74,7 @@ public class UserDomain {
         }, deviceId);
     }
 
+    @CacheEvict(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #userObject.getId())")
     public void patchUpdateUser(UserObject userObject) {
         String userId = userObject.getId();
         if (!StringUtils.isEmpty(userId)) {

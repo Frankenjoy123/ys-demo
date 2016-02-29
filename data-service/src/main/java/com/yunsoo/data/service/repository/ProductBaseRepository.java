@@ -5,8 +5,6 @@ import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 /**
  * Created by  : haitao
  * Created on  : 2015/7/20
@@ -14,8 +12,8 @@ import java.util.List;
  */
 public interface ProductBaseRepository extends FindOneAndSaveRepository<ProductBaseEntity, String> {
 
-    Page<ProductBaseEntity> findByOrgIdAndDeleted(String orgId, boolean deleted, Pageable pageable);
+    Page<ProductBaseEntity> findByDeletedFalseAndOrgId(String orgId, Pageable pageable);
 
-    List<ProductBaseEntity> findByDeleted(boolean deleted);
+    Page<ProductBaseEntity> findByDeletedFalse(Pageable pageable);
 
 }

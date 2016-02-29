@@ -7,6 +7,7 @@ import com.yunsoo.api.rabbit.dto.ProductComments;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductCommentsObject;
+import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -83,7 +84,10 @@ public class ProductCommentsController {
             response.setHeader("Content-Range", productCommentsPage.toContentRange());
         }
         List<ProductComments> productCommentsList = productCommentsPage.map(ProductComments::new).getContent();
-        productCommentsList.forEach(productComments -> productComments.setUserName(userDomain.getUserById(productComments.getUserId()).getName()));
+        productCommentsList.forEach(productComments -> {
+            UserObject uo = userDomain.getUserById(productComments.getUserId());
+            productComments.setUserName(uo == null ? null : uo.getName());
+        });
 
         return productCommentsList;
     }

@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.common.util.DateTimeUtils;
-import com.yunsoo.common.util.IdGenerator;
+import com.yunsoo.common.util.ObjectIdGenerator;
 import org.joda.time.DateTime;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +22,8 @@ public class DebugController {
     //id
     @RequestMapping(value = "tools/id")
     public Map<String, String> newId() {
-        String id = IdGenerator.getNew();
-        DateTime generatedDateTime = new DateTime(IdGenerator.getGeneratedDateFromId(id));
+        String id = ObjectIdGenerator.getNew();
+        DateTime generatedDateTime = new DateTime(ObjectIdGenerator.getGeneratedDateFromId(id));
         Map<String, String> result = new HashMap<>();
         result.put("id", id);
         result.put("generated_datetime", DateTimeUtils.toUTCString(generatedDateTime));
@@ -32,7 +32,7 @@ public class DebugController {
 
     @RequestMapping(value = "tools/id/{id}")
     public Map<String, String> newId(@PathVariable String id) {
-        DateTime generatedDateTime = new DateTime(IdGenerator.getGeneratedDateFromId(id));
+        DateTime generatedDateTime = new DateTime(ObjectIdGenerator.getGeneratedDateFromId(id));
         Map<String, String> result = new HashMap<>();
         result.put("id", id);
         result.put("generated_datetime", DateTimeUtils.toUTCString(generatedDateTime));

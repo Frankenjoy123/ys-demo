@@ -25,14 +25,6 @@ public class DataSourceConfiguration {
     @Primary
     @ConfigurationProperties(prefix = "jdbc.master")
     public DataSource dataSource() throws Exception {
-//        Properties props = new Properties();
-//        props.put("driverClassName", dataSourceProperties.getDriverClassName());
-//        props.put("url", dataSourceProperties.getUrl());
-//        props.put("username", dataSourceProperties.getUsername());
-//        props.put("password", dataSourceProperties.getPassword());
-//        props.put("initialSize", dataSourceProperties.getInitialSize());
-//        props.put("maxIdle", dataSourceProperties.getMaxIdle());
-//        return BasicDataSourceFactory.createDataSource(props);
         DataSource dataSource = DataSourceBuilder.create().build();
         log.info("dataSource created. " + dataSource.getClass());
         return dataSource;
@@ -41,7 +33,9 @@ public class DataSourceConfiguration {
     // Bean used to translate Hibernate exceptions into Spring ones
     @Bean
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
-        return new PersistenceExceptionTranslationPostProcessor();
+        PersistenceExceptionTranslationPostProcessor postProcessor = new PersistenceExceptionTranslationPostProcessor();
+        postProcessor.setProxyTargetClass(true);
+        return postProcessor;
     }
 
 }

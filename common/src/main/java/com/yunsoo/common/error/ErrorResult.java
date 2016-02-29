@@ -37,7 +37,7 @@ public class ErrorResult {
 
     @Override
     public String toString() {
-        return "{code: " + code + ", message: " + message + "}";
+        return String.format("{code: %d, message: %s}", code, message);
     }
 
 }

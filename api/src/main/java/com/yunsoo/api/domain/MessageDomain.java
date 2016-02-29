@@ -136,10 +136,6 @@ public class MessageDomain {
 
     public void saveMessageDetails(MessageDetails messageDetails, String orgId, String id) {
         try {
-            if (messageDetails.getCover() == null) {
-                String coverPath = "organization/" + orgId + "/message/" + id + "/" + COVER_IMAGE_NAME;
-                messageDetails.setCover(coverPath);
-            }
             if (messageDetails.getBody() != null) {
                 saveMessageBodyText(messageDetails.getBody(), orgId, id);
                 //     String bodyPath = "organization/" + orgId + "/message/" + id + "/" + BODY_FILE_NAME;
@@ -196,11 +192,13 @@ public class MessageDomain {
             transmissionTemplate.setTransmissionType(2);
             transmissionTemplate.setTransmissionContent(content);
             // define app and message tag
-            List appIdList = new ArrayList();
-            List tagList = new ArrayList<>();
+            List<String> appIdList = new ArrayList<>();
+            List<String> tagList = new ArrayList<>();
+            List<String> phoneTypeList = new ArrayList<>();
             appIdList.add(Constants.PushBase.APPID);
             tagList.add("yunsu");
             tagList.add(orgId);
+            phoneTypeList.add("ANDROID");
 
             // message content
             AppMessage appMessage = new AppMessage();
@@ -208,6 +206,7 @@ public class MessageDomain {
             appMessage.setOffline(true);
             appMessage.setAppIdList(appIdList);
             appMessage.setTagList(tagList);
+            appMessage.setPhoneTypeList(phoneTypeList);
 
             //push message to users
             iiGtPush.connect();
@@ -225,12 +224,16 @@ public class MessageDomain {
             payload.setContentAvailable(1);
             payload.setSound("default");
             payload.setCategory("default");
+            payload.addCustomMsg("message_id", messageToApp.getMessageId());
+            payload.addCustomMsg("org_id", messageToApp.getOrgId());
+            payload.addCustomMsg("org_name", messageToApp.getOrgName());
+            payload.addCustomMsg("title", messageToApp.getTitle());
+            payload.addCustomMsg("body", messageToApp.getBody());
             APNPayload.DictionaryAlertMsg alertMsg = new APNPayload.DictionaryAlertMsg();
-            alertMsg.setTitle(messageToApp.getTitle());
+            //    alertMsg.setTitle(messageToApp.getTitle());
             //  alertMsg.setBody(messageToApp.getBody());
             alertMsg.setBody(messageToApp.getTitle());
             payload.setAlertMsg(alertMsg);
-            //payload.setAlertMsg(new APNPayload.SimpleAlertMsg("hello"));
             iostransmissionTemplate.setAPNInfo(payload);
             AppMessage iosappMessage = new AppMessage();
             iosappMessage.setData(iostransmissionTemplate);
@@ -251,11 +254,11 @@ public class MessageDomain {
     public static String getRandomString() {
         String base = "abcdefghijklmnopqrstuvwxyz0123456789";
         Random random = new Random();
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 10; i++) {
             int number = random.nextInt(base.length());
-            buffer.append(base.charAt(number));
+            sb.append(base.charAt(number));
         }
-        return buffer.toString();
+        return sb.toString();
     }
 }

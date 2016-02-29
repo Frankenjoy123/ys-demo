@@ -7,8 +7,6 @@ import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
@@ -38,8 +36,6 @@ public class OrganizationController {
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationController.class);
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Organization getById(@PathVariable(value = "id") String orgId) {

@@ -33,9 +33,6 @@ public class OrganizationEntity {
     @Column(name = "description")
     private String description;
 
-//    @Column(name = "image_uri")
-//    private String imageUri;
-
     @Column(name = "details")
     private String details;
 

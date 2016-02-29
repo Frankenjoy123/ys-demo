@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Created by  : Zhe
  * Created on  : 2015/3/5
@@ -21,19 +23,21 @@ public class TokenAuthenticationService {
     @Value("${yunsoo.access_token.expires_minutes}")
     private int accessTokenExpiresMinutes;
 
+    @Value("${yunsoo.access_token.hash_salt}")
+    private String accessTokenHashSalt;
+
     @Value("${yunsoo.login_token.expires_minutes}")
     private int loginTokenExpiresMinutes;
 
-    private String accessTokenHashSalt = "lvtHDkfIUxJ2bLWHc0MNztUqCJSVPSJO";
-
-    private String loginTokenHashSalt = "nC9UYPUupMaViIG3UBODY7B19IYW6Z0X";
-
+    @Value("${yunsoo.login_token.hash_salt}")
+    private String loginTokenHashSalt;
 
     private TokenHandler accessTokenHandler;
 
     private TokenHandler loginTokenHandler;
 
-    public TokenAuthenticationService() {
+    @PostConstruct
+    public void init() {
         this.accessTokenHandler = new TokenHandler(accessTokenHashSalt);
         this.loginTokenHandler = new TokenHandler(loginTokenHashSalt);
     }

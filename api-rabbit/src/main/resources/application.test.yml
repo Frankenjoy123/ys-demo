@@ -1,0 +1,33 @@
+server:
+  port: 5080
+management:
+  port: 5081
+  address: 127.0.0.1
+
+multipart.maxFileSize: 10MB
+multipart.maxRequestSize: 10MB
+
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+logging:
+  file: /var/log/api-rabbit.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'INFO'
+    springfox.documentation: 'ERROR'
+
+yunsoo:
+  debug: false
+  environment: test
+  client:
+    dataapi:
+      baseurl: http://localhost:3080/ #todo: use load balance address instead
+  access_token:
+    expires_minutes: 5256000
+    hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
+  cache:
+    type: redis
+    redis:
+      host: test-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn

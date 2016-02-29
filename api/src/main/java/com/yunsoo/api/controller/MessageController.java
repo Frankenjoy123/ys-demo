@@ -15,9 +15,9 @@ import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +44,7 @@ import java.util.List;
 @RequestMapping("/message")
 public class MessageController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private RestClient dataAPIClient;
@@ -86,12 +86,8 @@ public class MessageController {
         if (pageable != null) {
             response.setHeader("Content-Range", messagePage.toContentRange());
         }
-        List<Message> messages = messagePage.map(p -> {
-            Message message = new Message(p);
-            return message;
-        }).getContent();
 
-        return messages;
+        return messagePage.map(Message::new).getContent();
     }
 
     @RequestMapping(value = "/count/on", method = RequestMethod.GET)
@@ -233,7 +229,7 @@ public class MessageController {
         MessageObject messageObject = findMessageById(id);
         String orgId = messageObject.getOrgId();
         messageDomain.saveMessageCoverImage(messageImageRequest, orgId, id);
-        LOGGER.info("message cover image saved [orgId: {}, messageId:{}]", orgId, id);
+        log.info(String.format("message cover image saved [orgId: %s, messageId:%s]", orgId, id));
     }
 
     @RequestMapping(value = "{id}/bodyimage", method = RequestMethod.PUT)
@@ -244,7 +240,7 @@ public class MessageController {
         String orgId = messageObject.getOrgId();
         String imageName = messageDomain.saveMessageBodyImage(messageImageRequest, orgId, id);
         messageBodyImage.setImageName(imageName);
-        LOGGER.info("message body image saved [orgId: {}, messageId:{},name:{}]", orgId, id, imageName);
+        log.info(String.format("message body image saved [orgId: %s, messageId:%s, name:%s]", orgId, id, imageName));
         return messageBodyImage;
     }
 

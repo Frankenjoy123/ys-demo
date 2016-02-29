@@ -1,27 +1,17 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.rabbit.dto.Product;
-import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
-import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductObject;
-import com.yunsoo.common.data.object.UserProductFollowingObject;
-import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -29,23 +19,40 @@ import java.util.List;
  * Descriptions:
  */
 @Component
-@ElastiCacheConfig
+@ObjectCacheConfig
 public class ProductDomain {
 
     @Autowired
     private RestClient dataAPIClient;
 
     @Autowired
-    private UserDomain userDomain;
+    ProductBaseDomain productBaseDomain;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductDomain.class);
+    private Log log = LogFactory.getLog(this.getClass());
+
+    //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT.toString(),#key)")
+    public ProductObject getProduct(String key) {
+        try {
+            return dataAPIClient.get("product/{key}", ProductObject.class, key);
+        } catch (NotFoundException ex) {
+            return null;
+        }
+    }
+    //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT_BATCH.toString(),#productKeyBatchId)")
+    public ProductKeyBatchObject getProductKeyBatch(String productKeyBatchId) {
+        try {
+            return dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, productKeyBatchId);
+        } catch (NotFoundException ex) {
+            return null;
+        }
+    }
 
     //Retrieve Product key, ProductBase entry and Product-Category entry from Backend.
     public Product getProductByKey(String key) {
         Product product = new Product();
         product.setProductKey(key);
 
-        ProductObject productObject = null;
+        ProductObject productObject;
         try {
             productObject = dataAPIClient.get("product/{key}", ProductObject.class, key);
         } catch (NotFoundException ex) {
@@ -58,17 +65,18 @@ public class ProductDomain {
 
         //fill with ProductBase information.
         String productBaseId = productObject.getProductBaseId();
-        ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
-        product.setProductBaseId(productBaseId);
-        product.setBarcode(productBaseObject.getBarcode());
-        product.setComment(productBaseObject.getComments());
-        product.setName(productBaseObject.getName());
-        product.setOrgId(productBaseObject.getOrgId());
+        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
+        if (productBaseObject != null) {
+            product.setProductBaseId(productBaseId);
+            product.setBarcode(productBaseObject.getBarcode());
+            product.setComment(productBaseObject.getComments());
+            product.setName(productBaseObject.getName());
+            product.setOrgId(productBaseObject.getOrgId());
 
-        //fill with ProductCategory information.
-        ProductCategory productCategory = getProductCategoryById(productBaseObject.getCategoryId());
-        product.setProductCategory(productCategory);
-
+            //fill with ProductCategory information.
+            ProductCategory productCategory = getProductCategoryById(productBaseObject.getCategoryId());
+            product.setProductCategory(productCategory);
+        }
         return product;
     }
 
@@ -80,56 +88,9 @@ public class ProductDomain {
     }
 
 
-    public Long getCommentsScore(String productBaseId){
+    public Long getCommentsScore(String productBaseId) {
         return dataAPIClient.get("productcomments/avgscore/{id}", Long.class, productBaseId);
     }
 
-    public Page<User> getFollowingUsersByProductBaseId(String productBaseId, Pageable pageable){
-        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("product_base_id", productBaseId)
-                .append(pageable)
-                .build();
 
-        Page<UserProductFollowingObject> userFollowingList = dataAPIClient.getPaged("UserProductFollowing" + query,
-                new ParameterizedTypeReference<List<UserProductFollowingObject>>() {
-                });
-
-         List<User> userList = new ArrayList<>();
-         userFollowingList.forEach(item -> {
-             userList.add(new User(userDomain.getUserById(item.getUserId())));
-         });
-
-        return new Page<>(userList, userFollowingList.getPage(), userFollowingList.getTotal());
-    }
-
-    //获取基本产品信息 - ProductBase
-    public void fillProductName(List<Product> productList) {
-        //fill product name
-        HashMap<String, String> productHashMap = new HashMap<>();
-        for (Product product : productList) {
-            if (!productHashMap.containsKey(product.getProductBaseId())) {
-                ProductBaseObject productBaseObject = dataAPIClient.get("productbase/{id}", ProductBaseObject.class, product.getProductBaseId());
-                if (productBaseObject != null) {
-                    productHashMap.put(product.getProductBaseId(), productBaseObject.getName());
-                    product.setProductName(productBaseObject.getName());
-                }
-            } else {
-                product.setProductName(productHashMap.get(product.getProductName()));
-            }
-        }
-    }
-
-    public ProductBase convertFromProductBaseObject(ProductBaseObject productBaseObject) {
-        ProductBase productBase = new ProductBase();
-        productBase.setId(productBaseObject.getId());
-        productBase.setVersion(productBaseObject.getVersion());
-        productBase.setName(productBaseObject.getName());
-        productBase.setDescription(productBaseObject.getComments());
-        productBase.setOrgId(productBaseObject.getOrgId());
-        productBase.setShelfLife(productBaseObject.getShelfLife());
-        productBase.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
-        productBase.setCategory(getProductCategoryById(productBaseObject.getCategoryId()));
-
-        return productBase;
-    }
 }

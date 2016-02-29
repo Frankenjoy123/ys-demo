@@ -18,8 +18,8 @@ import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +50,7 @@ public class AuthController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     /**
      * login with password
@@ -66,12 +66,12 @@ public class AuthController {
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
             @RequestBody @Valid AccountLoginRequest account) {
 
-        LOGGER.info("password login request from [appId: {}, deviceId: {}]", appId, deviceId);
+        log.info(String.format("password login request from [appId: %s, deviceId: %s]", appId, deviceId));
 
         //validate parameters
         if (account.getAccountId() == null && (account.getOrganization() == null || account.getIdentifier() == null)) {
-            LOGGER.warn("parameters are invalid [accountId: {}, organization: {},identifier: {}]",
-                    account.getAccountId(), account.getOrganization(), account.getIdentifier());
+            log.warn(String.format("parameters are invalid [accountId: %s, organization: %s, identifier: %s]",
+                    account.getAccountId(), account.getOrganization(), account.getIdentifier()));
             throw new UnauthorizedException("account is not valid");
         }
 
@@ -91,13 +91,13 @@ public class AuthController {
                 orgObject = organizationDomain.getOrganizationByName(org);
             }
             if (orgObject == null) {
-                LOGGER.warn("organization not found, [org: {}]", org);
+                log.warn(String.format("organization not found, [org: %s]", org));
                 throw new UnauthorizedException("account is not valid");
             }
             accountObject = accountDomain.getByOrgIdAndIdentifier(orgObject.getId(), account.getIdentifier().trim());
         }
         if (accountObject == null) {
-            LOGGER.warn("account not found");
+            log.warn("account not found");
             throw new UnauthorizedException("account is not valid");
         }
 
@@ -111,7 +111,7 @@ public class AuthController {
 
         //validate password
         if (!accountDomain.validatePassword(rawPassword, hashSalt, password)) {
-            LOGGER.warn("password not valid, [id: {}, orgId: {}, identifier: {}]", accountId, orgId, identifier);
+            log.warn(String.format("password not valid, [id: %s, orgId: %s, identifier: %s]", accountId, orgId, identifier));
             throw new UnauthorizedException("account is not valid");
         }
 
@@ -123,8 +123,8 @@ public class AuthController {
         Token accessToken = tokenAuthenticationService.generateAccessToken(accountId, orgId);
 
         //login successfully
-        LOGGER.info("password login successfully, [id: {}, orgId: {}, identifier: {}, appId: {}, deviceId: {}]",
-                accountId, orgId, identifier, appId, deviceId);
+        log.info(String.format("password login successfully, [id: %s, orgId: %s, identifier: %s, appId: %s, deviceId: %s]",
+                accountId, orgId, identifier, appId, deviceId));
         return new AccountLoginResponse(permanentToken, accessToken);
     }
 
@@ -140,24 +140,24 @@ public class AuthController {
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
             @RequestBody Token loginToken) {
 
-        LOGGER.info("token login request from [appId: {}, deviceId: {}]", appId, deviceId);
+        log.info(String.format("token login request from [appId: %s, deviceId: %s]", appId, deviceId));
 
         String token = loginToken.getToken();
         if (StringUtils.isEmpty(token)) {
-            LOGGER.warn("token is empty [token: {}]", token);
+            log.warn(String.format("token is empty [token: %s]", token));
             throw new UnauthorizedException("token is not valid");
         }
 
         TAccount tAccount = tokenAuthenticationService.parseLoginToken(token);
         if (tAccount == null || StringUtils.isEmpty(tAccount.getId())) {
-            LOGGER.warn("token is not valid [token: {}]", token);
+            log.warn(String.format("token is not valid [token: %s]", token));
             throw new UnauthorizedException("token is not valid");
         }
 
         String accountId = tAccount.getId();
         AccountObject accountObject = accountDomain.getById(accountId);
         if (accountObject == null) {
-            LOGGER.warn("account not found");
+            log.warn("account not found");
             throw new UnauthorizedException("token is not valid");
         }
 
@@ -173,8 +173,8 @@ public class AuthController {
         Token accessToken = tokenAuthenticationService.generateAccessToken(accountId, orgId);
 
         //login successfully
-        LOGGER.info("token login successfully, [id: {}, orgId: {}, identifier: {}, appId: {}, deviceId: {}]",
-                accountId, orgId, identifier, appId, deviceId);
+        log.info(String.format("token login successfully, [id: %s, orgId: %s, identifier: %s, appId: %s, deviceId: %s]",
+                accountId, orgId, identifier, appId, deviceId));
         return new AccountLoginResponse(permanentToken, accessToken);
     }
 
@@ -203,7 +203,7 @@ public class AuthController {
 
         Token accessToken = tokenAuthenticationService.generateAccessToken(accountId, orgId);
 
-        LOGGER.info("access token generated for account [id: {}]", accountToken.getAccountId());
+        log.info(String.format("access token generated for account [id: %s]", accountToken.getAccountId()));
         return accessToken;
     }
 
@@ -218,7 +218,7 @@ public class AuthController {
 
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
-        LOGGER.info("login token creation request from account [id: {}] for account [id: {}]", currentAccountId, accountId);
+        log.info(String.format("login token creation request from account [id: %s] for account [id: %s]", currentAccountId, accountId));
 
         AccountObject accountObject = null;
         if (StringUtils.hasText(accountId)) {

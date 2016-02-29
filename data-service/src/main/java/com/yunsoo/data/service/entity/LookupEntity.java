@@ -1,14 +1,21 @@
 package com.yunsoo.data.service.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
- * Created by yan on 9/7/2015.
+ * Created by:   yan
+ * Created on:   9/7/2015
+ * Descriptions:
  */
 @Entity
 @Table(name = "lookup_code")
-@IdClass(LookupPK.class)
+@IdClass(LookupEntity.LookupPK.class)
 public class LookupEntity {
+
+    @Id
+    @Column(name = "type_code")
+    private String typeCode;
 
     @Id
     @Column(name = "code")
@@ -23,9 +30,14 @@ public class LookupEntity {
     @Column(name = "active")
     private boolean active;
 
-    @Column(name = "type_code")
-    @Id
-    private String typeCode;
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
 
     public String getCode() {
         return code;
@@ -59,30 +71,54 @@ public class LookupEntity {
         this.active = active;
     }
 
-    public String getTypeCode() {
-        return typeCode;
+
+    public static class LookupPK implements Serializable {
+
+        private String typeCode;
+
+        private String code;
+
+        public String getTypeCode() {
+            return typeCode;
+        }
+
+        public void setTypeCode(String typeCode) {
+            this.typeCode = typeCode;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public LookupPK() {
+        }
+
+        public LookupPK(String typeCode, String code) {
+            this.typeCode = typeCode;
+            this.code = code;
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            if (this == object) return true;
+            if (object == null || this.typeCode == null || this.code == null || !(object instanceof LookupPK)) {
+                return false;
+            }
+
+            LookupPK obj = (LookupPK) object;
+
+            return this.typeCode.equals(obj.typeCode) && this.code.equals(obj.code);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * typeCode.hashCode() + code.hashCode();
+        }
+
     }
 
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof LookupEntity)) return false;
-
-        LookupEntity entity = (LookupEntity) o;
-
-        if (!code.equals(entity.code)) return false;
-        return typeCode.equals(entity.typeCode);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = code.hashCode();
-        result = 31 * result + typeCode.hashCode();
-        return result;
-    }
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -49,7 +50,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .and()
                 .anonymous().and()
                 .servletApi().and()
-                .headers().cacheControl().and()
+                .headers().cacheControl().and().and()
                 .authorizeRequests()
 
                 .antMatchers("/").permitAll()
@@ -57,6 +58,8 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .antMatchers("/auth/login/**").permitAll()
                 .antMatchers("/auth/accesstoken/**").permitAll()
                 .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
+                .antMatchers(HttpMethod.GET, "/image/*").permitAll()
+                .antMatchers(HttpMethod.GET, "/organization/*/logo/*").permitAll()
                 .anyRequest().authenticated().and()
                 //.antMatchers("/**").permitAll()
 

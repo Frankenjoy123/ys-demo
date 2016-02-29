@@ -15,9 +15,6 @@ public class MessageDetails {
     @JsonProperty("author")
     private String author;
 
-    @JsonProperty("cover")
-    private String cover;
-
     @JsonProperty("body")
     private String body;
 
@@ -35,14 +32,6 @@ public class MessageDetails {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public String getCover() {
-        return cover;
-    }
-
-    public void setCover(String cover) {
-        this.cover = cover;
     }
 
     public String getBody() {

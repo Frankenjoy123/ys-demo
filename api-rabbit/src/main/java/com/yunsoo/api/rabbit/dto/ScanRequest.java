@@ -31,6 +31,16 @@ public class ScanRequest {
     @JsonProperty("details")
     private String details;
 
+    @JsonProperty("auto_following")
+    private Boolean autoFollowing;
+
+    public Boolean getAutoFollowing() {
+        return autoFollowing;
+    }
+
+    public void setAutoFollowing(Boolean autoFollowing) {
+        this.autoFollowing = autoFollowing;
+    }
 
     public String getKey() {
         return key;

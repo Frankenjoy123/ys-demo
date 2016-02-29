@@ -1,30 +1,27 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
-import com.yunsoo.api.rabbit.dto.Organization;
-import com.yunsoo.api.rabbit.dto.ProductBase;
+import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.rabbit.dto.ProductBaseDetails;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
-import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by  : Lijian
@@ -32,23 +29,19 @@ import java.util.stream.Collectors;
  * Descriptions:
  */
 @Component
-@ElastiCacheConfig
+@ObjectCacheConfig
 public class ProductBaseDomain {
-
-//    private static final String DETAILS_FILE_NAME = "details.json";
-//
-//    private static ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private RestClient dataAPIClient;
-    @Autowired
-    private OrganizationDomain organizationDomain;
 
+    private Log log = LogFactory.getLog(this.getClass());
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductDomain.class);
-
-    @Cacheable(key="T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId )")
+    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId )")
     public ProductBaseObject getProductBaseById(String productBaseId) {
+        if (productBaseId == null) {
+            return null;
+        }
         try {
             return dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         } catch (NotFoundException ignored) {
@@ -56,20 +49,16 @@ public class ProductBaseDomain {
         }
     }
 
-//    public ProductBaseDetails getProductBaseDetails(String orgId, String productBaseId, Integer version) {
-//        ResourceInputStream resourceInputStream;
-//        try {
-//            resourceInputStream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{fileName}",
-//                    orgId, productBaseId, version, DETAILS_FILE_NAME);
-//        } catch (NotFoundException ex) {
-//            return null;
-//        }
-//        try {
-//            return mapper.readValue(resourceInputStream, ProductBaseDetails.class);
-//        } catch (IOException e) {
-//            return null;
-//        }
-//    }
+    public String getProductBaseDetails(String orgId, String productBaseId, int version) {
+        try {
+            ResourceInputStream resourceInputStream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json",
+                    orgId, productBaseId, version);
+            byte[] bytes = StreamUtils.copyToByteArray(resourceInputStream);
+            return new String(bytes, StandardCharsets.UTF_8);
+        } catch (NotFoundException | IOException ignored) {
+            return null;
+        }
+    }
 
     public Page<ProductBaseObject> getProductBaseByOrgId(String orgId, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -91,15 +80,15 @@ public class ProductBaseDomain {
         }
     }
 
-    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId, 'details' )")
+    @Deprecated
+    //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId, 'details' )")
     public ProductBaseDetails getProductBaseDetailsById(String productBaseId) {
         try {
             ProductBaseObject productBaseObject = getProductBaseById(productBaseId);
             ResourceInputStream stream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json", productBaseObject.getOrgId(), productBaseId, productBaseObject.getVersion());
-            ProductBaseDetails details = new ObjectMapper().readValue(stream, ProductBaseDetails.class);
-            return details;
+            return new ObjectMapper().readValue(stream, ProductBaseDetails.class);
         } catch (Exception ex) {
-            LOGGER.error("get detail data from s3 failed.", ex);
+            log.error("get detail data from s3 failed.", ex);
             return null;
         }
     }
@@ -110,9 +99,5 @@ public class ProductBaseDomain {
         }
         return dataAPIClient.get("productcategory/{id}", ProductCategory.class, id);
     }
-
-
-
-
 
 }

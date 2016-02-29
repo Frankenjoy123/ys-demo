@@ -7,9 +7,7 @@ import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.object.ValidationResult;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.api.rabbit.security.UserAuthentication;
-import com.yunsoo.common.data.object.OrganizationObject;
-import com.yunsoo.common.data.object.ProductBaseObject;
-import com.yunsoo.common.data.object.UserScanRecordObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.web.client.Page;
@@ -18,10 +16,9 @@ import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -58,7 +55,7 @@ public class ScanController {
     private LogisticsDomain logisticsDomain;
 
     @Autowired
-    private ScanDomain scanDomain;
+    private UserScanDomain userScanDomain;
 
     @Autowired
     private UserFollowDomain userFollowDomain;
@@ -70,15 +67,12 @@ public class ScanController {
     private ProductBaseDomain productBaseDomain;
 
     @Autowired
-    private UserLikedProductDomain userLikedProductDomain;
-
-    @Autowired
     private OrganizationDomain organizationDomain;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     //能够访问所有的Key,为移动客户端调用，因此每次Scan都save扫描记录。
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -104,48 +98,45 @@ public class ScanController {
         //2. get product information
         Product product = productDomain.getProductByKey(productKey);
         if (product == null) {
-            LOGGER.warn("product not found by [key: {}]", productKey);
+            log.warn(String.format("product not found by [key: %s]", productKey));
             scanResult.setValidationResult(ValidationResult.Fake);
             return scanResult;
         }
         scanResult.setProduct(product);
 
-        //3. set if user liked this product
-        UserLikedProduct userLikedProduct = this.userLikedProductDomain.getUserLikedProduct(userId, product.getProductBaseId());
-        if (userLikedProduct != null) {
-            scanResult.setLiked_product(userLikedProduct.getActive());
-        } else {
-            scanResult.setLiked_product(false);
-        }
-
-        //4. retrieve scan records
-        List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByProductKey(scanRequest.getKey(), new PageRequest(0, 20))
+        //3. retrieve scan records
+        List<ScanRecord> scanRecordList = userScanDomain.getScanRecordsByProductKey(scanRequest.getKey(), null)
                 .map(ScanRecord::new)
                 .getContent();
         scanResult.setScanRecordList(scanRecordList);
         scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
 
-        //5. retrieve logistics information
+        //4. retrieve logistics information
         scanResult.setLogisticsList(getLogisticsInfo(scanRequest.getKey()));
 
-        //6. get company information.
+        //5. get company information.
         OrganizationObject organizationObject = organizationDomain.getById(product.getOrgId());
         scanResult.setManufacturer(new Organization(organizationObject));
 
-        //7.1 ensure user following the company, and set the followed status in result.
-        if (userFollowDomain.ensureUserOrganizationFollowing(userId, organizationObject.getId()) != null) {
-            scanResult.setFollowed_org(true);
+        //6. following info
+        if (scanRequest.getAutoFollowing() != null && scanRequest.getAutoFollowing()) {
+            // ensure user following the company, and set the followed status in result.
+            userFollowDomain.ensureUserOrganizationFollowing(userId, organizationObject.getId());
+            // ensure user following the product
+            userFollowDomain.ensureUserProductFollowing(userId, product.getProductBaseId());
+            scanResult.setFollowedOrg(true);
+            scanResult.setLikedProduct(true);
         } else {
-            scanResult.setFollowed_org(false);
+            UserOrganizationFollowingObject userOrganizationFollowingObject = userFollowDomain.getUserOrganizationFollowingByUserIdAndOrgId(userId, organizationObject.getId());
+            UserProductFollowingObject userProductFollowingObject = userFollowDomain.getUserProductFollowingByUserIdAndProductBaseId(userId, product.getProductBaseId());
+            scanResult.setFollowedOrg(userOrganizationFollowingObject != null);
+            scanResult.setLikedProduct(userProductFollowingObject != null);
         }
 
-        //7.2. ensure user following the product
-        userFollowDomain.ensureUserProductFollowing(userId, product.getProductBaseId());
-
-        //8. set validation result by our validation strategy.
+        //7. set validation result by our validation strategy.
         scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), userId, scanRecordList));
 
-        //9. save scan Record
+        //8. save scan Record
         UserScanRecordObject userScanRecordObject = scanRequest.toUserScanRecordObject();
         userScanRecordObject.setProductKey(productKey);
         userScanRecordObject.setUserId(userId);
@@ -155,7 +146,7 @@ public class ScanController {
         if (userScanRecordObject.getDetails() == null) {
             userScanRecordObject.setDetails("匿名用户扫描");
         }
-        scanDomain.createScanRecord(userScanRecordObject);
+        userScanDomain.createScanRecord(userScanRecordObject);
 
         return scanResult;
     }
@@ -174,14 +165,14 @@ public class ScanController {
         //2. get product information
         Product product = productDomain.getProductByKey(key);
         if (product == null) {
-            LOGGER.warn("product not found by [key: {}]", key);
+            log.warn(String.format("product not found by [key: %s]", key));
             scanResult.setValidationResult(ValidationResult.Fake);
             return scanResult;
         }
         scanResult.setProduct(product);
 
         //3. retrieve scan records
-        List<ScanRecord> scanRecordList = scanDomain.getScanRecordsByProductKey(key, new PageRequest(0, 20))
+        List<ScanRecord> scanRecordList = userScanDomain.getScanRecordsByProductKey(key, null)
                 .map(ScanRecord::new)
                 .getContent();
         scanResult.setScanRecordList(scanRecordList);
@@ -220,11 +211,11 @@ public class ScanController {
         Page<UserScanRecordObject> page;
         if (!StringUtils.isEmpty(productKey)) {
             //get the scan records by product key include other user's
-            page = scanDomain.getScanRecordsByProductKey(productKey, pageable);
+            page = userScanDomain.getScanRecordsByProductKey(productKey, pageable);
         } else {
             //get the scan records for current user only
             String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-            page = scanDomain.getScanRecordsByUserId(userId, pageable);
+            page = userScanDomain.getScanRecordsByUserId(userId, pageable);
         }
 
         if (pageable != null) {

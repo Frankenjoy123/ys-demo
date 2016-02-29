@@ -8,6 +8,8 @@ import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.OrgAgencyObject;
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 /**
  * Created by:  haitao
  * Created on:  2015/9/2
@@ -24,8 +26,8 @@ public class OrgAgency {
     @JsonProperty("org_id")
     private String orgId;
 
-    @JsonProperty("location_id")
-    private String locationId;
+    @JsonProperty("location_ids")
+    private List<String> locationIds;
 
     @JsonProperty("parent_id")
     private String parentId;
@@ -79,12 +81,12 @@ public class OrgAgency {
         this.orgId = orgId;
     }
 
-    public String getLocationId() {
-        return locationId;
+    public List<String> getLocationIds() {
+        return locationIds;
     }
 
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
+    public void setLocationIds(List<String> locationIds) {
+        this.locationIds = locationIds;
     }
 
     public String getParentId() {
@@ -159,7 +161,7 @@ public class OrgAgency {
             this.setId(object.getId());
             this.setName(object.getName());
             this.setOrgId(object.getOrgId());
-            this.setLocationId(object.getLocationId());
+            this.setLocationIds(object.getLocationIds());
             this.setParentId(object.getParentId());
             this.setAddress(object.getAddress());
             this.setDescription(object.getDescription());
@@ -176,7 +178,7 @@ public class OrgAgency {
         object.setId(this.getId());
         object.setName(this.getName());
         object.setOrgId(this.getOrgId());
-        object.setLocationId(this.getLocationId());
+        object.setLocationIds(this.getLocationIds());
         object.setParentId(this.getParentId());
         object.setAddress(this.getAddress());
         object.setDescription(this.getDescription());

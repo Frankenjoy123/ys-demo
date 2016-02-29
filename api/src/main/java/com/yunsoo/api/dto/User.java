@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.UserObject;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
@@ -107,4 +108,20 @@ public class User implements Serializable {
     public void setCreatedDatetime(DateTime createdDatetime) {
         this.createdDatetime = createdDatetime;
     }
+
+    public User() {
+    }
+
+    public User(UserObject object) {
+        if (object != null) {
+            this.id = object.getId();
+            this.statusCode = object.getStatusCode();
+            this.phone = object.getPhone();
+            this.address = object.getAddress();
+            this.deviceId = object.getDeviceId();
+            this.createdDatetime = object.getCreatedDateTime();
+            this.point = object.getPoint();
+        }
+    }
+
 }

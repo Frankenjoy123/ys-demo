@@ -114,7 +114,7 @@ public class AccountPermissionDomain {
             String orgId = permission.getOrgId();
             String resourceCode = permission.getResourceCode();
             String actionCode = permission.getActionCode();
-            if (resourceCode == null || actionCode == null) {
+            if (resourceCode == null) {
                 return true; //anonymous
             }
             for (PermissionInstance pi : permissions) {
@@ -123,7 +123,7 @@ public class AccountPermissionDomain {
                     continue; //try next permission;
                 }
                 boolean isResourceMatched = WildcardMatcher.match(pi.getResourceCode(), resourceCode);
-                boolean isActionMatched = WildcardMatcher.match(pi.getActionCode(), actionCode);
+                boolean isActionMatched = actionCode == null || "*".equals(actionCode) || WildcardMatcher.match(pi.getActionCode(), actionCode);
                 if (!isResourceMatched || !isActionMatched) {
                     continue; //try next permission;
                 }

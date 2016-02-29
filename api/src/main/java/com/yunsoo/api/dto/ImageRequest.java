@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotNull;
 
 /**
- * Created by  : Lijian
- * Created on  : 2015/7/30
+ * Created by:   Lijian
+ * Created on:   2016-01-22
  * Descriptions:
  */
 public class ImageRequest {
@@ -15,11 +15,9 @@ public class ImageRequest {
     @JsonProperty("data")
     private String data; // prefix: data:image/png;base64,
 
-    @JsonProperty("range2x1")
-    private Range range2x1;
+    @JsonProperty("options")
+    private Options options;
 
-    @JsonProperty("range1x1")
-    private Range range1x1;
 
     public String getData() {
         return data;
@@ -29,57 +27,50 @@ public class ImageRequest {
         this.data = data;
     }
 
-    public Range getRange2x1() {
-        return range2x1;
+    public Options getOptions() {
+        return options;
     }
 
-    public void setRange2x1(Range range2x1) {
-        this.range2x1 = range2x1;
+    public void setOptions(Options options) {
+        this.options = options;
     }
 
-    public Range getRange1x1() {
-        return range1x1;
-    }
+    public static class Options {
 
-    public void setRange1x1(Range range1x1) {
-        this.range1x1 = range1x1;
-    }
+        private Integer x;
+        private Integer y;
+        private Integer width;
+        private Integer height;
 
-    public static class Range {
-        private int x;
-        private int y;
-        private int width;
-        private int height;
-
-        public int getX() {
+        public Integer getX() {
             return x;
         }
 
-        public void setX(int x) {
+        public void setX(Integer x) {
             this.x = x;
         }
 
-        public int getY() {
+        public Integer getY() {
             return y;
         }
 
-        public void setY(int y) {
+        public void setY(Integer y) {
             this.y = y;
         }
 
-        public int getWidth() {
+        public Integer getWidth() {
             return width;
         }
 
-        public void setWidth(int width) {
+        public void setWidth(Integer width) {
             this.width = width;
         }
 
-        public int getHeight() {
+        public Integer getHeight() {
             return height;
         }
 
-        public void setHeight(int height) {
+        public void setHeight(Integer height) {
             this.height = height;
         }
     }

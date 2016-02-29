@@ -1,10 +1,14 @@
 package com.yunsoo.data.service.entity;
 
+import com.yunsoo.common.data.object.ProductKeyBatchObject;
+import com.yunsoo.common.data.object.ScanRecordLocationAnalysisObject;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
+import java.util.Arrays;
 
 /**
  * Created by:   Lijian
@@ -51,6 +55,9 @@ public class ProductKeyBatchEntity {
 
     @Column(name="rest_quantity")
     private int restQuantity;
+
+    @Column(name = "marketing_id")
+    private String marketingId;
 
     public int getRestQuantity() {
         return restQuantity;
@@ -139,4 +146,34 @@ public class ProductKeyBatchEntity {
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
+
+    public String getMarketingId() {
+        return marketingId;
+    }
+
+    public void setMarketingId(String marketingId) {
+        this.marketingId = marketingId;
+    }
+
+    public static ProductKeyBatchObject toDataObject(ProductKeyBatchEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
+        batchObj.setId(entity.getId());
+        batchObj.setQuantity(entity.getQuantity());
+        batchObj.setStatusCode(entity.getStatusCode());
+        batchObj.setOrgId(entity.getOrgId());
+        batchObj.setProductBaseId(entity.getProductBaseId());
+        batchObj.setCreatedAppId(entity.getCreatedAppId());
+        batchObj.setCreatedAccountId(entity.getCreatedAccountId());
+        batchObj.setCreatedDateTime(entity.getCreatedDateTime());
+        batchObj.setRestQuantity(entity.getRestQuantity());
+        String codes = entity.getProductKeyTypeCodes();
+        if (codes != null) {
+            batchObj.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
+        }
+        return batchObj;
+    }
+
 }

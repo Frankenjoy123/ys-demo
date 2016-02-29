@@ -99,7 +99,7 @@ public class OrgAgencyController {
     public void update(@PathVariable("id") String id, @RequestBody OrgAgency orgAgency) {
         OrgAgencyObject orgAgencyObject = findOrgAgencyById(id);
         orgAgencyObject.setName(orgAgency.getName());
-        orgAgencyObject.setLocationId(orgAgency.getLocationId());
+        orgAgencyObject.setLocationIds(orgAgency.getLocationIds());
         orgAgencyObject.setAddress(orgAgency.getAddress());
         orgAgencyObject.setDescription(orgAgency.getDescription());
         orgAgencyObject.setParentId(orgAgency.getParentId());

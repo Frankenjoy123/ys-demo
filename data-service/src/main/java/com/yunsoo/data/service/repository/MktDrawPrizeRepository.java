@@ -1,0 +1,32 @@
+package com.yunsoo.data.service.repository;
+
+import com.yunsoo.data.service.entity.MktDrawPrizeEntity;
+import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
+/**
+ * Created by  : haitao
+ * Created on  : 2016/1/25
+ * Descriptions:
+ */
+public interface MktDrawPrizeRepository extends FindOneAndSaveRepository<MktDrawPrizeEntity, String> {
+
+    List<MktDrawPrizeEntity> findByProductKey(String productKey);
+
+    Page<MktDrawPrizeEntity> findByMarketingId(String marketingId, Pageable pageable);
+
+    @Query("select o from #{#entityName} o where " +
+            "(o.marketingId = :marketingId) " +
+            "and (:accountType is null or o.accountType = :accountType) " +
+            "and (:statusCode is null or o.statusCode <= :statusCode) ")
+    Page<MktDrawPrizeEntity> query(@Param("marketingId") String marketingId,
+                                   @Param("accountType") String accountType,
+                                   @Param("statusCode") String statusCode,
+                                   Pageable pageable);
+
+}

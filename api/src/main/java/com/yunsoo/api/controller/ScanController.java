@@ -2,13 +2,15 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.LogisticsDomain;
 import com.yunsoo.api.domain.ProductDomain;
+import com.yunsoo.api.domain.UserScanDomain;
 import com.yunsoo.api.dto.*;
+import com.yunsoo.common.data.object.UserScanRecordObject;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,8 +38,10 @@ public class ScanController {
     private LogisticsDomain logisticsDomain;
     @Autowired
     private ProductDomain productDomain;
+    @Autowired
+    private UserScanDomain userScanDomain;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScanController.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
 
     //仅仅能够访问属于特定组织的Key
@@ -80,6 +84,16 @@ public class ScanController {
         return scanResult;
     }
 
+    @RequestMapping(value = "/userScanRecord/{id}", method = RequestMethod.GET)
+    public ScanRecord getUserScanRecordById(@PathVariable(value = "id") String id) {
+        UserScanRecordObject object = userScanDomain.getScanRecordById(id);
+        if (object == null) {
+            throw new NotFoundException("user scan record not found by [id: " + id + "]");
+        }
+        return new ScanRecord(object);
+    }
+
+
 
     private List<Logistics> getLogisticsInfo(String key) {
         List<LogisticsPath> logisticsPaths;
@@ -87,7 +101,7 @@ public class ScanController {
             logisticsPaths = logisticsDomain.getLogisticsPathsOrderByStartDateTime(key);
         } catch (NotFoundException ex) {
             //to do: log
-            LOGGER.warn("物流信息找不到 - Key = " + key);
+            log.warn("物流信息找不到 - Key = " + key);
             return null;
         }
 

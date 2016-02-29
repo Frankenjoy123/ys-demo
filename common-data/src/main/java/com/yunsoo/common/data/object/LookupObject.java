@@ -1,11 +1,8 @@
 package com.yunsoo.common.data.object;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yunsoo.common.data.LookupCodes;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -13,6 +10,9 @@ import java.util.stream.Collectors;
  * Descriptions:
  */
 public class LookupObject implements Serializable {
+
+    @JsonProperty("type_code")
+    private String typeCode;
 
     @JsonProperty("code")
     private String code;
@@ -26,15 +26,12 @@ public class LookupObject implements Serializable {
     @JsonProperty("active")
     private Boolean active;
 
-    @JsonProperty("type_code")
-    private String typeCode;
-
-    public String getName() {
-        return name;
+    public String getTypeCode() {
+        return typeCode;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
     public String getCode() {
@@ -45,6 +42,14 @@ public class LookupObject implements Serializable {
         this.code = code;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -53,7 +58,7 @@ public class LookupObject implements Serializable {
         this.description = description;
     }
 
-    public Boolean isActive() {
+    public Boolean getActive() {
         return active;
     }
 
@@ -61,40 +66,27 @@ public class LookupObject implements Serializable {
         this.active = active;
     }
 
-    public Boolean getActive() {
-        return active;
-    }
-
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
 
     @Override
     public String toString() {
-        return this.name + " (" + this.code + ", " + this.typeCode + ")";
+        return this.name + " (" + this.typeCode + ", " + this.code + ")";
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof LookupObject)) return false;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || this.typeCode == null || this.code == null || !(obj instanceof LookupObject)) {
+            return false;
+        }
 
-        LookupObject that = (LookupObject) o;
+        LookupObject entity = (LookupObject) obj;
 
-        if (!code.equals(that.code)) return false;
-        return typeCode.equals(that.typeCode);
-
+        return this.typeCode.equals(entity.typeCode) && this.code.equals(entity.code);
     }
 
     @Override
     public int hashCode() {
-        int result = code.hashCode();
-        result = 31 * result + typeCode.hashCode();
-        return result;
+        return 31 * typeCode.hashCode() + code.hashCode();
     }
 
 }

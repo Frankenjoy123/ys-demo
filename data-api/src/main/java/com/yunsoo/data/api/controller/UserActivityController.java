@@ -1,7 +1,6 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.UserActivityObject;
-import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.UserActivityEntity;
@@ -54,8 +53,8 @@ public class UserActivityController {
             Pageable pageable,
             HttpServletResponse response) {
         Page<UserActivityEntity> entityPage = userActivityRepository.query(
-                DateTimeUtils.toDBString(lastSignInDatetimeGE),
-                DateTimeUtils.toDBString(lastSignInDatetimeLE),
+                lastSignInDatetimeGE,
+                lastSignInDatetimeLE,
                 lastSignInContinuousDaysGE,
                 lastSignInContinuousDaysLE,
                 pageable);

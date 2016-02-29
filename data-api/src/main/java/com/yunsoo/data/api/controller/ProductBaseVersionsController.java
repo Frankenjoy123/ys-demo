@@ -3,6 +3,7 @@ package com.yunsoo.data.api.controller;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductBaseVersionsObject;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import com.yunsoo.data.service.entity.ProductBaseVersionsEntity;
 import com.yunsoo.data.service.repository.ProductBaseRepository;
 import com.yunsoo.data.service.repository.ProductBaseVersionsRepository;
@@ -50,7 +51,7 @@ public class ProductBaseVersionsController {
                 .collect(Collectors.toList());
     }
 
-    //query for multi-productbases
+    //query for multi-productBases
     @RequestMapping(value = "", method = RequestMethod.GET)
     public Map<String, List<ProductBaseVersionsObject>> getByFilter(@RequestParam(value = "product_base_ids") List<String> productBaseIds) {
         Map<String, List<ProductBaseVersionsObject>> map = new HashMap<>();
@@ -75,7 +76,7 @@ public class ProductBaseVersionsController {
     public ProductBaseVersionsObject create(@PathVariable(value = "product_base_id") String productBaseId,
                                             @RequestBody @Valid ProductBaseVersionsObject productBaseVersionsObject) {
         if (productBaseRepository.findOne(productBaseId) == null) {
-            throw new NotFoundException("product base not found by id");
+            throw new UnprocessableEntityException("product base not found by id");
         }
         ProductBaseVersionsEntity entity = toProductBaseVersionsEntity(productBaseVersionsObject);
         List<ProductBaseVersionsEntity> currentVersions = productBaseVersionsRepository.findByProductBaseIdOrderByVersionAsc(productBaseId);

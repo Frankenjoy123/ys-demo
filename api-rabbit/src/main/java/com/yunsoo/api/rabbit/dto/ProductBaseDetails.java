@@ -1,6 +1,5 @@
 package com.yunsoo.api.rabbit.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -12,9 +11,8 @@ import java.util.List;
  */
 public class ProductBaseDetails {
 
-    @JsonIgnore
     @JsonProperty("version")
-    private Integer version;
+    private String version;
 
     @JsonProperty("details")
     private List<Item> details;
@@ -28,15 +26,15 @@ public class ProductBaseDetails {
     @JsonProperty("t_commerce")
     private List<TCommerce> tCommerce;
 
-/*
-    public Integer getVersion() {
+
+    public String getVersion() {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(String version) {
         this.version = version;
     }
-*/
+
     public List<Item> getDetails() {
         return details;
     }
@@ -68,8 +66,6 @@ public class ProductBaseDetails {
         public void setValue(String value) {
             this.value = value;
         }
-
-        public Item(){}
     }
 
     public static class Contact {
@@ -95,8 +91,6 @@ public class ProductBaseDetails {
         public void setSupport(String support) {
             this.support = support;
         }
-
-        public Contact(){}
     }
 
     public static class ECommerce {
@@ -122,8 +116,6 @@ public class ProductBaseDetails {
         public void setUrl(String url) {
             this.url = url;
         }
-
-        public ECommerce(){}
     }
 
     public static class TCommerce {
@@ -149,8 +141,6 @@ public class ProductBaseDetails {
         public void setTel(String tel) {
             this.tel = tel;
         }
-
-        public TCommerce(){}
     }
 
     public ProductBaseDetails() {

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Zhe
@@ -81,5 +83,16 @@ public class S3ItemDaoImpl implements S3ItemDao {
         } catch (Exception ex) {
             throw new RuntimeException("Note: getItem failed! " + "[bucketName: " + bucketName + ", key: " + key + "]", ex);
         }
+    }
+
+    @Override
+    public List<String> getItemNamesByFolderName(String bucketName, String folderName) {
+        ObjectListing objects = amazonS3Client.listObjects(bucketName, folderName);
+        return objects.getObjectSummaries().stream().map(this::getKey).collect(Collectors.toList());
+
+    }
+
+    private String getKey(S3ObjectSummary objectSummary){
+        return objectSummary.getKey();
     }
 }

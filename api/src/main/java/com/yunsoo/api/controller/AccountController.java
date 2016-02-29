@@ -22,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -311,11 +312,12 @@ public class AccountController {
     public List<PermissionInstance> getAllPermissionByAccountId(@PathVariable("account_id") String accountId,
                                                                 @RequestParam(value = "org_id", required = false) String orgId) {
         accountId = fixAccountId(accountId); //auto fix current
-        orgId = fixOrgId(orgId);
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         checkAccountPermissionRead(currentAccountId, accountId);
         List<PermissionInstance> permissionInstances = accountPermissionDomain.getPermissionsByAccountId(accountId);
-        permissionInstances = accountPermissionDomain.filterPermissionsByOrgId(permissionInstances, orgId);
+        if (!StringUtils.isEmpty(orgId)) {
+            permissionInstances = accountPermissionDomain.filterPermissionsByOrgId(permissionInstances, fixOrgId(orgId));
+        }
         return permissionDomain.extendPermissions(permissionInstances);
     }
 

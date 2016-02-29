@@ -2,12 +2,19 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.api.dto.Product;
 import com.yunsoo.api.dto.ProductCategory;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -17,8 +24,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductDomain {
 
+    private Log log = LogFactory.getLog(this.getClass());
+
     @Autowired
     private RestClient dataAPIClient;
+
+    @Autowired
+    private ProductBaseDomain productBaseDomain;
 
     @Autowired
     private ProductCategoryDomain productCategoryDomain;
@@ -60,4 +72,38 @@ public class ProductDomain {
         //todo
     }
 
+    public void deleteProduct(String key) {
+        ProductObject productObject = null;
+        try {
+            productObject = dataAPIClient.get("product/{key}", ProductObject.class, key);
+        } catch (NotFoundException ex) {
+            log.error("could not found key!");
+        }
+        productObject.setProductStatusCode(LookupCodes.ProductStatus.DELETED);
+        dataAPIClient.patch("product/{key}", productObject, key);
+    }
+
+    public boolean batchDeleteProducts(String[] productKeys, String orgId) throws AccessDeniedException {
+        boolean batchResult = false;
+        List<String> productBaseIds = new ArrayList<>();
+        try {
+            for (String productKey : productKeys) {
+                ProductObject productObject = dataAPIClient.get("product/{key}", ProductObject.class, productKey);
+                String productBaseId = productObject.getProductBaseId();
+                if (!productBaseIds.contains(productBaseId)) {
+                    productBaseIds.add(productBaseId);
+                }
+            }
+            for (String productBaseId : productBaseIds) {
+                ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
+                if (!productBaseObject.getOrgId().equals(orgId)) {
+                    throw new AccessDeniedException("You do not have access to delete product keys not belong to your organization.");
+                }
+            }
+            batchResult = dataAPIClient.post("/product/batchdelete/file", productKeys, Boolean.class);
+        } catch (NotFoundException ex) {
+            log.error("could not found key!");
+        }
+        return batchResult;
+    }
 }

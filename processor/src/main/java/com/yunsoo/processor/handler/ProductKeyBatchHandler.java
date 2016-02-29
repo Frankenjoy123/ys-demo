@@ -8,11 +8,10 @@ import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import com.yunsoo.processor.config.HandlerConfiguration;
 import com.yunsoo.processor.domain.SqsDomain;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -36,27 +35,27 @@ public class ProductKeyBatchHandler {
     @Value("${yunsoo.sqs.message.delayseconds}")
     private int DELAY_SECONDS;  //10min
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductKeyBatchHandler.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private RestClient dataAPIClient;
 
     @Autowired
-    private SqsDomain domain;
+    private SqsDomain sqsDomain;
 
     public void execute(ProductKeyBatchMassage message) {
         String batchId = message.getProductKeyBatchId();
         String productStatusCode = message.getProductStatusCode();
 
-        LOGGER.info("start processing productkeybatch: [message: {}]", message.toString());
+        log.info(String.format("start processing productkeybatch: [message: %s]", message.toString()));
         DateTime start = DateTime.now();
 
         ProductKeyBatchObject batch = dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, batchId);
 
         String productKeyBatchStatusCode = batch.getStatusCode();
         if (!LookupCodes.ProductKeyBatchStatus.CREATING.equals(productKeyBatchStatusCode)) {
-            LOGGER.error("productkeybatch status is not valid [message: {}, productKeyBatchStatus: {}]",
-                    message.toString(), productKeyBatchStatusCode);
+            log.error(String.format("productkeybatch status is not valid [message: %s, productKeyBatchStatus: %s]",
+                    message.toString(), productKeyBatchStatusCode));
             throw new RuntimeException("productkeybatch status is not valid");
         }
 
@@ -93,12 +92,12 @@ public class ProductKeyBatchHandler {
 
             if( restQuantity > 0 && loopRestQuantity<=0 && exists(restQuantity)){
                 loopRestQuantity = MAX_BATCH_LIMIT;
-                domain.sendMessage(message, (long) DELAY_SECONDS);
+                sqsDomain.sendMessage(message, (long) DELAY_SECONDS);
                 batch.setRestQuantity(restQuantity );
                 dataAPIClient.patch("productkeybatch/{id}", batch, batchId);
 
                 long seconds = (DateTime.now().getMillis() - start.getMillis()) / 1000;
-                LOGGER.info("processing productkeybatch exceed max batch limit: [message: {}, quantity: {}, rest quantity: {}, seconds: {}, max limit: {}]", message.toString(), quantity, restQuantity, seconds, MAX_BATCH_LIMIT);
+                log.info(String.format("processing productkeybatch exceed max batch limit: [message: %s, quantity: %d, rest quantity: %d, seconds: %d, max limit: %d]", message.toString(), quantity, restQuantity, seconds, MAX_BATCH_LIMIT));
                 return;
             }
 
@@ -110,7 +109,7 @@ public class ProductKeyBatchHandler {
 
         long seconds = (DateTime.now().getMillis() - start.getMillis()) / 1000;
 
-        LOGGER.info("finished processing productkeybatch: [message: {}, quantity: {}, seconds: {}]", message.toString(), quantity, seconds);
+        log.info(String.format("finished processing productkeybatch: [message: %s, quantity: %d, seconds: %d]", message.toString(), quantity, seconds));
     }
 
     private boolean exists(int quantity){

@@ -1,11 +1,11 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.client.DataAPIClient;
 import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.exception.NotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -20,26 +20,26 @@ import java.util.stream.Collectors;
  * Created on  : 2015/7/1
  * Descriptions:
  */
-@ElastiCacheConfig
+@ObjectCacheConfig
 @Component
 public class ProductCategoryDomain {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductCategoryDomain.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private DataAPIClient dataAPIClient;
 
 
-    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTCATEGORY.toString(), 'list')")
+    @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTCATEGORY.toString(), 'list')")
     public List<ProductCategoryObject> getProductCategories() {
-        LOGGER.debug("cache missed [name: productcategory, key: 'list']");
+        log.debug("cache missed [name: productcategory, key: 'list']");
         return dataAPIClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {
         });
     }
 
-    @Cacheable(key="T(com.yunsoo.api.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTCATEGORY.toString(), 'map')")
+    @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTCATEGORY.toString(), 'map')")
     public Map<String, ProductCategoryObject> getProductCategoryMap() {
-        LOGGER.debug("cache missed [name: productcategory, key: 'map']");
+        log.debug("cache missed [name: productcategory, key: 'map']");
         List<ProductCategoryObject> categoryObjects =  dataAPIClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {});
         return categoryObjects.stream().collect(Collectors.toMap(ProductCategoryObject::getId, c -> c));
     }

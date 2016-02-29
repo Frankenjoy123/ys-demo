@@ -9,19 +9,13 @@ cloud:
     stack:
       auto: false
     region:
-      auto: true
+      auto: false
       static: cn-north-1
 
 spring:
-  profiles.active: dev
-
----
-spring:
-  profiles: dev
-
-management:
-  port: 4081
-  address: 127.0.0.1
+  profiles.active: local
+  mvc:
+    throw-exception-if-no-handler-found: true
 
 yunsoo:
   debug: true
@@ -38,17 +32,20 @@ yunsoo:
 
 ---
 spring:
-  profiles: test
+  profiles: local
 
-yunsoo:
-  debug: true
-  environment: test
-  client:
-    dataapi:
-      baseurl: http://localhost:3080/
-  sqs:
-    message:
-      delayseconds: 60
-    handler:
-      max: 5000
-      batch: 1000
+logging:
+  file: c:/logs/data-api.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'INFO'
+
+---
+spring:
+  profiles: dev
+
+logging:
+  file: /var/log/data-api.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'INFO'

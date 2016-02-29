@@ -3,17 +3,16 @@ package com.yunsoo.common.web.client;
 import com.yunsoo.common.web.util.PageableUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.client.RequestCallback;
-import org.springframework.web.client.ResponseErrorHandler;
-import org.springframework.web.client.ResponseExtractor;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -25,46 +24,45 @@ public class RestClient {
     private static final int CONNECT_TIMEOUT = 3 * 1000; //3 seconds
     private static final int READ_TIMEOUT = 10 * 60 * 1000; //10 minutes
 
-    private RestTemplate restTemplate;
+    private CustomRestTemplate restTemplate;
     private String baseURL;
 
     public RestClient() {
-        this(null, null);
+        this(null, null, null);
     }
 
     public RestClient(String baseURL) {
-        this(baseURL, null);
+        this(baseURL, null, null);
     }
 
     public RestClient(String baseURL, ResponseErrorHandler responseErrorHandler) {
-        //added this request factory for PATCH method support
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(CONNECT_TIMEOUT);
-        requestFactory.setReadTimeout(READ_TIMEOUT);
+        this(baseURL, responseErrorHandler, null);
+    }
 
-        this.restTemplate = new RestTemplate(requestFactory);
-
+    public RestClient(String baseURL, ResponseErrorHandler responseErrorHandler, RequestCallback preRequestCallback) {
         this.baseURL = baseURL;
         if (baseURL != null && !baseURL.endsWith("/")) {
             this.baseURL += "/";
         }
 
+        //added this request factory for PATCH method support
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(CONNECT_TIMEOUT);
+        requestFactory.setReadTimeout(READ_TIMEOUT);
+
+        this.restTemplate = new CustomRestTemplate(requestFactory);
+
         if (responseErrorHandler != null) {
-            restTemplate.setErrorHandler(responseErrorHandler);
+            this.restTemplate.setErrorHandler(responseErrorHandler);
+        }
+
+        if (preRequestCallback != null) {
+            this.restTemplate.setPreRequestCallback(preRequestCallback);
         }
     }
 
     public String getBaseURL() {
         return baseURL;
-    }
-
-
-    private String createURL(String url) {
-        Assert.notNull(url, "'url' must not be null");
-        if (baseURL != null && url.startsWith("/")) {
-            url = url.substring(1);
-        }
-        return baseURL + url;
     }
 
 
@@ -81,15 +79,15 @@ public class RestClient {
     public <T> Page<T> getPaged(String url, ParameterizedTypeReference<List<T>> responseType, Object... uriVariables) {
         ResponseEntity<List<T>> result = restTemplate.exchange(createURL(url), HttpMethod.GET, null, responseType, uriVariables);
         List<T> resultContent = result.getBody();
-        Integer page = 0;
-        Integer total = null;
+        Integer page = 0, total = null, count = null;
         List<String> pagesValue = result.getHeaders().get("Content-Range");
         if (pagesValue != null && pagesValue.size() == 1) {
             Integer[] pagesArray = PageableUtils.parsePages(pagesValue.get(0));
             page = pagesArray[0];
             total = pagesArray[1];
+            count = pagesArray[2];
         }
-        return new Page<>(resultContent, page, total);
+        return new Page<>(resultContent, page, total, count);
     }
 
     public ResourceInputStream getResourceInputStream(String url, Object... uriVariables) {
@@ -124,8 +122,7 @@ public class RestClient {
             OutputStream outputStream = request.getBody();
             StreamUtils.copy(resourceInputStream, outputStream);
         };
-        ResponseExtractor<?> responseExtractor = response -> null;
-        restTemplate.execute(createURL(url), HttpMethod.PUT, requestCallback, responseExtractor, uriVariables);
+        restTemplate.execute(createURL(url), HttpMethod.PUT, requestCallback, null, uriVariables);
     }
 
 
@@ -137,5 +134,39 @@ public class RestClient {
     //DELETE
     public void delete(String url, Object... uriVariables) {
         restTemplate.delete(createURL(url), uriVariables);
+    }
+
+    private String createURL(String url) {
+        Assert.notNull(url, "'url' must not be null");
+        if (baseURL != null && url.startsWith("/")) {
+            url = url.substring(1);
+        }
+        return baseURL + url;
+    }
+
+
+    private static class CustomRestTemplate extends RestTemplate {
+
+        private RequestCallback preRequestCallback;
+
+        public CustomRestTemplate(ClientHttpRequestFactory requestFactory) {
+            super(requestFactory);
+        }
+
+        public void setPreRequestCallback(RequestCallback preRequestCallback) {
+            this.preRequestCallback = preRequestCallback;
+        }
+
+        @Override
+        protected <T> T doExecute(URI url, HttpMethod method, RequestCallback requestCallback, ResponseExtractor<T> responseExtractor) throws RestClientException {
+            return super.doExecute(url, method, request -> {
+                if (this.preRequestCallback != null) {
+                    this.preRequestCallback.doWithRequest(request);
+                }
+                if (requestCallback != null) {
+                    requestCallback.doWithRequest(request);
+                }
+            }, responseExtractor);
+        }
     }
 }

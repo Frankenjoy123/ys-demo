@@ -11,8 +11,6 @@ import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,8 +30,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/device")
 public class DeviceController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeviceController.class);
 
     @Autowired
     private AccountPermissionDomain accountPermissionDomain;

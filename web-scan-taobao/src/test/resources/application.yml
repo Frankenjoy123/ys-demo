@@ -1,0 +1,15 @@
+#shared properties
+server:
+  port: 7180
+management:
+  port: 7181
+  address: 127.0.0.1
+
+spring:
+  thymeleaf:
+    cache: false
+
+yunsoo:
+  client:
+    api-rabbit:
+      baseurl: http://dev.yunsu.co:5080/

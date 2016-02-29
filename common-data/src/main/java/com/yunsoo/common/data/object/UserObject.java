@@ -39,6 +39,9 @@ public class UserObject implements Serializable {
     @JsonProperty("address")
     private String address;
 
+    @JsonProperty("oauth_openid")
+    private String oauthOpenid;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
@@ -99,6 +102,14 @@ public class UserObject implements Serializable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getOauthOpenid() {
+        return oauthOpenid;
+    }
+
+    public void setOauthOpenid(String oauthOpenid) {
+        this.oauthOpenid = oauthOpenid;
     }
 
     public DateTime getCreatedDateTime() {

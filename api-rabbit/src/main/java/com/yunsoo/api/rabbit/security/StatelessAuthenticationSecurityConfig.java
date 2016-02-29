@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,16 +39,21 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .and()
                 .anonymous().and()
                 .servletApi().and()
-                .headers().cacheControl().and()
+                .headers().cacheControl().and().and()
                 .authorizeRequests()
 
                 .antMatchers("/").permitAll()
                 //.antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/application/**").permitAll()
                 .antMatchers("/auth/**").permitAll()
+                .antMatchers("/message/**").permitAll()
                 .antMatchers("/organization/**").permitAll()
                 .antMatchers("/productbase/**").permitAll()
                 .antMatchers("/scan/**").permitAll()
+                .antMatchers("/productwarranty/**").permitAll()
+                .antMatchers("/webScan/**").permitAll()
+                .antMatchers("/marketing/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/user/*/gravatar").permitAll()
 
                 .antMatchers("/v2/api-docs").permitAll()
                 .antMatchers("/configuration/ui").permitAll()
@@ -57,21 +63,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .antMatchers("/webjars/**").permitAll()
 
                 .anyRequest().authenticated().and()
-                //.antMatchers("/**").permitAll()
 
-                //allow anonymous POSTs to login
-                // .antMatchers(HttpMethod.POST, "/auth/**").permitAll().and()
-
-                //allow anonymous GETs to API
-                // .antMatchers(HttpMethod.GET, "/api/**").permitAll()
-
-                //all other request need to be authenticated
-//               .anyRequest().hasRole("COM_USER").and()
-
-                // custom JSON based authentication by POST of {"username":"<name>","password":"<password>"} which sets the token header upon authentication
-                //.addFilterBefore(new StatelessLoginFilter("/auth/login", tokenAuthenticationService, accountDetailService, authenticationManager()), UsernamePasswordAuthenticationFilter.class)
-
-                // custom Token based authentication based on the header previously given to the client
                 .addFilterBefore(new TokenAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
     }
 

@@ -1,29 +1,24 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.cache.annotation.ElastiCacheConfig;
+import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
-import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by  : Lijian
@@ -31,19 +26,19 @@ import java.util.stream.Stream;
  * Descriptions:
  */
 @Component
-@ElastiCacheConfig
+@ObjectCacheConfig
 public class OrganizationDomain {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrganizationDomain.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     private static final String DEFAULT_LOGO_IMAGE_NAME = "image-128x128";
 
     @Autowired
     private RestClient dataAPIClient;
 
-    @Cacheable(key="T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(),#id )")
+    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(),#id )")
     public OrganizationObject getById(String id) {
-        LOGGER.debug("cache missing on organization." + id );
+        log.debug("cache missing on organization." + id);
         try {
             return dataAPIClient.get("organization/{id}", OrganizationObject.class, id);
         } catch (NotFoundException ex) {
@@ -53,21 +48,23 @@ public class OrganizationDomain {
 
 
     public List<Organization> getOrganizationList() {
-        List<OrganizationObject> orgObjList = dataAPIClient.get("organization", new ParameterizedTypeReference<List<OrganizationObject>>() { });
-        List<ProductBaseObject> productBaseList = dataAPIClient.get("productbase", new ParameterizedTypeReference<List<ProductBaseObject>>() {});
-        if(orgObjList != null && productBaseList != null){
+        List<OrganizationObject> orgObjList = dataAPIClient.get("organization", new ParameterizedTypeReference<List<OrganizationObject>>() {
+        });
+        List<ProductBaseObject> productBaseList = dataAPIClient.get("productbase", new ParameterizedTypeReference<List<ProductBaseObject>>() {
+        });
+        if (orgObjList != null && productBaseList != null) {
             List<Organization> orgList = new ArrayList<>();
             orgObjList.forEach(item -> {
                 Organization organization = new Organization(item);
-                organization.setProductBaseList(productBaseList.stream().filter(product->product.getOrgId().equals(item.getId())).map(ProductBase::new).collect(Collectors.toList()));
+                organization.setProductBaseList(productBaseList.stream().filter(product -> product.getOrgId().equals(item.getId())).map(ProductBase::new).collect(Collectors.toList()));
                 orgList.add(organization);
             });
 
-            orgList.removeIf( item -> item.getProductBaseList().size()==0);
+            orgList.removeIf(item -> item.getProductBaseList().size() == 0);
 
-           return orgList;
+            return orgList;
         }
-       return null;
+        return null;
     }
 
     public ResourceInputStream getLogoImage(String orgId, String imageName) {

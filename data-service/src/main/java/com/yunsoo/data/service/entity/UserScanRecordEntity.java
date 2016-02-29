@@ -33,8 +33,14 @@ public class UserScanRecordEntity {
     @Column(name = "app_id")
     private String appId;
 
+    @Column(name = "ysid")
+    private String ysid;
+
     @Column(name = "device_id")
     private String deviceId;
+
+    @Column(name = "ip")
+    private String ip;
 
     @Column(name = "longitude")
     private Double longitude;
@@ -53,6 +59,9 @@ public class UserScanRecordEntity {
 
     @Column(name = "details")
     private String details;
+
+    @Column(name = "user_agent")
+    private String userAgent;
 
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @Column(name = "created_datetime")
@@ -99,12 +108,28 @@ public class UserScanRecordEntity {
         this.appId = appId;
     }
 
+    public String getYsid() {
+        return ysid;
+    }
+
+    public void setYsid(String ysid) {
+        this.ysid = ysid;
+    }
+
     public String getDeviceId() {
         return deviceId;
     }
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     public Double getLongitude() {
@@ -153,6 +178,14 @@ public class UserScanRecordEntity {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 
     public DateTime getCreatedDateTime() {

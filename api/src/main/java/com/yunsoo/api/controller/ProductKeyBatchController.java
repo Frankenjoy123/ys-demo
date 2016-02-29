@@ -4,6 +4,8 @@ import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
+import com.yunsoo.api.dto.ProductBase;
+import com.yunsoo.api.dto.ProductBatchCollection;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
 import com.yunsoo.api.object.TPermission;
@@ -14,9 +16,9 @@ import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +35,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -44,7 +48,7 @@ import java.util.List;
 @RequestMapping(value = "/productkeybatch")
 public class ProductKeyBatchController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductKeyBatchController.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private ProductBaseDomain productBaseDomain;
@@ -87,7 +91,7 @@ public class ProductKeyBatchController {
                                                   Pageable pageable,
                                                   HttpServletResponse response) {
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        Page<ProductKeyBatch> productKeyBatchPage = null;
+        Page<ProductKeyBatch> productKeyBatchPage;
         productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, isPackage, pageable);
 
         if (pageable != null) {
@@ -148,11 +152,58 @@ public class ProductKeyBatchController {
         batchObj.setCreatedAccountId(accountId);
         batchObj.setCreatedDateTime(createdDateTime);
         batchObj.setRestQuantity(quantity);
-        LOGGER.info("ProductKeyBatch creating started [quantity: {}]", batchObj.getQuantity());
+        log.info(String.format("ProductKeyBatch creating started [quantity: %s]", batchObj.getQuantity()));
         ProductKeyBatch newBatch = productKeyDomain.createProductKeyBatch(batchObj);
-        LOGGER.info("ProductKeyBatch created [id: {}, quantity: {}]", newBatch.getId(), newBatch.getQuantity());
+        log.info(String.format("ProductKeyBatch created [id: %s, quantity: %s]", newBatch.getId(), newBatch.getQuantity()));
 
         return newBatch;
     }
+
+    public static Comparator<ProductKeyBatch> comparator = (s1, s2) -> s1.getCreatedDateTime().compareTo(s2.getCreatedDateTime());
+
+    @RequestMapping(value = "product_batch_group", method = RequestMethod.GET)
+    public List<ProductBatchCollection> getProductBatchCollection() {
+        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        Page<ProductBaseObject> pageProductBase = productBaseDomain.getProductBaseByOrgId(orgId, null);
+        Page<ProductKeyBatch> pageBatch = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, null, false, null);
+
+
+        return pageProductBase.getContent().stream().map(p -> {
+            ProductBatchCollection collection = new ProductBatchCollection();
+            collection.setProductBase(new ProductBase(p));
+            List<ProductKeyBatch> listBatchForProductBase = pageBatch.getContent().stream()
+                    .filter(b -> b.getProductBaseId().equals(p.getId())).sorted(comparator).collect(Collectors.toList());
+            collection.setBatches(listBatchForProductBase);
+
+            return collection;
+        }).collect(Collectors.toList());
+
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public void updateProductKeyBatch(
+            @Valid @RequestBody ProductKeyBatch productKeyBatch) {
+
+        if (productKeyBatch == null) {
+            throw new BadRequestException("marketing draw record can not be null");
+        }
+        ProductKeyBatchObject productKeyBatchObject = new ProductKeyBatchObject();
+
+        productKeyBatchObject.setId(productKeyBatch.getId());
+        productKeyBatchObject.setQuantity(productKeyBatch.getQuantity());
+        productKeyBatchObject.setStatusCode(productKeyBatch.getStatusCode());
+        productKeyBatchObject.setProductKeyTypeCodes(productKeyBatch.getProductKeyTypeCodes());
+        productKeyBatchObject.setProductBaseId(productKeyBatch.getProductBaseId());
+        productKeyBatchObject.setOrgId(productKeyBatch.getOrgId());
+        productKeyBatchObject.setCreatedAppId(productKeyBatch.getCreatedAppId());
+        productKeyBatchObject.setCreatedAccountId(productKeyBatch.getCreatedAccountId());
+        productKeyBatchObject.setCreatedDateTime(productKeyBatch.getCreatedDateTime());
+        productKeyBatchObject.setRestQuantity(productKeyBatch.getQuantity());
+        productKeyBatchObject.setMarketingId(productKeyBatch.getMarketingId());
+
+        productKeyDomain.updateProductKeyBatch(productKeyBatchObject);
+    }
+
+
 
 }

@@ -1,10 +1,11 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.ProcessorClient;
-import com.yunsoo.api.dto.*;
+import com.yunsoo.api.dto.Lookup;
+import com.yunsoo.api.dto.ProductKeyBatch;
+import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.message.ProductKeyBatchMassage;
-import com.yunsoo.common.data.object.LookupObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
@@ -14,8 +15,8 @@ import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -39,7 +40,7 @@ public class ProductKeyDomain {
 
     private static final byte[] CR_LF = new byte[]{13, 10};
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductKeyDomain.class);
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private RestClient dataAPIClient;
@@ -63,7 +64,7 @@ public class ProductKeyDomain {
 
     //ProductKey
 
-    public ProductKeyObject getProductKeyByKey(String productKey) {
+    public ProductKeyObject getProductKey(String productKey) {
         try {
             return dataAPIClient.get("productkey/{key}", ProductKeyObject.class, productKey);
         } catch (NotFoundException ex) {
@@ -80,6 +81,15 @@ public class ProductKeyDomain {
                 lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType),
                 lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus));
     }
+
+    public ProductKeyBatchObject getPkBatchById(String id) {
+        return dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id);
+    }
+
+    public void updatePkBatch(ProductKeyBatchObject productKeyBatchObject) {
+        dataAPIClient.patch("productkeybatch/{id}", productKeyBatchObject, productKeyBatchObject.getId());
+    }
+
 
     public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Boolean isPackage, Pageable pageable) {
         String[] statusCodes = new String[]{
@@ -108,10 +118,10 @@ public class ProductKeyDomain {
 
     public Long sumQuantity(String orgId, String productBaseId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId)
+                .append("marketing_id", orgId)
                 .append("product_base_id", productBaseId)
                 .build();
-        return dataAPIClient.get("productkeybatch/sum/quantity" + query, Long.class);
+        return dataAPIClient.get("productkeybatch/sum/quantity?" + query, Long.class);
     }
 
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {
@@ -126,27 +136,27 @@ public class ProductKeyDomain {
             }
         }
         if (remain < batchObj.getQuantity()) {
-            LOGGER.warn("insufficient ProductKeyCredit");
+            log.warn("insufficient ProductKeyCredit");
             throw new UnprocessableEntityException("产品码可用额度不足");
         }
 
         //create new product key batch
         batchObj.setStatusCode(LookupCodes.ProductKeyBatchStatus.NEW);
         ProductKeyBatchObject newBatchObj = dataAPIClient.post("productkeybatch", batchObj, ProductKeyBatchObject.class);
-        LOGGER.info("ProductKeyBatch created [id: {}, statusCode: {}]", newBatchObj.getId(), newBatchObj.getStatusCode());
+        log.info(String.format("ProductKeyBatch created [id: %s, statusCode: %s]", newBatchObj.getId(), newBatchObj.getStatusCode()));
 
         //purchase
         String transactionId = productKeyTransactionDomain.purchase(newBatchObj);
-        LOGGER.info("ProductKeyBatch purchased [transactionId: {}]", transactionId);
+        log.info(String.format("ProductKeyBatch purchased [transactionId: %s]", transactionId));
 
         //commit transaction
         productKeyTransactionDomain.commit(transactionId);
-        LOGGER.info("ProductKeyTransaction committed [transactionId: {}]", transactionId);
+        log.info(String.format("ProductKeyTransaction committed [transactionId: %s]", transactionId));
 
         //update status to creating
         newBatchObj.setStatusCode(LookupCodes.ProductKeyBatchStatus.CREATING);
         dataAPIClient.patch("productkeybatch/{id}", newBatchObj, newBatchObj.getId());
-        LOGGER.info("ProductKeyBatch status changed [id: {}, statusCode: {}]", newBatchObj.getId(), newBatchObj.getStatusCode());
+        log.info(String.format("ProductKeyBatch status changed [id: %s, statusCode: %s]", newBatchObj.getId(), newBatchObj.getStatusCode()));
 
         //send sqs message to processor
         ProductKeyBatchMassage sqsMessage = new ProductKeyBatchMassage();
@@ -156,12 +166,16 @@ public class ProductKeyDomain {
         }
         try {
             processorClient.post("sqs/productkeybatch", sqsMessage, ProductKeyBatchMassage.class);
-            LOGGER.info("ProductKeyBatchMassage posted to sqs {}", sqsMessage);
+            log.info(String.format("ProductKeyBatchMassage posted to sqs %s", sqsMessage));
         } catch (Exception ex) {
-            LOGGER.error("ProductKeyBatchMassage posting to sqs failed [exceptionMessage: {}]", ex.getMessage());
+            log.error(String.format("ProductKeyBatchMassage posting to sqs failed [exceptionMessage: %s]", ex.getMessage()));
         }
 
         return toProductKeyBatch(newBatchObj, lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType), lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus));
+    }
+
+    public void updateProductKeyBatch(ProductKeyBatchObject batchObj) {
+        dataAPIClient.patch("productkeybatch/{id}", batchObj, batchObj.getId());
     }
 
     public byte[] getProductKeysByBatchId(String id) {
@@ -215,6 +229,7 @@ public class ProductKeyDomain {
         batch.setCreatedAppId(object.getCreatedAppId());
         batch.setCreatedAccountId(object.getCreatedAccountId());
         batch.setCreatedDateTime(object.getCreatedDateTime());
+        batch.setMarketingId(object.getMarketingId());
         return batch;
     }
 

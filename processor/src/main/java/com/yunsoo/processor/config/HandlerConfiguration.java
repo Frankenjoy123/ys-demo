@@ -1,7 +1,6 @@
 package com.yunsoo.processor.config;
 
-import com.yunsoo.processor.handler.ProductKeyBatchHandler;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -10,10 +9,6 @@ import org.springframework.context.annotation.Configuration;
  * Descriptions:
  */
 @Configuration
+@ComponentScan(basePackages = "com.yunsoo.processor.handler")
 public class HandlerConfiguration {
-
-    @Bean
-    public ProductKeyBatchHandler productKeyBatchHandler() {
-        return new ProductKeyBatchHandler();
-    }
 }

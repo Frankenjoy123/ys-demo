@@ -10,24 +10,34 @@ import java.util.List;
  * Created by Zhe on 2015/2/27.
  */
 public class ScanResult {
+
     @JsonProperty("key")
     private String Key;
+
     @JsonProperty("product")
     private Product product;
-    @JsonProperty("liked_product")
-    private Boolean liked_product;
+
     @JsonProperty("manufacturer")
     private Organization manufacturer;
+
     @JsonProperty("followed_org")
-    private Boolean followed_org;
+    private Boolean followedOrg;
+
+    @JsonProperty("liked_product")
+    private Boolean likedProduct;
+
     @JsonProperty("scan_record_list")
     private List<ScanRecord> scanRecordList;
+
     @JsonProperty("logistics_list")
     private List<Logistics> logisticsList;
+
     @JsonProperty("validation_result")
     private ValidationResult validationResult;
+
     @JsonProperty("scan_counter")
     private int scanCounter;
+
     @JsonProperty("user_id")
     private String userId;
 
@@ -55,20 +65,20 @@ public class ScanResult {
         this.manufacturer = manufacturer;
     }
 
-    public Boolean getLiked_product() {
-        return liked_product;
+    public Boolean getLikedProduct() {
+        return likedProduct;
     }
 
-    public void setLiked_product(Boolean liked_product) {
-        this.liked_product = liked_product;
+    public void setLikedProduct(Boolean likedProduct) {
+        this.likedProduct = likedProduct;
     }
 
-    public Boolean getFollowed_org() {
-        return followed_org;
+    public Boolean getFollowedOrg() {
+        return followedOrg;
     }
 
-    public void setFollowed_org(Boolean followed_org) {
-        this.followed_org = followed_org;
+    public void setFollowedOrg(Boolean followedOrg) {
+        this.followedOrg = followedOrg;
     }
 
     public List<ScanRecord> getScanRecordList() {

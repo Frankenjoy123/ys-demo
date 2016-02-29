@@ -1,0 +1,30 @@
+server:
+  port: 4080
+management:
+  port: 4081
+  address: 127.0.0.1
+
+cloud:
+  aws:
+    stack:
+      auto: false
+    region:
+      auto: false
+      static: cn-north-1
+
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+yunsoo:
+  debug: false
+  environment: test
+  client:
+    dataapi:
+      baseurl: http://localhost:3080/
+  sqs:
+    message:
+      delayseconds: 60
+    handler:
+      max: 5000
+      batch: 1000
