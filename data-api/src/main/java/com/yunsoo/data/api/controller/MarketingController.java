@@ -6,6 +6,7 @@ import com.yunsoo.common.data.object.MktDrawPrizeObject;
 import com.yunsoo.common.data.object.MktDrawRecordObject;
 import com.yunsoo.common.data.object.MktDrawRuleObject;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.MarketingEntity;
@@ -200,6 +201,9 @@ public class MarketingController {
         MktDrawPrizeEntity entity = entities.get(0);
         if(!entity.getDrawRecordId().equals(mktDrawPrizeObject.getDrawRecordId()))
             throw new NotFoundException("This draw prize has not been found");
+
+        if(!entity.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.CREATED))
+            throw new ForbiddenException("This draw prize not allowed to be updated");
 
         entity.setAccountType(mktDrawPrizeObject.getAccountType());
         entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
