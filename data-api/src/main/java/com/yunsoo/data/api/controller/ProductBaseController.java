@@ -53,7 +53,7 @@ public class ProductBaseController {
         }
 
         if (pageable != null) {
-            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
         }
         return entityPage.getContent().stream()
                 .map(this::toProductBaseObject)
@@ -119,6 +119,7 @@ public class ProductBaseController {
         object.setShelfLife(entity.getShelfLife());
         object.setShelfLifeInterval(entity.getShelfLifeInterval());
         object.setChildProductCount(entity.getChildProductCount());
+        object.setImage(entity.getImage());
         object.setComments(entity.getComments());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
@@ -144,6 +145,7 @@ public class ProductBaseController {
         entity.setShelfLife(object.getShelfLife());
         entity.setShelfLifeInterval(object.getShelfLifeInterval());
         entity.setChildProductCount(object.getChildProductCount());
+        entity.setImage(object.getImage());
         entity.setComments(object.getComments());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());

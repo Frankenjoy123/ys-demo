@@ -53,6 +53,9 @@ public class ProductBaseObject implements Serializable {
     @JsonProperty("child_product_count")
     private Integer childProductCount;
 
+    @JsonProperty("image")
+    private String image;
+
     @JsonProperty("comments")
     private String comments;
 
@@ -170,6 +173,14 @@ public class ProductBaseObject implements Serializable {
 
     public void setChildProductCount(Integer childProductCount) {
         this.childProductCount = childProductCount;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getComments() {

@@ -2,6 +2,7 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,11 @@ public class FileDomain {
         log.info(String.format("new file saved to s3 [path: %s]", path));
     }
 
-    public ResourceInputStream getFile(String path){
-        return dataAPIClient.getResourceInputStream("file/s3?path={path}", path);
+    public ResourceInputStream getFile(String path) {
+        try {
+            return dataAPIClient.getResourceInputStream("file/s3?path={path}", path);
+        } catch (NotFoundException ignored) {
+            throw new NotFoundException("image not found");
+        }
     }
 }
