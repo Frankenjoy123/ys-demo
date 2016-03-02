@@ -208,7 +208,7 @@ public class MarketingController {
         entity.setAccountType(mktDrawPrizeObject.getAccountType());
         entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
         entity.setPrizeAccountName(mktDrawPrizeObject.getPrizeAccountName());
-        entity.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
+        entity.setStatusCode(mktDrawPrizeObject.getStatusCode());
         MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
 
         return toMktDrawPrizeObject(newEntity);
