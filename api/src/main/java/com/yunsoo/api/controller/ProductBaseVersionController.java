@@ -38,12 +38,12 @@ import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
- * Created on:   2015/3/20
+ * Created on:   2016-03-02
  * Descriptions:
  */
 @RestController
-@RequestMapping(value = "/productbase")
-public class ProductBaseController {
+@RequestMapping(value = "/productbaseVersion")
+public class ProductBaseVersionController {
 
     @Autowired
     private ProductBaseDomain productBaseDomain;

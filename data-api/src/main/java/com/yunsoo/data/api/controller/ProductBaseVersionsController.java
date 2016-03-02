@@ -149,6 +149,7 @@ public class ProductBaseVersionsController {
         pbObject.setShelfLife(entity.getShelfLife());
         pbObject.setShelfLifeInterval(entity.getShelfLifeInterval());
         pbObject.setChildProductCount(entity.getChildProductCount());
+        pbObject.setImage(entity.getImage());
         pbObject.setComments(entity.getComments());
 
         object.setProductBase(pbObject);
@@ -181,6 +182,7 @@ public class ProductBaseVersionsController {
             entity.setShelfLife(pbObject.getShelfLife());
             entity.setShelfLifeInterval(pbObject.getShelfLifeInterval());
             entity.setChildProductCount(pbObject.getChildProductCount());
+            entity.setImage(pbObject.getImage());
             entity.setComments(pbObject.getComments());
         }
         return entity;

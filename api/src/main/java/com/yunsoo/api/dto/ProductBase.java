@@ -78,9 +78,6 @@ public class ProductBase {
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
 
-    @JsonProperty("details")
-    private ProductBaseDetails_removed details;
-
     @JsonProperty("product_base_versions")
     private List<ProductBaseVersions> productBaseVersions;
     @JsonProperty("following_users")
@@ -247,14 +244,6 @@ public class ProductBase {
 
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
-    }
-
-    public ProductBaseDetails_removed getDetails() {
-        return details;
-    }
-
-    public void setDetails(ProductBaseDetails_removed details) {
-        this.details = details;
     }
 
     public List<ProductBaseVersions> getProductBaseVersions() {
