@@ -1,7 +1,10 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.*;
-import com.yunsoo.api.dto.*;
+import com.yunsoo.api.dto.Lookup;
+import com.yunsoo.api.dto.ProductBase;
+import com.yunsoo.api.dto.ProductBaseVersions;
+import com.yunsoo.api.dto.ProductCategory;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
@@ -29,7 +32,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -221,8 +223,7 @@ public class ProductBaseVersionController {
         productBaseObject.setShelfLifeInterval(productBase.getShelfLifeInterval());
         productBaseVersionsObject.setProductBase(productBaseObject);
 
-        ProductBaseVersionsObject newProductBaseVersionsObject = productBaseDomain.createProductBaseVersions(productBaseVersionsObject);
-        return newProductBaseVersionsObject;
+        return productBaseDomain.createProductBaseVersions(productBaseVersionsObject);
     }
 
     //update product base versions: edit current product version detail
@@ -271,7 +272,7 @@ public class ProductBaseVersionController {
         productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.SUBMITTED);
         productBaseVersionsObject.setCreatedAccountId(currentAccountId);
         productBaseVersionsObject.setCreatedDateTime(DateTime.now());
-        productBaseDomain.patchUpdate(productBaseVersionsObject);
+        productBaseDomain.updateProductBaseVersions(productBaseVersionsObject);
     }
 
     //approve/reject product base versions
@@ -300,7 +301,7 @@ public class ProductBaseVersionController {
             if (reviewComments != null) {
                 productBaseVersionsObject.setReviewComments(reviewComments);
             }
-            productBaseDomain.patchUpdate(productBaseVersionsObject);
+            productBaseDomain.updateProductBaseVersions(productBaseVersionsObject);
             ProductBaseObject productBaseObject = productBaseDomain.copyFromProductBaseVersionsObject(productBaseVersionsObject);
             productBaseDomain.updateProductBase(productBaseObject);
         }
@@ -309,7 +310,7 @@ public class ProductBaseVersionController {
             if (reviewComments != null) {
                 productBaseVersionsObject.setReviewComments(reviewComments);
             }
-            productBaseDomain.patchUpdate(productBaseVersionsObject);
+            productBaseDomain.updateProductBaseVersions(productBaseVersionsObject);
         }
     }
 
@@ -353,64 +354,32 @@ public class ProductBaseVersionController {
 
     //region product base image
 
-    /**
-     * @param productBaseId id of product base
-     * @param version       it will be current active version of product base if it's null
-     * @param imageRequest  image base64 string format with schema header and crop arguments
-     */
-    @RequestMapping(value = "{product_base_id}/image", method = RequestMethod.PUT)
-    public void putProductBaseImage(@PathVariable(value = "product_base_id") String productBaseId,
-                                    @RequestParam(value = "version", required = false) Integer version,
-                                    @RequestBody @Valid ImageRequest_removed imageRequest) {
-        ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
-        String orgId = productBaseObject.getOrgId();
-        Integer currentVersion = productBaseObject.getVersion();
-        if (version == null) {
-            version = currentVersion;
-        }
-        //check permission
-        //todo:
-
-        //find the edit version
-        ProductBaseVersionsObject productBaseVersionsObject = productBaseDomain.getProductBaseVersionsByProductBaseIdAndVersion(productBaseId, version);
-        if (productBaseVersionsObject == null || !LookupCodes.ProductBaseVersionsStatus.EDITABLE_STATUS.contains(productBaseVersionsObject.getStatusCode())) {
-            throw new UnprocessableEntityException("image can only be uploaded to the editable product base");
-        }
-
-        productBaseDomain.saveProductBaseImage(imageRequest, orgId, productBaseId, version);
-        log.info(String.format("image saved [orgId: %s, productBaseId:%s, version:%s]", orgId, productBaseId, version));
-    }
-
-    /**
-     * @param productBaseId id of product base
-     * @param imageName     Ex. image-800x400
-     * @param version       it will be current active version of product base if it's null
-     * @return image
-     */
-    @RequestMapping(value = "{product_base_id}/image/{image_name}", method = RequestMethod.GET)
+    @RequestMapping(value = "{product_base_id}/image", method = RequestMethod.GET)
     public ResponseEntity<?> getProductBaseImage(
             @PathVariable(value = "product_base_id") String productBaseId,
-            @PathVariable(value = "image_name") String imageName,
             @RequestParam(value = "version", required = false) Integer version) {
         ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
-        String orgId = productBaseObject.getOrgId();
         Integer currentVersion = productBaseObject.getVersion();
-        if (version == null) {
-            version = currentVersion;
+        if (version != null && !version.equals(currentVersion)) {
+            findProductBaseVersionsById(productBaseId, version);
         }
-
-        ResourceInputStream resourceInputStream = productBaseDomain.getProductBaseImage(orgId, productBaseId, version, imageName);
-        if (resourceInputStream == null) {
+        String imageName = productBaseObject.getImage();
+        if (imageName == null) {
             throw new NotFoundException("image not found");
         }
-        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
-        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
-        if (resourceInputStream.getContentLength() > 0) {
-            builder.contentLength(resourceInputStream.getContentLength());
-        }
-        return builder.body(new InputStreamResource(resourceInputStream));
-    }
+        ResourceInputStream resourceInputStream = fileDomain.getFile(String.format("image/%s", imageName));
+        String contentType = resourceInputStream.getContentType();
+        long contentLength = resourceInputStream.getContentLength();
 
+        ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
+        if (contentType != null) {
+            bodyBuilder.contentType(MediaType.parseMediaType(contentType));
+        }
+        if (contentLength > 0) {
+            bodyBuilder.contentLength(contentLength);
+        }
+        return bodyBuilder.body(new InputStreamResource(resourceInputStream));
+    }
 
     //endregion
 
@@ -418,8 +387,8 @@ public class ProductBaseVersionController {
     //region product base details
 
     @RequestMapping(value = "{product_base_id}/details", method = RequestMethod.GET)
-    public ResponseEntity<?> getProductBaseTemplate(@PathVariable(value = "product_base_id") String productBaseId,
-                                                    @RequestParam(value = "version", required = false) Integer version) {
+    public ResponseEntity<?> getProductBaseDetails(@PathVariable(value = "product_base_id") String productBaseId,
+                                                   @RequestParam(value = "version", required = false) Integer version) {
         ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
         if (version == null) {
             version = productBaseObject.getVersion();
@@ -437,9 +406,9 @@ public class ProductBaseVersionController {
     }
 
     @RequestMapping(value = "{product_base_id}/details", method = RequestMethod.PUT)
-    public void saveProductBaseTemplate(@PathVariable(value = "product_base_id") String productBaseId,
-                                        @RequestParam(value = "version", required = false) Integer version,
-                                        @RequestBody String details) {
+    public void saveProductBaseDetails(@PathVariable(value = "product_base_id") String productBaseId,
+                                       @RequestParam(value = "version", required = false) Integer version,
+                                       @RequestBody String details) {
         ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
         if (version == null) {
             version = productBaseObject.getVersion();
@@ -465,11 +434,20 @@ public class ProductBaseVersionController {
         return orgId;
     }
 
-    private ProductBaseObject findProductBaseById(String id) {
-        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(id);
+    private ProductBaseObject findProductBaseById(String productBaseId) {
+        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
         if (productBaseObject == null) {
-            throw new NotFoundException("product base not found by [id: " + id + "]");
+            throw new NotFoundException("product base not found by [id: " + productBaseId + "]");
         }
         return productBaseObject;
     }
+
+    private ProductBaseVersionsObject findProductBaseVersionsById(String productBaseId, Integer version) {
+        ProductBaseVersionsObject productBaseVersionsObject = productBaseDomain.getProductBaseVersionsByProductBaseIdAndVersion(productBaseId, version);
+        if (productBaseVersionsObject == null) {
+            throw new NotFoundException("product base versions not found");
+        }
+        return productBaseVersionsObject;
+    }
+
 }

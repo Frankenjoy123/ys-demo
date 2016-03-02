@@ -59,6 +59,9 @@ public class ProductBase {
     @JsonProperty("child_product_count")
     private Integer childProductCount;
 
+    @JsonProperty("image")
+    private String image;
+
     @JsonProperty("comments")
     private String comments;
 
@@ -206,6 +209,14 @@ public class ProductBase {
         this.childProductCount = childProductCount;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public String getComments() {
         return comments;
     }
@@ -280,6 +291,7 @@ public class ProductBase {
             this.setShelfLife(object.getShelfLife());
             this.setShelfLifeInterval(object.getShelfLifeInterval());
             this.setChildProductCount(object.getChildProductCount());
+            this.setImage(object.getImage());
             this.setComments(object.getComments());
             this.setCreatedAccountId(object.getCreatedAccountId());
             this.setCreatedDateTime(object.getCreatedDateTime());
@@ -303,6 +315,7 @@ public class ProductBase {
         object.setShelfLife(this.getShelfLife());
         object.setShelfLifeInterval(this.getShelfLifeInterval());
         object.setChildProductCount(this.getChildProductCount());
+        object.setImage(this.getImage());
         object.setComments(this.getComments());
         object.setCreatedAccountId(this.getCreatedAccountId());
         object.setCreatedDateTime(this.getCreatedDateTime());
