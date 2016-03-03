@@ -151,7 +151,7 @@ public class ProductBaseController {
 
 
     //update product base versions: edit current product version detail
-    @RequestMapping(value = "{product_base_id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "{product_base_id}", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:modify')")
     public void updateProductBase(@PathVariable(value = "product_base_id") String productBaseId,
                                   @RequestBody ProductBase productBase) {
@@ -187,8 +187,8 @@ public class ProductBaseController {
         productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.SUBMITTED);
         productBaseVersionsObject.setCreatedAccountId(currentAccountId);
         productBaseVersionsObject.setCreatedDateTime(DateTime.now());
-        productBaseDomain.updateProductBaseVersions(productBaseVersionsObject);
-        productBaseDomain.updateProductBase(productBaseObject);
+        productBaseDomain.patchUpdateProductBaseVersions(productBaseVersionsObject);
+        productBaseDomain.patchUpdateProductBase(productBaseObject);
     }
 
     /**

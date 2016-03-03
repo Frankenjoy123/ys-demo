@@ -5,6 +5,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.ProductBaseEntity;
 import com.yunsoo.data.service.repository.ProductBaseRepository;
+import com.yunsoo.data.service.util.EntityUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -89,6 +90,19 @@ public class ProductBaseController {
             }
             productBaseRepository.save(entity);
         }
+    }
+
+    //patchUpdate
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public void patchUpdate(@PathVariable(value = "id") String id,
+                            @RequestBody ProductBaseObject productBaseObject) {
+        productBaseObject.setId(null);
+        ProductBaseEntity entity = productBaseRepository.findOne(id);
+        if(entity==null){
+            throw new NotFoundException();
+        }
+        EntityUtils.patchUpdate(entity, toProductBaseEntity(productBaseObject));
+        productBaseRepository.save(entity);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
