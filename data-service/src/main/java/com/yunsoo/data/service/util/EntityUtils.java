@@ -17,6 +17,7 @@ public final class EntityUtils {
             Field[] fields = entity.getClass().getDeclaredFields();
             try {
                 for (Field field : fields) {
+                    field.setAccessible(true);
                     Object value = field.get(fromEntity);
                     if (value != null) {
                         field.set(entity, value);
