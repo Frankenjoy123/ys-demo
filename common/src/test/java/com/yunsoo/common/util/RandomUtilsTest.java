@@ -11,7 +11,7 @@ public class RandomUtilsTest {
 
     @Test
     public void test_generateString() {
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < 33; i++) {
             System.out.println(RandomUtils.generateString(i));
         }
     }
