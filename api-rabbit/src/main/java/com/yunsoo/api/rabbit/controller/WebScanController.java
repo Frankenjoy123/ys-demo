@@ -232,7 +232,7 @@ public class WebScanController {
             security = new WebScanResponse.Security();
             Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 1));
             List<UserScanRecordObject> userScanRecordObjects = userScanRecordObjectPage.getContent();
-            security.setScanCount(userScanRecordObjectPage.getCount());
+            security.setScanCount(userScanRecordObjectPage.getCount() == null ? 0 : userScanRecordObjectPage.getCount());
             if (userScanRecordObjects.size() > 0) {
                 security.setFirstScan(toScanRecord(userScanRecordObjects.get(0)));
             }
