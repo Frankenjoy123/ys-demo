@@ -18,6 +18,9 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -84,6 +87,8 @@ public class ProductBaseController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'productbase:read')")
     public List<ProductBase> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                         @PageableDefault(page = 0, size = 20)
+                                         @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                          Pageable pageable,
                                          HttpServletResponse response) {
         orgId = fixOrgId(orgId);
@@ -151,7 +156,7 @@ public class ProductBaseController {
 
 
     //update product base versions: edit current product version detail
-    @RequestMapping(value = "{product_base_id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "{product_base_id}", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:modify')")
     public void updateProductBase(@PathVariable(value = "product_base_id") String productBaseId,
                                   @RequestBody ProductBase productBase) {
@@ -174,7 +179,6 @@ public class ProductBaseController {
         productBaseObject.setChildProductCount(productBase.getChildProductCount());
         productBaseObject.setComments(productBase.getComments());
         productBaseObject.setCreatedDateTime(productBase.getCreatedDateTime());
-        productBaseObject.setId(productBase.getId());
         productBaseObject.setModifiedDateTime(productBase.getModifiedDateTime());
         productBaseObject.setProductKeyTypeCodes(productBase.getProductKeyTypeCodes());
         productBaseObject.setShelfLife(productBase.getShelfLife());
@@ -187,8 +191,8 @@ public class ProductBaseController {
         productBaseVersionsObject.setStatusCode(LookupCodes.ProductBaseVersionsStatus.SUBMITTED);
         productBaseVersionsObject.setCreatedAccountId(currentAccountId);
         productBaseVersionsObject.setCreatedDateTime(DateTime.now());
-        productBaseDomain.updateProductBaseVersions(productBaseVersionsObject);
-        productBaseDomain.updateProductBase(productBaseObject);
+        productBaseDomain.patchUpdateProductBaseVersions(productBaseVersionsObject);
+        productBaseDomain.patchUpdateProductBase(productBaseObject);
     }
 
     /**

@@ -7,6 +7,7 @@ import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import com.yunsoo.data.service.entity.ProductBaseVersionsEntity;
 import com.yunsoo.data.service.repository.ProductBaseRepository;
 import com.yunsoo.data.service.repository.ProductBaseVersionsRepository;
+import com.yunsoo.data.service.util.EntityUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -112,6 +113,21 @@ public class ProductBaseVersionsController {
         if (entity.getModifiedDateTime() == null) {
             entity.setModifiedDateTime(DateTime.now());
         }
+        productBaseVersionsRepository.save(entity);
+    }
+
+    //update
+    @RequestMapping(value = "{product_base_id}/{version}", method = RequestMethod.PATCH)
+    public void patchUpdateByProductBaseIdAndVersion(@PathVariable(value = "product_base_id") String productBaseId,
+                                                     @PathVariable(value = "version") Integer version,
+                                                     @RequestBody ProductBaseVersionsObject productBaseVersionsObject) {
+        List<ProductBaseVersionsEntity> productBaseVersionsEntities = productBaseVersionsRepository.findByProductBaseIdAndVersion(productBaseId, version);
+        if (productBaseVersionsEntities.size() == 0) {
+            throw new NotFoundException("product base not found on the specific version");
+        }
+
+        ProductBaseVersionsEntity entity = productBaseVersionsEntities.get(0);
+        EntityUtils.patchUpdate(entity, toProductBaseVersionsEntity(productBaseVersionsObject));
         productBaseVersionsRepository.save(entity);
     }
 

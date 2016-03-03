@@ -104,12 +104,21 @@ public class ProductBaseDomain {
     }
 
     @CacheEvict(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseObject.getId())")
-    public void updateProductBase(ProductBaseObject productBaseObject) {
+        public void updateProductBase(ProductBaseObject productBaseObject) {
         dataAPIClient.put("productbase/{id}", productBaseObject, productBaseObject.getId());
     }
 
     public void updateProductBaseVersions(ProductBaseVersionsObject productBaseVersionsObject) {
         dataAPIClient.put("productbaseversions/{product_base_id}/{version}", productBaseVersionsObject, productBaseVersionsObject.getProductBaseId(), productBaseVersionsObject.getVersion());
+    }
+
+    @CacheEvict(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseObject.getId())")
+    public void patchUpdateProductBase(ProductBaseObject productBaseObject) {
+        dataAPIClient.patch("productbase/{id}", productBaseObject, productBaseObject.getId());
+    }
+
+    public void patchUpdateProductBaseVersions(ProductBaseVersionsObject productBaseVersionsObject) {
+        dataAPIClient.patch("productbaseversions/{product_base_id}/{version}", productBaseVersionsObject, productBaseVersionsObject.getProductBaseId(), productBaseVersionsObject.getVersion());
     }
 
     @CacheEvict(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseId)")
