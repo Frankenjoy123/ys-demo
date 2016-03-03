@@ -174,7 +174,6 @@ public class ProductBaseController {
         productBaseObject.setChildProductCount(productBase.getChildProductCount());
         productBaseObject.setComments(productBase.getComments());
         productBaseObject.setCreatedDateTime(productBase.getCreatedDateTime());
-        productBaseObject.setId(productBase.getId());
         productBaseObject.setModifiedDateTime(productBase.getModifiedDateTime());
         productBaseObject.setProductKeyTypeCodes(productBase.getProductKeyTypeCodes());
         productBaseObject.setShelfLife(productBase.getShelfLife());
