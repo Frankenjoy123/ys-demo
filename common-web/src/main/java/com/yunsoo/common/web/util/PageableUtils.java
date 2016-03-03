@@ -17,7 +17,7 @@ public class PageableUtils {
         return String.format("pages %s/%s/%s",
                 (page == null || page < 0 ? "0" : page.toString()),
                 (total == null || total < 1 ? "*" : total.toString()),
-                (count == null || count < 1 ? "*" : count.toString()));
+                (count == null || count < 0 ? "*" : count.toString()));
     }
 
     public static Integer[] parsePages(String contentRange) {
