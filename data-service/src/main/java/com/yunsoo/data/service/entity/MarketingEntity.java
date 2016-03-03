@@ -24,6 +24,9 @@ public class MarketingEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "wishes")
+    private String wishes;
+
     @Column(name = "org_id")
     private String orgId;
 
@@ -67,6 +70,14 @@ public class MarketingEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getWishes() {
+        return wishes;
+    }
+
+    public void setWishes(String wishes) {
+        this.wishes = wishes;
     }
 
     public String getOrgId() {
