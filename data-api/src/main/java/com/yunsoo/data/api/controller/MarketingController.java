@@ -6,6 +6,7 @@ import com.yunsoo.common.data.object.MktDrawPrizeObject;
 import com.yunsoo.common.data.object.MktDrawRecordObject;
 import com.yunsoo.common.data.object.MktDrawRuleObject;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.MarketingEntity;
@@ -201,10 +202,13 @@ public class MarketingController {
         if(!entity.getDrawRecordId().equals(mktDrawPrizeObject.getDrawRecordId()))
             throw new NotFoundException("This draw prize has not been found");
 
+        if(!entity.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.CREATED))
+            throw new ForbiddenException("This draw prize not allowed to be updated");
+
         entity.setAccountType(mktDrawPrizeObject.getAccountType());
         entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
         entity.setPrizeAccountName(mktDrawPrizeObject.getPrizeAccountName());
-        entity.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
+        entity.setStatusCode(mktDrawPrizeObject.getStatusCode());
         MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
 
         return toMktDrawPrizeObject(newEntity);
@@ -265,6 +269,7 @@ public class MarketingController {
         MarketingObject object = new MarketingObject();
         object.setId(entity.getId());
         object.setName(entity.getName());
+        object.setWishes(entity.getWishes());
         object.setOrgId(entity.getOrgId());
         object.setProductBaseId(entity.getProductBaseId());
         object.setTypeCode(entity.getTypeCode());
@@ -342,6 +347,7 @@ public class MarketingController {
         MarketingEntity entity = new MarketingEntity();
         entity.setId(object.getId());
         entity.setName(object.getName());
+        entity.setWishes(object.getWishes());
         entity.setOrgId(object.getOrgId());
         entity.setProductBaseId(object.getProductBaseId());
         entity.setTypeCode(object.getTypeCode());

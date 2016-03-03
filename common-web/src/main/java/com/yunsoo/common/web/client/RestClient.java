@@ -109,7 +109,7 @@ public class RestClient {
     }
 
     //PUT
-    public void put(String url, Object request, Object... uriVariables) {
+    public void put(String url, Object request, Object... uriVariables)  {
         restTemplate.put(createURL(url), request, uriVariables);
     }
 
