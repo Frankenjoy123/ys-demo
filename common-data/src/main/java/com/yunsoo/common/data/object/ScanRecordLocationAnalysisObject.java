@@ -37,6 +37,9 @@ public class ScanRecordLocationAnalysisObject implements Serializable {
     @JsonProperty("pv")
     private int pv;
 
+    @JsonProperty("uv")
+    private int uv;
+
 
     public DateTime getScanDate() {
         return scanDate;
@@ -84,5 +87,13 @@ public class ScanRecordLocationAnalysisObject implements Serializable {
 
     public void setPv(int pv) {
         this.pv = pv;
+    }
+
+    public int getUv() {
+        return uv;
+    }
+
+    public void setUv(int uv) {
+        this.uv = uv;
     }
 }

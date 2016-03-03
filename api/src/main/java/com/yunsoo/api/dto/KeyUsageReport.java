@@ -23,9 +23,6 @@ public class KeyUsageReport {
     @JsonProperty("quantity")
     private int[] quantity;
 
-    @JsonProperty("rest_quantity")
-    private int[] restQuantity;
-
     public String[] getDate() {
         return date;
     }
@@ -40,14 +37,6 @@ public class KeyUsageReport {
 
     public void setQuantity(int[] quantity) {
         this.quantity = quantity;
-    }
-
-    public int[] getRestQuantity() {
-        return restQuantity;
-    }
-
-    public void setRestQuantity(int[] restQuantity) {
-        this.restQuantity = restQuantity;
     }
 }
 
