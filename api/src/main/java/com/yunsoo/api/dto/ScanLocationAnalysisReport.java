@@ -39,6 +39,15 @@ public class ScanLocationAnalysisReport {
         @JsonProperty("value")
         private int value;
 
+        @JsonProperty("pvp")
+        private double pvPercentage;
+
+        @JsonProperty("uv")
+        private int uv;
+
+        @JsonProperty("uvp")
+        private double uvPercentage;
+
         @JsonProperty("city")
         private NameValue[] cityData;
 
@@ -65,6 +74,30 @@ public class ScanLocationAnalysisReport {
 
         public void setCityData(NameValue[] cityData) {
             this.cityData = cityData;
+        }
+
+        public int getUv() {
+            return uv;
+        }
+
+        public void setUv(int uv) {
+            this.uv = uv;
+        }
+
+        public double getPvPercentage() {
+            return pvPercentage;
+        }
+
+        public void setPvPercentage(double pvPercentage) {
+            this.pvPercentage = pvPercentage;
+        }
+
+        public double getUvPercentage() {
+            return uvPercentage;
+        }
+
+        public void setUvPercentage(double uvPercentage) {
+            this.uvPercentage = uvPercentage;
         }
     }
 

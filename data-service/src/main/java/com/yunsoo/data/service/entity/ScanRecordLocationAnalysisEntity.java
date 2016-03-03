@@ -46,6 +46,10 @@ public class ScanRecordLocationAnalysisEntity {
     private int pv;
 
 
+    @Column(name = "uv")
+    private int uv;
+
+
     public DateTime getScanDate() {
         return scanDate;
     }
@@ -118,6 +122,7 @@ public class ScanRecordLocationAnalysisEntity {
         object.setScanDate(scanRecordLocationAnalysisEntity.getScanDate());
         object.setProvince(scanRecordLocationAnalysisEntity.getProvince());
         object.setCity(scanRecordLocationAnalysisEntity.getCity());
+        object.setUv(scanRecordLocationAnalysisEntity.getUv());
         return object;
     }
 
@@ -128,16 +133,24 @@ public class ScanRecordLocationAnalysisEntity {
 
         ScanRecordLocationAnalysisEntity entity = (ScanRecordLocationAnalysisEntity) o;
 
-        String key = getUniqueKey();
-        return key.equals(entity.getUniqueKey());
+        String key = generateUniqueKey();
+        return key.equals(entity.generateUniqueKey());
     }
 
     @Override
     public int hashCode() {
-        return getUniqueKey().hashCode();
+        return generateUniqueKey().hashCode();
     }
 
-    public String getUniqueKey() {
+    public String generateUniqueKey() {
         return scanDate.toString("yyyy-MM-dd") + orgId + productBaseId + batchId + province + city;
+    }
+
+    public int getUv() {
+        return uv;
+    }
+
+    public void setUv(int uv) {
+        this.uv = uv;
     }
 }
