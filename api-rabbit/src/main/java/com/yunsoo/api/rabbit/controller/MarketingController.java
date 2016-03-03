@@ -11,6 +11,7 @@ import com.yunsoo.common.data.object.MktDrawRuleObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -105,6 +106,19 @@ public class MarketingController {
             throw new BadRequestException("marketing draw record can not be null");
         }
         MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
+        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
+        marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+
+    }
+
+    @RequestMapping(value = "drawPrize/paid", method = RequestMethod.PUT)
+    public void updateMktDrawPrizeAfterPaid(@RequestBody MktDrawPrize mktDrawPrize) {
+        if (mktDrawPrize == null) {
+            throw new BadRequestException("marketing draw record can not be null");
+        }
+        MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
+        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+        mktDrawPrizeObject.setPaidDateTime(DateTime.now());
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
 
     }

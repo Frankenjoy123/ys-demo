@@ -202,13 +202,13 @@ public class MarketingController {
         if(!entity.getDrawRecordId().equals(mktDrawPrizeObject.getDrawRecordId()))
             throw new NotFoundException("This draw prize has not been found");
 
-        if(!entity.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.CREATED))
-            throw new ForbiddenException("This draw prize not allowed to be updated");
-
-        entity.setAccountType(mktDrawPrizeObject.getAccountType());
-        entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
-        entity.setPrizeAccountName(mktDrawPrizeObject.getPrizeAccountName());
+        if(entity.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.CREATED)){
+            entity.setAccountType(mktDrawPrizeObject.getAccountType());
+            entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
+            entity.setPrizeAccountName(mktDrawPrizeObject.getPrizeAccountName());
+        }
         entity.setStatusCode(mktDrawPrizeObject.getStatusCode());
+        entity.setPaidDateTime(mktDrawPrizeObject.getPaidDateTime());
         MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
 
         return toMktDrawPrizeObject(newEntity);

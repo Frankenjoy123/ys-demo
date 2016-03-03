@@ -50,9 +50,10 @@ public class MarketingDomain {
     }
 
     public void updateMktDrawPrize(MktDrawPrizeObject mktDrawPrizeObject){
-        //mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
         dataAPIClient.put("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
     }
+
+
 
     public List<MktDrawRuleObject> getRuleList(String marketingId){
         return dataAPIClient.get("marketing/drawRule/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>(){}, marketingId);
