@@ -112,6 +112,9 @@ public class UserController {
         if (userObject.getAddress() != null) {
             entity.setAddress(userObject.getAddress());
         }
+        if (userObject.getOauthOpenid() != null) {
+            entity.setOauthOpenid(userObject.getOauthOpenid());
+        }
         userRepository.save(entity);
     }
 
@@ -141,6 +144,7 @@ public class UserController {
         object.setStatusCode(entity.getStatusCode());
         object.setPoint(entity.getPoint());
         object.setAddress(entity.getAddress());
+        object.setOauthOpenid(entity.getOauthOpenid());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         return object;
     }
@@ -157,6 +161,7 @@ public class UserController {
         entity.setStatusCode(object.getStatusCode());
         entity.setPoint(object.getPoint());
         entity.setAddress(object.getAddress());
+        entity.setOauthOpenid(object.getOauthOpenid());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         return entity;
     }

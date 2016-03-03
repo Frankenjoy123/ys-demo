@@ -19,6 +19,9 @@ public class MarketingObject {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("wishes")
+    private String wishes;
+
     @JsonProperty("org_id")
     private String orgId;
 
@@ -64,6 +67,14 @@ public class MarketingObject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getWishes() {
+        return wishes;
+    }
+
+    public void setWishes(String wishes) {
+        this.wishes = wishes;
     }
 
     public String getOrgId() {

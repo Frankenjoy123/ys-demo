@@ -56,6 +56,9 @@ public class ProductBaseVersionsEntity {
     @Column(name = "child_product_count")
     private Integer childProductCount;
 
+    @Column(name = "image")
+    private String image;
+
     @Column(name = "comments")
     private String comments;
 
@@ -179,6 +182,14 @@ public class ProductBaseVersionsEntity {
 
     public void setChildProductCount(Integer childProductCount) {
         this.childProductCount = childProductCount;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getComments() {

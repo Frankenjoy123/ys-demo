@@ -39,6 +39,9 @@ public class UserEntity {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "oauth_openid")
+    private String oauthOpenid;
+
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
@@ -98,6 +101,14 @@ public class UserEntity {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getOauthOpenid() {
+        return oauthOpenid;
+    }
+
+    public void setOauthOpenid(String oauthOpenid) {
+        this.oauthOpenid = oauthOpenid;
     }
 
     public DateTime getCreatedDateTime() {
