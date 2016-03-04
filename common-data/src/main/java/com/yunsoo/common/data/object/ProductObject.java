@@ -45,6 +45,8 @@ public class ProductObject implements Serializable {
     @JsonProperty("manufacturing_datetime")
     private DateTime manufacturingDateTime;
 
+    private String details;
+
 
     public String getProductKey() {
         return productKey;
@@ -108,5 +110,13 @@ public class ProductObject implements Serializable {
 
     public void setManufacturingDateTime(DateTime manufacturingDateTime) {
         this.manufacturingDateTime = manufacturingDateTime;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 }

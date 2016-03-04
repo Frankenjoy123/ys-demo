@@ -28,6 +28,8 @@ public class Product {
 
     private DateTime manufacturingDateTime;
 
+    private String details;
+
 
     public String getProductKey() {
         return productKey;
@@ -91,5 +93,13 @@ public class Product {
 
     public void setManufacturingDateTime(DateTime manufacturingDateTime) {
         this.manufacturingDateTime = manufacturingDateTime;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 }

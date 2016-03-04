@@ -41,6 +41,7 @@ public class ProductModel {
     private String productBaseId;
     private String productStatusCode;
     private Long manufacturingDateTimeValue;
+    private String details;
 
 
     @DynamoDBHashKey(attributeName = "key") //product_key
@@ -162,4 +163,14 @@ public class ProductModel {
     public void setManufacturingDateTimeValue(Long manufacturingDateTimeValue) {
         this.manufacturingDateTimeValue = manufacturingDateTimeValue;
     }
+
+    @DynamoDBAttribute(attributeName = "details") //details
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
 }
