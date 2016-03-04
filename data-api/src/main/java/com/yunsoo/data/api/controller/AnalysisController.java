@@ -9,6 +9,7 @@ import com.yunsoo.data.service.entity.ScanRecordLocationAnalysisEntity;
 import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
 import com.yunsoo.data.service.repository.ScanRecordAnalysisRepository;
 import com.yunsoo.data.service.repository.ScanRecordLocationAnalysisRepository;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -84,7 +85,10 @@ public class AnalysisController {
         if (StringUtils.isEmpty(productBaseId))
             productBaseId = null;
 
-        List<ProductKeyBatchEntity> list = productKeyBatchRepository.queryDailyKeyUsageReport(orgId, productBaseId, startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)), endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)));
+        DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        DateTime endDateTime =  endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+
+        List<ProductKeyBatchEntity> list = productKeyBatchRepository.queryDailyKeyUsageReport(orgId, productBaseId,startDateTime,endDateTime);
         return list.stream().map(ProductKeyBatchEntity::toDataObject).collect(Collectors.toList());
     }
 
