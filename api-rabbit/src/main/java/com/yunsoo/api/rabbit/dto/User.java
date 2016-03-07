@@ -41,6 +41,8 @@ public class User {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
+    @JsonProperty("oauth_openid")
+    private String oauthOpenid;
 
     public String getId() {
         return id;
@@ -106,6 +108,13 @@ public class User {
         this.createdDateTime = createdDateTime;
     }
 
+    public String getOauthOpenid() {
+        return oauthOpenid;
+    }
+
+    public void setOauthOpenid(String oauthOpenid) {
+        this.oauthOpenid = oauthOpenid;
+    }
 
     public User() {
     }
@@ -120,6 +129,7 @@ public class User {
             this.setPoint(object.getPoint());
             this.setAddress(object.getAddress());
             this.setCreatedDateTime(object.getCreatedDateTime());
+            this.setOauthOpenid(object.getOauthOpenid());
         }
     }
 
@@ -133,6 +143,7 @@ public class User {
         object.setPoint(this.getPoint());
         object.setAddress(this.getAddress());
         object.setCreatedDateTime(this.getCreatedDateTime());
+        object.setOauthOpenid(this.getOauthOpenid());
         return object;
     }
 }
