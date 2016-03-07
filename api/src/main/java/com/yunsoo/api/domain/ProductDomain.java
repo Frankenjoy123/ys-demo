@@ -35,6 +35,16 @@ public class ProductDomain {
     @Autowired
     private ProductCategoryDomain productCategoryDomain;
 
+
+    public ProductObject getProduct(String key) {
+        try {
+            return dataAPIClient.get("product/{key}", ProductObject.class, key);
+        } catch (NotFoundException ex) {
+            return null;
+        }
+    }
+
+    @Deprecated
     //Retrieve Product key, ProductBase entry and Product-Category entry from Backend.
     public Product getProductByKey(String key) {
         Product product = new Product();
@@ -69,20 +79,22 @@ public class ProductDomain {
     }
 
     public void activeProduct(String key) {
-        //todo
+        ProductObject productObject = new ProductObject();
+        productObject.setProductStatusCode(LookupCodes.ProductStatus.ACTIVATED);
+        dataAPIClient.patch("product/{key}", productObject, key);
     }
 
     public void deleteProduct(String key) {
-        ProductObject productObject = null;
-        try {
-            productObject = dataAPIClient.get("product/{key}", ProductObject.class, key);
-        } catch (NotFoundException ex) {
-            log.error("could not found key!");
-        }
+        ProductObject productObject = new ProductObject();
         productObject.setProductStatusCode(LookupCodes.ProductStatus.DELETED);
         dataAPIClient.patch("product/{key}", productObject, key);
     }
 
+    public void patchUpdateProduct(String key, ProductObject productObject) {
+        dataAPIClient.patch("product/{key}", productObject, key);
+    }
+
+    @Deprecated
     public boolean batchDeleteProducts(String[] productKeys, String orgId) throws AccessDeniedException {
         boolean batchResult = false;
         List<String> productBaseIds = new ArrayList<>();
