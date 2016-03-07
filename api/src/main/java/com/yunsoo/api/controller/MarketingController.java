@@ -5,7 +5,9 @@ import com.yunsoo.api.dto.Marketing;
 import com.yunsoo.api.dto.MktDrawPrize;
 import com.yunsoo.api.dto.MktDrawRule;
 import com.yunsoo.api.dto.ScanRecord;
+import com.yunsoo.api.payment.ParameterNames;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -17,9 +19,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by  : haitao
@@ -171,6 +177,51 @@ public class MarketingController {
             marketingDomain.deleteMarketingById(id);
         }
     }
+
+    //alipay batch transfer
+    @RequestMapping(value = "alipay_batchtransfer", method = RequestMethod.GET)
+    public Map<String, String> batchTransfer() {
+        Map<String, String> parametersMap = marketingDomain.getAlipayBatchTansferParameters();
+        List<String> keys = new ArrayList<>(parametersMap.keySet());
+        keys.sort(null);
+        return parametersMap;
+
+    }
+
+    @RequestMapping(value = "alipay/notify", method = RequestMethod.POST)
+    public void alipayNotify(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Map<String, String> parametersMap = new HashMap<String, String>();
+        Map requestParams = request.getParameterMap();
+
+        String notifyType = request.getParameter(ParameterNames.NOTIFY_TYPE);
+        List<String> drawRecordIds = new ArrayList<String>();
+        String batchNo = request.getParameter("batch_no");
+
+        if (notifyType.equals("batch_trans_notify")) {
+            String successDetails = request.getParameter("success_details");
+            String failDetails = request.getParameter("fail_details");
+
+            if (successDetails != null) {
+                String[] orderPaymentDetails = successDetails.split("\\|");
+                for (int i = 0; i < orderPaymentDetails.length; i++) {
+                    String[] orderPaymentDetail = orderPaymentDetails[i].split("\\^");
+                    drawRecordIds.add(orderPaymentDetail[0]);
+                }
+                if (drawRecordIds.size() != 0) {
+                    for (String id : drawRecordIds) {
+                        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeById(id);
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                        mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+                        marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+                    }
+                }
+                response.getWriter().print("success");
+            }
+
+        }
+
+    }
+
 
     private String fixOrgId(String orgId) {
         if (orgId == null || "current".equals(orgId)) {

@@ -16,9 +16,13 @@ import java.util.List;
  */
 public interface MktDrawPrizeRepository extends FindOneAndSaveRepository<MktDrawPrizeEntity, String> {
 
+    MktDrawPrizeEntity findOne(String drawRecordId);
+
     List<MktDrawPrizeEntity> findByProductKey(String productKey);
 
     Page<MktDrawPrizeEntity> findByMarketingId(String marketingId, Pageable pageable);
+
+    List<MktDrawPrizeEntity> findByStatusCodeAndAccountType(String statusCode, String accountType);
 
     @Query("select o from #{#entityName} o where " +
             "(o.marketingId = :marketingId) " +

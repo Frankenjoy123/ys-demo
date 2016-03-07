@@ -2,17 +2,14 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.ProductDomain;
-import com.yunsoo.api.dto.Product;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
+import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.exception.NotAcceptableException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -42,13 +39,10 @@ public class ProductController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
+    //todo: change ProductObject to product dto
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
-    public Product get(@PathVariable(value = "key") String key) {
-        Product product = productDomain.getProductByKey(key);
-        if (product == null) {
-            throw new NotFoundException("product not found");
-        }
-        return product;
+    public ProductObject get(@PathVariable(value = "key") String key) {
+        return findProduct(key);
     }
 
     @RequestMapping(value = "/{key}/active", method = RequestMethod.POST)
@@ -59,6 +53,19 @@ public class ProductController {
     @RequestMapping(value = "/{key}/delete", method = RequestMethod.POST)
     public void delete(@PathVariable(value = "key") String key) {
         productDomain.deleteProduct(key);
+    }
+
+    @RequestMapping(value = "/{key}/details", method = RequestMethod.GET)
+    public String putDetails(@PathVariable(value = "key") String key) {
+        return findProduct(key).getDetails();
+    }
+
+    @RequestMapping(value = "/{key}/details", method = RequestMethod.PUT)
+    public void putDetails(@PathVariable(value = "key") String key,
+                           @RequestBody String details) {
+        ProductObject productObject = new ProductObject();
+        productObject.setDetails(details);
+        productDomain.patchUpdateProduct(key, productObject);
     }
 
     @RequestMapping(value = "/delete/file", method = RequestMethod.POST)
@@ -97,6 +104,13 @@ public class ProductController {
         return batchResult;
     }
 
+    private ProductObject findProduct(String key) {
+        ProductObject productObject = productDomain.getProduct(key);
+        if (productObject == null) {
+            throw new NotFoundException("product not found");
+        }
+        return productObject;
+    }
 
 }
 

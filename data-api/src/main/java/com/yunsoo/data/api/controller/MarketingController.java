@@ -6,7 +6,6 @@ import com.yunsoo.common.data.object.MktDrawPrizeObject;
 import com.yunsoo.common.data.object.MktDrawRecordObject;
 import com.yunsoo.common.data.object.MktDrawRuleObject;
 import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.MarketingEntity;
@@ -253,6 +252,23 @@ public class MarketingController {
         List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingId(marketingId);
         return mktDrawRuleEntities.stream().map(this::toMktDrawRuleObject).collect(Collectors.toList());
     }
+
+    @RequestMapping(value = "/drawPrize/record/{id}", method = RequestMethod.GET)
+    public MktDrawPrizeObject findMktDrawPrizeById(@PathVariable(value = "id") String id) {
+        MktDrawPrizeEntity entity = mktDrawPrizeRepository.findOne(id);
+        if (entity != null) {
+            return toMktDrawPrizeObject(entity);
+        } else {
+            return null;
+        }
+    }
+
+    @RequestMapping(value = "/alipay_batchtransfer", method = RequestMethod.GET)
+    public List<MktDrawPrizeObject> findAlipayMktDrawPrize() {
+        List<MktDrawPrizeEntity> mktDrawPrizeEntities = mktDrawPrizeRepository.findByStatusCodeAndAccountType("submit", "alipay");
+        return mktDrawPrizeEntities.stream().map(this::toMktDrawPrizeObject).collect(Collectors.toList());
+    }
+
 
     private MarketingEntity findMarketingById(String id) {
         MarketingEntity entity = marketingRepository.findOne(id);

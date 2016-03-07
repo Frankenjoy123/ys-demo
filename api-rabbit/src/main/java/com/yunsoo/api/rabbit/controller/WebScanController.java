@@ -62,6 +62,7 @@ public class WebScanController {
         product.setKey(key);
         product.setStatusCode(productObject.getProductStatusCode());
         product.setManufacturingDatetime(productObject.getManufacturingDateTime());
+        product.setKeyDetails(productObject.getDetails());
 
         //marketing info
         webScanResponse.setMarketing(getMarketingInfo(productObject.getProductBaseId(), productObject.getProductKeyBatchId()));

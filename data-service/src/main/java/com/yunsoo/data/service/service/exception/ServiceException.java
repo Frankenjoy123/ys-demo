@@ -7,18 +7,38 @@ package com.yunsoo.data.service.service.exception;
  */
 public class ServiceException extends RuntimeException {
 
-    private Class<?> source;
+    private Type type;
 
-    public ServiceException(Class<?> source) {
-        this(source, "Unknown Service Exception");
+    public ServiceException(Type type) {
+        this(type, type.getDefaultMessage());
     }
 
-    public ServiceException(Class<?> source, String message) {
-        super(source.getName() + ": " + message);
-        this.source = source;
+    public ServiceException(Type type, String message) {
+        super(message);
+        this.type = type;
     }
 
-    public boolean isThrownFrom(Class<?> source) {
-        return source != null && this.source != null && source.isAssignableFrom(this.source);
+    public Type getType() {
+        return type;
     }
+
+    public static ServiceException notFound(String message) {
+        return new ServiceException(Type.NotFound, message);
+    }
+
+    public enum Type {
+        NotFound("resource not found"),
+        InternalServerError("internal server error");
+
+        private String defaultMessage;
+
+        public String getDefaultMessage() {
+            return defaultMessage;
+        }
+
+        Type(String defaultMessage) {
+            this.defaultMessage = defaultMessage;
+        }
+    }
+
 }
