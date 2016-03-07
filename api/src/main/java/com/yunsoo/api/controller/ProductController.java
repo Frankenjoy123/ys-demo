@@ -42,11 +42,7 @@ public class ProductController {
     //todo: change ProductObject to product dto
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
     public ProductObject get(@PathVariable(value = "key") String key) {
-        ProductObject productObject = productDomain.getProduct(key);
-        if (productObject == null) {
-            throw new NotFoundException("product not found");
-        }
-        return productObject;
+        return findProduct(key);
     }
 
     @RequestMapping(value = "/{key}/active", method = RequestMethod.POST)
@@ -61,11 +57,7 @@ public class ProductController {
 
     @RequestMapping(value = "/{key}/details", method = RequestMethod.GET)
     public String putDetails(@PathVariable(value = "key") String key) {
-        ProductObject productObject = productDomain.getProduct(key);
-        if (productObject == null) {
-            throw new NotFoundException("product not found");
-        }
-        return productObject.getDetails();
+        return findProduct(key).getDetails();
     }
 
     @RequestMapping(value = "/{key}/details", method = RequestMethod.PUT)
@@ -112,6 +104,13 @@ public class ProductController {
         return batchResult;
     }
 
+    private ProductObject findProduct(String key) {
+        ProductObject productObject = productDomain.getProduct(key);
+        if (productObject == null) {
+            throw new NotFoundException("product not found");
+        }
+        return productObject;
+    }
 
 }
 

@@ -1,5 +1,4 @@
-DELIMITER $$
-CREATE DEFINER=`root`@`%` PROCEDURE `sp_run_location_analysis`(chooseDate date)
+CREATE DEFINER=`admin`@`%` PROCEDURE `sp_run_location_analysis`(chooseDate date)
 BEGIN
 
 SET SQL_SAFE_UPDATES = 0;
@@ -86,24 +85,6 @@ insert into tmp_user_scan_record_location_analysis
 
 
 -- 插入特殊处理的数据
- insert into tmp_user_scan_record_location_analysis 
- select  r.scan_date,  
- r.org_id, r.product_base_id, r.product_name, '所有批次' as batch_id, '浙江' as province, '杭州市'as city, ifnull(r.ysid, user_id),r.product_key 
- from tmp_user_scan_location_record r 
- where  city like '%杭州%' and length(city) > 3;
- 
-  insert into tmp_user_scan_record_location_analysis 
- select r.scan_date, 
- r.org_id, r.product_base_id, r.product_name, '所有批次' as batch_id, '广东' as province, '广州市'as city, ifnull(r.ysid, user_id),r.product_key 
- from tmp_user_scan_location_record r 
- where  city like '%广州%' and length(city) > 3; 
- 
-  insert into tmp_user_scan_record_location_analysis 
- select  r.scan_date, 
- r.org_id, r.product_base_id, r.product_name, '所有批次' as batch_id, '广东' as province, '深圳市'as city, ifnull(r.ysid, user_id),r.product_key 
- from tmp_user_scan_location_record r 
- where  city like '%深圳%' and length(city) > 3;
- 
 
 
 
@@ -122,5 +103,4 @@ drop table tmp_user_scan_location_record;
 drop table tmp_user_scan_record_location_analysis;
 
 
-END$$
-DELIMITER ;
+END

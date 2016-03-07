@@ -1,4 +1,3 @@
-DELIMITER $$
 CREATE DEFINER=`root`@`%` PROCEDURE `sp_run_scan_analysis`(chooseDate date)
 BEGIN
 
@@ -63,5 +62,4 @@ commit;
 drop table tmp_user_scan_record;
 
 
-END$$
-DELIMITER ;
+END

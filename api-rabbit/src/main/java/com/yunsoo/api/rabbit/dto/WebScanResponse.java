@@ -99,6 +99,9 @@ public class WebScanResponse {
         @JsonProperty("manufacturing_datetime")
         private DateTime manufacturingDatetime;
 
+        @JsonProperty("key_details")
+        private String keyDetails;
+
 
         public String getKey() {
             return key;
@@ -186,6 +189,14 @@ public class WebScanResponse {
 
         public void setManufacturingDatetime(DateTime manufacturingDatetime) {
             this.manufacturingDatetime = manufacturingDatetime;
+        }
+
+        public String getKeyDetails() {
+            return keyDetails;
+        }
+
+        public void setKeyDetails(String keyDetails) {
+            this.keyDetails = keyDetails;
         }
     }
 
