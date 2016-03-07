@@ -47,7 +47,7 @@ public class MarketingDomain {
 
     public MktDrawPrizeObject getMktDrawPrizeById(String id) {
         try {
-            return dataAPIClient.get("marketing/drawPrize/{id}", MktDrawPrizeObject.class, id);
+            return dataAPIClient.get("marketing/drawPrize/record/{id}", MktDrawPrizeObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -122,7 +122,7 @@ public class MarketingDomain {
         parameters.put(ParameterNames.BATCH_FEE, batchFee.toString());
         parameters.put(ParameterNames.EMAIL, "zhe@yunsu.co");
         parameters.put(ParameterNames.DETAIL_DATA, detail_data);
-        parameters.put(ParameterNames.NOTIFY_URL, "http://115.206.127.4:6080/payment/alipay/notify");
+        parameters.put(ParameterNames.NOTIFY_URL, "http://183.128.236.12:6080/marketing/alipay/notify");
         parameters.put(ParameterNames.PAY_DATE, DateTime.now().toString("yyyyMMdd"));
         return parameters.toMap();
     }

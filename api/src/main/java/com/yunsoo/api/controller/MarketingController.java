@@ -202,9 +202,9 @@ public class MarketingController {
             String failDetails = request.getParameter("fail_details");
 
             if (successDetails != null) {
-                String[] orderPaymentDetails = successDetails.split("|");
+                String[] orderPaymentDetails = successDetails.split("\\|");
                 for (int i = 0; i < orderPaymentDetails.length; i++) {
-                    String[] orderPaymentDetail = orderPaymentDetails[i].split("^");
+                    String[] orderPaymentDetail = orderPaymentDetails[i].split("\\^");
                     drawRecordIds.add(orderPaymentDetail[0]);
                 }
                 if (drawRecordIds.size() != 0) {

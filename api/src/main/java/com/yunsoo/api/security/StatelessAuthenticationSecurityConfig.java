@@ -56,6 +56,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .antMatchers("/").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/auth/login/**").permitAll()
+                .antMatchers("/marketing/alipay/notify").permitAll()
                 .antMatchers("/auth/accesstoken/**").permitAll()
                 .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
                 .antMatchers(HttpMethod.GET, "/image/*").permitAll()

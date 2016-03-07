@@ -253,7 +253,7 @@ public class MarketingController {
         return mktDrawRuleEntities.stream().map(this::toMktDrawRuleObject).collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "/drawPrize/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/drawPrize/record/{id}", method = RequestMethod.GET)
     public MktDrawPrizeObject findMktDrawPrizeById(@PathVariable(value = "id") String id) {
         MktDrawPrizeEntity entity = mktDrawPrizeRepository.findOne(id);
         if (entity != null) {
