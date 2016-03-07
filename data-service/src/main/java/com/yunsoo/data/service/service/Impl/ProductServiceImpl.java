@@ -5,6 +5,7 @@ import com.yunsoo.data.service.dao.ProductDao;
 import com.yunsoo.data.service.dbmodel.dynamodb.ProductModel;
 import com.yunsoo.data.service.service.ProductService;
 import com.yunsoo.data.service.service.contract.Product;
+import com.yunsoo.data.service.service.exception.ServiceException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,14 +64,14 @@ public class ProductServiceImpl implements ProductService {
         ProductModel productModel = productDao.getByKey(product.getProductKey());
         if (productModel == null
                 || (productModel.getProductKeyDisabled() != null && productModel.getProductKeyDisabled())) {
-            return; //product not found
+            throw ServiceException.notFound("product not found"); //product not found
         }
         if (!productModel.isPrimary()) {
             //get the primary product key
             productModel = productDao.getByKey(productModel.getPrimaryProductKey());
         }
         if (productModel == null) {
-            return; //product not found
+            throw ServiceException.notFound("product not found"); //product not found
         }
 
         if (statusCode != null) productModel.setProductStatusCode(statusCode);
