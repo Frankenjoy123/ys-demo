@@ -5,7 +5,6 @@ import com.yunsoo.data.service.dbmodel.dynamodb.ProductModel;
 import com.yunsoo.data.service.service.ProductKeyService;
 import com.yunsoo.data.service.service.contract.Product;
 import com.yunsoo.data.service.service.contract.ProductKey;
-import com.yunsoo.data.service.service.exception.ServiceException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,10 +31,8 @@ public class ProductKeyServiceImpl implements ProductKeyService {
         Assert.notNull(key, "productKey must not be null");
 
         ProductModel productModel = productDao.getByKey(key);
-        if (productModel == null) {
-            return null;
-        }
-        return new ProductKey(productModel);
+
+        return productModel != null ? new ProductKey(productModel) : null;
     }
 
     @Override
@@ -43,11 +40,10 @@ public class ProductKeyServiceImpl implements ProductKeyService {
         Assert.notNull(key, "productKey must not be null");
 
         ProductModel productModel = productDao.getByKey(key);
-        if (productModel == null) {
-            throw new ServiceException(this.getClass(), "ProductKey not found");
+        if (productModel != null) {
+            productModel.setProductKeyDisabled(disabled);
+            productDao.save(productModel);
         }
-        productModel.setProductKeyDisabled(disabled);
-        productDao.save(productModel);
     }
 
     @Override

@@ -60,6 +60,7 @@ public class ProductKeyController {
         productKeyObj.setPrimaryProductKey(productKey.getPrimaryProductKey());
         productKeyObj.setProductKeySet(productKey.getProductKeySet());
         productKeyObj.setCreatedDateTime(productKey.getCreatedDateTime());
+        productKeyObj.setDetails(productKey.getDetails());
         return productKeyObj;
     }
 

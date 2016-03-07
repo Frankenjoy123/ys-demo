@@ -37,6 +37,7 @@ public class ProductController {
         product.setProductKey(key);
         product.setProductStatusCode(productObject.getProductStatusCode());
         product.setManufacturingDateTime(productObject.getManufacturingDateTime());
+        product.setDetails(productObject.getDetails());
         productService.patchUpdate(product);
     }
 
@@ -66,7 +67,8 @@ public class ProductController {
         object.setCreatedDateTime(product.getCreatedDateTime());
         object.setProductBaseId(product.getProductBaseId());
         object.setProductStatusCode(product.getProductStatusCode());
-        object.setManufacturingDateTime((product.getManufacturingDateTime()));
+        object.setManufacturingDateTime(product.getManufacturingDateTime());
+        object.setDetails(product.getDetails());
         return object;
     }
 
