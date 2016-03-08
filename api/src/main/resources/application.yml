@@ -29,7 +29,7 @@ yunsoo:
     key: e0opacdva54q9todmujp0vc5pwqlcj10
     accountName: 广州云溯科技有限公司
     email: zhe@yunsu.co
-    notify_url: http://54.222.188.12:6080/marketing/alipay/notify
+    notify_url: http://54.223.217.78:6080/marketing/alipay/notify
 spring:
   profiles.active: local
   mvc:
