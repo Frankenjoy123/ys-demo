@@ -329,6 +329,7 @@ public class MarketingController {
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setUserId(entity.getUserId());
         object.setIsPrized(entity.getIsPrized());
+        object.setYsid(entity.getYsid());
         return object;
     }
 
@@ -408,6 +409,7 @@ public class MarketingController {
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setUserId(object.getUserId());
         entity.setIsPrized(object.getIsPrized());
+        entity.setYsid(object.getYsid());
         return entity;
     }
 

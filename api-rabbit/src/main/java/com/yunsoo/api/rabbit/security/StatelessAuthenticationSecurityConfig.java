@@ -54,7 +54,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .antMatchers("/webScan/**").permitAll()
                 .antMatchers("/marketing/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/user/*/gravatar").permitAll()
-
+                .antMatchers(HttpMethod.POST, "/user").permitAll()
                 .antMatchers("/v2/api-docs").permitAll()
                 .antMatchers("/configuration/ui").permitAll()
                 .antMatchers("/configuration/security").permitAll()

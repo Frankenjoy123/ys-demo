@@ -48,8 +48,14 @@ public class UserController {
         return new User(user);
     }
 
+    @RequestMapping( method = RequestMethod.POST)
+    public User create(@RequestBody User user) {
+        UserObject userObject = user.toUserObject();
+        UserObject savedUser = userDomain.createUser(userObject);
+        return new User(savedUser);
+    }
+
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    @PreAuthorize("hasPermission(#userId, 'userId', 'user:modify')")
     public void patchUpdateUser(@PathVariable(value = "id") String userId,
                                 @RequestBody User user) {
         userId = fixUserId(userId);
