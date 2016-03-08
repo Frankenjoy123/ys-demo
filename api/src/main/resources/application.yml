@@ -29,7 +29,7 @@ yunsoo:
     key: e0opacdva54q9todmujp0vc5pwqlcj10
     accountName: 广州云溯科技有限公司
     email: zhe@yunsu.co
-    notify_url: http://54.223.217.78:6080/marketing/alipay/notify
+    notify_url: http://dev.yunsu.co:6080/marketing/alipay/notify
 spring:
   profiles.active: local
   mvc:
@@ -48,6 +48,9 @@ logging:
 yunsoo:
   cache:
     type: local
+  alipay:
+    notify_url: http://115.192.221.38:6080/marketing/alipay/notify
+
 
 ---
 spring:
@@ -65,3 +68,5 @@ yunsoo:
     default_expire_time: 600 #seconds
     redis:
       host: dev-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn
+  alipay:
+    notify_url: http://dev.yunsu.co:6080/marketing/alipay/notify
