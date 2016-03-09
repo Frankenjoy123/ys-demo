@@ -27,7 +27,7 @@ yunsoo:
   alipay:
     pid: 2088121812016826
     key: e0opacdva54q9todmujp0vc5pwqlcj10
-    accountName: 广州云溯科技有限公司
+    account_name: 广州云溯科技有限公司
     email: zhe@yunsu.co
     notify_url: http://dev.yunsu.co:6080/marketing/alipay/notify
 spring:

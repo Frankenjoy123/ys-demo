@@ -38,7 +38,7 @@ public class MarketingDomain {
     @Value("${yunsoo.alipay.key}")
     private String key;
 
-    @Value("${yunsoo.alipay.accountName}")
+    @Value("${yunsoo.alipay.account_name}")
     private String alipayAccountName;
 
     @Value("${yunsoo.alipay.email}")
