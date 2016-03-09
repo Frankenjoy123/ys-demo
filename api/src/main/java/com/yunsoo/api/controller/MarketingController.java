@@ -219,6 +219,7 @@ public class MarketingController {
 
         String notifyType = request.getParameter(ParameterNames.NOTIFY_TYPE);
         List<String> drawRecordIds = new ArrayList<String>();
+        List<String> drawRecordFailedIds = new ArrayList<String>();
         String batchNo = request.getParameter("batch_no");
 
         if (notifyType.equals("batch_trans_notify")) {
@@ -239,8 +240,23 @@ public class MarketingController {
                         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
                     }
                 }
-                response.getWriter().print("success");
             }
+            if (failDetails != null) {
+                String[] orderPaymentFailedDetails = failDetails.split("\\|");
+                for (int i = 0; i < orderPaymentFailedDetails.length; i++) {
+                    String[] orderPaymentFailedDetail = orderPaymentFailedDetails[i].split("\\^");
+                    drawRecordFailedIds.add(orderPaymentFailedDetail[0]);
+                }
+                if (drawRecordFailedIds.size() != 0) {
+                    for (String id : drawRecordFailedIds) {
+                        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeById(id);
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.INVALID);
+                        marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+                    }
+                }
+
+            }
+            response.getWriter().print("success");
 
         }
 
