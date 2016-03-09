@@ -28,6 +28,9 @@ public class ProductKey {
 
     private DateTime createdDateTime;
 
+    private String details;
+
+
     public String getProductKey() {
         return productKey;
     }
@@ -92,6 +95,14 @@ public class ProductKey {
         this.createdDateTime = createdDateTime;
     }
 
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
     public ProductKey() {
 
     }
@@ -107,6 +118,7 @@ public class ProductKey {
             this.setPrimaryProductKey(productModel.getPrimaryProductKey());
             this.setProductKeySet(productModel.getProductKeySet());
             this.setCreatedDateTime(productModel.getCreatedDateTime());
+            this.setDetails(productModel.getDetails());
         }
     }
 

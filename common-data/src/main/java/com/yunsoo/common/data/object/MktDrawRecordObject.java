@@ -22,6 +22,9 @@ public class MktDrawRecordObject {
     @JsonProperty("marketing_id")
     private String marketingId;
 
+    @JsonProperty("ysid")
+    private String ysid;
+
     @JsonProperty("product_base_id")
     private String productBaseId;
 
@@ -61,6 +64,14 @@ public class MktDrawRecordObject {
 
     public void setMarketingId(String marketingId) {
         this.marketingId = marketingId;
+    }
+
+    public String getYsid() {
+        return ysid;
+    }
+
+    public void setYsid(String ysid) {
+        this.ysid = ysid;
     }
 
     public String getProductBaseId() {

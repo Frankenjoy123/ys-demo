@@ -211,10 +211,12 @@ public class AuthController {
      * generate loginToken for the given account, must check the permission with current login account
      *
      * @param accountId String
+     * @param expiresIn Integer, seconds
      * @return loginToken Token
      */
     @RequestMapping(value = "logintoken", method = RequestMethod.GET)
-    public Token getLoginToken(@RequestParam("account_id") String accountId) {
+    public Token getLoginToken(@RequestParam("account_id") String accountId,
+                               @RequestParam(value = "expires_in", required = false) Integer expiresIn) {
 
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
@@ -236,7 +238,7 @@ public class AuthController {
             throw new BadRequestException("account is not activated");
         }
 
-        return tokenAuthenticationService.generateLoginToken(accountId);
+        return tokenAuthenticationService.generateLoginToken(accountId, expiresIn);
     }
 
 

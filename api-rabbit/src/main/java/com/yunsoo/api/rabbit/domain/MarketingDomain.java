@@ -78,7 +78,14 @@ public class MarketingDomain {
         for(MktDrawRuleObject rule : ruleList){
             int ruleQuantity = (int)(rule.getProbability() * totalQuantity);
             for(int i=0; i<ruleQuantity; i++){
-                prizeArray.put(Math.floor(Math.random() * totalQuantity), rule);
+                double index = Math.floor(Math.random() * totalQuantity);
+                while(prizeArray.containsKey(index)){
+                    index +=1;
+                    if(index > totalQuantity)
+                        index = index - totalQuantity;
+                }
+
+                prizeArray.put(index, rule);
             }
         }
 

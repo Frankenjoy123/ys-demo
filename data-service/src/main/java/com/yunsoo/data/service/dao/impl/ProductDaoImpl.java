@@ -17,6 +17,9 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public ProductModel getByKey(String key) {
+        if (key == null || key.length() == 0) {
+            return null;
+        }
         return dynamoDBMapper.load(ProductModel.class, key);
     }
 
@@ -26,7 +29,7 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public void batchSave(List<ProductModel> products){
+    public void batchSave(List<ProductModel> products) {
         dynamoDBMapper.batchSave(products);
     }
 

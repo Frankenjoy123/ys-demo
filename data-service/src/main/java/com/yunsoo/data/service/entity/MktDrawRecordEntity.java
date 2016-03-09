@@ -26,6 +26,9 @@ public class MktDrawRecordEntity {
     @Column(name = "marketing_id")
     private String marketingId;
 
+    @Column(name = "ysid")
+    private String ysid;
+
     @Column(name = "product_base_id")
     private String productBaseId;
 
@@ -64,6 +67,14 @@ public class MktDrawRecordEntity {
 
     public void setMarketingId(String marketingId) {
         this.marketingId = marketingId;
+    }
+
+    public String getYsid() {
+        return ysid;
+    }
+
+    public void setYsid(String ysid) {
+        this.ysid = ysid;
     }
 
     public String getProductBaseId() {
