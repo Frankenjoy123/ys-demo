@@ -242,7 +242,7 @@ public class MarketingController {
                 }
             }
             if (failDetails != null) {
-                String[] orderPaymentFailedDetails = successDetails.split("\\|");
+                String[] orderPaymentFailedDetails = failDetails.split("\\|");
                 for (int i = 0; i < orderPaymentFailedDetails.length; i++) {
                     String[] orderPaymentFailedDetail = orderPaymentFailedDetails[i].split("\\^");
                     drawRecordFailedIds.add(orderPaymentFailedDetail[0]);
