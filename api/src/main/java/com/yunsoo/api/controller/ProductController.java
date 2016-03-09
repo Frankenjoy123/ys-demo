@@ -63,7 +63,7 @@ public class ProductController {
     @RequestMapping(value = "/{key}/details", method = RequestMethod.GET)
     public ResponseEntity<?> getDetails(@PathVariable(value = "key") String key) {
         String details = findProduct(key).getDetails();
-        byte[] buffer = details.getBytes(StandardCharsets.UTF_8);
+        byte[] buffer = details == null ? new byte[0] : details.getBytes(StandardCharsets.UTF_8);
         ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
         bodyBuilder.contentType(MediaType.APPLICATION_JSON);
         bodyBuilder.contentLength(buffer.length);
