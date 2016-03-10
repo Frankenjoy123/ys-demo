@@ -37,7 +37,7 @@ public class UserScanRecordController {
     public UserScanRecordObject getById(@PathVariable(value = "id") String id) {
         UserScanRecordEntity entity = userScanRecordRepository.findOne(id);
         if (entity == null) {
-            throw new NotFoundException(String.format("scan record not found by [id: %s]", id));
+            throw new NotFoundException(String.format("userScanRecord not found by [id: %s]", id));
         }
         return toUserScanRecordObject(entity);
     }
@@ -87,6 +87,7 @@ public class UserScanRecordController {
         object.setId(entity.getId());
         object.setUserId(entity.getUserId());
         object.setProductKey(entity.getProductKey());
+        object.setProductKeyBatchId(entity.getProductKeyBatchId());
         object.setProductBaseId(entity.getProductBaseId());
         object.setAppId(entity.getAppId());
         object.setYsid(entity.getYsid());
@@ -111,6 +112,7 @@ public class UserScanRecordController {
         entity.setId(object.getId());
         entity.setUserId(object.getUserId());
         entity.setProductKey(object.getProductKey());
+        entity.setProductKeyBatchId(object.getProductKeyBatchId());
         entity.setProductBaseId(object.getProductBaseId());
         entity.setAppId(object.getAppId());
         entity.setYsid(object.getYsid());

@@ -7,9 +7,8 @@ import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.MktDrawPrizeObject;
 import com.yunsoo.common.data.object.MktDrawRecordObject;
-import com.yunsoo.common.data.object.MktDrawRuleObject;
+import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +70,7 @@ public class MarketingController {
             throw new BadRequestException("marketing draw record can not be null");
         }
         String productKey = mktDrawRecord.getProductKey();
-        Product product = productDomain.getProductByKey(productKey);
+        ProductObject product = productDomain.getProduct(productKey);
         if (product == null) {
             throw new NotFoundException("product can not be found by the key");
         }
@@ -90,7 +89,7 @@ public class MarketingController {
             throw new BadRequestException("marketing draw record can not be null");
         }
         String productKey = mktDrawPrize.getProductKey();
-        Product product = productDomain.getProductByKey(productKey);
+        ProductObject product = productDomain.getProduct(productKey);
         if (product == null) {
             throw new NotFoundException("product can not be found by the key");
         }

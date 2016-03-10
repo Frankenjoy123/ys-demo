@@ -27,6 +27,9 @@ public class UserScanRecordEntity {
     @Column(name = "product_key")
     private String productKey;
 
+    @Column(name = "product_key_batch_id")
+    private String productKeyBatchId;
+
     @Column(name = "product_base_id")
     private String productBaseId;
 
@@ -90,6 +93,14 @@ public class UserScanRecordEntity {
 
     public void setProductKey(String productKey) {
         this.productKey = productKey;
+    }
+
+    public String getProductKeyBatchId() {
+        return productKeyBatchId;
+    }
+
+    public void setProductKeyBatchId(String productKeyBatchId) {
+        this.productKeyBatchId = productKeyBatchId;
     }
 
     public String getProductBaseId() {

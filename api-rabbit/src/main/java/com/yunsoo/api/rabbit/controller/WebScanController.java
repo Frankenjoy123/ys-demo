@@ -91,7 +91,13 @@ public class WebScanController {
         ProductObject productObject = getProductByKey(key);
 
         //save scan record
-        UserScanRecordObject userScanRecordObject = saveScanRecord(key, productObject.getProductBaseId(), appId, webScanRequest, deviceId);
+        UserScanRecordObject userScanRecordObject = saveScanRecord(
+                key,
+                productObject.getProductBaseId(),
+                productObject.getProductKeyBatchId(),
+                appId,
+                deviceId,
+                webScanRequest);
 
         if (userAgent != null && ysid == null) {
             //set cookie YSID
@@ -136,7 +142,13 @@ public class WebScanController {
         ProductBaseObject productBaseObject = getProductBaseById(productBaseId);
 
         //save scan record
-        UserScanRecordObject userScanRecordObject = saveScanRecord(null, productBaseObject.getId(), appId, webScanRequest, deviceId);
+        UserScanRecordObject userScanRecordObject = saveScanRecord(
+                null,
+                productBaseObject.getId(),
+                null,
+                appId,
+                deviceId,
+                webScanRequest);
 
         if (userAgent != null && ysid == null) {
             //set cookie YSID
@@ -243,12 +255,14 @@ public class WebScanController {
 
     private UserScanRecordObject saveScanRecord(String productKey,
                                                 String productBaseId,
+                                                String productKeyBatchId,
                                                 String appId,
-                                                WebScanRequest webScanRequest,
-                                                String deviceId) {
+                                                String deviceId,
+                                                WebScanRequest webScanRequest) {
         UserScanRecordObject userScanRecordObject = new UserScanRecordObject();
         userScanRecordObject.setProductKey(productKey);
         userScanRecordObject.setProductBaseId(productBaseId);
+        userScanRecordObject.setProductKeyBatchId(productKeyBatchId);
         userScanRecordObject.setAppId(appId);
         userScanRecordObject.setYsid(webScanRequest.getYsid());
         userScanRecordObject.setDeviceId(deviceId);
