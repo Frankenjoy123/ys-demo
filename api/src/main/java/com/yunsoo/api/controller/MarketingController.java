@@ -74,6 +74,8 @@ public class MarketingController {
         return new MktDrawRule(newMktDrawRuleObject);
     }
 
+
+
     //query marketing plan by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<Marketing> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
@@ -130,6 +132,18 @@ public class MarketingController {
             mktObject = marketingDomain.createMarketing(marketingObject);
         }
         return new Marketing(mktObject);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    public void enableMarketing(@PathVariable(value = "id")String id){
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        MarketingObject marketingObject = marketingDomain.getMarketingById(id);
+        if(marketingObject != null) {
+            marketingObject.setStatusCode(LookupCodes.MktStatus.AVAILABLE);
+            marketingObject.setModifiedDateTime(DateTime.now());
+            marketingObject.setModifiedAccountId(currentAccountId);
+            marketingDomain.updateMarketing(marketingObject);
+        }
     }
 
     @RequestMapping(value = "drawPrize/marketing", method = RequestMethod.GET)

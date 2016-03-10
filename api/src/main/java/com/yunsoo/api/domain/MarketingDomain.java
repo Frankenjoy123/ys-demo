@@ -69,6 +69,10 @@ public class MarketingDomain {
         return dataAPIClient.post("marketing", marketingObject, MarketingObject.class);
     }
 
+    public void updateMarketing(MarketingObject marketingObject){
+        dataAPIClient.put("marketing/{id}", marketingObject, marketingObject.getId());
+    }
+
     public void deleteMarketingById(String id) {
         dataAPIClient.delete("marketing/{id}", id);
         dataAPIClient.delete("marketing/drawRule/{id}", id);

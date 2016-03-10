@@ -10,7 +10,7 @@ multipart.maxRequestSize: 20MB
 spring:
   profiles.active: local
   jpa:
-    show_sql: false
+    show_sql: true
     database: MYSQL
     generate_ddl: false
   mvc:

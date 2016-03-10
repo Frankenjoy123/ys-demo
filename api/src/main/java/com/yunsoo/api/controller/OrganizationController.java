@@ -1,8 +1,11 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.OrganizationDomain;
+import com.yunsoo.api.dto.Brand;
 import com.yunsoo.api.dto.Organization;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -47,6 +50,18 @@ public class OrganizationController {
         return new Organization(object);
     }
 
+    @RequestMapping(value = "{id}/approve", method = RequestMethod.PUT)
+    public void Approve(@PathVariable(value = "id") String orgId) {
+        orgId = fixOrgId(orgId);
+        organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.AVAILABLE);
+    }
+
+    @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
+    public void Disable(@PathVariable(value = "id") String orgId) {
+        orgId = fixOrgId(orgId);
+        organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.DISABLE);
+    }
+
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
     public List<Organization> getByFilter(@RequestParam(value = "name", required = false) String name,
@@ -79,6 +94,30 @@ public class OrganizationController {
         return new Organization(organizationDomain.createOrganization(object));
     }
 
+    @RequestMapping(value = "/brand", method = RequestMethod.POST)
+    @PreAuthorize("hasPermission('*', 'filterByOrg', 'organization:create')")
+    public Brand createBrand(@RequestBody Brand brand) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        BrandObject object = brand.toBrand(brand);
+        object.setCreatedAccountId(currentAccountId);
+        return new Brand(organizationDomain.createBrand(object));
+    }
+
+    @RequestMapping(value = "/{id}/brand", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission('*', 'filterByOrg', 'organization:create')")
+    public  List<Brand> filterOrgBrand(@PathVariable(value = "id") String id,
+                                       @RequestParam(value="status", required = false)String status,
+                                       @RequestParam(value = "name", required = false) String name,
+                                       @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC) Pageable pageable,
+                                       HttpServletResponse response) {
+        Page<BrandObject> brandPage = organizationDomain.getOrgBrandList(id, name, status, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", brandPage.toContentRange());
+        }
+
+        return brandPage.map(Brand::new).getContent();
+    }
+
     @RequestMapping(value = "{id}/logo/{imageName}", method = RequestMethod.GET)
     public ResponseEntity<?> getLogo(
             @PathVariable(value = "id") String id,
@@ -95,6 +134,16 @@ public class OrganizationController {
         return builder.body(new InputStreamResource(resourceInputStream));
     }
 
+    @RequestMapping(value = "{id}/brand", method = RequestMethod.PUT)
+    @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
+    public void saveBrandAttachment(@PathVariable(value = "id") String orgId,
+                            @RequestBody byte[] attachment) {
+        if (attachment != null && attachment.length > 0) {
+            orgId = fixOrgId(orgId);
+            organizationDomain.saveBrandAttachment(orgId, attachment, "");
+        }
+    }
+
     @RequestMapping(value = "{id}/logo", method = RequestMethod.PUT)
     @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
     public void saveOrgLogo(@PathVariable(value = "id") String orgId,
@@ -104,6 +153,7 @@ public class OrganizationController {
             organizationDomain.saveOrgLogo(orgId, imageDataBytes);
         }
     }
+
 
 
     private String fixOrgId(String orgId) {

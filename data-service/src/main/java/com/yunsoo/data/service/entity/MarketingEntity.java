@@ -36,6 +36,9 @@ public class MarketingEntity {
     @Column(name = "type_code")
     private String typeCode;
 
+    @Column(name = "status_code")
+    private String statusCode;
+
     @Column(name = "budget")
     private Double budget;
 
@@ -146,6 +149,14 @@ public class MarketingEntity {
 
     public DateTime getModifiedDateTime() {
         return modifiedDateTime;
+    }
+
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 
     public void setModifiedDateTime(DateTime modifiedDateTime) {

@@ -150,6 +150,24 @@ public class LookupCodes {
         public static final String DEACTIVATED = "deactivated";
     }
 
+    public static class OrgStatus {
+        private OrgStatus() {
+        }
+
+        public static final String AVAILABLE = "available";
+        public static final String DISABLE = "disable";
+        public static final String CREATED = "created";
+    }
+
+    public static class OrgType {
+        private OrgType() {
+        }
+
+        public static final String TECH = "tech";
+        public static final String CARRIER = "carrier";
+        public static final String MANUFACTURER = "manufacturer";
+    }
+
     public static class MktDrawPrizeStatus {
         private MktDrawPrizeStatus() {
         }
@@ -161,7 +179,14 @@ public class LookupCodes {
 
     }
 
+    public static class MktStatus {
+        private MktStatus() {
+        }
 
+        public static final String CREATED = "created";
+        public static final String AVAILABLE = "available";
+
+    }
 
     public enum LookupType {
 

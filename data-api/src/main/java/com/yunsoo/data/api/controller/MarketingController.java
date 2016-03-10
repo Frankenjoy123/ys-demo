@@ -60,6 +60,15 @@ public class MarketingController {
         return toMarketingObject(entity);
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    public void updateMarketing(@PathVariable String id, @RequestBody MarketingObject marketingObject) {
+        MarketingEntity oldEntity = findMarketingById(id);
+        MarketingEntity entity = toMarketingEntity(marketingObject);
+        entity.setCreatedDateTime(oldEntity.getCreatedDateTime());
+        entity.setCreatedAccountId(oldEntity.getCreatedAccountId());
+        marketingRepository.save(entity);
+    }
+
     //get mktDrawPrize by product key, provide API-Rabbit
     @RequestMapping(value = "/drawprize/{key}", method = RequestMethod.GET)
     public MktDrawPrizeObject getMktDrawPrizeByProductKey(@PathVariable String key) {
@@ -131,6 +140,8 @@ public class MarketingController {
         }
         entity.setModifiedAccountId(null);
         entity.setModifiedDateTime(null);
+        entity.setStatusCode(LookupCodes.MktStatus.CREATED);
+
         MarketingEntity newEntity = marketingRepository.save(entity);
         return toMarketingObject(newEntity);
     }
@@ -295,6 +306,7 @@ public class MarketingController {
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
+        object.setStatusCode(entity.getStatusCode());
         return object;
     }
 
@@ -374,6 +386,7 @@ public class MarketingController {
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());
+        entity.setStatusCode(object.getStatusCode());
         return entity;
     }
 
@@ -410,6 +423,7 @@ public class MarketingController {
         entity.setUserId(object.getUserId());
         entity.setIsPrized(object.getIsPrized());
         entity.setYsid(object.getYsid());
+
         return entity;
     }
 

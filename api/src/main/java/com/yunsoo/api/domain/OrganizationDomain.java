@@ -1,6 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
+import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.web.client.Page;
@@ -41,7 +42,7 @@ public class OrganizationDomain {
     private static final String ORG_LOGO_IMAGE_200X200 = "image-200x200";
 
 
-    @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
+    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
     public OrganizationObject getOrganizationById(String id) {
         log.debug("cache missing on organization." + id);
         try {
@@ -49,6 +50,12 @@ public class OrganizationDomain {
         } catch (NotFoundException ex) {
             return null;
         }
+    }
+
+    public void updateOrganizationStatus(String id, String status) {
+        OrganizationObject org = getOrganizationById(id);
+        org.setStatusCode(status);
+        dataAPIClient.put("organization/{id}", org, id);
     }
 
     public OrganizationObject getOrganizationByName(String name) {
@@ -65,10 +72,40 @@ public class OrganizationDomain {
         });
     }
 
+    public Page<BrandObject> getOrgBrandList(String orgId, String orgName, String orgStatus, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("name", orgName).append("status", orgStatus)
+                .append(pageable)
+                .build();
+        return dataAPIClient.getPaged("organization/{id}/brand" + query, new ParameterizedTypeReference<List<BrandObject>>() {
+        }, orgId);
+    }
+
     public OrganizationObject createOrganization(OrganizationObject object) {
         object.setId(null);
         object.setCreatedDateTime(DateTime.now());
         return dataAPIClient.post("organization", object, OrganizationObject.class);
+    }
+
+    public BrandObject createBrand(BrandObject object) {
+        object.setId(null);
+        object.setCreatedDateTime(DateTime.now());
+        return dataAPIClient.post("organization/brand", object, BrandObject.class);
+    }
+
+    public void saveBrandAttachment(String orgId, byte[] attachment, String contentType) {
+        String attachmentName = "brandAttachment";
+        try {
+            //128x128
+            ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(attachment));
+            ByteArrayOutputStream logo128x128OutputStream = new ByteArrayOutputStream();
+            imageProcessor.resize(128, 128).write(logo128x128OutputStream, "png");
+            dataAPIClient.put("file/s3?path=organization/{orgId}/attachment/{name}",
+                    new ResourceInputStream(new ByteArrayInputStream(logo128x128OutputStream.toByteArray()), logo128x128OutputStream.size(), contentType),
+                    orgId, attachmentName);
+        } catch (IOException e) {
+            throw new InternalServerErrorException("attachment upload failed [orgId: " + orgId + "]");
+        }
     }
 
     public ResourceInputStream getLogoImage(String orgId, String imageName) {

@@ -33,6 +33,9 @@ public class Marketing {
     @JsonProperty("type_code")
     private String typeCode;
 
+    @JsonProperty("status_code")
+    private String statusCode;
+
     @JsonProperty("budget")
     private Double budget;
 
@@ -163,6 +166,14 @@ public class Marketing {
         this.productBaseName = productBaseName;
     }
 
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
+
     public Marketing() {
 
     }
@@ -181,6 +192,7 @@ public class Marketing {
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
             this.setModifiedDateTime(object.getModifiedDateTime());
+            this.setStatusCode(object.getStatusCode());
         }
     }
 
@@ -198,6 +210,7 @@ public class Marketing {
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());
         object.setModifiedDateTime(this.getModifiedDateTime());
+        object.setStatusCode(this.getStatusCode());
         return object;
     }
 
