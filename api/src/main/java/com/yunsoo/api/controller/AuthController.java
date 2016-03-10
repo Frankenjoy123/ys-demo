@@ -215,7 +215,7 @@ public class AuthController {
      * @return loginToken Token
      */
     @RequestMapping(value = "logintoken", method = RequestMethod.GET)
-    public Token getLoginToken(@RequestParam("account_id") String accountId,
+    public Token getLoginToken(@RequestParam(value = "account_id", required = false) String accountId,
                                @RequestParam(value = "expires_in", required = false) Integer expiresIn) {
 
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
@@ -223,9 +223,10 @@ public class AuthController {
         log.info(String.format("login token creation request from account [id: %s] for account [id: %s]", currentAccountId, accountId));
 
         AccountObject accountObject = null;
-        if (StringUtils.hasText(accountId)) {
-            accountObject = accountDomain.getById(accountId);
+        if (StringUtils.isEmpty(accountId) || "current".equals(accountId)) {
+            accountId = currentAccountId;
         }
+        accountObject = accountDomain.getById(accountId);
         if (accountObject == null) {
             throw new NotFoundException("account not found by [id: " + accountId + "]");
         }
