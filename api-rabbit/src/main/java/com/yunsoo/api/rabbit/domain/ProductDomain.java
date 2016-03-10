@@ -38,6 +38,7 @@ public class ProductDomain {
             return null;
         }
     }
+
     //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT_BATCH.toString(),#productKeyBatchId)")
     public ProductKeyBatchObject getProductKeyBatch(String productKeyBatchId) {
         try {
@@ -48,17 +49,12 @@ public class ProductDomain {
     }
 
     //Retrieve Product key, ProductBase entry and Product-Category entry from Backend.
-    public Product getProductByKey(String key) {
-        Product product = new Product();
-        product.setProductKey(key);
-
-        ProductObject productObject;
-        try {
-            productObject = dataAPIClient.get("product/{key}", ProductObject.class, key);
-        } catch (NotFoundException ex) {
+    public Product getProductFromProductObject(ProductObject productObject) {
+        if (productObject == null) {
             return null;
         }
-
+        Product product = new Product();
+        product.setProductKey(productObject.getProductKey());
         product.setStatusCode(productObject.getProductStatusCode());
         product.setManufacturingDateTime(productObject.getManufacturingDateTime());
         product.setCreatedDateTime(productObject.getCreatedDateTime());

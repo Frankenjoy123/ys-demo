@@ -11,6 +11,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,22 @@ public class MarketingDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+
+    @Value("${yunsoo.alipay.pid}")
+    private String pid;
+
+    @Value("${yunsoo.alipay.key}")
+    private String key;
+
+    @Value("${yunsoo.alipay.account_name}")
+    private String alipayAccountName;
+
+    @Value("${yunsoo.alipay.email}")
+    private String alipayEmail;
+
+    @Value("${yunsoo.alipay.notify_url}")
+    private String alipayNotifyUrl;
+
 
     public MktDrawRuleObject createMktDrawRule(MktDrawRuleObject mktDrawRuleObject) {
         mktDrawRuleObject.setId(null);
@@ -98,7 +115,7 @@ public class MarketingDomain {
 
     public Map<String, String> getAlipayBatchTansferParameters() {
 
-        AlipayParameters parameters = new AlipayParameters("batch_trans_notify", "2088121812016826", "e0opacdva54q9todmujp0vc5pwqlcj10");
+        AlipayParameters parameters = new AlipayParameters("batch_trans_notify", pid, key);
         //order info
         String batchNo = DateTime.now().toString("yyyyMMddHHmmss") + getRandomString(10);
         String detail_data = "";
@@ -120,13 +137,13 @@ public class MarketingDomain {
 
         detail_data = detail_data.substring(0, detail_data.length() - 1);
 
-        parameters.put(ParameterNames.ACCOUNT_NAME, "广州云溯科技有限公司");
+        parameters.put(ParameterNames.ACCOUNT_NAME, alipayAccountName);
         parameters.put(ParameterNames.BATCH_NO, batchNo);
         parameters.put(ParameterNames.BATCH_NUM, batchNum.toString());
         parameters.put(ParameterNames.BATCH_FEE, batchFee.toString());
-        parameters.put(ParameterNames.EMAIL, "zhe@yunsu.co");
+        parameters.put(ParameterNames.EMAIL, alipayEmail);
         parameters.put(ParameterNames.DETAIL_DATA, detail_data);
-        parameters.put(ParameterNames.NOTIFY_URL, "http://183.128.236.12:6080/marketing/alipay/notify");
+        parameters.put(ParameterNames.NOTIFY_URL, alipayNotifyUrl);
         parameters.put(ParameterNames.PAY_DATE, DateTime.now().toString("yyyyMMdd"));
         return parameters.toMap();
     }

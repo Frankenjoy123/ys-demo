@@ -15,6 +15,8 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -150,6 +152,7 @@ public class MarketingController {
     public List<MktDrawPrize> getMktDrawPrizeByFilter(@RequestParam(value = "marketing_id") String marketingId,
                                                       @RequestParam(value = "account_type", required = false) String accountType,
                                                       @RequestParam(value = "status_code", required = false) String statusCode,
+                                                      @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                                       Pageable pageable,
                                                       HttpServletResponse response) {
         if (marketingId == null || marketingId.isEmpty()) {
@@ -192,6 +195,27 @@ public class MarketingController {
         }
     }
 
+    @RequestMapping(value = "drawPrize", method = RequestMethod.PUT)
+    public void updateMktDrawPrize(@RequestBody MktDrawPrize mktDrawPrize) {
+        if (mktDrawPrize == null) {
+            throw new BadRequestException("marketing draw record can not be null");
+        }
+        MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
+        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
+        marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+
+    }
+
+    @RequestMapping(value = "drawPrize/disable/{id}", method = RequestMethod.GET)
+    public void disableMktDrawPrize(@PathVariable(value = "id") String id) {
+        if (id == null) {
+            throw new BadRequestException("marketing draw record id can not be null");
+        }
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeById(id);
+        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.INVALID);
+        marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+    }
+
     //alipay batch transfer
     @RequestMapping(value = "alipay_batchtransfer", method = RequestMethod.GET)
     public Map<String, String> batchTransfer() {
@@ -209,6 +233,7 @@ public class MarketingController {
 
         String notifyType = request.getParameter(ParameterNames.NOTIFY_TYPE);
         List<String> drawRecordIds = new ArrayList<String>();
+        List<String> drawRecordFailedIds = new ArrayList<String>();
         String batchNo = request.getParameter("batch_no");
 
         if (notifyType.equals("batch_trans_notify")) {
@@ -229,8 +254,23 @@ public class MarketingController {
                         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
                     }
                 }
-                response.getWriter().print("success");
             }
+            if (failDetails != null) {
+                String[] orderPaymentFailedDetails = failDetails.split("\\|");
+                for (int i = 0; i < orderPaymentFailedDetails.length; i++) {
+                    String[] orderPaymentFailedDetail = orderPaymentFailedDetails[i].split("\\^");
+                    drawRecordFailedIds.add(orderPaymentFailedDetail[0]);
+                }
+                if (drawRecordFailedIds.size() != 0) {
+                    for (String id : drawRecordFailedIds) {
+                        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeById(id);
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.INVALID);
+                        marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+                    }
+                }
+
+            }
+            response.getWriter().print("success");
 
         }
 

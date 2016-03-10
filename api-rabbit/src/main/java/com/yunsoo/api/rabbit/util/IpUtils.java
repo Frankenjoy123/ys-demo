@@ -29,7 +29,7 @@ public final class IpUtils {
     }
 
     public static boolean validate(String ip) {
-        return ip != null && ip.length() <= 15;
+        return ip != null && ip.length() >= 7 && ip.length() <= 15;
     }
 
 }
