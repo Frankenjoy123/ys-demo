@@ -154,10 +154,11 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         }
 
         String bucketName = awsProperties.getS3().getBucketName();
-        String key = String.format("organization/%s/product_key_batch/%s", orgId, batchId);
+        String key = String.format("organization/%s/product_key_batch/%s/keys.pks", orgId, batchId);
         InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(totalKeyLength);
+        metadata.setContentType("application/vnd+yunsoo.pks");
         s3ItemDao.putItem(bucketName, key, inputStream, metadata);
 
         return String.join("/", bucketName, key); //uri
@@ -235,56 +236,6 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         entity.setProductKeysUri(batch.getProductKeysUri());
         entity.setMarketingId(batch.getMarketingId());
         return entity;
-    }
-
-    private static class ProductKeyBatchS3Object {
-
-        private String batchId;
-        private Integer quantity;
-        private Long createdDateTime;
-        private List<String> productKeyTypeCodes;
-        private Long totalKeyLength;
-
-
-        public String getBatchId() {
-            return batchId;
-        }
-
-        public void setBatchId(String batchId) {
-            this.batchId = batchId;
-        }
-
-        public Integer getQuantity() {
-            return quantity;
-        }
-
-        public void setQuantity(Integer quantity) {
-            this.quantity = quantity;
-        }
-
-        public Long getCreatedDateTime() {
-            return createdDateTime;
-        }
-
-        public void setCreatedDateTime(Long createdDateTime) {
-            this.createdDateTime = createdDateTime;
-        }
-
-        public List<String> getProductKeyTypeCodes() {
-            return productKeyTypeCodes;
-        }
-
-        public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
-            this.productKeyTypeCodes = productKeyTypeCodes;
-        }
-
-        public Long getTotalKeyLength() {
-            return totalKeyLength;
-        }
-
-        public void setTotalKeyLength(Long totalKeyLength) {
-            this.totalKeyLength = totalKeyLength;
-        }
     }
 
 }
