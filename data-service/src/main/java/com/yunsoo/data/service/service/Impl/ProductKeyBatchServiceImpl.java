@@ -9,9 +9,11 @@ import com.yunsoo.data.service.config.AWSProperties;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
 import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
+import com.yunsoo.data.service.service.FileService;
 import com.yunsoo.data.service.service.ProductKeyBatchService;
 import com.yunsoo.data.service.service.contract.ProductKeyBatch;
 import com.yunsoo.data.service.service.contract.ProductKeys;
+import com.yunsoo.data.service.service.exception.ServiceException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,20 +50,22 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
     @Autowired
     private AWSProperties awsProperties;
 
+    @Autowired
+    private FileService fileService;
+
 
     @Override
-    public ProductKeyBatch getById(String id) {
-        ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(id);
-        return toProductKeyBatch(entity);
+    public ProductKeyBatch getById(String batchId) {
+        return toProductKeyBatch(productKeyBatchRepository.findOne(batchId));
     }
 
     @Override
     public ProductKeys getProductKeysByBatchId(String batchId) {
         ProductKeyBatch keyBatch = this.getById(batchId);
-        if (keyBatch == null || keyBatch.getProductKeysUri() == null) {
+        if (keyBatch == null) {
             return null;
         }
-        List<List<String>> keys = getProductKeyListFromS3(keyBatch.getProductKeysUri());
+        List<List<String>> keys = getProductKeyListFromS3(keyBatch.getOrgId(), batchId, keyBatch.getProductKeysUri());
         if (keys == null) {
             return null;
         }
@@ -72,6 +76,35 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         productKeys.setProductKeyTypeCodes(keyBatch.getProductKeyTypeCodes());
         productKeys.setProductKeys(keys);
         return productKeys;
+    }
+
+    @Override
+    public S3Object getProductKeyBatchDetails(String batchId) {
+        ProductKeyBatchEntity batchEntity = productKeyBatchRepository.findOne(batchId);
+        if (batchEntity == null) {
+            return null;
+        }
+        String bucketName = awsProperties.getS3().getBucketName();
+        String s3Key = formatProductKeyBatchDetailsS3Key(batchEntity.getOrgId(), batchId);
+        return fileService.getFile(bucketName, s3Key);
+    }
+
+    @Override
+    public void saveProductKeyBatchDetails(String batchId, InputStream inputStream, String contentType, long contentLength) {
+        ProductKeyBatchEntity batchEntity = productKeyBatchRepository.findOne(batchId);
+        if (batchEntity == null) {
+            throw ServiceException.notFound("productKeyBatch not found by [id: " + batchId + "]");
+        }
+        String bucketName = awsProperties.getS3().getBucketName();
+        String s3Key = formatProductKeyBatchDetailsS3Key(batchEntity.getOrgId(), batchId);
+        ObjectMetadata metadata = new ObjectMetadata();
+        if (contentType != null) {
+            metadata.setContentType(contentType);
+        }
+        if (contentLength > 0) {
+            metadata.setContentLength(contentLength);
+        }
+        s3ItemDao.putItem(bucketName, s3Key, inputStream, metadata);
     }
 
     @Override
@@ -154,22 +187,26 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         }
 
         String bucketName = awsProperties.getS3().getBucketName();
-        String key = String.format("organization/%s/product_key_batch/%s/keys.pks", orgId, batchId);
+        String s3Key = formatProductKeyBatchKeysS3Key(orgId, batchId);
         InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(totalKeyLength);
         metadata.setContentType("application/vnd+yunsoo.pks");
-        s3ItemDao.putItem(bucketName, key, inputStream, metadata);
+        s3ItemDao.putItem(bucketName, s3Key, inputStream, metadata);
 
-        return String.join("/", bucketName, key); //uri
+        return String.join("/", bucketName, s3Key); //uri
     }
 
-    private List<List<String>> getProductKeyListFromS3(String address) {
-        if (address == null) {
-            return null;
+    private List<List<String>> getProductKeyListFromS3(String orgId, String batchId, String uri) {
+        String bucketName = awsProperties.getS3().getBucketName();
+        String s3Key;
+        if (uri == null) {
+            s3Key = formatProductKeyBatchKeysS3Key(orgId, batchId);
+        } else {
+            String[] tempArr = uri.split("/", 2); //String[]{bucketName, key}
+            s3Key = tempArr[1];
         }
-        String[] tempArr = address.split("/", 2); //String[]{bucketName, key}
-        S3Object s3Object = s3ItemDao.getItem(tempArr[0], tempArr[1]);
+        S3Object s3Object = s3ItemDao.getItem(bucketName, s3Key);
         S3ObjectInputStream inputStream = s3Object.getObjectContent();
         byte[] buffer;
         try {
@@ -190,6 +227,14 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
             }
         }
         return result;
+    }
+
+    private String formatProductKeyBatchKeysS3Key(String orgId, String batchId) {
+        return String.format("organization/%s/product_key_batch/%s/keys.pks", orgId, batchId);
+    }
+
+    private String formatProductKeyBatchDetailsS3Key(String orgId, String batchId) {
+        return String.format("organization/%s/product_key_batch/%s/details.json", orgId, batchId);
     }
 
     private ProductKeyBatch toProductKeyBatch(ProductKeyBatchEntity entity) {

@@ -2,17 +2,14 @@ package com.yunsoo.data.api.controller;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.data.api.util.ResponseEntityUtils;
 import com.yunsoo.data.service.config.AWSProperties;
 import com.yunsoo.data.service.dao.S3ItemDao;
 import com.yunsoo.data.service.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -45,7 +41,7 @@ public class FileController {
 
 
     @RequestMapping(value = "s3", method = RequestMethod.GET)
-    public ResponseEntity getS3FileByPath(@RequestParam(value = "path", required = true) String path) throws IOException {
+    public ResponseEntity<?> getS3FileByPath(@RequestParam(value = "path", required = true) String path) throws IOException {
         if (StringUtils.isEmpty(path)) {
             throw new BadRequestException("path must not be null or empty");
         }
@@ -54,21 +50,7 @@ public class FileController {
         if (s3Object == null) {
             throw new NotFoundException("file not found [bucket: " + bucketName + ", path: " + path + "]");
         }
-        S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
-        ObjectMetadata metadata = s3Object.getObjectMetadata();
-        String contentType = metadata.getContentType();
-        long contentLength = metadata.getContentLength();
-
-        ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
-        if (contentType != null) {
-            bodyBuilder.contentType(MediaType.parseMediaType(contentType));
-        }
-        if (contentLength > 0) {
-            bodyBuilder.contentLength(contentLength);
-        }
-        ByteArrayInputStream resultInputStream = new ByteArrayInputStream(StreamUtils.copyToByteArray(s3ObjectInputStream));
-        s3ObjectInputStream.close();
-        return bodyBuilder.body(new InputStreamResource(resultInputStream));
+        return ResponseEntityUtils.convert(s3Object);
     }
 
     @RequestMapping(value = "s3", method = RequestMethod.PUT)

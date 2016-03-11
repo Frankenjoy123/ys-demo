@@ -1,9 +1,11 @@
 package com.yunsoo.data.api.controller;
 
+import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
+import com.yunsoo.data.api.util.ResponseEntityUtils;
 import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
 import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
 import com.yunsoo.data.service.service.ProductKeyBatchService;
@@ -16,10 +18,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +51,7 @@ public class ProductKeyBatchController {
 
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ProductKeyBatchObject getBatchById(@PathVariable(value = "id") String id) {
+    public ProductKeyBatchObject getById(@PathVariable(value = "id") String id) {
         ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(id);
         if (entity == null) {
             throw new NotFoundException("productKeyBatch not found by [id: " + id + "]");
@@ -54,12 +60,29 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
-    public ProductKeys getProductKeysById(@PathVariable(value = "id") String id) {
+    public ProductKeys getProductKeys(@PathVariable(value = "id") String id) {
         ProductKeys productKeys = productKeyBatchService.getProductKeysByBatchId(id);
         if (productKeys == null) {
-            throw new NotFoundException("ProductKeys");
+            throw new NotFoundException("productKeys not found by [id: " + id + "]");
         }
         return productKeys;
+    }
+
+    @RequestMapping(value = "{id}/details", method = RequestMethod.GET)
+    public ResponseEntity<?> getProductKeyBatchDetails(@PathVariable(value = "id") String id) throws IOException {
+        S3Object s3Object = productKeyBatchService.getProductKeyBatchDetails(id);
+        if (s3Object == null) {
+            throw new NotFoundException("productKeyBatchDetails not found by [id: " + id + "]");
+        }
+        return ResponseEntityUtils.convert(s3Object);
+    }
+
+    @RequestMapping(value = "{id}/details", method = RequestMethod.PUT)
+    public void putProductKeyBatchDetails(@PathVariable(value = "id") String id, HttpServletRequest request) throws IOException {
+        String contentType = request.getContentType();
+        long contentLength = request.getContentLengthLong();
+        ServletInputStream inputStream = request.getInputStream();
+        productKeyBatchService.saveProductKeyBatchDetails(id, inputStream, contentType, contentLength);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
