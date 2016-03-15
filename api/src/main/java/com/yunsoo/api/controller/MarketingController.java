@@ -54,6 +54,9 @@ public class MarketingController {
     private UserScanDomain userScanDomain;
 
     @Autowired
+    private OrganizationDomain organizationDomain;
+
+    @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "drawRule", method = RequestMethod.POST)
@@ -81,10 +84,18 @@ public class MarketingController {
     //query marketing plan by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<Marketing> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                       @RequestParam(value = "carrier_id", required = false) String carrierId,
+                                       @RequestParam(value = "status", required = false) String status,
                                        Pageable pageable,
                                        HttpServletResponse response) {
-        orgId = fixOrgId(orgId);
-        Page<MarketingObject> marketingPage = marketingDomain.getMarketingByOrgId(orgId, pageable);
+
+        List<String> orgIds = null;
+        if(carrierId != null)
+            orgIds = organizationDomain.getBrandIdsForCarrier(carrierId);
+        else
+            orgId = fixOrgId(orgId);
+
+        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", marketingPage.toContentRange());
         }
@@ -136,12 +147,24 @@ public class MarketingController {
         return new Marketing(mktObject);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "{id}/active", method = RequestMethod.PUT)
     public void enableMarketing(@PathVariable(value = "id")String id){
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
         if(marketingObject != null) {
             marketingObject.setStatusCode(LookupCodes.MktStatus.AVAILABLE);
+            marketingObject.setModifiedDateTime(DateTime.now());
+            marketingObject.setModifiedAccountId(currentAccountId);
+            marketingDomain.updateMarketing(marketingObject);
+        }
+    }
+
+    @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
+    public void disableMarketing(@PathVariable(value = "id")String id){
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        MarketingObject marketingObject = marketingDomain.getMarketingById(id);
+        if(marketingObject != null) {
+            marketingObject.setStatusCode(LookupCodes.MktStatus.DISABLE);
             marketingObject.setModifiedDateTime(DateTime.now());
             marketingObject.setModifiedAccountId(currentAccountId);
             marketingDomain.updateMarketing(marketingObject);

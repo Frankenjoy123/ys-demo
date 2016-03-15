@@ -52,13 +52,11 @@ public class OrganizationController {
 
     @RequestMapping(value = "{id}/approve", method = RequestMethod.PUT)
     public void Approve(@PathVariable(value = "id") String orgId) {
-        orgId = fixOrgId(orgId);
         organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.AVAILABLE);
     }
 
     @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
     public void Disable(@PathVariable(value = "id") String orgId) {
-        orgId = fixOrgId(orgId);
         organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.DISABLE);
     }
 
@@ -100,11 +98,12 @@ public class OrganizationController {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         BrandObject object = brand.toBrand(brand);
         object.setCreatedAccountId(currentAccountId);
+        object.setTypeCode(LookupCodes.OrgType.MANUFACTURER);
         return new Brand(organizationDomain.createBrand(object));
     }
 
     @RequestMapping(value = "/{id}/brand", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission('*', 'filterByOrg', 'organization:create')")
+    @PreAuthorize("hasPermission(returnObject, 'organization:read')")
     public  List<Brand> filterOrgBrand(@PathVariable(value = "id") String id,
                                        @RequestParam(value="status", required = false)String status,
                                        @RequestParam(value = "name", required = false) String name,

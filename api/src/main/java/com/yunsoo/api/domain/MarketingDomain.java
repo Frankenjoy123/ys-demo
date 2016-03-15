@@ -71,15 +71,17 @@ public class MarketingDomain {
     }
 
 
-    public Page<MarketingObject> getMarketingByOrgId(String orgId, Pageable pageable) {
+    public Page<MarketingObject> getMarketingList(String orgId, List<String> orgIds, String status, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId)
+                .append("org_id", orgId).append("org_ids", orgIds).append("status", status)
                 .append(pageable)
                 .build();
 
         return dataAPIClient.getPaged("marketing" + query, new ParameterizedTypeReference<List<MarketingObject>>() {
         });
     }
+
+
 
     public MarketingObject createMarketing(MarketingObject marketingObject) {
         marketingObject.setId(null);
