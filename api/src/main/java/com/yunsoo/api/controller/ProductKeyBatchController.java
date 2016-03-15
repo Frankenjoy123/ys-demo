@@ -2,6 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountPermissionDomain;
+import com.yunsoo.api.domain.FileDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductBase;
@@ -13,6 +14,7 @@ import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,6 +63,9 @@ public class ProductKeyBatchController {
     private AccountPermissionDomain accountPermissionDomain;
 
     @Autowired
+    private FileDomain fileDomain;
+
+    @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -67,7 +73,7 @@ public class ProductKeyBatchController {
         String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
         if (batch == null) {
-            throw new NotFoundException("product batch");
+            throw new NotFoundException("product key batch not found");
         }
         if (!accountPermissionDomain.hasPermission(accountId, new TPermission(batch.getOrgId(), "productkey", "read"))) {
             throw new ForbiddenException();
@@ -205,5 +211,51 @@ public class ProductKeyBatchController {
     }
 
 
+    @RequestMapping(value = "{id}/details", method = RequestMethod.GET)
+    public ResponseEntity<?> getProductKeyBatchDetails(@PathVariable(value = "id") String id) {
+        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String orgId = fixOrgId("current");
+        ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
+        if (batch == null) {
+            throw new NotFoundException("product key batch not found");
+        }
+        if (!accountPermissionDomain.hasPermission(accountId, new TPermission(batch.getOrgId(), "productkeybatch", "read"))) {
+            throw new ForbiddenException();
+        }
+        String path = String.format("organization/%s/product_key_batch/%s/details.json", orgId, id);
+        ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+        if (resourceInputStream == null) {
+            throw new NotFoundException("product base details not found");
+        }
+        ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
+        bodyBuilder.contentType(MediaType.APPLICATION_JSON);
+        bodyBuilder.contentLength(resourceInputStream.getContentLength());
+        return bodyBuilder.body(new InputStreamResource(resourceInputStream));
+    }
+
+    @RequestMapping(value = "{id}/details", method = RequestMethod.PUT)
+    public void putProductKeyBatchDetails(@PathVariable(value = "id") String id,
+                                          @RequestBody String details) {
+        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String orgId = fixOrgId("current");
+        ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
+        if (batch == null) {
+            throw new NotFoundException("product key batch not found");
+        }
+        if (!accountPermissionDomain.hasPermission(accountId, new TPermission(batch.getOrgId(), "productkeybatch", "modify"))) {
+            throw new ForbiddenException();
+        }
+        String path = String.format("organization/%s/product_key_batch/%s/details.json", orgId, id);
+        byte[] bytes = details.getBytes(StandardCharsets.UTF_8);
+        fileDomain.putFile(path, new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE));
+    }
+
+    private String fixOrgId(String orgId) {
+        if (orgId == null || "current".equals(orgId)) {
+            //current orgId
+            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
+        return orgId;
+    }
 
 }
