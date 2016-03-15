@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : haitao
@@ -136,6 +137,20 @@ public class MarketingController {
         return new Marketing(mktObject);
     }
 
+    @RequestMapping(value = "update/{id}", method = RequestMethod.PUT)
+    public void updateMarketing(@PathVariable(value = "id") String id, @RequestBody Marketing marketing) {
+        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        MarketingObject marketingObject = marketingDomain.getMarketingById(id);
+        if (marketingObject != null) {
+            marketingObject.setName(marketing.getName());
+            marketingObject.setWishes(marketing.getWishes());
+            marketingObject.setBudget(marketing.getBudget());
+            marketingObject.setModifiedDateTime(DateTime.now());
+            marketingObject.setModifiedAccountId(currentAccountId);
+            marketingDomain.updateMarketing(marketingObject);
+        }
+    }
+
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public void enableMarketing(@PathVariable(value = "id")String id){
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
@@ -184,6 +199,14 @@ public class MarketingController {
         return mktDrawPrizeList;
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public Marketing getMarketing(@PathVariable(value = "id") String marketingId) {
+        if (marketingId == null)
+            throw new BadRequestException("marketing id can not be null");
+
+        return new Marketing(marketingDomain.getMarketingById(marketingId));
+    }
+
 
     //delete marketing plan by id
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
@@ -194,6 +217,46 @@ public class MarketingController {
             marketingDomain.deleteMarketingById(id);
         }
     }
+
+    @RequestMapping(value = "drawRule/{id}", method = RequestMethod.GET)
+    public List<MktDrawRule> getMarketingRuleList(@PathVariable(value = "id") String marketingId) {
+        if (marketingId == null)
+            throw new BadRequestException("marketing id can not be null");
+
+        return marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "Rule/{id}", method = RequestMethod.GET)
+    public MktDrawRule getMarketingRuleById(@PathVariable(value = "id") String id) {
+        if (id == null)
+            throw new BadRequestException("rule id can not be null");
+
+        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktDrawRuleById(id);
+        return new MktDrawRule(mktDrawRuleObject);
+    }
+
+
+    @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.PUT)
+    public void updateMktDrawRule(@PathVariable(value = "id") String id, @RequestBody MktDrawRule mktDrawRule) {
+        if (mktDrawRule == null) {
+            throw new BadRequestException("marketing draw rule can not be null");
+        }
+
+        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktDrawRuleById(id);
+        if (mktDrawRuleObject == null) {
+            throw new NotFoundException("marketing draw rule can not be found");
+        }
+
+        String currentUserId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        mktDrawRuleObject.setComments(mktDrawRule.getComments());
+        mktDrawRuleObject.setAmount(mktDrawRule.getAmount());
+        mktDrawRuleObject.setProbability(mktDrawRule.getProbability());
+        mktDrawRuleObject.setModifiedAccountId(currentUserId);
+        mktDrawRuleObject.setModifiedDateTime(DateTime.now());
+
+        marketingDomain.updateMktDrawRule(mktDrawRuleObject);
+    }
+
 
     @RequestMapping(value = "drawPrize", method = RequestMethod.PUT)
     public void updateMktDrawPrize(@RequestBody MktDrawPrize mktDrawPrize) {

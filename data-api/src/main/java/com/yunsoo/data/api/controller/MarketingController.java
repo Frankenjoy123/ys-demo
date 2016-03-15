@@ -198,6 +198,21 @@ public class MarketingController {
         return toMktDrawPrizeObject(newEntity);
     }
 
+    @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.PUT)
+    public void updateMktDrawRule(@PathVariable String id, @RequestBody MktDrawRuleObject mktDrawRuleObject) {
+        MktDrawRuleEntity oldEntity = findMktDrawRuleById(id);
+        MktDrawRuleEntity entity = toMktDrawRuleEntity(mktDrawRuleObject);
+        entity.setModifiedDateTime(oldEntity.getModifiedDateTime());
+        mktDrawRuleRepository.save(entity);
+    }
+
+    @RequestMapping(value = "/Rule/{id}", method = RequestMethod.GET)
+    public MktDrawRuleObject getMktDrawRuleById(@PathVariable String id) {
+        MktDrawRuleEntity entity = findMktDrawRuleById(id);
+        return toMktDrawRuleObject(entity);
+    }
+
+
     //update marketing draw prize by product key, provide: API-Rabbit
     @RequestMapping(value = "/drawPrize", method = RequestMethod.PUT)
     public MktDrawPrizeObject updateDrawPrize(@RequestBody MktDrawPrizeObject mktDrawPrizeObject) {
@@ -288,6 +303,15 @@ public class MarketingController {
         }
         return entity;
     }
+
+    private MktDrawRuleEntity findMktDrawRuleById(String id) {
+        MktDrawRuleEntity entity = mktDrawRuleRepository.findOne(id);
+        if (entity == null) {
+            throw new NotFoundException("marketing not found by [id: " + id + ']');
+        }
+        return entity;
+    }
+
 
     private MarketingObject toMarketingObject(MarketingEntity entity) {
         if (entity == null) {

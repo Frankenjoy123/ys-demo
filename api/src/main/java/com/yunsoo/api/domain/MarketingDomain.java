@@ -62,6 +62,15 @@ public class MarketingDomain {
         }
     }
 
+    public MktDrawRuleObject getMktDrawRuleById(String id) {
+        try {
+            return dataAPIClient.get("marketing/Rule/{id}", MktDrawRuleObject.class, id);
+        } catch (NotFoundException ignored) {
+            return null;
+        }
+    }
+
+
     public MktDrawPrizeObject getMktDrawPrizeById(String id) {
         try {
             return dataAPIClient.get("marketing/drawPrize/record/{id}", MktDrawPrizeObject.class, id);
@@ -69,6 +78,13 @@ public class MarketingDomain {
             return null;
         }
     }
+
+    public List<MktDrawRuleObject> getRuleList(String marketingId) {
+        return dataAPIClient.get("marketing/drawRule/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>() {
+        }, marketingId);
+
+    }
+
 
 
     public Page<MarketingObject> getMarketingByOrgId(String orgId, Pageable pageable) {
@@ -106,6 +122,10 @@ public class MarketingDomain {
         return dataAPIClient.getPaged("marketing/drawPrize/marketing" + query, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
         });
 
+    }
+
+    public void updateMktDrawRule(MktDrawRuleObject mktDrawRuleObject) {
+        dataAPIClient.put("marketing/drawRule/{id}", mktDrawRuleObject, mktDrawRuleObject.getId());
     }
 
     public void updateMktDrawPrize(MktDrawPrizeObject mktDrawPrizeObject) {
