@@ -73,6 +73,9 @@ public class WebScanResponse {
         @JsonProperty("batch_id")
         private String batchId;
 
+        @JsonProperty("batch_no")
+        private String batchNo;
+
         @JsonProperty("category")
         private ProductCategory category;
 
@@ -88,9 +91,6 @@ public class WebScanResponse {
         @JsonProperty("shelf_life_interval")
         private String shelfLifeInterval;
 
-        @JsonProperty("details")
-        private String details;
-
         @JsonProperty("status_code")
         private String statusCode;
 
@@ -98,6 +98,12 @@ public class WebScanResponse {
         @JsonDeserialize(using = DateTimeJsonDeserializer.class)
         @JsonProperty("manufacturing_datetime")
         private DateTime manufacturingDatetime;
+
+        @JsonProperty("details")
+        private String details;
+
+        @JsonProperty("batch_details")
+        private String batchDetails;
 
         @JsonProperty("key_details")
         private String keyDetails;
@@ -125,6 +131,14 @@ public class WebScanResponse {
 
         public void setBatchId(String batchId) {
             this.batchId = batchId;
+        }
+
+        public String getBatchNo() {
+            return batchNo;
+        }
+
+        public void setBatchNo(String batchNo) {
+            this.batchNo = batchNo;
         }
 
         public ProductCategory getCategory() {
@@ -167,14 +181,6 @@ public class WebScanResponse {
             this.shelfLifeInterval = shelfLifeInterval;
         }
 
-        public String getDetails() {
-            return details;
-        }
-
-        public void setDetails(String details) {
-            this.details = details;
-        }
-
         public String getStatusCode() {
             return statusCode;
         }
@@ -189,6 +195,22 @@ public class WebScanResponse {
 
         public void setManufacturingDatetime(DateTime manufacturingDatetime) {
             this.manufacturingDatetime = manufacturingDatetime;
+        }
+
+        public String getDetails() {
+            return details;
+        }
+
+        public void setDetails(String details) {
+            this.details = details;
+        }
+
+        public String getBatchDetails() {
+            return batchDetails;
+        }
+
+        public void setBatchDetails(String batchDetails) {
+            this.batchDetails = batchDetails;
         }
 
         public String getKeyDetails() {

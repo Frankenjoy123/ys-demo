@@ -64,8 +64,13 @@ public class WebScanController {
         product.setManufacturingDatetime(productObject.getManufacturingDateTime());
         product.setKeyDetails(productObject.getDetails());
 
-        //marketing info
-        webScanResponse.setMarketing(getMarketingInfo(productObject.getProductBaseId(), productObject.getProductKeyBatchId()));
+        ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(productObject.getProductKeyBatchId());
+        if (productKeyBatchObject != null) {
+            String productKeyBatchDetails = productDomain.getProductKeyBatchDetails(productKeyBatchObject.getOrgId(), productObject.getProductKeyBatchId());
+            product.setBatchDetails(productKeyBatchDetails);
+            //marketing info
+            webScanResponse.setMarketing(getMarketingInfo(productKeyBatchObject.getMarketingId()));
+        }
 
         //security info
         webScanResponse.setSecurity(getSecurityInfo(productObject));
@@ -119,7 +124,7 @@ public class WebScanController {
         WebScanResponse webScanResponse = getBasicInfo(productBaseId);
 
         //marketing info
-        webScanResponse.setMarketing(getMarketingInfo(productBaseId, null));
+        webScanResponse.setMarketing(null);
 
         return webScanResponse;
     }
@@ -225,15 +230,11 @@ public class WebScanController {
         return response;
     }
 
-    private WebScanResponse.Marketing getMarketingInfo(String productBaseId, String productKeyBatchId) {
+    private WebScanResponse.Marketing getMarketingInfo(String marketingId) {
         WebScanResponse.Marketing marketing = null;
-        if (productKeyBatchId != null) {
-            //load marketing from product key batch
-            ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(productKeyBatchId);
-            if (productKeyBatchObject != null && productKeyBatchObject.getMarketingId() != null) {
-                marketing = new WebScanResponse.Marketing();
-                marketing.setId(productKeyBatchObject.getMarketingId());
-            }
+        if (marketingId != null) {
+            marketing = new WebScanResponse.Marketing();
+            marketing.setId(marketingId);
         }
         return marketing;
     }
