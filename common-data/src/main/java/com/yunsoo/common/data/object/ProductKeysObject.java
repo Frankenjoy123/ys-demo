@@ -1,5 +1,6 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
@@ -15,12 +16,22 @@ import java.util.List;
  * Descriptions:
  */
 public class ProductKeysObject implements Serializable {
+
+    @JsonProperty("batch_id")
     private String batchId;
+
+    @JsonProperty("quantity")
     private Integer quantity;
+
+    @JsonProperty("created_datetime")
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
+
+    @JsonProperty("product_key_type_codes")
     private List<String> productKeyTypeCodes;
+
+    @JsonProperty("product_keys")
     private List<List<String>> productKeys;
 
 

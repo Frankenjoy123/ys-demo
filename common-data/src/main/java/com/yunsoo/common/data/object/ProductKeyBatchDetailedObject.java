@@ -1,5 +1,7 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -10,8 +12,10 @@ import java.util.List;
  */
 public class ProductKeyBatchDetailedObject extends ProductKeyBatchObject implements Serializable {
 
+    @JsonProperty("product_keys")
     private List<List<String>> productKeys;
 
+    @JsonProperty("product_template")
     private ProductObject productTemplate;
 
 
