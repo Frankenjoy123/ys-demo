@@ -12,6 +12,7 @@ import java.util.List;
 public class ProductKeyBatch {
 
     private String id;
+    private String batchNo;
     private Integer quantity;
     private String statusCode;
     private String orgId;
@@ -38,6 +39,14 @@ public class ProductKeyBatch {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getBatchNo() {
+        return batchNo;
+    }
+
+    public void setBatchNo(String batchNo) {
+        this.batchNo = batchNo;
     }
 
     public Integer getQuantity() {

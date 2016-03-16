@@ -182,6 +182,7 @@ public class ProductKeyBatchController {
         }
         ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
         batchObj.setId(batch.getId());
+        batchObj.setBatchNo(batch.getBatchNo());
         batchObj.setQuantity(batch.getQuantity());
         batchObj.setStatusCode(batch.getStatusCode());
         batchObj.setOrgId(batch.getOrgId());
@@ -201,6 +202,7 @@ public class ProductKeyBatchController {
         }
         ProductKeyBatchObject object = new ProductKeyBatchObject();
         object.setId(entity.getId());
+        object.setBatchNo(entity.getBatchNo());
         object.setQuantity(entity.getQuantity());
         object.setStatusCode(entity.getStatusCode());
         if (entity.getProductKeyTypeCodes() != null) {
@@ -222,6 +224,7 @@ public class ProductKeyBatchController {
         }
         ProductKeyBatch batch = new ProductKeyBatch();
         batch.setId(batchObj.getId());
+        batch.setBatchNo(batchObj.getBatchNo());
         batch.setQuantity(batchObj.getQuantity());
         batch.setStatusCode(batchObj.getStatusCode());
         batch.setOrgId(batchObj.getOrgId());
