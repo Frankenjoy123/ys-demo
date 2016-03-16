@@ -3,6 +3,7 @@ package com.yunsoo.data.api.controller;
 import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
+import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.api.util.ResponseEntityUtils;
@@ -60,12 +61,12 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
-    public ProductKeys getProductKeys(@PathVariable(value = "id") String id) {
+    public ProductKeysObject getProductKeys(@PathVariable(value = "id") String id) {
         ProductKeys productKeys = productKeyBatchService.getProductKeysByBatchId(id);
         if (productKeys == null) {
             throw new NotFoundException("productKeys not found by [id: " + id + "]");
         }
-        return productKeys;
+        return toProductKeysObject(productKeys);
     }
 
     @RequestMapping(value = "{id}/details", method = RequestMethod.GET)
@@ -236,5 +237,18 @@ public class ProductKeyBatchController {
         batch.setRestQuantity(batchObj.getRestQuantity());
         batch.setMarketingId(batchObj.getMarketingId());
         return batch;
+    }
+
+    private ProductKeysObject toProductKeysObject(ProductKeys productKeys) {
+        if (productKeys == null) {
+            return null;
+        }
+        ProductKeysObject object = new ProductKeysObject();
+        object.setBatchId(productKeys.getBatchId());
+        object.setQuantity(productKeys.getQuantity());
+        object.setCreatedDateTime(productKeys.getCreatedDateTime());
+        object.setProductKeyTypeCodes(productKeys.getProductKeyTypeCodes());
+        object.setProductKeys(productKeys.getProductKeys());
+        return object;
     }
 }
