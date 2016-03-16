@@ -22,6 +22,9 @@ public class ProductKeyBatchRequest {
     @JsonProperty("product_base_id")
     private String productBaseId;
 
+    @JsonProperty("batch_no")
+    private String batchNo;
+
 
     public int getQuantity() {
         return quantity;
@@ -45,5 +48,13 @@ public class ProductKeyBatchRequest {
 
     public void setProductBaseId(String productBaseId) {
         this.productBaseId = productBaseId;
+    }
+
+    public String getBatchNo() {
+        return batchNo;
+    }
+
+    public void setBatchNo(String batchNo) {
+        this.batchNo = batchNo;
     }
 }

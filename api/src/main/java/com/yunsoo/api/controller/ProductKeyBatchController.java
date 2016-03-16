@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -149,7 +148,7 @@ public class ProductKeyBatchController {
         if (!productKeyDomain.validateProductKeyTypeCodes(productKeyTypeCodes)) {
             throw new BadRequestException("productKeyTypeCodes invalid");
         }
-
+        batchObj.setBatchNo(request.getBatchNo());
         batchObj.setQuantity(quantity);
         batchObj.setProductBaseId(productBaseId);
         batchObj.setProductKeyTypeCodes(productKeyTypeCodes);
@@ -165,8 +164,6 @@ public class ProductKeyBatchController {
         return newBatch;
     }
 
-    public static Comparator<ProductKeyBatch> comparator = (s1, s2) -> s1.getCreatedDateTime().compareTo(s2.getCreatedDateTime());
-
     @RequestMapping(value = "product_batch_group", method = RequestMethod.GET)
     public List<ProductBatchCollection> getProductBatchCollection() {
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
@@ -178,7 +175,9 @@ public class ProductKeyBatchController {
             ProductBatchCollection collection = new ProductBatchCollection();
             collection.setProductBase(new ProductBase(p));
             List<ProductKeyBatch> listBatchForProductBase = pageBatch.getContent().stream()
-                    .filter(b -> b.getProductBaseId().equals(p.getId())).sorted(comparator).collect(Collectors.toList());
+                    .filter(b -> b.getProductBaseId().equals(p.getId()))
+                    .sorted((s1, s2) -> s1.getCreatedDateTime().compareTo(s2.getCreatedDateTime()))
+                    .collect(Collectors.toList());
             collection.setBatches(listBatchForProductBase);
 
             return collection;
@@ -196,6 +195,7 @@ public class ProductKeyBatchController {
         ProductKeyBatchObject productKeyBatchObject = new ProductKeyBatchObject();
 
         productKeyBatchObject.setId(productKeyBatch.getId());
+        productKeyBatchObject.setBatchNo(productKeyBatch.getBatchNo());
         productKeyBatchObject.setQuantity(productKeyBatch.getQuantity());
         productKeyBatchObject.setStatusCode(productKeyBatch.getStatusCode());
         productKeyBatchObject.setProductKeyTypeCodes(productKeyBatch.getProductKeyTypeCodes());
