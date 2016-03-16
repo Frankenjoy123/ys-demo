@@ -3,7 +3,8 @@ server:
 management:
   port: 6081
   address: 127.0.0.1
-  
+  add-application-context-header: false
+
 multipart:
   max-file-size: 20MB
   max-request-size: 20MB
