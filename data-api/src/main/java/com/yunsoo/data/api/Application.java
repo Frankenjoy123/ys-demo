@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan(basePackages = "com.yunsoo.data")
@@ -13,8 +14,9 @@ public class Application {
     private static Log log = LogFactory.getLog(Application.class);
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        ConfigurableApplicationContext app = SpringApplication.run(Application.class, args);
+        app.setId("data-api");
 
-        log.info("data-api started...");
+        log.info(String.format("%s started...", app.getId()));
     }
 }
