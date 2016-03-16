@@ -224,13 +224,12 @@ public class ProductKeyBatchController {
         }
         String path = String.format("organization/%s/product_key_batch/%s/details.json", orgId, id);
         ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+        ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON);
         if (resourceInputStream == null) {
-            throw new NotFoundException("product base details not found");
+            return bodyBuilder.body(null);
         }
-        ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
-        bodyBuilder.contentType(MediaType.APPLICATION_JSON);
-        bodyBuilder.contentLength(resourceInputStream.getContentLength());
-        return bodyBuilder.body(new InputStreamResource(resourceInputStream));
+        return bodyBuilder.contentLength(resourceInputStream.getContentLength())
+                .body(new InputStreamResource(resourceInputStream));
     }
 
     @RequestMapping(value = "{id}/details", method = RequestMethod.PUT)
