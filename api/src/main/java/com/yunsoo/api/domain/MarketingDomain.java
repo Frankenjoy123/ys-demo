@@ -102,6 +102,23 @@ public class MarketingDomain {
         return dataAPIClient.post("marketing", marketingObject, MarketingObject.class);
     }
 
+    public Long countProductKeysByMarketingId(String marketingId) {
+        Long totalQuantity = dataAPIClient.get("productkeybatch/sum/quantity?marketing_id=" + marketingId, Long.class);
+        return totalQuantity;
+    }
+
+    public Long countDrawRecordsByMarketingId(String marketingId) {
+        Long totalQuantity = dataAPIClient.get("marketing/drawRecord/sum?marketing_id=" + marketingId, Long.class);
+        return totalQuantity;
+    }
+
+    public Long countDrawPrizeByDrawRuleId(String drawRuleId) {
+        Long totalQuantity = dataAPIClient.get("marketing/drawPrize/sum?draw_rule_id=" + drawRuleId, Long.class);
+        return totalQuantity;
+    }
+
+
+
     public void updateMarketing(MarketingObject marketingObject){
         dataAPIClient.put("marketing/{id}", marketingObject, marketingObject.getId());
     }
