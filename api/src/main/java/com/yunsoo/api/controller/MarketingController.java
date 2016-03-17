@@ -187,8 +187,7 @@ public class MarketingController {
     }
 
 
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-     @RequestMapping(value = "{id}/active", method = RequestMethod.PUT)
+    @RequestMapping(value = "{id}/active", method = RequestMethod.PUT)
     public void enableMarketing(@PathVariable(value = "id")String id){
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
