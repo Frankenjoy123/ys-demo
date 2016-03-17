@@ -81,6 +81,11 @@ public class OrganizationDomain {
         }, orgId);
     }
 
+    public List<String> getBrandIdsForCarrier(String carrierId){
+        return dataAPIClient.get("organization/{id}/brandIds", new ParameterizedTypeReference<List<String>>() {
+        }, carrierId);
+    }
+
     public OrganizationObject createOrganization(OrganizationObject object) {
         object.setId(null);
         object.setCreatedDateTime(DateTime.now());

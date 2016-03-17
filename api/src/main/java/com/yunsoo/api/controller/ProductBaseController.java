@@ -228,6 +228,9 @@ public class ProductBaseController {
             throw new NotFoundException("image not found");
         }
         ResourceInputStream resourceInputStream = fileDomain.getFile(String.format("image/%s", imageName));
+        if (resourceInputStream == null) {
+            throw new NotFoundException("image not found");
+        }
         String contentType = resourceInputStream.getContentType();
         long contentLength = resourceInputStream.getContentLength();
 

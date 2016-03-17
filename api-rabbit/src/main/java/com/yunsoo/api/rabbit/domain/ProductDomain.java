@@ -6,12 +6,17 @@ import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductObject;
+import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Created by:   Lijian
@@ -44,6 +49,17 @@ public class ProductDomain {
         try {
             return dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, productKeyBatchId);
         } catch (NotFoundException ex) {
+            return null;
+        }
+    }
+
+    public String getProductKeyBatchDetails(String orgId, String productKeyBatchId) {
+        try {
+            ResourceInputStream resourceInputStream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_key_batch/{pkbId}/details.json",
+                    orgId, productKeyBatchId);
+            byte[] bytes = StreamUtils.copyToByteArray(resourceInputStream);
+            return new String(bytes, StandardCharsets.UTF_8);
+        } catch (NotFoundException | IOException ignored) {
             return null;
         }
     }

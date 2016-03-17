@@ -95,11 +95,17 @@ public class MarketingController {
 
     //query marketing plan, provide API
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<MarketingObject> getByFilter(@RequestParam(value = "org_id") String orgId,
+    public List<MarketingObject> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                             @RequestParam(value = "org_ids", required = false) List<String> orgIds ,
+                                             @RequestParam(value = "status", required = false) String status,
                                              Pageable pageable,
                                              HttpServletResponse response) {
-        Page<MarketingEntity> entityPage = marketingRepository.findByOrgId(orgId, pageable);
-
+        Page<MarketingEntity> entityPage = null;
+        if(orgId != null)
+            entityPage = marketingRepository.findByOrgId(orgId, pageable);
+        else if (orgIds != null || orgIds.size() > 0){
+            entityPage = marketingRepository.query(orgIds, status, pageable);
+        }
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }

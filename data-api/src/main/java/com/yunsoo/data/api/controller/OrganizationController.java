@@ -128,6 +128,13 @@ public class OrganizationController {
 
     }
 
+    @RequestMapping(value = "{id}/brandIds", method = RequestMethod.GET)
+    public List<String> getOrgBrandListIds(@PathVariable(value = "id") String id) {
+
+        return brandRepository.findOrgIdByCarrierId(id);
+
+    }
+
     private OrganizationObject toOrganizationObject(OrganizationEntity entity) {
         OrganizationObject object = new OrganizationObject();
         object.setId(entity.getId());

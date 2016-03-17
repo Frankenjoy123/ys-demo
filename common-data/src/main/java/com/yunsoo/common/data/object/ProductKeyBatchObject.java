@@ -1,5 +1,6 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
@@ -16,21 +17,43 @@ import java.util.List;
  */
 public class ProductKeyBatchObject implements Serializable {
 
+    @JsonProperty("id")
     private String id;
+
+    @JsonProperty("batch_no")
+    private String batchNo;
+
+    @JsonProperty("quantity")
     private Integer quantity;
+
+    @JsonProperty("status_code")
     private String statusCode;
+
+    @JsonProperty("product_key_type_codes")
     private List<String> productKeyTypeCodes;
+
+    @JsonProperty("product_base_id")
     private String productBaseId;
+
+    @JsonProperty("org_id")
     private String orgId;
+
+    @JsonProperty("created_app_id")
     private String createdAppId;
+
+    @JsonProperty("created_account_id")
     private String createdAccountId;
+
+    @JsonProperty("created_datetime")
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
 
+    @JsonProperty("rest_quantity")
     private Integer restQuantity;
-    private String marketingId;
 
+    @JsonProperty("marketing_id")
+    private String marketingId;
 
 
     public Integer getRestQuantity() {
@@ -47,6 +70,14 @@ public class ProductKeyBatchObject implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getBatchNo() {
+        return batchNo;
+    }
+
+    public void setBatchNo(String batchNo) {
+        this.batchNo = batchNo;
     }
 
     public Integer getQuantity() {

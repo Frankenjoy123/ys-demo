@@ -3,6 +3,7 @@ server:
 management:
   port: 4081
   address: 127.0.0.1
+  add-application-context-header: false
 
 cloud:
   aws:

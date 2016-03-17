@@ -1,5 +1,6 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
@@ -9,19 +10,36 @@ import org.joda.time.DateTime;
 import java.io.Serializable;
 
 /**
- * Created by Jerry on 4/14/2015.
+ * Created by:   Jerry
+ * Created on:   4/14/2015
+ * Descriptions:
  */
 public class ProductFileObject implements Serializable {
 
+    @JsonProperty("id")
     private Long id;
+
+    @JsonProperty("file_name")
     private String fileName;
+
+    @JsonProperty("created_by")
     private String createBy;
+
+    @JsonProperty("status")
     private Integer status;
+
+    @JsonProperty("file_type")
     private Integer fileType;
+
+    @JsonProperty("created_datetime")
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createDate;
+
+    @JsonProperty("file_path")
     private String filePath;
+
+    @JsonProperty("org_id")
     private String orgId;
 
     public Long getId() {

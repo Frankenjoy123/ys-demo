@@ -1,8 +1,7 @@
 package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * Created by:   Lijian
@@ -11,7 +10,7 @@ import javax.validation.constraints.NotNull;
  */
 public class ImageRequest {
 
-    @NotNull(message = "data must not be null")
+    @NotBlank(message = "data must not be null or empty")
     @JsonProperty("data")
     private String data; // prefix: data:image/png;base64,
 
