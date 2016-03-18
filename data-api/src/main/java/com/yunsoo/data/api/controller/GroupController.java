@@ -68,7 +68,10 @@ public class GroupController {
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") String id) {
-        groupRepository.delete(id);
+        GroupEntity entity = groupRepository.findOne(id);
+        if (entity != null) {
+            groupRepository.delete(id);
+        }
     }
 
     private GroupEntity getGroupEntityById(String id) {
