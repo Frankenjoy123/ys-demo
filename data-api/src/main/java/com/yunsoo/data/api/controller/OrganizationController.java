@@ -72,6 +72,9 @@ public class OrganizationController {
     public OrganizationObject create(@RequestBody OrganizationObject organizationObject) {
         OrganizationEntity entity = toOrganizationEntity(organizationObject);
         entity.setId(null);
+        entity.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
+        if(entity.getCreatedDateTime() == null)
+            entity.setCreatedDateTime(DateTime.now());
         OrganizationEntity newEntity = organizationRepository.save(entity);
         return toOrganizationObject(newEntity);
     }
@@ -110,6 +113,14 @@ public class OrganizationController {
         return toBrandObject(brandEntity, newEntity);
     }
 
+    @RequestMapping(value = "/brand/{id}", method = RequestMethod.GET)
+    public BrandObject getBrandById(@PathVariable(value = "id") String id) {
+        BrandEntity brand = brandRepository.findOne(id);
+        if (brand == null) {
+            throw new NotFoundException("brand not found by [id: " + id + "]");
+        }
+        return toBrandObject(brand);
+    }
 
     @RequestMapping(value = "{id}/brand", method = RequestMethod.GET)
     public List<BrandObject> getOrgBrandList(@PathVariable(value = "id") String id,

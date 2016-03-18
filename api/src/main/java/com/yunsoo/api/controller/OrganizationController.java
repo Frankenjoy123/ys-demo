@@ -58,6 +58,14 @@ public class OrganizationController {
     @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
     public void Disable(@PathVariable(value = "id") String orgId) {
         organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.DISABLE);
+
+
+
+    }
+
+    @RequestMapping(value = "{id}/enable", method = RequestMethod.PUT)
+    public void Enable(@PathVariable(value = "id") String orgId) {
+        organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.AVAILABLE);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -103,15 +111,25 @@ public class OrganizationController {
         Brand returnObj = new Brand(organizationDomain.createBrand(object));
 
         AccountObject accountObject = new AccountObject();
-        accountObject.setEmail(brand.getEmail());
+        accountObject.setEmail(returnObj.getEmail());
         accountObject.setIdentifier("admin");
-        accountObject.setFirstName(brand.getName());
+        accountObject.setFirstName(returnObj.getName());
         accountObject.setPassword("admin");
-        accountObject.setPhone(brand.getContactMobile());
-        accountObject.setOrgId(brand.getId());
+        accountObject.setPhone(returnObj.getContactMobile());
+        accountObject.setOrgId(returnObj.getId());
         accountObject.setCreatedAccountId(currentAccountId);
         accountDomain.createAccount(accountObject);
         return returnObj;
+    }
+
+
+    @RequestMapping(value = "/brand/{id}", method = RequestMethod.GET)
+    public Brand getBrandById(@PathVariable(value = "id") String id) {
+        BrandObject object = organizationDomain.getBrandById(id);
+        if (object == null) {
+            throw new NotFoundException("Brand not found by [id: " + id + "]");
+        }
+        return new Brand(object);
     }
 
     @RequestMapping(value = "/{id}/brand", method = RequestMethod.GET)

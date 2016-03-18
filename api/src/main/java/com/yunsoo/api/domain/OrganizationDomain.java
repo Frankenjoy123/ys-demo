@@ -52,6 +52,14 @@ public class OrganizationDomain {
         }
     }
 
+    public BrandObject getBrandById(String id) {
+        try {
+            return dataAPIClient.get("organization/brand/{id}", BrandObject.class, id);
+        } catch (NotFoundException ex) {
+            return null;
+        }
+    }
+
     public void updateOrganizationStatus(String id, String status) {
         OrganizationObject org = getOrganizationById(id);
         org.setStatusCode(status);

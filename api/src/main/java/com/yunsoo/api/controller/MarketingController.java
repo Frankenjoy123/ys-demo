@@ -102,12 +102,25 @@ public class MarketingController {
         }
 
         List<Marketing> marketingList = new ArrayList<>();
+        Map<String, String> orgList = new HashMap<>();
         marketingPage.getContent().forEach(object -> {
             Marketing marketing = new Marketing(object);
             ProductBaseObject pbo = productBaseDomain.getProductBaseById(object.getProductBaseId());
             if (pbo != null) {
                 marketing.setProductBaseName(pbo.getName());
             }
+            if(carrierId != null){
+                if(orgList.containsKey(marketing.getOrgId()))
+                    marketing.setOrgName(orgList.get(marketing.getOrgId()));
+                else {
+                    OrganizationObject org = organizationDomain.getOrganizationById(marketing.getOrgId());
+                    if (org != null) {
+                        orgList.put(org.getId(), org.getName());
+                        marketing.setOrgName(org.getName());
+                    }
+                }
+            }
+
             marketingList.add(marketing);
         });
 

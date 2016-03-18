@@ -61,6 +61,8 @@ public class Marketing {
     @JsonProperty("product_base_name")
     private String productBaseName;
 
+    @JsonProperty("org_name")
+    private String orgName;
 
     public String getId() {
         return id;
@@ -172,6 +174,14 @@ public class Marketing {
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
     }
 
     public Marketing() {

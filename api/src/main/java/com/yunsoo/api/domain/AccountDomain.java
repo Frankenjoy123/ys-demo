@@ -47,8 +47,6 @@ public class AccountDomain {
         } catch (NotFoundException ex) {
             return null;
         }
-
-
     }
 
     public AccountObject getByOrgIdAndIdentifier(String orgId, String identifier) {
@@ -116,6 +114,8 @@ public class AccountDomain {
     private String hashPassword(String rawPassword, String hashSalt) {
         return HashUtils.sha1HexString(rawPassword + hashSalt);
     }
+
+
 
 
 }
