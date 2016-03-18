@@ -219,6 +219,7 @@ public class ProductKeyDomain {
         }
         ProductKeyBatch batch = new ProductKeyBatch();
         batch.setId(object.getId());
+        batch.setBatchNo(object.getBatchNo());
         batch.setQuantity(object.getQuantity());
         batch.setStatusCode(object.getStatusCode());
         batch.setStatus(Lookup.fromCode(productKeyBatchStatuses, object.getStatusCode()));
