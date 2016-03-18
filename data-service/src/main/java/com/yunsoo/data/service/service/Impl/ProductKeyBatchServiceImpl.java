@@ -159,7 +159,23 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
     @Override
     public void patchUpdate(ProductKeyBatch batch) {
-        ProductKeyBatchEntity entity = toProductKeyBatchEntity(batch);
+        ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(batch.getId());
+        if (entity == null) {
+            throw ServiceException.notFound("productKeyBatch not found by id: " + batch.getId());
+        }
+        if (batch.getProductBaseId() != null) {
+            entity.setProductBaseId(batch.getProductBaseId());
+        }
+        if (batch.getStatusCode() != null) {
+            entity.setStatusCode(batch.getStatusCode());
+        }
+        if (batch.getRestQuantity() != null) {
+            entity.setRestQuantity(batch.getRestQuantity());
+        }
+        if (batch.getMarketingId() != null) {
+            entity.setMarketingId(batch.getMarketingId());
+        }
+
         productKeyBatchRepository.save(entity);
     }
 

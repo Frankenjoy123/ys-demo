@@ -156,24 +156,7 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void patchUpdate(@PathVariable(value = "id") String id, @RequestBody ProductKeyBatchObject batchObj) {
-        ProductKeyBatch batch = productKeyBatchService.getById(id);
-        if (batch == null) {
-            throw new NotFoundException("ProductKeyBatch not found by [id: " + id + "]");
-        }
-        batch.setId(id);
-        if (batchObj.getProductBaseId() != null) {
-            batch.setProductBaseId(batchObj.getProductBaseId());
-        }
-        if (batchObj.getStatusCode() != null) {
-            batch.setStatusCode(batchObj.getStatusCode());
-        }
-        if (batchObj.getRestQuantity() != null)
-            batch.setRestQuantity(batchObj.getRestQuantity());
-        if (batchObj.getMarketingId() != null) {
-            batch.setMarketingId(batchObj.getMarketingId());
-        }
-
-        productKeyBatchService.patchUpdate(batch);
+        productKeyBatchService.patchUpdate(toProductKeyBatch(batchObj));
     }
 
 
