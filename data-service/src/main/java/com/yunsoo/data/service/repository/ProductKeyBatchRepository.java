@@ -52,5 +52,6 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
     List<ProductKeyBatchEntity> queryDailyKeyUsageReport(@Param("orgId") String orgId,
                      @Param("productBaseId") String productBaseId, @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime);
 
+    ProductKeyBatchEntity findFirstByOrgIdOrderByIdDesc(String orgId);
 
 }

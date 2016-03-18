@@ -143,6 +143,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         if (batch.getCreatedDateTime() == null) {
             batch.setCreatedDateTime(DateTime.now());
         }
+        batch.setBatchNo(getBatchNoForNewBatch(batch.getOrgId()));
         ProductKeyBatchEntity newEntity = productKeyBatchRepository.save(toProductKeyBatchEntity(batch));
 
         //save product keys to S3
@@ -285,12 +286,18 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         return String.format("organization/%s/product_key_batch/%s/details.json", orgId, batchId);
     }
 
+    private String getBatchNoForNewBatch(String orgId) {
+        ProductKeyBatchEntity lastEntity = productKeyBatchRepository.findFirstByOrgIdOrderByIdDesc(orgId);
+        return Integer.toString(Integer.parseInt(lastEntity.getBatchNo()) + 1);
+    }
+
     private ProductKeyBatch toProductKeyBatch(ProductKeyBatchEntity entity) {
         if (entity == null) {
             return null;
         }
         ProductKeyBatch batch = new ProductKeyBatch();
         batch.setId(entity.getId());
+        batch.setBatchNo(entity.getBatchNo());
         batch.setQuantity(entity.getQuantity());
         batch.setStatusCode(entity.getStatusCode());
         batch.setOrgId(entity.getOrgId());
@@ -314,6 +321,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         }
         ProductKeyBatchEntity entity = new ProductKeyBatchEntity();
         entity.setId(batch.getId());
+        entity.setBatchNo(batch.getBatchNo());
         entity.setQuantity(batch.getQuantity());
         entity.setStatusCode(batch.getStatusCode());
         entity.setOrgId(batch.getOrgId());
