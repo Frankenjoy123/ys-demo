@@ -99,7 +99,6 @@ public class OrganizationController {
     public BrandObject createBrand(@RequestBody BrandObject brandObject) {
         OrganizationEntity entity = toOrganizationEntity(brandObject);
         entity.setId(null);
-        entity.setStatusCode(LookupCodes.OrgStatus.CREATED);
         entity.setTypeCode(LookupCodes.OrgType.MANUFACTURER);
         entity.setCreatedDateTime(DateTime.now());
         OrganizationEntity newEntity = organizationRepository.save(entity);

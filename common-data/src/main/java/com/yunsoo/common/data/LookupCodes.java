@@ -156,6 +156,14 @@ public class LookupCodes {
 
         public static final String AVAILABLE = "available";
         public static final String DISABLE = "disable";
+        public static final String CREATED = "created";
+    }
+
+    public static class BrandApplicationStatus {
+        private BrandApplicationStatus() {
+        }
+
+        public static final String APPROVED = "approved";
         public static final String REJECTED = "rejected";
         public static final String CREATED = "created";
     }

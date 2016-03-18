@@ -1,10 +1,12 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.Brand;
 import com.yunsoo.api.dto.Organization;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
@@ -40,6 +42,9 @@ public class OrganizationController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
+    @Autowired
+    private AccountDomain accountDomain;
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Organization getById(@PathVariable(value = "id") String orgId) {
         orgId = fixOrgId(orgId);
@@ -48,11 +53,6 @@ public class OrganizationController {
             throw new NotFoundException("organization not found by [id: " + orgId + "]");
         }
         return new Organization(object);
-    }
-
-    @RequestMapping(value = "{id}/approve", method = RequestMethod.PUT)
-    public void Approve(@PathVariable(value = "id") String orgId) {
-        organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.AVAILABLE);
     }
 
     @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
@@ -99,7 +99,19 @@ public class OrganizationController {
         BrandObject object = brand.toBrand(brand);
         object.setCreatedAccountId(currentAccountId);
         object.setTypeCode(LookupCodes.OrgType.MANUFACTURER);
-        return new Brand(organizationDomain.createBrand(object));
+        object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
+        Brand returnObj = new Brand(organizationDomain.createBrand(object));
+
+        AccountObject accountObject = new AccountObject();
+        accountObject.setEmail(brand.getEmail());
+        accountObject.setIdentifier("admin");
+        accountObject.setFirstName(brand.getName());
+        accountObject.setPassword("admin");
+        accountObject.setPhone(brand.getContactMobile());
+        accountObject.setOrgId(brand.getId());
+        accountObject.setCreatedAccountId(currentAccountId);
+        accountDomain.createAccount(accountObject);
+        return returnObj;
     }
 
     @RequestMapping(value = "/{id}/brand", method = RequestMethod.GET)
