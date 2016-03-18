@@ -14,4 +14,7 @@ public interface MktDrawRecordRepository extends FindOneAndSaveRepository<MktDra
 
     List<MktDrawRecordEntity> findByProductKey(String productKey);
 
+    Long countByMarketingId(String marketingId);
+
+
 }

@@ -3,9 +3,11 @@ server:
 management:
   port: 5081
   address: 127.0.0.1
+  add-application-context-header: false
 
-multipart.maxFileSize: 10MB
-multipart.maxRequestSize: 10MB
+multipart:
+  max-file-size: 4MB
+  max-request-size: 4MB
 
 spring:
   mvc:

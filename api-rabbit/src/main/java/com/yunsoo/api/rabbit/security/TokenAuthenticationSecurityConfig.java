@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @Configuration
 @Order(1)
-public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurerAdapter {
+public class TokenAuthenticationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -29,7 +29,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
-    public StatelessAuthenticationSecurityConfig() {
+    public TokenAuthenticationSecurityConfig() {
         super(true);
     }
 
@@ -39,7 +39,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .and()
                 .anonymous().and()
                 .servletApi().and()
-                .headers().cacheControl().and().and()
+                .headers().and()
                 .authorizeRequests()
 
                 .antMatchers("/").permitAll()

@@ -162,7 +162,32 @@ public class MarketingController {
         }
     }
 
-     @RequestMapping(value = "{id}/active", method = RequestMethod.PUT)
+    @RequestMapping(value = "keys/sum/{id}", method = RequestMethod.GET)
+    public Long countKeysByMarketingId(@PathVariable(value = "id") String marketingId) {
+        if (marketingId == null)
+            throw new BadRequestException("marketing id can not be null");
+
+        return marketingDomain.countProductKeysByMarketingId(marketingId);
+    }
+
+    @RequestMapping(value = "drawRecords/sum/{id}", method = RequestMethod.GET)
+    public Long countDrawRecordsByMarketingId(@PathVariable(value = "id") String marketingId) {
+        if (marketingId == null)
+            throw new BadRequestException("marketing id can not be null");
+
+        return marketingDomain.countDrawRecordsByMarketingId(marketingId);
+    }
+
+    @RequestMapping(value = "drawPrize/sum/{id}", method = RequestMethod.GET)
+    public Long countDrawPrizeByDrawRuleId(@PathVariable(value = "id") String drawRuleId) {
+        if (drawRuleId == null)
+            throw new BadRequestException("draw rule id can not be null");
+
+        return marketingDomain.countDrawPrizeByDrawRuleId(drawRuleId);
+    }
+
+
+    @RequestMapping(value = "{id}/active", method = RequestMethod.PUT)
     public void enableMarketing(@PathVariable(value = "id")String id){
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);

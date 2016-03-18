@@ -36,7 +36,7 @@ public class FileDomain {
         try {
             return dataAPIClient.getResourceInputStream("file/s3?path={path}", path);
         } catch (NotFoundException ignored) {
-            throw new NotFoundException("image not found");
+            return null;
         }
     }
 }

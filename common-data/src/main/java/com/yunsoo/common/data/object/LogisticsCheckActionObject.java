@@ -1,14 +1,26 @@
 package com.yunsoo.common.data.object;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
 /**
- * Created by Jerry on 3/16/2015.
+ * Created by:   Jerry
+ * Created on:   3/16/2015
+ * Descriptions:
  */
 public class LogisticsCheckActionObject implements Serializable {
+
+    @JsonProperty("id")
     private Integer id;
+
+    @JsonProperty("name")
     private String name;
+
+    @JsonProperty("description")
     private String description;
+
+    @JsonProperty("org_id")
     private String orgId;
 
     public Integer getId() {

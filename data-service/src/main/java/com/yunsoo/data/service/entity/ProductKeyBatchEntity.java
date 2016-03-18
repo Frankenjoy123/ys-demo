@@ -1,7 +1,6 @@
 package com.yunsoo.data.service.entity;
 
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
-import com.yunsoo.common.data.object.ScanRecordLocationAnalysisObject;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
@@ -24,6 +23,9 @@ public class ProductKeyBatchEntity {
     @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
     private String id;
+
+    @Column(name = "batch_no")
+    private String batchNo;
 
     @Column(name = "quantity")
     private Integer quantity;
@@ -53,7 +55,7 @@ public class ProductKeyBatchEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
-    @Column(name="rest_quantity")
+    @Column(name = "rest_quantity")
     private int restQuantity;
 
     @Column(name = "marketing_id")
@@ -73,6 +75,14 @@ public class ProductKeyBatchEntity {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getBatchNo() {
+        return batchNo;
+    }
+
+    public void setBatchNo(String batchNo) {
+        this.batchNo = batchNo;
     }
 
     public Integer getQuantity() {

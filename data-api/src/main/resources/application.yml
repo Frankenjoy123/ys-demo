@@ -3,9 +3,11 @@ server:
 management:
   port: 3081
   address: 127.0.0.1
+  add-application-context-header: false
 
-multipart.maxFileSize: 20MB
-multipart.maxRequestSize: 20MB
+multipart:
+  max-file-size: 20MB
+  max-request-size: 20MB
 
 spring:
   profiles.active: local

@@ -24,6 +24,8 @@ public interface MktDrawPrizeRepository extends FindOneAndSaveRepository<MktDraw
 
     List<MktDrawPrizeEntity> findByStatusCodeAndAccountType(String statusCode, String accountType);
 
+    Long countByDrawRuleId(String drawRuleId);
+
     @Query("select o from #{#entityName} o where " +
             "(o.marketingId = :marketingId) " +
             "and (:accountType is null or o.accountType = :accountType) " +

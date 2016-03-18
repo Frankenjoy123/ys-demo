@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @Configuration
 @Order(1)
-public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurerAdapter {
+public class TokenAuthenticationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${yunsoo.debug}")
     private Boolean debug;
@@ -33,7 +33,7 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
-    public StatelessAuthenticationSecurityConfig() {
+    public TokenAuthenticationSecurityConfig() {
         super(true);
     }
 
@@ -41,16 +41,10 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
     protected void configure(HttpSecurity http) throws Exception {
 
         http.exceptionHandling().authenticationEntryPoint(new TokenInvalidAuthenticationEntryPoint())
-//                .accessDeniedHandler(new AccessDeniedHandler() {
-//            @Override
-//            public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-//                response.getOutputStream().write(new byte[]{65, 66, 67});
-//            }
-//        })
                 .and()
                 .anonymous().and()
                 .servletApi().and()
-                .headers().cacheControl().and().and()
+                .headers().frameOptions().disable().xssProtection().disable().and()
                 .authorizeRequests()
 
                 .antMatchers("/").permitAll()
@@ -62,7 +56,6 @@ public class StatelessAuthenticationSecurityConfig extends WebSecurityConfigurer
                 .antMatchers(HttpMethod.GET, "/image/*").permitAll()
                 .antMatchers(HttpMethod.GET, "/organization/*/logo/*").permitAll()
                 .anyRequest().authenticated().and()
-                //.antMatchers("/**").permitAll()
 
                 // custom Token based authentication based on the header previously given to the client
                 .addFilterBefore(new TokenAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
