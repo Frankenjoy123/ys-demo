@@ -24,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletResponse;
@@ -62,7 +61,7 @@ public class OrganizationController {
 
     @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
     public void Disable(@PathVariable(value = "id") String orgId) {
-        organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.DISABLE);
+        organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.DISABLED);
 
 
 

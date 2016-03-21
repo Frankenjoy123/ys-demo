@@ -98,7 +98,7 @@ public class BrandApplicationController {
 
     }
 
-        @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public Brand createBrand(@RequestBody Brand brand) {
         BrandObject object = brand.toBrand(brand);
         Brand returnObj = new Brand(brandDomain.createBrand(object));

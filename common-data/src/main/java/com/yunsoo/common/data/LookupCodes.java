@@ -155,7 +155,7 @@ public class LookupCodes {
         }
 
         public static final String AVAILABLE = "available";
-        public static final String DISABLE = "disable";
+        public static final String DISABLED = "disabled";
         public static final String CREATED = "created";
     }
 
@@ -195,7 +195,7 @@ public class LookupCodes {
         public static final String CREATED = "created";
         public static final String AVAILABLE = "available";
         public static final String PAID = "paid";
-        public static final String DISABLE = "disable";
+        public static final String DISABLED = "disabled";
         public static final String REJECTED = "rejected";
     }
 
