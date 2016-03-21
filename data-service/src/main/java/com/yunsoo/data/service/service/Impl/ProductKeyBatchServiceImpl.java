@@ -15,6 +15,7 @@ import com.yunsoo.data.service.service.ProductKeyBatchService;
 import com.yunsoo.data.service.service.contract.ProductKeyBatch;
 import com.yunsoo.data.service.service.contract.ProductKeys;
 import com.yunsoo.data.service.service.exception.ServiceException;
+import com.yunsoo.data.service.util.BatchNoGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
@@ -143,7 +144,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         if (batch.getCreatedDateTime() == null) {
             batch.setCreatedDateTime(DateTime.now());
         }
-        batch.setBatchNo(getBatchNoForNewBatch(batch.getOrgId()));
+        batch.setBatchNo(BatchNoGenerator.getNew());
         ProductKeyBatchEntity newEntity = productKeyBatchRepository.save(toProductKeyBatchEntity(batch));
 
         //save product keys to S3
@@ -300,11 +301,6 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
 
     private String formatProductKeyBatchDetailsS3Key(String orgId, String batchId) {
         return String.format("organization/%s/product_key_batch/%s/details.json", orgId, batchId);
-    }
-
-    private String getBatchNoForNewBatch(String orgId) {
-        ProductKeyBatchEntity lastEntity = productKeyBatchRepository.findFirstByOrgIdOrderByIdDesc(orgId);
-        return Integer.toString(Integer.parseInt(lastEntity.getBatchNo()) + 1);
     }
 
     private ProductKeyBatch toProductKeyBatch(ProductKeyBatchEntity entity) {
