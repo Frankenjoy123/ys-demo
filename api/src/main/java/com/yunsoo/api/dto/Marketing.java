@@ -64,6 +64,9 @@ public class Marketing {
     @JsonProperty("org_name")
     private String orgName;
 
+    @JsonProperty("comments")
+    private String comments;
+
     public String getId() {
         return id;
     }
@@ -180,6 +183,14 @@ public class Marketing {
         return orgName;
     }
 
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
     public void setOrgName(String orgName) {
         this.orgName = orgName;
     }
@@ -203,7 +214,9 @@ public class Marketing {
             this.setModifiedAccountId(object.getModifiedAccountId());
             this.setModifiedDateTime(object.getModifiedDateTime());
             this.setStatusCode(object.getStatusCode());
+            this.setComments(object.getComments());
         }
+
     }
 
     public MarketingObject toMarketingObject() {
@@ -221,6 +234,7 @@ public class Marketing {
         object.setModifiedAccountId(this.getModifiedAccountId());
         object.setModifiedDateTime(this.getModifiedDateTime());
         object.setStatusCode(this.getStatusCode());
+        object.setComments(this.getComments());
         return object;
     }
 

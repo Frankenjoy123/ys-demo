@@ -12,6 +12,8 @@ import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -35,6 +39,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/organization")
 public class OrganizationController {
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private OrganizationDomain organizationDomain;
@@ -113,7 +118,8 @@ public class OrganizationController {
         AccountObject accountObject = new AccountObject();
         accountObject.setEmail(returnObj.getEmail());
         accountObject.setIdentifier("admin");
-        accountObject.setFirstName(returnObj.getName());
+        accountObject.setFirstName(returnObj.getContactName());
+        accountObject.setLastName(returnObj.getName());
         accountObject.setPassword("admin");
         accountObject.setPhone(returnObj.getContactMobile());
         accountObject.setOrgId(returnObj.getId());
@@ -163,14 +169,12 @@ public class OrganizationController {
         return builder.body(new InputStreamResource(resourceInputStream));
     }
 
-    @RequestMapping(value = "{id}/brand", method = RequestMethod.PUT)
-    @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
+    @RequestMapping(value = "{id}/brand/attachment", method = RequestMethod.POST )
+    //@PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
     public void saveBrandAttachment(@PathVariable(value = "id") String orgId,
-                            @RequestBody byte[] attachment) {
-        if (attachment != null && attachment.length > 0) {
-            orgId = fixOrgId(orgId);
-            organizationDomain.saveBrandAttachment(orgId, attachment, "");
-        }
+                                    @RequestBody Object attachment, MultipartHttpServletRequest request) {
+        log.info(request.getFileNames());
+        log.info(attachment);
     }
 
     @RequestMapping(value = "{id}/logo", method = RequestMethod.PUT)

@@ -45,6 +45,9 @@ public class MarketingEntity {
     @Column(name = "balance")
     private Double balance;
 
+    @Column(name = "comments")
+    private String comments;
+
     @Column(name = "created_account_id")
     private String createdAccountId;
 
@@ -161,5 +164,13 @@ public class MarketingEntity {
 
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }

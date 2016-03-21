@@ -34,6 +34,9 @@ public class MarketingObject {
     @JsonProperty("status_code")
     private String statusCode;
 
+    @JsonProperty("comments")
+    private String comments;
+
     @JsonProperty("budget")
     private Double budget;
 
@@ -161,5 +164,13 @@ public class MarketingObject {
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }

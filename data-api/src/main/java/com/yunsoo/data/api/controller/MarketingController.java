@@ -360,6 +360,7 @@ public class MarketingController {
         object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
         object.setStatusCode(entity.getStatusCode());
+        object.setComments(entity.getComments());
         return object;
     }
 
@@ -440,6 +441,7 @@ public class MarketingController {
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());
         entity.setStatusCode(object.getStatusCode());
+        entity.setComments(object.getComments());
         return entity;
     }
 
@@ -476,7 +478,6 @@ public class MarketingController {
         entity.setUserId(object.getUserId());
         entity.setIsPrized(object.getIsPrized());
         entity.setYsid(object.getYsid());
-
         return entity;
     }
 

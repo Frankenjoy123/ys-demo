@@ -201,25 +201,29 @@ public class MarketingController {
 
 
     @RequestMapping(value = "{id}/active", method = RequestMethod.PUT)
-    public void enableMarketing(@PathVariable(value = "id")String id){
+    public void enableMarketing(@PathVariable(value = "id")String id, @RequestParam(value="comments")String comments){
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
         if(marketingObject != null) {
-            marketingObject.setStatusCode(LookupCodes.MktStatus.AVAILABLE);
+            marketingObject.setStatusCode(LookupCodes.MktStatus.PAID);
             marketingObject.setModifiedDateTime(DateTime.now());
             marketingObject.setModifiedAccountId(currentAccountId);
+            if(StringUtils.hasText(comments))
+                marketingObject.setComments(marketingObject.getComments()+ ";" + comments);
             marketingDomain.updateMarketing(marketingObject);
         }
     }
 
     @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
-    public void disableMarketing(@PathVariable(value = "id")String id){
+    public void disableMarketing(@PathVariable(value = "id")String id, @RequestParam(value="comments")String comments){
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
         if(marketingObject != null) {
             marketingObject.setStatusCode(LookupCodes.MktStatus.DISABLE);
             marketingObject.setModifiedDateTime(DateTime.now());
             marketingObject.setModifiedAccountId(currentAccountId);
+            if(StringUtils.hasText(comments))
+                marketingObject.setComments(marketingObject.getComments()+ ";" + comments);
             marketingDomain.updateMarketing(marketingObject);
         }
     }
