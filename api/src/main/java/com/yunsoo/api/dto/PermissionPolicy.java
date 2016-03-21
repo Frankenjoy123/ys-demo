@@ -1,13 +1,11 @@
 package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yunsoo.common.data.object.PermissionObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by  : Lijian
@@ -70,9 +68,10 @@ public class PermissionPolicy {
         this.code = permissionPolicyObject.getCode();
         this.name = permissionPolicyObject.getName();
         this.description = permissionPolicyObject.getDescription();
-        List<PermissionObject> permissionObjects = permissionPolicyObject.getPermissions();
-        if (permissionObjects != null) {
-            this.permissions = permissionObjects.stream().map(Permission::new).collect(Collectors.toList());
-        }
+        //todo:permissions
+//        List<PermissionObject> permissionObjects = permissionPolicyObject.getPermissions();
+//        if (permissionObjects != null) {
+//            this.permissions = permissionObjects.stream().map(Permission::new).collect(Collectors.toList());
+//        }
     }
 }

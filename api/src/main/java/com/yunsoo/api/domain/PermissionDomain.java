@@ -65,7 +65,8 @@ public class PermissionDomain {
             }
             String pCode = o.getCode();
             if (permissionPolicies.containsKey(pCode)) {
-                permissionPolicies.get(pCode).getPermissions().addAll(o.getPermissions());
+                //todo:permissions
+                //permissionPolicies.get(pCode).getPermissions().addAll(o.getPermissions());
             } else {
                 permissionPolicies.put(pCode, o);
             }

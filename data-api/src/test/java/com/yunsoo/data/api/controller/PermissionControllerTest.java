@@ -1,6 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.PermissionActionObject;
+import com.yunsoo.common.data.object.PermissionPolicyObject;
 import com.yunsoo.common.data.object.PermissionRegionObject;
 import com.yunsoo.common.data.object.PermissionResourceObject;
 import com.yunsoo.data.api.Constants;
@@ -56,5 +57,14 @@ public class PermissionControllerTest extends ControllerTestBase {
 
     }
 
+    @Test
+    public void test_PermissionPolicy() {
+        List<PermissionPolicyObject> objects = dataAPIClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
+        });
+        assert objects.size() > 0;
+
+        PermissionPolicyObject obj = dataAPIClient.get("permission/policy/{code}", PermissionPolicyObject.class, "admin");
+        assert obj != null;
+    }
 
 }

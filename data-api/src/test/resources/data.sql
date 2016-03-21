@@ -87,3 +87,7 @@ VALUES
   ('modify', '修改', '修改'),
   ('read', '查看', '查看');
 
+INSERT INTO permission_policy (code, name, description, permissions)
+VALUES
+  ('admin', 'admin', NULL, '*:*'),
+  ('read', 'read', NULL, '*:read');

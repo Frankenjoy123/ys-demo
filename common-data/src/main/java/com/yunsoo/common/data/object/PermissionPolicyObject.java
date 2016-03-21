@@ -3,7 +3,6 @@ package com.yunsoo.common.data.object;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -17,7 +16,7 @@ public class PermissionPolicyObject implements Serializable {
     @JsonProperty("code")
     private String code;
 
-    @NotNull(message = "policy name must not be null")
+    @NotEmpty(message = "policy name must not be null or empty")
     @JsonProperty("name")
     private String name;
 
@@ -26,7 +25,8 @@ public class PermissionPolicyObject implements Serializable {
 
     @NotEmpty(message = "permissions must not be null or empty")
     @JsonProperty("permissions")
-    private List<PermissionObject> permissions;
+    private List<String> permissions;
+
 
     public String getCode() {
         return code;
@@ -52,11 +52,11 @@ public class PermissionPolicyObject implements Serializable {
         this.description = description;
     }
 
-    public List<PermissionObject> getPermissions() {
+    public List<String> getPermissions() {
         return permissions;
     }
 
-    public void setPermissions(List<PermissionObject> permissions) {
+    public void setPermissions(List<String> permissions) {
         this.permissions = permissions;
     }
 }
