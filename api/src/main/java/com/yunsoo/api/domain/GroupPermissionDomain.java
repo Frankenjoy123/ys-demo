@@ -75,11 +75,12 @@ public class GroupPermissionDomain {
         groupPermissions.forEach(p -> {
             permissions.add(new PermissionInstance(p.getResourceCode(), p.getActionCode(), p.getOrgId()));
         });
-        groupPermissionPolicies.stream().filter(pp -> permissionPolicyMap.containsKey(pp.getPolicyCode())).forEach(pp -> {
-            permissionPolicyMap.get(pp.getPolicyCode()).getPermissions().forEach(po -> {
-                permissions.add(new PermissionInstance(po.getResourceCode(), po.getActionCode(), pp.getOrgId()));
-            });
-        });
+        //todo:permissions
+//        groupPermissionPolicies.stream().filter(pp -> permissionPolicyMap.containsKey(pp.getPolicyCode())).forEach(pp -> {
+//            permissionPolicyMap.get(pp.getPolicyCode()).getPermissions().forEach(po -> {
+//                permissions.add(new PermissionInstance(po.getResourceCode(), po.getActionCode(), pp.getOrgId()));
+//            });
+//        });
         return permissions;
     }
 }

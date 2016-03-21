@@ -1,7 +1,9 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.common.data.object.*;
-import com.yunsoo.common.web.exception.ConflictException;
+import com.yunsoo.common.data.object.PermissionActionObject;
+import com.yunsoo.common.data.object.PermissionPolicyObject;
+import com.yunsoo.common.data.object.PermissionRegionObject;
+import com.yunsoo.common.data.object.PermissionResourceObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.PermissionActionEntity;
 import com.yunsoo.data.service.entity.PermissionPolicyEntity;
@@ -17,7 +19,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -120,56 +124,16 @@ public class PermissionController {
     @RequestMapping(value = "policy", method = RequestMethod.GET)
     public List<PermissionPolicyObject> getAllPolicies() {
         List<PermissionPolicyEntity> entities = permissionPolicyRepository.findAll();
-        return toPermissionPolicyObjectList(entities);
+        return entities.stream().map(this::toPermissionPolicyObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "policy/{code}", method = RequestMethod.GET)
     public PermissionPolicyObject getPolicyByCode(@PathVariable(value = "code") String code) {
-        List<PermissionPolicyEntity> entities = permissionPolicyRepository.findByCode(code);
-        List<PermissionPolicyObject> pps = toPermissionPolicyObjectList(entities);
-        if (pps == null || pps.size() == 0) {
+        PermissionPolicyEntity entity = permissionPolicyRepository.findOne(code);
+        if (entity == null) {
             throw new NotFoundException("permission policy not found by [code: " + code + "]");
         }
-        return pps.get(0);
-    }
-
-    @RequestMapping(value = "policy/{code}", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public PermissionPolicyObject create(@PathVariable(value = "code") String code,
-                                         @RequestBody @Valid PermissionPolicyObject permissionPolicyObject) {
-
-        List<PermissionPolicyEntity> currentEntities = permissionPolicyRepository.findByCode(code);
-        if (currentEntities != null && currentEntities.size() > 0) {
-            throw new ConflictException("permission policy with [code: " + code + "] already exists");
-        }
-        permissionPolicyObject.setCode(code);
-        List<PermissionPolicyEntity> entities = toPermissionPolicyEntityList(permissionPolicyObject);
-        List<PermissionPolicyEntity> savedEntities = permissionPolicyRepository.save(entities);
-        return toPermissionPolicyObjectList(savedEntities).get(0);
-    }
-
-    @RequestMapping(value = "policy/{code}", method = RequestMethod.PUT)
-    public PermissionPolicyObject update(@PathVariable(value = "code") String code,
-                                         @RequestBody @Valid PermissionPolicyObject permissionPolicyObject) {
-
-        List<PermissionPolicyEntity> currentEntities = permissionPolicyRepository.findByCode(code);
-        if (currentEntities != null && currentEntities.size() > 0) {
-            permissionPolicyRepository.delete(currentEntities);
-        }
-        permissionPolicyObject.setCode(code);
-        List<PermissionPolicyEntity> entities = toPermissionPolicyEntityList(permissionPolicyObject);
-        List<PermissionPolicyEntity> savedEntities = permissionPolicyRepository.save(entities);
-        return toPermissionPolicyObjectList(savedEntities).get(0);
-    }
-
-    @RequestMapping(value = "policy/{code}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(value = "code") String code) {
-        List<PermissionPolicyEntity> currentEntities = permissionPolicyRepository.findByCode(code);
-        if (currentEntities == null || currentEntities.size() == 0) {
-            throw new NotFoundException("permission policy not found by [code: " + code + "]");
-        }
-        permissionPolicyRepository.delete(currentEntities);
+        return toPermissionPolicyObject(entity);
     }
 
     //endregion
@@ -183,9 +147,13 @@ public class PermissionController {
         object.setCode(entity.getCode());
         object.setName(entity.getName());
         object.setDescription(entity.getDescription());
+        List<String> actions;
         if (entity.getActions() != null) {
-            object.setActions(Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getActions())));
+            actions = Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getActions()));
+        } else {
+            actions = new ArrayList<>();
         }
+        object.setActions(actions);
         return object;
     }
 
@@ -209,11 +177,13 @@ public class PermissionController {
         object.setOrgId(entity.getOrgId());
         object.setName(entity.getName());
         object.setDescription(entity.getDescription());
+        List<String> restrictions;
         if (entity.getRestrictions() != null && entity.getRestrictions().length() > 0) {
-            object.setRestrictions(Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getRestrictions())));
+            restrictions = Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getRestrictions()));
         } else {
-            object.setRestrictions(new ArrayList<>());
+            restrictions = new ArrayList<>();
         }
+        object.setRestrictions(restrictions);
         object.setTypeCode(entity.getTypeCode());
         return object;
     }
@@ -227,61 +197,33 @@ public class PermissionController {
         entity.setOrgId(object.getOrgId());
         entity.setName(object.getName());
         entity.setDescription(object.getDescription());
+        String restrictions;
         if (object.getRestrictions() != null) {
-            entity.setRestrictions(StringUtils.collectionToCommaDelimitedString(
-                    object.getRestrictions().stream().distinct().sorted().collect(Collectors.toList())));
+            restrictions = StringUtils.collectionToCommaDelimitedString(object.getRestrictions().stream().distinct().sorted().collect(Collectors.toList()));
         } else {
-            entity.setRestrictions("");
+            restrictions = "";
         }
+        entity.setRestrictions(restrictions);
         entity.setTypeCode(object.getTypeCode());
         return entity;
     }
 
-    private List<PermissionPolicyObject> toPermissionPolicyObjectList(List<PermissionPolicyEntity> entities) {
-        if (entities == null) {
+    private PermissionPolicyObject toPermissionPolicyObject(PermissionPolicyEntity entity) {
+        if (entity == null) {
             return null;
         }
-        Map<String, PermissionPolicyObject> ppMap = new HashMap<>();
-        List<PermissionPolicyObject> pps = new ArrayList<>();
-        entities.forEach(ppe -> {
-            PermissionPolicyObject pp;
-            String ppCode = ppe.getCode();
-            if (ppMap.containsKey(ppCode)) {
-                pp = ppMap.get(ppCode);
-            } else {
-                pps.add(pp = new PermissionPolicyObject());
-                pp.setCode(ppCode);
-                pp.setName(ppe.getName());
-                pp.setDescription(ppe.getDescription());
-                pp.setPermissions(new ArrayList<>());
-                ppMap.put(ppCode, pp);
-            }
-            PermissionObject p = new PermissionObject();
-            p.setResourceCode(ppe.getResourceCode());
-            p.setActionCode(ppe.getActionCode());
-            pp.getPermissions().add(p);
-        });
-        return pps;
+        PermissionPolicyObject object = new PermissionPolicyObject();
+        object.setCode(entity.getCode());
+        object.setName(entity.getName());
+        object.setDescription(entity.getDescription());
+        List<String> permissions;
+        if (entity.getPermissions() != null && entity.getPermissions().length() > 0) {
+            permissions = Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getPermissions()));
+        } else {
+            permissions = new ArrayList<>();
+        }
+        object.setPermissions(permissions);
+        return object;
     }
 
-    private List<PermissionPolicyEntity> toPermissionPolicyEntityList(PermissionPolicyObject permissionPolicyObject) {
-        if (permissionPolicyObject == null || permissionPolicyObject.getPermissions() == null) {
-            return null;
-        }
-        List<PermissionObject> permissions = permissionPolicyObject.getPermissions();
-        List<PermissionPolicyEntity> entities = new ArrayList<>();
-        String code = permissionPolicyObject.getCode();
-        String name = permissionPolicyObject.getName();
-        String desc = permissionPolicyObject.getDescription();
-        permissions.forEach(p -> {
-            PermissionPolicyEntity entity = new PermissionPolicyEntity();
-            entity.setCode(code);
-            entity.setName(name);
-            entity.setDescription(desc);
-            entity.setResourceCode(p.getResourceCode());
-            entity.setActionCode(p.getActionCode());
-            entities.add(entity);
-        });
-        return entities;
-    }
 }

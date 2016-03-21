@@ -12,9 +12,9 @@ import java.util.List;
  */
 public interface PermissionPolicyRepository extends Repository<PermissionPolicyEntity, String> {
 
-    List<PermissionPolicyEntity> findAll();
+    PermissionPolicyEntity findOne(String code);
 
-    List<PermissionPolicyEntity> findByCode(String code);
+    List<PermissionPolicyEntity> findAll();
 
     List<PermissionPolicyEntity> save(Iterable<PermissionPolicyEntity> entities);
 

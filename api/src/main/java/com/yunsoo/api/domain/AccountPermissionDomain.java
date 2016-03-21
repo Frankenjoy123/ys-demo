@@ -88,11 +88,12 @@ public class AccountPermissionDomain {
         accountPermissions.forEach(p -> {
             permissions.add(new PermissionInstance(p.getResourceCode(), p.getActionCode(), p.getOrgId()));
         });
-        accountPermissionPolicies.stream().filter(pp -> permissionPolicyMap.containsKey(pp.getPolicyCode())).forEach(pp -> {
-            permissionPolicyMap.get(pp.getPolicyCode()).getPermissions().forEach(po -> {
-                permissions.add(new PermissionInstance(po.getResourceCode(), po.getActionCode(), pp.getOrgId()));
-            });
-        });
+        //todo:permissions
+//        accountPermissionPolicies.stream().filter(pp -> permissionPolicyMap.containsKey(pp.getPolicyCode())).forEach(pp -> {
+//            permissionPolicyMap.get(pp.getPolicyCode()).getPermissions().forEach(po -> {
+//                permissions.add(new PermissionInstance(po.getResourceCode(), po.getActionCode(), pp.getOrgId()));
+//            });
+//        });
 
         //permissions from group
         List<AccountGroupObject> accountGroupObjects = accountGroupDomain.getAccountGroupByAccountId(accountId);
