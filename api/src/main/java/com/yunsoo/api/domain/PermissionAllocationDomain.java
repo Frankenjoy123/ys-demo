@@ -32,12 +32,12 @@ public class PermissionAllocationDomain {
     public List<PermissionAllocationObject> getPermissionAllocationsByGroupId(String groupId) {
         return StringUtils.isEmpty(groupId) ? new ArrayList<>() : getPermissionAllocationsByPrincipal("group/" + groupId);
     }
-
-    public void allocatePermissionByAccount(String accountId, String restriction, String permission, String effect) {
-        String principal = "account/" + accountId;
-
-
-    }
+//
+//    public void allocatePermissionByAccount(String accountId, String restriction, String permission, String effect) {
+//        String principal = "account/" + accountId;
+//
+//
+//    }
 
 
     private PermissionAllocationObject getPermissionAllocationById(String id) {
