@@ -3,11 +3,13 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.BrandDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
+import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
 import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
+import com.yunsoo.common.data.object.AttachmentObject;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -20,6 +22,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -46,7 +49,10 @@ public class BrandApplicationController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Brand getById(@PathVariable(value = "id") String id) {
-        return new Brand(brandDomain.getBrandById(id));
+        BrandObject object = brandDomain.getBrandById(id);
+        if(object == null)
+            throw new NotFoundException("brand application not found by [id: " + id + "]");
+        return new Brand(object);
     }
 
     @RequestMapping(value = "{id}/approve", method = RequestMethod.PUT)
@@ -110,6 +116,7 @@ public class BrandApplicationController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "carrier_id", required = false) String carrierId,
             Pageable pageable,
+
             HttpServletResponse response) {
 
         Page<BrandObject> brandPage = brandDomain.getBrandList(name, carrierId, pageable);
@@ -119,4 +126,25 @@ public class BrandApplicationController {
         return brandPage.map(Brand::new).getContent();
 
     }
+
+    @RequestMapping(value = "attachment", method = RequestMethod.POST)
+    //@PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
+    public Attachment saveBrandAttachment(@RequestParam(value = "file") MultipartFile attachment) {
+        if(attachment == null)
+            throw new NotFoundException("no file uploaded!");
+        AttachmentObject attachmentObject = brandDomain.createAttachment(attachment);
+        return new Attachment(attachmentObject);
+
+
+    }
+
+    @RequestMapping(value = "attachment/{id}", method = RequestMethod.POST)
+    //@PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
+    public void updateBrandAttachment(@PathVariable(value = "id") String id,
+                                    @RequestParam(value = "file") MultipartFile attachment) {
+        if(attachment == null)
+            throw new NotFoundException("no file uploaded!");
+        brandDomain.updateAttachment(id, attachment);
+    }
+
 }

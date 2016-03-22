@@ -61,6 +61,17 @@ public class BrandApplicationEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
+    @Column(name = "attachment")
+    private String attachment;
+
+    public String getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(String attachment) {
+        this.attachment = attachment;
+    }
+
     public String getId() {
         return id;
     }

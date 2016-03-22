@@ -7,6 +7,9 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.BrandObject;
 import org.joda.time.DateTime;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * Created by yan on 3/9/2016.
@@ -43,6 +46,19 @@ public class Brand extends Organization {
 
     @JsonProperty("carrier_id")
     private String carrierId;
+
+    @JsonProperty("attachment")
+    private String attachment;
+
+    private List<Attachment> attachmentList;
+
+    public List<Attachment> getAttachmentList() {
+        return attachmentList;
+    }
+
+    public void setAttachmentList(List<Attachment> attachmentList) {
+        this.attachmentList = attachmentList;
+    }
 
     public String getContactName() {
         return contactName;
@@ -116,6 +132,14 @@ public class Brand extends Organization {
         this.carrierId = carrierId;
     }
 
+    public String getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(String attachment) {
+        this.attachment = attachment;
+    }
+
     public Brand() {
     }
 
@@ -137,7 +161,7 @@ public class Brand extends Organization {
             setContactName(object.getContactName());
             setContactMobile(object.getContactMobile());
             setEmail(object.getEmail());
-
+            setAttachment(object.getAttachment());
         }
     }
 
@@ -160,7 +184,7 @@ public class Brand extends Organization {
             object.setContactName(brand.getContactName());
             object.setContactMobile(brand.getContactMobile());
             object.setEmail(brand.getEmail());
-
+            object.setAttachment(brand.getAttachment());
             return object;
         }
 

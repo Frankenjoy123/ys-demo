@@ -43,6 +43,17 @@ public class BrandObject extends OrganizationObject {
     @JsonProperty("carrier_id")
     private String carrierId;
 
+    @JsonProperty("attachment")
+    private String attachment;
+
+    public String getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(String attachment) {
+        this.attachment = attachment;
+    }
+
     public String getContactName() {
         return contactName;
     }

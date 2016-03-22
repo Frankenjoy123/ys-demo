@@ -193,6 +193,7 @@ public class OrganizationController {
             brandObj.setContactName(brand.getContactName());
             brandObj.setContactMobile(brand.getContactMobile());
             brandObj.setEmail(brand.getEmail());
+            brandObj.setAttachment(brand.getAttachment());
         }
         return brandObj;
     }
@@ -220,6 +221,7 @@ public class OrganizationController {
             brandObj.setContactName(brand.getContactName());
             brandObj.setContactMobile(brand.getContactMobile());
             brandObj.setEmail(brand.getEmail());
+            brandObj.setAttachment(brand.getAttachment());
         }
         return brandObj;
     }
@@ -237,6 +239,7 @@ public class OrganizationController {
             entity.setContactMobile(brand.getContactMobile());
             entity.setComments(brand.getComments());
             entity.setEmail(brand.getEmail());
+            entity.setAttachment(brand.getAttachment());
             return entity;
         }
         return null;

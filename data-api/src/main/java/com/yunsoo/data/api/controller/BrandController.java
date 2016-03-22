@@ -1,12 +1,15 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.AttachmentObject;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
+import com.yunsoo.data.service.entity.AttachmentEntity;
 import com.yunsoo.data.service.entity.BrandApplicationEntity;
 import com.yunsoo.data.service.entity.OrganizationEntity;
+import com.yunsoo.data.service.repository.AttachmentRepository;
 import com.yunsoo.data.service.repository.BrandApplicationRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,9 @@ public class BrandController {
 
     @Autowired
     private BrandApplicationRepository repository;
+
+    @Autowired
+    private AttachmentRepository attachmentRepository;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public BrandObject getById(@PathVariable(value = "id") String id) {
@@ -71,6 +77,32 @@ public class BrandController {
 
     }
 
+    @RequestMapping(value = "/attachment", method = RequestMethod.POST)
+    public AttachmentObject createAttachment(@RequestBody AttachmentObject attachment) {
+        attachment.setId(null);
+        attachment.setCreatedDateTime(DateTime.now());
+        AttachmentEntity entity = toAttachmentEntity(attachment);
+        attachmentRepository.save(entity);
+        return toAttachmentObject(entity);
+    }
+
+    @RequestMapping(value = "/attachment", method = RequestMethod.PUT)
+    public AttachmentObject updateAttachment(@RequestBody AttachmentObject attachment) {
+        AttachmentEntity existEntity =  attachmentRepository.findOne(attachment.getId());
+        attachment.setModifiedDateTime(DateTime.now());
+        attachment.setCreatedDateTime(existEntity.getCreatedDateTime());
+        AttachmentEntity entity = toAttachmentEntity(attachment);
+        attachmentRepository.save(entity);
+        return toAttachmentObject(entity);
+    }
+
+    @RequestMapping(value = "/attachment", method = RequestMethod.GET)
+    public List<AttachmentObject> getAttachments(@RequestParam("ids") List<String> ids) {
+        List<AttachmentEntity> EntityList =  attachmentRepository.findByIdIn(ids);
+        return EntityList.stream().map(this::toAttachmentObject).collect(Collectors.toList());
+
+    }
+
 
     private BrandObject toBrandObject(BrandApplicationEntity brand){
         BrandObject brandObj = new BrandObject();
@@ -89,10 +121,10 @@ public class BrandController {
             brandObj.setContactMobile(brand.getContactMobile());
             brandObj.setEmail(brand.getEmail());
             brandObj.setStatusCode(brand.getStatusCode());
+                  brandObj.setAttachment(brand.getAttachment());
         }
         return brandObj;
     }
-
 
     private BrandApplicationEntity toBrandEntity(BrandObject brand){
         if(brand != null) {
@@ -111,8 +143,38 @@ public class BrandController {
             entity.setBrandName(brand.getName());
             entity.setCreatedDateTime(brand.getCreatedDateTime());
             entity.setStatusCode(brand.getStatusCode());
+            entity.setAttachment(brand.getAttachment());
             return entity;
         }
         return null;
     }
+
+    private AttachmentEntity toAttachmentEntity(AttachmentObject attachment){
+        if(attachment == null)
+            return null;
+
+        AttachmentEntity attachmentEntity = new AttachmentEntity();
+        attachmentEntity.setId(attachment.getId());
+        attachmentEntity.setOriginalFileName(attachment.getOriginalFileName());
+        attachmentEntity.setS3FileName(attachment.getS3FileName());
+        attachmentEntity.setCreatedDateTime(attachment.getCreatedDateTime());
+        attachmentEntity.setModifiedDateTime(attachment.getModifiedDateTime());
+        return attachmentEntity;
+
+    }
+
+    private AttachmentObject toAttachmentObject(AttachmentEntity attachment){
+        if(attachment == null)
+            return null;
+
+        AttachmentObject attachmentObj = new AttachmentObject();
+        attachmentObj.setId(attachment.getId());
+        attachmentObj.setOriginalFileName(attachment.getOriginalFileName());
+        attachmentObj.setS3FileName(attachment.getS3FileName());
+        attachmentObj.setCreatedDateTime(attachment.getCreatedDateTime());
+        attachmentObj.setModifiedDateTime(attachment.getModifiedDateTime());
+        return attachmentObj;
+
+    }
+
 }

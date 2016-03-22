@@ -49,6 +49,17 @@ public class BrandEntity {
     @JoinColumn(name = "org_id", insertable = false, updatable = false)
     private OrganizationEntity organization;
 
+    @Column(name = "attachment")
+    private String attachment;
+
+    public String getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(String attachment) {
+        this.attachment = attachment;
+    }
+
     public String getCarrierId() {
         return carrierId;
     }

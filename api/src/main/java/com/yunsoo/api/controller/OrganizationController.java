@@ -1,12 +1,16 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountDomain;
+import com.yunsoo.api.domain.BrandDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
+import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
+import com.yunsoo.api.dto.BrandAttachment;
 import com.yunsoo.api.dto.Organization;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
+import com.yunsoo.common.data.object.AttachmentObject;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
@@ -23,12 +27,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Zhe
@@ -48,6 +56,9 @@ public class OrganizationController {
 
     @Autowired
     private AccountDomain accountDomain;
+
+    @Autowired
+    private BrandDomain brandDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Organization getById(@PathVariable(value = "id") String orgId) {
@@ -134,7 +145,14 @@ public class OrganizationController {
         if (object == null) {
             throw new NotFoundException("Brand not found by [id: " + id + "]");
         }
-        return new Brand(object);
+
+        Brand returnObject = new Brand(object);
+
+        if(StringUtils.hasText(object.getAttachment())) {
+            List<AttachmentObject> attachmentObjectList = brandDomain.getAttachmentList(object.getAttachment());
+            returnObject.setAttachmentList(attachmentObjectList.stream().map(Attachment::new).collect(Collectors.toList()));
+        }
+        return returnObject;
     }
 
     @RequestMapping(value = "/{id}/brand", method = RequestMethod.GET)
@@ -168,13 +186,6 @@ public class OrganizationController {
         return builder.body(new InputStreamResource(resourceInputStream));
     }
 
-    @RequestMapping(value = "{id}/brand/attachment", method = RequestMethod.POST )
-    //@PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
-    public void saveBrandAttachment(@PathVariable(value = "id") String orgId,
-                                    @RequestBody Object attachment, MultipartHttpServletRequest request) {
-        log.info(request.getFileNames());
-        log.info(attachment);
-    }
 
     @RequestMapping(value = "{id}/logo", method = RequestMethod.PUT)
     @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
