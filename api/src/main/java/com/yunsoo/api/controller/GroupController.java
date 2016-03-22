@@ -5,7 +5,7 @@ import com.yunsoo.api.domain.GroupDomain;
 import com.yunsoo.api.domain.GroupPermissionDomain;
 import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.*;
-import com.yunsoo.api.object.TAccount;
+import com.yunsoo.api.security.AuthAccount;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.GroupObject;
@@ -70,7 +70,7 @@ public class GroupController {
     @ResponseStatus(HttpStatus.CREATED)
     public Group create(@RequestBody @Valid Group group) {
         GroupObject groupObject = group.toGroupObject();
-        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        AuthAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
 
         groupObject.setId(null);
         if (groupObject.getOrgId() == null) {
@@ -186,7 +186,7 @@ public class GroupController {
                                                  @RequestBody @Valid GroupPermission groupPermission) {
         findGroupById(groupId);
         GroupPermissionObject groupPermissionObject = groupPermission.toGroupPermissionObject();
-        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        AuthAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
         groupPermissionObject.setId(null);
         groupPermissionObject.setGroupId(groupId);
         groupPermissionObject.setOrgId(fixOrgId(groupPermissionObject.getOrgId()));
@@ -226,7 +226,7 @@ public class GroupController {
                                                              @RequestBody @Valid GroupPermissionPolicy groupPermissionPolicy) {
         findGroupById(groupId);
         GroupPermissionPolicyObject groupPermissionPolicyObject = groupPermissionPolicy.toGroupPermissionPolicyObject();
-        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        AuthAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
         groupPermissionPolicyObject.setId(null);
         groupPermissionPolicyObject.setGroupId(groupId);
         groupPermissionPolicyObject.setOrgId(fixOrgId(groupPermissionPolicyObject.getOrgId()));

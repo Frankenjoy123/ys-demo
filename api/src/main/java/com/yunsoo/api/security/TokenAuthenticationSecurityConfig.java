@@ -3,12 +3,8 @@ package com.yunsoo.api.security;
 import com.yunsoo.api.security.filter.TokenAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -19,16 +15,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * Created on  : 2015/3/4
  * Descriptions:
  */
-@EnableWebSecurity
 @Configuration
-@Order(1)
+@EnableWebSecurity
 public class TokenAuthenticationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${yunsoo.debug}")
     private Boolean debug;
-
-    @Autowired
-    private AccountDetailsService accountDetailsService;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -61,19 +53,4 @@ public class TokenAuthenticationSecurityConfig extends WebSecurityConfigurerAdap
                 .addFilterBefore(new TokenAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
     }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(accountDetailsService);
-    }
-
-    @Override
-    protected AccountDetailsService userDetailsService() {
-        return accountDetailsService;
-    }
 }

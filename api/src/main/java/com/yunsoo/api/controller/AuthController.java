@@ -8,7 +8,7 @@ import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.AccountLoginRequest;
 import com.yunsoo.api.dto.AccountLoginResponse;
 import com.yunsoo.api.dto.Token;
-import com.yunsoo.api.object.TAccount;
+import com.yunsoo.api.security.AuthAccount;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
@@ -148,13 +148,13 @@ public class AuthController {
             throw new UnauthorizedException("token is not valid");
         }
 
-        TAccount tAccount = tokenAuthenticationService.parseLoginToken(token);
-        if (tAccount == null || StringUtils.isEmpty(tAccount.getId())) {
+        AuthAccount authAccount = tokenAuthenticationService.parseLoginToken(token);
+        if (authAccount == null || StringUtils.isEmpty(authAccount.getId())) {
             log.warn(String.format("token is not valid [token: %s]", token));
             throw new UnauthorizedException("token is not valid");
         }
 
-        String accountId = tAccount.getId();
+        String accountId = authAccount.getId();
         AccountObject accountObject = accountDomain.getById(accountId);
         if (accountObject == null) {
             log.warn("account not found");
