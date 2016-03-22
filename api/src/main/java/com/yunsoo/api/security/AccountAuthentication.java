@@ -1,9 +1,9 @@
 package com.yunsoo.api.security;
 
-import com.yunsoo.api.object.TAccount;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -13,36 +13,36 @@ import java.util.Collection;
  */
 public class AccountAuthentication implements Authentication {
 
-    private final TAccount tAccount;
+    private final AuthAccount authAccount;
     private boolean authenticated = true;
 
-    public AccountAuthentication(TAccount tAccount) {
-        this.tAccount = tAccount;
+    public AccountAuthentication(AuthAccount authAccount) {
+        this.authAccount = authAccount;
     }
 
     @Override
     public String getName() {
-        return tAccount.getUsername();
+        return authAccount.getId();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return tAccount.getAuthorities();
+        return new ArrayList<>();
     }
 
     @Override
     public Object getCredentials() {
-        return tAccount.getPassword();
+        return null;
     }
 
     @Override
-    public TAccount getDetails() {
-        return tAccount;
+    public AuthAccount getDetails() {
+        return authAccount;
     }
 
     @Override
-    public TAccount getPrincipal() {
-        return tAccount;
+    public AuthAccount getPrincipal() {
+        return authAccount;
     }
 
     @Override
@@ -51,7 +51,11 @@ public class AccountAuthentication implements Authentication {
     }
 
     @Override
-    public void setAuthenticated(boolean authenticated) {
-        this.authenticated = authenticated;
+    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+        if (isAuthenticated) {
+            throw new IllegalArgumentException();
+        }
+        authenticated = false;
     }
+
 }

@@ -5,10 +5,12 @@ import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.PermissionInstance;
 import com.yunsoo.api.util.WildcardMatcher;
 import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.PermissionActionObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
+import com.yunsoo.common.data.object.PermissionRegionObject;
+import com.yunsoo.common.data.object.PermissionResourceObject;
 import com.yunsoo.common.web.client.RestClient;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -30,51 +32,61 @@ import java.util.stream.Collectors;
 @Component
 public class PermissionDomain {
 
-    private Log log = LogFactory.getLog(this.getClass());
-
-    public PermissionDomain(){
-        log.debug("init PermissionDomain");
-    }
-
     @Autowired
     private RestClient dataAPIClient;
 
     @Autowired
     private LookupDomain lookupDomain;
 
-    @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'list')")
+
+    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'resourceList')")
+    public List<PermissionResourceObject> getPermissionResources() {
+        return dataAPIClient.get("permission/resource", new ParameterizedTypeReference<List<PermissionResourceObject>>() {
+        });
+    }
+
+    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'actionList')")
+    public List<PermissionActionObject> getPermissionActions() {
+        return dataAPIClient.get("permission/action", new ParameterizedTypeReference<List<PermissionActionObject>>() {
+        });
+    }
+
+    //region region
+
+    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'region/' + #id)")
+    public PermissionRegionObject getPermissionRegionById(String id) {
+        if (id == null || id.length() == 0) return null;
+        try {
+            return dataAPIClient.get("permission/region/{id}", PermissionRegionObject.class, id);
+        } catch (NotFoundException ignored) {
+            return null;
+        }
+    }
+
+    //endregion
+
+    //region policy
+
+    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'policyList')")
     public List<PermissionPolicyObject> getPermissionPolicies() {
-        log.debug("cache missed [name: permission, key: 'policylist']");
         return dataAPIClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
         });
     }
 
-    @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'map')")
+    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'policyMap')")
     public Map<String, PermissionPolicyObject> getPermissionPolicyMap() {
-        log.debug("cache missed [name: permission, key: 'policymap']");
-        Map<String, PermissionPolicyObject> permissionPolicies = new HashMap<>();
-        //avoid Spring AOP proxy not work for internal invoke
-        List<PermissionPolicyObject> policyList =  dataAPIClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
-        });
-        policyList.forEach(o -> {
-            if (o == null) {
-                return;
-            }
-            if (o.getPermissions() == null) {
-                o.setPermissions(new ArrayList<>());
-            }
-            String pCode = o.getCode();
-            if (permissionPolicies.containsKey(pCode)) {
-                //todo:permissions
-                //permissionPolicies.get(pCode).getPermissions().addAll(o.getPermissions());
-            } else {
-                permissionPolicies.put(pCode, o);
+        Map<String, PermissionPolicyObject> policyMap = new HashMap<>();
+        List<PermissionPolicyObject> policyList = getPermissionPolicies();
+        policyList.forEach(p -> {
+            if (p != null) {
+                policyMap.put(p.getCode(), p);
             }
         });
 
-        return permissionPolicies;
+        return policyMap;
     }
 
+    //endregion
 
     public List<PermissionInstance> extendPermissions(List<PermissionInstance> permissions) {
         List<String> resources = lookupDomain.getLookupListByType(LookupCodes.LookupType.PermissionResource, true)

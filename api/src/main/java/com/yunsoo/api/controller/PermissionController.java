@@ -1,18 +1,19 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.client.DataAPIClient;
-import com.yunsoo.api.domain.LookupDomain;
 import com.yunsoo.api.domain.PermissionDomain;
-import com.yunsoo.api.dto.Lookup;
+import com.yunsoo.api.dto.PermissionAction;
 import com.yunsoo.api.dto.PermissionPolicy;
-import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.api.dto.PermissionResource;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -30,9 +31,20 @@ public class PermissionController {
     @Autowired
     private PermissionDomain permissionDomain;
 
-    @Autowired
-    private LookupDomain lookupDomain;
 
+    @RequestMapping(value = "/resource", method = RequestMethod.GET)
+    public List<PermissionResource> getResources() {
+        Map<String, PermissionAction> actionMap = new HashMap<>();
+        permissionDomain.getPermissionActions().forEach(a -> {
+            actionMap.put(a.getCode(), new PermissionAction(a));
+        });
+        return permissionDomain.getPermissionResources().stream().map(r -> new PermissionResource(r, actionMap)).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/action", method = RequestMethod.GET)
+    public List<PermissionAction> getActions() {
+        return permissionDomain.getPermissionActions().stream().map(PermissionAction::new).collect(Collectors.toList());
+    }
 
     @RequestMapping(value = "/policy", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(null, 'permissionpolicy:read')")
@@ -61,15 +73,5 @@ public class PermissionController {
                 .collect(Collectors.toList());
     }
 
-
-    @RequestMapping(value = "/resource", method = RequestMethod.GET)
-    public List<Lookup> getResources(@RequestParam(value = "all", required = false) Boolean all) {
-        return lookupDomain.getLookupListByType(LookupCodes.LookupType.PermissionResource, all != null && all ? null : true);
-    }
-
-    @RequestMapping(value = "/action", method = RequestMethod.GET)
-    public List<Lookup> getActions(@RequestParam(value = "all", required = false) Boolean all) {
-        return lookupDomain.getLookupListByType(LookupCodes.LookupType.PermissionAction, all != null && all ? null : true);
-    }
 
 }

@@ -1,7 +1,6 @@
 package com.yunsoo.api.security;
 
 import com.yunsoo.api.dto.Token;
-import com.yunsoo.api.object.TAccount;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,18 +54,18 @@ public class TokenAuthenticationService {
         if (token == null) {
             return null;
         }
-        TAccount tAccount = accessTokenHandler.parseToken(token);
-        if (tAccount == null) {
+        AuthAccount authAccount = accessTokenHandler.parseToken(token);
+        if (authAccount == null) {
             return null;
         }
-        return new AccountAuthentication(tAccount);
+        return new AccountAuthentication(authAccount);
     }
 
-    public TAccount parseAccessToken(String token) {
+    public AuthAccount parseAccessToken(String token) {
         return accessTokenHandler.parseToken(token);
     }
 
-    public TAccount parseLoginToken(String token) {
+    public AuthAccount parseLoginToken(String token) {
         return loginTokenHandler.parseToken(token);
     }
 

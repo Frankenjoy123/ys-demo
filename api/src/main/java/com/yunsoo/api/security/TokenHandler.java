@@ -1,6 +1,5 @@
 package com.yunsoo.api.security;
 
-import com.yunsoo.api.object.TAccount;
 import com.yunsoo.common.util.HashUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
@@ -30,7 +29,7 @@ public final class TokenHandler {
     }
 
 
-    public TAccount parseToken(String token) {
+    public AuthAccount parseToken(String token) {
         String src = decodeToken(token);
         if (src == null) {
             log.error(String.format("Token invalid [token: %s]", token));
@@ -52,7 +51,7 @@ public final class TokenHandler {
             return null;
         }
 
-        TAccount account = new TAccount();
+        AuthAccount account = new AuthAccount();
         account.setExpires(expires);
         account.setId(accountId);
         account.setOrgId(orgId);

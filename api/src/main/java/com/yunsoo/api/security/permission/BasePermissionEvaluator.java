@@ -3,7 +3,7 @@ package com.yunsoo.api.security.permission;
 import com.yunsoo.api.AppContext;
 import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.dto.*;
-import com.yunsoo.api.object.TAccount;
+import com.yunsoo.api.security.AuthAccount;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
 import com.yunsoo.common.data.object.LogisticsCheckPointObject;
@@ -34,7 +34,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         boolean hasPermission = false;
         if (authentication != null && permission instanceof String) {
-            TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            AuthAccount account = (AuthAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
             TPermission currentPermission = this.getPermission((String) permission);
             if (targetDomainObject instanceof Message) {
@@ -72,7 +72,7 @@ public class BasePermissionEvaluator implements PermissionEvaluator {
         boolean hasPermission = false;
         if (authentication != null && permission instanceof String) {
 
-            TAccount account = (TAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            AuthAccount account = (AuthAccount) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
             TPermission currentPermission = this.getPermission((String) permission);
             //check if user trying to take action on it's own orgId's resource
