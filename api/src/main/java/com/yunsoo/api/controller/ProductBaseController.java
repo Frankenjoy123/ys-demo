@@ -129,7 +129,7 @@ public class ProductBaseController {
 
         productBaseObject.setBarcode(productBase.getBarcode());
         productBaseObject.setVersion(1);
-        productBaseObject.setStatusCode(LookupCodes.ProductBaseStatus.CREATED);
+        productBaseObject.setStatusCode(LookupCodes.ProductBaseStatus.ACTIVATED);
         productBaseObject.setCategoryId(productBase.getCategoryId());
         productBaseObject.setChildProductCount(productBase.getChildProductCount());
         productBaseObject.setComments(productBase.getComments());
