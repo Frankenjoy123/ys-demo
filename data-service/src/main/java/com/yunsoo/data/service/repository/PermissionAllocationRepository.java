@@ -14,6 +14,8 @@ public interface PermissionAllocationRepository extends FindOneAndSaveRepository
 
     List<PermissionAllocationEntity> findByPrincipal(String principal);
 
+    List<PermissionAllocationEntity> findByPrincipalIn(List<String> principals);
+
     void delete(String id);
 
 }

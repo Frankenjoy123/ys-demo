@@ -16,17 +16,18 @@ public abstract class PermissionExpression extends ResourceExpression {
             return null;
         } else if (expression.startsWith(PolicyPermissionExpression.PREFIX)) {
             return new PolicyPermissionExpression(expression);
-        } else if (expression.contains(SimplePermissionExpression.SP)) {
+        } else if (!expression.contains(SP) && expression.contains(SimplePermissionExpression.OP)) {
             return new SimplePermissionExpression(expression);
         } else {
             return null;
         }
     }
 
+
     public static class PolicyPermissionExpression extends PermissionExpression {
 
         private static final String RESOURCE = "policy";
-        private static final String PREFIX = RESOURCE + "/";
+        private static final String PREFIX = RESOURCE + SP;
 
         public PolicyPermissionExpression(String expressionOrPolicyCode) {
             super(expressionOrPolicyCode);
@@ -40,8 +41,7 @@ public abstract class PermissionExpression extends ResourceExpression {
 
     public static class SimplePermissionExpression extends PermissionExpression {
 
-        private static final String RESOURCE = null;
-        private static final String SP = ":";
+        private static final String OP = ":";
 
         private String resourceCode;
 
@@ -49,15 +49,15 @@ public abstract class PermissionExpression extends ResourceExpression {
 
         public SimplePermissionExpression(String expression) {
             super(expression);
-            setResource(RESOURCE);
-            String[] tempArray = expression.split(SP, 2);
+            setResource(null);
+            String[] tempArray = expression.split(OP, 2);
             this.resourceCode = tempArray[0];
             this.actionCode = tempArray[1];
         }
 
         public SimplePermissionExpression(String resourceCode, String actionCode) {
-            super(String.format("%s%s%s", resourceCode, SP, actionCode));
-            setResource(RESOURCE);
+            super(String.format("%s%s%s", resourceCode, OP, actionCode));
+            setResource(null);
             this.resourceCode = resourceCode;
             this.actionCode = actionCode;
         }

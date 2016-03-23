@@ -27,4 +27,13 @@ public class ResourceExpressionTest {
             assert true;
         }
     }
+
+    @Test
+    public void test_constructor() {
+        PrincipalExpression pe1 = PrincipalExpression.newInstance("account/12345");
+        PrincipalExpression pe2 = new PrincipalExpression.AccountPrincipalExpression("12345");
+        assert pe1.equals(pe2);
+
+
+    }
 }

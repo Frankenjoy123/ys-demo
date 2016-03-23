@@ -22,10 +22,11 @@ public abstract class PrincipalExpression extends ResourceExpression {
         return null;
     }
 
+
     public static class AccountPrincipalExpression extends PrincipalExpression {
 
         private static final String RESOURCE = "account";
-        private static final String PREFIX = RESOURCE + "/";
+        private static final String PREFIX = RESOURCE + SP;
 
         public AccountPrincipalExpression(String expressionOrAccountId) {
             super(expressionOrAccountId);
@@ -41,7 +42,7 @@ public abstract class PrincipalExpression extends ResourceExpression {
     public static class GroupPrincipalExpression extends PrincipalExpression {
 
         private static final String RESOURCE = "group";
-        private static final String PREFIX = RESOURCE + "/";
+        private static final String PREFIX = RESOURCE + SP;
 
         public GroupPrincipalExpression(String expressionOrGroupId) {
             super(expressionOrGroupId);

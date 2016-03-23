@@ -22,10 +22,11 @@ public abstract class RestrictionExpression extends ResourceExpression {
         return null;
     }
 
+
     public static class OrgRestrictionExpression extends RestrictionExpression {
 
         private static final String RESOURCE = "org";
-        private static final String PREFIX = RESOURCE + "/";
+        private static final String PREFIX = RESOURCE + SP;
 
         public OrgRestrictionExpression(String expressionOrOrgId) {
             super(expressionOrOrgId);
@@ -41,7 +42,7 @@ public abstract class RestrictionExpression extends ResourceExpression {
     public static class RegionRestrictionExpression extends RestrictionExpression {
 
         private static final String RESOURCE = "region";
-        private static final String PREFIX = RESOURCE + "/";
+        private static final String PREFIX = RESOURCE + SP;
 
         public RegionRestrictionExpression(String expressionOrRegionId) {
             super(expressionOrRegionId);

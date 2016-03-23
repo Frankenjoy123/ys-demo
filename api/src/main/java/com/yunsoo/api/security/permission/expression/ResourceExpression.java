@@ -14,13 +14,11 @@ public abstract class ResourceExpression implements Comparable {
 
     private String expression;
 
+    protected static final String SP = "/";
+
 
     public String getResource() {
         return resource;
-    }
-
-    protected void setResource(String resource) {
-        this.resource = resource;
     }
 
     public String getValue() {
@@ -31,22 +29,28 @@ public abstract class ResourceExpression implements Comparable {
         return expression;
     }
 
-
-    public ResourceExpression(String expressionOrValue) {
-        if (expressionOrValue.contains("/")) {
-            String[] tempArray = expressionOrValue.split("/", 2);
+    protected ResourceExpression(String expressionOrValue) {
+        if (expressionOrValue.contains(SP)) {
+            String[] tempArray = expressionOrValue.split(SP, 2);
             this.resource = tempArray[0];
             this.value = tempArray[1];
         } else {
+            this.resource = null;
             this.value = expressionOrValue;
         }
         this.expression = expressionOrValue;
     }
 
-    public ResourceExpression(String resource, String value) {
+    protected void setResource(String resource) {
+        if (this.resource != null && this.resource.length() > 0 && !this.resource.equals(resource)) {
+            throw new IllegalArgumentException("resource not match");
+        }
+        if (resource == null) {
+            this.expression = value;
+        } else if (this.resource == null || this.resource.length() == 0) {
+            this.expression = String.format("%s%s%s", resource, SP, this.value);
+        }
         this.resource = resource;
-        this.value = value;
-        this.expression = String.format("%s/%s", resource, value);
     }
 
     @Override

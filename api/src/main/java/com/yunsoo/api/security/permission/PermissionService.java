@@ -1,5 +1,7 @@
 package com.yunsoo.api.security.permission;
 
+import com.yunsoo.api.domain.AccountGroupDomain;
+import com.yunsoo.api.domain.PermissionAllocationDomain;
 import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.security.permission.expression.PermissionExpression;
 import com.yunsoo.api.security.permission.expression.PermissionExpression.PolicyPermissionExpression;
@@ -7,6 +9,8 @@ import com.yunsoo.api.security.permission.expression.PermissionExpression.Simple
 import com.yunsoo.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression.RegionRestrictionExpression;
+import com.yunsoo.common.data.object.AccountGroupObject;
+import com.yunsoo.common.data.object.PermissionAllocationObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import com.yunsoo.common.data.object.PermissionRegionObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +33,23 @@ public class PermissionService {
     @Autowired
     private PermissionDomain permissionDomain;
 
+    @Autowired
+    private PermissionAllocationDomain permissionAllocationDomain;
+
+    @Autowired
+    private AccountGroupDomain accountGroupDomain;
+
+
+    public List<PermissionEntry> getPermissionEntryByAccountId(String accountId) {
+        List<PermissionEntry> permissionEntries = new ArrayList<>();
+        List<String> groupIds = accountGroupDomain.getAccountGroupByAccountId(accountId)
+                .stream().map(AccountGroupObject::getGroupId).collect(Collectors.toList());
+        List<PermissionAllocationObject> paObjects = permissionAllocationDomain.getPermissionAllocations(accountId, groupIds);
+        paObjects.forEach(pa -> {
+            if (pa != null) permissionEntries.add(new PermissionEntry(pa));
+        });
+        return permissionEntries.stream().sorted().collect(Collectors.toList());
+    }
 
     public List<RestrictionExpression> getRegionRestrictionsByRegionId(String id) {
         List<RestrictionExpression> restrictions = new ArrayList<>();
@@ -63,6 +84,7 @@ public class PermissionService {
         });
         return policyMap;
     }
+
 
     //region extends
 
