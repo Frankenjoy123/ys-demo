@@ -130,11 +130,13 @@ public class MarketingDomain {
         dataAPIClient.delete("marketing/drawRule/{id}", id);
     }
 
-    public Page<MktDrawPrizeObject> getMktDrawPrizeByFilter(String marketingId, String accountType, String statusCode, Pageable pageable) {
+    public Page<MktDrawPrizeObject> getMktDrawPrizeByFilter(String marketingId, String accountType, String statusCode, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("marketing_id", marketingId)
                 .append("account_type", accountType)
                 .append("status_code", statusCode)
+                .append("start_time", startTime)
+                .append("end_time", endTime)
                 .append(pageable)
                 .build();
 

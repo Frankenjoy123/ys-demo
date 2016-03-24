@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -232,14 +233,13 @@ public class MarketingController {
     public List<MktDrawPrize> getMktDrawPrizeByFilter(@RequestParam(value = "marketing_id") String marketingId,
                                                       @RequestParam(value = "account_type", required = false) String accountType,
                                                       @RequestParam(value = "status_code", required = false) String statusCode,
+                                                      @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                      @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
                                                       @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                                       Pageable pageable,
                                                       HttpServletResponse response) {
-        if (marketingId == null || marketingId.isEmpty()) {
-            throw new BadRequestException("marketing id is not valid");
-        }
 
-        Page<MktDrawPrizeObject> mktDrawPrizePage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, statusCode, pageable);
+        Page<MktDrawPrizeObject> mktDrawPrizePage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, statusCode, startTime, endTime, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", mktDrawPrizePage.toContentRange());
         }
