@@ -2,6 +2,7 @@ package com.yunsoo.api.security.permission;
 
 import com.yunsoo.api.security.permission.expression.PermissionExpression;
 import com.yunsoo.api.security.permission.expression.PrincipalExpression;
+import com.yunsoo.api.security.permission.expression.ResourceExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.common.data.object.PermissionAllocationObject;
 
@@ -85,13 +86,12 @@ public class PermissionEntry implements Comparable, Serializable {
 
         PermissionEntry that = (PermissionEntry) o;
 
-        if (!isValid() || !that.isValid()) return false;
-        if (id.equals(that.id)) return true;
+        //if (id != null && id.equals(that.id)) return true;
 
-        return principal.equals(that.principal)
-                && restriction.equals(that.restriction)
-                && permission.equals(that.permission)
-                && effect.equals(that.effect);
+        return ResourceExpression.equals(principal, that.principal)
+                && ResourceExpression.equals(restriction, that.restriction)
+                && ResourceExpression.equals(permission, that.permission)
+                && (effect == that.effect || effect != null && effect.equals(that.effect));
     }
 
     @Override
@@ -121,10 +121,52 @@ public class PermissionEntry implements Comparable, Serializable {
         return id != null && id.length() > 0 && principal != null && restriction != null && permission != null && effect != null;
     }
 
+    public static PermissionEntry parse(String str) {
+        if (str == null || str.length() < 58) { //[id: , principal: , restriction: , permission: , effect: ]
+            return null;
+        }
+
+        String raw = str.substring(1, str.length() - 1);
+        String[] items = raw.split("[,:] ");
+
+        if (items.length != 10) {
+            return null;
+        }
+
+        String id = items[1].equals("null") ? null : items[1];
+        String principal = items[3].equals("null") ? null : items[3];
+        String restriction = items[5].equals("null") ? null : items[5];
+        String permission = items[7].equals("null") ? null : items[7];
+        String effect = items[9].equals("null") ? null : items[9];
+
+        PermissionEntry permissionEntry = new PermissionEntry();
+        permissionEntry.setId(id);
+        permissionEntry.setPrincipal(PrincipalExpression.parse(principal));
+        permissionEntry.setRestriction(RestrictionExpression.parse(restriction));
+        permissionEntry.setPermission(PermissionExpression.parse(permission));
+        permissionEntry.setEffect(Effect.parse(effect));
+
+        return permissionEntry;
+    }
+
 
     public enum Effect {
         allow,
-        deny
+        deny;
+
+        public static Effect parse(String name) {
+            if (name == null) {
+                return null;
+            }
+            if (name.equals(allow.name())) {
+                return allow;
+            }
+            if (name.equals(deny.name())) {
+                return deny;
+            } else {
+                return null;
+            }
+        }
     }
 
 }

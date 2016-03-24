@@ -111,4 +111,8 @@ public abstract class ResourceExpression implements Comparable {
         }
     }
 
+    public static <T extends ResourceExpression> boolean equals(T e1, T e2) {
+        return e1 == e2 || e1 != null && e1.equals(e2);
+    }
+
 }

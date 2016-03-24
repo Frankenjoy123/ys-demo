@@ -26,6 +26,11 @@ public class ResourceExpressionTest {
         } catch (ClassCastException ignored) {
             assert true;
         }
+
+        assert ResourceExpression.equals(pe1, pe2);
+        assert ResourceExpression.equals(null, null);
+        assert !ResourceExpression.equals(null, pe2);
+        assert !ResourceExpression.equals(pe1, new PermissionExpression.CollectionPermissionExpression("account:read"));
     }
 
     @Test
