@@ -49,11 +49,13 @@ public abstract class ResourceExpression implements Comparable {
     }
 
     protected void setResource(String resource) {
-        if (this.resource != null && this.resource.length() > 0 && !this.resource.equals(resource)) {
+        if (this.resource != null && this.resource.length() > 0 && !this.resource.equals(resource) && !resource.equals(COLLECTION_RESOURCE)) {
             throw new IllegalArgumentException("resource not match");
         }
-        if (resource == null || COLLECTION_RESOURCE.equals(resource)) {
-            this.expression = value;
+        if (resource == null) {
+            this.expression = this.value;
+        } else if (COLLECTION_RESOURCE.equals(resource)) {
+            this.value = this.expression;
         } else if (this.resource == null || this.resource.length() == 0) {
             this.expression = String.format("%s%s%s", resource, DELIMITER, this.value);
         }
@@ -107,12 +109,6 @@ public abstract class ResourceExpression implements Comparable {
             }
             return sb.toString();
         }
-    }
-
-    public interface CollectionResourceExpression<T extends ResourceExpression> {
-
-        List<T> getExpressions();
-
     }
 
 }

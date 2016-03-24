@@ -29,6 +29,12 @@ public abstract class PermissionExpression extends ResourceExpression {
         }
     }
 
+    public static <E extends PermissionExpression> PermissionExpression collect(List<E> expressions) {
+        return expressions == null || expressions.size() == 0 ? null
+                : expressions.size() == 1 ? expressions.get(0)
+                : new CollectionPermissionExpression(expressions);
+    }
+
 
     public static class PolicyPermissionExpression extends PermissionExpression {
 
@@ -87,6 +93,7 @@ public abstract class PermissionExpression extends ResourceExpression {
 
         public CollectionPermissionExpression(String expression) {
             super(expression);
+            setResource(COLLECTION_RESOURCE);
             this.expressions = new ArrayList<>();
             for (String e : expression.split(COLLECTION_DELIMITER)) {
                 PermissionExpression exp = parse(e);
@@ -96,6 +103,7 @@ public abstract class PermissionExpression extends ResourceExpression {
 
         public <E extends PermissionExpression> CollectionPermissionExpression(List<E> expressions) {
             super(ResourceExpression.toString(expressions));
+            setResource(COLLECTION_RESOURCE);
             if (expressions != null) {
                 this.expressions = expressions.stream().collect(Collectors.toList());
             } else {

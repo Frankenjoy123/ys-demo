@@ -4,6 +4,7 @@ import com.yunsoo.api.domain.AccountGroupDomain;
 import com.yunsoo.api.domain.PermissionAllocationDomain;
 import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.security.permission.expression.PermissionExpression;
+import com.yunsoo.api.security.permission.expression.PermissionExpression.CollectionPermissionExpression;
 import com.yunsoo.api.security.permission.expression.PermissionExpression.PolicyPermissionExpression;
 import com.yunsoo.api.security.permission.expression.PermissionExpression.SimplePermissionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression;
@@ -40,6 +41,14 @@ public class PermissionService {
     @Autowired
     private AccountGroupDomain accountGroupDomain;
 
+    public List<PermissionEntry> getExpendedPermissionEntriesByAccountId(String accountId) {
+        List<PermissionEntry> permissionEntries = getPermissionEntriesByAccountId(accountId);
+        Map<String, List<PermissionExpression>> policyPermissionMap = getPolicyPermissionMap();
+        permissionEntries.forEach(p -> {
+            expendPermissionEntry(p, policyPermissionMap);
+        });
+        return permissionEntries.stream().filter(PermissionEntry::isValid).sorted().collect(Collectors.toList());
+    }
 
     public List<PermissionEntry> getPermissionEntriesByAccountId(String accountId) {
         List<PermissionEntry> permissionEntries = new ArrayList<>();
@@ -49,13 +58,17 @@ public class PermissionService {
         paObjects.forEach(pa -> {
             if (pa != null) permissionEntries.add(new PermissionEntry(pa));
         });
-        return permissionEntries.stream().sorted().collect(Collectors.toList());
+        return permissionEntries.stream().filter(PermissionEntry::isValid).sorted().collect(Collectors.toList());
     }
 
-    private PermissionEntry extendPermissionEntry(PermissionEntry permissionEntry) {
+    private void expendPermissionEntry(PermissionEntry permissionEntry, Map<String, List<PermissionExpression>> policyPermissionMap) {
+        List<OrgRestrictionExpression> restrictions = expendRestrictionExpression(permissionEntry.getRestriction());
+        RestrictionExpression restriction = RestrictionExpression.collect(restrictions);
+        permissionEntry.setRestriction(restriction);
 
-
-        return permissionEntry;
+        List<SimplePermissionExpression> permissions = expendPermissionExpression(permissionEntry.getPermission(), policyPermissionMap);
+        PermissionExpression permission = PermissionExpression.collect(permissions);
+        permissionEntry.setPermission(permission);
     }
 
     private List<RestrictionExpression> getRegionRestrictionsByRegionId(String id) {
@@ -95,53 +108,63 @@ public class PermissionService {
 
     //region expends
 
-    private List<OrgRestrictionExpression> expendRegionRestrictionExpression(RegionRestrictionExpression restriction) {
-        return expendRegionRestrictionExpression(restriction, 5);
+    private List<OrgRestrictionExpression> expendRestrictionExpression(RestrictionExpression restriction) {
+        return expendRestrictionExpression(restriction, 5);
     }
 
-    private List<OrgRestrictionExpression> expendRegionRestrictionExpression(RegionRestrictionExpression restriction, int ttl) {
+    private List<OrgRestrictionExpression> expendRestrictionExpression(RestrictionExpression restriction, int ttl) {
         if (ttl <= 0) {
             return new ArrayList<>();
         }
         List<OrgRestrictionExpression> orgRestrictions = new ArrayList<>();
-        List<RestrictionExpression> restrictions = getRegionRestrictionsByRegionId(restriction.getValue());
-        if (restrictions != null) {
-            restrictions.forEach(r -> {
-                if (r instanceof OrgRestrictionExpression) {
-                    orgRestrictions.add((OrgRestrictionExpression) r);
-                } else if (r instanceof RegionRestrictionExpression) {
-                    if (!restriction.equals(r)) {
-                        orgRestrictions.addAll(expendRegionRestrictionExpression((RegionRestrictionExpression) r, ttl - 1));
+        if (restriction instanceof OrgRestrictionExpression) {
+            orgRestrictions.add((OrgRestrictionExpression) restriction);
+        } else {
+            List<RestrictionExpression> inlineRestrictions = null;
+            if (restriction instanceof RegionRestrictionExpression) {
+                inlineRestrictions = getRegionRestrictionsByRegionId(restriction.getValue());
+            } else if (restriction instanceof CollectionRestrictionExpression) {
+                inlineRestrictions = ((CollectionRestrictionExpression) restriction).getExpressions();
+            }
+            if (inlineRestrictions != null) {
+                inlineRestrictions.forEach(r -> {
+                    if (r != null && !r.equals(restriction)) {
+                        orgRestrictions.addAll(expendRestrictionExpression(r, ttl - 1));
                     }
-                } else if (r instanceof CollectionRestrictionExpression) {
-                    List<RestrictionExpression> rs = ((CollectionRestrictionExpression) r).getExpressions();
-
-                }
-            });
+                });
+            }
         }
-        return orgRestrictions.stream().distinct().sorted().collect(Collectors.toList());
+        return orgRestrictions.size() <= 1 ? orgRestrictions : orgRestrictions.stream().distinct().sorted().collect(Collectors.toList());
     }
 
-    private List<SimplePermissionExpression> expendPolicyPermissionExpression(PolicyPermissionExpression permission, Map<String, List<PermissionExpression>> policyPermissionMap) {
-        return expendPolicyPermissionExpression(permission, policyPermissionMap, 5);
+
+    private List<SimplePermissionExpression> expendPermissionExpression(PermissionExpression permission, Map<String, List<PermissionExpression>> policyPermissionMap) {
+        return expendPermissionExpression(permission, policyPermissionMap, 5);
     }
 
-    private List<SimplePermissionExpression> expendPolicyPermissionExpression(PolicyPermissionExpression permission, Map<String, List<PermissionExpression>> policyPermissionMap, int ttl) {
+    private List<SimplePermissionExpression> expendPermissionExpression(PermissionExpression permission, Map<String, List<PermissionExpression>> policyPermissionMap, int ttl) {
         if (ttl <= 0) {
             return new ArrayList<>();
         }
         List<SimplePermissionExpression> simplePermissions = new ArrayList<>();
-        List<PermissionExpression> inlinePermissions = policyPermissionMap.get(permission.getValue());
-        if (inlinePermissions != null) {
-            inlinePermissions.forEach(p -> {
-                if (p instanceof SimplePermissionExpression) {
-                    simplePermissions.add((SimplePermissionExpression) p);
-                } else if (!permission.equals(p)) {
-                    simplePermissions.addAll(expendPolicyPermissionExpression((PolicyPermissionExpression) p, policyPermissionMap, ttl - 1));
-                }
-            });
+        if (permission instanceof SimplePermissionExpression) {
+            simplePermissions.add((SimplePermissionExpression) permission);
+        } else {
+            List<PermissionExpression> inlinePermissions = null;
+            if (permission instanceof PolicyPermissionExpression) {
+                inlinePermissions = policyPermissionMap.get(permission.getValue());
+            } else if (permission instanceof CollectionPermissionExpression) {
+                inlinePermissions = ((CollectionPermissionExpression) permission).getExpressions();
+            }
+            if (inlinePermissions != null) {
+                inlinePermissions.forEach(p -> {
+                    if (p != null && !p.equals(permission)) {
+                        simplePermissions.addAll(expendPermissionExpression(p, policyPermissionMap, ttl - 1));
+                    }
+                });
+            }
         }
-        return simplePermissions.stream().distinct().sorted().collect(Collectors.toList());
+        return simplePermissions.size() <= 1 ? simplePermissions : simplePermissions.stream().distinct().sorted().collect(Collectors.toList());
     }
 
     //endregion
