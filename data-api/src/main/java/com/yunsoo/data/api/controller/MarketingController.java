@@ -19,10 +19,13 @@ import com.yunsoo.data.service.repository.MktDrawRuleRepository;
 import com.yunsoo.data.service.service.ProductService;
 import com.yunsoo.data.service.service.contract.Product;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -144,10 +147,25 @@ public class MarketingController {
             @RequestParam(value = "marketing_id") String marketingId,
             @RequestParam(value = "account_type", required = false) String accountType,
             @RequestParam(value = "status_code", required = false) String statusCode,
+            @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+            @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
             Pageable pageable,
             HttpServletResponse response) {
 
-        Page<MktDrawPrizeEntity> entityPage = mktDrawPrizeRepository.query(marketingId, accountType, statusCode, pageable);
+        if (StringUtils.isEmpty(accountType))
+            accountType = null;
+        if (StringUtils.isEmpty(statusCode))
+            statusCode = null;
+
+        DateTime startDateTime = null;
+        DateTime endDateTime = null;
+
+        if (!StringUtils.isEmpty(startTime.toString()))
+            startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        if (!StringUtils.isEmpty(endTime.toString()))
+            endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        Page<MktDrawPrizeEntity> entityPage = mktDrawPrizeRepository.query(marketingId, accountType, statusCode, startDateTime, endDateTime, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
