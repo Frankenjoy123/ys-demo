@@ -7,6 +7,7 @@ import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AccountPermissionObject;
@@ -98,18 +99,27 @@ public class AccountController {
         return new Account(accountDomain.createAccount(accountObject));
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public void updateStatus(@PathVariable("id") String accountId, @RequestBody String statusCode) {
+    @RequestMapping(value = "{id}/disable", method = RequestMethod.PATCH)
+    public void disableAccount(@PathVariable("id") String accountId) {
         accountId = fixAccountId(accountId); //auto fix current
         findAccountById(accountId);
-        //todo
+        accountDomain.updateStatus(accountId, LookupCodes.AccountStatus.DISABLED);
+
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public void patchUpdate(@PathVariable("id") String accountId, @RequestBody AccountRequest accountRequest) {
+    @RequestMapping(value = "{id}/enable", method = RequestMethod.PATCH)
+    public void enableAccount(@PathVariable("id") String accountId) {
         accountId = fixAccountId(accountId); //auto fix current
         findAccountById(accountId);
-        //todo
+        accountDomain.updateStatus(accountId, LookupCodes.AccountStatus.AVAILABLE);
+
+    }
+
+    @RequestMapping(value = "{id}/resetpassword", method = RequestMethod.PATCH)
+    public void changePassword(@PathVariable("id") String accountId, @RequestBody String newPassword) {
+        accountId = fixAccountId(accountId); //auto fix current
+        findAccountById(accountId);
+        accountDomain.updatePassword(accountId, newPassword);
     }
 
     @RequestMapping(value = "current/password", method = RequestMethod.POST)

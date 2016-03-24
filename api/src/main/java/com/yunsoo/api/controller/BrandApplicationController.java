@@ -12,12 +12,16 @@ import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AttachmentObject;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
@@ -25,6 +29,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -145,6 +151,28 @@ public class BrandApplicationController {
         if(attachment == null)
             throw new NotFoundException("no file uploaded!");
         brandDomain.updateAttachment(id, attachment);
+    }
+
+    @RequestMapping(value = "attachment/{id}", method = RequestMethod.GET)
+    //@PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
+    public ResponseEntity<?> getBrandAttachment(@PathVariable(value = "id") String id) throws UnsupportedEncodingException {
+        List<AttachmentObject> attachmentObjectList = brandDomain.getAttachmentList(id);
+        if(attachmentObjectList.size()<=0)
+            throw new NotFoundException("no attachment exited!");
+
+        AttachmentObject currentObj = attachmentObjectList.get(0);
+
+        ResourceInputStream resourceInputStream = brandDomain.getAttachment(currentObj.getS3FileName());
+        if (resourceInputStream == null) {
+            throw new NotFoundException("logo not found");
+        }
+        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
+        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
+        if (resourceInputStream.getContentLength() > 0) {
+            builder.contentLength(resourceInputStream.getContentLength());
+        }
+        builder.header("Content-Disposition","filename=" + URLEncoder.encode(currentObj.getOriginalFileName(), "UTF-8") );
+        return builder.body(new InputStreamResource(resourceInputStream));
     }
 
 }

@@ -101,6 +101,16 @@ public class AccountDomain {
         }
     }
 
+    @CacheEvict(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
+    public void updateStatus(String accountId, String statusCode){
+        if (!StringUtils.isEmpty(accountId)) {
+            AccountObject accountObject = new AccountObject();
+            accountObject.setStatusCode(statusCode);
+            dataAPIClient.patch("account/{id}", accountObject, accountId);
+        }
+    }
+
+
     public boolean isActiveAccount(AccountObject accountObject) {
         String statusCode = accountObject.getStatusCode();
         return LookupCodes.AccountStatus.AVAILABLE.equals(statusCode);
