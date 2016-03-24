@@ -5,14 +5,16 @@ import com.yunsoo.api.security.permission.expression.PrincipalExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.common.data.object.PermissionAllocationObject;
 
+import java.io.Serializable;
+
 /**
  * Created by:   Lijian
  * Created on:   2016-03-22
- * Descriptions:
+ * Descriptions: corresponding to the permission_allocation by one to one
  */
-public class PermissionEntry implements Comparable {
+public class PermissionEntry implements Comparable, Serializable {
 
-    private String id; //permission_allocation.id
+    private String id; //the same as permission_allocation.id
 
     private PrincipalExpression principal;
 
@@ -69,9 +71,9 @@ public class PermissionEntry implements Comparable {
 
     public PermissionEntry(PermissionAllocationObject paObject) {
         this.id = paObject.getId();
-        this.principal = PrincipalExpression.newInstance(paObject.getPrincipal());
-        this.restriction = RestrictionExpression.newInstance(paObject.getRestriction());
-        this.permission = PermissionExpression.newInstance(paObject.getPermission());
+        this.principal = PrincipalExpression.parse(paObject.getPrincipal());
+        this.restriction = RestrictionExpression.parse(paObject.getRestriction());
+        this.permission = PermissionExpression.parse(paObject.getPermission());
         this.effect = Effect.valueOf(paObject.getEffect().name());
     }
 
@@ -83,7 +85,13 @@ public class PermissionEntry implements Comparable {
 
         PermissionEntry that = (PermissionEntry) o;
 
-        return id != null ? id.equals(that.id) : that.id == null;
+        if (!isValid() || !that.isValid()) return false;
+        if (id.equals(that.id)) return true;
+
+        return principal.equals(that.principal)
+                && restriction.equals(that.restriction)
+                && permission.equals(that.permission)
+                && effect.equals(that.effect);
     }
 
     @Override
@@ -109,9 +117,14 @@ public class PermissionEntry implements Comparable {
                 id, principal, restriction, permission, effect);
     }
 
+    public boolean isValid() {
+        return id != null && id.length() > 0 && principal != null && restriction != null && permission != null && effect != null;
+    }
 
-    public static enum Effect {
+
+    public enum Effect {
         allow,
         deny
     }
+
 }

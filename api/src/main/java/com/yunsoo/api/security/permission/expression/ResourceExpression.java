@@ -1,10 +1,12 @@
 package com.yunsoo.api.security.permission.expression;
 
 
+import java.util.List;
+
 /**
  * Created by:   Lijian
  * Created on:   2016-03-22
- * Descriptions:
+ * Descriptions: key characters: [/,]
  */
 public abstract class ResourceExpression implements Comparable {
 
@@ -14,7 +16,9 @@ public abstract class ResourceExpression implements Comparable {
 
     private String expression;
 
-    protected static final String SP = "/";
+    protected static final String DELIMITER = "/";
+    protected static final String COLLECTION_DELIMITER = ",";
+    protected static final String COLLECTION_RESOURCE = "collection";
 
 
     public String getResource() {
@@ -30,8 +34,11 @@ public abstract class ResourceExpression implements Comparable {
     }
 
     protected ResourceExpression(String expressionOrValue) {
-        if (expressionOrValue.contains(SP)) {
-            String[] tempArray = expressionOrValue.split(SP, 2);
+        if (expressionOrValue.contains(COLLECTION_DELIMITER)) {
+            this.resource = COLLECTION_RESOURCE;
+            this.value = expressionOrValue;
+        } else if (expressionOrValue.contains(DELIMITER)) {
+            String[] tempArray = expressionOrValue.split(DELIMITER, 2);
             this.resource = tempArray[0];
             this.value = tempArray[1];
         } else {
@@ -45,10 +52,10 @@ public abstract class ResourceExpression implements Comparable {
         if (this.resource != null && this.resource.length() > 0 && !this.resource.equals(resource)) {
             throw new IllegalArgumentException("resource not match");
         }
-        if (resource == null) {
+        if (resource == null || COLLECTION_RESOURCE.equals(resource)) {
             this.expression = value;
         } else if (this.resource == null || this.resource.length() == 0) {
-            this.expression = String.format("%s%s%s", resource, SP, this.value);
+            this.expression = String.format("%s%s%s", resource, DELIMITER, this.value);
         }
         this.resource = resource;
     }
@@ -86,6 +93,26 @@ public abstract class ResourceExpression implements Comparable {
         if (that.getExpression() == null) return -1;
 
         return expression.compareTo(that.expression);
+    }
+
+    public static <T extends ResourceExpression> String toString(List<T> resourceExpressions) {
+        if (resourceExpressions == null) {
+            return "";
+        } else if (resourceExpressions.size() == 0) {
+            return "";
+        } else {
+            StringBuilder sb = new StringBuilder(resourceExpressions.get(0).toString());
+            for (int i = 1; i < resourceExpressions.size(); i++) {
+                sb.append(",").append(resourceExpressions.get(i).toString());
+            }
+            return sb.toString();
+        }
+    }
+
+    public interface CollectionResourceExpression<T extends ResourceExpression> {
+
+        List<T> getExpressions();
+
     }
 
 }

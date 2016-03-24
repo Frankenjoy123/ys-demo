@@ -3,7 +3,7 @@ package com.yunsoo.api.security.permission.expression;
 /**
  * Created by:   Lijian
  * Created on:   2016-03-22
- * Descriptions:
+ * Descriptions: key characters: [/,]
  */
 public abstract class PrincipalExpression extends ResourceExpression {
 
@@ -11,7 +11,7 @@ public abstract class PrincipalExpression extends ResourceExpression {
         super(expressionOrValue);
     }
 
-    public static PrincipalExpression newInstance(String expression) {
+    public static PrincipalExpression parse(String expression) {
         if (expression == null) {
             return null;
         } else if (expression.startsWith(AccountPrincipalExpression.PREFIX)) {
@@ -26,7 +26,7 @@ public abstract class PrincipalExpression extends ResourceExpression {
     public static class AccountPrincipalExpression extends PrincipalExpression {
 
         private static final String RESOURCE = "account";
-        private static final String PREFIX = RESOURCE + SP;
+        private static final String PREFIX = RESOURCE + DELIMITER;
 
         public AccountPrincipalExpression(String expressionOrAccountId) {
             super(expressionOrAccountId);
@@ -42,7 +42,7 @@ public abstract class PrincipalExpression extends ResourceExpression {
     public static class GroupPrincipalExpression extends PrincipalExpression {
 
         private static final String RESOURCE = "group";
-        private static final String PREFIX = RESOURCE + SP;
+        private static final String PREFIX = RESOURCE + DELIMITER;
 
         public GroupPrincipalExpression(String expressionOrGroupId) {
             super(expressionOrGroupId);

@@ -26,7 +26,7 @@ public class PermissionServiceTest {
     @Test
     public void test_getPermissionEntryByAccountId() {
         String accountId = "2kadmvn8uh248k5k7wa";
-        List<PermissionEntry> permissions = permissionService.getPermissionEntryByAccountId(accountId);
+        List<PermissionEntry> permissions = permissionService.getPermissionEntriesByAccountId(accountId);
         permissions.forEach(System.out::println);
 
     }
