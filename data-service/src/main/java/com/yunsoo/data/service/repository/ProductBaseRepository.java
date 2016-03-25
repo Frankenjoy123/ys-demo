@@ -16,4 +16,5 @@ public interface ProductBaseRepository extends FindOneAndSaveRepository<ProductB
 
     Page<ProductBaseEntity> findByDeletedFalse(Pageable pageable);
 
+    Long countByOrgIdAndDeletedFalse(String orgId);
 }
