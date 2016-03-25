@@ -258,6 +258,10 @@ public class MarketingController {
             if (userScanRecordObject != null) {
                 mktDrawPrize.setScanRecord(new ScanRecord(userScanRecordObject));
             }
+            MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktDrawRuleById(object.getDrawRuleId());
+            if (mktDrawRuleObject != null) {
+                mktDrawPrize.setMktDrawRule(new MktDrawRule(mktDrawRuleObject));
+            }
             mktDrawPrizeList.add(mktDrawPrize);
         });
 

@@ -1,12 +1,14 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.PermissionAllocationObject;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.PermissionAllocationEntity;
 import com.yunsoo.data.service.repository.PermissionAllocationRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,8 +37,17 @@ public class PermissionAllocationController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<PermissionAllocationObject> getPermissionAllocations(@RequestParam(value = "principal", required = true) String principal) {
-        List<PermissionAllocationEntity> entities = permissionAllocationRepository.findByPrincipal(principal);
+    public List<PermissionAllocationObject> getPermissionAllocations(
+            @RequestParam(value = "principal", required = false) String principal,
+            @RequestParam(value = "principal_in", required = false) List<String> principalIn) {
+        List<PermissionAllocationEntity> entities;
+        if (!StringUtils.isEmpty(principal)) {
+            entities = permissionAllocationRepository.findByPrincipal(principal);
+        } else if (principalIn != null && principalIn.size() > 0) {
+            entities = permissionAllocationRepository.findByPrincipalIn(principalIn);
+        } else {
+            throw new BadRequestException("principal is required");
+        }
         return entities.stream().map(this::toPermissionAllocationObject).collect(Collectors.toList());
     }
 

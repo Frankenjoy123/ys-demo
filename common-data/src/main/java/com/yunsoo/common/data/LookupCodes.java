@@ -60,6 +60,7 @@ public class LookupCodes {
 
         public static final String CREATED = "created";
         public static final String AVAILABLE = "available";
+        public static final String DISABLED = "disabled";
     }
 
     public static class MessageStatus {

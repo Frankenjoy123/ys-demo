@@ -90,6 +90,16 @@ public class BrandDomain {
         }
     }
 
+
+    public ResourceInputStream getAttachment(String fileName) {
+        try {
+            return dataAPIClient.getResourceInputStream("file/s3?path={fileName}", fileName);
+        } catch (NotFoundException ex) {
+            return null;
+        }
+
+    }
+
     public void updateAttachment(String attachmentId, MultipartFile file) {
         String fileName = file.getOriginalFilename();
         String s3FileName = "attachment/" + RandomUtils.generateStringWithDate();

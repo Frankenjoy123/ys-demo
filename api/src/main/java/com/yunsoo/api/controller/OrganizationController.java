@@ -3,10 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.BrandDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
-import com.yunsoo.api.dto.Attachment;
-import com.yunsoo.api.dto.Brand;
-import com.yunsoo.api.dto.BrandAttachment;
-import com.yunsoo.api.dto.Organization;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
@@ -16,6 +13,7 @@ import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +32,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -191,6 +190,22 @@ public class OrganizationController {
     @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
     public void saveOrgLogo(@PathVariable(value = "id") String orgId,
                             @RequestBody byte[] imageDataBytes) {
+        if (imageDataBytes != null && imageDataBytes.length > 0) {
+            orgId = fixOrgId(orgId);
+            organizationDomain.saveOrgLogo(orgId, imageDataBytes);
+        }
+    }
+
+    @RequestMapping(value = "{id}/brand_logo", method = RequestMethod.PUT)
+    @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
+    public void saveBrandLogo(@PathVariable(value = "id") String orgId,
+                              @RequestBody @Valid ImageRequest imageRequest) {
+
+        String imageData = imageRequest.getData(); //data:image/png;base64,
+        int splitIndex = imageData.indexOf(",");
+        String imageDataBase64 = imageData.substring(splitIndex + 1);
+        byte[] imageDataBytes = Base64.decodeBase64(imageDataBase64);
+
         if (imageDataBytes != null && imageDataBytes.length > 0) {
             orgId = fixOrgId(orgId);
             organizationDomain.saveOrgLogo(orgId, imageDataBytes);
