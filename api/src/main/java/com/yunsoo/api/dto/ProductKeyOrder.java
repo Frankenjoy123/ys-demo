@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.ProductKeyTransactionObject;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.Min;
+import java.util.List;
 
 /**
  * Created by  : Lijian
@@ -50,6 +52,12 @@ public class ProductKeyOrder {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime expireDateTime;
+
+    @JsonProperty("product_base")
+    private ProductBase productBase;
+
+    @JsonProperty("transaction_list")
+    private List<ProductKeyTransactionObject> transactionList;
 
 
     public String getId() {
@@ -130,5 +138,21 @@ public class ProductKeyOrder {
 
     public void setExpireDateTime(DateTime expireDateTime) {
         this.expireDateTime = expireDateTime;
+    }
+
+    public List<ProductKeyTransactionObject> getTransactionList() {
+        return transactionList;
+    }
+
+    public void setTransactionList(List<ProductKeyTransactionObject> transactionList) {
+        this.transactionList = transactionList;
+    }
+
+    public ProductBase getProductBase() {
+        return productBase;
+    }
+
+    public void setProductBase(ProductBase productBase) {
+        this.productBase = productBase;
     }
 }

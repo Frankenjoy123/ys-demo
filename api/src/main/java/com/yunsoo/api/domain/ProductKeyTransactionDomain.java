@@ -29,7 +29,7 @@ public class ProductKeyTransactionDomain {
     private ProductKeyOrderDomain productKeyOrderDomain;
 
     public List<ProductKeyTransactionObject> getCreatedTransactionByOrderId(String orderId) {
-        String statusCode = LookupCodes.ProductKeyTransactionStatus.CREATED;
+        String statusCode = LookupCodes.ProductKeyTransactionStatus.COMMITTED;
         return dataAPIClient.get("productkeytransaction?order_id={0}&status_code={1}", new ParameterizedTypeReference<List<ProductKeyTransactionObject>>() {
         }, orderId, statusCode);
     }
