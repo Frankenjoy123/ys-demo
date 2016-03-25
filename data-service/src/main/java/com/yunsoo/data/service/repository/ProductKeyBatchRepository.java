@@ -37,6 +37,15 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
                      @Param("productBaseId") String productBaseId,
                      @Param("statusCodeIn") List<String> statusCodeIn);
 
+    @Query("select sum(o.quantity) from #{#entityName} o where " +
+            "(:orgId is null or o.orgId = :orgId) " +
+            "and (:productBaseId is null or o.productBaseId = :productBaseId) " +
+            "and o.createdDateTime >=:startTime and o.createdDateTime <= :endTime")
+    Long sumQuantityTime(@Param("orgId") String orgId,
+                     @Param("productBaseId") String productBaseId,
+                     @Param("startTime") DateTime startTime,
+                     @Param("endTime") DateTime endTime);
+
     Integer countByRestQuantityLessThanAndStatusCodeIn(Integer quantity,  List<String> statusCodeIn);
 
     Page<ProductKeyBatchEntity> findByOrgIdAndProductKeyTypeCodesAndStatusCodeIn(String orgId, String typeCode, List<String> statusCodeIn, Pageable pageable);

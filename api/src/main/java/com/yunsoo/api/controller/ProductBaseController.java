@@ -110,6 +110,15 @@ public class ProductBaseController {
         return productBases;
     }
 
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'productbase:read')")
+    public Long getCount(@RequestParam(value = "org_id", required = false) String orgId) {
+
+        orgId = fixOrgId(orgId);
+        Long count = productBaseDomain.getProductBaseCountByOrgId(orgId);
+
+        return count;
+    }
 
     //create product base
     @RequestMapping(value = "", method = RequestMethod.POST)

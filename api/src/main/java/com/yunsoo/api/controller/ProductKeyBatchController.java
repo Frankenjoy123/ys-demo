@@ -116,6 +116,23 @@ public class ProductKeyBatchController {
         return productKeyDomain.sumQuantity(orgId, productBaseId);
     }
 
+    @RequestMapping(value = "sum/time", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'productkeybatch:read')")
+    public Long sumQuantityTime(
+            @RequestParam(value = "org_id", required = false) String orgId,
+            @RequestParam(value = "product_base_id", required = false) String productBaseId) {
+        if (StringUtils.isEmpty(orgId)) {
+            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
+
+        DateTime now = DateTime.now();
+        DateTime nextMonth = now.plusMonths(1);
+        DateTime firstDayOfThisMonth = new DateTime(now.getYear(), now.getMonthOfYear(), 1, 0, 0, 0);
+        DateTime lastDayOfThisMonth = new DateTime(nextMonth.getYear(), nextMonth.getMonthOfYear(), 1, 0, 0, 0);
+
+        return productKeyDomain.sumTime(orgId, productBaseId, firstDayOfThisMonth, lastDayOfThisMonth);
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ProductKeyBatch create(

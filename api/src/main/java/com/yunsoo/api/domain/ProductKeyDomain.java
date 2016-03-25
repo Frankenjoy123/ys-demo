@@ -17,6 +17,7 @@ import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -122,6 +123,16 @@ public class ProductKeyDomain {
                 .append("product_base_id", productBaseId)
                 .build();
         return dataAPIClient.get("productkeybatch/sum/quantity" + query, Long.class);
+    }
+
+    public Long sumTime(String orgId, String productBaseId, DateTime startTime, DateTime endTime) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("start_time", startTime)
+                .append("end_time", endTime)
+                .build();
+        return dataAPIClient.get("productkeybatch/sum/time" + query, Long.class);
     }
 
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {

@@ -61,6 +61,17 @@ public class ProductBaseController {
                 .collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public Long getCountByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
+
+        Long proCount = 0L;
+        if (orgId != null) {
+            proCount = productBaseRepository.countByOrgIdAndDeletedFalse(orgId);
+        }
+
+        return proCount;
+    }
+
     //create
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -98,7 +109,7 @@ public class ProductBaseController {
                             @RequestBody ProductBaseObject productBaseObject) {
         productBaseObject.setId(null);
         ProductBaseEntity entity = productBaseRepository.findOne(id);
-        if(entity==null){
+        if (entity == null) {
             throw new NotFoundException();
         }
         EntityUtils.patchUpdate(entity, toProductBaseEntity(productBaseObject));

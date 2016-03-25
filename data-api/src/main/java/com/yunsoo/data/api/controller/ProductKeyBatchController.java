@@ -14,10 +14,12 @@ import com.yunsoo.data.service.service.contract.ProductKeyBatch;
 import com.yunsoo.data.service.service.contract.ProductKeys;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -129,6 +131,22 @@ public class ProductKeyBatchController {
         } else {
             sum = productKeyBatchRepository.sumQuantity(orgId, productBaseId, marketingId);
         }
+        return sum == null ? 0L : sum;
+    }
+
+    @RequestMapping(value = "sum/time", method = RequestMethod.GET)
+    public Long sumQuantityPerTime(
+            @RequestParam(value = "org_id", required = false) String orgId,
+            @RequestParam(value = "product_base_id", required = false) String productBaseId,
+            @RequestParam(value = "start_time", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            DateTime startTime,
+            @RequestParam(value = "end_time", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            DateTime endTime) {
+
+        Long sum = productKeyBatchRepository.sumQuantityTime(orgId, productBaseId, startTime, endTime);
+
         return sum == null ? 0L : sum;
     }
 
