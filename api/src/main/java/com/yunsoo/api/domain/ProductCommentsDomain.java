@@ -41,6 +41,12 @@ public class ProductCommentsDomain {
         return dataAPIClient.get("productcomments/{id}", ProductCommentsObject.class, id);
     }
 
+    public Long countProductCommentsByOrgId(String orgId) {
+        Long totalQuantity = dataAPIClient.get("productcomments/totalcount?org_id=" + orgId, Long.class);
+        return totalQuantity;
+    }
+
+
     public Long getProductCommentsNumber(String productBaseId) {
         return dataAPIClient.get("productcomments/count/{productBaseId}", Long.class, productBaseId);
     }

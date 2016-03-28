@@ -130,6 +130,31 @@ public class MarketingController {
     }
 
     //query marketing prize, provide API
+    @RequestMapping(value = "/totalcount", method = RequestMethod.GET)
+    public Long countMarketingsByOrgId(
+            @RequestParam(value = "org_id") String orgId) {
+        if (orgId == null) {
+            throw new BadRequestException("orgId id is not valid");
+        }
+        Long quantity = marketingRepository.countByOrgId(orgId);
+        return quantity;
+    }
+
+    @RequestMapping(value = "/drawPrize/totalcount", method = RequestMethod.GET)
+    public Long countMktDrawPrizesByOrgId(@RequestParam(value = "org_id") String orgId) {
+        if (orgId == null) {
+            throw new BadRequestException("org id is not valid.");
+        }
+        List<String> marketingIdIn = marketingRepository.findMarketingIdByOrgId(orgId);
+        if (marketingIdIn != null) {
+            return mktDrawPrizeRepository.countByMarketingIdIn(marketingIdIn);
+        } else {
+            return null;
+        }
+    }
+
+
+    //query marketing prize, provide API
     @RequestMapping(value = "/drawPrize/sum", method = RequestMethod.GET)
     public Long countDrawPrizeByDrawRuleId(
             @RequestParam(value = "draw_rule_id") String drawRuleId) {

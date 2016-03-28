@@ -176,6 +176,28 @@ public class MarketingController {
         }
     }
 
+    @RequestMapping(value = "/totalcount", method = RequestMethod.GET)
+    public Long countByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
+        orgId = fixOrgId(orgId);
+        if (orgId == null)
+            throw new BadRequestException("org id can not be null");
+
+        return marketingDomain.countMarketingsByOrgId(orgId);
+    }
+
+    @RequestMapping(value = "/drawPrize/totalcount", method = RequestMethod.GET)
+    public Long countMktDrawPrizesByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
+        orgId = fixOrgId(orgId);
+        if (orgId == null)
+            throw new BadRequestException("org id can not be null");
+
+        return marketingDomain.countMktDrawPrizesByOrgId(orgId);
+
+
+    }
+
+
+
     @RequestMapping(value = "keys/sum/{id}", method = RequestMethod.GET)
     public Long countKeysByMarketingId(@PathVariable(value = "id") String marketingId) {
         if (marketingId == null)
