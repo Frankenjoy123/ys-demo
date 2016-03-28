@@ -15,6 +15,8 @@ public abstract class RestrictionExpression extends ResourceExpression {
         super(expressionOrValue);
     }
 
+    public abstract boolean contains(RestrictionExpression restriction);
+
     public static RestrictionExpression parse(String expression) {
         if (expression == null) {
             return null;
@@ -49,6 +51,15 @@ public abstract class RestrictionExpression extends ResourceExpression {
             return getValue();
         }
 
+        @Override
+        public boolean contains(RestrictionExpression restriction) {
+            String org = getValue();
+            if (org == null || restriction == null || restriction.getValue() == null) {
+                return false;
+            }
+            return org.equals("*") || org.equals(restriction.getValue());
+        }
+
     }
 
     public static class RegionRestrictionExpression extends RestrictionExpression {
@@ -59,6 +70,11 @@ public abstract class RestrictionExpression extends ResourceExpression {
         public RegionRestrictionExpression(String expressionOrRegionId) {
             super(expressionOrRegionId);
             setResource(RESOURCE);
+        }
+
+        @Override
+        public boolean contains(RestrictionExpression restriction) {
+            return false; //expands to OrgRestrictionExpressions first
         }
 
         public String getRegionId() {
@@ -92,6 +108,19 @@ public abstract class RestrictionExpression extends ResourceExpression {
             } else {
                 this.expressions = new ArrayList<>();
             }
+        }
+
+        @Override
+        public boolean contains(RestrictionExpression restriction) {
+            if (expressions == null || expressions.size() == 0 || restriction == null || restriction.getValue() == null) {
+                return false;
+            }
+            for (RestrictionExpression exp : expressions) {
+                if (exp != null && exp.contains(restriction)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

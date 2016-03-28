@@ -3,6 +3,7 @@ package com.yunsoo.api.domain;
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.PermissionInstance;
+import com.yunsoo.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.api.util.WildcardMatcher;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.PermissionActionObject;
@@ -17,10 +18,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -60,6 +58,43 @@ public class PermissionDomain {
             return dataAPIClient.get("permission/region/{id}", PermissionRegionObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
+        }
+    }
+
+    /**
+     * put the orgRestriction(orgId) to the restrictions of default permission region of the masterOrgId
+     *
+     * @param masterOrgId    current org id
+     * @param orgRestriction sub org id
+     */
+    public void putOrgRestrictionToDefaultPermissionRegion(String masterOrgId, String orgRestriction) {
+        orgRestriction = new RestrictionExpression.OrgRestrictionExpression(orgRestriction).toString();
+
+        List<PermissionRegionObject> defaultRegionObjects = dataAPIClient.get("permission/region?org_id={orgId}&type_code={typeCode}", new ParameterizedTypeReference<List<PermissionRegionObject>>() {
+        }, masterOrgId, LookupCodes.PermissionRegionType.DEFAULT);
+        if (defaultRegionObjects.size() == 0) {
+            //create new default region
+            PermissionRegionObject defaultPR = new PermissionRegionObject();
+            defaultPR.setOrgId(masterOrgId);
+            defaultPR.setTypeCode(LookupCodes.PermissionRegionType.DEFAULT);
+            defaultPR.setName("默认权限范围");
+            defaultPR.setRestrictions(Collections.singletonList(orgRestriction));
+            dataAPIClient.post("permission/region", defaultPR, PermissionRegionObject.class);
+        } else if (defaultRegionObjects.size() == 1) {
+            PermissionRegionObject defaultPR = defaultRegionObjects.get(0);
+            defaultPR.getRestrictions().add(orgRestriction);
+            dataAPIClient.patch("permission/region/{id}", defaultPR, defaultPR.getId());
+        } else if (defaultRegionObjects.size() > 1) {
+            PermissionRegionObject defaultPR = defaultRegionObjects.get(0);
+            //merge other default regions if exist
+            for (int i = 1; i < defaultRegionObjects.size(); i++) {
+                defaultPR.getRestrictions().addAll(defaultRegionObjects.get(i).getRestrictions());
+            }
+            defaultPR.getRestrictions().add(orgRestriction);
+            dataAPIClient.patch("permission/region/{id}", defaultPR, defaultPR.getId());
+            for (int i = 1; i < defaultRegionObjects.size(); i++) {
+                dataAPIClient.delete("permission/region/{id}", defaultRegionObjects.get(0).getId());
+            }
         }
     }
 

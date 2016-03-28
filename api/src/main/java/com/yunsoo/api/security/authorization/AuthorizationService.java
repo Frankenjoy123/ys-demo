@@ -1,10 +1,11 @@
 package com.yunsoo.api.security.authorization;
 
-import com.yunsoo.api.security.permission.PermissionEntry;
-import com.yunsoo.api.security.permission.PermissionEntry.Effect;
-import com.yunsoo.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.api.security.permission.expression.RestrictionExpression;
+import com.yunsoo.api.domain.PermissionAllocationDomain;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -14,10 +15,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthorizationService {
 
+    @Autowired
+    private PermissionAllocationDomain permissionAllocationDomain;
 
-    public Effect check(PermissionEntry permissionEntry, RestrictionExpression restriction, PermissionExpression permission) {
-
-
-        return null;
+    public List<AccountGrantedAuthority> getGrantedAuthorities(String accountId) {
+        return permissionAllocationDomain.getGrantedAuthoritiesByAccountId(accountId)
+                .stream().map(AccountGrantedAuthority::new).collect(Collectors.toList());
     }
 }

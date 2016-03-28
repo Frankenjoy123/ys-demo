@@ -1,5 +1,7 @@
 package com.yunsoo.api.security.permission.expression;
 
+import com.yunsoo.api.util.WildcardMatcher;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +16,8 @@ public abstract class PermissionExpression extends ResourceExpression {
     public PermissionExpression(String expressionOrValue) {
         super(expressionOrValue);
     }
+
+    public abstract boolean contains(PermissionExpression permission);
 
     public static PermissionExpression parse(String expression) {
         if (expression == null) {
@@ -36,21 +40,6 @@ public abstract class PermissionExpression extends ResourceExpression {
     }
 
 
-    public static class PolicyPermissionExpression extends PermissionExpression {
-
-        private static final String RESOURCE = "policy";
-        private static final String PREFIX = RESOURCE + DELIMITER;
-
-        public PolicyPermissionExpression(String expressionOrPolicyCode) {
-            super(expressionOrPolicyCode);
-            setResource(RESOURCE);
-        }
-
-        public String getPolicyCode() {
-            return getValue();
-        }
-    }
-
     public static class SimplePermissionExpression extends PermissionExpression {
 
         private static final String OPERATOR = ":";
@@ -67,6 +56,18 @@ public abstract class PermissionExpression extends ResourceExpression {
             this.actionCode = tempArray[1];
         }
 
+        @Override
+        public boolean contains(PermissionExpression permission) {
+            if (resourceCode == null || actionCode == null || permission == null
+                    || !(permission instanceof SimplePermissionExpression)) {
+                return false;
+            }
+            SimplePermissionExpression simplePermission = (SimplePermissionExpression) permission;
+            boolean resourceIsMatch = WildcardMatcher.match(resourceCode, simplePermission.getResourceCode());
+            boolean actionIsMatch = actionCode.equals("*") || actionCode.equals(simplePermission.getActionCode());
+            return resourceIsMatch && actionIsMatch;
+        }
+
         public SimplePermissionExpression(String resourceCode, String actionCode) {
             super(String.format("%s%s%s", resourceCode, OPERATOR, actionCode));
             setResource(null);
@@ -80,6 +81,26 @@ public abstract class PermissionExpression extends ResourceExpression {
 
         public String getActionCode() {
             return actionCode;
+        }
+    }
+
+    public static class PolicyPermissionExpression extends PermissionExpression {
+
+        private static final String RESOURCE = "policy";
+        private static final String PREFIX = RESOURCE + DELIMITER;
+
+        public PolicyPermissionExpression(String expressionOrPolicyCode) {
+            super(expressionOrPolicyCode);
+            setResource(RESOURCE);
+        }
+
+        @Override
+        public boolean contains(PermissionExpression permission) {
+            return false; //expands to SimplePermissionExpressions first
+        }
+
+        public String getPolicyCode() {
+            return getValue();
         }
     }
 
@@ -109,6 +130,19 @@ public abstract class PermissionExpression extends ResourceExpression {
             } else {
                 this.expressions = new ArrayList<>();
             }
+        }
+
+        @Override
+        public boolean contains(PermissionExpression permission) {
+            if (expressions == null || expressions.size() == 0 || permission == null || permission.getValue() == null) {
+                return false;
+            }
+            for (PermissionExpression exp : expressions) {
+                if (exp != null && exp.contains(permission)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

@@ -1,8 +1,10 @@
 package com.yunsoo.api.security;
 
 import com.yunsoo.api.dto.Token;
+import com.yunsoo.api.security.authorization.AuthorizationService;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +37,10 @@ public class TokenAuthenticationService {
 
     private TokenHandler loginTokenHandler;
 
+    @Autowired
+    private AuthorizationService authorizationService;
+
+
     @PostConstruct
     public void init() {
         this.accessTokenHandler = new TokenHandler(accessTokenHashSalt);
@@ -58,7 +64,7 @@ public class TokenAuthenticationService {
         if (authAccount == null) {
             return null;
         }
-        return new AccountAuthentication(authAccount);
+        return new AccountAuthentication(authAccount, authorizationService);
     }
 
     public AuthAccount parseAccessToken(String token) {
