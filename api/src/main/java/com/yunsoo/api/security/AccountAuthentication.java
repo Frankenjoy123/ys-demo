@@ -4,9 +4,7 @@ import com.yunsoo.api.security.authorization.AccountGrantedAuthority;
 import com.yunsoo.api.security.authorization.AuthorizationService;
 import com.yunsoo.api.security.permission.PermissionEntry;
 import com.yunsoo.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.api.security.permission.expression.PermissionExpression.SimplePermissionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression;
-import com.yunsoo.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
@@ -79,15 +77,4 @@ public class AccountAuthentication implements Authentication {
         return false;
     }
 
-    public boolean checkPermission(String orgId, String permission) {
-        RestrictionExpression restrictionExp = new OrgRestrictionExpression(orgId);
-        PermissionExpression permissionExp = new SimplePermissionExpression(permission);
-        return this.checkPermission(restrictionExp, permissionExp);
-    }
-
-    public boolean checkPermission(String orgId, String resource, String action) {
-        RestrictionExpression restrictionExp = new OrgRestrictionExpression(orgId);
-        PermissionExpression permissionExp = new SimplePermissionExpression(resource, action);
-        return this.checkPermission(restrictionExp, permissionExp);
-    }
 }
