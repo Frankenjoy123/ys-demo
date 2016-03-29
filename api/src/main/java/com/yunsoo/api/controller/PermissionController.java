@@ -5,11 +5,16 @@ import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.PermissionAction;
 import com.yunsoo.api.dto.PermissionPolicy;
 import com.yunsoo.api.dto.PermissionResource;
+import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +36,8 @@ public class PermissionController {
     @Autowired
     private PermissionDomain permissionDomain;
 
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "/resource", method = RequestMethod.GET)
     public List<PermissionResource> getResources() {
@@ -73,5 +80,9 @@ public class PermissionController {
                 .collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<String> permissions() {
+        return tokenAuthenticationService.getAuthentication().getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+    }
 
 }

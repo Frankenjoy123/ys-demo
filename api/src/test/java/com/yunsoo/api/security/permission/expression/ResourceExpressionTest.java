@@ -44,4 +44,30 @@ public class ResourceExpressionTest {
         assert ((PermissionExpression.CollectionPermissionExpression) pe3).getExpressions().size() == 2;
 
     }
+
+    @Test
+    public void test_RestrictionExpression_contains() {
+        RestrictionExpression exp0 = new RestrictionExpression.OrgRestrictionExpression("12345");
+        RestrictionExpression exp1 = new RestrictionExpression.OrgRestrictionExpression("12345");
+        RestrictionExpression exp2 = new RestrictionExpression.OrgRestrictionExpression("*");
+        RestrictionExpression exp3 = new RestrictionExpression.CollectionRestrictionExpression("org/12345,org/45678");
+
+        assert exp1.contains(exp0);
+        assert exp2.contains(exp0);
+        assert exp3.contains(exp0);
+    }
+
+    @Test
+    public void test_PermissionExpression_contains() {
+        PermissionExpression exp0 = new PermissionExpression.SimplePermissionExpression("account:read");
+        PermissionExpression exp1 = new PermissionExpression.SimplePermissionExpression("account:read");
+        PermissionExpression exp2 = new PermissionExpression.SimplePermissionExpression("account:*");
+        PermissionExpression exp3 = new PermissionExpression.SimplePermissionExpression("*:read");
+        PermissionExpression exp4 = new PermissionExpression.CollectionPermissionExpression("*:*,account:delete");
+
+        assert exp1.contains(exp0);
+        assert exp2.contains(exp0);
+        assert exp3.contains(exp0);
+        assert exp4.contains(exp0);
+    }
 }

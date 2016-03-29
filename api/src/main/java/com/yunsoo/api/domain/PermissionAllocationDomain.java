@@ -1,6 +1,8 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
+import com.yunsoo.api.security.permission.PermissionEntry;
+import com.yunsoo.api.security.permission.PermissionService;
 import com.yunsoo.api.security.permission.expression.PrincipalExpression.AccountPrincipalExpression;
 import com.yunsoo.api.security.permission.expression.PrincipalExpression.GroupPrincipalExpression;
 import com.yunsoo.common.data.object.PermissionAllocationObject;
@@ -8,12 +10,14 @@ import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -27,6 +31,14 @@ public class PermissionAllocationDomain {
     @Autowired
     private RestClient dataAPIClient;
 
+    @Autowired
+    private PermissionService permissionService;
+
+    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'grantedAuthorities/'+#accountId)")
+    public List<String> getGrantedAuthoritiesByAccountId(String accountId) {
+        List<PermissionEntry> permissionEntries = permissionService.getExpendedPermissionEntriesByAccountId(accountId);
+        return permissionEntries.stream().map(PermissionEntry::toString).collect(Collectors.toList());
+    }
 
     public List<PermissionAllocationObject> getPermissionAllocationsByAccountId(String accountId) {
         return StringUtils.isEmpty(accountId)

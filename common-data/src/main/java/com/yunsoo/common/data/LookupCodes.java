@@ -200,6 +200,15 @@ public class LookupCodes {
         public static final String REJECTED = "rejected";
     }
 
+    public static class PermissionRegionType {
+        private PermissionRegionType() {
+        }
+
+        public static final String DEFAULT = "default";
+
+    }
+
+
     public enum LookupType {
 
         ProductStatus("product_status"),
@@ -218,13 +227,13 @@ public class LookupCodes {
             this.type = type;
         }
 
-        public static LookupType toLookupType(String typeCode){
-            if(typeCode == null)
-                return  null;
-           for(LookupType type : LookupType.values()){
-               if(typeCode.equals(type.type))
-                   return type;
-           }
+        public static LookupType toLookupType(String typeCode) {
+            if (typeCode == null)
+                return null;
+            for (LookupType type : LookupType.values()) {
+                if (typeCode.equals(type.type))
+                    return type;
+            }
             return null;
         }
 

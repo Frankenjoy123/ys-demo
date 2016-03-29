@@ -1,8 +1,12 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyOrderDomain;
+import com.yunsoo.api.domain.ProductKeyTransactionDomain;
+import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductKeyOrder;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.common.data.object.ProductKeyTransactionObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
@@ -11,11 +15,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by  : Lijian
@@ -30,6 +37,12 @@ public class ProductKeyOrderController {
     private ProductKeyOrderDomain productKeyOrderDomain;
 
     @Autowired
+    private ProductBaseDomain productBaseDomain;
+
+    @Autowired
+    private ProductKeyTransactionDomain transactionDomain;
+
+    @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -38,6 +51,10 @@ public class ProductKeyOrderController {
         if (productKeyOrder == null) {
             throw new NotFoundException("ProductKeyOrder not found by [id: " + id + "]");
         }
+        productKeyOrder.setTransactionList(transactionDomain.getCreatedTransactionByOrderId(id));
+        if(StringUtils.hasText(productKeyOrder.getProductBaseId()))
+            productKeyOrder.setProductBase(new ProductBase(productBaseDomain.getProductBaseById(productKeyOrder.getProductBaseId())));
+
         return productKeyOrder;
     }
 
@@ -63,7 +80,20 @@ public class ProductKeyOrderController {
             response.setHeader("Content-Range", orderPage.toContentRange());
         }
 
-        return orderPage.getContent();
+        List<ProductKeyOrder> list = orderPage.getContent();
+        if(productBaseId == null){
+            Map<String, ProductBase> productBaseMap = new HashMap<>();
+            list.forEach(item->{
+                if(productBaseMap.containsKey(item.getProductBaseId()))
+                    item.setProductBase(productBaseMap.get(item.getProductBaseId()));
+                else{
+                    ProductBase productBase = new ProductBase(productBaseDomain.getProductBaseById(item.getProductBaseId()));
+                    item.setProductBase(productBase);
+                    productBaseMap.put(item.getProductBaseId(), productBase);
+                }
+            });
+        }
+        return list;
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -83,6 +113,24 @@ public class ProductKeyOrderController {
         order.setActive(true);
         order.setCreatedDateTime(DateTime.now());
         return productKeyOrderDomain.create(order);
+    }
+
+    @RequestMapping(value = "{id}/activate", method = RequestMethod.PATCH)
+    public void activate(@PathVariable("id") String id){
+        ProductKeyOrder productKeyOrder = new ProductKeyOrder();
+        productKeyOrder.setId(id);
+        productKeyOrder.setActive(true);
+        productKeyOrderDomain.patchUpdate(productKeyOrder);
+
+    }
+
+    @RequestMapping(value = "{id}/deactivate", method = RequestMethod.PATCH)
+    public void deactivate(@PathVariable("id") String id){
+        ProductKeyOrder productKeyOrder = new ProductKeyOrder();
+        productKeyOrder.setId(id);
+        productKeyOrder.setActive(false);
+        productKeyOrderDomain.patchUpdate(productKeyOrder);
+
     }
 
 }

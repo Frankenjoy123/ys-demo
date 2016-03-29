@@ -1,10 +1,13 @@
 package com.yunsoo.api.security;
 
+import com.yunsoo.api.security.authorization.AccountGrantedAuthority;
+import com.yunsoo.api.security.authorization.AuthorizationService;
+import com.yunsoo.api.security.permission.PermissionEntry;
+import com.yunsoo.api.security.permission.expression.PermissionExpression;
+import com.yunsoo.api.security.permission.expression.RestrictionExpression;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by  : Zhe
@@ -14,10 +17,13 @@ import java.util.Collection;
 public class AccountAuthentication implements Authentication {
 
     private final AuthAccount authAccount;
+    private AuthorizationService authorizationService;
+    private List<AccountGrantedAuthority> grantedAuthorities;
     private boolean authenticated = true;
 
-    public AccountAuthentication(AuthAccount authAccount) {
+    public AccountAuthentication(AuthAccount authAccount, AuthorizationService authorizationService) {
         this.authAccount = authAccount;
+        this.authorizationService = authorizationService;
     }
 
     @Override
@@ -26,8 +32,11 @@ public class AccountAuthentication implements Authentication {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new ArrayList<>();
+    public List<AccountGrantedAuthority> getAuthorities() {
+        if (grantedAuthorities == null) {
+            grantedAuthorities = authorizationService.getGrantedAuthorities(authAccount.getId());
+        }
+        return grantedAuthorities;
     }
 
     @Override
@@ -56,6 +65,16 @@ public class AccountAuthentication implements Authentication {
             throw new IllegalArgumentException();
         }
         authenticated = false;
+    }
+
+    public boolean checkPermission(RestrictionExpression restriction, PermissionExpression permission) {
+        for (AccountGrantedAuthority grantedAuthority : getAuthorities()) {
+            PermissionEntry.Effect effect = grantedAuthority.check(restriction, permission);
+            if (effect != null) {
+                return effect.equals(PermissionEntry.Effect.allow);
+            }
+        }
+        return false;
     }
 
 }

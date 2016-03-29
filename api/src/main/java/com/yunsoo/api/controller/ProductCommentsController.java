@@ -60,9 +60,28 @@ public class ProductCommentsController {
         return new ProductComments(object);
     }
 
+    @RequestMapping(value = "/totalcount", method = RequestMethod.GET)
+    public Long countByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
+        orgId = fixOrgId(orgId);
+        if (orgId == null)
+            throw new BadRequestException("org id can not be null");
+
+        return productCommentsDomain.countProductCommentsByOrgId(orgId);
+    }
+
+
     @RequestMapping(value = "/count/{id}", method = RequestMethod.GET)
     public Long getCommentsNumberByProductBaseId(@PathVariable(value = "id") String productBaseId) {
         return productCommentsDomain.getProductCommentsNumber(productBaseId);
     }
+
+    private String fixOrgId(String orgId) {
+        if (orgId == null || "current".equals(orgId)) {
+            //current orgId
+            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        }
+        return orgId;
+    }
+
 
 }

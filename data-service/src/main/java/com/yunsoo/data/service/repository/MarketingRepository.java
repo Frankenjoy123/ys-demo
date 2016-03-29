@@ -17,6 +17,12 @@ import java.util.List;
 public interface MarketingRepository extends CrudRepository<MarketingEntity, String> {
     Page<MarketingEntity> findByOrgId(String orgId, Pageable pageable);
 
+    Long countByOrgId(String orgId);
+
+    @Query("select m.id from MarketingEntity m where orgId = ?1")
+    List<String> findMarketingIdByOrgId(String orgId);
+
+
     @Query("select m from MarketingEntity m where orgId in :orgIds and ( :status is null or statusCode = :status) order by createdDateTime desc")
     Page<MarketingEntity> query(@Param("orgIds")List<String> orgIds, @Param("status")String status, Pageable pageable);
 }

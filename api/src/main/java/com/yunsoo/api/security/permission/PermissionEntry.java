@@ -6,14 +6,12 @@ import com.yunsoo.api.security.permission.expression.ResourceExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.common.data.object.PermissionAllocationObject;
 
-import java.io.Serializable;
-
 /**
  * Created by:   Lijian
  * Created on:   2016-03-22
  * Descriptions: corresponding to the permission_allocation by one to one
  */
-public class PermissionEntry implements Comparable, Serializable {
+public class PermissionEntry implements Comparable {
 
     private String id; //the same as permission_allocation.id
 
@@ -79,6 +77,21 @@ public class PermissionEntry implements Comparable, Serializable {
     }
 
 
+    public boolean isValid() {
+        return id != null && principal != null && restriction != null && permission != null && effect != null;
+    }
+
+    public PermissionEntry.Effect check(RestrictionExpression restriction, PermissionExpression permission) {
+        if (!isValid() || restriction == null || permission == null) {
+            return null;
+        }
+        if (this.restriction.contains(restriction)
+                && this.permission.contains(permission)) {
+            return this.effect;
+        }
+        return null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -115,10 +128,6 @@ public class PermissionEntry implements Comparable, Serializable {
     public String toString() {
         return String.format("[id: %s, principal: %s, restriction: %s, permission: %s, effect: %s]",
                 id, principal, restriction, permission, effect);
-    }
-
-    public boolean isValid() {
-        return id != null && id.length() > 0 && principal != null && restriction != null && permission != null && effect != null;
     }
 
     public static PermissionEntry parse(String str) {

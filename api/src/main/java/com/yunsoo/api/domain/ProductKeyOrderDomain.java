@@ -115,6 +115,11 @@ public class ProductKeyOrderDomain {
         return credits;
     }
 
+    public void patchUpdate(ProductKeyOrder order){
+        ProductKeyOrderObject object = toProductKeyOrderObject(order);
+        dataAPIClient.patch("productKeyOrder/{id}", object, object.getId());
+
+    }
 
     private ProductKeyOrder toProductKeyOrder(ProductKeyOrderObject object) {
         if (object == null) {

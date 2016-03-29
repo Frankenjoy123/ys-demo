@@ -1,9 +1,11 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.ProductCommentsObject;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.ProductCommentsEntity;
+import com.yunsoo.data.service.repository.ProductBaseRepository;
 import com.yunsoo.data.service.repository.ProductCommentsRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,10 @@ public class ProductCommentsController {
 
     @Autowired
     private ProductCommentsRepository productCommentsRepository;
+
+    @Autowired
+    private ProductBaseRepository productBaseRepository;
+
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductCommentsObject getById(@PathVariable String id) {
@@ -60,6 +66,20 @@ public class ProductCommentsController {
                 .map(this::toProductCommentsObject)
                 .collect(Collectors.toList());
     }
+
+    @RequestMapping(value = "/totalcount", method = RequestMethod.GET)
+    public Long countMktDrawPrizesByOrgId(@RequestParam(value = "org_id") String orgId) {
+        if (orgId == null) {
+            throw new BadRequestException("org id is not valid.");
+        }
+        List<String> productBaseIdIn = productBaseRepository.findIdByOrgId(orgId);
+        if (productBaseIdIn != null) {
+            return productCommentsRepository.countByProductBaseIdIn(productBaseIdIn);
+        } else {
+            return null;
+        }
+    }
+
 
     @RequestMapping(value = "/count/{id}", method = RequestMethod.GET)
     public Long getCommentsNumberByProductBaseId(@PathVariable(value = "id") String productBaseId) {
