@@ -56,18 +56,6 @@ public abstract class PermissionExpression extends ResourceExpression {
             this.actionCode = tempArray[1];
         }
 
-        @Override
-        public boolean contains(PermissionExpression permission) {
-            if (resourceCode == null || actionCode == null || permission == null
-                    || !(permission instanceof SimplePermissionExpression)) {
-                return false;
-            }
-            SimplePermissionExpression simplePermission = (SimplePermissionExpression) permission;
-            boolean resourceIsMatch = WildcardMatcher.match(resourceCode, simplePermission.getResourceCode());
-            boolean actionIsMatch = actionCode.equals("*") || actionCode.equals(simplePermission.getActionCode());
-            return resourceIsMatch && actionIsMatch;
-        }
-
         public SimplePermissionExpression(String resourceCode, String actionCode) {
             super(String.format("%s%s%s", resourceCode, OPERATOR, actionCode));
             setResource(null);
@@ -82,6 +70,18 @@ public abstract class PermissionExpression extends ResourceExpression {
         public String getActionCode() {
             return actionCode;
         }
+
+        @Override
+        public boolean contains(PermissionExpression permission) {
+            if (resourceCode == null || actionCode == null || permission == null
+                    || !(permission instanceof SimplePermissionExpression)) {
+                return false;
+            }
+            SimplePermissionExpression simplePermission = (SimplePermissionExpression) permission;
+            boolean resourceIsMatch = WildcardMatcher.match(resourceCode, simplePermission.getResourceCode());
+            boolean actionIsMatch = actionCode.equals("*") || actionCode.equals(simplePermission.getActionCode());
+            return resourceIsMatch && actionIsMatch;
+        }
     }
 
     public static class PolicyPermissionExpression extends PermissionExpression {
@@ -94,13 +94,13 @@ public abstract class PermissionExpression extends ResourceExpression {
             setResource(RESOURCE);
         }
 
+        public String getPolicyCode() {
+            return getValue();
+        }
+
         @Override
         public boolean contains(PermissionExpression permission) {
             return false; //expands to SimplePermissionExpressions first
-        }
-
-        public String getPolicyCode() {
-            return getValue();
         }
     }
 

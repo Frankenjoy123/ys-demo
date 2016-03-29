@@ -42,6 +42,8 @@ public abstract class RestrictionExpression extends ResourceExpression {
         private static final String RESOURCE = "org";
         private static final String PREFIX = RESOURCE + DELIMITER;
 
+        public static final OrgRestrictionExpression CURRENT = new OrgRestrictionExpression("current");
+
         public OrgRestrictionExpression(String expressionOrOrgId) {
             super(expressionOrOrgId);
             setResource(RESOURCE);
@@ -54,12 +56,11 @@ public abstract class RestrictionExpression extends ResourceExpression {
         @Override
         public boolean contains(RestrictionExpression restriction) {
             String org = getValue();
-            if (org == null || restriction == null || restriction.getValue() == null) {
+            if (org == null || restriction == null || !(restriction instanceof OrgRestrictionExpression) || restriction.getValue() == null) {
                 return false;
             }
             return org.equals("*") || org.equals(restriction.getValue());
         }
-
     }
 
     public static class RegionRestrictionExpression extends RestrictionExpression {
@@ -72,13 +73,13 @@ public abstract class RestrictionExpression extends ResourceExpression {
             setResource(RESOURCE);
         }
 
+        public String getRegionId() {
+            return getValue();
+        }
+
         @Override
         public boolean contains(RestrictionExpression restriction) {
             return false; //expands to OrgRestrictionExpressions first
-        }
-
-        public String getRegionId() {
-            return getValue();
         }
     }
 
