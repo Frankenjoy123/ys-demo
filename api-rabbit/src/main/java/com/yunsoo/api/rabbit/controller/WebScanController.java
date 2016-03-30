@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -244,11 +245,18 @@ public class WebScanController {
         if (LookupCodes.ProductKeyType.QR_SECURE.equals(productObject.getProductKeyTypeCode())) {
             //防伪码
             security = new WebScanResponse.Security();
-            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 1));
+            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 20));
             List<UserScanRecordObject> userScanRecordObjects = userScanRecordObjectPage.getContent();
             security.setScanCount(userScanRecordObjectPage.getCount() == null ? 0 : userScanRecordObjectPage.getCount());
             if (userScanRecordObjects.size() > 0) {
                 security.setFirstScan(toScanRecord(userScanRecordObjects.get(0)));
+
+                List<WebScanResponse.ScanRecord> scanRecords = new ArrayList<>();
+                for (UserScanRecordObject scanRecord : userScanRecordObjects) {
+                    scanRecords.add(toScanRecord(scanRecord));
+                }
+
+                security.setScanRecords(scanRecords);
             }
         }
         return security;
