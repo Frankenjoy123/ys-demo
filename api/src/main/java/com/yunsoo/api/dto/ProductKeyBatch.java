@@ -3,8 +3,10 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -159,5 +161,23 @@ public class ProductKeyBatch {
 
     public void setMarketingId(String marketingId) {
         this.marketingId = marketingId;
+    }
+
+    public ProductKeyBatch(){}
+
+    public ProductKeyBatch(ProductKeyBatchObject object){
+        if (object != null) {
+            this.setId(object.getId());
+            this.setBatchNo(object.getBatchNo());
+            this.setQuantity(object.getQuantity());
+            this.setStatusCode(object.getStatusCode());
+            this.setProductKeyTypeCodes(object.getProductKeyTypeCodes());
+            this.setProductBaseId(object.getProductBaseId());
+            this.setOrgId(object.getOrgId());
+            this.setCreatedAppId(object.getCreatedAppId());
+            this.setCreatedAccountId(object.getCreatedAccountId());
+            this.setCreatedDateTime(object.getCreatedDateTime());
+            this.setMarketingId(object.getMarketingId());
+        }
     }
 }

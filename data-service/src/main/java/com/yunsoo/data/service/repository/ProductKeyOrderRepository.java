@@ -33,4 +33,11 @@ public interface ProductKeyOrderRepository extends FindOneAndSaveRepository<Prod
                                       Pageable pageable);
 
     List<ProductKeyOrderEntity> save(Iterable<ProductKeyOrderEntity> entities);
+
+
+    @Query("select sum(p.total) from #{#entityName} p where p.orgId in ?1")
+    long sumTotalByOrgIdIn(List<String> orgIds);
+
+    @Query("select sum(p.remain) from #{#entityName} p where p.orgId in ?1")
+    long sumRemainByOrgIdIn(List<String> orgIds);
 }

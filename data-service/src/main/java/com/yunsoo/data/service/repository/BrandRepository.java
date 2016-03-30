@@ -22,4 +22,8 @@ public interface BrandRepository extends CrudRepository<BrandEntity, String> {
 
     @Query("select be.orgId from BrandEntity be where carrierId = ?1")
     List<String> findOrgIdByCarrierId(String carrierId);
+
+    @Query(" select count(o.id) from BrandEntity be inner join be.organization o where be.carrierId= :carrierId and " +
+            "( :status is null or o.statusCode = :status)")
+    int countByCarrierIdAndStatus(@Param("carrierId")String carrierId, @Param("status")String status);
 }

@@ -1,10 +1,10 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.ProductBaseDomain;
+import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.domain.ProductKeyOrderDomain;
 import com.yunsoo.api.domain.ProductKeyTransactionDomain;
-import com.yunsoo.api.dto.ProductBase;
-import com.yunsoo.api.dto.ProductKeyOrder;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductKeyTransactionObject;
 import com.yunsoo.common.web.client.Page;
@@ -23,6 +23,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Lijian
@@ -43,6 +44,9 @@ public class ProductKeyOrderController {
     private ProductKeyTransactionDomain transactionDomain;
 
     @Autowired
+    private ProductKeyDomain productKeyDomain;
+
+    @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -51,9 +55,37 @@ public class ProductKeyOrderController {
         if (productKeyOrder == null) {
             throw new NotFoundException("ProductKeyOrder not found by [id: " + id + "]");
         }
-        productKeyOrder.setTransactionList(transactionDomain.getCreatedTransactionByOrderId(id));
+        List<ProductKeyTransaction> transactionList = transactionDomain.getCreatedTransactionByOrderId(id).stream().map(ProductKeyTransaction::new).collect(Collectors.toList());
+        productKeyOrder.setTransactionList(transactionList);
         if(StringUtils.hasText(productKeyOrder.getProductBaseId()))
             productKeyOrder.setProductBase(new ProductBase(productBaseDomain.getProductBaseById(productKeyOrder.getProductBaseId())));
+
+        HashMap<String, ProductKeyBatch> productKeyTransactionHashMap = new HashMap<>();
+        HashMap<String, ProductBase> productBaseHashMap = new HashMap<>();
+        for(ProductKeyTransaction transaction : transactionList ){
+            if(productKeyTransactionHashMap.containsKey(transaction.getProductKeyBatchId()))
+                transaction.setKeyBatch(productKeyTransactionHashMap.get(transaction.getProductKeyBatchId()));
+            else {
+                ProductKeyBatch batch = new ProductKeyBatch(productKeyDomain.getPkBatchById(transaction.getProductKeyBatchId()));
+                transaction.setKeyBatch(batch);
+                productKeyTransactionHashMap.put(transaction.getProductKeyBatchId(), batch);
+            }
+
+            if(StringUtils.hasText(productKeyOrder.getProductBaseId()))
+                transaction.setProductBase(productKeyOrder.getProductBase());
+            else{
+                String productBaseId = transaction.getKeyBatch().getProductBaseId();
+                if(productBaseHashMap.containsKey(productBaseId))
+                    transaction.setProductBase(productBaseHashMap.get(productBaseId));
+                else{
+                    ProductBase base = new ProductBase(productBaseDomain.getProductBaseById(productBaseId));
+                    transaction.setProductBase(base);
+                    productBaseHashMap.put(productBaseId, base);
+                }
+            }
+
+
+        }
 
         return productKeyOrder;
     }
@@ -132,5 +164,15 @@ public class ProductKeyOrderController {
         productKeyOrderDomain.patchUpdate(productKeyOrder);
 
     }
+    @RequestMapping(value = "/count/total", method = RequestMethod.GET)
+    public long countTotal(@RequestParam("org_ids")List<String> orgIds){
+        return productKeyOrderDomain.count(orgIds, true);
+    }
+
+    @RequestMapping(value = "/count/remain", method = RequestMethod.GET)
+    public long countRemain(@RequestParam("org_ids")List<String> orgIds){
+        return productKeyOrderDomain.count(orgIds, false);
+    }
+
 
 }

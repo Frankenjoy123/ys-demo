@@ -121,6 +121,13 @@ public class ProductKeyOrderDomain {
 
     }
 
+    public long count(List<String> orgIds, boolean isTotal){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("org_ids", orgIds)
+                .append("is_total", isTotal)
+                .build();
+        return dataAPIClient.get("productKeyOrder/count" + query , Long.class);
+    }
+
     private ProductKeyOrder toProductKeyOrder(ProductKeyOrderObject object) {
         if (object == null) {
             return null;

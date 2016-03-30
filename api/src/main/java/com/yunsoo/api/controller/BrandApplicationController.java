@@ -61,6 +61,12 @@ public class BrandApplicationController {
         return new Brand(object);
     }
 
+
+    @RequestMapping(value = "count/created", method = RequestMethod.GET)
+    public int count(@RequestParam(value = "carrier_id") String id) {
+        return brandDomain.count(id, LookupCodes.BrandApplicationStatus.CREATED);
+    }
+
     @RequestMapping(value = "{id}/approve", method = RequestMethod.PUT)
     public boolean approveBrandApplication(@PathVariable("id") String id){
         try {

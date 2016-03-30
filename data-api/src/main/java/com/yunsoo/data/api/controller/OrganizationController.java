@@ -121,6 +121,11 @@ public class OrganizationController {
         }
         return toBrandObject(brand);
     }
+    @RequestMapping(value = "{id}/brand/count", method = RequestMethod.GET)
+    public int countBrand(@PathVariable(value = "id") String id,
+                          @RequestParam(value="status", required = false)String status){
+        return brandRepository.countByCarrierIdAndStatus(id, status);
+    }
 
     @RequestMapping(value = "{id}/brand", method = RequestMethod.GET)
     public List<BrandObject> getOrgBrandList(@PathVariable(value = "id") String id,

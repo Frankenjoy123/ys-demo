@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AttachmentObject;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.OrganizationObject;
@@ -53,6 +54,13 @@ public class BrandDomain {
         } catch (NotFoundException ex) {
             return null;
         }
+    }
+
+    public int count(String id, String status){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("carrier_id", id)
+                .append("status", status)
+                .build();
+        return dataAPIClient.get("brand/count/" + query , Integer.class);
     }
 
     public Page<BrandObject> getBrandList(String name, String carrierId, Pageable pageable) {

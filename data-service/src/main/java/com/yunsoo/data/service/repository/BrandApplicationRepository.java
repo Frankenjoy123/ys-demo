@@ -17,4 +17,6 @@ public interface BrandApplicationRepository  extends CrudRepository<BrandApplica
 
     @Query("select be from BrandApplicationEntity be where (:carrierId is null or be.carrierId = :carrierId) and (:name is null or be.brandName = :name) ")
     Page<BrandApplicationEntity> query(@Param("name")String name, @Param("carrierId")String carrier_id, Pageable pageable);
+
+    int countByCarrierIdAndStatusCode(@Param("carrierId")String carrierId, @Param("status")String status);
 }

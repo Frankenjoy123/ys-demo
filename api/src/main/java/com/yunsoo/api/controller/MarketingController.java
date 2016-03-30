@@ -369,6 +369,13 @@ public class MarketingController {
         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.INVALID);
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
     }
+    @RequestMapping(value = "/count/unpaid")
+    public int countUnpaidMarketing(@RequestParam("org_ids")List<String> orgIds){
+        if(orgIds == null || orgIds.size() == 0)
+            throw new BadRequestException("org ids can not be null");
+
+        return marketingDomain.countMarketing(orgIds, LookupCodes.MktStatus.CREATED);
+    }
 
     //alipay batch transfer
     @RequestMapping(value = "alipay_batchtransfer", method = RequestMethod.GET)

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
-import com.yunsoo.common.data.object.ProductKeyTransactionObject;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.Min;
@@ -57,7 +56,7 @@ public class ProductKeyOrder {
     private ProductBase productBase;
 
     @JsonProperty("transaction_list")
-    private List<ProductKeyTransactionObject> transactionList;
+    private List<ProductKeyTransaction> transactionList;
 
 
     public String getId() {
@@ -140,11 +139,11 @@ public class ProductKeyOrder {
         this.expireDateTime = expireDateTime;
     }
 
-    public List<ProductKeyTransactionObject> getTransactionList() {
+    public List<ProductKeyTransaction> getTransactionList() {
         return transactionList;
     }
 
-    public void setTransactionList(List<ProductKeyTransactionObject> transactionList) {
+    public void setTransactionList(List<ProductKeyTransaction> transactionList) {
         this.transactionList = transactionList;
     }
 

@@ -102,6 +102,10 @@ public class BrandController {
         return EntityList.stream().map(this::toAttachmentObject).collect(Collectors.toList());
 
     }
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public int getPendingApprovalBrand(@RequestParam("carrier_id")String carrierId, @RequestParam("status")String status){
+        return  repository.countByCarrierIdAndStatusCode(carrierId, status);
+    }
 
 
     private BrandObject toBrandObject(BrandApplicationEntity brand){

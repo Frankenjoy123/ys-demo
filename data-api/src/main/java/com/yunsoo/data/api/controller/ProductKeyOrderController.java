@@ -142,6 +142,15 @@ public class ProductKeyOrderController {
         return savedEntities.stream().map(this::toProductKeyOrderObject).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "count", method = RequestMethod.GET)
+    public long countOrder(@RequestParam("org_ids") List<String> orgIds, @RequestParam("is_total")boolean isTotal){
+        if(isTotal)
+            return productKeyOrderRepository.sumTotalByOrgIdIn(orgIds);
+        else
+            return productKeyOrderRepository.sumRemainByOrgIdIn(orgIds);
+    }
+
+
     ProductKeyOrderObject toProductKeyOrderObject(ProductKeyOrderEntity entity) {
         if (entity == null) {
             return null;

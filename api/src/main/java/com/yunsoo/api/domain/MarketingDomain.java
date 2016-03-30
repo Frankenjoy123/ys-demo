@@ -130,6 +130,12 @@ public class MarketingDomain {
         return totalQuantity;
     }
 
+    public int countMarketing(List<String> orgIds, String status){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                 .append("org_ids", orgIds).append("status", status)
+                .build();
+        return dataAPIClient.get("marketing/count" + query, Integer.class);
+    }
 
 
     public void updateMarketing(MarketingObject marketingObject){

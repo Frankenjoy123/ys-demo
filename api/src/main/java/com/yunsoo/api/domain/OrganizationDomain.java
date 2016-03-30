@@ -60,6 +60,10 @@ public class OrganizationDomain {
         }
     }
 
+    public int countBrand(String id, String status){
+       return dataAPIClient.get("organization/{id}/brand/count?status={status}", Integer.class, id, status);
+    }
+
     public void updateOrganizationStatus(String id, String status) {
         OrganizationObject org = getOrganizationById(id);
         org.setStatusCode(status);

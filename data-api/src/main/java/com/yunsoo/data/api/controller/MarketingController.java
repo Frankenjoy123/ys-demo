@@ -367,6 +367,12 @@ public class MarketingController {
         return mktDrawPrizeEntities.stream().map(this::toMktDrawPrizeObject).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public int countMarketingByStatus(@RequestParam("org_ids")List<String> orgIds, @RequestParam("status")String status){
+        return marketingRepository.countByOrgIdInAndStatusCode(orgIds, status);
+    }
+
+
 
     private MarketingEntity findMarketingById(String id) {
         MarketingEntity entity = marketingRepository.findOne(id);
