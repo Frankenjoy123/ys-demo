@@ -51,7 +51,7 @@ public class PermissionDomain {
 
     //region region
 
-    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'region/' + #id)")
+    //@Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'region/' + #id)")
     public PermissionRegionObject getPermissionRegionById(String id) {
         if (id == null || id.length() == 0) return null;
         try {

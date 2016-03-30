@@ -38,8 +38,8 @@ public class PermissionController {
 
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<PermissionEntry> permissions() {
-        return AuthUtils.getAuthentication().getPermissionEntries();
+    public List<String> permissions() {
+        return AuthUtils.getAuthentication().getPermissionEntries().stream().map(PermissionEntry::toString).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/resource", method = RequestMethod.GET)

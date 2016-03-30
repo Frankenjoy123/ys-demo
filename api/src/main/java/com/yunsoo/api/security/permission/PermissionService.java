@@ -1,6 +1,5 @@
 package com.yunsoo.api.security.permission;
 
-import com.yunsoo.api.domain.AccountGroupDomain;
 import com.yunsoo.api.domain.PermissionAllocationDomain;
 import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.security.permission.expression.PermissionExpression;
@@ -11,7 +10,6 @@ import com.yunsoo.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression.CollectionRestrictionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression.RegionRestrictionExpression;
-import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.PermissionAllocationObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
 import com.yunsoo.common.data.object.PermissionRegionObject;
@@ -38,8 +36,6 @@ public class PermissionService {
     @Autowired
     private PermissionAllocationDomain permissionAllocationDomain;
 
-    @Autowired
-    private AccountGroupDomain accountGroupDomain;
 
     public List<PermissionEntry> getExpendedPermissionEntriesByAccountId(String accountId) {
         List<PermissionEntry> permissionEntries = getPermissionEntriesByAccountId(accountId);
@@ -52,14 +48,13 @@ public class PermissionService {
 
     public List<PermissionEntry> getPermissionEntriesByAccountId(String accountId) {
         List<PermissionEntry> permissionEntries = new ArrayList<>();
-        List<String> groupIds = accountGroupDomain.getAccountGroupByAccountId(accountId)
-                .stream().map(AccountGroupObject::getGroupId).collect(Collectors.toList());
-        List<PermissionAllocationObject> paObjects = permissionAllocationDomain.getPermissionAllocations(accountId, groupIds);
+        List<PermissionAllocationObject> paObjects = permissionAllocationDomain.getAllPermissionAllocationsByAccountId(accountId);
         paObjects.forEach(pa -> {
             if (pa != null) permissionEntries.add(new PermissionEntry(pa));
         });
         return permissionEntries.stream().filter(PermissionEntry::isValid).sorted().collect(Collectors.toList());
     }
+
 
     private void expendPermissionEntry(PermissionEntry permissionEntry, Map<String, List<PermissionExpression>> policyPermissionMap) {
         List<OrgRestrictionExpression> restrictions = expendRestrictionExpression(permissionEntry.getRestriction());

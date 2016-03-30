@@ -28,6 +28,8 @@ public abstract class PrincipalExpression extends ResourceExpression {
         private static final String RESOURCE = "account";
         private static final String PREFIX = RESOURCE + DELIMITER;
 
+        public static final AccountPrincipalExpression ANY = new AccountPrincipalExpression("*");
+
         public AccountPrincipalExpression(String expressionOrAccountId) {
             super(expressionOrAccountId);
             setResource(RESOURCE);

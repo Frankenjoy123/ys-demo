@@ -7,6 +7,7 @@ import com.yunsoo.api.security.permission.expression.PrincipalExpression.Account
 import com.yunsoo.api.security.permission.expression.PrincipalExpression.GroupPrincipalExpression;
 import com.yunsoo.common.data.object.PermissionAllocationObject;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,23 +34,31 @@ public class PermissionAllocationDomain {
     @Autowired
     private PermissionService permissionService;
 
+    @Autowired
+    private AccountGroupDomain accountGroupDomain;
+
+
     //@Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'permissionEntries/'+#accountId)")
     public List<String> getPermissionEntriesByAccountId(String accountId) {
         List<PermissionEntry> permissionEntries = permissionService.getExpendedPermissionEntriesByAccountId(accountId);
         return permissionEntries.stream().map(PermissionEntry::toString).collect(Collectors.toList());
     }
 
-    public List<PermissionAllocationObject> getPermissionAllocations(String accountId, List<String> groupIds) {
+    /**
+     * permission allocations of the account and it's groups
+     *
+     * @param accountId
+     * @return
+     */
+    public List<PermissionAllocationObject> getAllPermissionAllocationsByAccountId(String accountId) {
         List<String> principals = new ArrayList<>();
-        if (!StringUtils.isEmpty(accountId)) {
-            principals.add(new AccountPrincipalExpression(accountId).toString());
-        }
-        if (groupIds != null && groupIds.size() > 0) {
-            groupIds.forEach(g -> {
-                principals.add(new GroupPrincipalExpression(g).toString());
-            });
-        }
-        return principals.size() == 0 ? new ArrayList<>() : getPermissionAllocationsByPrincipal(principals);
+        principals.add(new AccountPrincipalExpression(accountId).toString());
+        principals.add(AccountPrincipalExpression.ANY.toString()); // account/*
+        accountGroupDomain.getAccountGroupByAccountId(accountId).forEach(g -> {
+            principals.add(new GroupPrincipalExpression(g.getGroupId()).toString());
+        });
+
+        return getPermissionAllocationsByPrincipal(principals);
     }
 
     public List<PermissionAllocationObject> getPermissionAllocationsByAccountId(String accountId) {
@@ -71,16 +80,31 @@ public class PermissionAllocationDomain {
 //    }
 
 
+    //region private methods
+
     private PermissionAllocationObject getPermissionAllocationById(String id) {
-        return dataAPIClient.get("permissionAllocation/{id}", PermissionAllocationObject.class, id);
+        if (StringUtils.isEmpty(id)) {
+            return null;
+        }
+        try {
+            return dataAPIClient.get("permissionAllocation/{id}", PermissionAllocationObject.class, id);
+        } catch (NotFoundException ignored) {
+            return null;
+        }
     }
 
     private List<PermissionAllocationObject> getPermissionAllocationsByPrincipal(String principal) {
+        if (StringUtils.isEmpty(principal)) {
+            return new ArrayList<>();
+        }
         return dataAPIClient.get("permissionAllocation?principal={p}", new ParameterizedTypeReference<List<PermissionAllocationObject>>() {
         }, principal);
     }
 
     private List<PermissionAllocationObject> getPermissionAllocationsByPrincipal(List<String> principals) {
+        if (principals == null || principals.size() == 0) {
+            return new ArrayList<>();
+        }
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("principal_in", principals)
                 .build();
@@ -99,4 +123,6 @@ public class PermissionAllocationDomain {
             dataAPIClient.delete("permissionAllocation/{id}", id);
         }
     }
+
+    //endregion
 }
