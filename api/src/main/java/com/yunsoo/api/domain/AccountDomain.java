@@ -111,7 +111,7 @@ public class AccountDomain {
     }
 
 
-    public boolean isActiveAccount(AccountObject accountObject) {
+    public boolean isValidAccount(AccountObject accountObject) {
         String statusCode = accountObject.getStatusCode();
         return LookupCodes.AccountStatus.AVAILABLE.equals(statusCode);
     }

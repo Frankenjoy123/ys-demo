@@ -7,6 +7,8 @@ import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 /**
  * Created by:   Lijian
  * Created on:   2016-02-17
@@ -289,6 +291,9 @@ public class WebScanResponse {
         @JsonProperty("first_scan")
         private ScanRecord firstScan;
 
+        @JsonProperty("scan_records")
+        private List<ScanRecord> scanRecords;
+
         public int getScanCount() {
             return scanCount;
         }
@@ -305,6 +310,13 @@ public class WebScanResponse {
             this.firstScan = firstScan;
         }
 
+        public List<ScanRecord> getScanRecords() {
+            return scanRecords;
+        }
+
+        public void setScanRecords(List<ScanRecord> scanRecords) {
+            this.scanRecords = scanRecords;
+        }
     }
 
     public static class ScanRecord {
