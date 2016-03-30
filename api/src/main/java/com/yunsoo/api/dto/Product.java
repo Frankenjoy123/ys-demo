@@ -3,6 +3,7 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
@@ -12,7 +13,7 @@ import org.joda.time.DateTime;
  * Descriptions:
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Product {
+public class Product implements OrgIdDetectable {
     @JsonProperty("product_key")
     private String productKey;
 

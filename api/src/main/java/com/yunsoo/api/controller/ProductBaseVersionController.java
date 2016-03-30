@@ -104,7 +104,7 @@ public class ProductBaseVersionController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'productbase:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'productbase:read')")
     public List<ProductBase> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                          Pageable pageable,
                                          HttpServletResponse response) {
@@ -140,7 +140,7 @@ public class ProductBaseVersionController {
     //create product base
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:create')")
+    @PreAuthorize("hasPermission(#productBase.orgId, 'org', 'productbase:create')")
     public ProductBase create(@RequestBody ProductBase productBase) {
         ProductBaseObject productBaseObject = new ProductBaseObject();
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
@@ -182,7 +182,7 @@ public class ProductBaseVersionController {
     //create new product base versions
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:modify')")
+    @PreAuthorize("hasPermission(#productBase.orgId, 'org', 'productbase:modify')")
     public ProductBaseVersionsObject createProductBaseVersions(@PathVariable(value = "product_base_id") String productBaseId,
                                                                @RequestBody ProductBase productBase) {
         ProductBaseObject originalProductBaseObject = findProductBaseById(productBaseId);
@@ -228,7 +228,7 @@ public class ProductBaseVersionController {
 
     //update product base versions: edit current product version detail
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.PATCH)
-    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:modify')")
+    @PreAuthorize("hasPermission(#productBase.orgId, 'org', 'productbase:modify')")
     public void updateProductBaseVersions(@PathVariable(value = "product_base_id") String productBaseId,
                                           @RequestParam(value = "version", required = false) Integer version,
                                           @RequestBody ProductBase productBase) {

@@ -6,12 +6,14 @@ import com.yunsoo.api.security.permission.expression.ResourceExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.common.data.object.PermissionAllocationObject;
 
+import java.io.Serializable;
+
 /**
  * Created by:   Lijian
  * Created on:   2016-03-22
  * Descriptions: corresponding to the permission_allocation by one to one
  */
-public class PermissionEntry implements Comparable {
+public class PermissionEntry implements Comparable, Serializable {
 
     private String id; //the same as permission_allocation.id
 

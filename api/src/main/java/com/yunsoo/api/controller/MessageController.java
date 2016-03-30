@@ -77,7 +77,7 @@ public class MessageController {
 
     //query by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'message:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'message:read')")
     public List<Message> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                      Pageable pageable,
                                      HttpServletResponse response) {
@@ -91,7 +91,7 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/count/on", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'message:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'message:read')")
     public Long getNewMessagesByMessageId(
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "type_code_in", required = false) List<String> typeCodeIn,
@@ -121,7 +121,7 @@ public class MessageController {
 
     //update message
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    @PreAuthorize("hasPermission(#message.orgId, 'filterByOrg', 'message:create')")
+    @PreAuthorize("hasPermission(#message.orgId, 'org', 'message:create')")
     public Message updateMessage(@PathVariable(value = "id") String id,
                                  @RequestBody @Valid Message message) {
         MessageObject messageObject = findMessageById(id);

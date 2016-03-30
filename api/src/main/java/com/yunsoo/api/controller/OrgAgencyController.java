@@ -52,7 +52,7 @@ public class OrgAgencyController {
 
     //query by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'orgagency:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'orgagency:read')")
     public List<OrgAgency> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                        Pageable pageable,
                                        HttpServletResponse response) {
@@ -71,7 +71,7 @@ public class OrgAgencyController {
 
     //query locations
     @RequestMapping(value = "location", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'orgagency:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'orgagency:read')")
     public List<Location> getLocationsByFilter(@RequestParam(value = "parent_id", required = false) String parentId) {
         return orgAgencyDomain.getLocationsByFilter(parentId).stream().map(Location::new).collect(Collectors.toList());
     }

@@ -10,7 +10,6 @@ import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -34,22 +33,10 @@ public class PermissionAllocationDomain {
     @Autowired
     private PermissionService permissionService;
 
-    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'grantedAuthorities/'+#accountId)")
-    public List<String> getGrantedAuthoritiesByAccountId(String accountId) {
+    //@Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'permissionEntries/'+#accountId)")
+    public List<String> getPermissionEntriesByAccountId(String accountId) {
         List<PermissionEntry> permissionEntries = permissionService.getExpendedPermissionEntriesByAccountId(accountId);
         return permissionEntries.stream().map(PermissionEntry::toString).collect(Collectors.toList());
-    }
-
-    public List<PermissionAllocationObject> getPermissionAllocationsByAccountId(String accountId) {
-        return StringUtils.isEmpty(accountId)
-                ? new ArrayList<>()
-                : getPermissionAllocationsByPrincipal(new AccountPrincipalExpression(accountId).toString());
-    }
-
-    public List<PermissionAllocationObject> getPermissionAllocationsByGroupId(String groupId) {
-        return StringUtils.isEmpty(groupId)
-                ? new ArrayList<>()
-                : getPermissionAllocationsByPrincipal(new GroupPrincipalExpression(groupId).toString());
     }
 
     public List<PermissionAllocationObject> getPermissionAllocations(String accountId, List<String> groupIds) {
@@ -63,6 +50,18 @@ public class PermissionAllocationDomain {
             });
         }
         return principals.size() == 0 ? new ArrayList<>() : getPermissionAllocationsByPrincipal(principals);
+    }
+
+    public List<PermissionAllocationObject> getPermissionAllocationsByAccountId(String accountId) {
+        return StringUtils.isEmpty(accountId)
+                ? new ArrayList<>()
+                : getPermissionAllocationsByPrincipal(new AccountPrincipalExpression(accountId).toString());
+    }
+
+    public List<PermissionAllocationObject> getPermissionAllocationsByGroupId(String groupId) {
+        return StringUtils.isEmpty(groupId)
+                ? new ArrayList<>()
+                : getPermissionAllocationsByPrincipal(new GroupPrincipalExpression(groupId).toString());
     }
 
 //    public void allocatePermissionByAccount(String accountId, String restriction, String permission, String effect) {

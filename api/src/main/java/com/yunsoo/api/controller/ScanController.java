@@ -46,7 +46,7 @@ public class ScanController {
 
     //仅仅能够访问属于特定组织的Key
     @RequestMapping(value = "/{org_id}/{key}", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'scan:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'scan:read')")
     public ScanResultWeb getDetailForWebByKey(@PathVariable(value = "org_id") String orgId,
                                               @PathVariable(value = "key") String key) {
 

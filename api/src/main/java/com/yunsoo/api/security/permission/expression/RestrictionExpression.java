@@ -111,6 +111,10 @@ public abstract class RestrictionExpression extends ResourceExpression {
             }
         }
 
+        public CollectionRestrictionExpression distinct() {
+            return new CollectionRestrictionExpression(expressions.stream().distinct().collect(Collectors.toList()));
+        }
+
         @Override
         public boolean contains(RestrictionExpression restriction) {
             if (expressions == null || expressions.size() == 0 || restriction == null || restriction.getValue() == null) {

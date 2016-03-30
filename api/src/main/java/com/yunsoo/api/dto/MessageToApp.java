@@ -1,11 +1,12 @@
 package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 
 /**
  * Created by admin on 2015/8/14.
  */
-public class MessageToApp {
+public class MessageToApp implements OrgIdDetectable {
 
     @JsonProperty("message_id")
     private String messageId;

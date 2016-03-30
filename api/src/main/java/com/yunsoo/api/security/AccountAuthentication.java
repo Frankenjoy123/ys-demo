@@ -1,13 +1,14 @@
 package com.yunsoo.api.security;
 
-import com.yunsoo.api.security.authorization.AccountGrantedAuthority;
 import com.yunsoo.api.security.authorization.AuthorizationService;
+import com.yunsoo.api.security.authorization.PermissionGrantedAuthority;
 import com.yunsoo.api.security.permission.PermissionEntry;
 import com.yunsoo.api.security.permission.expression.PermissionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Zhe
@@ -18,12 +19,23 @@ public class AccountAuthentication implements Authentication {
 
     private final AuthAccount authAccount;
     private AuthorizationService authorizationService;
-    private List<AccountGrantedAuthority> grantedAuthorities;
+    private List<PermissionEntry> permissionEntries;
     private boolean authenticated = true;
 
     public AccountAuthentication(AuthAccount authAccount, AuthorizationService authorizationService) {
         this.authAccount = authAccount;
         this.authorizationService = authorizationService;
+    }
+
+    public List<PermissionEntry> getPermissionEntries() {
+        if (permissionEntries == null) {
+            permissionEntries = authorizationService.getPermissionEntries(authAccount.getId());
+        }
+        return permissionEntries;
+    }
+
+    public boolean checkPermission(RestrictionExpression restriction, PermissionExpression permission) {
+        return authorizationService.checkPermission(getPermissionEntries(), restriction, permission);
     }
 
     @Override
@@ -32,11 +44,8 @@ public class AccountAuthentication implements Authentication {
     }
 
     @Override
-    public List<AccountGrantedAuthority> getAuthorities() {
-        if (grantedAuthorities == null) {
-            grantedAuthorities = authorizationService.getGrantedAuthorities(authAccount.getId());
-        }
-        return grantedAuthorities;
+    public List<PermissionGrantedAuthority> getAuthorities() {
+        return getPermissionEntries().stream().map(PermissionGrantedAuthority::new).collect(Collectors.toList());
     }
 
     @Override
@@ -66,15 +75,4 @@ public class AccountAuthentication implements Authentication {
         }
         authenticated = false;
     }
-
-    public boolean checkPermission(RestrictionExpression restriction, PermissionExpression permission) {
-        for (AccountGrantedAuthority grantedAuthority : getAuthorities()) {
-            PermissionEntry.Effect effect = grantedAuthority.check(restriction, permission);
-            if (effect != null) {
-                return effect.equals(PermissionEntry.Effect.allow);
-            }
-        }
-        return false;
-    }
-
 }

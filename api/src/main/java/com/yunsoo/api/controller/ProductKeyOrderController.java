@@ -6,7 +6,6 @@ import com.yunsoo.api.domain.ProductKeyOrderDomain;
 import com.yunsoo.api.domain.ProductKeyTransactionDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.security.TokenAuthenticationService;
-import com.yunsoo.common.data.object.ProductKeyTransactionObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
@@ -91,7 +90,7 @@ public class ProductKeyOrderController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'productkeyorder:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'productkeyorder:read')")
     public List<ProductKeyOrder> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                              @RequestParam(value = "available", required = false) Boolean available,
                                              @RequestParam(value = "active", required = false) Boolean active,

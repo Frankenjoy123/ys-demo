@@ -3,7 +3,10 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.BrandDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
-import com.yunsoo.api.dto.*;
+import com.yunsoo.api.dto.Attachment;
+import com.yunsoo.api.dto.Brand;
+import com.yunsoo.api.dto.ImageRequest;
+import com.yunsoo.api.dto.Organization;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
@@ -27,10 +30,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/organization")
 public class OrganizationController {
+
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
@@ -60,6 +61,7 @@ public class OrganizationController {
     private BrandDomain brandDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
     public Organization getById(@PathVariable(value = "id") String orgId) {
         orgId = fixOrgId(orgId);
         OrganizationObject object = organizationDomain.getOrganizationById(orgId);
@@ -70,14 +72,13 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
     public void Disable(@PathVariable(value = "id") String orgId) {
         organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.DISABLED);
-
-
-
     }
 
     @RequestMapping(value = "{id}/enable", method = RequestMethod.PUT)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
     public void Enable(@PathVariable(value = "id") String orgId) {
         organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.AVAILABLE);
     }
@@ -106,7 +107,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    @PreAuthorize("hasPermission('*', 'filterByOrg', 'organization:create')")
+    @PreAuthorize("hasPermission('*', 'org', 'organization:create')")
     public Organization create(@RequestBody Organization organization) {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         OrganizationObject object = organization.toOrganizationObject();
@@ -115,7 +116,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "/brand", method = RequestMethod.POST)
-    @PreAuthorize("hasPermission('*', 'filterByOrg', 'organization:create')")
+    @PreAuthorize("hasPermission('*', 'org', 'organization:create')")
     public Brand createBrand(@RequestBody Brand brand) {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         BrandObject object = brand.toBrand(brand);
