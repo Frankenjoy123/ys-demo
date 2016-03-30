@@ -8,8 +8,8 @@ import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.AccountLoginRequest;
 import com.yunsoo.api.dto.AccountLoginResponse;
 import com.yunsoo.api.dto.Token;
-import com.yunsoo.api.security.AuthAccount;
 import com.yunsoo.api.object.TPermission;
+import com.yunsoo.api.security.AuthAccount;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AccountTokenObject;
@@ -100,6 +100,10 @@ public class AuthController {
             log.warn("account not found");
             throw new UnauthorizedException("account is not valid");
         }
+        if (!accountDomain.isValidAccount(accountObject)) {
+            log.warn("account not valid");
+            throw new UnauthorizedException("account is not valid");
+        }
 
         //prepare properties
         String accountId = accountObject.getId();
@@ -160,6 +164,10 @@ public class AuthController {
             log.warn("account not found");
             throw new UnauthorizedException("token is not valid");
         }
+        if (!accountDomain.isValidAccount(accountObject)) {
+            log.warn("account not valid");
+            throw new UnauthorizedException("account is not valid");
+        }
 
         //prepare properties
         String orgId = accountObject.getOrgId();
@@ -197,11 +205,13 @@ public class AuthController {
             throw new UnauthorizedException("permanent_token invalid");
         }
 
-        String accountId = accountToken.getAccountId();
-        AccountObject accountObject = accountDomain.getById(accountId);
-        String orgId = accountObject.getOrgId();
+        AccountObject accountObject = accountDomain.getById(accountToken.getAccountId());
+        if (!accountDomain.isValidAccount(accountObject)) {
+            log.warn("account not valid");
+            throw new UnauthorizedException("account is not valid");
+        }
 
-        Token accessToken = tokenAuthenticationService.generateAccessToken(accountId, orgId);
+        Token accessToken = tokenAuthenticationService.generateAccessToken(accountToken.getAccountId(), accountObject.getOrgId());
 
         log.info(String.format("access token generated for account [id: %s]", accountToken.getAccountId()));
         return accessToken;
@@ -235,8 +245,8 @@ public class AuthController {
             throw new ForbiddenException();
         }
 
-        if (!accountDomain.isActiveAccount(accountObject)) {
-            throw new BadRequestException("account is not activated");
+        if (!accountDomain.isValidAccount(accountObject)) {
+            throw new BadRequestException("account not valid");
         }
 
         return tokenAuthenticationService.generateLoginToken(accountId, expiresIn);
