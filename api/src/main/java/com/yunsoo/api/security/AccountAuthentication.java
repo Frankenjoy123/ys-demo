@@ -29,7 +29,7 @@ public class AccountAuthentication implements Authentication {
 
     public List<PermissionEntry> getPermissionEntries() {
         if (permissionEntries == null) {
-            permissionEntries = authorizationService.getPermissionEntries(authAccount.getId());
+            permissionEntries = authorizationService.getPermissionEntries(authAccount);
         }
         return permissionEntries;
     }

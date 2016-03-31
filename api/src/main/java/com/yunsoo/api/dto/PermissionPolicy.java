@@ -22,7 +22,7 @@ public class PermissionPolicy {
     private String description;
 
     @JsonProperty("permissions")
-    private List<Permission> permissions;
+    private List<String> permissions;
 
 
     public String getCode() {
@@ -49,11 +49,11 @@ public class PermissionPolicy {
         this.description = description;
     }
 
-    public List<Permission> getPermissions() {
+    public List<String> getPermissions() {
         return permissions;
     }
 
-    public void setPermissions(List<Permission> permissions) {
+    public void setPermissions(List<String> permissions) {
         this.permissions = permissions;
     }
 
@@ -66,11 +66,7 @@ public class PermissionPolicy {
             this.code = policy.getCode();
             this.name = policy.getName();
             this.description = policy.getDescription();
-            //todo:permissions
-//        List<PermissionObject> permissionObjects = permissionPolicyObject.getPermissions();
-//        if (permissionObjects != null) {
-//            this.permissions = permissionObjects.stream().map(Permission::new).collect(Collectors.toList());
-//        }
+            this.permissions = policy.getPermissions();
         }
     }
 }

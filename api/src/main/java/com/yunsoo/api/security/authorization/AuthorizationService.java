@@ -1,12 +1,16 @@
 package com.yunsoo.api.security.authorization;
 
 import com.yunsoo.api.domain.PermissionAllocationDomain;
+import com.yunsoo.api.security.AuthAccount;
 import com.yunsoo.api.security.permission.PermissionEntry;
 import com.yunsoo.api.security.permission.expression.PermissionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression;
+import com.yunsoo.api.security.permission.expression.RestrictionExpression.CollectionRestrictionExpression;
+import com.yunsoo.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,9 +26,17 @@ public class AuthorizationService {
     private PermissionAllocationDomain permissionAllocationDomain;
 
 
-    public List<PermissionEntry> getPermissionEntries(String accountId) {
-        return permissionAllocationDomain.getPermissionEntriesByAccountId(accountId)
-                .stream().map(PermissionEntry::parse).collect(Collectors.toList());
+    public List<PermissionEntry> getPermissionEntries(AuthAccount authAccount) {
+        List<PermissionEntry> permissionEntries = permissionAllocationDomain.getPermissionEntriesByAccountId(authAccount.getId())
+                .stream()
+                .map(PermissionEntry::parse)
+                .collect(Collectors.toList());
+        //fix orgRestriction
+        String orgId = authAccount.getOrgId();
+        permissionEntries.forEach(p -> {
+            p.setRestriction(fixRestriction(p.getRestriction(), orgId));
+        });
+        return permissionEntries;
     }
 
     /**
@@ -63,4 +75,25 @@ public class AuthorizationService {
         }
         return false;
     }
+
+    private RestrictionExpression fixRestriction(RestrictionExpression restriction, String orgId) {
+        if (OrgRestrictionExpression.CURRENT.equals(restriction)) {
+            restriction = new OrgRestrictionExpression(orgId);
+        } else if (restriction instanceof CollectionRestrictionExpression) {
+            List<RestrictionExpression> subRestrictions = new ArrayList<>();
+            boolean hasCurrent = false;
+            for (RestrictionExpression r : ((CollectionRestrictionExpression) restriction).getExpressions()) {
+                if (OrgRestrictionExpression.CURRENT.equals(r)) {
+                    r = new OrgRestrictionExpression(orgId);
+                    hasCurrent = true;
+                }
+                subRestrictions.add(r);
+            }
+            if (hasCurrent) {
+                restriction = new CollectionRestrictionExpression(subRestrictions);
+            }
+        }
+        return restriction;
+    }
+
 }

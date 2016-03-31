@@ -50,12 +50,10 @@ public abstract class ResourceExpression implements Comparable {
 
     protected void setType(String type) {
         if (this.type != null && this.type.length() > 0 && !this.type.equals(type) && !COLLECTION_TYPE.equals(type)) {
-            throw new IllegalArgumentException("type not match");
+            throw new IllegalArgumentException("type mismatch");
         }
-        if (type == null) {
+        if (type == null || COLLECTION_TYPE.equals(type)) {
             this.expression = this.value;
-        } else if (COLLECTION_TYPE.equals(type)) {
-            this.value = this.expression;
         } else if (this.type == null || this.type.length() == 0) {
             this.expression = String.format("%s%s%s", type, DELIMITER, this.value);
         }

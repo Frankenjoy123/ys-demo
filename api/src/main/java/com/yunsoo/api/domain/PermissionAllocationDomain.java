@@ -73,11 +73,12 @@ public class PermissionAllocationDomain {
                 : getPermissionAllocationsByPrincipal(new GroupPrincipalExpression(groupId).toString());
     }
 
-//    public void allocatePermissionByAccount(String accountId, String restriction, String permission, String effect) {
-//        String principal = "account/" + accountId;
-//
-//
-//    }
+    public void allocatePermissionByAccount(String accountId, String restriction, String permission, String effect) {
+        String principal = new AccountPrincipalExpression(accountId).toString();
+        
+
+
+    }
 
 
     //region private methods
