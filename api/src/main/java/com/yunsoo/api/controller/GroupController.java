@@ -56,7 +56,7 @@ public class GroupController {
         return new Group(groupObject);
     }
 
-    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'group:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'group:read')")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<Group> getByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
         if (orgId == null) {

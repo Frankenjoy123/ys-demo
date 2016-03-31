@@ -5,6 +5,10 @@ import com.yunsoo.api.domain.BrandDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.*;
+import com.yunsoo.api.dto.Attachment;
+import com.yunsoo.api.dto.Brand;
+import com.yunsoo.api.dto.ImageRequest;
+import com.yunsoo.api.dto.Organization;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
@@ -64,6 +68,7 @@ public class OrganizationController {
     private PermissionDomain permissionDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
     public Organization getById(@PathVariable(value = "id") String orgId) {
         orgId = fixOrgId(orgId);
         OrganizationObject object = organizationDomain.getOrganizationById(orgId);
@@ -74,6 +79,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
     public void Disable(@PathVariable(value = "id") String orgId) {
         organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.DISABLED);
 
@@ -82,6 +88,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "{id}/enable", method = RequestMethod.PUT)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
     public void Enable(@PathVariable(value = "id") String orgId) {
         organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.AVAILABLE);
     }
@@ -110,7 +117,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    @PreAuthorize("hasPermission('*', 'filterByOrg', 'organization:create')")
+    @PreAuthorize("hasPermission('*', 'org', 'organization:create')")
     public Organization create(@RequestBody Organization organization) {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         OrganizationObject object = organization.toOrganizationObject();
@@ -119,7 +126,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "/brand", method = RequestMethod.POST)
-    @PreAuthorize("hasPermission('*', 'filterByOrg', 'organization:create')")
+    @PreAuthorize("hasPermission('current', 'org', 'organization:create')")
     public Brand createBrand(@RequestBody Brand brand) {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         BrandObject object = brand.toBrand(brand);
@@ -140,8 +147,6 @@ public class OrganizationController {
         accountObject.setOrgId(returnObj.getId());
         accountObject.setCreatedAccountId(currentAccountId);
         accountDomain.createAccount(accountObject);
-
-
         return returnObj;
     }
 

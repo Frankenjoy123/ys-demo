@@ -132,6 +132,10 @@ public abstract class PermissionExpression extends ResourceExpression {
             }
         }
 
+        public CollectionPermissionExpression distinct() {
+            return new CollectionPermissionExpression(expressions.stream().distinct().collect(Collectors.toList()));
+        }
+
         @Override
         public boolean contains(PermissionExpression permission) {
             if (expressions == null || expressions.size() == 0 || permission == null || permission.getValue() == null) {

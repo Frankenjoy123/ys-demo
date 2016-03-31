@@ -3,6 +3,7 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -13,7 +14,7 @@ import org.joda.time.DateTime;
  * Created on  : 2015/5/11
  * Descriptions:
  */
-public class Device {
+public class Device implements OrgIdDetectable {
 
     @NotEmpty(message = "id must not be null or empty")
     @JsonProperty("id")

@@ -65,7 +65,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'account:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'account:read')")
     public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                      @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                      Pageable pageable,
@@ -90,7 +90,7 @@ public class AccountController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#request.orgId, 'filterByOrg', 'account:create')")
+    @PreAuthorize("hasPermission(#request.orgId, 'org', 'account:create')")
     public Account create(@Valid @RequestBody AccountRequest request) {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         AccountObject accountObject = toAccountObject(request);

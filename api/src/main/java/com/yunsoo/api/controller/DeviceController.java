@@ -51,7 +51,7 @@ public class DeviceController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(#orgId, 'filterByOrg', 'device:read')")
+    @PostAuthorize("hasPermission(#orgId, 'org', 'device:read')")
     public List<Device> getByFilterPaged(
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "login_account_id", required = false) String accountId,

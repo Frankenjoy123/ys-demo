@@ -11,13 +11,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Created by  : Zhe
- * Created on  : 2015/3/4
+ * Created by:   Lijian
+ * Created on:   2016-03-30
  * Descriptions:
  */
 @Configuration
 @EnableWebSecurity
-public class TokenAuthenticationSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Value("${yunsoo.debug}")
     private Boolean debug;
@@ -25,8 +25,8 @@ public class TokenAuthenticationSecurityConfig extends WebSecurityConfigurerAdap
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
-    public TokenAuthenticationSecurityConfig() {
-        super(true);
+    public WebSecurityConfiguration() {
+        super(true); //disableDefaults
     }
 
     @Override

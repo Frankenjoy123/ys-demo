@@ -3,6 +3,7 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
@@ -12,7 +13,7 @@ import org.joda.time.DateTime;
  * Created on  : 4/29/2015
  * Descriptions:
  */
-public class ProductFile {
+public class ProductFile implements OrgIdDetectable {
 
     @JsonProperty("id")
     private Long id;

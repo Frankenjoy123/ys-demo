@@ -42,6 +42,7 @@ public abstract class RestrictionExpression extends ResourceExpression {
         private static final String RESOURCE = "org";
         private static final String PREFIX = RESOURCE + DELIMITER;
 
+        public static final OrgRestrictionExpression ANY = new OrgRestrictionExpression("*");
         public static final OrgRestrictionExpression CURRENT = new OrgRestrictionExpression("current");
 
         public OrgRestrictionExpression(String expressionOrOrgId) {
@@ -109,6 +110,10 @@ public abstract class RestrictionExpression extends ResourceExpression {
             } else {
                 this.expressions = new ArrayList<>();
             }
+        }
+
+        public CollectionRestrictionExpression distinct() {
+            return new CollectionRestrictionExpression(expressions.stream().distinct().collect(Collectors.toList()));
         }
 
         @Override

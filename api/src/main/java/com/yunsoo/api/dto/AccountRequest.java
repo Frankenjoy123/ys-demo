@@ -1,6 +1,7 @@
 package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
@@ -8,7 +9,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * Created on  : 2015/5/19
  * Descriptions:
  */
-public class AccountRequest {
+public class AccountRequest implements OrgIdDetectable {
     @NotBlank(message="org_id must not be null or empty")
     @JsonProperty("org_id")
     private String orgId;

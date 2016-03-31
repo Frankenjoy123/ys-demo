@@ -92,7 +92,7 @@ public class ProductKeyOrderController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'productkeyorder:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'productkeyorder:read')")
     public List<ProductKeyOrder> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                              @RequestParam(value = "available", required = false) Boolean available,
                                              @RequestParam(value = "active", required = false) Boolean active,

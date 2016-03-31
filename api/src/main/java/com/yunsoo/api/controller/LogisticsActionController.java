@@ -58,7 +58,7 @@ public class LogisticsActionController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'logisticsaction:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'logisticsaction:read')")
     public List<LogisticsAction> get(@RequestParam(value = "orgId", required = true) String orgId,
                                      @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
