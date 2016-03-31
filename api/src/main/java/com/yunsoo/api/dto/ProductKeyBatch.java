@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.api.dto.detectable.OrgIdDetectable;
-import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
@@ -164,9 +163,10 @@ public class ProductKeyBatch implements OrgIdDetectable {
         this.marketingId = marketingId;
     }
 
-    public ProductKeyBatch(){}
+    public ProductKeyBatch() {
+    }
 
-    public ProductKeyBatch(ProductKeyBatchObject object){
+    public ProductKeyBatch(ProductKeyBatchObject object) {
         if (object != null) {
             this.setId(object.getId());
             this.setBatchNo(object.getBatchNo());

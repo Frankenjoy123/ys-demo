@@ -116,7 +116,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "/brand", method = RequestMethod.POST)
-    @PreAuthorize("hasPermission('*', 'org', 'organization:create')")
+    @PreAuthorize("hasPermission('current', 'org', 'organization:create')")
     public Brand createBrand(@RequestBody Brand brand) {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         BrandObject object = brand.toBrand(brand);
