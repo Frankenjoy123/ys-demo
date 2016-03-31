@@ -1,17 +1,11 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.MarketingObject;
-import com.yunsoo.common.data.object.MktDrawPrizeObject;
-import com.yunsoo.common.data.object.MktDrawRecordObject;
-import com.yunsoo.common.data.object.MktDrawRuleObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
-import com.yunsoo.data.service.entity.MarketingEntity;
-import com.yunsoo.data.service.entity.MktDrawPrizeEntity;
-import com.yunsoo.data.service.entity.MktDrawRecordEntity;
-import com.yunsoo.data.service.entity.MktDrawRuleEntity;
+import com.yunsoo.data.service.entity.*;
 import com.yunsoo.data.service.repository.MarketingRepository;
 import com.yunsoo.data.service.repository.MktDrawPrizeRepository;
 import com.yunsoo.data.service.repository.MktDrawRecordRepository;
@@ -29,6 +23,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -106,9 +102,13 @@ public class MarketingController {
         Page<MarketingEntity> entityPage = null;
         if(orgId != null)
             entityPage = marketingRepository.findByOrgId(orgId, pageable);
-        else if (orgIds != null || orgIds.size() > 0){
+        else if (orgIds != null && orgIds.size() > 0){
             entityPage = marketingRepository.query(orgIds, status, pageable);
         }
+        else
+            throw new BadRequestException("one of the request parameter org_id or org_ids is required");
+
+
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
@@ -370,6 +370,19 @@ public class MarketingController {
     @RequestMapping(value = "/count", method = RequestMethod.GET)
     public int countMarketingByStatus(@RequestParam("org_ids")List<String> orgIds, @RequestParam("status")String status){
         return marketingRepository.countByOrgIdInAndStatusCode(orgIds, status);
+    }
+    @RequestMapping(value = "/statistics", method = RequestMethod.GET)
+    public List<MarketingObject> getMarketingCostList(@RequestParam("org_ids")List<String> orgIds,
+                                                       @RequestParam("status")List<String> status, Pageable pageable){
+        List<Object[]>  result = marketingRepository.sumMarketingByOrgIds(orgIds, status, pageable);
+        List<MarketingObject> marketingObjectList = new ArrayList<>();
+        for(Object[] item : result){
+            MarketingObject object = new MarketingObject();
+            object.setOrgId((String)item[0]);
+            object.setBudget((Double)item[1]);
+            marketingObjectList.add(object);
+        }
+        return marketingObjectList;
     }
 
 

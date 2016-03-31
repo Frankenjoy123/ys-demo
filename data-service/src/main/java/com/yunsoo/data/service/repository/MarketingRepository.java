@@ -28,4 +28,7 @@ public interface MarketingRepository extends CrudRepository<MarketingEntity, Str
 
 
     int countByOrgIdInAndStatusCode(@Param("orgIds")List<String> orgIds, @Param("status")String status );
+
+    @Query("select m.orgId as id, sum(m.budget) as cal_value from MarketingEntity m where m.orgId in :orgIds and  statusCode in :status group by m.orgId order by cal_value desc")
+    List<Object[]>  sumMarketingByOrgIds(@Param("orgIds")List<String> orgIds, @Param("status")List<String> statusList, Pageable pageable );
 }

@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -149,7 +150,19 @@ public class ProductKeyOrderController {
         else
             return productKeyOrderRepository.sumRemainByOrgIdIn(orgIds);
     }
-
+    @RequestMapping(value = "statistics", method = RequestMethod.GET)
+    public List<ProductKeyOrderObject> statistics(@RequestParam("org_ids") List<String> orgIds, Pageable pageable){
+        List<Object[]> result = productKeyOrderRepository.statistics(orgIds, pageable);
+        List<ProductKeyOrderObject> list = new ArrayList<>();
+        for(Object[] item : result){
+            ProductKeyOrderObject object = new ProductKeyOrderObject();
+            object.setOrgId((String)item[0]);
+            object.setTotal((Long)item[1]);
+            object.setRemain((Long)item[2]);
+            list.add(object);
+        }
+        return  list;
+    }
 
     ProductKeyOrderObject toProductKeyOrderObject(ProductKeyOrderEntity entity) {
         if (entity == null) {

@@ -137,6 +137,13 @@ public class MarketingDomain {
         return dataAPIClient.get("marketing/count" + query, Integer.class);
     }
 
+    public List<MarketingObject> statisticsMarketing(List<String> orgIds, List<String> status, Pageable pageable){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_ids", orgIds).append("status", status).append(pageable)
+                .build();
+        return dataAPIClient.get("marketing/statistics" + query, new ParameterizedTypeReference<List<MarketingObject>>() {
+        });
+    }
 
     public void updateMarketing(MarketingObject marketingObject){
         dataAPIClient.put("marketing/{id}", marketingObject, marketingObject.getId());

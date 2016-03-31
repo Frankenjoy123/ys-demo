@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.BrandDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
+import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
@@ -58,6 +59,9 @@ public class OrganizationController {
 
     @Autowired
     private BrandDomain brandDomain;
+
+    @Autowired
+    private PermissionDomain permissionDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Organization getById(@PathVariable(value = "id") String orgId) {
@@ -124,6 +128,8 @@ public class OrganizationController {
         object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
         Brand returnObj = new Brand(organizationDomain.createBrand(object));
 
+        permissionDomain.putOrgRestrictionToDefaultPermissionRegion(brand.getCarrierId(), returnObj.getId());
+
         AccountObject accountObject = new AccountObject();
         accountObject.setEmail(returnObj.getEmail());
         accountObject.setIdentifier("admin");
@@ -134,6 +140,8 @@ public class OrganizationController {
         accountObject.setOrgId(returnObj.getId());
         accountObject.setCreatedAccountId(currentAccountId);
         accountDomain.createAccount(accountObject);
+
+
         return returnObj;
     }
 

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Lijian
@@ -126,6 +127,17 @@ public class ProductKeyOrderDomain {
                 .append("is_total", isTotal)
                 .build();
         return dataAPIClient.get("productKeyOrder/count" + query , Long.class);
+    }
+
+    public List<ProductKeyOrder> statistics(List<String> orgIds, Pageable pageable){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_ids", orgIds)
+                .append(pageable)
+                .build();
+        List<ProductKeyOrderObject> objectList = dataAPIClient.get("productKeyOrder/statistics" + query, new ParameterizedTypeReference<List<ProductKeyOrderObject>>() {
+        });
+
+        return objectList.stream().map(this::toProductKeyOrder).collect(Collectors.toList());
     }
 
     private ProductKeyOrder toProductKeyOrder(ProductKeyOrderObject object) {
