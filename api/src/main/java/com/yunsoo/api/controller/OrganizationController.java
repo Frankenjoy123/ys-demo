@@ -172,7 +172,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "/{id}/brand", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(returnObject, 'organization:read')")
+    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
     public  List<Brand> filterOrgBrand(@PathVariable(value = "id") String id,
                                        @RequestParam(value="status", required = false)String status,
                                        @RequestParam(value = "name", required = false) String name,
