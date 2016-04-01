@@ -34,7 +34,7 @@ public final class AuthUtils {
     }
 
     public static boolean isMe(String accountId) {
-        return getCurrentAccount().getId().equals(accountId);
+        return "current".equals(accountId) || getCurrentAccount().getId().equals(accountId);
     }
 
     public static String fixAccountId(String accountId) {

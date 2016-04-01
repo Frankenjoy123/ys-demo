@@ -29,13 +29,13 @@ public class AccountAuthentication implements Authentication {
 
     public List<PermissionEntry> getPermissionEntries() {
         if (permissionEntries == null) {
-            permissionEntries = authorizationService.getPermissionEntries(authAccount);
+            permissionEntries = authorizationService.getPermissionEntries(this);
         }
         return permissionEntries;
     }
 
     public boolean checkPermission(RestrictionExpression restriction, PermissionExpression permission) {
-        return authorizationService.checkPermission(getPermissionEntries(), restriction, permission);
+        return authorizationService.checkPermission(this, restriction, permission);
     }
 
     @Override
@@ -69,10 +69,11 @@ public class AccountAuthentication implements Authentication {
     }
 
     @Override
-    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+    public void setAuthenticated(boolean isAuthenticated) {
         if (isAuthenticated) {
             throw new IllegalArgumentException();
         }
         authenticated = false;
     }
+
 }

@@ -1,7 +1,5 @@
 package com.yunsoo.api.security;
 
-import org.joda.time.DateTime;
-
 import java.io.Serializable;
 
 /**
@@ -14,8 +12,6 @@ public class AuthAccount implements Serializable {
     private String id;
 
     private String orgId;
-
-    private DateTime expires;
 
 
     public String getId() {
@@ -32,14 +28,6 @@ public class AuthAccount implements Serializable {
 
     public void setOrgId(String orgId) {
         this.orgId = orgId;
-    }
-
-    public DateTime getExpires() {
-        return expires;
-    }
-
-    public void setExpires(DateTime expires) {
-        this.expires = expires;
     }
 
 }
