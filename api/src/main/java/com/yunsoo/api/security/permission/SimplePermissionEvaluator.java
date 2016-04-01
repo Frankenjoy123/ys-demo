@@ -1,7 +1,7 @@
 package com.yunsoo.api.security.permission;
 
-import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import com.yunsoo.api.dto.Organization;
+import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import com.yunsoo.api.security.AccountAuthentication;
 import com.yunsoo.api.security.permission.expression.PermissionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression;
@@ -78,9 +78,6 @@ public class SimplePermissionEvaluator implements PermissionEvaluator {
         if (permission == null) {
             log.error("permission expression not well formatted");
             return false;
-        }
-        if (OrgRestrictionExpression.CURRENT.equals(restriction)) {
-            restriction = new OrgRestrictionExpression(accountAuthentication.getPrincipal().getOrgId());
         }
         return accountAuthentication.checkPermission(restriction, permission);
     }

@@ -1,17 +1,12 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.client.DataAPIClient;
 import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.PermissionAction;
+import com.yunsoo.api.dto.PermissionEntry;
 import com.yunsoo.api.dto.PermissionPolicy;
 import com.yunsoo.api.dto.PermissionResource;
-import com.yunsoo.api.security.permission.PermissionEntry;
 import com.yunsoo.api.util.AuthUtils;
-import com.yunsoo.common.data.object.PermissionPolicyObject;
-import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,15 +26,24 @@ import java.util.stream.Collectors;
 public class PermissionController {
 
     @Autowired
-    private DataAPIClient dataAPIClient;
-
-    @Autowired
     private PermissionDomain permissionDomain;
 
-
+    /**
+     * get all permissions of the current account
+     *
+     * @return all permissions
+     */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<String> permissions() {
-        return AuthUtils.getAuthentication().getPermissionEntries().stream().map(PermissionEntry::toString).collect(Collectors.toList());
+    public List<PermissionEntry> getPermissions() {
+        return AuthUtils.getAuthentication().getPermissionEntries().stream().map(p -> {
+            PermissionEntry pe = new PermissionEntry();
+            pe.setId(p.getId());
+            pe.setPrincipal(p.getPrincipal().toString());
+            pe.setRestriction(p.getRestriction().toString());
+            pe.setPermission(p.getPermission().toString());
+            pe.setEffect(p.getEffect().name());
+            return pe;
+        }).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/resource", method = RequestMethod.GET)
@@ -57,30 +61,17 @@ public class PermissionController {
     }
 
     @RequestMapping(value = "/policy", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(null, 'permissionpolicy:read')")
     public List<PermissionPolicy> getAllPolicies() {
         return permissionDomain.getPermissionPolicies().stream().map(PermissionPolicy::new).collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "/policy/{code}", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(null, 'permissionpolicy:read')")
-    public PermissionPolicy getPolicyByCode(@PathVariable(value = "code") String code) {
-        //todo: change it getting from cached list permissionDomain.getPermissionPolicies()
-        try {
-            PermissionPolicyObject permissionPolicyObject = dataAPIClient.get("permission/policy/{code}", PermissionPolicyObject.class, code);
-            return new PermissionPolicy(permissionPolicyObject);
-        } catch (NotFoundException ignored) {
-            throw new NotFoundException("permission policy not found by [code: " + code + "]");
-        }
-    }
-
-    @RequestMapping(value = "/policy/page/enterprise", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(null, 'permissionpolicy:read')")
-    public List<PermissionPolicy> getPoliciesForPageEnterprise() {
-        return permissionDomain.getPermissionPolicies().stream()
-                .filter(p -> p.getCode().startsWith("page-enterprise-"))
-                .map(PermissionPolicy::new)
-                .collect(Collectors.toList());
-    }
+//    @RequestMapping(value = "/policy/page/enterprise", method = RequestMethod.GET)
+//    @PreAuthorize("hasPermission(null, 'permissionpolicy:read')")
+//    public List<PermissionPolicy> getPoliciesForPageEnterprise() {
+//        return permissionDomain.getPermissionPolicies().stream()
+//                .filter(p -> p.getCode().startsWith("page-enterprise-"))
+//                .map(PermissionPolicy::new)
+//                .collect(Collectors.toList());
+//    }
 
 }

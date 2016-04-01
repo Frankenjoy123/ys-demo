@@ -47,12 +47,10 @@ public class PermissionService {
     }
 
     public List<PermissionEntry> getPermissionEntriesByAccountId(String accountId) {
-        List<PermissionEntry> permissionEntries = new ArrayList<>();
         List<PermissionAllocationObject> paObjects = permissionAllocationDomain.getAllPermissionAllocationsByAccountId(accountId);
-        paObjects.forEach(pa -> {
-            if (pa != null) permissionEntries.add(new PermissionEntry(pa));
-        });
-        return permissionEntries.stream().filter(PermissionEntry::isValid).sorted().collect(Collectors.toList());
+        return paObjects.stream()
+                .map(PermissionEntry::new)
+                .filter(PermissionEntry::isValid).sorted().collect(Collectors.toList());
     }
 
 

@@ -18,6 +18,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 public final class AuthUtils {
 
+    private AuthUtils() {
+    }
+
     public static AccountAuthentication getAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AccountAuthentication)) {
@@ -28,6 +31,26 @@ public final class AuthUtils {
 
     public static AuthAccount getCurrentAccount() {
         return getAuthentication().getPrincipal();
+    }
+
+    public static boolean isMe(String accountId) {
+        return "current".equals(accountId) || getCurrentAccount().getId().equals(accountId);
+    }
+
+    public static String fixAccountId(String accountId) {
+        if (accountId == null || "current".equals(accountId)) {
+            //current accountId
+            return getCurrentAccount().getId();
+        }
+        return accountId;
+    }
+
+    public static String fixOrgId(String orgId) {
+        if (orgId == null || "current".equals(orgId)) {
+            //current orgId
+            return getCurrentAccount().getOrgId();
+        }
+        return orgId;
     }
 
     public static void checkPermission(RestrictionExpression restriction, PermissionExpression permission) {

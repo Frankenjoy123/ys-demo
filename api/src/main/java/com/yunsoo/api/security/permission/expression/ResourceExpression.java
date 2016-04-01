@@ -10,7 +10,7 @@ import java.util.List;
  */
 public abstract class ResourceExpression implements Comparable {
 
-    private String resource;
+    private String type;
 
     private String value;
 
@@ -18,11 +18,11 @@ public abstract class ResourceExpression implements Comparable {
 
     protected static final String DELIMITER = "/";
     protected static final String COLLECTION_DELIMITER = ",";
-    protected static final String COLLECTION_RESOURCE = "collection";
+    protected static final String COLLECTION_TYPE = "collection";
 
 
-    public String getResource() {
-        return resource;
+    public String getType() {
+        return type;
     }
 
     public String getValue() {
@@ -35,31 +35,29 @@ public abstract class ResourceExpression implements Comparable {
 
     protected ResourceExpression(String expressionOrValue) {
         if (expressionOrValue.contains(COLLECTION_DELIMITER)) {
-            this.resource = COLLECTION_RESOURCE;
+            this.type = COLLECTION_TYPE;
             this.value = expressionOrValue;
         } else if (expressionOrValue.contains(DELIMITER)) {
             String[] tempArray = expressionOrValue.split(DELIMITER, 2);
-            this.resource = tempArray[0];
+            this.type = tempArray[0];
             this.value = tempArray[1];
         } else {
-            this.resource = null;
+            this.type = null;
             this.value = expressionOrValue;
         }
         this.expression = expressionOrValue;
     }
 
-    protected void setResource(String resource) {
-        if (this.resource != null && this.resource.length() > 0 && !this.resource.equals(resource) && !resource.equals(COLLECTION_RESOURCE)) {
-            throw new IllegalArgumentException("resource not match");
+    protected void setType(String type) {
+        if (this.type != null && this.type.length() > 0 && !this.type.equals(type) && !COLLECTION_TYPE.equals(type)) {
+            throw new IllegalArgumentException("type mismatch");
         }
-        if (resource == null) {
+        if (type == null || COLLECTION_TYPE.equals(type)) {
             this.expression = this.value;
-        } else if (COLLECTION_RESOURCE.equals(resource)) {
-            this.value = this.expression;
-        } else if (this.resource == null || this.resource.length() == 0) {
-            this.expression = String.format("%s%s%s", resource, DELIMITER, this.value);
+        } else if (this.type == null || this.type.length() == 0) {
+            this.expression = String.format("%s%s%s", type, DELIMITER, this.value);
         }
-        this.resource = resource;
+        this.type = type;
     }
 
     @Override

@@ -44,13 +44,15 @@ public abstract class PermissionExpression extends ResourceExpression {
 
         private static final String OPERATOR = ":";
 
+        public static final SimplePermissionExpression ADMIN = new SimplePermissionExpression("*", "*");
+
         private String resourceCode;
 
         private String actionCode;
 
         public SimplePermissionExpression(String expression) {
             super(expression);
-            setResource(null);
+            setType(null);
             String[] tempArray = expression.split(OPERATOR, 2);
             this.resourceCode = tempArray[0];
             this.actionCode = tempArray[1];
@@ -58,7 +60,7 @@ public abstract class PermissionExpression extends ResourceExpression {
 
         public SimplePermissionExpression(String resourceCode, String actionCode) {
             super(String.format("%s%s%s", resourceCode, OPERATOR, actionCode));
-            setResource(null);
+            setType(null);
             this.resourceCode = resourceCode;
             this.actionCode = actionCode;
         }
@@ -86,12 +88,12 @@ public abstract class PermissionExpression extends ResourceExpression {
 
     public static class PolicyPermissionExpression extends PermissionExpression {
 
-        private static final String RESOURCE = "policy";
-        private static final String PREFIX = RESOURCE + DELIMITER;
+        private static final String TYPE = "policy";
+        private static final String PREFIX = TYPE + DELIMITER;
 
         public PolicyPermissionExpression(String expressionOrPolicyCode) {
             super(expressionOrPolicyCode);
-            setResource(RESOURCE);
+            setType(TYPE);
         }
 
         public String getPolicyCode() {
@@ -114,7 +116,7 @@ public abstract class PermissionExpression extends ResourceExpression {
 
         public CollectionPermissionExpression(String expression) {
             super(expression);
-            setResource(COLLECTION_RESOURCE);
+            setType(COLLECTION_TYPE);
             this.expressions = new ArrayList<>();
             for (String e : expression.split(COLLECTION_DELIMITER)) {
                 PermissionExpression exp = parse(e);
@@ -124,7 +126,7 @@ public abstract class PermissionExpression extends ResourceExpression {
 
         public <E extends PermissionExpression> CollectionPermissionExpression(List<E> expressions) {
             super(ResourceExpression.toString(expressions));
-            setResource(COLLECTION_RESOURCE);
+            setType(COLLECTION_TYPE);
             if (expressions != null) {
                 this.expressions = expressions.stream().collect(Collectors.toList());
             } else {
