@@ -44,6 +44,8 @@ public abstract class PermissionExpression extends ResourceExpression {
 
         private static final String OPERATOR = ":";
 
+        public static final SimplePermissionExpression ADMIN = new SimplePermissionExpression("*", "*");
+
         private String resourceCode;
 
         private String actionCode;
