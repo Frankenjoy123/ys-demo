@@ -214,7 +214,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "{id}/brand_logo", method = RequestMethod.PUT)
-    @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
+   // @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
     public void saveBrandLogo(@PathVariable(value = "id") String orgId,
                               @RequestBody @Valid ImageRequest imageRequest) {
 
