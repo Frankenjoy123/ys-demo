@@ -81,6 +81,8 @@ public class MarketingDomain {
                 double index = Math.floor(Math.random() * totalQuantity);
                 while(prizeArray.containsKey(index)){
                     index +=1;
+                    if(prizeArray.size() >= totalQuantity)
+                        break;
                     if(index > totalQuantity)
                         index = index - totalQuantity;
                 }
