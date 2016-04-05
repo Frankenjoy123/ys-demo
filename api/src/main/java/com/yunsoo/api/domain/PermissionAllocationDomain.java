@@ -26,9 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-;
-;
-
 /**
  * Created by:   Lijian
  * Created on:   2016-03-21
@@ -59,8 +56,8 @@ public class PermissionAllocationDomain {
     /**
      * permission allocations of the account and it's groups
      *
-     * @param accountId
-     * @return
+     * @param accountId accountId
+     * @return List<PermissionAllocationObject>
      */
     public List<PermissionAllocationObject> getAllPermissionAllocationsByAccountId(String accountId) {
         List<String> principals = new ArrayList<>();
@@ -85,13 +82,6 @@ public class PermissionAllocationDomain {
                 : getPermissionAllocationsByPrincipal(new GroupPrincipalExpression(groupId).toString());
     }
 
-//
-//    public void allocatePermissionToAccount(String accountId, String permission, String effect) {
-//        Assert.hasText(accountId, "accountId not valid");
-//        String principal = new AccountPrincipalExpression(accountId).toString();
-//        String permissionExp = PermissionExpression.parse(permission).toString();
-//
-//    }
 
     public void allocateAdminPermissionToAccount(String accountId) {
         Assert.hasText(accountId, "accountId not valid");
@@ -102,15 +92,13 @@ public class PermissionAllocationDomain {
                 PermissionEntry.Effect.allow);
     }
 
-    private void allocatePermission(PrincipalExpression principal,
-                                    RestrictionExpression restriction,
-                                    PermissionExpression permission,
-                                    PermissionEntry.Effect effect) {
+    public void allocatePermission(PrincipalExpression principal,
+                                   RestrictionExpression restriction,
+                                   PermissionExpression permission,
+                                   PermissionEntry.Effect effect) {
         List<PermissionAllocationObject> pAOs = getPermissionAllocationsByPrincipal(principal.toString());
-        for (PermissionAllocationObject pAO : pAOs) {
-            if (restriction.toString().equals(pAO.getRestriction())
-                    && permission.toString().equals(pAO.getPermission())
-                    && effect.name().equals(pAO.getEffect().name())) {
+        for (PermissionAllocationObject p : pAOs) {
+            if (isEqualPermissionAllocation(p, principal, restriction, permission, effect)) {
                 return; //already has the same allocation item
             }
         }
@@ -121,6 +109,34 @@ public class PermissionAllocationDomain {
         permissionAllocationObject.setEffect(PermissionAllocationObject.Effect.valueOf(effect.name()));
         permissionAllocationObject.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         createPermissionAllocation(permissionAllocationObject);
+    }
+
+    public void deallocatePermission(PrincipalExpression principal,
+                                     RestrictionExpression restriction,
+                                     PermissionExpression permission,
+                                     PermissionEntry.Effect effect) {
+        List<PermissionAllocationObject> pAOs = getPermissionAllocationsByPrincipal(principal.toString());
+        for (PermissionAllocationObject p : pAOs) {
+            if (isEqualPermissionAllocation(p, principal, restriction, permission, effect)) {
+                //already has the same allocation item
+                deletePermissionAllocationById(p.getId());
+            }
+        }
+    }
+
+    private boolean isEqualPermissionAllocation(PermissionAllocationObject pao,
+                                                PrincipalExpression principal,
+                                                RestrictionExpression restriction,
+                                                PermissionExpression permission,
+                                                PermissionEntry.Effect effect) {
+        OrgRestrictionExpression currentOrgRestriction = new OrgRestrictionExpression(AuthUtils.getCurrentAccount().getOrgId());
+        RestrictionExpression restriction1 = OrgRestrictionExpression.CURRENT.equals(restriction) ? currentOrgRestriction : restriction;
+        String paoRestriction1 = OrgRestrictionExpression.CURRENT.toString().equals(pao.getRestriction()) ? currentOrgRestriction.toString() : pao.getRestriction();
+
+        return principal.toString().equals(pao.getPrincipal())
+                && restriction1.toString().equals(paoRestriction1)
+                && permission.toString().equals(pao.getPermission())
+                && effect.name().equals(pao.getEffect().name());
     }
 
 
