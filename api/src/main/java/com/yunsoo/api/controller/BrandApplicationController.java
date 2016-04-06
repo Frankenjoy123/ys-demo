@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.BrandDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
+import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
 import com.yunsoo.api.dto.Lookup;
@@ -53,6 +54,9 @@ public class BrandApplicationController {
     @Autowired
     private OrganizationDomain organizationDomain;
 
+    @Autowired
+    private PermissionDomain permissionDomain;
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Brand getById(@PathVariable(value = "id") String id) {
         BrandObject object = brandDomain.getBrandById(id);
@@ -77,6 +81,8 @@ public class BrandApplicationController {
             object.setTypeCode(LookupCodes.OrgType.MANUFACTURER);
             object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
             BrandObject createdBrand = organizationDomain.createBrand(object);
+
+            permissionDomain.putOrgRestrictionToDefaultPermissionRegion(object.getCarrierId(), createdBrand.getId());
 
             AccountObject accountObject = new AccountObject();
             accountObject.setEmail(object.getEmail());

@@ -6,6 +6,8 @@ import com.yunsoo.api.domain.ProductKeyOrderDomain;
 import com.yunsoo.api.domain.ProductKeyTransactionDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.common.data.object.ProductKeyOrderObject;
+import com.yunsoo.common.data.object.ProductKeyTransactionObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
@@ -171,6 +173,10 @@ public class ProductKeyOrderController {
     @RequestMapping(value = "/count/remain", method = RequestMethod.GET)
     public long countRemain(@RequestParam("org_ids")List<String> orgIds){
         return productKeyOrderDomain.count(orgIds, false);
+    }
+    @RequestMapping(value = "/statistics", method = RequestMethod.GET)
+    public List<ProductKeyOrder> statistics(@RequestParam("org_ids")List<String> orgIds, Pageable pageable){
+        return productKeyOrderDomain.statistics(orgIds, pageable);
     }
 
 

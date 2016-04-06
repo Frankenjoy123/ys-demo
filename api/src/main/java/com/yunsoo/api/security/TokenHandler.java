@@ -52,7 +52,6 @@ public final class TokenHandler {
         }
 
         AuthAccount account = new AuthAccount();
-        account.setExpires(expires);
         account.setId(accountId);
         account.setOrgId(orgId);
         return account;

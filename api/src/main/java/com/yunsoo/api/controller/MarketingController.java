@@ -1,10 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.*;
-import com.yunsoo.api.dto.Marketing;
-import com.yunsoo.api.dto.MktDrawPrize;
-import com.yunsoo.api.dto.MktDrawRule;
-import com.yunsoo.api.dto.ScanRecord;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.payment.ParameterNames;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
@@ -25,10 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -375,6 +369,12 @@ public class MarketingController {
             throw new BadRequestException("org ids can not be null");
 
         return marketingDomain.countMarketing(orgIds, LookupCodes.MktStatus.CREATED);
+    }
+
+    @RequestMapping(value = "statistics")
+    public List<Marketing> marketingStatistics(@RequestParam("org_ids")List<String> orgIds, Pageable pageable){
+        List<MarketingObject> statisticsObjectList = marketingDomain.statisticsMarketing(orgIds, Arrays.asList(LookupCodes.MktStatus.PAID, LookupCodes.MktStatus.AVAILABLE), pageable);
+        return statisticsObjectList.stream().map(Marketing::new).collect(Collectors.toList());
     }
 
     //alipay batch transfer

@@ -47,6 +47,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
                 .antMatchers(HttpMethod.GET, "/image/*").permitAll()
                 .antMatchers(HttpMethod.GET, "/organization/*/logo/*").permitAll()
+                .antMatchers(HttpMethod.PUT, "/organization/*/brand_logo").permitAll()
+                .antMatchers(HttpMethod.POST, "/brand/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/brand").permitAll()
                 .anyRequest().authenticated().and()
 
                 // custom Token based authentication based on the header previously given to the client

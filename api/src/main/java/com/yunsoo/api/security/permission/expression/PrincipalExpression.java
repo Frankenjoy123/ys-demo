@@ -25,14 +25,14 @@ public abstract class PrincipalExpression extends ResourceExpression {
 
     public static class AccountPrincipalExpression extends PrincipalExpression {
 
-        private static final String RESOURCE = "account";
-        private static final String PREFIX = RESOURCE + DELIMITER;
+        private static final String TYPE = "account";
+        private static final String PREFIX = TYPE + DELIMITER;
 
         public static final AccountPrincipalExpression ANY = new AccountPrincipalExpression("*");
 
         public AccountPrincipalExpression(String expressionOrAccountId) {
             super(expressionOrAccountId);
-            setResource(RESOURCE);
+            setType(TYPE);
         }
 
         public String getAccountId() {
@@ -43,12 +43,12 @@ public abstract class PrincipalExpression extends ResourceExpression {
 
     public static class GroupPrincipalExpression extends PrincipalExpression {
 
-        private static final String RESOURCE = "group";
-        private static final String PREFIX = RESOURCE + DELIMITER;
+        private static final String TYPE = "group";
+        private static final String PREFIX = TYPE + DELIMITER;
 
         public GroupPrincipalExpression(String expressionOrGroupId) {
             super(expressionOrGroupId);
-            setResource(RESOURCE);
+            setType(TYPE);
         }
 
         public String getGroupId() {

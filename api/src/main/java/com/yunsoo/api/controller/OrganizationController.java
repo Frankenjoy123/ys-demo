@@ -3,6 +3,8 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.BrandDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
+import com.yunsoo.api.domain.PermissionDomain;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
 import com.yunsoo.api.dto.ImageRequest;
@@ -30,7 +32,10 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -45,7 +50,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/organization")
 public class OrganizationController {
-
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
@@ -59,6 +63,9 @@ public class OrganizationController {
 
     @Autowired
     private BrandDomain brandDomain;
+
+    @Autowired
+    private PermissionDomain permissionDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
@@ -75,6 +82,9 @@ public class OrganizationController {
     @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
     public void Disable(@PathVariable(value = "id") String orgId) {
         organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.DISABLED);
+
+
+
     }
 
     @RequestMapping(value = "{id}/enable", method = RequestMethod.PUT)
@@ -125,6 +135,8 @@ public class OrganizationController {
         object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
         Brand returnObj = new Brand(organizationDomain.createBrand(object));
 
+        permissionDomain.putOrgRestrictionToDefaultPermissionRegion(brand.getCarrierId(), returnObj.getId());
+
         AccountObject accountObject = new AccountObject();
         accountObject.setEmail(returnObj.getEmail());
         accountObject.setIdentifier("admin");
@@ -160,7 +172,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "/{id}/brand", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(returnObject, 'organization:read')")
+    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
     public  List<Brand> filterOrgBrand(@PathVariable(value = "id") String id,
                                        @RequestParam(value="status", required = false)String status,
                                        @RequestParam(value = "name", required = false) String name,
@@ -202,7 +214,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "{id}/brand_logo", method = RequestMethod.PUT)
-    @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
+   // @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
     public void saveBrandLogo(@PathVariable(value = "id") String orgId,
                               @RequestBody @Valid ImageRequest imageRequest) {
 

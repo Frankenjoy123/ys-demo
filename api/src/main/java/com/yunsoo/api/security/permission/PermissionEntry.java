@@ -71,11 +71,13 @@ public class PermissionEntry implements Comparable, Serializable {
     }
 
     public PermissionEntry(PermissionAllocationObject paObject) {
-        this.id = paObject.getId();
-        this.principal = PrincipalExpression.parse(paObject.getPrincipal());
-        this.restriction = RestrictionExpression.parse(paObject.getRestriction());
-        this.permission = PermissionExpression.parse(paObject.getPermission());
-        this.effect = Effect.valueOf(paObject.getEffect().name());
+        if (paObject != null) {
+            this.id = paObject.getId();
+            this.principal = PrincipalExpression.parse(paObject.getPrincipal());
+            this.restriction = RestrictionExpression.parse(paObject.getRestriction());
+            this.permission = PermissionExpression.parse(paObject.getPermission());
+            this.effect = Effect.valueOf(paObject.getEffect().name());
+        }
     }
 
 
