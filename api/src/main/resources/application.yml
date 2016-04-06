@@ -32,6 +32,8 @@ yunsoo:
     account_name: 广州云溯科技有限公司
     email: zhe@yunsu.co
     notify_url: http://dev.yunsu.co:6080/marketing/alipay/notify
+    direct_return_url: http://127.0.0.1:9080/payment/brand/alipay/return
+    direct_notify_url: http://127.0.0.1:9080/payment/brand/alipay/notify
 spring:
   profiles.active: local
   mvc:

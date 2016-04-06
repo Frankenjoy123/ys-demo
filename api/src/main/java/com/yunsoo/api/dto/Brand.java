@@ -7,7 +7,6 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.BrandObject;
 import org.joda.time.DateTime;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -46,6 +45,9 @@ public class Brand extends Organization {
 
     @JsonProperty("carrier_id")
     private String carrierId;
+
+    @JsonProperty("payment_id")
+    private String paymentId;
 
     @JsonProperty("attachment")
     private String attachment;
@@ -132,6 +134,14 @@ public class Brand extends Organization {
         this.carrierId = carrierId;
     }
 
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
+    }
+
     public String getAttachment() {
         return attachment;
     }
@@ -158,6 +168,7 @@ public class Brand extends Organization {
             setBusinessLicenseNumber(object.getBusinessLicenseNumber());
             setBusinessSphere(object.getBusinessSphere());
             setCarrierId(object.getCarrierId());
+            setPaymentId(object.getPaymentId());
             setContactName(object.getContactName());
             setContactMobile(object.getContactMobile());
             setEmail(object.getEmail());
@@ -181,6 +192,7 @@ public class Brand extends Organization {
             object.setBusinessLicenseNumber(brand.getBusinessLicenseNumber());
             object.setBusinessSphere(brand.getBusinessSphere());
             object.setCarrierId(brand.getCarrierId());
+            object.setPaymentId(brand.getPaymentId());
             object.setContactName(brand.getContactName());
             object.setContactMobile(brand.getContactMobile());
             object.setEmail(brand.getEmail());

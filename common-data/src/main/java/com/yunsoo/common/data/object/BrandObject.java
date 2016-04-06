@@ -43,6 +43,9 @@ public class BrandObject extends OrganizationObject {
     @JsonProperty("carrier_id")
     private String carrierId;
 
+    @JsonProperty("payment_id")
+    private String paymentId;
+
     @JsonProperty("attachment")
     private String attachment;
 
@@ -124,5 +127,13 @@ public class BrandObject extends OrganizationObject {
 
     public void setCarrierId(String carrierId) {
         this.carrierId = carrierId;
+    }
+
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
     }
 }
