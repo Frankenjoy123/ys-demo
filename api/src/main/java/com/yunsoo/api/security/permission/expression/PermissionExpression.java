@@ -1,7 +1,5 @@
 package com.yunsoo.api.security.permission.expression;
 
-import com.yunsoo.api.util.WildcardMatcher;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,10 +57,7 @@ public abstract class PermissionExpression extends ResourceExpression {
         }
 
         public SimplePermissionExpression(String resourceCode, String actionCode) {
-            super(String.format("%s%s%s", resourceCode, OPERATOR, actionCode));
-            setType(null);
-            this.resourceCode = resourceCode;
-            this.actionCode = actionCode;
+            this(String.format("%s%s%s", resourceCode == null ? "" : resourceCode, OPERATOR, actionCode == null ? "" : actionCode));
         }
 
         public String getResourceCode() {
@@ -75,13 +70,17 @@ public abstract class PermissionExpression extends ResourceExpression {
 
         @Override
         public boolean contains(PermissionExpression permission) {
-            if (resourceCode == null || actionCode == null || permission == null
+            if (resourceCode.length() == 0 || actionCode.length() == 0 || permission == null
                     || !(permission instanceof SimplePermissionExpression)) {
                 return false;
             }
             SimplePermissionExpression simplePermission = (SimplePermissionExpression) permission;
-            boolean resourceIsMatch = WildcardMatcher.match(resourceCode, simplePermission.getResourceCode());
-            boolean actionIsMatch = actionCode.equals("*") || actionCode.equals(simplePermission.getActionCode());
+            //boolean resourceIsMatch = WildcardMatcher.match(resourceCode, simplePermission.getResourceCode());
+            boolean resourceIsMatch = simplePermission.getResourceCode().length() > 0
+                    && (resourceCode.equals("*") || resourceCode.equals(simplePermission.getResourceCode()));
+            boolean actionIsMatch = simplePermission.getActionCode().length() == 0
+                    || actionCode.equals("*")
+                    || actionCode.equals(simplePermission.getActionCode());
             return resourceIsMatch && actionIsMatch;
         }
     }

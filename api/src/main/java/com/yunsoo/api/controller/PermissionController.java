@@ -35,15 +35,7 @@ public class PermissionController {
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<PermissionEntry> getPermissions() {
-        return AuthUtils.getAuthentication().getPermissionEntries().stream().map(p -> {
-            PermissionEntry pe = new PermissionEntry();
-            pe.setId(p.getId());
-            pe.setPrincipal(p.getPrincipal().toString());
-            pe.setRestriction(p.getRestriction().toString());
-            pe.setPermission(p.getPermission().toString());
-            pe.setEffect(p.getEffect().name());
-            return pe;
-        }).collect(Collectors.toList());
+        return AuthUtils.getAuthentication().getPermissionEntries().stream().map(PermissionEntry::new).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/resource", method = RequestMethod.GET)

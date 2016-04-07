@@ -64,4 +64,15 @@ public class PermissionEntry {
     public void setEffect(String effect) {
         this.effect = effect;
     }
+
+    public PermissionEntry() {
+    }
+
+    public PermissionEntry(com.yunsoo.api.security.permission.PermissionEntry p) {
+        this.setId(p.getId());
+        this.setPrincipal(p.getPrincipal().toString());
+        this.setRestriction(p.getRestriction().toString());
+        this.setPermission(p.getPermission().toString());
+        this.setEffect(p.getEffect().name());
+    }
 }

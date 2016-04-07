@@ -69,5 +69,20 @@ public class ResourceExpressionTest {
         assert exp2.contains(exp0);
         assert exp3.contains(exp0);
         assert exp4.contains(exp0);
+
+        PermissionExpression exp00 = new PermissionExpression.SimplePermissionExpression("account", null);
+
+        assert exp1.contains(exp00);
+        assert exp2.contains(exp00);
+        assert exp3.contains(exp00);
+        assert exp4.contains(exp00);
+
+        PermissionExpression exp000 = new PermissionExpression.SimplePermissionExpression(null, null);
+
+        assert !exp1.contains(exp000);
+        assert !exp2.contains(exp000);
+        assert !exp3.contains(exp000);
+        assert !exp4.contains(exp000);
+
     }
 }
