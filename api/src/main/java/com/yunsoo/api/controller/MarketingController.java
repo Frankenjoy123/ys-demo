@@ -1,7 +1,10 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.*;
-import com.yunsoo.api.dto.*;
+import com.yunsoo.api.dto.Marketing;
+import com.yunsoo.api.dto.MktDrawPrize;
+import com.yunsoo.api.dto.MktDrawRule;
+import com.yunsoo.api.dto.ScanRecord;
 import com.yunsoo.api.payment.ParameterNames;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
@@ -115,7 +118,11 @@ public class MarketingController {
                     }
                 }
             }
-
+            List<MktDrawRuleObject> mktDrawRuleObjectList = marketingDomain.getRuleList(object.getId());
+            if (mktDrawRuleObjectList != null) {
+                List<MktDrawRule> mktDrawRuleList = mktDrawRuleObjectList.stream().map(MktDrawRule::new).collect(Collectors.toList());
+                marketing.setMarketingRules(mktDrawRuleList);
+            }
             marketingList.add(marketing);
         });
 

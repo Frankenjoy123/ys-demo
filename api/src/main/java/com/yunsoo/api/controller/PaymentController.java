@@ -6,6 +6,7 @@ import com.yunsoo.api.dto.Payment;
 import com.yunsoo.api.payment.AlipayNotify;
 import com.yunsoo.api.payment.ParameterNames;
 import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.PaymentObject;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ public class PaymentController {
         paymentObject.setTypeCode(LookupCodes.PaymentType.ALIPAY);
         PaymentObject pObject = paymentDomain.createAlipayPayment(paymentObject);
         String paymentId = pObject.getId();
+        BrandObject brandObject = brandDomain.getBrandById(id);
+        brandObject.setPaymentId(paymentId);
+        brandDomain.updateBrand(brandObject);
         Map<String, String> parametersMap = paymentDomain.getAlipaySubmitParametersByPaymentId(paymentId);
         return parametersMap;
     }

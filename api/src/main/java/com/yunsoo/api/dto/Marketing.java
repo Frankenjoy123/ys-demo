@@ -9,6 +9,8 @@ import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.MarketingObject;
 import org.joda.time.DateTime;
 
+import java.util.List;
+
 /**
  * Created by:  haitao
  * Created on:  2015/1/25
@@ -67,6 +69,10 @@ public class Marketing implements OrgIdDetectable {
 
     @JsonProperty("comments")
     private String comments;
+
+    @JsonProperty("marketing_rules")
+    private List<MktDrawRule> marketingRules;
+
 
     public String getId() {
         return id;
@@ -194,6 +200,14 @@ public class Marketing implements OrgIdDetectable {
 
     public void setOrgName(String orgName) {
         this.orgName = orgName;
+    }
+
+    public List<MktDrawRule> getMarketingRules() {
+        return marketingRules;
+    }
+
+    public void setMarketingRules(List<MktDrawRule> marketingRules) {
+        this.marketingRules = marketingRules;
     }
 
     public Marketing() {
