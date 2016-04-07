@@ -4,7 +4,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Table;
 
 /**
  * Created by yan on 3/16/2016.
@@ -56,6 +59,9 @@ public class BrandApplicationEntity {
 
     @Column(name = "carrier_id")
     private String carrierId;
+
+    @Column(name = "payment_id")
+    private String paymentId;
 
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -230,6 +236,14 @@ public class BrandApplicationEntity {
 
     public void setCarrierId(String carrierId) {
         this.carrierId = carrierId;
+    }
+
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
     }
 
     public String getStatusCode() {

@@ -38,7 +38,6 @@ public class AccountDomain {
 
     @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
     public AccountObject getById(String accountId) {
-        log.debug("missed cache: account." + accountId);
         if (StringUtils.isEmpty(accountId)) {
             return null;
         }

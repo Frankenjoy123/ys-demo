@@ -33,10 +33,6 @@ public final class AuthUtils {
         return getAuthentication().getPrincipal();
     }
 
-    public static boolean isMe(String accountId) {
-        return "current".equals(accountId) || getCurrentAccount().getId().equals(accountId);
-    }
-
     public static String fixAccountId(String accountId) {
         if (accountId == null || "current".equals(accountId)) {
             //current accountId
@@ -51,6 +47,14 @@ public final class AuthUtils {
             return getCurrentAccount().getOrgId();
         }
         return orgId;
+    }
+
+    public static boolean isMe(String accountId) {
+        return "current".equals(accountId) || getCurrentAccount().getId().equals(accountId);
+    }
+
+    public static boolean isMyOrg(String orgId) {
+        return "current".equals(orgId) || getCurrentAccount().getOrgId().equals(orgId);
     }
 
     public static void checkPermission(RestrictionExpression restriction, PermissionExpression permission) {

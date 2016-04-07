@@ -200,6 +200,23 @@ public class LookupCodes {
         public static final String REJECTED = "rejected";
     }
 
+    public static class PaymentStatus {
+        private PaymentStatus() {
+        }
+
+        public static final String CREATED = "created";
+        public static final String PAID = "paid";
+        public static final String FAILED = "failed";
+    }
+
+    public static class PaymentType {
+        private PaymentType() {
+        }
+
+        public static final String ALIPAY = "alipay";
+    }
+
+
     public static class PermissionRegionType {
         private PermissionRegionType() {
         }
