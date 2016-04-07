@@ -209,6 +209,14 @@ public class LookupCodes {
         public static final String FAILED = "failed";
     }
 
+    public static class PaymentType {
+        private PaymentType() {
+        }
+
+        public static final String ALIPAY = "alipay";
+    }
+
+
     public static class PermissionRegionType {
         private PermissionRegionType() {
         }

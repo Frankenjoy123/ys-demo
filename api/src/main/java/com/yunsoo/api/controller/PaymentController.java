@@ -33,13 +33,19 @@ public class PaymentController {
 
 
     //create brand payment record
-    @RequestMapping(value = "/brand/alipay", method = RequestMethod.POST)
-    public Payment createPayment(@RequestBody Payment payment) {
-        PaymentObject paymentObject = payment.toPaymentObject();
+    @RequestMapping(value = "/brand/alipay/{id}", method = RequestMethod.GET)
+    public Map<String, String> getAlipaySubmitParametersByBrandApplicationId(@PathVariable String id) {
+        PaymentObject paymentObject = new PaymentObject();
+        paymentObject.setBrandApplicationId(id);
+        paymentObject.setStatusCode(LookupCodes.PaymentStatus.CREATED);
         paymentObject.setCreatedDateTime(DateTime.now());
-        PaymentObject pObject = new PaymentObject();
-        pObject = paymentDomain.createAlipayPayment(paymentObject);
-        return new Payment(pObject);
+        paymentObject.setPayTotals(paymentDomain.getAlipayAmount());
+        paymentObject.setTradeNo(id);
+        paymentObject.setTypeCode(LookupCodes.PaymentType.ALIPAY);
+        PaymentObject pObject = paymentDomain.createAlipayPayment(paymentObject);
+        String paymentId = pObject.getId();
+        Map<String, String> parametersMap = paymentDomain.getAlipaySubmitParametersByPaymentId(paymentId);
+        return parametersMap;
     }
 
     @RequestMapping(value = "/brand/alipay/return", method = RequestMethod.GET)
@@ -89,7 +95,6 @@ public class PaymentController {
             paymentDomain.updateAlipayPayment(paymentObject);
         }
         response.getWriter().print("success");
-
     }
 
 }

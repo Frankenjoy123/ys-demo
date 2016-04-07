@@ -37,8 +37,12 @@ public class PaymentDomain {
     @Value("${yunsoo.alipay.email}")
     private String alipayEmail;
 
+    @Value("${yunsoo.alipay.amount}")
+    private String alipayAmount;
+
     @Value("${yunsoo.alipay.direct_return_url}")
     private String alipayReturnUrl;
+
     @Value("${yunsoo.alipay.direct_notify_url}")
     private String alipayNotifyUrl;
 
@@ -77,7 +81,7 @@ public class PaymentDomain {
         BrandObject brandObject = dataAPIClient.get("brand/{id}", BrandObject.class, brandApplicationId);
 
         //order info
-        parameters.put(ParameterNames.OUT_TRADE_NO, paymentId);
+        parameters.put(ParameterNames.OUT_TRADE_NO, brandApplicationId);
         parameters.put(ParameterNames.SUBJECT, brandObject.getName() + "审核费用");
         parameters.put(ParameterNames.PAYMENT_TYPE, "1");
         parameters.put(ParameterNames.TOTAL_FEE, paymentObject.getPayTotals().toString());
@@ -86,6 +90,11 @@ public class PaymentDomain {
         parameters.put(ParameterNames.NOTIFY_URL, alipayNotifyUrl);
 
         return parameters.toMap();
+    }
+
+    public BigDecimal getAlipayAmount() {
+        BigDecimal amount = new BigDecimal(alipayAmount);
+        return amount;
     }
 
 }

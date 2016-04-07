@@ -107,5 +107,8 @@ public class PaymentObject {
     public void setPaidDateTime(DateTime paidDateTime) {
         this.paidDateTime = paidDateTime;
     }
+
+    public PaymentObject() {
+    }
 }
 
