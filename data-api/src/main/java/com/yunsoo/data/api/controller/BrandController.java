@@ -64,10 +64,11 @@ public class BrandController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<BrandObject> getByFilter(  @RequestParam(value = "carrier_id", required = false) String carrierId,
             @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "status", required = false) String status,
             Pageable pageable,
             HttpServletResponse response) {
 
-            Page<BrandApplicationEntity> entityPage = repository.query(name, carrierId,pageable);
+            Page<BrandApplicationEntity> entityPage = repository.query(name, carrierId, status,pageable);
             if (pageable != null) {
                 response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
             }
@@ -125,7 +126,12 @@ public class BrandController {
             brandObj.setContactMobile(brand.getContactMobile());
             brandObj.setEmail(brand.getEmail());
             brandObj.setStatusCode(brand.getStatusCode());
-                  brandObj.setAttachment(brand.getAttachment());
+            brandObj.setAttachment(brand.getAttachment());
+                  brandObj.setIdentifier(brand.getIdentifier());
+                  brandObj.setPassword(brand.getPassword());
+                  brandObj.setInvestigatorAttachment(brand.getInvestigatorAttachment());
+                  brandObj.setInvestigatorComments(brand.getInvestigatorComments());
+                  brandObj.setHashSalt(brand.getHashSalt());
         }
         return brandObj;
     }
@@ -148,6 +154,11 @@ public class BrandController {
             entity.setCreatedDateTime(brand.getCreatedDateTime());
             entity.setStatusCode(brand.getStatusCode());
             entity.setAttachment(brand.getAttachment());
+            entity.setIdentifier(brand.getIdentifier());
+            entity.setPassword(brand.getPassword());
+            entity.setInvestigatorAttachment(brand.getInvestigatorAttachment());
+            entity.setInvestigatorComments(brand.getInvestigatorComments());
+            entity.setHashSalt(brand.getHashSalt());
             return entity;
         }
         return null;

@@ -46,6 +46,61 @@ public class BrandObject extends OrganizationObject {
     @JsonProperty("attachment")
     private String attachment;
 
+    @JsonProperty("password")
+    private String password;
+
+    @JsonProperty("hash_salt")
+    private String hashSalt;
+
+    @JsonProperty("identifier")
+    private String identifier;
+
+    @JsonProperty("investigator_attachment")
+    private String investigatorAttachment;
+
+    @JsonProperty("investigator_comments")
+    private String investigatorComments;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getHashSalt() {
+        return hashSalt;
+    }
+
+    public void setHashSalt(String hashSalt) {
+        this.hashSalt = hashSalt;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public String getInvestigatorAttachment() {
+        return investigatorAttachment;
+    }
+
+    public void setInvestigatorAttachment(String investigatorAttachment) {
+        this.investigatorAttachment = investigatorAttachment;
+    }
+
+    public String getInvestigatorComments() {
+        return investigatorComments;
+    }
+
+    public void setInvestigatorComments(String investigatorComments) {
+        this.investigatorComments = investigatorComments;
+    }
+
     public String getAttachment() {
         return attachment;
     }

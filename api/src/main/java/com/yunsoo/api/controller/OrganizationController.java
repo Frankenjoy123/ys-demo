@@ -1,9 +1,6 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.AccountDomain;
-import com.yunsoo.api.domain.BrandDomain;
-import com.yunsoo.api.domain.OrganizationDomain;
-import com.yunsoo.api.domain.PermissionDomain;
+import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
@@ -66,6 +63,9 @@ public class OrganizationController {
 
     @Autowired
     private PermissionDomain permissionDomain;
+
+    @Autowired
+    private PermissionAllocationDomain permissionAllocationDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
@@ -131,8 +131,6 @@ public class OrganizationController {
         String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         BrandObject object = brand.toBrand(brand);
         object.setCreatedAccountId(currentAccountId);
-        object.setTypeCode(LookupCodes.OrgType.MANUFACTURER);
-        object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
         Brand returnObj = new Brand(organizationDomain.createBrand(object));
 
         permissionDomain.putOrgRestrictionToDefaultPermissionRegion(brand.getCarrierId(), returnObj.getId());
@@ -146,7 +144,9 @@ public class OrganizationController {
         accountObject.setPhone(returnObj.getContactMobile());
         accountObject.setOrgId(returnObj.getId());
         accountObject.setCreatedAccountId(currentAccountId);
-        accountDomain.createAccount(accountObject);
+        AccountObject createdAccount = accountDomain.createAccount(accountObject);
+        permissionAllocationDomain.allocateAdminPermissionToAccount(createdAccount.getId());
+
         return returnObj;
     }
 

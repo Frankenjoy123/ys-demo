@@ -64,6 +64,62 @@ public class BrandApplicationEntity {
     @Column(name = "attachment")
     private String attachment;
 
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "hash_salt")
+    private String hashSalt;
+
+    @Column(name = "identifier")
+    private String identifier;
+
+    @Column(name = "investigator_attachment")
+    private String investigatorAttachment;
+
+    @Column(name = "investigator_comments")
+    private String investigatorComments;
+
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getHashSalt() {
+        return hashSalt;
+    }
+
+    public void setHashSalt(String hashSalt) {
+        this.hashSalt = hashSalt;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public String getInvestigatorAttachment() {
+        return investigatorAttachment;
+    }
+
+    public void setInvestigatorAttachment(String investigatorAttachment) {
+        this.investigatorAttachment = investigatorAttachment;
+    }
+
+    public String getInvestigatorComments() {
+        return investigatorComments;
+    }
+
+    public void setInvestigatorComments(String investigatorComments) {
+        this.investigatorComments = investigatorComments;
+    }
+
     public String getAttachment() {
         return attachment;
     }
