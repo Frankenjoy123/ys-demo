@@ -296,7 +296,14 @@ public class MarketingController {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        return new Marketing(marketingDomain.getMarketingById(marketingId));
+        Marketing marketing = new Marketing(marketingDomain.getMarketingById(marketingId));
+        List<MktDrawRuleObject> mktDrawRuleObjectList = marketingDomain.getRuleList(marketingId);
+
+        if (mktDrawRuleObjectList != null) {
+            List<MktDrawRule> mktDrawRuleList = mktDrawRuleObjectList.stream().map(MktDrawRule::new).collect(Collectors.toList());
+            marketing.setMarketingRules(mktDrawRuleList);
+        }
+        return marketing;
     }
 
 
