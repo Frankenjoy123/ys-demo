@@ -1,6 +1,5 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.MessageDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.Message;
@@ -54,10 +53,6 @@ public class MessageController {
 
     @Autowired
     private OrganizationDomain organizationDomain;
-
-
-    @Autowired
-    private AccountPermissionDomain accountPermissionDomain;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;

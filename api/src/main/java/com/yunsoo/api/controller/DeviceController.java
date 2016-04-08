@@ -1,14 +1,12 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.DeviceDomain;
 import com.yunsoo.api.dto.Device;
-import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.DeviceObject;
 import com.yunsoo.common.web.client.Page;
-import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +28,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/device")
 public class DeviceController {
-
-    @Autowired
-    private AccountPermissionDomain accountPermissionDomain;
 
     @Autowired
     private DeviceDomain deviceDomain;
@@ -78,9 +73,7 @@ public class DeviceController {
         if (deviceCurrent == null) {
             throw new NotFoundException("device not found by [id: " + id + "]");
         }
-        if (!accountPermissionDomain.hasPermission(accountId, new TPermission(deviceCurrent.getOrgId(), "device", "update"))) {
-            throw new ForbiddenException();
-        }
+        AuthUtils.checkPermission(deviceCurrent.getOrgId(), "device", "write");
 
         if (device.getCheckPointId() != null) deviceCurrent.setCheckPointId(device.getCheckPointId());
         if (device.getName() != null) deviceCurrent.setName(device.getName());

@@ -5,8 +5,8 @@ import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductBaseVersions;
 import com.yunsoo.api.dto.ProductCategory;
-import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductBaseVersionsObject;
@@ -14,7 +14,6 @@ import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.apache.commons.logging.Log;
@@ -49,9 +48,6 @@ public class ProductBaseVersionController {
 
     @Autowired
     private ProductBaseDomain productBaseDomain;
-
-    @Autowired
-    private AccountPermissionDomain accountPermissionDomain;
 
     @Autowired
     private ProductCategoryDomain productCategoryDomain;
@@ -328,16 +324,10 @@ public class ProductBaseVersionController {
         if (productBaseObject != null) {
             if (version == null) {
                 //delete product base
-                TPermission tPermission = new TPermission(productBaseObject.getOrgId(), "productbase", "delete");
-                if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
-                    throw new ForbiddenException("operation denied");
-                }
+                AuthUtils.checkPermission(productBaseObject.getOrgId(), "productbase", "delete");
                 productBaseDomain.deleteProductBase(productBaseId);
             } else {
-                TPermission tPermission = new TPermission(productBaseObject.getOrgId(), "productbase", "modify");
-                if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
-                    throw new ForbiddenException("operation denied");
-                }
+                AuthUtils.checkPermission(productBaseObject.getOrgId(), "productbase", "write");
                 ProductBaseVersionsObject productBaseVersionsObject = productBaseDomain.getProductBaseVersionsByProductBaseIdAndVersion(productBaseId, version);
                 if (productBaseVersionsObject != null) {
                     if (!LookupCodes.ProductBaseVersionsStatus.EDITABLE_STATUS.contains(productBaseVersionsObject.getStatusCode())) {

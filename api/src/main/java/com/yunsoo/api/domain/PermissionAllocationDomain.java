@@ -82,6 +82,12 @@ public class PermissionAllocationDomain {
                 : getPermissionAllocationsByPrincipal(new GroupPrincipalExpression(groupId).toString());
     }
 
+    public void deletePermissionAllocationsByGroupId(String groupId) {
+        getPermissionAllocationsByPrincipal(new GroupPrincipalExpression(groupId).toString())
+                .forEach(pa -> {
+                    deletePermissionAllocationById(pa.getId());
+                });
+    }
 
     public void allocateAdminPermissionToAccount(String accountId) {
         Assert.hasText(accountId, "accountId not valid");

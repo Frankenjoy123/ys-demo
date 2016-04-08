@@ -1,7 +1,6 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
-import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.FileDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
@@ -9,14 +8,13 @@ import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductBatchCollection;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
-import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,6 +28,7 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -59,23 +58,17 @@ public class ProductKeyBatchController {
     private ProductKeyDomain productKeyDomain;
 
     @Autowired
-    private AccountPermissionDomain accountPermissionDomain;
-
-    @Autowired
     private FileDomain fileDomain;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'product_key_batch:read')")
     public ProductKeyBatch getById(@PathVariable(value = "id") String id) {
-        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
         if (batch == null) {
             throw new NotFoundException("product key batch not found");
-        }
-        if (!accountPermissionDomain.hasPermission(accountId, new TPermission(batch.getOrgId(), "productkey", "read"))) {
-            throw new ForbiddenException();
         }
         return batch;
     }
@@ -144,9 +137,9 @@ public class ProductKeyBatchController {
 
         String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        if (!accountPermissionDomain.hasPermission(accountId, new TPermission(orgId, "productkey", "create"))) {
-            throw new ForbiddenException();
-        }
+
+        AuthUtils.checkPermission(orgId, "product_key_batch", "create");
+
         appId = (appId == null) ? "unknown" : appId;
         DateTime createdDateTime = DateTime.now();
 
@@ -230,15 +223,13 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "{id}/details", method = RequestMethod.GET)
     public ResponseEntity<?> getProductKeyBatchDetails(@PathVariable(value = "id") String id) {
-        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         String orgId = fixOrgId("current");
         ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
         if (batch == null) {
             throw new NotFoundException("product key batch not found");
         }
-        if (!accountPermissionDomain.hasPermission(accountId, new TPermission(batch.getOrgId(), "productkeybatch", "read"))) {
-            throw new ForbiddenException();
-        }
+        AuthUtils.checkPermission(batch.getOrgId(), "product_key_batch", "read");
+
         String path = String.format("organization/%s/product_key_batch/%s/details.json", orgId, id);
         ResourceInputStream resourceInputStream = fileDomain.getFile(path);
         ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON);
@@ -252,15 +243,13 @@ public class ProductKeyBatchController {
     @RequestMapping(value = "{id}/details", method = RequestMethod.PUT)
     public void putProductKeyBatchDetails(@PathVariable(value = "id") String id,
                                           @RequestBody String details) {
-        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
         String orgId = fixOrgId("current");
         ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
         if (batch == null) {
             throw new NotFoundException("product key batch not found");
         }
-        if (!accountPermissionDomain.hasPermission(accountId, new TPermission(batch.getOrgId(), "productkeybatch", "modify"))) {
-            throw new ForbiddenException();
-        }
+        AuthUtils.checkPermission(batch.getOrgId(), "product_key_batch", "write");
+
         String path = String.format("organization/%s/product_key_batch/%s/details.json", orgId, id);
         byte[] bytes = details.getBytes(StandardCharsets.UTF_8);
         fileDomain.putFile(path, new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE));
@@ -269,7 +258,7 @@ public class ProductKeyBatchController {
     private String fixOrgId(String orgId) {
         if (orgId == null || "current".equals(orgId)) {
             //current orgId
-            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+            return AuthUtils.getCurrentAccount().getOrgId();
         }
         return orgId;
     }

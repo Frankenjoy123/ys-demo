@@ -2,20 +2,18 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountDomain;
-import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.AccountTokenDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.AccountLoginRequest;
 import com.yunsoo.api.dto.AccountLoginResponse;
 import com.yunsoo.api.dto.Token;
-import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.AuthAccount;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AccountTokenObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.apache.commons.logging.Log;
@@ -43,9 +41,6 @@ public class AuthController {
 
     @Autowired
     private AccountTokenDomain accountTokenDomain;
-
-    @Autowired
-    private AccountPermissionDomain accountPermissionDomain;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -241,9 +236,7 @@ public class AuthController {
             throw new NotFoundException("account not found by [id: " + accountId + "]");
         }
 
-        if (!accountPermissionDomain.hasPermission(currentAccountId, new TPermission(accountObject.getOrgId(), "logintoken", "create"))) {
-            throw new ForbiddenException();
-        }
+        AuthUtils.checkPermission(accountObject.getOrgId(), "logintoken", "create");
 
         if (!accountDomain.isValidAccount(accountObject)) {
             throw new BadRequestException("account not valid");

@@ -4,15 +4,14 @@ import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductCategory;
-import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductBaseVersionsObject;
 import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
-import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +45,6 @@ public class ProductBaseController {
 
     @Autowired
     private ProductBaseDomain productBaseDomain;
-
-    @Autowired
-    private AccountPermissionDomain accountPermissionDomain;
 
     @Autowired
     private ProductCategoryDomain productCategoryDomain;
@@ -215,10 +211,8 @@ public class ProductBaseController {
         ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
         if (productBaseObject != null) {
             //delete product base
-            TPermission tPermission = new TPermission(productBaseObject.getOrgId(), "productbase", "delete");
-            if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getPrincipal().getId(), tPermission)) {
-                throw new ForbiddenException("operation denied");
-            }
+            AuthUtils.checkPermission(productBaseObject.getOrgId(), "productbase", "delete");
+
             productBaseDomain.deleteProductBase(productBaseId);
         }
     }
