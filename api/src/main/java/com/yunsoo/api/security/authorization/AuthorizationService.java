@@ -7,7 +7,6 @@ import com.yunsoo.api.security.permission.expression.PermissionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression.CollectionRestrictionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
-import com.yunsoo.common.data.object.AccountObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,24 +24,6 @@ public class AuthorizationService {
 
     @Autowired
     private PermissionAllocationDomain permissionAllocationDomain;
-
-    /**
-     * @param account account
-     * @return PermissionEntry list of the given account
-     */
-    public List<PermissionEntry> getPermissionEntries(AccountObject account) {
-        String accountId = account.getId();
-        String orgId = account.getOrgId();
-        List<PermissionEntry> permissionEntries = permissionAllocationDomain.getPermissionEntriesByAccountId(accountId)
-                .stream()
-                .map(PermissionEntry::parse)
-                .collect(Collectors.toList());
-        //fix orgRestriction
-        permissionEntries.forEach(p -> {
-            p.setRestriction(fixOrgRestriction(p.getRestriction(), orgId));
-        });
-        return permissionEntries;
-    }
 
     /**
      * @param accountAuthentication AccountAuthentication
@@ -100,7 +81,7 @@ public class AuthorizationService {
         return false;
     }
 
-    private RestrictionExpression fixOrgRestriction(RestrictionExpression restriction, String orgId) {
+    public RestrictionExpression fixOrgRestriction(RestrictionExpression restriction, String orgId) {
         if (restriction instanceof CollectionRestrictionExpression) {
             List<RestrictionExpression> subRestrictions = new ArrayList<>();
             boolean hasCurrent = false;

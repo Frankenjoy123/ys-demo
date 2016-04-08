@@ -3,11 +3,11 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.AccountGroupDomain;
 import com.yunsoo.api.domain.AccountPermissionDomain;
-import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.object.TPermission;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.api.security.authorization.AuthorizationService;
+import com.yunsoo.api.security.permission.PermissionService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountGroupObject;
@@ -50,13 +50,13 @@ public class AccountController {
     private AccountPermissionDomain accountPermissionDomain;
 
     @Autowired
-    private PermissionDomain permissionDomain;
-
-    @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
     @Autowired
     private AuthorizationService authorizationService;
+
+    @Autowired
+    private PermissionService permissionService;
 
     //region account
 
@@ -326,8 +326,14 @@ public class AccountController {
             return AuthUtils.getAuthentication().getPermissionEntries().stream().map(PermissionEntry::new).collect(Collectors.toList());
         } else {
             AccountObject accountObject = findAccountById(accountId);
-            AuthUtils.checkPermission(accountObject.getOrgId(), "permission_allocation", "read");
-            return authorizationService.getPermissionEntries(accountObject).stream().map(PermissionEntry::new).collect(Collectors.toList());
+            String orgId = accountObject.getOrgId();
+            AuthUtils.checkPermission(orgId, "permission_allocation", "read");
+            List<com.yunsoo.api.security.permission.PermissionEntry> permissionEntries = permissionService.getExpendedPermissionEntriesByAccountId(accountId);
+            //fix orgRestriction
+            permissionEntries.forEach(p -> {
+                p.setRestriction(authorizationService.fixOrgRestriction(p.getRestriction(), orgId));
+            });
+            return permissionEntries.stream().map(PermissionEntry::new).collect(Collectors.toList());
         }
     }
 

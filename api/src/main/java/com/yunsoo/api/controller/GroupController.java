@@ -3,10 +3,12 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.AccountGroupDomain;
 import com.yunsoo.api.domain.GroupDomain;
 import com.yunsoo.api.domain.GroupPermissionDomain;
-import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.security.AuthAccount;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.security.authorization.AuthorizationService;
+import com.yunsoo.api.security.permission.PermissionService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.GroupObject;
 import com.yunsoo.common.data.object.GroupPermissionObject;
@@ -43,7 +45,10 @@ public class GroupController {
     private GroupPermissionDomain groupPermissionDomain;
 
     @Autowired
-    private PermissionDomain permissionDomain;
+    private PermissionService permissionService;
+
+    @Autowired
+    private AuthorizationService authorizationService;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -250,9 +255,16 @@ public class GroupController {
     //endregion
 
     @RequestMapping(value = "{group_id}/permission", method = RequestMethod.GET)
-    public List<PermissionInstance> getAllPermissionByGroupId(@PathVariable("group_id") String groupId) {
-        findGroupById(groupId);
-        return permissionDomain.extendPermissions(groupPermissionDomain.getAllGroupPermissions(groupId));
+    public List<PermissionEntry> getAllPermissionByGroupId(@PathVariable("group_id") String groupId) {
+        GroupObject group = findGroupById(groupId);
+        String orgId = group.getOrgId();
+        AuthUtils.checkPermission(orgId, "permission_allocation", "read");
+        List<com.yunsoo.api.security.permission.PermissionEntry> permissionEntries = permissionService.getExpendedPermissionEntriesByGroupId(groupId);
+        //fix orgRestriction
+        permissionEntries.forEach(p -> {
+            p.setRestriction(authorizationService.fixOrgRestriction(p.getRestriction(), orgId));
+        });
+        return permissionEntries.stream().map(PermissionEntry::new).collect(Collectors.toList());
     }
 
     private String fixOrgId(String orgId) {

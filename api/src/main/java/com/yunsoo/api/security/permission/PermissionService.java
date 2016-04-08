@@ -46,13 +46,29 @@ public class PermissionService {
         return permissionEntries.stream().filter(PermissionEntry::isValid).sorted().collect(Collectors.toList());
     }
 
-    public List<PermissionEntry> getPermissionEntriesByAccountId(String accountId) {
+    public List<PermissionEntry> getExpendedPermissionEntriesByGroupId(String groupId) {
+        List<PermissionEntry> permissionEntries = getPermissionEntriesByGroupId(groupId);
+        Map<String, List<PermissionExpression>> policyPermissionMap = getPolicyPermissionMap();
+        permissionEntries.forEach(p -> {
+            expendPermissionEntry(p, policyPermissionMap);
+        });
+        return permissionEntries.stream().filter(PermissionEntry::isValid).sorted().collect(Collectors.toList());
+    }
+
+
+    private List<PermissionEntry> getPermissionEntriesByAccountId(String accountId) {
         List<PermissionAllocationObject> paObjects = permissionAllocationDomain.getAllPermissionAllocationsByAccountId(accountId);
         return paObjects.stream()
                 .map(PermissionEntry::new)
                 .filter(PermissionEntry::isValid).sorted().collect(Collectors.toList());
     }
 
+    private List<PermissionEntry> getPermissionEntriesByGroupId(String groupId) {
+        List<PermissionAllocationObject> paObjects = permissionAllocationDomain.getPermissionAllocationsByGroupId(groupId);
+        return paObjects.stream()
+                .map(PermissionEntry::new)
+                .filter(PermissionEntry::isValid).sorted().collect(Collectors.toList());
+    }
 
     private void expendPermissionEntry(PermissionEntry permissionEntry, Map<String, List<PermissionExpression>> policyPermissionMap) {
         List<OrgRestrictionExpression> restrictions = expendRestrictionExpression(permissionEntry.getRestriction());
