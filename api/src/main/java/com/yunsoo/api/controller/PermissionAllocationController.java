@@ -47,9 +47,7 @@ public class PermissionAllocationController {
         accountId = AuthUtils.fixAccountId(accountId);
         AccountObject accountObject = findAccountById(accountId);
         AuthUtils.checkPermission(accountObject.getOrgId(), "permission_allocation", "read");
-        return permissionAllocationDomain.getPermissionAllocationsByAccountId(accountId).stream()
-                .map(PermissionAllocation::new)
-                .collect(Collectors.toList());
+        return getPermissionAllocationsByAccountId(accountId);
     }
 
     /**
@@ -58,9 +56,9 @@ public class PermissionAllocationController {
      * @param permissionAllocation permission and effect
      */
     @RequestMapping(value = "account/{accountId}/allocate", method = RequestMethod.POST)
-    public void allocateByAccount(@PathVariable("accountId") String accountId,
-                                  @RequestParam(value = "org_id", required = false, defaultValue = "current") String orgId,
-                                  @RequestBody PermissionAllocation permissionAllocation) {
+    public List<PermissionAllocation> allocateByAccount(@PathVariable("accountId") String accountId,
+                                                        @RequestParam(value = "org_id", required = false, defaultValue = "current") String orgId,
+                                                        @RequestBody PermissionAllocation permissionAllocation) {
         accountId = AuthUtils.fixAccountId(accountId);
         AuthUtils.checkPermission(orgId, "permission_allocation", "write");
         findAccountById(accountId);
@@ -73,6 +71,7 @@ public class PermissionAllocationController {
             throw new BadRequestException("permission expression not valid");
         }
         permissionAllocationDomain.allocatePermission(principalExp, restrictionExp, permissionExp, effect);
+        return getPermissionAllocationsByAccountId(accountId);
     }
 
     /**
@@ -81,9 +80,9 @@ public class PermissionAllocationController {
      * @param permissionAllocation permission and effect
      */
     @RequestMapping(value = "account/{accountId}/deallocate", method = RequestMethod.POST)
-    public void deallocateByAccount(@PathVariable("accountId") String accountId,
-                                    @RequestParam(value = "org_id", required = false, defaultValue = "current") String orgId,
-                                    @RequestBody PermissionAllocation permissionAllocation) {
+    public List<PermissionAllocation> deallocateByAccount(@PathVariable("accountId") String accountId,
+                                                          @RequestParam(value = "org_id", required = false, defaultValue = "current") String orgId,
+                                                          @RequestBody PermissionAllocation permissionAllocation) {
         accountId = AuthUtils.fixAccountId(accountId);
         AuthUtils.checkPermission(orgId, "permission_allocation", "write");
         findAccountById(accountId);
@@ -96,6 +95,7 @@ public class PermissionAllocationController {
             throw new BadRequestException("permission expression not valid");
         }
         permissionAllocationDomain.deallocatePermission(principalExp, restrictionExp, permissionExp, effect);
+        return getPermissionAllocationsByAccountId(accountId);
     }
 
     //endregion
@@ -106,9 +106,7 @@ public class PermissionAllocationController {
     public List<PermissionAllocation> getByGroup(@PathVariable("groupId") String groupId) {
         GroupObject groupObject = findGroupById(groupId);
         AuthUtils.checkPermission(groupObject.getOrgId(), "permission_allocation", "read");
-        return permissionAllocationDomain.getPermissionAllocationsByGroupId(groupId).stream()
-                .map(PermissionAllocation::new)
-                .collect(Collectors.toList());
+        return getPermissionAllocationsByGroupId(groupId);
     }
 
     /**
@@ -117,9 +115,9 @@ public class PermissionAllocationController {
      * @param permissionAllocation permission and effect
      */
     @RequestMapping(value = "group/{groupId}/allocate", method = RequestMethod.POST)
-    public void allocateByGroup(@PathVariable("groupId") String groupId,
-                                @RequestParam(value = "org_id", required = false, defaultValue = "current") String orgId,
-                                @RequestBody PermissionAllocation permissionAllocation) {
+    public List<PermissionAllocation> allocateByGroup(@PathVariable("groupId") String groupId,
+                                                      @RequestParam(value = "org_id", required = false, defaultValue = "current") String orgId,
+                                                      @RequestBody PermissionAllocation permissionAllocation) {
         AuthUtils.checkPermission(orgId, "permission_allocation", "write");
         findGroupById(groupId);
 
@@ -131,6 +129,7 @@ public class PermissionAllocationController {
             throw new BadRequestException("permission expression not valid");
         }
         permissionAllocationDomain.allocatePermission(principalExp, restrictionExp, permissionExp, effect);
+        return getPermissionAllocationsByGroupId(groupId);
     }
 
     /**
@@ -139,9 +138,9 @@ public class PermissionAllocationController {
      * @param permissionAllocation permission and effect
      */
     @RequestMapping(value = "group/{groupId}/deallocate", method = RequestMethod.POST)
-    public void deallocateByGroup(@PathVariable("groupId") String groupId,
-                                  @RequestParam(value = "org_id", required = false, defaultValue = "current") String orgId,
-                                  @RequestBody PermissionAllocation permissionAllocation) {
+    public List<PermissionAllocation> deallocateByGroup(@PathVariable("groupId") String groupId,
+                                                        @RequestParam(value = "org_id", required = false, defaultValue = "current") String orgId,
+                                                        @RequestBody PermissionAllocation permissionAllocation) {
         AuthUtils.checkPermission(orgId, "permission_allocation", "write");
         findGroupById(groupId);
 
@@ -153,6 +152,7 @@ public class PermissionAllocationController {
             throw new BadRequestException("permission expression not valid");
         }
         permissionAllocationDomain.deallocatePermission(principalExp, restrictionExp, permissionExp, effect);
+        return getPermissionAllocationsByGroupId(groupId);
     }
 
     //endregion
@@ -172,6 +172,18 @@ public class PermissionAllocationController {
             throw new NotFoundException("group not found");
         }
         return groupObject;
+    }
+
+    private List<PermissionAllocation> getPermissionAllocationsByAccountId(String accountId) {
+        return permissionAllocationDomain.getPermissionAllocationsByAccountId(accountId).stream()
+                .map(PermissionAllocation::new)
+                .collect(Collectors.toList());
+    }
+
+    private List<PermissionAllocation> getPermissionAllocationsByGroupId(String groupId) {
+        return permissionAllocationDomain.getPermissionAllocationsByGroupId(groupId).stream()
+                .map(PermissionAllocation::new)
+                .collect(Collectors.toList());
     }
 
     private PermissionEntry.Effect getPermissionEntryEffect(PermissionAllocation.Effect effect) {
