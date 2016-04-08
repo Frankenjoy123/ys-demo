@@ -1,6 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.ImageProcessor;
@@ -107,6 +108,10 @@ public class OrganizationDomain {
     public BrandObject createBrand(BrandObject object) {
         object.setId(null);
         object.setCreatedDateTime(DateTime.now());
+        object.setTypeCode(LookupCodes.OrgType.MANUFACTURER);
+        object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
+        if(object.getAttachment().endsWith(","))
+            object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() -1 ));
         return dataAPIClient.post("organization/brand", object, BrandObject.class);
     }
 

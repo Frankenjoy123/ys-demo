@@ -1,11 +1,17 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.*;
+import com.yunsoo.common.data.object.MarketingObject;
+import com.yunsoo.common.data.object.MktDrawPrizeObject;
+import com.yunsoo.common.data.object.MktDrawRecordObject;
+import com.yunsoo.common.data.object.MktDrawRuleObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
-import com.yunsoo.data.service.entity.*;
+import com.yunsoo.data.service.entity.MarketingEntity;
+import com.yunsoo.data.service.entity.MktDrawPrizeEntity;
+import com.yunsoo.data.service.entity.MktDrawRecordEntity;
+import com.yunsoo.data.service.entity.MktDrawRuleEntity;
 import com.yunsoo.data.service.repository.MarketingRepository;
 import com.yunsoo.data.service.repository.MktDrawPrizeRepository;
 import com.yunsoo.data.service.repository.MktDrawRecordRepository;
@@ -24,7 +30,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -335,7 +340,7 @@ public class MarketingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMarketingRuleByMarketingId(@PathVariable(value = "id") String id) {
         if (id != null) {
-            List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingId(id);
+            List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderByAmountDesc(id);
             if (mktDrawRuleEntities.size() > 0) {
                 for (MktDrawRuleEntity entity : mktDrawRuleEntities) {
                     String mktDrawRuleId = entity.getId();
@@ -347,7 +352,7 @@ public class MarketingController {
 
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.GET)
     public List<MktDrawRuleObject> findMarketingRulesById(@PathVariable(value = "id")String marketingId){
-        List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingId(marketingId);
+        List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderByAmountDesc(marketingId);
         return mktDrawRuleEntities.stream().map(this::toMktDrawRuleObject).collect(Collectors.toList());
     }
 

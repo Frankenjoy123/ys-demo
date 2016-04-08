@@ -7,7 +7,6 @@ import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.BrandObject;
 import org.joda.time.DateTime;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -47,10 +46,68 @@ public class Brand extends Organization {
     @JsonProperty("carrier_id")
     private String carrierId;
 
+    @JsonProperty("payment_id")
+    private String paymentId;
+
     @JsonProperty("attachment")
     private String attachment;
 
+    @JsonProperty("password")
+    private String password;
+
+    @JsonProperty("hash_salt")
+    private String hashSalt;
+
+    @JsonProperty("identifier")
+    private String identifier;
+
+    @JsonProperty("investigator_attachment")
+    private String investigatorAttachment;
+
+    @JsonProperty("investigator_comments")
+    private String investigatorComments;
+
     private List<Attachment> attachmentList;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getHashSalt() {
+        return hashSalt;
+    }
+
+    public void setHashSalt(String hashSalt) {
+        this.hashSalt = hashSalt;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public String getInvestigatorAttachment() {
+        return investigatorAttachment;
+    }
+
+    public void setInvestigatorAttachment(String investigatorAttachment) {
+        this.investigatorAttachment = investigatorAttachment;
+    }
+
+    public String getInvestigatorComments() {
+        return investigatorComments;
+    }
+
+    public void setInvestigatorComments(String investigatorComments) {
+        this.investigatorComments = investigatorComments;
+    }
 
     public List<Attachment> getAttachmentList() {
         return attachmentList;
@@ -132,6 +189,14 @@ public class Brand extends Organization {
         this.carrierId = carrierId;
     }
 
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
+    }
+
     public String getAttachment() {
         return attachment;
     }
@@ -158,10 +223,15 @@ public class Brand extends Organization {
             setBusinessLicenseNumber(object.getBusinessLicenseNumber());
             setBusinessSphere(object.getBusinessSphere());
             setCarrierId(object.getCarrierId());
+            setPaymentId(object.getPaymentId());
             setContactName(object.getContactName());
             setContactMobile(object.getContactMobile());
             setEmail(object.getEmail());
             setAttachment(object.getAttachment());
+            setIdentifier(object.getIdentifier());
+            setPassword("******");
+            setInvestigatorAttachment(object.getInvestigatorAttachment());
+            setInvestigatorComments(object.getInvestigatorComments());
         }
     }
 
@@ -181,10 +251,15 @@ public class Brand extends Organization {
             object.setBusinessLicenseNumber(brand.getBusinessLicenseNumber());
             object.setBusinessSphere(brand.getBusinessSphere());
             object.setCarrierId(brand.getCarrierId());
+            object.setPaymentId(brand.getPaymentId());
             object.setContactName(brand.getContactName());
             object.setContactMobile(brand.getContactMobile());
             object.setEmail(brand.getEmail());
             object.setAttachment(brand.getAttachment());
+            object.setIdentifier(brand.getIdentifier());
+            object.setPassword(brand.getPassword());
+            object.setInvestigatorAttachment(brand.getInvestigatorAttachment());
+            object.setInvestigatorComments(brand.getInvestigatorComments());
             return object;
         }
 

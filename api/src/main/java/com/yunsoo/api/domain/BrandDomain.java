@@ -1,9 +1,8 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AttachmentObject;
 import com.yunsoo.common.data.object.BrandObject;
-import com.yunsoo.common.data.object.OrganizationObject;
+import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -18,13 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,6 +37,12 @@ public class BrandDomain {
     public BrandObject createBrand(BrandObject object) {
         object.setId(null);
         object.setCreatedDateTime(DateTime.now());
+        String hashSalt = RandomUtils.generateString(8);
+        String password =  HashUtils.sha1HexString(object.getPassword() + hashSalt);
+        object.setHashSalt(hashSalt);
+        object.setPassword(password);
+        if(object.getAttachment().endsWith(","))
+            object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() -1 ));
         return dataAPIClient.post("brand", object, BrandObject.class);
     }
 
@@ -63,8 +65,10 @@ public class BrandDomain {
         return dataAPIClient.get("brand/count/" + query , Integer.class);
     }
 
-    public Page<BrandObject> getBrandList(String name, String carrierId, Pageable pageable) {
-        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("name", name)
+    public Page<BrandObject> getBrandList(String name, String carrierId, String status, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("name", name)
+                .append("status", status)
                 .append("carrier_id", carrierId).append(pageable)
                 .build();
         return dataAPIClient.getPaged("brand" + query, new ParameterizedTypeReference<List<BrandObject>>() {
@@ -74,7 +78,7 @@ public class BrandDomain {
 
     public List<AttachmentObject> getAttachmentList(String attachmentIds){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("ids", attachmentIds.split(";")).build();
+                .append("ids", StringUtils.commaDelimitedListToStringArray(attachmentIds)).build();
         return dataAPIClient.get("brand/attachment" + query, new ParameterizedTypeReference<List<AttachmentObject>>(){});
     }
 

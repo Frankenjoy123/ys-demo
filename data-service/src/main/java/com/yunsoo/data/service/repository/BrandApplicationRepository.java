@@ -15,8 +15,9 @@ import java.util.List;
  */
 public interface BrandApplicationRepository  extends CrudRepository<BrandApplicationEntity, String> {
 
-    @Query("select be from BrandApplicationEntity be where (:carrierId is null or be.carrierId = :carrierId) and (:name is null or be.brandName = :name) ")
-    Page<BrandApplicationEntity> query(@Param("name")String name, @Param("carrierId")String carrier_id, Pageable pageable);
+    @Query("select be from BrandApplicationEntity be where (:carrierId is null or be.carrierId = :carrierId) " +
+            "and (:name is null or be.brandName = :name) and (:status is null or be.statusCode = :status)  ")
+    Page<BrandApplicationEntity> query(@Param("name")String name, @Param("carrierId")String carrier_id,  @Param("status")String status,Pageable pageable);
 
     int countByCarrierIdAndStatusCode(@Param("carrierId")String carrierId, @Param("status")String status);
 }

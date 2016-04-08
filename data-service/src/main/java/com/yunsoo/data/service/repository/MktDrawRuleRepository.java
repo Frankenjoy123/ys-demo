@@ -11,5 +11,5 @@ import java.util.List;
  * Descriptions:
  */
 public interface MktDrawRuleRepository extends CrudRepository<MktDrawRuleEntity, String> {
-    List<MktDrawRuleEntity> findByMarketingId(String marketingId);
+    List<MktDrawRuleEntity> findByMarketingIdOrderByAmountDesc(String marketingId);
 }

@@ -4,7 +4,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Table;
 
 /**
  * Created by yan on 3/16/2016.
@@ -57,12 +60,71 @@ public class BrandApplicationEntity {
     @Column(name = "carrier_id")
     private String carrierId;
 
+    @Column(name = "payment_id")
+    private String paymentId;
+
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
     @Column(name = "attachment")
     private String attachment;
+
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "hash_salt")
+    private String hashSalt;
+
+    @Column(name = "identifier")
+    private String identifier;
+
+    @Column(name = "investigator_attachment")
+    private String investigatorAttachment;
+
+    @Column(name = "investigator_comments")
+    private String investigatorComments;
+
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getHashSalt() {
+        return hashSalt;
+    }
+
+    public void setHashSalt(String hashSalt) {
+        this.hashSalt = hashSalt;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public String getInvestigatorAttachment() {
+        return investigatorAttachment;
+    }
+
+    public void setInvestigatorAttachment(String investigatorAttachment) {
+        this.investigatorAttachment = investigatorAttachment;
+    }
+
+    public String getInvestigatorComments() {
+        return investigatorComments;
+    }
+
+    public void setInvestigatorComments(String investigatorComments) {
+        this.investigatorComments = investigatorComments;
+    }
 
     public String getAttachment() {
         return attachment;
@@ -174,6 +236,14 @@ public class BrandApplicationEntity {
 
     public void setCarrierId(String carrierId) {
         this.carrierId = carrierId;
+    }
+
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
     }
 
     public String getStatusCode() {
