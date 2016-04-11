@@ -11,6 +11,8 @@ import com.yunsoo.api.dto.ProductKeyBatchRequest;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
+import com.yunsoo.common.support.YSFile;
+import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -71,10 +73,38 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
     public ResponseEntity<?> getKeysById(@PathVariable(value = "id") String id) {
+        ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
+        if (batch == null) {
+            throw new NotFoundException("product key batch not found " + StringFormatter.formatMap("id", id));
+        }
+        AuthUtils.checkPermission(batch.getOrgId(), "product_key_batch", "read");
+
+        byte[] data = productKeyDomain.getProductKeysByBatchId(id);
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/vnd+yunsoo.pks"))
+                .contentType(MediaType.parseMediaType("application/vnd+ys.pks"))
+                .contentLength(data.length)
                 .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + ".pks\"")
-                .body(new InputStreamResource(new ByteArrayInputStream(productKeyDomain.getProductKeysByBatchId(id))));
+                .body(new InputStreamResource(new ByteArrayInputStream(data)));
+    }
+
+    @RequestMapping(value = "{id}/file", method = RequestMethod.GET)
+    public ResponseEntity<?> getYSFileByProductKeyBatchId(@PathVariable(value = "id") String id) {
+        ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
+        if (batch == null) {
+            throw new NotFoundException("product key batch not found " + StringFormatter.formatMap("id", id));
+        }
+        AuthUtils.checkPermission(batch.getOrgId(), "product_key_batch", "read");
+
+        YSFile ysFile = productKeyDomain.getProductKeyFile(id, batch.getOrgId());
+        if (ysFile == null) {
+            throw new NotFoundException("product key batch file not found " + StringFormatter.formatMap("id", id));
+        }
+        byte[] data = ysFile.toBytes();
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/vnd+ys.pks"))
+                .contentLength(data.length)
+                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + ".pks\"")
+                .body(new InputStreamResource(new ByteArrayInputStream(data)));
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -195,14 +225,13 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "{id}/details", method = RequestMethod.GET)
     public ResponseEntity<?> getProductKeyBatchDetails(@PathVariable(value = "id") String id) {
-        String orgId = AuthUtils.getCurrentAccount().getOrgId();
         ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
         if (batch == null) {
             throw new NotFoundException("product key batch not found");
         }
         AuthUtils.checkPermission(batch.getOrgId(), "product_key_batch", "read");
 
-        String path = String.format("organization/%s/product_key_batch/%s/details.json", orgId, id);
+        String path = String.format("organization/%s/product_key_batch/%s/details.json", batch.getOrgId(), id);
         ResourceInputStream resourceInputStream = fileDomain.getFile(path);
         ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON);
         if (resourceInputStream == null) {

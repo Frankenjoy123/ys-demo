@@ -10,7 +10,9 @@ import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
+import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -52,6 +54,9 @@ public class ProductKeyDomain {
 
     @Autowired
     private LookupDomain lookupDomain;
+
+    @Autowired
+    private FileDomain fileDomain;
 
     @Autowired
     private ProductKeyOrderDomain productKeyOrderDomain;
@@ -218,6 +223,22 @@ public class ProductKeyDomain {
             throw new InternalServerErrorException("product keys format issue");
         }
         return outputStream.toByteArray();
+    }
+
+    public YSFile getProductKeyFile(String batchId, String orgId) {
+        String path = String.format("organization/%s/product_key_batch/%s/keys.pks", orgId, batchId);
+        ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+        if (resourceInputStream == null) {
+            return null;
+        }
+        try {
+            YSFile ysFile = YSFile.read(resourceInputStream);
+            ysFile.putHeader("product_key_base_url", productKeyBaseUrl);
+            return ysFile;
+        } catch (Exception e) {
+            log.error("resourceInputStream invalid", e);
+            return null;
+        }
     }
 
     public boolean validateProductKeyTypeCodes(List<String> productKeyTypeCodes) {

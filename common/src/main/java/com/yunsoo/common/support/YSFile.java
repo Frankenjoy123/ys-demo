@@ -3,6 +3,9 @@ package com.yunsoo.common.support;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.HexStringUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -149,6 +152,19 @@ public class YSFile {
         return realHash.equals(hash);
     }
 
+    public static YSFile read(InputStream inputStream) throws IOException {
+        if (inputStream == null) {
+            throw new RuntimeException("inputStream invalid");
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            out.write(buffer, 0, bytesRead);
+        }
+        out.flush();
+        return YSFile.read(out.toByteArray());
+    }
 
     public static YSFile read(byte[] data) {
         if (data == null || data.length < 15 || data[0] != 'Y' || data[1] != 'S') {
