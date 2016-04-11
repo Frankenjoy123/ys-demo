@@ -79,7 +79,7 @@ public class LogisticsActionController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
-    @PreAuthorize("hasPermission(#logisticsAction, 'logisticsaction:update')")
+    @PreAuthorize("hasPermission(#logisticsAction, 'logistics_action:write')")
     public void patch(@RequestBody LogisticsAction logisticsAction) {
 
         if (logisticsAction.getOrgId() == null || "current".equals(logisticsAction.getOrgId())) { //get current Organization

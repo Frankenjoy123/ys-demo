@@ -65,7 +65,7 @@ public class ProductBaseController {
      * @return product base
      */
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'productbase:read')")
+    @PostAuthorize("hasPermission(returnObject, 'product_base:read')")
     public ProductBase getById(@PathVariable(value = "product_base_id") String productBaseId) {
         ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
 
@@ -77,7 +77,7 @@ public class ProductBaseController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'productbase:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'product_base:read')")
     public List<ProductBase> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                          @PageableDefault(page = 0, size = 20)
                                          @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
@@ -103,7 +103,7 @@ public class ProductBaseController {
     }
 
     @RequestMapping(value = "/count", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'productbase:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'product_base:read')")
     public Long getCount(@RequestParam(value = "org_id", required = false) String orgId) {
 
         orgId = AuthUtils.fixOrgId(orgId);
@@ -115,7 +115,7 @@ public class ProductBaseController {
     //create product base
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#productBase.orgId, 'org', 'productbase:create')")
+    @PreAuthorize("hasPermission(#productBase.orgId, 'org', 'product_base:create')")
     public ProductBase create(@RequestBody ProductBase productBase) {
         ProductBaseObject productBaseObject = new ProductBaseObject();
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
@@ -158,7 +158,7 @@ public class ProductBaseController {
 
     //update product base versions: edit current product version detail
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.PATCH)
-    @PreAuthorize("hasPermission(#productBase.orgId, 'org', 'productbase:modify')")
+    @PreAuthorize("hasPermission(#productBase.orgId, 'org', 'product_base:write')")
     public void updateProductBase(@PathVariable(value = "product_base_id") String productBaseId,
                                   @RequestBody ProductBase productBase) {
         ProductBaseObject originalProductBaseObject = findProductBaseById(productBaseId);
@@ -207,7 +207,7 @@ public class ProductBaseController {
         ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
         if (productBaseObject != null) {
             //delete product base
-            AuthUtils.checkPermission(productBaseObject.getOrgId(), "productbase", "delete");
+            AuthUtils.checkPermission(productBaseObject.getOrgId(), "product_base", "delete");
 
             productBaseDomain.deleteProductBase(productBaseId);
         }

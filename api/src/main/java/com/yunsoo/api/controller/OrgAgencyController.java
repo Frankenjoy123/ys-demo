@@ -91,7 +91,7 @@ public class OrgAgencyController {
     }
 
     //update organization agency
-    @PreAuthorize("hasPermission(#orgagency, 'orgagency:modify')")
+    @PreAuthorize("hasPermission(#orgagency, 'org_agency:write')")
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public void update(@PathVariable("id") String id, @RequestBody OrgAgency orgAgency) {
         OrgAgencyObject orgAgencyObject = findOrgAgencyById(id);

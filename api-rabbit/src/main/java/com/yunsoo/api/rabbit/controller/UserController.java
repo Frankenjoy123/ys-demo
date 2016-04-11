@@ -83,7 +83,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "{id}/gravatar", method = RequestMethod.PUT)
-    @PreAuthorize("hasPermission(#userId, 'userId', 'user:modify')")
+    @PreAuthorize("hasPermission(#userId, 'userId', 'user:write')")
     public void saveUserGravatar(@PathVariable(value = "id") String userId,
                                  @RequestBody byte[] imageDataBytes) {
         if (imageDataBytes != null && imageDataBytes.length > 0) {
@@ -104,7 +104,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "{id}/signin", method = RequestMethod.POST)
-    @PreAuthorize("hasPermission(#userId, 'userId', 'user:modify')")
+    @PreAuthorize("hasPermission(#userId, 'userId', 'user:write')")
     public int signIn(@PathVariable(value = "id") String userId) {
         userId = fixUserId(userId);
         return userActivityDomain.signIn(userId);
@@ -122,7 +122,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "{id}/config", method = RequestMethod.PUT)
-    @PreAuthorize("hasPermission(#userId, 'userId', 'user:modify')")
+    @PreAuthorize("hasPermission(#userId, 'userId', 'user:write')")
     public void saveUserConfig(@PathVariable(value = "id") String userId,
                                @RequestBody UserConfigObject userConfigObject) {
         userId = fixUserId(userId);

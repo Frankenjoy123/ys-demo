@@ -161,7 +161,7 @@ public class BrandApplicationController {
     }
 
     @RequestMapping(value = "attachment", method = RequestMethod.POST)
-    //@PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
+    //@PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:write')")
     public Attachment saveBrandAttachment(@RequestParam(value = "file") MultipartFile attachment) {
         if(attachment == null)
             throw new NotFoundException("no file uploaded!");
@@ -172,7 +172,7 @@ public class BrandApplicationController {
     }
 
     @RequestMapping(value = "attachment/{id}", method = RequestMethod.POST)
-    //@PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
+    //@PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:write')")
     public void updateBrandAttachment(@PathVariable(value = "id") String id,
                                     @RequestParam(value = "file") MultipartFile attachment) {
         if(attachment == null)
@@ -181,7 +181,7 @@ public class BrandApplicationController {
     }
 
     @RequestMapping(value = "attachment/{id}", method = RequestMethod.GET)
-    //@PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:modify')")
+    //@PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:write')")
     public ResponseEntity<?> getBrandAttachment(@PathVariable(value = "id") String id) throws UnsupportedEncodingException {
         List<AttachmentObject> attachmentObjectList = brandDomain.getAttachmentList(id);
         if(attachmentObjectList.size()<=0)
