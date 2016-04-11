@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.dto.LogisticsAction;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -25,8 +25,6 @@ public class LogisticsActionController {
     @Autowired
     private RestClient dataAPIClient;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -34,7 +32,7 @@ public class LogisticsActionController {
     public LogisticsAction create(@RequestBody LogisticsAction logisticsAction) {
 
         if (logisticsAction.getOrgId() == null || "current".equals(logisticsAction.getOrgId())) { //get current Organization
-            String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+            String orgId = AuthUtils.getCurrentAccount().getOrgId();
             logisticsAction.setOrgId(orgId);
         }
 
@@ -63,9 +61,7 @@ public class LogisticsActionController {
                                      @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
-        if ("current".equals(orgId)) { //get current Organization
-            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        }
+        orgId = AuthUtils.fixOrgId(orgId);
 
         LogisticsCheckActionObject[] objects =
                 dataAPIClient.get("logisticscheckaction?orgId={orgId}&&pageIndex={pageIndex}&&pageSize={pageSize}",
@@ -87,7 +83,7 @@ public class LogisticsActionController {
     public void patch(@RequestBody LogisticsAction logisticsAction) {
 
         if (logisticsAction.getOrgId() == null || "current".equals(logisticsAction.getOrgId())) { //get current Organization
-            String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+            String orgId = AuthUtils.getCurrentAccount().getOrgId();
             logisticsAction.setOrgId(orgId);
         }
 

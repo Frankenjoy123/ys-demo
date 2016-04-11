@@ -223,11 +223,11 @@ public class AuthController {
     public Token getLoginToken(@RequestParam(value = "account_id", required = false) String accountId,
                                @RequestParam(value = "expires_in", required = false) Integer expiresIn) {
 
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
 
         log.info(String.format("login token creation request from account [id: %s] for account [id: %s]", currentAccountId, accountId));
 
-        AccountObject accountObject = null;
+        AccountObject accountObject;
         if (StringUtils.isEmpty(accountId) || "current".equals(accountId)) {
             accountId = currentAccountId;
         }

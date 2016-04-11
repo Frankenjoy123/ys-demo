@@ -2,7 +2,6 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.DeviceDomain;
 import com.yunsoo.api.dto.Device;
-import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.DeviceObject;
@@ -32,9 +31,6 @@ public class DeviceController {
     @Autowired
     private DeviceDomain deviceDomain;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
-
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'device:read')")
     public Device getById(@PathVariable(value = "id") String id) {
@@ -55,7 +51,7 @@ public class DeviceController {
             HttpServletResponse response) {
 
         if (!StringUtils.hasText(orgId)) {
-            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+            orgId = AuthUtils.getCurrentAccount().getOrgId();
         }
 
         Page<DeviceObject> devicePage = deviceDomain.getByFilterPaged(orgId, accountId, pageable);
@@ -66,9 +62,10 @@ public class DeviceController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
+    @PostAuthorize("hasPermission(#device, 'device:write')")
     public void update(@RequestBody Device device) {
         String id = device.getId();
-        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String accountId = AuthUtils.getCurrentAccount().getId();
         DeviceObject deviceCurrent = deviceDomain.getById(id);
         if (deviceCurrent == null) {
             throw new NotFoundException("device not found by [id: " + id + "]");
@@ -87,10 +84,11 @@ public class DeviceController {
 
 
     @RequestMapping(value = "register", method = RequestMethod.POST)
+    @PostAuthorize("hasPermission(#device, 'device:create')")
     public Device register(@RequestBody Device device) {
         DeviceObject deviceNew = toDeviceObject(device);
-        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        String accountId = AuthUtils.getCurrentAccount().getId();
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
         deviceNew.setOrgId(orgId);
         deviceNew.setLoginAccountId(accountId);
         deviceNew.setStatusCode(LookupCodes.DeviceStatus.ACTIVATED);

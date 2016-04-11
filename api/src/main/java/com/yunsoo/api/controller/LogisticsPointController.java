@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.dto.LogisticsPoint;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.LogisticsCheckPointObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -25,8 +25,6 @@ public class LogisticsPointController {
     @Autowired
     private RestClient dataAPIClient;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -34,7 +32,7 @@ public class LogisticsPointController {
     public LogisticsPoint create(@RequestBody LogisticsPoint logisticsPoint) {
 
         if (logisticsPoint.getOrgId() == null || "current".equals(logisticsPoint.getOrgId())) { //get current Organization
-            String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+            String orgId = AuthUtils.getCurrentAccount().getOrgId();
             logisticsPoint.setOrgId(orgId);
         }
 
@@ -66,7 +64,7 @@ public class LogisticsPointController {
                                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
         if ("current".equals(orgId)) { //get current Organization
-            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+            orgId = AuthUtils.getCurrentAccount().getOrgId();
         }
 
         LogisticsCheckPointObject[] objects =
@@ -89,7 +87,7 @@ public class LogisticsPointController {
     public void patch(@RequestBody LogisticsPoint logisticsPoint) {
 
         if (logisticsPoint.getOrgId() == null || "current".equals(logisticsPoint.getOrgId())) { //get current Organization
-            String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+            String orgId = AuthUtils.getCurrentAccount().getOrgId();
             logisticsPoint.setOrgId(orgId);
         }
 

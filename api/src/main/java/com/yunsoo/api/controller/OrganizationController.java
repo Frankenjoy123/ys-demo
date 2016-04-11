@@ -1,12 +1,11 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.*;
-import com.yunsoo.api.dto.*;
 import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
 import com.yunsoo.api.dto.ImageRequest;
 import com.yunsoo.api.dto.Organization;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AttachmentObject;
@@ -29,10 +28,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -53,9 +49,6 @@ public class OrganizationController {
     private OrganizationDomain organizationDomain;
 
     @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
-
-    @Autowired
     private AccountDomain accountDomain;
 
     @Autowired
@@ -70,7 +63,7 @@ public class OrganizationController {
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
     public Organization getById(@PathVariable(value = "id") String orgId) {
-        orgId = fixOrgId(orgId);
+        orgId = AuthUtils.fixOrgId(orgId);
         OrganizationObject object = organizationDomain.getOrganizationById(orgId);
         if (object == null) {
             throw new NotFoundException("organization not found by [id: " + orgId + "]");
@@ -82,9 +75,6 @@ public class OrganizationController {
     @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
     public void Disable(@PathVariable(value = "id") String orgId) {
         organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.DISABLED);
-
-
-
     }
 
     @RequestMapping(value = "{id}/enable", method = RequestMethod.PUT)
@@ -119,7 +109,7 @@ public class OrganizationController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @PreAuthorize("hasPermission('*', 'org', 'organization:create')")
     public Organization create(@RequestBody Organization organization) {
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         OrganizationObject object = organization.toOrganizationObject();
         object.setCreatedAccountId(currentAccountId);
         return new Organization(organizationDomain.createOrganization(object));
@@ -128,7 +118,7 @@ public class OrganizationController {
     @RequestMapping(value = "/brand", method = RequestMethod.POST)
     @PreAuthorize("hasPermission('current', 'org', 'organization:create')")
     public Brand createBrand(@RequestBody Brand brand) {
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         BrandObject object = brand.toBrand(brand);
         object.setCreatedAccountId(currentAccountId);
         Brand returnObj = new Brand(organizationDomain.createBrand(object));
@@ -208,7 +198,7 @@ public class OrganizationController {
     public void saveOrgLogo(@PathVariable(value = "id") String orgId,
                             @RequestBody byte[] imageDataBytes) {
         if (imageDataBytes != null && imageDataBytes.length > 0) {
-            orgId = fixOrgId(orgId);
+            orgId = AuthUtils.fixOrgId(orgId);
             organizationDomain.saveOrgLogo(orgId, imageDataBytes);
         }
     }
@@ -224,18 +214,9 @@ public class OrganizationController {
         byte[] imageDataBytes = Base64.decodeBase64(imageDataBase64);
 
         if (imageDataBytes != null && imageDataBytes.length > 0) {
-            orgId = fixOrgId(orgId);
+            orgId = AuthUtils.fixOrgId(orgId);
             organizationDomain.saveOrgLogo(orgId, imageDataBytes);
         }
     }
 
-
-
-    private String fixOrgId(String orgId) {
-        if (orgId == null || "current".equals(orgId)) {
-            //current orgId
-            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        }
-        return orgId;
-    }
 }

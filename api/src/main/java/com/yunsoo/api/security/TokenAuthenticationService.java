@@ -2,13 +2,9 @@ package com.yunsoo.api.security;
 
 import com.yunsoo.api.dto.Token;
 import com.yunsoo.api.security.authorization.AuthorizationService;
-import com.yunsoo.api.util.AuthUtils;
-import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -46,18 +42,6 @@ public class TokenAuthenticationService {
     public void init() {
         this.accessTokenHandler = new TokenHandler(accessTokenHashSalt);
         this.loginTokenHandler = new TokenHandler(loginTokenHashSalt);
-    }
-
-    /**
-     * @see AuthUtils
-     */
-    @Deprecated()
-    public AccountAuthentication getAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AccountAuthentication)) {
-            throw new UnauthorizedException();
-        }
-        return (AccountAuthentication) SecurityContextHolder.getContext().getAuthentication();
     }
 
     public AccountAuthentication getAuthentication(String token) {

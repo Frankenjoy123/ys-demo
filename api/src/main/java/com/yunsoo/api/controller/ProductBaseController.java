@@ -4,7 +4,6 @@ import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductCategory;
-import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -58,9 +57,6 @@ public class ProductBaseController {
     @Autowired
     private FileDomain fileDomain;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
-
 
     //region product base
 
@@ -87,7 +83,7 @@ public class ProductBaseController {
                                          @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                          Pageable pageable,
                                          HttpServletResponse response) {
-        orgId = fixOrgId(orgId);
+        orgId = AuthUtils.fixOrgId(orgId);
         Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", productBasePage.toContentRange());
@@ -110,7 +106,7 @@ public class ProductBaseController {
     @PreAuthorize("hasPermission(#orgId, 'org', 'productbase:read')")
     public Long getCount(@RequestParam(value = "org_id", required = false) String orgId) {
 
-        orgId = fixOrgId(orgId);
+        orgId = AuthUtils.fixOrgId(orgId);
         Long count = productBaseDomain.getProductBaseCountByOrgId(orgId);
 
         return count;
@@ -125,12 +121,12 @@ public class ProductBaseController {
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
         productBaseObject.setName(productBase.getName());
         productBaseObject.setVersion(1);
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
 
         if (StringUtils.hasText(productBase.getOrgId()))
             productBaseObject.setOrgId(productBase.getOrgId());
         else
-            productBaseObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+            productBaseObject.setOrgId(AuthUtils.getCurrentAccount().getOrgId());
 
         productBaseObject.setBarcode(productBase.getBarcode());
         productBaseObject.setVersion(1);
@@ -174,10 +170,10 @@ public class ProductBaseController {
         productBaseObject.setId(productBaseId);
         productBaseObject.setVersion(version);
         productBaseObject.setName(productBase.getName());
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         productBaseObject.setOrgId(StringUtils.hasText(productBase.getOrgId())
                 ? productBase.getOrgId()
-                : tokenAuthenticationService.getAuthentication().getPrincipal().getOrgId());
+                : AuthUtils.getCurrentAccount().getOrgId());
         productBaseObject.setBarcode(productBase.getBarcode());
         productBaseObject.setStatusCode(productBase.getStatusCode());
         productBaseObject.setCategoryId(productBase.getCategoryId());
@@ -257,7 +253,7 @@ public class ProductBaseController {
     public ResponseEntity<?> getProductBaseTemplate(@PathVariable(value = "product_base_id") String productBaseId) {
         ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
         Integer version = productBaseObject.getVersion();
-        String orgId = fixOrgId("current");
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
         String path = String.format("organization/%s/product_base/%s/%s/details.json", orgId, productBaseId, version);
         ResourceInputStream resourceInputStream = fileDomain.getFile(path);
         if (resourceInputStream == null) {
@@ -274,7 +270,7 @@ public class ProductBaseController {
                                         @RequestBody String details) {
         ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
         Integer version = productBaseObject.getVersion();
-        String orgId = fixOrgId("current");
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
         String path = String.format("organization/%s/product_base/%s/%s/details.json", orgId, productBaseId, version);
         ProductBaseVersionsObject productBaseVersionsObject = productBaseDomain.getProductBaseVersionsByProductBaseIdAndVersion(productBaseId, version);
         if (productBaseVersionsObject == null) {
@@ -286,14 +282,6 @@ public class ProductBaseController {
 
     //endregion
 
-
-    private String fixOrgId(String orgId) {
-        if (orgId == null || "current".equals(orgId)) {
-            //current orgId
-            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        }
-        return orgId;
-    }
 
     private ProductBaseObject findProductBaseById(String id) {
         ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(id);

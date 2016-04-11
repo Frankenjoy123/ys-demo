@@ -6,7 +6,7 @@ import com.yunsoo.api.dto.MktDrawPrize;
 import com.yunsoo.api.dto.MktDrawRule;
 import com.yunsoo.api.dto.ScanRecord;
 import com.yunsoo.api.payment.ParameterNames;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
@@ -41,9 +41,6 @@ public class MarketingController {
     private MarketingDomain marketingDomain;
 
     @Autowired
-    private ProductDomain productDomain;
-
-    @Autowired
     private ProductBaseDomain productBaseDomain;
 
     @Autowired
@@ -55,8 +52,6 @@ public class MarketingController {
     @Autowired
     private OrganizationDomain organizationDomain;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "drawRule", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -70,7 +65,7 @@ public class MarketingController {
             throw new NotFoundException("marketing can not be found by the id");
         }
         MktDrawRuleObject mktDrawRuleObject = mktDrawRule.toMktDrawRuleObject();
-        String currentUserId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentUserId = AuthUtils.getCurrentAccount().getId();
         mktDrawRuleObject.setCreatedAccountId(currentUserId);
         mktDrawRuleObject.setCreatedDateTime(DateTime.now());
 
@@ -92,7 +87,7 @@ public class MarketingController {
         if(carrierId != null)
             orgIds = organizationDomain.getBrandIdsForCarrier(carrierId);
         else
-            orgId = fixOrgId(orgId);
+            orgId = AuthUtils.fixOrgId(orgId);
 
         Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status, pageable);
         if (pageable != null) {
@@ -133,16 +128,16 @@ public class MarketingController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Marketing createMarketing(@RequestParam(value = "batchId", required = false) String batchId,
                                      @RequestBody Marketing marketing) {
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         MarketingObject marketingObject = marketing.toMarketingObject();
         marketingObject.setCreatedAccountId(currentAccountId);
         marketingObject.setCreatedDateTime(DateTime.now());
         if (StringUtils.hasText(marketing.getOrgId()))
             marketingObject.setOrgId(marketing.getOrgId());
         else
-            marketingObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+            marketingObject.setOrgId(AuthUtils.getCurrentAccount().getOrgId());
 
-        MarketingObject mktObject = new MarketingObject();
+        MarketingObject mktObject;
         if (batchId != null) {
             ProductKeyBatchObject batchObject = productKeyDomain.getPkBatchById(batchId);
             if (batchObject != null) {
@@ -165,7 +160,7 @@ public class MarketingController {
 
     @RequestMapping(value = "update/{id}", method = RequestMethod.PUT)
     public void updateMarketing(@PathVariable(value = "id") String id, @RequestBody Marketing marketing) {
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
         if (marketingObject != null) {
             marketingObject.setName(marketing.getName());
@@ -179,7 +174,7 @@ public class MarketingController {
 
     @RequestMapping(value = "/totalcount", method = RequestMethod.GET)
     public Long countByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
-        orgId = fixOrgId(orgId);
+        orgId = AuthUtils.fixOrgId(orgId);
         if (orgId == null)
             throw new BadRequestException("org id can not be null");
 
@@ -188,7 +183,7 @@ public class MarketingController {
 
     @RequestMapping(value = "/drawPrize/totalcount", method = RequestMethod.GET)
     public Long countMktDrawPrizesByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
-        orgId = fixOrgId(orgId);
+        orgId = AuthUtils.fixOrgId(orgId);
         if (orgId == null)
             throw new BadRequestException("org id can not be null");
 
@@ -226,7 +221,7 @@ public class MarketingController {
 
     @RequestMapping(value = "{id}/active", method = RequestMethod.PUT)
     public void enableMarketing(@PathVariable(value = "id")String id, @RequestParam(value="comments", required = false)String comments){
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
         if(marketingObject != null) {
             marketingObject.setStatusCode(LookupCodes.MktStatus.PAID);
@@ -240,7 +235,7 @@ public class MarketingController {
 
     @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
     public void disableMarketing(@PathVariable(value = "id")String id, @RequestParam(value="comments", required = false)String comments){
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
         if(marketingObject != null) {
             marketingObject.setStatusCode(LookupCodes.MktStatus.DISABLED);
@@ -346,7 +341,7 @@ public class MarketingController {
             throw new NotFoundException("marketing draw rule can not be found");
         }
 
-        String currentUserId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentUserId = AuthUtils.getCurrentAccount().getId();
         mktDrawRuleObject.setComments(mktDrawRule.getComments());
         mktDrawRuleObject.setAmount(mktDrawRule.getAmount());
         mktDrawRuleObject.setProbability(mktDrawRule.getProbability());
@@ -451,13 +446,5 @@ public class MarketingController {
 
     }
 
-
-    private String fixOrgId(String orgId) {
-        if (orgId == null || "current".equals(orgId)) {
-            //current orgId
-            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        }
-        return orgId;
-    }
 
 }

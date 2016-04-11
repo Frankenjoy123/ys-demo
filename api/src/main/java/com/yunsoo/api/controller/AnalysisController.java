@@ -4,7 +4,7 @@ import com.yunsoo.api.domain.AnalysisDomain;
 import com.yunsoo.api.dto.KeyUsageReport;
 import com.yunsoo.api.dto.ScanAnalysisReport;
 import com.yunsoo.api.dto.ScanLocationAnalysisReport;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ScanRecordAnalysisObject;
 import com.yunsoo.common.data.object.ScanRecordLocationAnalysisObject;
@@ -30,9 +30,6 @@ public class AnalysisController {
     @Autowired
     private AnalysisDomain analysisDomain;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
-
 
     @RequestMapping(value = "/scan_report", method = RequestMethod.GET)
     public ScanAnalysisReport getScanAnalysisReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
@@ -46,7 +43,7 @@ public class AnalysisController {
         if (endTime == null) {
             endTime = now.plusDays(-1);
         }
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
 
         List<ScanRecordAnalysisObject> data = analysisDomain.getScanAnalysisReport(orgId, startTime, endTime, productBaseId, batchId);
         Map<DateTime, Integer> pvData = data.stream().collect(Collectors.groupingBy(ScanRecordAnalysisObject::getScanDate, Collectors.summingInt(ScanRecordAnalysisObject::getPv)))
@@ -107,7 +104,7 @@ public class AnalysisController {
         if (endTime == null) {
             endTime = now.plusDays(-1);
         }
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
         List<ScanRecordLocationAnalysisObject> data = analysisDomain.getScanLocationAnalysisReport(orgId, startTime, endTime, productBaseId, batchId);
 
         ScanLocationAnalysisReport report = new ScanLocationAnalysisReport();
@@ -190,7 +187,7 @@ public class AnalysisController {
         if (endTime == null) {
             endTime = now.plusDays(-1);
         }
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
         List<ProductKeyBatchObject> list = analysisDomain.getDailyKeyUsageReport(orgId, productBaseId, startTime, endTime);
         Map<String, Integer> quantityMap = list.stream()
                 .collect(Collectors.groupingBy(o -> o.getCreatedDateTime().toString("yyyy-MM-dd"), Collectors.summingInt(ProductKeyBatchObject::getQuantity)))

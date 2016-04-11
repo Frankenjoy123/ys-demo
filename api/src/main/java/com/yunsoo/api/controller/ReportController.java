@@ -1,13 +1,14 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.FileDomain;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,15 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReportController {
 
     @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
-
-    @Autowired
     private FileDomain fileDomain;
 
     @RequestMapping(value = "myorganization/{type}/{period}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission('current', 'org', 'reports:read')")
     public ResponseEntity get(@PathVariable(value = "type") String type,
                               @PathVariable(value = "period") String period) {
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
         String path = String.format("report/organization/%s/%s/%s", orgId, type, period);
         ResourceInputStream resourceInputStream = fileDomain.getFile(path);
         if (resourceInputStream == null) {

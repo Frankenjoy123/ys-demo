@@ -4,10 +4,11 @@ import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.domain.ProductKeyOrderDomain;
 import com.yunsoo.api.domain.ProductKeyTransactionDomain;
-import com.yunsoo.api.dto.*;
-import com.yunsoo.api.security.TokenAuthenticationService;
-import com.yunsoo.common.data.object.ProductKeyOrderObject;
-import com.yunsoo.common.data.object.ProductKeyTransactionObject;
+import com.yunsoo.api.dto.ProductBase;
+import com.yunsoo.api.dto.ProductKeyBatch;
+import com.yunsoo.api.dto.ProductKeyOrder;
+import com.yunsoo.api.dto.ProductKeyTransaction;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
@@ -47,8 +48,6 @@ public class ProductKeyOrderController {
     @Autowired
     private ProductKeyDomain productKeyDomain;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ProductKeyOrder getById(@PathVariable(value = "id") String id) {
@@ -58,13 +57,13 @@ public class ProductKeyOrderController {
         }
         List<ProductKeyTransaction> transactionList = transactionDomain.getCreatedTransactionByOrderId(id).stream().map(ProductKeyTransaction::new).collect(Collectors.toList());
         productKeyOrder.setTransactionList(transactionList);
-        if(StringUtils.hasText(productKeyOrder.getProductBaseId()))
+        if (StringUtils.hasText(productKeyOrder.getProductBaseId()))
             productKeyOrder.setProductBase(new ProductBase(productBaseDomain.getProductBaseById(productKeyOrder.getProductBaseId())));
 
         HashMap<String, ProductKeyBatch> productKeyTransactionHashMap = new HashMap<>();
         HashMap<String, ProductBase> productBaseHashMap = new HashMap<>();
-        for(ProductKeyTransaction transaction : transactionList ){
-            if(productKeyTransactionHashMap.containsKey(transaction.getProductKeyBatchId()))
+        for (ProductKeyTransaction transaction : transactionList) {
+            if (productKeyTransactionHashMap.containsKey(transaction.getProductKeyBatchId()))
                 transaction.setKeyBatch(productKeyTransactionHashMap.get(transaction.getProductKeyBatchId()));
             else {
                 ProductKeyBatch batch = new ProductKeyBatch(productKeyDomain.getPkBatchById(transaction.getProductKeyBatchId()));
@@ -72,13 +71,13 @@ public class ProductKeyOrderController {
                 productKeyTransactionHashMap.put(transaction.getProductKeyBatchId(), batch);
             }
 
-            if(StringUtils.hasText(productKeyOrder.getProductBaseId()))
+            if (StringUtils.hasText(productKeyOrder.getProductBaseId()))
                 transaction.setProductBase(productKeyOrder.getProductBase());
-            else{
+            else {
                 String productBaseId = transaction.getKeyBatch().getProductBaseId();
-                if(productBaseHashMap.containsKey(productBaseId))
+                if (productBaseHashMap.containsKey(productBaseId))
                     transaction.setProductBase(productBaseHashMap.get(productBaseId));
-                else{
+                else {
                     ProductBase base = new ProductBase(productBaseDomain.getProductBaseById(productBaseId));
                     transaction.setProductBase(base);
                     productBaseHashMap.put(productBaseId, base);
@@ -101,9 +100,7 @@ public class ProductKeyOrderController {
                                              @RequestParam(value = "product_base_id", required = false) String productBaseId,
                                              Pageable pageable,
                                              HttpServletResponse response) {
-        if (orgId == null) {
-            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        }
+        orgId = AuthUtils.fixOrgId(orgId);
 
         Page<ProductKeyOrder> orderPage = available != null && available
                 ? productKeyOrderDomain.getAvailableOrdersByOrgId(orgId, pageable)
@@ -114,12 +111,12 @@ public class ProductKeyOrderController {
         }
 
         List<ProductKeyOrder> list = orderPage.getContent();
-        if(productBaseId == null){
+        if (productBaseId == null) {
             Map<String, ProductBase> productBaseMap = new HashMap<>();
-            list.forEach(item->{
-                if(productBaseMap.containsKey(item.getProductBaseId()))
+            list.forEach(item -> {
+                if (productBaseMap.containsKey(item.getProductBaseId()))
                     item.setProductBase(productBaseMap.get(item.getProductBaseId()));
-                else{
+                else {
                     ProductBase productBase = new ProductBase(productBaseDomain.getProductBaseById(item.getProductBaseId()));
                     item.setProductBase(productBase);
                     productBaseMap.put(item.getProductBaseId(), productBase);
@@ -133,8 +130,8 @@ public class ProductKeyOrderController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#order, 'productkeyorder:create')")
     public ProductKeyOrder create(@Valid @RequestBody ProductKeyOrder order) {
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
+        String accountId = AuthUtils.getCurrentAccount().getId();
         order.setId(null);
         if (order.getOrgId() == null || order.getOrgId().trim().isEmpty()) {
             order.setOrgId(orgId);
@@ -149,7 +146,7 @@ public class ProductKeyOrderController {
     }
 
     @RequestMapping(value = "{id}/activate", method = RequestMethod.PATCH)
-    public void activate(@PathVariable("id") String id){
+    public void activate(@PathVariable("id") String id) {
         ProductKeyOrder productKeyOrder = new ProductKeyOrder();
         productKeyOrder.setId(id);
         productKeyOrder.setActive(true);
@@ -158,24 +155,26 @@ public class ProductKeyOrderController {
     }
 
     @RequestMapping(value = "{id}/deactivate", method = RequestMethod.PATCH)
-    public void deactivate(@PathVariable("id") String id){
+    public void deactivate(@PathVariable("id") String id) {
         ProductKeyOrder productKeyOrder = new ProductKeyOrder();
         productKeyOrder.setId(id);
         productKeyOrder.setActive(false);
         productKeyOrderDomain.patchUpdate(productKeyOrder);
 
     }
+
     @RequestMapping(value = "/count/total", method = RequestMethod.GET)
-    public long countTotal(@RequestParam("org_ids")List<String> orgIds){
+    public long countTotal(@RequestParam("org_ids") List<String> orgIds) {
         return productKeyOrderDomain.count(orgIds, true);
     }
 
     @RequestMapping(value = "/count/remain", method = RequestMethod.GET)
-    public long countRemain(@RequestParam("org_ids")List<String> orgIds){
+    public long countRemain(@RequestParam("org_ids") List<String> orgIds) {
         return productKeyOrderDomain.count(orgIds, false);
     }
+
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
-    public List<ProductKeyOrder> statistics(@RequestParam("org_ids")List<String> orgIds, Pageable pageable){
+    public List<ProductKeyOrder> statistics(@RequestParam("org_ids") List<String> orgIds, Pageable pageable) {
         return productKeyOrderDomain.statistics(orgIds, pageable);
     }
 

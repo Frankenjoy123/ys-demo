@@ -6,13 +6,12 @@ import com.yunsoo.api.dto.Message;
 import com.yunsoo.api.dto.MessageBodyImage;
 import com.yunsoo.api.dto.MessageImageRequest;
 import com.yunsoo.api.dto.MessageToApp;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,16 +45,10 @@ public class MessageController {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private RestClient dataAPIClient;
-
-    @Autowired
     private MessageDomain messageDomain;
 
     @Autowired
     private OrganizationDomain organizationDomain;
-
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -76,7 +69,7 @@ public class MessageController {
     public List<Message> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                      Pageable pageable,
                                      HttpServletResponse response) {
-        orgId = fixOrgId(orgId);
+        orgId = AuthUtils.fixOrgId(orgId);
         Page<MessageObject> messagePage = messageDomain.getMessageByOrgId(orgId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", messagePage.toContentRange());
@@ -92,7 +85,7 @@ public class MessageController {
             @RequestParam(value = "type_code_in", required = false) List<String> typeCodeIn,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
 
-        orgId = fixOrgId(orgId);
+        orgId = AuthUtils.fixOrgId(orgId);
         return messageDomain.count(orgId, typeCodeIn, statusCodeIn);
     }
 
@@ -101,8 +94,8 @@ public class MessageController {
     @ResponseStatus(HttpStatus.CREATED)
     public MessageObject createMessage() {
         MessageObject messageObject = new MessageObject();
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
         messageObject.setOrgId(orgId);
         messageObject.setTitle("");
         messageObject.setStatusCode(LookupCodes.MessageStatus.CREATED);
@@ -124,12 +117,12 @@ public class MessageController {
         if (StringUtils.hasText(message.getOrgId()))
             messageObject.setOrgId(message.getOrgId());
         else
-            messageObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+            messageObject.setOrgId(AuthUtils.getCurrentAccount().getOrgId());
 
         if (StringUtils.hasText(message.getCreatedAccountId()))
             messageObject.setCreatedAccountId(message.getCreatedAccountId());
         else
-            messageObject.setCreatedAccountId(tokenAuthenticationService.getAuthentication().getDetails().getId());
+            messageObject.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         messageObject.setId(id);
         messageObject.setTitle(message.getTitle());
         messageObject.setTypeCode(message.getTypeCode());
@@ -200,14 +193,6 @@ public class MessageController {
         message.setModifiedAccountId(object.getModifiedAccountId());
         message.setModifiedDateTime(object.getModifiedDateTime());
         return message;
-    }
-
-    private String fixOrgId(String orgId) {
-        if (orgId == null || "current".equals(orgId)) {
-            //current orgId
-            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        }
-        return orgId;
     }
 
     private MessageObject findMessageById(String id) {

@@ -2,7 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.ProductCommentsDomain;
 import com.yunsoo.api.dto.ProductComments;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.ProductCommentsObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -29,8 +29,6 @@ public class ProductCommentsController {
     @Autowired
     private ProductCommentsDomain productCommentsDomain;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductComments> getProductCommentsByFilter(@RequestParam(value = "product_base_id", required = true) String productBaseId,
@@ -62,7 +60,7 @@ public class ProductCommentsController {
 
     @RequestMapping(value = "/totalcount", method = RequestMethod.GET)
     public Long countByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
-        orgId = fixOrgId(orgId);
+        orgId = AuthUtils.fixOrgId(orgId);
         if (orgId == null)
             throw new BadRequestException("org id can not be null");
 
@@ -74,14 +72,5 @@ public class ProductCommentsController {
     public Long getCommentsNumberByProductBaseId(@PathVariable(value = "id") String productBaseId) {
         return productCommentsDomain.getProductCommentsNumber(productBaseId);
     }
-
-    private String fixOrgId(String orgId) {
-        if (orgId == null || "current".equals(orgId)) {
-            //current orgId
-            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        }
-        return orgId;
-    }
-
 
 }

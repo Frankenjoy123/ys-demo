@@ -1,10 +1,14 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.*;
-import com.yunsoo.api.dto.*;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.dto.AccountLoginRequest;
+import com.yunsoo.api.dto.Attachment;
+import com.yunsoo.api.dto.Brand;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.*;
+import com.yunsoo.common.data.object.AccountObject;
+import com.yunsoo.common.data.object.AttachmentObject;
+import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.ConflictException;
@@ -12,14 +16,11 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,9 +41,6 @@ public class BrandApplicationController {
     private Log log = LogFactory.getLog(this.getClass());
     @Autowired
     private BrandDomain brandDomain;
-
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
     @Autowired
     private AccountDomain accountDomain;
@@ -81,7 +79,7 @@ public class BrandApplicationController {
     @RequestMapping(value = "{id}/approve", method = RequestMethod.PUT)
     public boolean approveBrandApplication(@PathVariable("id") String id){
         try {
-            String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+            String currentAccountId = AuthUtils.getCurrentAccount().getId();
             BrandObject object = brandDomain.getBrandById(id);
 
             object.setCreatedAccountId(currentAccountId);
