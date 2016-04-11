@@ -4,6 +4,7 @@ import com.yunsoo.api.client.ProcessorClient;
 import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyCredit;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
@@ -87,10 +88,6 @@ public class ProductKeyDomain {
         return dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id);
     }
 
-    public void updatePkBatch(ProductKeyBatchObject productKeyBatchObject) {
-        dataAPIClient.patch("productkeybatch/{id}", productKeyBatchObject, productKeyBatchObject.getId());
-    }
-
 
     public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Boolean isPackage, Pageable pageable) {
         String[] statusCodes = new String[]{
@@ -136,6 +133,9 @@ public class ProductKeyDomain {
     }
 
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {
+        batchObj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
+        batchObj.setCreatedDateTime(DateTime.now());
+        batchObj.setRestQuantity(batchObj.getQuantity());
         String productBaseId = batchObj.getProductBaseId();
 
         //check product key credit
@@ -185,7 +185,7 @@ public class ProductKeyDomain {
         return toProductKeyBatch(newBatchObj, lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType), lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus));
     }
 
-    public void updateProductKeyBatch(ProductKeyBatchObject batchObj) {
+    public void patchUpdateProductKeyBatch(ProductKeyBatchObject batchObj) {
         dataAPIClient.patch("productkeybatch/{id}", batchObj, batchObj.getId());
     }
 

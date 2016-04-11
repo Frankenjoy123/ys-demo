@@ -147,7 +147,7 @@ public class MarketingController {
 
                 batchObject.setMarketingId(mktObject.getId());
 
-                productKeyDomain.updateProductKeyBatch(batchObject);
+                productKeyDomain.patchUpdateProductKeyBatch(batchObject);
 
             } else {
                 mktObject = marketingDomain.createMarketing(marketingObject);

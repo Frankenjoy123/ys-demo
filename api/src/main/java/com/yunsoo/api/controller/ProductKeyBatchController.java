@@ -120,6 +120,7 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission('current', 'org', 'product_key_batch:create')")
     public ProductKeyBatch create(
             @RequestHeader(value = Constants.HttpHeaderName.APP_ID, required = false) String appId,
             @Valid @RequestBody ProductKeyBatchRequest request) {
@@ -127,20 +128,15 @@ public class ProductKeyBatchController {
         String productBaseId = request.getProductBaseId();
         List<String> productKeyTypeCodes = request.getProductKeyTypeCodes();
 
-        String accountId = AuthUtils.getCurrentAccount().getId();
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
 
-        AuthUtils.checkPermission(orgId, "product_key_batch", "create");
-
         appId = (appId == null) ? "unknown" : appId;
-        DateTime createdDateTime = DateTime.now();
 
-        ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
         if (productBaseId != null) {
             //create corresponding product according to the productBaseId
             ProductBaseObject productBase = productBaseDomain.getProductBaseById(productBaseId);
             if (productBase == null || !orgId.equals(productBase.getOrgId())) { //check orgId of productBase is the same
-                throw new BadRequestException("productBaseId invalid");
+                throw new BadRequestException("product_base_id invalid");
             }
             if (productKeyTypeCodes == null) {
                 productKeyTypeCodes = productBase.getProductKeyTypeCodes();
@@ -148,17 +144,16 @@ public class ProductKeyBatchController {
         }
 
         if (!productKeyDomain.validateProductKeyTypeCodes(productKeyTypeCodes)) {
-            throw new BadRequestException("productKeyTypeCodes invalid");
+            throw new BadRequestException("product_key_type_codes invalid");
         }
+
+        ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
         batchObj.setBatchNo(request.getBatchNo());
         batchObj.setQuantity(quantity);
         batchObj.setProductBaseId(productBaseId);
         batchObj.setProductKeyTypeCodes(productKeyTypeCodes);
         batchObj.setOrgId(orgId);
         batchObj.setCreatedAppId(appId);
-        batchObj.setCreatedAccountId(accountId);
-        batchObj.setCreatedDateTime(createdDateTime);
-        batchObj.setRestQuantity(quantity);
         log.info(String.format("ProductKeyBatch creating started [quantity: %s]", batchObj.getQuantity()));
         ProductKeyBatch newBatch = productKeyDomain.createProductKeyBatch(batchObj);
         log.info(String.format("ProductKeyBatch created [id: %s, quantity: %s]", newBatch.getId(), newBatch.getQuantity()));
@@ -188,28 +183,13 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
-    public void updateProductKeyBatch(
+    public void patchUpdateProductKeyBatch(
             @Valid @RequestBody ProductKeyBatch productKeyBatch) {
-
-        if (productKeyBatch == null) {
-            throw new BadRequestException("marketing draw record can not be null");
-        }
         ProductKeyBatchObject productKeyBatchObject = new ProductKeyBatchObject();
-
         productKeyBatchObject.setId(productKeyBatch.getId());
-        productKeyBatchObject.setBatchNo(productKeyBatch.getBatchNo());
-        productKeyBatchObject.setQuantity(productKeyBatch.getQuantity());
-        productKeyBatchObject.setStatusCode(productKeyBatch.getStatusCode());
-        productKeyBatchObject.setProductKeyTypeCodes(productKeyBatch.getProductKeyTypeCodes());
-        productKeyBatchObject.setProductBaseId(productKeyBatch.getProductBaseId());
-        productKeyBatchObject.setOrgId(productKeyBatch.getOrgId());
-        productKeyBatchObject.setCreatedAppId(productKeyBatch.getCreatedAppId());
-        productKeyBatchObject.setCreatedAccountId(productKeyBatch.getCreatedAccountId());
-        productKeyBatchObject.setCreatedDateTime(productKeyBatch.getCreatedDateTime());
-        productKeyBatchObject.setRestQuantity(productKeyBatch.getQuantity());
         productKeyBatchObject.setMarketingId(productKeyBatch.getMarketingId());
 
-        productKeyDomain.updateProductKeyBatch(productKeyBatchObject);
+        productKeyDomain.patchUpdateProductKeyBatch(productKeyBatchObject);
     }
 
 
