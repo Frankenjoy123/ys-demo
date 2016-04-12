@@ -174,7 +174,19 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void patchUpdate(@PathVariable(value = "id") String id, @RequestBody ProductKeyBatchObject batchObj) {
-        productKeyBatchService.patchUpdate(toProductKeyBatch(batchObj));
+        ProductKeyBatch batch = toProductKeyBatch(batchObj);
+        batch.setId(id);
+        productKeyBatchService.patchUpdate(batch);
+    }
+
+    @RequestMapping(value = "{id}/marketing_id", method = RequestMethod.PUT)
+    public void putMarketingId(@PathVariable(value = "id") String id, @RequestBody String marketingId) {
+        ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(id);
+        if (id == null) {
+            throw new NotFoundException("product key batch not found");
+        }
+        entity.setMarketingId(marketingId);
+        productKeyBatchRepository.save(entity);
     }
 
 
