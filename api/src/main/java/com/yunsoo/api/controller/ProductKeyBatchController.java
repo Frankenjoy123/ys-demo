@@ -222,6 +222,15 @@ public class ProductKeyBatchController {
         productKeyDomain.patchUpdateProductKeyBatch(productKeyBatchObject);
     }
 
+    @RequestMapping(value = "{id}/marketing_id", method = RequestMethod.PUT)
+    public void putMarketingId(@PathVariable(value = "id") String id, @RequestBody(required = false) String marketingId) {
+        if (id == null) {
+            throw new NotFoundException("product key batch not found");
+        }
+        productKeyDomain.putMarketingId(id, marketingId);
+    }
+
+
 
     @RequestMapping(value = "{id}/details", method = RequestMethod.GET)
     public ResponseEntity<?> getProductKeyBatchDetails(@PathVariable(value = "id") String id) {

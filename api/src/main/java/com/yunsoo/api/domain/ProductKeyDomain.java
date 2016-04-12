@@ -200,6 +200,11 @@ public class ProductKeyDomain {
         dataAPIClient.patch("productkeybatch/{id}", batchObj, batchObj.getId());
     }
 
+    public void putMarketingId(String id, String marketingId) {
+        dataAPIClient.put("productkeybatch/{id}/marketing_id", marketingId, id);
+    }
+
+
     public byte[] getProductKeysByBatchId(String id) {
         ProductKeysObject object = dataAPIClient.get("productkeybatch/{batchId}/keys", ProductKeysObject.class, id);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

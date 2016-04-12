@@ -180,12 +180,16 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "{id}/marketing_id", method = RequestMethod.PUT)
-    public void putMarketingId(@PathVariable(value = "id") String id, @RequestBody String marketingId) {
+    public void putMarketingId(@PathVariable(value = "id") String id, @RequestBody(required = false) String marketingId) {
         ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(id);
         if (id == null) {
             throw new NotFoundException("product key batch not found");
         }
-        entity.setMarketingId(marketingId);
+        if (marketingId != null) {
+            entity.setMarketingId(marketingId);
+        } else {
+            entity.setMarketingId(null);
+        }
         productKeyBatchRepository.save(entity);
     }
 
