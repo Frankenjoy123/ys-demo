@@ -175,7 +175,7 @@ public class LookupCodes {
 
         public static final String TECH = "tech";
         public static final String CARRIER = "carrier";
-        public static final String MANUFACTURER = "manufacturer";
+        public static final String BRAND = "brand";
     }
 
     public static class MktDrawPrizeStatus {

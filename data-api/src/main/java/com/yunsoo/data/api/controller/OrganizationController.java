@@ -18,10 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by  : Chen Jerry
@@ -102,7 +100,7 @@ public class OrganizationController {
     public BrandObject createBrand(@RequestBody BrandObject brandObject) {
         OrganizationEntity entity = toOrganizationEntity(brandObject);
         entity.setId(null);
-        entity.setTypeCode(LookupCodes.OrgType.MANUFACTURER);
+        entity.setTypeCode(LookupCodes.OrgType.BRAND);
         entity.setCreatedDateTime(DateTime.now());
         OrganizationEntity newEntity = organizationRepository.save(entity);
 

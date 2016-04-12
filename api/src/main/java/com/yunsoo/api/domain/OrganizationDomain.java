@@ -108,7 +108,7 @@ public class OrganizationDomain {
     public BrandObject createBrand(BrandObject object) {
         object.setId(null);
         object.setCreatedDateTime(DateTime.now());
-        object.setTypeCode(LookupCodes.OrgType.MANUFACTURER);
+        object.setTypeCode(LookupCodes.OrgType.BRAND);
         object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
         if(object.getAttachment().endsWith(","))
             object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() -1 ));

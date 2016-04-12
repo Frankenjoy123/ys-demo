@@ -83,7 +83,7 @@ public class BrandApplicationController {
             BrandObject object = brandDomain.getBrandById(id);
 
             object.setCreatedAccountId(currentAccountId);
-            object.setTypeCode(LookupCodes.OrgType.MANUFACTURER);
+            object.setTypeCode(LookupCodes.OrgType.BRAND);
             object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
             BrandObject createdBrand = organizationDomain.createBrand(object);
 
