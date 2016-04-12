@@ -70,9 +70,7 @@ public class GroupController {
         AuthAccount currentAccount = AuthUtils.getCurrentAccount();
 
         groupObject.setId(null);
-        if (groupObject.getOrgId() == null) {
-            groupObject.setOrgId(currentAccount.getOrgId());
-        }
+        groupObject.setOrgId(AuthUtils.fixOrgId(groupObject.getOrgId()));
         groupObject.setCreatedAccountId(currentAccount.getId());
         groupObject.setCreatedDateTime(DateTime.now());
         groupObject.setModifiedAccountId(null);

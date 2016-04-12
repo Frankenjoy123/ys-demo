@@ -95,6 +95,9 @@ public class SimplePermissionEvaluator implements PermissionEvaluator {
         String orgId = null;
         if (targetDomainObject instanceof OrgIdDetectable) {
             orgId = ((OrgIdDetectable) targetDomainObject).getOrgId();
+            if (orgId == null || orgId.length() == 0) {
+                return OrgRestrictionExpression.CURRENT;
+            }
         } else if (targetDomainObject instanceof Organization) {
             orgId = ((Organization) targetDomainObject).getId();
         }
