@@ -245,7 +245,7 @@ public class Brand extends Organization {
         }
     }
 
-    public static BrandObject toBrand(Brand brand) {
+    public BrandObject toBrand(Brand brand) {
         if (brand != null) {
             BrandObject object = new BrandObject();
             object.setId(brand.getId());

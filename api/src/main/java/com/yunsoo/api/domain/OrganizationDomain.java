@@ -1,8 +1,11 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.Constants;
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.BrandObject;
+import com.yunsoo.common.data.object.DomainDirectoryObject;
+import com.yunsoo.common.data.object.OrgConfigObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.web.client.Page;
@@ -19,7 +22,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,6 +41,9 @@ public class OrganizationDomain {
     @Autowired
     private RestClient dataAPIClient;
 
+    @Autowired
+    private DomainDirectoryDomain domainDirectoryDomain;
+
     private static final String ORG_LOGO_IMAGE_128X128 = "image-128x128";
 
     private static final String ORG_LOGO_IMAGE_200X200 = "image-200x200";
@@ -52,6 +57,25 @@ public class OrganizationDomain {
         } catch (NotFoundException ex) {
             return null;
         }
+    }
+
+    public OrgConfigObject getOrgConfigByDomainName(String domainName) {
+        DomainDirectoryObject domain = domainDirectoryDomain.search(domainDirectoryDomain.getDomainDirectoryObjects(), domainName);
+        String orgId = null;
+        if (domain != null) {
+            orgId = domain.getOrgId();
+        }
+        if (orgId == null || orgId.length() == 0) {
+            orgId = Constants.Ids.YUNSU_ORG_ID;
+        }
+
+        return getOrgConfigByOrgId(orgId);
+    }
+
+    public OrgConfigObject getOrgConfigByOrgId(String orgId) {
+
+
+        return null;
     }
 
     public BrandObject getBrandById(String id) {

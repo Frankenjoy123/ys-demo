@@ -110,7 +110,7 @@ public class ProductKeyBatchController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyBatch> getByFilterPaged(@RequestParam(value = "product_base_id", required = false) String productBaseId,
                                                   @RequestParam(value = "is_package", required = false) Boolean isPackage,
-                                                  @PageableDefault(page = 0, size = 20)
+                                                  @PageableDefault(page = 0, size = 1000)
                                                   @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                                   Pageable pageable,
                                                   HttpServletResponse response) {
