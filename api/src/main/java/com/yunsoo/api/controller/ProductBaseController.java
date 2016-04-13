@@ -79,7 +79,6 @@ public class ProductBaseController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'product_base:read')")
     public List<ProductBase> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
-                                         @PageableDefault(page = 0, size = 20)
                                          @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                          Pageable pageable,
                                          HttpServletResponse response) {
