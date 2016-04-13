@@ -140,7 +140,6 @@ public class OrganizationController {
         return returnObj;
     }
 
-
     @RequestMapping(value = "/brand/{id}", method = RequestMethod.GET)
     public Brand getBrandById(@PathVariable(value = "id") String id) {
         BrandObject object = organizationDomain.getBrandById(id);
@@ -150,24 +149,25 @@ public class OrganizationController {
 
         Brand returnObject = new Brand(object);
 
-        if(StringUtils.hasText(object.getAttachment())) {
+        if (StringUtils.hasText(object.getAttachment())) {
             List<AttachmentObject> attachmentObjectList = brandDomain.getAttachmentList(object.getAttachment());
             returnObject.setAttachmentList(attachmentObjectList.stream().map(Attachment::new).collect(Collectors.toList()));
         }
         return returnObject;
     }
+
     @RequestMapping(value = "/{id}/brand/count", method = RequestMethod.GET)
-    public int countBrand(@PathVariable(value = "id") String id){
+    public int countBrand(@PathVariable(value = "id") String id) {
         return organizationDomain.countBrand(id, LookupCodes.OrgStatus.AVAILABLE);
     }
 
     @RequestMapping(value = "/{id}/brand", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
-    public  List<Brand> filterOrgBrand(@PathVariable(value = "id") String id,
-                                       @RequestParam(value="status", required = false)String status,
-                                       @RequestParam(value = "name", required = false) String name,
-                                       @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC) Pageable pageable,
-                                       HttpServletResponse response) {
+    public List<Brand> filterOrgBrand(@PathVariable(value = "id") String id,
+                                      @RequestParam(value = "status", required = false) String status,
+                                      @RequestParam(value = "name", required = false) String name,
+                                      @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC) Pageable pageable,
+                                      HttpServletResponse response) {
         Page<BrandObject> brandPage = organizationDomain.getOrgBrandList(id, name, status, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", brandPage.toContentRange());
@@ -192,9 +192,8 @@ public class OrganizationController {
         return builder.body(new InputStreamResource(resourceInputStream));
     }
 
-
     @RequestMapping(value = "{id}/logo", method = RequestMethod.PUT)
-    @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:write')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
     public void saveOrgLogo(@PathVariable(value = "id") String orgId,
                             @RequestBody byte[] imageDataBytes) {
         if (imageDataBytes != null && imageDataBytes.length > 0) {
@@ -204,7 +203,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "{id}/brand_logo", method = RequestMethod.PUT)
-   // @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:write')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
     public void saveBrandLogo(@PathVariable(value = "id") String orgId,
                               @RequestBody @Valid ImageRequest imageRequest) {
 

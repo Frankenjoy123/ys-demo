@@ -1,8 +1,11 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.Constants;
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.BrandObject;
+import com.yunsoo.common.data.object.DomainDirectoryObject;
+import com.yunsoo.common.data.object.OrgConfigObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.web.client.Page;
@@ -33,10 +36,14 @@ import java.util.List;
 @Component
 @ObjectCacheConfig
 public class OrganizationDomain {
+
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private RestClient dataAPIClient;
+
+    @Autowired
+    private DomainDirectoryDomain domainDirectoryDomain;
 
     private static final String ORG_LOGO_IMAGE_128X128 = "image-128x128";
 
@@ -53,6 +60,25 @@ public class OrganizationDomain {
         }
     }
 
+    public OrgConfigObject getOrgConfigByDomainName(String domainName) {
+        DomainDirectoryObject domain = domainDirectoryDomain.search(domainDirectoryDomain.getDomainDirectoryObjects(), domainName);
+        String orgId = null;
+        if (domain != null) {
+            orgId = domain.getOrgId();
+        }
+        if (orgId == null || orgId.length() == 0) {
+            orgId = Constants.Ids.YUNSU_ORG_ID;
+        }
+
+        return getOrgConfigByOrgId(orgId);
+    }
+
+    public OrgConfigObject getOrgConfigByOrgId(String orgId) {
+
+
+        return null;
+    }
+
     public BrandObject getBrandById(String id) {
         try {
             return dataAPIClient.get("organization/brand/{id}", BrandObject.class, id);
@@ -61,8 +87,8 @@ public class OrganizationDomain {
         }
     }
 
-    public int countBrand(String id, String status){
-       return dataAPIClient.get("organization/{id}/brand/count?status={status}", Integer.class, id, status);
+    public int countBrand(String id, String status) {
+        return dataAPIClient.get("organization/{id}/brand/count?status={status}", Integer.class, id, status);
     }
 
     public void updateOrganizationStatus(String id, String status) {
@@ -94,7 +120,7 @@ public class OrganizationDomain {
         }, orgId);
     }
 
-    public List<String> getBrandIdsForCarrier(String carrierId){
+    public List<String> getBrandIdsForCarrier(String carrierId) {
         return dataAPIClient.get("organization/{id}/brandIds", new ParameterizedTypeReference<List<String>>() {
         }, carrierId);
     }
@@ -110,8 +136,8 @@ public class OrganizationDomain {
         object.setCreatedDateTime(DateTime.now());
         object.setTypeCode(LookupCodes.OrgType.BRAND);
         object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
-        if(object.getAttachment().endsWith(","))
-            object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() -1 ));
+        if (object.getAttachment().endsWith(","))
+            object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() - 1));
         return dataAPIClient.post("organization/brand", object, BrandObject.class);
     }
 
