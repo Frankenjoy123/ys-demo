@@ -62,19 +62,19 @@ public class BrandController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<BrandObject> getByFilter(  @RequestParam(value = "carrier_id", required = false) String carrierId,
-            @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "status", required = false) String status,
-            Pageable pageable,
-            HttpServletResponse response) {
+    public List<BrandObject> getByFilter(@RequestParam(value = "carrier_id", required = false) String carrierId,
+                                         @RequestParam(value = "name", required = false) String name,
+                                         @RequestParam(value = "status", required = false) String status,
+                                         Pageable pageable,
+                                         HttpServletResponse response) {
 
-            Page<BrandApplicationEntity> entityPage = repository.query(name, carrierId, status,pageable);
-            if (pageable != null) {
-                response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
-            }
-            return entityPage.getContent().stream()
-                    .map(this::toBrandObject)
-                    .collect(Collectors.toList());
+        Page<BrandApplicationEntity> entityPage = repository.query(name, carrierId, status, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+        return entityPage.getContent().stream()
+                .map(this::toBrandObject)
+                .collect(Collectors.toList());
 
     }
 
@@ -89,7 +89,7 @@ public class BrandController {
 
     @RequestMapping(value = "/attachment", method = RequestMethod.PUT)
     public AttachmentObject updateAttachment(@RequestBody AttachmentObject attachment) {
-        AttachmentEntity existEntity =  attachmentRepository.findOne(attachment.getId());
+        AttachmentEntity existEntity = attachmentRepository.findOne(attachment.getId());
         attachment.setModifiedDateTime(DateTime.now());
         attachment.setCreatedDateTime(existEntity.getCreatedDateTime());
         AttachmentEntity entity = toAttachmentEntity(attachment);
@@ -99,19 +99,20 @@ public class BrandController {
 
     @RequestMapping(value = "/attachment", method = RequestMethod.GET)
     public List<AttachmentObject> getAttachments(@RequestParam("ids") List<String> ids) {
-        List<AttachmentEntity> EntityList =  attachmentRepository.findByIdIn(ids);
+        List<AttachmentEntity> EntityList = attachmentRepository.findByIdIn(ids);
         return EntityList.stream().map(this::toAttachmentObject).collect(Collectors.toList());
 
     }
+
     @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public int getPendingApprovalBrand(@RequestParam("carrier_id")String carrierId, @RequestParam("status")String status){
-        return  repository.countByCarrierIdAndStatusCode(carrierId, status);
+    public int getPendingApprovalBrand(@RequestParam("carrier_id") String carrierId, @RequestParam("status") String status) {
+        return repository.countByCarrierIdAndStatusCode(carrierId, status);
     }
 
 
-    private BrandObject toBrandObject(BrandApplicationEntity brand){
+    private BrandObject toBrandObject(BrandApplicationEntity brand) {
         BrandObject brandObj = new BrandObject();
-              if(brand!=null) {
+        if (brand != null) {
             brandObj.setId(brand.getId());
             brandObj.setDescription(brand.getBrandDescription());
             brandObj.setName(brand.getBrandName());
@@ -127,17 +128,18 @@ public class BrandController {
             brandObj.setEmail(brand.getEmail());
             brandObj.setStatusCode(brand.getStatusCode());
             brandObj.setAttachment(brand.getAttachment());
-                  brandObj.setIdentifier(brand.getIdentifier());
-                  brandObj.setPassword(brand.getPassword());
-                  brandObj.setInvestigatorAttachment(brand.getInvestigatorAttachment());
-                  brandObj.setInvestigatorComments(brand.getInvestigatorComments());
-                  brandObj.setHashSalt(brand.getHashSalt());
+            brandObj.setIdentifier(brand.getIdentifier());
+            brandObj.setPassword(brand.getPassword());
+            brandObj.setInvestigatorAttachment(brand.getInvestigatorAttachment());
+            brandObj.setInvestigatorComments(brand.getInvestigatorComments());
+            brandObj.setHashSalt(brand.getHashSalt());
+            brandObj.setPaymentId(brand.getPaymentId());
         }
         return brandObj;
     }
 
-    private BrandApplicationEntity toBrandEntity(BrandObject brand){
-        if(brand != null) {
+    private BrandApplicationEntity toBrandEntity(BrandObject brand) {
+        if (brand != null) {
             BrandApplicationEntity entity = new BrandApplicationEntity();
             entity.setId(brand.getId());
             entity.setCarrierId(brand.getCarrierId());
@@ -159,13 +161,14 @@ public class BrandController {
             entity.setInvestigatorAttachment(brand.getInvestigatorAttachment());
             entity.setInvestigatorComments(brand.getInvestigatorComments());
             entity.setHashSalt(brand.getHashSalt());
+            entity.setPaymentId(brand.getPaymentId());
             return entity;
         }
         return null;
     }
 
-    private AttachmentEntity toAttachmentEntity(AttachmentObject attachment){
-        if(attachment == null)
+    private AttachmentEntity toAttachmentEntity(AttachmentObject attachment) {
+        if (attachment == null)
             return null;
 
         AttachmentEntity attachmentEntity = new AttachmentEntity();
@@ -178,8 +181,8 @@ public class BrandController {
 
     }
 
-    private AttachmentObject toAttachmentObject(AttachmentEntity attachment){
-        if(attachment == null)
+    private AttachmentObject toAttachmentObject(AttachmentEntity attachment) {
+        if (attachment == null)
             return null;
 
         AttachmentObject attachmentObj = new AttachmentObject();

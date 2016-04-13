@@ -81,7 +81,7 @@ public class PaymentDomain {
         BrandObject brandObject = dataAPIClient.get("brand/{id}", BrandObject.class, brandApplicationId);
 
         //order info
-        parameters.put(ParameterNames.OUT_TRADE_NO, brandApplicationId);
+        parameters.put(ParameterNames.OUT_TRADE_NO, paymentId);
         parameters.put(ParameterNames.SUBJECT, brandObject.getName() + "审核费用");
         parameters.put(ParameterNames.PAYMENT_TYPE, "1");
         parameters.put(ParameterNames.TOTAL_FEE, paymentObject.getPayTotals().toString());

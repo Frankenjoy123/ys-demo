@@ -69,6 +69,16 @@ public class Brand extends Organization {
 
     private List<Attachment> attachmentList;
 
+    private List<Attachment> investigatorAttachmentList;
+
+    public List<Attachment> getInvestigatorAttachmentList() {
+        return investigatorAttachmentList;
+    }
+
+    public void setInvestigatorAttachmentList(List<Attachment> investigatorAttachmentList) {
+        this.investigatorAttachmentList = investigatorAttachmentList;
+    }
+
     public String getPassword() {
         return password;
     }

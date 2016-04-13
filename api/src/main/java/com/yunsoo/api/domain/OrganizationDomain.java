@@ -19,6 +19,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -62,7 +63,10 @@ public class OrganizationDomain {
     }
 
     public int countBrand(String id, String status){
-       return dataAPIClient.get("organization/{id}/brand/count?status={status}", Integer.class, id, status);
+        if(StringUtils.hasText(status))
+            return dataAPIClient.get("organization/{id}/brand/count?status={status}", Integer.class, id, status);
+        else
+            return dataAPIClient.get("organization/{id}/brand/count", Integer.class, id);
     }
 
     public void updateOrganizationStatus(String id, String status) {

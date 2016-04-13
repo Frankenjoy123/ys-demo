@@ -167,6 +167,7 @@ public class LookupCodes {
         public static final String APPROVED = "approved";
         public static final String REJECTED = "rejected";
         public static final String CREATED = "created";
+        public static final String PAID = "paid";
     }
 
     public static class OrgType {

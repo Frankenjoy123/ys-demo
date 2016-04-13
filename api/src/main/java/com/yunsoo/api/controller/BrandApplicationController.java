@@ -1,6 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.*;
+import com.yunsoo.api.dto.Account;
 import com.yunsoo.api.dto.AccountLoginRequest;
 import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
@@ -11,11 +12,13 @@ import com.yunsoo.common.data.object.AttachmentObject;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
@@ -81,7 +84,7 @@ public class BrandApplicationController {
         try {
             String currentAccountId = AuthUtils.getCurrentAccount().getId();
             BrandObject object = brandDomain.getBrandById(id);
-
+            DateTime applicationDatetime = object.getCreatedDateTime();
             object.setCreatedAccountId(currentAccountId);
             object.setTypeCode(LookupCodes.OrgType.BRAND);
             object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
@@ -102,6 +105,8 @@ public class BrandApplicationController {
             AccountObject createdAccount = accountDomain.createAccount(accountObject);
             permissionAllocationDomain.allocateAdminPermissionToAccount(createdAccount.getId());
 
+            object.setId(id);
+            object.setCreatedDateTime(applicationDatetime);
             object.setStatusCode(LookupCodes.BrandApplicationStatus.APPROVED);
             brandDomain.updateBrand(object);
 
@@ -142,6 +147,33 @@ public class BrandApplicationController {
         else
             throw new ConflictException("same brand name application existed");
     }
+
+    @RequestMapping(value = "", method = RequestMethod.PUT)
+    public void updateBrand(@RequestBody Brand brand) {
+        BrandObject existingBrand = brandDomain.getBrandById(brand.getId());
+        if(existingBrand.getStatusCode().equals(LookupCodes.BrandApplicationStatus.APPROVED))
+            throw new BadRequestException("could not update with status approved");
+        if(existingBrand !=null) {
+            existingBrand.setBusinessSphere(brand.getBusinessSphere());
+            existingBrand.setBusinessLicenseStart(brand.getBusinessLicenseStart());
+            existingBrand.setBusinessLicenseEnd(brand.getBusinessLicenseEnd());
+            existingBrand.setBusinessLicenseNumber(brand.getBusinessLicenseNumber());
+            existingBrand.setDescription(brand.getDescription());
+            existingBrand.setContactName(brand.getContactName());
+            existingBrand.setContactMobile(brand.getContactMobile());
+            existingBrand.setEmail(brand.getEmail());
+            existingBrand.setComments(brand.getComments());
+            existingBrand.setAttachment(brand.getAttachment());
+            if(existingBrand.getAttachment().endsWith(","))
+                existingBrand.setAttachment(existingBrand.getAttachment().substring(0, existingBrand.getAttachment().length() -1 ));
+            brandDomain.updateBrand(existingBrand);
+        }
+        else
+            throw new NotFoundException("No such brand found");
+    }
+
+
+
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<Brand> getByFilter(
@@ -201,8 +233,9 @@ public class BrandApplicationController {
         builder.header("Content-Disposition","filename=" + URLEncoder.encode(currentObj.getOriginalFileName(), "UTF-8") );
         return builder.body(new InputStreamResource(resourceInputStream));
     }
+
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public Brand login(@RequestBody AccountLoginRequest account){
+    public Brand login(@RequestBody AccountLoginRequest account, @RequestParam(name = "summarize", required = false) boolean summarize){
         //validate parameters
         if (account.getAccountId() == null && (account.getOrganization() == null || account.getIdentifier() == null)) {
             log.warn(String.format("parameters are invalid [accountId: %s, organization: %s, identifier: %s]",
@@ -225,12 +258,17 @@ public class BrandApplicationController {
             }
 
             Brand returnObject = new Brand(brand);
+            if(!summarize) {
+                if (StringUtils.hasText(brand.getAttachment())) {
+                    List<AttachmentObject> attachmentObjectList = brandDomain.getAttachmentList(brand.getAttachment());
+                    returnObject.setAttachmentList(attachmentObjectList.stream().map(Attachment::new).collect(Collectors.toList()));
+                }
 
-            if(StringUtils.hasText(brand.getAttachment())) {
-                List<AttachmentObject> attachmentObjectList = brandDomain.getAttachmentList(brand.getAttachment());
-                returnObject.setAttachmentList(attachmentObjectList.stream().map(Attachment::new).collect(Collectors.toList()));
+                if (StringUtils.hasText(brand.getInvestigatorAttachment())) {
+                    List<AttachmentObject> attachmentObjectList = brandDomain.getAttachmentList(brand.getInvestigatorAttachment());
+                    returnObject.setInvestigatorAttachmentList(attachmentObjectList.stream().map(Attachment::new).collect(Collectors.toList()));
+                }
             }
-
             return returnObject;
 
         }

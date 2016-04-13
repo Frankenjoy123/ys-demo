@@ -158,7 +158,7 @@ public class OrganizationController {
     }
     @RequestMapping(value = "/{id}/brand/count", method = RequestMethod.GET)
     public int countBrand(@PathVariable(value = "id") String id){
-        return organizationDomain.countBrand(id, LookupCodes.OrgStatus.AVAILABLE);
+        return organizationDomain.countBrand(id, null);
     }
 
     @RequestMapping(value = "/{id}/brand", method = RequestMethod.GET)

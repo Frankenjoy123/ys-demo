@@ -70,6 +70,10 @@ public class PaymentController {
                 paymentObject.setPaidDateTime(DateTime.now());
                 paymentObject.setStatusCode(LookupCodes.PaymentStatus.PAID);
                 paymentDomain.updateAlipayPayment(paymentObject);
+
+                BrandObject brandObject = brandDomain.getBrandById(paymentObject.getBrandApplicationId());
+                brandObject.setStatusCode(LookupCodes.BrandApplicationStatus.PAID);
+                brandDomain.updateBrand(brandObject);
             } else {
                 paymentObject.setStatusCode(LookupCodes.PaymentStatus.FAILED);
                 paymentDomain.updateAlipayPayment(paymentObject);
