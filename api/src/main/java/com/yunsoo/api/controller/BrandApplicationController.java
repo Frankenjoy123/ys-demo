@@ -1,10 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.*;
-import com.yunsoo.api.dto.Account;
-import com.yunsoo.api.dto.AccountLoginRequest;
-import com.yunsoo.api.dto.Attachment;
-import com.yunsoo.api.dto.Brand;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
@@ -57,6 +54,9 @@ public class BrandApplicationController {
     @Autowired
     private PermissionAllocationDomain permissionAllocationDomain;
 
+    @Autowired
+    private PaymentDomain paymentDomain;
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Brand getById(@PathVariable(value = "id") String id) {
         BrandObject object = brandDomain.getBrandById(id);
@@ -68,6 +68,15 @@ public class BrandApplicationController {
         if(StringUtils.hasText(object.getAttachment())) {
             List<AttachmentObject> attachmentObjectList = brandDomain.getAttachmentList(object.getAttachment());
             returnObject.setAttachmentList(attachmentObjectList.stream().map(Attachment::new).collect(Collectors.toList()));
+        }
+
+        if (StringUtils.hasText(object.getInvestigatorAttachment())) {
+            List<AttachmentObject> attachmentObjectList = brandDomain.getAttachmentList(object.getInvestigatorAttachment());
+            returnObject.setInvestigatorAttachmentList(attachmentObjectList.stream().map(Attachment::new).collect(Collectors.toList()));
+        }
+
+        if(StringUtils.hasText(object.getPaymentId())){
+            returnObject.setPayment(new Payment(paymentDomain.getPaymentById(object.getPaymentId())));
         }
 
         return returnObject;
@@ -148,9 +157,9 @@ public class BrandApplicationController {
             throw new ConflictException("same brand name application existed");
     }
 
-    @RequestMapping(value = "", method = RequestMethod.PUT)
-    public void updateBrand(@RequestBody Brand brand) {
-        BrandObject existingBrand = brandDomain.getBrandById(brand.getId());
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public void updateBrand(@PathVariable("id")String id, @RequestBody Brand brand) {
+        BrandObject existingBrand = brandDomain.getBrandById(id);
         if(existingBrand.getStatusCode().equals(LookupCodes.BrandApplicationStatus.APPROVED))
             throw new BadRequestException("could not update with status approved");
         if(existingBrand !=null) {
@@ -164,8 +173,13 @@ public class BrandApplicationController {
             existingBrand.setEmail(brand.getEmail());
             existingBrand.setComments(brand.getComments());
             existingBrand.setAttachment(brand.getAttachment());
-            if(existingBrand.getAttachment().endsWith(","))
-                existingBrand.setAttachment(existingBrand.getAttachment().substring(0, existingBrand.getAttachment().length() -1 ));
+            if(brand.getAttachment().endsWith(","))
+                existingBrand.setAttachment(brand.getAttachment().substring(0, brand.getAttachment().length() -1 ));
+            existingBrand.setInvestigatorComments(brand.getInvestigatorComments());
+            if(brand.getInvestigatorAttachment().endsWith(","))
+                existingBrand.setInvestigatorAttachment(brand.getInvestigatorAttachment().substring(0, brand.getInvestigatorAttachment().length() -1 ));
+
+
             brandDomain.updateBrand(existingBrand);
         }
         else

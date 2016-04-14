@@ -71,6 +71,16 @@ public class Brand extends Organization {
 
     private List<Attachment> investigatorAttachmentList;
 
+    private Payment payment;
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
     public List<Attachment> getInvestigatorAttachmentList() {
         return investigatorAttachmentList;
     }
