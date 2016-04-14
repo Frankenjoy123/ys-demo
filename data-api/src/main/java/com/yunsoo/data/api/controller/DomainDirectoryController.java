@@ -4,6 +4,7 @@ import com.yunsoo.common.data.object.DomainDirectoryObject;
 import com.yunsoo.data.service.entity.DomainDirectoryEntity;
 import com.yunsoo.data.service.repository.DomainDirectoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class DomainDirectoryController {
     @Autowired
     private DomainDirectoryRepository domainDirectoryRepository;
 
+
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<DomainDirectoryObject> getAll() {
         return domainDirectoryRepository.findAll().stream()
@@ -31,10 +33,20 @@ public class DomainDirectoryController {
     @RequestMapping(value = "", method = RequestMethod.PUT)
     public void putOne(@RequestParam(name = "name", required = true) String name,
                        @RequestBody DomainDirectoryObject obj) {
-        DomainDirectoryEntity entity = toDomainDirectoryEntity(obj);
-        entity.setName(name);
-        domainDirectoryRepository.save(entity);
+        if (StringUtils.hasText(name)) {
+            DomainDirectoryEntity entity = toDomainDirectoryEntity(obj);
+            entity.setName(name);
+            domainDirectoryRepository.save(entity);
+        }
     }
+
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
+    public void deleteOne(@RequestParam(name = "name", required = true) String name) {
+        if (StringUtils.hasText(name)) {
+            domainDirectoryRepository.delete(name);
+        }
+    }
+
 
     private DomainDirectoryObject toDomainDirectoryObject(DomainDirectoryEntity entity) {
         if (entity == null) {

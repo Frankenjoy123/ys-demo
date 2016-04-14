@@ -21,6 +21,13 @@ public class DebugErrorResult extends ErrorResult {
         this.traceInfo = traceInfo;
     }
 
+    public DebugErrorResult(ErrorResult errorResult, String source, TraceInfo traceInfo) {
+        super((errorResult == null ? ErrorResult.UNKNOWN : errorResult).getCode(),
+                String.format("[%s] %s", source, (errorResult == null ? ErrorResult.UNKNOWN : errorResult).getMessage()));
+        this.traceInfo = traceInfo;
+    }
+
+
     public TraceInfo getTraceInfo() {
         return traceInfo;
     }

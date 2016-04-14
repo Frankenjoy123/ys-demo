@@ -1,11 +1,14 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.client.DataAPIClient;
 import com.yunsoo.common.data.object.DomainDirectoryObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,20 +20,38 @@ import java.util.Map;
  * Descriptions:
  */
 @Component
+@ObjectCacheConfig
 public class DomainDirectoryDomain {
 
     @Autowired
     private DataAPIClient dataAPIClient;
 
     @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).DOMAIN_DIRECTORY.toString(), 'map')")
-    public Map<String, DomainDirectoryObject> getDomainDirectoryObjects() {
+    public Map<String, DomainDirectoryObject> getDomainDirectoryObjectMap() {
         Map<String, DomainDirectoryObject> map = new HashMap<>();
-        List<DomainDirectoryObject> domainDirectoryObjects = dataAPIClient.get("domainDirectory", new ParameterizedTypeReference<List<DomainDirectoryObject>>() {
-        });
-        domainDirectoryObjects.stream().forEach(o -> {
+        getDomainDirectoryObjectList().stream().forEach(o -> {
             map.put(o.getName(), o);
         });
         return map;
+    }
+
+    public List<DomainDirectoryObject> getDomainDirectoryObjectList() {
+        return dataAPIClient.get("domainDirectory", new ParameterizedTypeReference<List<DomainDirectoryObject>>() {
+        });
+    }
+
+    @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).DOMAIN_DIRECTORY.toString(), 'map')")
+    public void putDomainDirectoryObject(DomainDirectoryObject domainDirectoryObject) {
+        if (StringUtils.hasText(domainDirectoryObject.getName())) {
+            dataAPIClient.put("domainDirectory?name={name}", domainDirectoryObject, domainDirectoryObject.getName());
+        }
+    }
+
+    @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).DOMAIN_DIRECTORY.toString(), 'map')")
+    public void deleteDomainDirectoryObjectByName(String name) {
+        if (StringUtils.hasText(name)) {
+            dataAPIClient.delete("domainDirectory?name={name}", name);
+        }
     }
 
     public DomainDirectoryObject search(Map<String, DomainDirectoryObject> map, String domainName) {

@@ -14,4 +14,5 @@ public interface DomainDirectoryRepository extends FindOneAndSaveRepository<Doma
 
     List<DomainDirectoryEntity> findAll();
 
+    void delete(String name);
 }
