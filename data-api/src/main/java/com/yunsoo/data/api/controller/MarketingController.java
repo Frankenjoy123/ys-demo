@@ -106,7 +106,7 @@ public class MarketingController {
                                              HttpServletResponse response) {
         Page<MarketingEntity> entityPage = null;
         if(orgId != null)
-            entityPage = marketingRepository.findByOrgId(orgId, pageable);
+            entityPage = marketingRepository.findByOrgIdAndStatusCodeNot(orgId, LookupCodes.MktStatus.DISABLED, pageable);
         else if (orgIds != null && orgIds.size() > 0){
             entityPage = marketingRepository.query(orgIds, status, pageable);
         }
