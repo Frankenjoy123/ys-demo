@@ -111,7 +111,7 @@ public class BrandApplicationController {
             accountObject.setPhone(object.getContactMobile());
             accountObject.setOrgId(createdBrand.getId());
             accountObject.setCreatedAccountId(currentAccountId);
-            AccountObject createdAccount = accountDomain.createAccount(accountObject);
+            AccountObject createdAccount = accountDomain.createAccount(accountObject, false);
             permissionAllocationDomain.allocateAdminPermissionToAccount(createdAccount.getId());
 
             object.setId(id);
