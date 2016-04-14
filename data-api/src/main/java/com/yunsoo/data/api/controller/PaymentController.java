@@ -71,6 +71,7 @@ public class PaymentController {
         entity.setPayTotals(object.getPayTotals());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setPaidDateTime(object.getPaidDateTime());
+        entity.setAccount(object.getAccount());
         return entity;
     }
 
@@ -87,6 +88,7 @@ public class PaymentController {
         object.setPayTotals(entity.getPayTotals());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setPaidDateTime(entity.getPaidDateTime());
+        object.setAccount(entity.getAccount());
         return object;
     }
 

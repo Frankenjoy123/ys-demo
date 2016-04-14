@@ -44,6 +44,17 @@ public class PaymentObject {
     @JsonProperty("paid_datetime")
     private DateTime paidDateTime;
 
+    @JsonProperty("account")
+    private String account;
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
     public String getId() {
         return Id;
     }

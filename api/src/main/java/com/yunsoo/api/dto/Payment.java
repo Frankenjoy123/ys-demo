@@ -44,6 +44,17 @@ public class Payment {
     @JsonProperty("paid_datetime")
     private DateTime paidDateTime;
 
+    @JsonProperty("account")
+    private String account;
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
     public String getId() {
         return Id;
     }
@@ -121,6 +132,7 @@ public class Payment {
             this.setPayTotals(object.getPayTotals());
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setPaidDateTime(object.getPaidDateTime());
+            this.setAccount(object.getAccount());
         }
     }
 
@@ -134,6 +146,7 @@ public class Payment {
         object.setPayTotals(this.getPayTotals());
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setPaidDateTime(this.getPaidDateTime());
+        object.setAccount(this.getAccount());
         return object;
     }
 

@@ -69,6 +69,26 @@ public class Brand extends Organization {
 
     private List<Attachment> attachmentList;
 
+    private List<Attachment> investigatorAttachmentList;
+
+    private Payment payment;
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
+    public List<Attachment> getInvestigatorAttachmentList() {
+        return investigatorAttachmentList;
+    }
+
+    public void setInvestigatorAttachmentList(List<Attachment> investigatorAttachmentList) {
+        this.investigatorAttachmentList = investigatorAttachmentList;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -235,7 +255,7 @@ public class Brand extends Organization {
         }
     }
 
-    public static BrandObject toBrand(Brand brand) {
+    public BrandObject toBrand(Brand brand) {
         if (brand != null) {
             BrandObject object = new BrandObject();
             object.setId(brand.getId());

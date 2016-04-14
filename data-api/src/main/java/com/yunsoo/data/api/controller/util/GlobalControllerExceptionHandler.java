@@ -125,7 +125,7 @@ public class GlobalControllerExceptionHandler {
 
     private ErrorResult appendTraceInfo(ErrorResult result, Exception ex) {
         if (debug != null && debug) {
-            result = new DebugErrorResult(result, new TraceInfo(ex));
+            result = new DebugErrorResult(result, FROM, new TraceInfo(ex));
         }
         return result;
     }

@@ -58,6 +58,7 @@ public class BrandDomain {
         }
     }
 
+
     public int count(String id, String status){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("carrier_id", id)
                 .append("status", status)

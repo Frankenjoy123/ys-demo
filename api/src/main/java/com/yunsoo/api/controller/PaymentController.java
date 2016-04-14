@@ -66,10 +66,16 @@ public class PaymentController {
 
             String tradeNo = request.getParameter("trade_no");
             String tradeStatus = request.getParameter("trade_status");
+            String buyerEmail = request.getParameter("buyer_email");
             if (tradeStatus.equals("TRADE_FINISHED") || tradeStatus.equals("TRADE_SUCCESS")) {
                 paymentObject.setPaidDateTime(DateTime.now());
                 paymentObject.setStatusCode(LookupCodes.PaymentStatus.PAID);
+                paymentObject.setAccount(buyerEmail);
                 paymentDomain.updateAlipayPayment(paymentObject);
+
+                BrandObject brandObject = brandDomain.getBrandById(paymentObject.getBrandApplicationId());
+                brandObject.setStatusCode(LookupCodes.BrandApplicationStatus.PAID);
+                brandDomain.updateBrand(brandObject);
             } else {
                 paymentObject.setStatusCode(LookupCodes.PaymentStatus.FAILED);
                 paymentDomain.updateAlipayPayment(paymentObject);
@@ -89,11 +95,16 @@ public class PaymentController {
 
         String tradeNo = request.getParameter("trade_no");
         String tradeStatus = request.getParameter("trade_status");
-
+        String buyerEmail = request.getParameter("buyer_email");
         if (tradeStatus.equals("TRADE_FINISHED") || tradeStatus.equals("TRADE_SUCCESS")) {
             paymentObject.setPaidDateTime(DateTime.now());
             paymentObject.setStatusCode(LookupCodes.PaymentStatus.PAID);
+            paymentObject.setAccount(buyerEmail);
             paymentDomain.updateAlipayPayment(paymentObject);
+
+            BrandObject brandObject = brandDomain.getBrandById(paymentObject.getBrandApplicationId());
+            brandObject.setStatusCode(LookupCodes.BrandApplicationStatus.PAID);
+            brandDomain.updateBrand(brandObject);
         } else {
             paymentObject.setStatusCode(LookupCodes.PaymentStatus.FAILED);
             paymentDomain.updateAlipayPayment(paymentObject);

@@ -44,6 +44,17 @@ public class PaymentEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime paidDateTime;
 
+    @Column(name = "account")
+    private String account;
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
     public String getId() {
         return id;
     }
