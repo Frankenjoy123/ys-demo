@@ -143,21 +143,19 @@ public class ProductKeyDomain {
         batchObj.setRestQuantity(batchObj.getQuantity());
         String productBaseId = batchObj.getProductBaseId();
         List<String> productKeyTypes = batchObj.getProductKeyTypeCodes();
-        boolean isPackageKey = productKeyTypes.size() == 0 && LookupCodes.ProductKeyType.PACKAGE.equals(productKeyTypes.get(0));
+        //boolean isPackageKey = productKeyTypes.size() == 1 && LookupCodes.ProductKeyType.PACKAGE.equals(productKeyTypes.get(0));
 
-        if (!isPackageKey) {
-            //check product key credit
-            List<ProductKeyCredit> credits = productKeyOrderDomain.getProductKeyCredits(batchObj.getOrgId(), productBaseId == null ? "*" : productBaseId);
-            Long remain = 0L;
-            for (ProductKeyCredit c : credits) {
-                if (c.getProductBaseId() == null || c.getProductBaseId().equals(productBaseId)) {
-                    remain += c.getRemain();
-                }
+        //check product key credit
+        List<ProductKeyCredit> credits = productKeyOrderDomain.getProductKeyCredits(batchObj.getOrgId(), productBaseId == null ? "*" : productBaseId);
+        Long remain = 0L;
+        for (ProductKeyCredit c : credits) {
+            if (c.getProductBaseId() == null || c.getProductBaseId().equals(productBaseId)) {
+                remain += c.getRemain();
             }
-            if (remain < batchObj.getQuantity()) {
-                log.warn("insufficient ProductKeyCredit");
-                throw new UnprocessableEntityException("产品码可用额度不足");
-            }
+        }
+        if (remain < batchObj.getQuantity()) {
+            log.warn("insufficient ProductKeyCredit");
+            throw new UnprocessableEntityException("产品码可用额度不足");
         }
 
         //create new product key batch
@@ -165,15 +163,13 @@ public class ProductKeyDomain {
         ProductKeyBatchObject newBatchObj = dataAPIClient.post("productkeybatch", batchObj, ProductKeyBatchObject.class);
         log.info(String.format("ProductKeyBatch created [id: %s, statusCode: %s]", newBatchObj.getId(), newBatchObj.getStatusCode()));
 
-        if (!isPackageKey) {
-            //purchase
-            String transactionId = productKeyTransactionDomain.purchase(newBatchObj);
-            log.info(String.format("ProductKeyBatch purchased [transactionId: %s]", transactionId));
+        //purchase
+        String transactionId = productKeyTransactionDomain.purchase(newBatchObj);
+        log.info(String.format("ProductKeyBatch purchased [transactionId: %s]", transactionId));
 
-            //commit transaction
-            productKeyTransactionDomain.commit(transactionId);
-            log.info(String.format("ProductKeyTransaction committed [transactionId: %s]", transactionId));
-        }
+        //commit transaction
+        productKeyTransactionDomain.commit(transactionId);
+        log.info(String.format("ProductKeyTransaction committed [transactionId: %s]", transactionId));
 
         //update status to creating
         newBatchObj.setStatusCode(LookupCodes.ProductKeyBatchStatus.CREATING);
