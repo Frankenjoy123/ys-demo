@@ -2,11 +2,14 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.DomainDirectoryDomain;
 import com.yunsoo.api.domain.OrganizationConfigDomain;
+import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.DomainDirectory;
+import com.yunsoo.api.dto.Organization;
 import com.yunsoo.api.dto.OrganizationConfig;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.DomainDirectoryObject;
 import com.yunsoo.common.data.object.OrganizationConfigObject;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,6 +29,9 @@ import java.util.stream.Collectors;
 public class ConfigController {
 
     @Autowired
+    private OrganizationDomain organizationDomain;
+
+    @Autowired
     private OrganizationConfigDomain organizationConfigDomain;
 
     @Autowired
@@ -35,12 +41,15 @@ public class ConfigController {
 
     @RequestMapping(value = "organization/public", method = RequestMethod.GET)
     public OrganizationConfig getPublicConfigByDomain(@RequestParam("domain") String domain) {
-        OrganizationConfigObject configObject = organizationConfigDomain.getOrgConfigByDomainName(domain);
+        DomainDirectoryObject domainDirectory = domainDirectoryDomain.search(domainDirectoryDomain.getDomainDirectoryObjectMap(), domain);
+        OrganizationObject org = findOrg(domainDirectory.getOrgId());
+        OrganizationConfigObject configObject = organizationConfigDomain.getOrgConfigByOrgId(org.getId());
         if (configObject == null) {
             throw new NotFoundException("organization config not found");
         }
         //public config items
         OrganizationConfig config = new OrganizationConfig();
+        config.setOrganization(new Organization(org));
         if (configObject.getEnterprise() != null) {
             OrganizationConfig.Enterprise enterprise = new OrganizationConfig.Enterprise();
             enterprise.setName(configObject.getEnterprise().getName());
@@ -57,7 +66,6 @@ public class ConfigController {
             }
             config.setEnterprise(enterprise);
         }
-
         return config;
     }
 
@@ -65,11 +73,14 @@ public class ConfigController {
     @PreAuthorize("hasPermission('#orgId', 'org', 'organization_config:read')")
     public OrganizationConfig getConfig(@RequestParam(value = "org_id", required = false) String orgId) {
         orgId = AuthUtils.fixOrgId(orgId);
+        OrganizationObject org = findOrg(orgId);
         OrganizationConfigObject configObject = organizationConfigDomain.getOrgConfigByOrgId(orgId);
         if (configObject == null) {
             throw new NotFoundException("organization config not found");
         }
-        return new OrganizationConfig(configObject);
+        OrganizationConfig config = new OrganizationConfig(configObject);
+        config.setOrganization(new Organization(org));
+        return config;
     }
 
     @RequestMapping(value = "organization", method = RequestMethod.PUT)
@@ -110,5 +121,13 @@ public class ConfigController {
     }
 
     //endregion
+
+    public OrganizationObject findOrg(String orgId) {
+        OrganizationObject org = organizationDomain.getOrganizationById(orgId);
+        if (org == null) {
+            throw new NotFoundException("");
+        }
+        return org;
+    }
 
 }

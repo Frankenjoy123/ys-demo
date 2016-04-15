@@ -46,7 +46,9 @@ public class OrganizationDomain {
 
     @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
     public OrganizationObject getOrganizationById(String id) {
-        log.debug("cache missing on organization." + id);
+        if (StringUtils.isEmpty(id)) {
+            return null;
+        }
         try {
             return dataAPIClient.get("organization/{id}", OrganizationObject.class, id);
         } catch (NotFoundException ex) {
@@ -62,8 +64,8 @@ public class OrganizationDomain {
         }
     }
 
-    public int countBrand(String id, String status){
-        if(StringUtils.hasText(status))
+    public int countBrand(String id, String status) {
+        if (StringUtils.hasText(status))
             return dataAPIClient.get("organization/{id}/brand/count?status={status}", Integer.class, id, status);
         else
             return dataAPIClient.get("organization/{id}/brand/count", Integer.class, id);
@@ -98,7 +100,7 @@ public class OrganizationDomain {
         }, orgId);
     }
 
-    public List<String> getBrandIdsForCarrier(String carrierId){
+    public List<String> getBrandIdsForCarrier(String carrierId) {
         return dataAPIClient.get("organization/{id}/brandIds", new ParameterizedTypeReference<List<String>>() {
         }, carrierId);
     }
@@ -114,8 +116,8 @@ public class OrganizationDomain {
         object.setCreatedDateTime(DateTime.now());
         object.setTypeCode(LookupCodes.OrgType.BRAND);
         object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
-        if(object.getAttachment().endsWith(","))
-            object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() -1 ));
+        if (object.getAttachment().endsWith(","))
+            object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() - 1));
         return dataAPIClient.post("organization/brand", object, BrandObject.class);
     }
 

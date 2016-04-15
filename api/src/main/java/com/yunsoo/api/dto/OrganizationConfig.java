@@ -10,8 +10,19 @@ import com.yunsoo.common.data.object.OrganizationConfigObject;
  */
 public class OrganizationConfig {
 
+    @JsonProperty("organization")
+    private Organization organization;
+
     @JsonProperty("enterprise")
     private Enterprise enterprise;
+
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
 
     public Enterprise getEnterprise() {
         return enterprise;
