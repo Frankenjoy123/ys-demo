@@ -55,7 +55,7 @@ public class ProductKeyOrderController {
         if (productKeyOrder == null) {
             throw new NotFoundException("ProductKeyOrder not found by [id: " + id + "]");
         }
-        List<ProductKeyTransaction> transactionList = transactionDomain.getCreatedTransactionByOrderId(id).stream().map(ProductKeyTransaction::new).collect(Collectors.toList());
+        List<ProductKeyTransaction> transactionList = transactionDomain.getCommittedTransactionByOrderId(id).stream().map(ProductKeyTransaction::new).collect(Collectors.toList());
         productKeyOrder.setTransactionList(transactionList);
         if (StringUtils.hasText(productKeyOrder.getProductBaseId()))
             productKeyOrder.setProductBase(new ProductBase(productBaseDomain.getProductBaseById(productKeyOrder.getProductBaseId())));
