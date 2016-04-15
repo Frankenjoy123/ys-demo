@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 
@@ -13,7 +14,7 @@ import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
  * Descriptions:
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Logistics {
+public class Logistics implements OrgIdDetectable {
 
     @JsonProperty("org_id")
     private String orgId;

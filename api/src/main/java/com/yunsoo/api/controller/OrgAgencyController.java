@@ -3,7 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.OrgAgencyDomain;
 import com.yunsoo.api.dto.Location;
 import com.yunsoo.api.dto.OrgAgency;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.OrgAgencyObject;
 import com.yunsoo.common.web.client.Page;
@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -35,12 +34,9 @@ public class OrgAgencyController {
     @Autowired
     private OrgAgencyDomain orgAgencyDomain;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
-
     //query by id
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'orgagency:read')")
+    @PostAuthorize("hasPermission(returnObject, 'org_agency:read')")
     public OrgAgency getById(@PathVariable(value = "id") String id) {
         OrgAgencyObject orgAgencyObject = findOrgAgencyById(id);
         if (orgAgencyObject == null) {
@@ -52,11 +48,11 @@ public class OrgAgencyController {
 
     //query by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'orgagency:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
     public List<OrgAgency> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                        Pageable pageable,
                                        HttpServletResponse response) {
-        orgId = fixOrgId(orgId);
+        orgId = AuthUtils.fixOrgId(orgId);
         Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", orgAgencyPage.toContentRange());
@@ -71,39 +67,35 @@ public class OrgAgencyController {
 
     //query locations
     @RequestMapping(value = "location", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'orgagency:read')")
     public List<Location> getLocationsByFilter(@RequestParam(value = "parent_id", required = false) String parentId) {
         return orgAgencyDomain.getLocationsByFilter(parentId).stream().map(Location::new).collect(Collectors.toList());
     }
 
     //create organization agency
     @RequestMapping(value = "", method = RequestMethod.POST)
-    @PreAuthorize("hasPermission(#orgagency, 'orgagency:create')")
+    @PreAuthorize("hasPermission(#orgAgency.orgId, 'org', 'org_agency:create')")
     public OrgAgency create(@RequestBody OrgAgency orgAgency) {
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         OrgAgencyObject orgAgencyobject = orgAgency.toOrgAgencyObject();
         orgAgencyobject.setCreatedAccountId(currentAccountId);
         orgAgencyobject.setCreatedDateTime(DateTime.now());
         orgAgencyobject.setStatusCode(LookupCodes.OrgAgencyStatus.ACTIVATED);
-        if (StringUtils.hasText(orgAgency.getOrgId()))
-            orgAgencyobject.setOrgId(orgAgency.getOrgId());
-        else
-            orgAgencyobject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+        orgAgencyobject.setOrgId(AuthUtils.fixOrgId(orgAgency.getOrgId()));
 
         return new OrgAgency(orgAgencyDomain.createOrgAgency(orgAgencyobject));
     }
 
     //update organization agency
-    @PreAuthorize("hasPermission(#orgagency, 'orgagency:modify')")
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public void update(@PathVariable("id") String id, @RequestBody OrgAgency orgAgency) {
         OrgAgencyObject orgAgencyObject = findOrgAgencyById(id);
+        AuthUtils.checkPermission(orgAgencyObject.getOrgId(), "org_agency", "write");
         orgAgencyObject.setName(orgAgency.getName());
         orgAgencyObject.setLocationIds(orgAgency.getLocationIds());
         orgAgencyObject.setAddress(orgAgency.getAddress());
         orgAgencyObject.setDescription(orgAgency.getDescription());
         orgAgencyObject.setParentId(orgAgency.getParentId());
-        orgAgencyObject.setModifiedAccountId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+        orgAgencyObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getOrgId());
         orgAgencyObject.setModifiedDateTime(DateTime.now());
         orgAgencyDomain.updateOrgAgency(orgAgencyObject);
     }
@@ -129,13 +121,5 @@ public class OrgAgencyController {
             throw new NotFoundException("organization agency not found");
         }
         return orgAgencyObject;
-    }
-
-    private String fixOrgId(String orgId) {
-        if (orgId == null || "current".equals(orgId)) {
-            //current orgId
-            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        }
-        return orgId;
     }
 }

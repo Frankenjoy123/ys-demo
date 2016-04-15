@@ -5,8 +5,7 @@ import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductBaseVersions;
 import com.yunsoo.api.dto.ProductCategory;
-import com.yunsoo.api.object.TPermission;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductBaseVersionsObject;
@@ -14,11 +13,8 @@ import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -51,9 +47,6 @@ public class ProductBaseVersionController {
     private ProductBaseDomain productBaseDomain;
 
     @Autowired
-    private AccountPermissionDomain accountPermissionDomain;
-
-    @Autowired
     private ProductCategoryDomain productCategoryDomain;
 
     @Autowired
@@ -64,11 +57,6 @@ public class ProductBaseVersionController {
 
     @Autowired
     private FileDomain fileDomain;
-
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
-
-    private Log log = LogFactory.getLog(this.getClass());
 
     public static final String APPROVED = "approved";
     public static final String REJECTED = "rejected";
@@ -81,7 +69,7 @@ public class ProductBaseVersionController {
      * @return product base
      */
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'productbase:read')")
+    @PostAuthorize("hasPermission(returnObject, 'product_base:read')")
     public ProductBase getById(@PathVariable(value = "product_base_id") String productBaseId,
                                @RequestParam(value = "version", required = false) Integer version) {
         ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
@@ -104,11 +92,11 @@ public class ProductBaseVersionController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'productbase:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'product_base:read')")
     public List<ProductBase> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                          Pageable pageable,
                                          HttpServletResponse response) {
-        orgId = fixOrgId(orgId);
+        orgId = AuthUtils.fixOrgId(orgId);
         Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", productBasePage.toContentRange());
@@ -140,18 +128,18 @@ public class ProductBaseVersionController {
     //create product base
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:create')")
+    @PreAuthorize("hasPermission(#productBase.orgId, 'org', 'product_base:create')")
     public ProductBase create(@RequestBody ProductBase productBase) {
         ProductBaseObject productBaseObject = new ProductBaseObject();
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
         productBaseObject.setName(productBase.getName());
         productBaseObject.setVersion(1);
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
 
         if (StringUtils.hasText(productBase.getOrgId()))
             productBaseObject.setOrgId(productBase.getOrgId());
         else
-            productBaseObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+            productBaseObject.setOrgId(AuthUtils.getCurrentAccount().getOrgId());
 
         productBaseObject.setBarcode(productBase.getBarcode());
         productBaseObject.setVersion(1);
@@ -182,7 +170,7 @@ public class ProductBaseVersionController {
     //create new product base versions
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:modify')")
+    @PreAuthorize("hasPermission(#productBase.orgId, 'org', 'product_base:write')")
     public ProductBaseVersionsObject createProductBaseVersions(@PathVariable(value = "product_base_id") String productBaseId,
                                                                @RequestBody ProductBase productBase) {
         ProductBaseObject originalProductBaseObject = findProductBaseById(productBaseId);
@@ -193,7 +181,7 @@ public class ProductBaseVersionController {
         if ((latestProductBaseVersionsObject == null) || (!LookupCodes.ProductBaseStatus.ACTIVATED.equals(originalProductBaseObject.getStatusCode())) || (!LookupCodes.ProductBaseVersionsStatus.ACTIVATED.equals(latestProductBaseVersionsObject.getStatusCode()))) {
             throw new BadRequestException("Not allow to create new product base version on the current product base id");
         }
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
         ProductBaseObject productBaseObject = new ProductBaseObject();
 
@@ -209,7 +197,7 @@ public class ProductBaseVersionController {
         if (StringUtils.hasText(productBase.getOrgId()))
             productBaseObject.setOrgId(productBase.getOrgId());
         else
-            productBaseObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+            productBaseObject.setOrgId(AuthUtils.getCurrentAccount().getOrgId());
         productBaseObject.setBarcode(productBase.getBarcode());
         productBaseObject.setStatusCode(LookupCodes.ProductBaseStatus.CREATED);
         productBaseObject.setCategoryId(productBase.getCategoryId());
@@ -228,7 +216,7 @@ public class ProductBaseVersionController {
 
     //update product base versions: edit current product version detail
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.PATCH)
-    @PreAuthorize("hasPermission(#productBase.orgId, 'filterByOrg', 'productbase:modify')")
+    @PreAuthorize("hasPermission(#productBase.orgId, 'org', 'product_base:write')")
     public void updateProductBaseVersions(@PathVariable(value = "product_base_id") String productBaseId,
                                           @RequestParam(value = "version", required = false) Integer version,
                                           @RequestBody ProductBase productBase) {
@@ -248,11 +236,11 @@ public class ProductBaseVersionController {
         productBaseObject.setId(productBaseId);
         productBaseObject.setVersion(version);
         productBaseObject.setName(productBase.getName());
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         if (StringUtils.hasText(productBase.getOrgId()))
             productBaseObject.setOrgId(productBase.getOrgId());
         else
-            productBaseObject.setOrgId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+            productBaseObject.setOrgId(AuthUtils.getCurrentAccount().getOrgId());
 
         productBaseObject.setBarcode(productBase.getBarcode());
         productBaseObject.setStatusCode(productBase.getStatusCode());
@@ -328,16 +316,10 @@ public class ProductBaseVersionController {
         if (productBaseObject != null) {
             if (version == null) {
                 //delete product base
-                TPermission tPermission = new TPermission(productBaseObject.getOrgId(), "productbase", "delete");
-                if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
-                    throw new ForbiddenException("operation denied");
-                }
+                AuthUtils.checkPermission(productBaseObject.getOrgId(), "productbase", "delete");
                 productBaseDomain.deleteProductBase(productBaseId);
             } else {
-                TPermission tPermission = new TPermission(productBaseObject.getOrgId(), "productbase", "modify");
-                if (!accountPermissionDomain.hasPermission(tokenAuthenticationService.getAuthentication().getDetails().getId(), tPermission)) {
-                    throw new ForbiddenException("operation denied");
-                }
+                AuthUtils.checkPermission(productBaseObject.getOrgId(), "productbase", "write");
                 ProductBaseVersionsObject productBaseVersionsObject = productBaseDomain.getProductBaseVersionsByProductBaseIdAndVersion(productBaseId, version);
                 if (productBaseVersionsObject != null) {
                     if (!LookupCodes.ProductBaseVersionsStatus.EDITABLE_STATUS.contains(productBaseVersionsObject.getStatusCode())) {
@@ -368,6 +350,9 @@ public class ProductBaseVersionController {
             throw new NotFoundException("image not found");
         }
         ResourceInputStream resourceInputStream = fileDomain.getFile(String.format("image/%s", imageName));
+        if (resourceInputStream == null) {
+            throw new NotFoundException("image not found");
+        }
         String contentType = resourceInputStream.getContentType();
         long contentLength = resourceInputStream.getContentLength();
 
@@ -393,7 +378,7 @@ public class ProductBaseVersionController {
         if (version == null) {
             version = productBaseObject.getVersion();
         }
-        String orgId = fixOrgId("current");
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
         String path = String.format("organization/%s/product_base/%s/%s/details.json", orgId, productBaseId, version);
         ResourceInputStream resourceInputStream = fileDomain.getFile(path);
         if (resourceInputStream == null) {
@@ -413,7 +398,7 @@ public class ProductBaseVersionController {
         if (version == null) {
             version = productBaseObject.getVersion();
         }
-        String orgId = fixOrgId("current");
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
         String path = String.format("organization/%s/product_base/%s/%s/details.json", orgId, productBaseId, version);
         ProductBaseVersionsObject productBaseVersionsObject = productBaseDomain.getProductBaseVersionsByProductBaseIdAndVersion(productBaseId, version);
         if (productBaseVersionsObject == null) {
@@ -424,15 +409,6 @@ public class ProductBaseVersionController {
     }
 
     //endregion
-
-
-    private String fixOrgId(String orgId) {
-        if (orgId == null || "current".equals(orgId)) {
-            //current orgId
-            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        }
-        return orgId;
-    }
 
     private ProductBaseObject findProductBaseById(String productBaseId) {
         ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);

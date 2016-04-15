@@ -96,7 +96,8 @@ public class ScanController {
         scanResult.setKey(productKey);
 
         //2. get product information
-        Product product = productDomain.getProductByKey(productKey);
+        ProductObject productObject = productDomain.getProduct(productKey);
+        Product product = productDomain.getProductFromProductObject(productObject);
         if (product == null) {
             log.warn(String.format("product not found by [key: %s]", productKey));
             scanResult.setValidationResult(ValidationResult.Fake);
@@ -141,6 +142,7 @@ public class ScanController {
         userScanRecordObject.setProductKey(productKey);
         userScanRecordObject.setUserId(userId);
         userScanRecordObject.setProductBaseId(product.getProductBaseId());
+        userScanRecordObject.setProductKeyBatchId(productObject.getProductKeyBatchId());
         userScanRecordObject.setAppId(appId);
         userScanRecordObject.setDeviceId(deviceId);
         if (userScanRecordObject.getDetails() == null) {
@@ -163,7 +165,8 @@ public class ScanController {
         scanResult.setKey(key);
 
         //2. get product information
-        Product product = productDomain.getProductByKey(key);
+        ProductObject productObject = productDomain.getProduct(key);
+        Product product = productDomain.getProductFromProductObject(productObject);
         if (product == null) {
             log.warn(String.format("product not found by [key: %s]", key));
             scanResult.setValidationResult(ValidationResult.Fake);

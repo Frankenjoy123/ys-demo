@@ -1,10 +1,7 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.Constants;
-import com.yunsoo.api.rabbit.domain.OrganizationDomain;
-import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
-import com.yunsoo.api.rabbit.domain.ProductDomain;
-import com.yunsoo.api.rabbit.domain.UserScanDomain;
+import com.yunsoo.api.rabbit.domain.*;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.api.rabbit.dto.WebScanRequest;
 import com.yunsoo.api.rabbit.dto.WebScanResponse;
@@ -23,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,6 +44,9 @@ public class WebScanController {
     @Autowired
     private UserScanDomain userScanDomain;
 
+    @Autowired
+    private MarketingDomain marketingDomain;
+
 
     //region 一物一码
 
@@ -64,8 +65,13 @@ public class WebScanController {
         product.setManufacturingDatetime(productObject.getManufacturingDateTime());
         product.setKeyDetails(productObject.getDetails());
 
-        //marketing info
-        webScanResponse.setMarketing(getMarketingInfo(productObject.getProductBaseId(), productObject.getProductKeyBatchId()));
+        ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(productObject.getProductKeyBatchId());
+        if (productKeyBatchObject != null) {
+            String productKeyBatchDetails = productDomain.getProductKeyBatchDetails(productKeyBatchObject.getOrgId(), productObject.getProductKeyBatchId());
+            product.setBatchDetails(productKeyBatchDetails);
+            //marketing info
+            webScanResponse.setMarketing(getMarketingInfo(productKeyBatchObject.getMarketingId()));
+        }
 
         //security info
         webScanResponse.setSecurity(getSecurityInfo(productObject));
@@ -91,7 +97,13 @@ public class WebScanController {
         ProductObject productObject = getProductByKey(key);
 
         //save scan record
-        UserScanRecordObject userScanRecordObject = saveScanRecord(key, productObject.getProductBaseId(), appId, webScanRequest, deviceId);
+        UserScanRecordObject userScanRecordObject = saveScanRecord(
+                key,
+                productObject.getProductBaseId(),
+                productObject.getProductKeyBatchId(),
+                appId,
+                deviceId,
+                webScanRequest);
 
         if (userAgent != null && ysid == null) {
             //set cookie YSID
@@ -113,7 +125,7 @@ public class WebScanController {
         WebScanResponse webScanResponse = getBasicInfo(productBaseId);
 
         //marketing info
-        webScanResponse.setMarketing(getMarketingInfo(productBaseId, null));
+        webScanResponse.setMarketing(null);
 
         return webScanResponse;
     }
@@ -136,7 +148,13 @@ public class WebScanController {
         ProductBaseObject productBaseObject = getProductBaseById(productBaseId);
 
         //save scan record
-        UserScanRecordObject userScanRecordObject = saveScanRecord(null, productBaseObject.getId(), appId, webScanRequest, deviceId);
+        UserScanRecordObject userScanRecordObject = saveScanRecord(
+                null,
+                productBaseObject.getId(),
+                null,
+                appId,
+                deviceId,
+                webScanRequest);
 
         if (userAgent != null && ysid == null) {
             //set cookie YSID
@@ -213,14 +231,13 @@ public class WebScanController {
         return response;
     }
 
-    private WebScanResponse.Marketing getMarketingInfo(String productBaseId, String productKeyBatchId) {
+    private WebScanResponse.Marketing getMarketingInfo(String marketingId) {
         WebScanResponse.Marketing marketing = null;
-        if (productKeyBatchId != null) {
-            //load marketing from product key batch
-            ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(productKeyBatchId);
-            if (productKeyBatchObject != null && productKeyBatchObject.getMarketingId() != null) {
+        if (marketingId != null) {
+            MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+            if (marketingObject != null && LookupCodes.MktStatus.PAID.equals(marketingObject.getStatusCode())) {
                 marketing = new WebScanResponse.Marketing();
-                marketing.setId(productKeyBatchObject.getMarketingId());
+                marketing.setId(marketingId);
             }
         }
         return marketing;
@@ -231,11 +248,18 @@ public class WebScanController {
         if (LookupCodes.ProductKeyType.QR_SECURE.equals(productObject.getProductKeyTypeCode())) {
             //防伪码
             security = new WebScanResponse.Security();
-            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 1));
+            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 20));
             List<UserScanRecordObject> userScanRecordObjects = userScanRecordObjectPage.getContent();
             security.setScanCount(userScanRecordObjectPage.getCount() == null ? 0 : userScanRecordObjectPage.getCount());
             if (userScanRecordObjects.size() > 0) {
                 security.setFirstScan(toScanRecord(userScanRecordObjects.get(0)));
+
+                List<WebScanResponse.ScanRecord> scanRecords = new ArrayList<>();
+                for (UserScanRecordObject scanRecord : userScanRecordObjects) {
+                    scanRecords.add(toScanRecord(scanRecord));
+                }
+
+                security.setScanRecords(scanRecords);
             }
         }
         return security;
@@ -243,12 +267,14 @@ public class WebScanController {
 
     private UserScanRecordObject saveScanRecord(String productKey,
                                                 String productBaseId,
+                                                String productKeyBatchId,
                                                 String appId,
-                                                WebScanRequest webScanRequest,
-                                                String deviceId) {
+                                                String deviceId,
+                                                WebScanRequest webScanRequest) {
         UserScanRecordObject userScanRecordObject = new UserScanRecordObject();
         userScanRecordObject.setProductKey(productKey);
         userScanRecordObject.setProductBaseId(productBaseId);
+        userScanRecordObject.setProductKeyBatchId(productKeyBatchId);
         userScanRecordObject.setAppId(appId);
         userScanRecordObject.setYsid(webScanRequest.getYsid());
         userScanRecordObject.setDeviceId(deviceId);

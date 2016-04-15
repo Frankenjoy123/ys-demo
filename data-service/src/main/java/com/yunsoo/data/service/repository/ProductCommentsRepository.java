@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 /**
  * Created by:   Haitao
  * Created on:   2015/8/20
@@ -27,6 +29,8 @@ public interface ProductCommentsRepository extends FindOneAndSaveRepository<Prod
                                       Pageable pageable);
 
     Long countByProductBaseId(String productBaseId);
+
+    Long countByProductBaseIdIn(List<String> productBaseIdIn);
 
     void delete(String id);
 

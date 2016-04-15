@@ -1,6 +1,8 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
+import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.web.client.Page;
@@ -17,10 +19,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -41,14 +45,37 @@ public class OrganizationDomain {
     private static final String ORG_LOGO_IMAGE_200X200 = "image-200x200";
 
 
-    @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
+    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
     public OrganizationObject getOrganizationById(String id) {
-        log.debug("cache missing on organization." + id);
+        if (StringUtils.isEmpty(id)) {
+            return null;
+        }
         try {
             return dataAPIClient.get("organization/{id}", OrganizationObject.class, id);
         } catch (NotFoundException ex) {
             return null;
         }
+    }
+
+    public BrandObject getBrandById(String id) {
+        try {
+            return dataAPIClient.get("organization/brand/{id}", BrandObject.class, id);
+        } catch (NotFoundException ex) {
+            return null;
+        }
+    }
+
+    public int countBrand(String id, String status) {
+        if (StringUtils.hasText(status))
+            return dataAPIClient.get("organization/{id}/brand/count?status={status}", Integer.class, id, status);
+        else
+            return dataAPIClient.get("organization/{id}/brand/count", Integer.class, id);
+    }
+
+    public void updateOrganizationStatus(String id, String status) {
+        OrganizationObject org = getOrganizationById(id);
+        org.setStatusCode(status);
+        dataAPIClient.put("organization/{id}", org, id);
     }
 
     public OrganizationObject getOrganizationByName(String name) {
@@ -65,10 +92,49 @@ public class OrganizationDomain {
         });
     }
 
+    public Page<BrandObject> getOrgBrandList(String orgId, String orgName, String orgStatus, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("name", orgName).append("status", orgStatus)
+                .append(pageable)
+                .build();
+        return dataAPIClient.getPaged("organization/{id}/brand" + query, new ParameterizedTypeReference<List<BrandObject>>() {
+        }, orgId);
+    }
+
+    public List<String> getBrandIdsForCarrier(String carrierId) {
+        return dataAPIClient.get("organization/{id}/brandIds", new ParameterizedTypeReference<List<String>>() {
+        }, carrierId);
+    }
+
     public OrganizationObject createOrganization(OrganizationObject object) {
         object.setId(null);
         object.setCreatedDateTime(DateTime.now());
         return dataAPIClient.post("organization", object, OrganizationObject.class);
+    }
+
+    public BrandObject createBrand(BrandObject object) {
+        object.setId(null);
+        object.setCreatedDateTime(DateTime.now());
+        object.setTypeCode(LookupCodes.OrgType.BRAND);
+        object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
+        if (object.getAttachment().endsWith(","))
+            object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() - 1));
+        return dataAPIClient.post("organization/brand", object, BrandObject.class);
+    }
+
+    public void saveBrandAttachment(String orgId, byte[] attachment, String contentType) {
+        String attachmentName = "brandAttachment";
+        try {
+            //128x128
+            ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(attachment));
+            ByteArrayOutputStream logo128x128OutputStream = new ByteArrayOutputStream();
+            imageProcessor.resize(128, 128).write(logo128x128OutputStream, "png");
+            dataAPIClient.put("file/s3?path=organization/{orgId}/attachment/{name}",
+                    new ResourceInputStream(new ByteArrayInputStream(logo128x128OutputStream.toByteArray()), logo128x128OutputStream.size(), contentType),
+                    orgId, attachmentName);
+        } catch (IOException e) {
+            throw new InternalServerErrorException("attachment upload failed [orgId: " + orgId + "]");
+        }
     }
 
     public ResourceInputStream getLogoImage(String orgId, String imageName) {
@@ -81,11 +147,15 @@ public class OrganizationDomain {
     }
 
     public void saveOrgLogo(String orgId, byte[] imageDataBytes) {
+        saveOrgLogo(orgId, new ByteArrayInputStream(imageDataBytes));
+    }
+
+    public void saveOrgLogo(String orgId, InputStream logoStream) {
         String logoImage128x128 = ORG_LOGO_IMAGE_128X128;
         String logoImage200x200 = ORG_LOGO_IMAGE_200X200;
         try {
             //128x128
-            ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
+            ImageProcessor imageProcessor = new ImageProcessor().read(logoStream);
             ByteArrayOutputStream logo128x128OutputStream = new ByteArrayOutputStream();
             imageProcessor.resize(128, 128).write(logo128x128OutputStream, "png");
             dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",

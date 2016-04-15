@@ -1,13 +1,9 @@
 package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yunsoo.common.data.object.PermissionObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
-import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by  : Lijian
@@ -19,16 +15,15 @@ public class PermissionPolicy {
     @JsonProperty("code")
     private String code;
 
-    @NotNull(message = "policy name must not be null")
     @JsonProperty("name")
     private String name;
 
     @JsonProperty("description")
     private String description;
 
-    @NotEmpty(message = "permissions must not be null or empty")
     @JsonProperty("permissions")
-    private List<Permission> permissions;
+    private List<String> permissions;
+
 
     public String getCode() {
         return code;
@@ -54,11 +49,11 @@ public class PermissionPolicy {
         this.description = description;
     }
 
-    public List<Permission> getPermissions() {
+    public List<String> getPermissions() {
         return permissions;
     }
 
-    public void setPermissions(List<Permission> permissions) {
+    public void setPermissions(List<String> permissions) {
         this.permissions = permissions;
     }
 
@@ -66,13 +61,12 @@ public class PermissionPolicy {
     public PermissionPolicy() {
     }
 
-    public PermissionPolicy(PermissionPolicyObject permissionPolicyObject) {
-        this.code = permissionPolicyObject.getCode();
-        this.name = permissionPolicyObject.getName();
-        this.description = permissionPolicyObject.getDescription();
-        List<PermissionObject> permissionObjects = permissionPolicyObject.getPermissions();
-        if (permissionObjects != null) {
-            this.permissions = permissionObjects.stream().map(Permission::new).collect(Collectors.toList());
+    public PermissionPolicy(PermissionPolicyObject policy) {
+        if (policy != null) {
+            this.code = policy.getCode();
+            this.name = policy.getName();
+            this.description = policy.getDescription();
+            this.permissions = policy.getPermissions();
         }
     }
 }

@@ -7,6 +7,7 @@ import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -92,6 +93,9 @@ public class ImageController {
     @RequestMapping(value = "{imageName}", method = RequestMethod.GET)
     public ResponseEntity<?> getImage(@PathVariable("imageName") String imageName) {
         ResourceInputStream resourceInputStream = fileDomain.getFile(String.format("image/%s", imageName));
+        if (resourceInputStream == null) {
+            throw new NotFoundException("image not found");
+        }
         String contentType = resourceInputStream.getContentType();
         long contentLength = resourceInputStream.getContentLength();
 

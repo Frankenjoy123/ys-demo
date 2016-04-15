@@ -36,11 +36,17 @@ public class MarketingEntity {
     @Column(name = "type_code")
     private String typeCode;
 
+    @Column(name = "status_code")
+    private String statusCode;
+
     @Column(name = "budget")
     private Double budget;
 
     @Column(name = "balance")
     private Double balance;
+
+    @Column(name = "comments")
+    private String comments;
 
     @Column(name = "created_account_id")
     private String createdAccountId;
@@ -148,7 +154,23 @@ public class MarketingEntity {
         return modifiedDateTime;
     }
 
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
+
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }

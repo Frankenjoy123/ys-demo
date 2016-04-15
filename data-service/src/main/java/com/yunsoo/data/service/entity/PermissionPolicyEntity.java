@@ -1,8 +1,9 @@
 package com.yunsoo.data.service.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by:   Lijian
@@ -14,34 +15,18 @@ import javax.persistence.*;
 public class PermissionPolicyEntity {
 
     @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
-    @Column(name = "id")
-    private String id;
-
     @Column(name = "code")
     private String code;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "resource_code")
-    private String resourceCode;
-
-    @Column(name = "action_code")
-    private String actionCode;
-
     @Column(name = "description")
     private String description;
 
+    @Column(name = "permissions")
+    private String permissions;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getCode() {
         return code;
@@ -59,27 +44,19 @@ public class PermissionPolicyEntity {
         this.name = name;
     }
 
-    public String getResourceCode() {
-        return resourceCode;
-    }
-
-    public void setResourceCode(String resourceCode) {
-        this.resourceCode = resourceCode;
-    }
-
-    public String getActionCode() {
-        return actionCode;
-    }
-
-    public void setActionCode(String actionCode) {
-        this.actionCode = actionCode;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
     }
 }

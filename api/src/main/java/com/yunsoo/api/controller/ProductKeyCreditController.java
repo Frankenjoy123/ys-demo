@@ -2,7 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.ProductKeyOrderDomain;
 import com.yunsoo.api.dto.ProductKeyCredit;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,15 +22,11 @@ public class ProductKeyCreditController {
     @Autowired
     private ProductKeyOrderDomain productKeyOrderDomain;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "")
     public List<ProductKeyCredit> calculate(@RequestParam(value = "org_id", required = false) String orgId,
                                             @RequestParam(value = "product_base_id", required = false) String productBaseId) {
-        if (orgId == null) {
-            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        }
+        orgId = AuthUtils.fixOrgId(orgId);
         return productKeyOrderDomain.getProductKeyCredits(orgId, productBaseId);
     }
 

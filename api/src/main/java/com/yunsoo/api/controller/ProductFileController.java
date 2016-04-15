@@ -1,12 +1,15 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.dto.ProductFile;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.ProductFileObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,8 +25,6 @@ public class ProductFileController {
     @Autowired
     private RestClient dataAPIClient;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductFile> get(@RequestParam(value = "createby", required = false) String createby,
@@ -33,7 +34,7 @@ public class ProductFileController {
                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
         if (createby == null)
-            createby = tokenAuthenticationService.getAuthentication().getDetails().getId();
+            createby = AuthUtils.getCurrentAccount().getId();
 
         ProductFileObject[] objects =
                 dataAPIClient.get("productfile?createby={createby}&&status={status}&&filetype={filetype}&&pageIndex={pageIndex}&&pageSize={pageSize}",
@@ -58,7 +59,7 @@ public class ProductFileController {
                          @RequestParam(value = "filetype", required = false, defaultValue = "0") Integer filetype) {
 
         if (createby == null)
-            createby = tokenAuthenticationService.getAuthentication().getDetails().getId();
+            createby = AuthUtils.getCurrentAccount().getId();
 
         Long count = 0l;
         count = dataAPIClient.get("productfile/count?createby={createby}&&status={status}&&filetype={filetype}",

@@ -4,12 +4,15 @@ import com.yunsoo.api.client.ProcessorClient;
 import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyCredit;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.message.ProductKeyBatchMassage;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
+import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -17,6 +20,7 @@ import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -50,6 +54,9 @@ public class ProductKeyDomain {
 
     @Autowired
     private LookupDomain lookupDomain;
+
+    @Autowired
+    private FileDomain fileDomain;
 
     @Autowired
     private ProductKeyOrderDomain productKeyOrderDomain;
@@ -86,10 +93,6 @@ public class ProductKeyDomain {
         return dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id);
     }
 
-    public void updatePkBatch(ProductKeyBatchObject productKeyBatchObject) {
-        dataAPIClient.patch("productkeybatch/{id}", productKeyBatchObject, productKeyBatchObject.getId());
-    }
-
 
     public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Boolean isPackage, Pageable pageable) {
         String[] statusCodes = new String[]{
@@ -97,16 +100,16 @@ public class ProductKeyDomain {
                 LookupCodes.ProductKeyBatchStatus.AVAILABLE
         };
         QueryStringBuilder query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK);
-        if(isPackage != null)
-             query = query.append("org_id", orgId)
+        if (isPackage != null)
+            query = query.append("org_id", orgId)
                     .append("is_package", isPackage)
                     .append("status_code_in", statusCodes)
                     .append(pageable);
         else
             query = query.append("org_id", orgId)
-                .append("product_base_id", productBaseId)
-                .append("status_code_in", statusCodes)
-                .append(pageable);
+                    .append("product_base_id", productBaseId)
+                    .append("status_code_in", statusCodes)
+                    .append(pageable);
         Page<ProductKeyBatchObject> objectsPage = dataAPIClient.getPaged("productkeybatch" + query.build(), new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
         });
 
@@ -124,8 +127,23 @@ public class ProductKeyDomain {
         return dataAPIClient.get("productkeybatch/sum/quantity" + query, Long.class);
     }
 
+    public Long sumTime(String orgId, String productBaseId, DateTime startTime, DateTime endTime) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("start_time", startTime)
+                .append("end_time", endTime)
+                .build();
+        return dataAPIClient.get("productkeybatch/sum/time" + query, Long.class);
+    }
+
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {
+        batchObj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
+        batchObj.setCreatedDateTime(DateTime.now());
+        batchObj.setRestQuantity(batchObj.getQuantity());
         String productBaseId = batchObj.getProductBaseId();
+        List<String> productKeyTypes = batchObj.getProductKeyTypeCodes();
+        //boolean isPackageKey = productKeyTypes.size() == 1 && LookupCodes.ProductKeyType.PACKAGE.equals(productKeyTypes.get(0));
 
         //check product key credit
         List<ProductKeyCredit> credits = productKeyOrderDomain.getProductKeyCredits(batchObj.getOrgId(), productBaseId == null ? "*" : productBaseId);
@@ -168,15 +186,20 @@ public class ProductKeyDomain {
             processorClient.post("sqs/productkeybatch", sqsMessage, ProductKeyBatchMassage.class);
             log.info(String.format("ProductKeyBatchMassage posted to sqs %s", sqsMessage));
         } catch (Exception ex) {
-            log.error(String.format("ProductKeyBatchMassage posting to sqs failed [exceptionMessage: %s]", ex.getMessage()));
+            log.error(String.format("ProductKeyBatchMassage posting to sqs failed [message: %s]", ex.getMessage()), ex);
         }
 
         return toProductKeyBatch(newBatchObj, lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType), lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus));
     }
 
-    public void updateProductKeyBatch(ProductKeyBatchObject batchObj) {
+    public void patchUpdateProductKeyBatch(ProductKeyBatchObject batchObj) {
         dataAPIClient.patch("productkeybatch/{id}", batchObj, batchObj.getId());
     }
+
+    public void putMarketingId(String id, String marketingId) {
+        dataAPIClient.put("productkeybatch/{id}/marketing_id", marketingId, id);
+    }
+
 
     public byte[] getProductKeysByBatchId(String id) {
         ProductKeysObject object = dataAPIClient.get("productkeybatch/{batchId}/keys", ProductKeysObject.class, id);
@@ -203,6 +226,22 @@ public class ProductKeyDomain {
         return outputStream.toByteArray();
     }
 
+    public YSFile getProductKeyFile(String batchId, String orgId) {
+        String path = String.format("organization/%s/product_key_batch/%s/keys.pks", orgId, batchId);
+        ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+        if (resourceInputStream == null) {
+            return null;
+        }
+        try {
+            YSFile ysFile = YSFile.read(resourceInputStream);
+            ysFile.putHeader("product_key_base_url", productKeyBaseUrl);
+            return ysFile;
+        } catch (Exception e) {
+            log.error("resourceInputStream invalid", e);
+            return null;
+        }
+    }
+
     public boolean validateProductKeyTypeCodes(List<String> productKeyTypeCodes) {
         List<Lookup> productKeyTypes = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
         return productKeyTypeCodes != null
@@ -219,6 +258,7 @@ public class ProductKeyDomain {
         }
         ProductKeyBatch batch = new ProductKeyBatch();
         batch.setId(object.getId());
+        batch.setBatchNo(object.getBatchNo());
         batch.setQuantity(object.getQuantity());
         batch.setStatusCode(object.getStatusCode());
         batch.setStatus(Lookup.fromCode(productKeyBatchStatuses, object.getStatusCode()));

@@ -19,13 +19,17 @@ import com.yunsoo.data.service.repository.MktDrawRuleRepository;
 import com.yunsoo.data.service.service.ProductService;
 import com.yunsoo.data.service.service.contract.Product;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,6 +64,15 @@ public class MarketingController {
         return toMarketingObject(entity);
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    public void updateMarketing(@PathVariable String id, @RequestBody MarketingObject marketingObject) {
+        MarketingEntity oldEntity = findMarketingById(id);
+        MarketingEntity entity = toMarketingEntity(marketingObject);
+        entity.setCreatedDateTime(oldEntity.getCreatedDateTime());
+        entity.setCreatedAccountId(oldEntity.getCreatedAccountId());
+        marketingRepository.save(entity);
+    }
+
     //get mktDrawPrize by product key, provide API-Rabbit
     @RequestMapping(value = "/drawprize/{key}", method = RequestMethod.GET)
     public MktDrawPrizeObject getMktDrawPrizeByProductKey(@PathVariable String key) {
@@ -86,10 +99,20 @@ public class MarketingController {
 
     //query marketing plan, provide API
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<MarketingObject> getByFilter(@RequestParam(value = "org_id") String orgId,
+    public List<MarketingObject> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                             @RequestParam(value = "org_ids", required = false) List<String> orgIds ,
+                                             @RequestParam(value = "status", required = false) String status,
                                              Pageable pageable,
                                              HttpServletResponse response) {
-        Page<MarketingEntity> entityPage = marketingRepository.findByOrgId(orgId, pageable);
+        Page<MarketingEntity> entityPage = null;
+        if(orgId != null)
+            entityPage = marketingRepository.findByOrgIdAndStatusCodeNot(orgId, LookupCodes.MktStatus.DISABLED, pageable);
+        else if (orgIds != null && orgIds.size() > 0){
+            entityPage = marketingRepository.query(orgIds, status, pageable);
+        }
+        else
+            throw new BadRequestException("one of the request parameter org_id or org_ids is required");
+
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
@@ -101,15 +124,78 @@ public class MarketingController {
     }
 
     //query marketing prize, provide API
+    @RequestMapping(value = "/drawRecord/sum", method = RequestMethod.GET)
+    public Long countDrawRecordByMarketingId(
+            @RequestParam(value = "marketing_id") String marketingId) {
+        if (marketingId == null) {
+            throw new BadRequestException("marketing id is not valid");
+        }
+        Long quantity = mktDrawRecordRepository.countByMarketingId(marketingId);
+        return quantity;
+    }
+
+    //query marketing prize, provide API
+    @RequestMapping(value = "/totalcount", method = RequestMethod.GET)
+    public Long countMarketingsByOrgId(
+            @RequestParam(value = "org_id") String orgId) {
+        if (orgId == null) {
+            throw new BadRequestException("orgId id is not valid");
+        }
+        Long quantity = marketingRepository.countByOrgId(orgId);
+        return quantity;
+    }
+
+    @RequestMapping(value = "/drawPrize/totalcount", method = RequestMethod.GET)
+    public Long countMktDrawPrizesByOrgId(@RequestParam(value = "org_id") String orgId) {
+        if (orgId == null) {
+            throw new BadRequestException("org id is not valid.");
+        }
+        List<String> marketingIdIn = marketingRepository.findMarketingIdByOrgId(orgId);
+        if (marketingIdIn != null) {
+            return mktDrawPrizeRepository.countByMarketingIdIn(marketingIdIn);
+        } else {
+            return null;
+        }
+    }
+
+
+    //query marketing prize, provide API
+    @RequestMapping(value = "/drawPrize/sum", method = RequestMethod.GET)
+    public Long countDrawPrizeByDrawRuleId(
+            @RequestParam(value = "draw_rule_id") String drawRuleId) {
+        if (drawRuleId == null) {
+            throw new BadRequestException("draw rule id is not valid");
+        }
+        Long quantity = mktDrawPrizeRepository.countByDrawRuleId(drawRuleId);
+        return quantity;
+    }
+
+
+    //query marketing prize, provide API
     @RequestMapping(value = "/drawPrize/marketing", method = RequestMethod.GET)
     public List<MktDrawPrizeObject> getMktDrawPrizeByMarketingId(
             @RequestParam(value = "marketing_id") String marketingId,
             @RequestParam(value = "account_type", required = false) String accountType,
             @RequestParam(value = "status_code", required = false) String statusCode,
+            @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+            @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
             Pageable pageable,
             HttpServletResponse response) {
 
-        Page<MktDrawPrizeEntity> entityPage = mktDrawPrizeRepository.query(marketingId, accountType, statusCode, pageable);
+        if (StringUtils.isEmpty(accountType))
+            accountType = null;
+        if (StringUtils.isEmpty(statusCode))
+            statusCode = null;
+
+        DateTime startDateTime = null;
+        DateTime endDateTime = null;
+
+        if (!StringUtils.isEmpty(startTime.toString()))
+            startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        if (!StringUtils.isEmpty(endTime.toString()))
+            endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+
+        Page<MktDrawPrizeEntity> entityPage = mktDrawPrizeRepository.query(marketingId, accountType, statusCode, startDateTime, endDateTime, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
@@ -131,6 +217,8 @@ public class MarketingController {
         }
         entity.setModifiedAccountId(null);
         entity.setModifiedDateTime(null);
+        entity.setStatusCode(LookupCodes.MktStatus.CREATED);
+
         MarketingEntity newEntity = marketingRepository.save(entity);
         return toMarketingObject(newEntity);
     }
@@ -187,6 +275,21 @@ public class MarketingController {
         return toMktDrawPrizeObject(newEntity);
     }
 
+    @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.PUT)
+    public void updateMktDrawRule(@PathVariable String id, @RequestBody MktDrawRuleObject mktDrawRuleObject) {
+        MktDrawRuleEntity oldEntity = findMktDrawRuleById(id);
+        MktDrawRuleEntity entity = toMktDrawRuleEntity(mktDrawRuleObject);
+        entity.setModifiedDateTime(oldEntity.getModifiedDateTime());
+        mktDrawRuleRepository.save(entity);
+    }
+
+    @RequestMapping(value = "/Rule/{id}", method = RequestMethod.GET)
+    public MktDrawRuleObject getMktDrawRuleById(@PathVariable String id) {
+        MktDrawRuleEntity entity = findMktDrawRuleById(id);
+        return toMktDrawRuleObject(entity);
+    }
+
+
     //update marketing draw prize by product key, provide: API-Rabbit
     @RequestMapping(value = "/drawPrize", method = RequestMethod.PUT)
     public MktDrawPrizeObject updateDrawPrize(@RequestBody MktDrawPrizeObject mktDrawPrizeObject) {
@@ -237,7 +340,7 @@ public class MarketingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMarketingRuleByMarketingId(@PathVariable(value = "id") String id) {
         if (id != null) {
-            List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingId(id);
+            List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderByAmountDesc(id);
             if (mktDrawRuleEntities.size() > 0) {
                 for (MktDrawRuleEntity entity : mktDrawRuleEntities) {
                     String mktDrawRuleId = entity.getId();
@@ -249,7 +352,7 @@ public class MarketingController {
 
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.GET)
     public List<MktDrawRuleObject> findMarketingRulesById(@PathVariable(value = "id")String marketingId){
-        List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingId(marketingId);
+        List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderByAmountDesc(marketingId);
         return mktDrawRuleEntities.stream().map(this::toMktDrawRuleObject).collect(Collectors.toList());
     }
 
@@ -269,6 +372,25 @@ public class MarketingController {
         return mktDrawPrizeEntities.stream().map(this::toMktDrawPrizeObject).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public int countMarketingByStatus(@RequestParam("org_ids")List<String> orgIds, @RequestParam("status")String status){
+        return marketingRepository.countByOrgIdInAndStatusCode(orgIds, status);
+    }
+    @RequestMapping(value = "/statistics", method = RequestMethod.GET)
+    public List<MarketingObject> getMarketingCostList(@RequestParam("org_ids")List<String> orgIds,
+                                                       @RequestParam("status")List<String> status, Pageable pageable){
+        List<Object[]>  result = marketingRepository.sumMarketingByOrgIds(orgIds, status, pageable);
+        List<MarketingObject> marketingObjectList = new ArrayList<>();
+        for(Object[] item : result){
+            MarketingObject object = new MarketingObject();
+            object.setOrgId((String)item[0]);
+            object.setBudget((Double)item[1]);
+            marketingObjectList.add(object);
+        }
+        return marketingObjectList;
+    }
+
+
 
     private MarketingEntity findMarketingById(String id) {
         MarketingEntity entity = marketingRepository.findOne(id);
@@ -277,6 +399,15 @@ public class MarketingController {
         }
         return entity;
     }
+
+    private MktDrawRuleEntity findMktDrawRuleById(String id) {
+        MktDrawRuleEntity entity = mktDrawRuleRepository.findOne(id);
+        if (entity == null) {
+            throw new NotFoundException("marketing not found by [id: " + id + ']');
+        }
+        return entity;
+    }
+
 
     private MarketingObject toMarketingObject(MarketingEntity entity) {
         if (entity == null) {
@@ -295,6 +426,8 @@ public class MarketingController {
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
+        object.setStatusCode(entity.getStatusCode());
+        object.setComments(entity.getComments());
         return object;
     }
 
@@ -374,6 +507,8 @@ public class MarketingController {
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());
+        entity.setStatusCode(object.getStatusCode());
+        entity.setComments(object.getComments());
         return entity;
     }
 

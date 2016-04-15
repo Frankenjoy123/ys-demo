@@ -32,42 +32,6 @@ VALUES
   ('org_status', 'deleted', '已删除', '被删除了', TRUE),
   ('org_status', 'verified', '已认证', '通过平台认证', TRUE),
 
-  ('permission_action', 'create', '创建', 'create', TRUE),
-  ('permission_action', 'delete', '删除', 'delete', TRUE),
-  ('permission_action', 'manage', '管理', 'manage', TRUE),
-  ('permission_action', 'modify', '修改', 'modify', TRUE),
-  ('permission_action', 'read', '查看', 'read', TRUE),
-
-  ('permission_resource', 'account', '帐号', '帐号', TRUE),
-  ('permission_resource', 'accountpermission', '帐号权限', '与帐号直接关联的权限', TRUE),
-  ('permission_resource', 'accountpermissionpolicy', '帐号权限策略', '与帐号直接关联的权限策略', TRUE),
-  ('permission_resource', 'device', '设备', '设备', TRUE),
-  ('permission_resource', 'group', '帐号组', '帐号组', TRUE),
-  ('permission_resource', 'grouppermission', '帐号组权限', '与帐号组直接关联的权限', TRUE),
-  ('permission_resource', 'grouppermissionpolicy', '帐号组权限策略', '与帐号组直接关联的权限策略', TRUE),
-  ('permission_resource', 'message', '消息', '企业推送消息', TRUE),
-  ('permission_resource', 'organization', '组织', '组织', TRUE),
-  ('permission_resource', 'permissionaction', '权限操作', '对权限资源的操作', TRUE),
-  ('permission_resource', 'permissionpolicy', '权限策略', '定义了一系列权限', TRUE),
-  ('permission_resource', 'permissionresource', '权限资源', '权限资源', TRUE),
-  ('permission_resource', 'product', '产品', '单件产品', TRUE),
-  ('permission_resource', 'productbase', '产品', '产品模板', TRUE),
-  ('permission_resource', 'productkey', '产品码', '产品码', TRUE),
-  ('permission_resource', 'productkeycredit', '产品码额度', '产品码额度', TRUE),
-  ('permission_resource', 'productkeyorder', '产品码订单', '产品码订单', TRUE),
-  ('permission_resource', 'page-enterprise-account', '帐号', '帐号页面', TRUE),
-  ('permission_resource', 'page-enterprise-dashboard', '仪表台', '仪表台页面', TRUE),
-  ('permission_resource', 'page-enterprise-device', '设备', '设备页面', TRUE),
-  ('permission_resource', 'page-enterprise-group', '帐号组', '帐号组页面', TRUE),
-  ('permission_resource', 'page-enterprise-logistics', '物流', '物流页面', TRUE),
-  ('permission_resource', 'page-enterprise-message', '消息', '消息页面', TRUE),
-  ('permission_resource', 'page-enterprise-package', '包装', '包装页面', TRUE),
-  ('permission_resource', 'page-enterprise-productbase', '产品', '产品页面', TRUE),
-  ('permission_resource', 'page-enterprise-productkey', '产品码', '产品码页面', TRUE),
-  ('permission_resource', 'page-enterprise-profile', '个人设置', '个人帐号设置页面', TRUE),
-  ('permission_resource', 'page-enterprise-report', '报表', '报表相关页面', TRUE),
-  ('permission_resource', 'page-enterprise-marketing', '市场营销', '市场营销相关页面', TRUE),
-
   ('product_base_status', 'activated', '激活', '已出厂激活', TRUE),
   ('product_base_status', 'created', '新创建', '产品的初始状态', TRUE),
   ('product_base_status', 'deactivated', '失效', '已经失效', TRUE),
@@ -107,3 +71,23 @@ VALUES
 
   ('user_point_transaction_type', 'sign_in_rewards', '签到', '签到积分回馈', TRUE);
 
+INSERT INTO permission_resource (code, name, description, actions)
+VALUES
+  ('account', '账号', '账号', 'create,delete,modify,read'),
+  ('group', '账号组', '账号组', 'create,delete,modify,read'),
+  ('organization', '组织', '组织', 'create,delete,modify,read'),
+  ('product_base', '产品方案', '产品方案', 'create,delete,modify,read'),
+  ('product_key', '产品码', '产品码', 'create,delete,modify,read');
+
+INSERT INTO permission_action (code, name, description)
+VALUES
+  ('*', '完全控制', '完全控制'),
+  ('create', '新建', '新建'),
+  ('delete', '删除', '删除'),
+  ('modify', '修改', '修改'),
+  ('read', '查看', '查看');
+
+INSERT INTO permission_policy (code, name, description, permissions)
+VALUES
+  ('admin', 'admin', NULL, '*:*'),
+  ('read', 'read', NULL, '*:read');

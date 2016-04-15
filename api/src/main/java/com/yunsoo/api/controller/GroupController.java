@@ -2,15 +2,15 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountGroupDomain;
 import com.yunsoo.api.domain.GroupDomain;
-import com.yunsoo.api.domain.GroupPermissionDomain;
-import com.yunsoo.api.domain.PermissionDomain;
-import com.yunsoo.api.dto.*;
-import com.yunsoo.api.object.TAccount;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.dto.Account;
+import com.yunsoo.api.dto.Group;
+import com.yunsoo.api.dto.PermissionEntry;
+import com.yunsoo.api.security.AuthAccount;
+import com.yunsoo.api.security.authorization.AuthorizationService;
+import com.yunsoo.api.security.permission.PermissionService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.GroupObject;
-import com.yunsoo.common.data.object.GroupPermissionObject;
-import com.yunsoo.common.data.object.GroupPermissionPolicyObject;
 import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
@@ -40,42 +40,37 @@ public class GroupController {
     private AccountGroupDomain accountGroupDomain;
 
     @Autowired
-    private GroupPermissionDomain groupPermissionDomain;
+    private PermissionService permissionService;
 
     @Autowired
-    private PermissionDomain permissionDomain;
-
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
+    private AuthorizationService authorizationService;
 
 
-    @PostAuthorize("hasPermission(returnObject, 'group:read')")
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'group:read')")
     public Group getById(@PathVariable("id") String id) {
         GroupObject groupObject = findGroupById(id);
         return new Group(groupObject);
     }
 
-    @PreAuthorize("hasPermission(#orgId, 'filterByOrg', 'group:read')")
     @RequestMapping(value = "", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'group:read')")
     public List<Group> getByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
         if (orgId == null) {
-            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+            orgId = AuthUtils.getCurrentAccount().getOrgId();
         }
         return groupDomain.getByOrgId(orgId).stream().map(Group::new).collect(Collectors.toList());
     }
 
-    @PreAuthorize("hasPermission(#group, 'group:create')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission(#group, 'group:create')")
     public Group create(@RequestBody @Valid Group group) {
         GroupObject groupObject = group.toGroupObject();
-        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
+        AuthAccount currentAccount = AuthUtils.getCurrentAccount();
 
         groupObject.setId(null);
-        if (groupObject.getOrgId() == null) {
-            groupObject.setOrgId(currentAccount.getOrgId());
-        }
+        groupObject.setOrgId(AuthUtils.fixOrgId(groupObject.getOrgId()));
         groupObject.setCreatedAccountId(currentAccount.getId());
         groupObject.setCreatedDateTime(DateTime.now());
         groupObject.setModifiedAccountId(null);
@@ -84,17 +79,17 @@ public class GroupController {
         return new Group(groupObject);
     }
 
-    @PreAuthorize("hasPermission(#group, 'group:modify')")
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void patchUpdate(@PathVariable("id") String id, @RequestBody Group group) {
         GroupObject groupObject = findGroupById(id);
+        AuthUtils.checkPermission(groupObject.getOrgId(), "group", "write");
         if (group.getName() != null) {
             groupObject.setName(group.getName());
         }
         if (group.getDescription() != null) {
             groupObject.setDescription(group.getDescription());
         }
-        groupObject.setModifiedAccountId(tokenAuthenticationService.getAuthentication().getDetails().getOrgId());
+        groupObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getOrgId());
         groupObject.setModifiedDatetime(DateTime.now());
         groupDomain.patchUpdate(groupObject);
     }
@@ -106,7 +101,7 @@ public class GroupController {
     }
 
 
-    //accounts
+    //region accounts
 
     @RequestMapping(value = "{id}/account", method = RequestMethod.GET)
     public List<Account> getAccounts(@PathVariable("id") String groupId) {
@@ -123,7 +118,7 @@ public class GroupController {
     public String createAccountGroup(@PathVariable(value = "group_id") String groupId,
                                      @PathVariable(value = "account_id") String accountId) {
         findGroupById(groupId);
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         AccountGroupObject exists = accountGroupDomain.getAccountGroupByAccountIdAndGroupId(accountId, groupId);
         if (exists != null) {
             throw new ConflictException("account id: " + accountId + "group id: " + groupId + "already exist.");
@@ -152,7 +147,7 @@ public class GroupController {
         findGroupById(groupId);
         List<String> originalAccountIds = accountGroupDomain.getAccountGroupByGroupId(groupId).stream()
                 .map(AccountGroupObject::getAccountId).collect(Collectors.toList());
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         //delete original but not in the new accountId list
         originalAccountIds.stream().filter(aId -> !accountIds.contains(aId)).forEach(aId -> {
             accountGroupDomain.deleteAccountGroupByAccountIdAndGroupId(aId, groupId);
@@ -168,99 +163,19 @@ public class GroupController {
         });
     }
 
-    //region grouppermission
-
-    @RequestMapping(value = "{group_id}/grouppermission", method = RequestMethod.GET)
-    public List<GroupPermission> getPermissionsByGroupId(@PathVariable(value = "group_id") String groupId) {
-        findGroupById(groupId);
-        return groupPermissionDomain.getGroupPermissions(groupId)
-                .stream()
-                .map(GroupPermission::new)
-                .collect(Collectors.toList());
-    }
-
-    //create group permission
-    @RequestMapping(value = "{group_id}/grouppermission", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public GroupPermission createGroupPermission(@PathVariable(value = "group_id") String groupId,
-                                                 @RequestBody @Valid GroupPermission groupPermission) {
-        findGroupById(groupId);
-        GroupPermissionObject groupPermissionObject = groupPermission.toGroupPermissionObject();
-        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
-        groupPermissionObject.setId(null);
-        groupPermissionObject.setGroupId(groupId);
-        groupPermissionObject.setOrgId(fixOrgId(groupPermissionObject.getOrgId()));
-        groupPermissionObject.setCreatedAccountId(currentAccount.getId());
-        groupPermissionObject.setCreatedDatetime(DateTime.now());
-        groupPermissionObject = groupPermissionDomain.createGroupPermission(groupPermissionObject);
-        return new GroupPermission(groupPermissionObject);
-    }
-
-    //delete group permission
-    @RequestMapping(value = "{group_id}/grouppermission/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteGroupPermission(@PathVariable(value = "group_id") String groupId,
-                                      @PathVariable("id") String id) {
-        findGroupById(groupId);
-        groupPermissionDomain.deleteGroupPermissionById(id);
-    }
-
-    //endregion
-
-
-    //region grouppermissionpolicy
-
-    @RequestMapping(value = "{group_id}/grouppermissionpolicy", method = RequestMethod.GET)
-    public List<GroupPermissionPolicy> getPermissionPoliciesByGroupId(@PathVariable(value = "group_id") String groupId) {
-        findGroupById(groupId);
-        return groupPermissionDomain.getGroupPermissionPolicies(groupId)
-                .stream()
-                .map(GroupPermissionPolicy::new)
-                .collect(Collectors.toList());
-    }
-
-    //create group permission policy
-    @RequestMapping(value = "{group_id}/grouppermissionpolicy", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public GroupPermissionPolicy createGroupPermissionPolicy(@PathVariable(value = "group_id") String groupId,
-                                                             @RequestBody @Valid GroupPermissionPolicy groupPermissionPolicy) {
-        findGroupById(groupId);
-        GroupPermissionPolicyObject groupPermissionPolicyObject = groupPermissionPolicy.toGroupPermissionPolicyObject();
-        TAccount currentAccount = tokenAuthenticationService.getAuthentication().getDetails();
-        groupPermissionPolicyObject.setId(null);
-        groupPermissionPolicyObject.setGroupId(groupId);
-        groupPermissionPolicyObject.setOrgId(fixOrgId(groupPermissionPolicyObject.getOrgId()));
-        groupPermissionPolicyObject.setCreatedAccountId(currentAccount.getId());
-        groupPermissionPolicyObject.setCreatedDatetime(DateTime.now());
-        groupPermissionPolicyObject = groupPermissionDomain.createGroupPermissionPolicy(groupPermissionPolicyObject);
-        return new GroupPermissionPolicy(groupPermissionPolicyObject);
-    }
-
-    //delete group permission policy
-    @RequestMapping(value = "{group_id}/grouppermissionpolicy", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteGroupPermissionPolicy(@PathVariable(value = "group_id") String groupId,
-                                            @RequestParam(value = "org_id", required = false) String orgId,
-                                            @RequestParam(value = "policy_code") String policyCode) {
-        orgId = fixOrgId(orgId);
-        findGroupById(groupId);
-        groupPermissionDomain.deleteGroupPermissionPolicy(groupId, orgId, policyCode);
-    }
-
     //endregion
 
     @RequestMapping(value = "{group_id}/permission", method = RequestMethod.GET)
-    public List<PermissionInstance> getAllPermissionByGroupId(@PathVariable("group_id") String groupId) {
-        findGroupById(groupId);
-        return permissionDomain.extendPermissions(groupPermissionDomain.getAllGroupPermissions(groupId));
-    }
-
-    private String fixOrgId(String orgId) {
-        if (orgId == null || "current".equals(orgId)) {
-            //current orgId
-            return tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
-        }
-        return orgId;
+    public List<PermissionEntry> getAllPermissionByGroupId(@PathVariable("group_id") String groupId) {
+        GroupObject group = findGroupById(groupId);
+        String orgId = group.getOrgId();
+        AuthUtils.checkPermission(orgId, "permission_allocation", "read");
+        List<com.yunsoo.api.security.permission.PermissionEntry> permissionEntries = permissionService.getExpendedPermissionEntriesByGroupId(groupId);
+        //fix orgRestriction
+        permissionEntries.forEach(p -> {
+            p.setRestriction(authorizationService.fixOrgRestriction(p.getRestriction(), orgId));
+        });
+        return permissionEntries.stream().map(PermissionEntry::new).collect(Collectors.toList());
     }
 
 

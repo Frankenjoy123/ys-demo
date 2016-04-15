@@ -1,14 +1,11 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.AccountPermissionDomain;
 import com.yunsoo.api.domain.DeviceDomain;
 import com.yunsoo.api.dto.Device;
-import com.yunsoo.api.object.TPermission;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.DeviceObject;
 import com.yunsoo.common.web.client.Page;
-import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +29,7 @@ import java.util.List;
 public class DeviceController {
 
     @Autowired
-    private AccountPermissionDomain accountPermissionDomain;
-
-    @Autowired
     private DeviceDomain deviceDomain;
-
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'device:read')")
@@ -51,7 +42,7 @@ public class DeviceController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(#orgId, 'filterByOrg', 'device:read')")
+    @PostAuthorize("hasPermission(#orgId, 'org', 'device:read')")
     public List<Device> getByFilterPaged(
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "login_account_id", required = false) String accountId,
@@ -60,7 +51,7 @@ public class DeviceController {
             HttpServletResponse response) {
 
         if (!StringUtils.hasText(orgId)) {
-            orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+            orgId = AuthUtils.getCurrentAccount().getOrgId();
         }
 
         Page<DeviceObject> devicePage = deviceDomain.getByFilterPaged(orgId, accountId, pageable);
@@ -71,16 +62,15 @@ public class DeviceController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
+    @PostAuthorize("hasPermission(#device, 'device:write')")
     public void update(@RequestBody Device device) {
         String id = device.getId();
-        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String accountId = AuthUtils.getCurrentAccount().getId();
         DeviceObject deviceCurrent = deviceDomain.getById(id);
         if (deviceCurrent == null) {
             throw new NotFoundException("device not found by [id: " + id + "]");
         }
-        if (!accountPermissionDomain.hasPermission(accountId, new TPermission(deviceCurrent.getOrgId(), "device", "update"))) {
-            throw new ForbiddenException();
-        }
+        AuthUtils.checkPermission(deviceCurrent.getOrgId(), "device", "write");
 
         if (device.getCheckPointId() != null) deviceCurrent.setCheckPointId(device.getCheckPointId());
         if (device.getName() != null) deviceCurrent.setName(device.getName());
@@ -94,10 +84,11 @@ public class DeviceController {
 
 
     @RequestMapping(value = "register", method = RequestMethod.POST)
+    @PostAuthorize("hasPermission(#device, 'device:create')")
     public Device register(@RequestBody Device device) {
         DeviceObject deviceNew = toDeviceObject(device);
-        String accountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        String accountId = AuthUtils.getCurrentAccount().getId();
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
         deviceNew.setOrgId(orgId);
         deviceNew.setLoginAccountId(accountId);
         deviceNew.setStatusCode(LookupCodes.DeviceStatus.ACTIVATED);

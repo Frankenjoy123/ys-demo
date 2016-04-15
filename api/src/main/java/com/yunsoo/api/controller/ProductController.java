@@ -2,7 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.ProductDomain;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.exception.NotAcceptableException;
@@ -41,9 +41,6 @@ public class ProductController {
     @Autowired
     private AccountDomain accountDomain;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
-
     //todo: change ProductObject to product dto
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
     public ProductObject get(@PathVariable(value = "key") String key) {
@@ -81,7 +78,7 @@ public class ProductController {
     @RequestMapping(value = "/delete/file", method = RequestMethod.POST)
     public Boolean UploadFile(MultipartHttpServletRequest request, HttpServletResponse response) throws IOException, IllegalAccessException {
 
-        String createdAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String createdAccountId = AuthUtils.getCurrentAccount().getId();
         AccountObject accountObject = accountDomain.getById(createdAccountId);
         if (accountObject == null) {
             throw new IllegalAccessException("Current account is not valid to delete product keys.");

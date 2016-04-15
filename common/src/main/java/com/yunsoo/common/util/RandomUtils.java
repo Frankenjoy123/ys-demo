@@ -1,5 +1,8 @@
 package com.yunsoo.common.util;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.util.Random;
 
 /**
@@ -36,4 +39,7 @@ public class RandomUtils {
         return sb.toString();
     }
 
+    public static String  generateStringWithDate() {
+        return DateTime.now().toDateTime(DateTimeZone.UTC).toString("yyMMddHHmmssSSS") + generateString(3, RandomUtils.NUMERIC_CHARS);
+    }
 }

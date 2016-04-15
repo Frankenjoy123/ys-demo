@@ -5,7 +5,7 @@ import com.yunsoo.api.domain.UserReportDomain;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.User;
 import com.yunsoo.api.dto.UserReport;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.data.object.UserReportObject;
@@ -37,8 +37,6 @@ public class UserReportController {
     @Autowired
     private ProductBaseDomain productBaseDomain;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(method = RequestMethod.GET, value = "{id}")
     public UserReport getById(@PathVariable(value = "id") String id) {
@@ -49,7 +47,7 @@ public class UserReportController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<UserReport> getByFilter(@RequestParam(value = "product_base_id", required = false) String productBaseId, Pageable pageable, HttpServletResponse response) {
-        String orgId = tokenAuthenticationService.getAuthentication().getDetails().getOrgId();
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
         List<String> productBaseIds = new ArrayList<>();
         if (productBaseId == null) {
             productBaseIds = productBaseDomain.getProductBaseByOrgId(orgId, null).getContent().stream().map(item -> item.getId()).collect(Collectors.toList());

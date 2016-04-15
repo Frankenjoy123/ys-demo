@@ -1,12 +1,10 @@
 package com.yunsoo.api.security;
 
 import com.yunsoo.api.dto.Token;
-import com.yunsoo.api.object.TAccount;
-import com.yunsoo.common.web.exception.UnauthorizedException;
+import com.yunsoo.api.security.authorization.AuthorizationService;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -36,37 +34,28 @@ public class TokenAuthenticationService {
 
     private TokenHandler loginTokenHandler;
 
+    @Autowired
+    private AuthorizationService authorizationService;
+
+
     @PostConstruct
     public void init() {
         this.accessTokenHandler = new TokenHandler(accessTokenHashSalt);
         this.loginTokenHandler = new TokenHandler(loginTokenHashSalt);
     }
 
-
-    public AccountAuthentication getAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AccountAuthentication)) {
-            throw new UnauthorizedException();
-        }
-        return (AccountAuthentication) SecurityContextHolder.getContext().getAuthentication();
-    }
-
     public AccountAuthentication getAuthentication(String token) {
         if (token == null) {
             return null;
         }
-        TAccount tAccount = accessTokenHandler.parseToken(token);
-        if (tAccount == null) {
+        AuthAccount authAccount = accessTokenHandler.parseToken(token);
+        if (authAccount == null) {
             return null;
         }
-        return new AccountAuthentication(tAccount);
+        return new AccountAuthentication(authAccount, authorizationService);
     }
 
-    public TAccount parseAccessToken(String token) {
-        return accessTokenHandler.parseToken(token);
-    }
-
-    public TAccount parseLoginToken(String token) {
+    public AuthAccount parseLoginToken(String token) {
         return loginTokenHandler.parseToken(token);
     }
 
@@ -76,8 +65,7 @@ public class TokenAuthenticationService {
     }
 
     public Token generateLoginToken(String accountId) {
-        DateTime expires = DateTime.now().plusMinutes(loginTokenExpiresMinutes);
-        return new Token(loginTokenHandler.createToken(expires, accountId), expires);
+        return generateLoginToken(accountId, null);
     }
 
     /**

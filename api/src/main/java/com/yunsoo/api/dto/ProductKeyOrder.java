@@ -3,18 +3,20 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.Min;
+import java.util.List;
 
 /**
  * Created by  : Lijian
  * Created on  : 2015/5/6
  * Descriptions:
  */
-public class ProductKeyOrder {
+public class ProductKeyOrder implements OrgIdDetectable {
 
     @JsonProperty("id")
     private String id;
@@ -50,6 +52,12 @@ public class ProductKeyOrder {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime expireDateTime;
+
+    @JsonProperty("product_base")
+    private ProductBase productBase;
+
+    @JsonProperty("transaction_list")
+    private List<ProductKeyTransaction> transactionList;
 
 
     public String getId() {
@@ -130,5 +138,21 @@ public class ProductKeyOrder {
 
     public void setExpireDateTime(DateTime expireDateTime) {
         this.expireDateTime = expireDateTime;
+    }
+
+    public List<ProductKeyTransaction> getTransactionList() {
+        return transactionList;
+    }
+
+    public void setTransactionList(List<ProductKeyTransaction> transactionList) {
+        this.transactionList = transactionList;
+    }
+
+    public ProductBase getProductBase() {
+        return productBase;
+    }
+
+    public void setProductBase(ProductBase productBase) {
+        this.productBase = productBase;
     }
 }

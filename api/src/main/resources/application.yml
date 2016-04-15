@@ -3,9 +3,11 @@ server:
 management:
   port: 6081
   address: 127.0.0.1
-  
-multipart.maxFileSize: 20MB
-multipart.maxRequestSize: 20MB
+  add-application-context-header: false
+
+multipart:
+  max-file-size: 20MB
+  max-request-size: 20MB
 
 yunsoo:
   debug: true
@@ -29,7 +31,10 @@ yunsoo:
     key: e0opacdva54q9todmujp0vc5pwqlcj10
     account_name: 广州云溯科技有限公司
     email: zhe@yunsu.co
+    amount: 0.1
     notify_url: http://dev.yunsu.co:6080/marketing/alipay/notify
+    direct_return_url: http://127.0.0.1/enterprise/brandapplication.html
+    direct_notify_url: http://127.0.0.1:6080/payment/brand/alipay/notify
 spring:
   profiles.active: local
   mvc:

@@ -62,6 +62,15 @@ public class MarketingDomain {
         }
     }
 
+    public MktDrawRuleObject getMktDrawRuleById(String id) {
+        try {
+            return dataAPIClient.get("marketing/Rule/{id}", MktDrawRuleObject.class, id);
+        } catch (NotFoundException ignored) {
+            return null;
+        }
+    }
+
+
     public MktDrawPrizeObject getMktDrawPrizeById(String id) {
         try {
             return dataAPIClient.get("marketing/drawPrize/record/{id}", MktDrawPrizeObject.class, id);
@@ -70,10 +79,17 @@ public class MarketingDomain {
         }
     }
 
+    public List<MktDrawRuleObject> getRuleList(String marketingId) {
+        return dataAPIClient.get("marketing/drawRule/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>() {
+        }, marketingId);
 
-    public Page<MarketingObject> getMarketingByOrgId(String orgId, Pageable pageable) {
+    }
+
+
+
+    public Page<MarketingObject> getMarketingList(String orgId, List<String> orgIds, String status, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId)
+                .append("org_id", orgId).append("org_ids", orgIds).append("status", status)
                 .append(pageable)
                 .build();
 
@@ -81,9 +97,56 @@ public class MarketingDomain {
         });
     }
 
+
+
     public MarketingObject createMarketing(MarketingObject marketingObject) {
         marketingObject.setId(null);
         return dataAPIClient.post("marketing", marketingObject, MarketingObject.class);
+    }
+
+    public Long countMarketingsByOrgId(String orgId) {
+        Long totalQuantity = dataAPIClient.get("marketing/totalcount?org_id=" + orgId, Long.class);
+        return totalQuantity;
+    }
+
+    public Long countProductKeysByMarketingId(String marketingId) {
+        Long totalQuantity = dataAPIClient.get("productkeybatch/sum/quantity?marketing_id=" + marketingId, Long.class);
+        return totalQuantity;
+    }
+
+    public Long countDrawRecordsByMarketingId(String marketingId) {
+        Long totalQuantity = dataAPIClient.get("marketing/drawRecord/sum?marketing_id=" + marketingId, Long.class);
+        return totalQuantity;
+    }
+
+    public Long countMktDrawPrizesByOrgId(String orgId) {
+        Long totalQuantity = dataAPIClient.get("marketing/drawPrize/totalcount?org_id=" + orgId, Long.class);
+        return totalQuantity;
+    }
+
+
+    public Long countDrawPrizeByDrawRuleId(String drawRuleId) {
+        Long totalQuantity = dataAPIClient.get("marketing/drawPrize/sum?draw_rule_id=" + drawRuleId, Long.class);
+        return totalQuantity;
+    }
+
+    public int countMarketing(List<String> orgIds, String status){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                 .append("org_ids", orgIds).append("status", status)
+                .build();
+        return dataAPIClient.get("marketing/count" + query, Integer.class);
+    }
+
+    public List<MarketingObject> statisticsMarketing(List<String> orgIds, List<String> status, Pageable pageable){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_ids", orgIds).append("status", status).append(pageable)
+                .build();
+        return dataAPIClient.get("marketing/statistics" + query, new ParameterizedTypeReference<List<MarketingObject>>() {
+        });
+    }
+
+    public void updateMarketing(MarketingObject marketingObject){
+        dataAPIClient.put("marketing/{id}", marketingObject, marketingObject.getId());
     }
 
     public void deleteMarketingById(String id) {
@@ -91,17 +154,23 @@ public class MarketingDomain {
         dataAPIClient.delete("marketing/drawRule/{id}", id);
     }
 
-    public Page<MktDrawPrizeObject> getMktDrawPrizeByFilter(String marketingId, String accountType, String statusCode, Pageable pageable) {
+    public Page<MktDrawPrizeObject> getMktDrawPrizeByFilter(String marketingId, String accountType, String statusCode, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("marketing_id", marketingId)
                 .append("account_type", accountType)
                 .append("status_code", statusCode)
+                .append("start_time", startTime)
+                .append("end_time", endTime)
                 .append(pageable)
                 .build();
 
         return dataAPIClient.getPaged("marketing/drawPrize/marketing" + query, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
         });
 
+    }
+
+    public void updateMktDrawRule(MktDrawRuleObject mktDrawRuleObject) {
+        dataAPIClient.put("marketing/drawRule/{id}", mktDrawRuleObject, mktDrawRuleObject.getId());
     }
 
     public void updateMktDrawPrize(MktDrawPrizeObject mktDrawPrizeObject) {

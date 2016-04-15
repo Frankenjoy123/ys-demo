@@ -12,13 +12,14 @@ public enum CacheType {
     PRODUCTBASE("productbase"),
     PRODUCT("product"),
     PRODUCT_BATCH("product_batch"),
-    PRODUCTCATEGORY("product_category"),
-    PERMISSION("permission");
+    PRODUCT_CATEGORY("product_category"),
+    PERMISSION("permission"),
+    DOMAIN_DIRECTORY("domain_directory");
 
 
     private String typeName;
 
-    CacheType(String type){
+    CacheType(String type) {
         this.typeName = type;
     }
 

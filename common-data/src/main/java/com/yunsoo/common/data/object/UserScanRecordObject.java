@@ -24,9 +24,11 @@ public class UserScanRecordObject implements Serializable {
     @JsonProperty("user_id")
     private String userId;
 
-    @NotEmpty(message = "product_key must not be null or empty")
     @JsonProperty("product_key")
     private String productKey;
+
+    @JsonProperty("product_key_batch_id")
+    private String productKeyBatchId;
 
     @NotEmpty(message = "product_base_id must not be null or empty")
     @JsonProperty("product_base_id")
@@ -94,6 +96,14 @@ public class UserScanRecordObject implements Serializable {
 
     public void setProductKey(String productKey) {
         this.productKey = productKey;
+    }
+
+    public String getProductKeyBatchId() {
+        return productKeyBatchId;
+    }
+
+    public void setProductKeyBatchId(String productKeyBatchId) {
+        this.productKeyBatchId = productKeyBatchId;
     }
 
     public String getProductBaseId() {

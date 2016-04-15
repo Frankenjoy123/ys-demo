@@ -38,7 +38,6 @@ public class AccountDomain {
 
     @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
     public AccountObject getById(String accountId) {
-        log.debug("missed cache: account." + accountId);
         if (StringUtils.isEmpty(accountId)) {
             return null;
         }
@@ -47,8 +46,6 @@ public class AccountDomain {
         } catch (NotFoundException ex) {
             return null;
         }
-
-
     }
 
     public AccountObject getByOrgIdAndIdentifier(String orgId, String identifier) {
@@ -79,15 +76,20 @@ public class AccountDomain {
         return dataAPIClient.get("account/count" + query, Long.class);
     }
 
-    public AccountObject createAccount(AccountObject accountObject) {
+    public AccountObject createAccount(AccountObject accountObject, boolean generateHash) {
+        if(generateHash) {
+            String hashSalt = RandomUtils.generateString(8);
+            String password = hashPassword(accountObject.getPassword(), hashSalt);
+            accountObject.setHashSalt(hashSalt);
+            accountObject.setPassword(password);
+        }
+        return createAccountWithSalt(accountObject);
+    }
+
+    public AccountObject createAccountWithSalt(AccountObject accountObject) {
         accountObject.setId(null);
         accountObject.setCreatedDateTime(DateTime.now());
         accountObject.setStatusCode(LookupCodes.AccountStatus.AVAILABLE);
-        String hashSalt = RandomUtils.generateString(8);
-        String password = hashPassword(accountObject.getPassword(), hashSalt);
-        accountObject.setHashSalt(hashSalt);
-        accountObject.setPassword(password);
-
         return dataAPIClient.post("account", accountObject, AccountObject.class);
     }
 
@@ -103,7 +105,17 @@ public class AccountDomain {
         }
     }
 
-    public boolean isActiveAccount(AccountObject accountObject) {
+    @CacheEvict(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
+    public void updateStatus(String accountId, String statusCode){
+        if (!StringUtils.isEmpty(accountId)) {
+            AccountObject accountObject = new AccountObject();
+            accountObject.setStatusCode(statusCode);
+            dataAPIClient.patch("account/{id}", accountObject, accountId);
+        }
+    }
+
+
+    public boolean isValidAccount(AccountObject accountObject) {
         String statusCode = accountObject.getStatusCode();
         return LookupCodes.AccountStatus.AVAILABLE.equals(statusCode);
     }
@@ -116,6 +128,8 @@ public class AccountDomain {
     private String hashPassword(String rawPassword, String hashSalt) {
         return HashUtils.sha1HexString(rawPassword + hashSalt);
     }
+
+
 
 
 }

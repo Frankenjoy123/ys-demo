@@ -1,9 +1,12 @@
 package com.yunsoo.data.api.controller;
 
+import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
+import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
+import com.yunsoo.data.api.util.ResponseEntityUtils;
 import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
 import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
 import com.yunsoo.data.service.service.ProductKeyBatchService;
@@ -11,15 +14,21 @@ import com.yunsoo.data.service.service.contract.ProductKeyBatch;
 import com.yunsoo.data.service.service.contract.ProductKeys;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,21 +54,38 @@ public class ProductKeyBatchController {
 
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ProductKeyBatchObject getBatchById(@PathVariable(value = "id") String id) {
-        ProductKeyBatch batch = productKeyBatchService.getById(id);
-        if (batch == null) {
-            throw new NotFoundException("ProductKeyBatch not found by [id: " + id + "]");
+    public ProductKeyBatchObject getById(@PathVariable(value = "id") String id) {
+        ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(id);
+        if (entity == null) {
+            throw new NotFoundException("productKeyBatch not found by [id: " + id + "]");
         }
-        return toProductKeyBatchObject(batch);
+        return toProductKeyBatchObject(entity);
     }
 
     @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
-    public ProductKeys getProductKeysById(@PathVariable(value = "id") String id) {
+    public ProductKeysObject getProductKeys(@PathVariable(value = "id") String id) {
         ProductKeys productKeys = productKeyBatchService.getProductKeysByBatchId(id);
         if (productKeys == null) {
-            throw new NotFoundException("ProductKeys");
+            throw new NotFoundException("productKeys not found by [id: " + id + "]");
         }
-        return productKeys;
+        return toProductKeysObject(productKeys);
+    }
+
+    @RequestMapping(value = "{id}/details", method = RequestMethod.GET)
+    public ResponseEntity<?> getProductKeyBatchDetails(@PathVariable(value = "id") String id) throws IOException {
+        S3Object s3Object = productKeyBatchService.getProductKeyBatchDetails(id);
+        if (s3Object == null) {
+            throw new NotFoundException("productKeyBatchDetails not found by [id: " + id + "]");
+        }
+        return ResponseEntityUtils.convert(s3Object);
+    }
+
+    @RequestMapping(value = "{id}/details", method = RequestMethod.PUT)
+    public void putProductKeyBatchDetails(@PathVariable(value = "id") String id, HttpServletRequest request) throws IOException {
+        String contentType = request.getContentType();
+        long contentLength = request.getContentLengthLong();
+        ServletInputStream inputStream = request.getInputStream();
+        productKeyBatchService.saveProductKeyBatchDetails(id, inputStream, contentType, contentLength);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -108,6 +134,22 @@ public class ProductKeyBatchController {
         return sum == null ? 0L : sum;
     }
 
+    @RequestMapping(value = "sum/time", method = RequestMethod.GET)
+    public Long sumQuantityPerTime(
+            @RequestParam(value = "org_id", required = false) String orgId,
+            @RequestParam(value = "product_base_id", required = false) String productBaseId,
+            @RequestParam(value = "start_time", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            DateTime startTime,
+            @RequestParam(value = "end_time", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            DateTime endTime) {
+
+        Long sum = productKeyBatchRepository.sumQuantityTime(orgId, productBaseId, startTime, endTime);
+
+        return sum == null ? 0L : sum;
+    }
+
     @RequestMapping(value = "/exists", method = RequestMethod.GET)
     public boolean existsProductKeyBatch(@RequestParam(value = "quantity", required = false) Integer quantity,
                                          @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
@@ -132,24 +174,23 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void patchUpdate(@PathVariable(value = "id") String id, @RequestBody ProductKeyBatchObject batchObj) {
-        ProductKeyBatch batch = productKeyBatchService.getById(id);
-        if (batch == null) {
-            throw new NotFoundException("ProductKeyBatch not found by [id: " + id + "]");
-        }
+        ProductKeyBatch batch = toProductKeyBatch(batchObj);
         batch.setId(id);
-        if (batchObj.getProductBaseId() != null) {
-            batch.setProductBaseId(batchObj.getProductBaseId());
-        }
-        if (batchObj.getStatusCode() != null) {
-            batch.setStatusCode(batchObj.getStatusCode());
-        }
-        if (batchObj.getRestQuantity() != null)
-            batch.setRestQuantity(batchObj.getRestQuantity());
-        if (batchObj.getMarketingId() != null) {
-            batch.setMarketingId(batchObj.getMarketingId());
-        }
-
         productKeyBatchService.patchUpdate(batch);
+    }
+
+    @RequestMapping(value = "{id}/marketing_id", method = RequestMethod.PUT)
+    public void putMarketingId(@PathVariable(value = "id") String id, @RequestBody(required = false) String marketingId) {
+        ProductKeyBatchEntity entity = productKeyBatchRepository.findOne(id);
+        if (id == null) {
+            throw new NotFoundException("product key batch not found");
+        }
+        if (marketingId != null) {
+            entity.setMarketingId(marketingId);
+        } else {
+            entity.setMarketingId(null);
+        }
+        productKeyBatchRepository.save(entity);
     }
 
 
@@ -159,6 +200,7 @@ public class ProductKeyBatchController {
         }
         ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
         batchObj.setId(batch.getId());
+        batchObj.setBatchNo(batch.getBatchNo());
         batchObj.setQuantity(batch.getQuantity());
         batchObj.setStatusCode(batch.getStatusCode());
         batchObj.setOrgId(batch.getOrgId());
@@ -176,22 +218,22 @@ public class ProductKeyBatchController {
         if (entity == null) {
             return null;
         }
-        ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
-        batchObj.setId(entity.getId());
-        batchObj.setQuantity(entity.getQuantity());
-        batchObj.setStatusCode(entity.getStatusCode());
-        batchObj.setOrgId(entity.getOrgId());
-        batchObj.setProductBaseId(entity.getProductBaseId());
-        batchObj.setCreatedAppId(entity.getCreatedAppId());
-        batchObj.setCreatedAccountId(entity.getCreatedAccountId());
-        batchObj.setCreatedDateTime(entity.getCreatedDateTime());
-        batchObj.setRestQuantity(entity.getRestQuantity());
-        String codes = entity.getProductKeyTypeCodes();
-        if (codes != null) {
-            batchObj.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
+        ProductKeyBatchObject object = new ProductKeyBatchObject();
+        object.setId(entity.getId());
+        object.setBatchNo(entity.getBatchNo());
+        object.setQuantity(entity.getQuantity());
+        object.setStatusCode(entity.getStatusCode());
+        if (entity.getProductKeyTypeCodes() != null) {
+            object.setProductKeyTypeCodes(Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getProductKeyTypeCodes())));
         }
-        batchObj.setMarketingId(entity.getMarketingId());
-        return batchObj;
+        object.setProductBaseId(entity.getProductBaseId());
+        object.setOrgId(entity.getOrgId());
+        object.setCreatedAppId(entity.getCreatedAppId());
+        object.setCreatedAccountId(entity.getCreatedAccountId());
+        object.setCreatedDateTime(entity.getCreatedDateTime());
+        object.setRestQuantity(entity.getRestQuantity());
+        object.setMarketingId(entity.getMarketingId());
+        return object;
     }
 
     private ProductKeyBatch toProductKeyBatch(ProductKeyBatchObject batchObj) {
@@ -200,6 +242,7 @@ public class ProductKeyBatchController {
         }
         ProductKeyBatch batch = new ProductKeyBatch();
         batch.setId(batchObj.getId());
+        batch.setBatchNo(batchObj.getBatchNo());
         batch.setQuantity(batchObj.getQuantity());
         batch.setStatusCode(batchObj.getStatusCode());
         batch.setOrgId(batchObj.getOrgId());
@@ -211,5 +254,18 @@ public class ProductKeyBatchController {
         batch.setRestQuantity(batchObj.getRestQuantity());
         batch.setMarketingId(batchObj.getMarketingId());
         return batch;
+    }
+
+    private ProductKeysObject toProductKeysObject(ProductKeys productKeys) {
+        if (productKeys == null) {
+            return null;
+        }
+        ProductKeysObject object = new ProductKeysObject();
+        object.setBatchId(productKeys.getBatchId());
+        object.setQuantity(productKeys.getQuantity());
+        object.setCreatedDateTime(productKeys.getCreatedDateTime());
+        object.setProductKeyTypeCodes(productKeys.getProductKeyTypeCodes());
+        object.setProductKeys(productKeys.getProductKeys());
+        return object;
     }
 }

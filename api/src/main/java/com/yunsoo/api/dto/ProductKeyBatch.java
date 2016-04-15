@@ -3,8 +3,10 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -14,10 +16,13 @@ import java.util.List;
  * Created on:   2015/2/16
  * Descriptions:
  */
-public class ProductKeyBatch {
+public class ProductKeyBatch implements OrgIdDetectable {
 
     @JsonProperty("id")
     private String id;
+
+    @JsonProperty("batch_no")
+    private String batchNo;
 
     @JsonProperty("quantity")
     private Integer quantity;
@@ -60,6 +65,14 @@ public class ProductKeyBatch {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getBatchNo() {
+        return batchNo;
+    }
+
+    public void setBatchNo(String batchNo) {
+        this.batchNo = batchNo;
     }
 
     public Integer getQuantity() {
@@ -148,5 +161,24 @@ public class ProductKeyBatch {
 
     public void setMarketingId(String marketingId) {
         this.marketingId = marketingId;
+    }
+
+    public ProductKeyBatch() {
+    }
+
+    public ProductKeyBatch(ProductKeyBatchObject object) {
+        if (object != null) {
+            this.setId(object.getId());
+            this.setBatchNo(object.getBatchNo());
+            this.setQuantity(object.getQuantity());
+            this.setStatusCode(object.getStatusCode());
+            this.setProductKeyTypeCodes(object.getProductKeyTypeCodes());
+            this.setProductBaseId(object.getProductBaseId());
+            this.setOrgId(object.getOrgId());
+            this.setCreatedAppId(object.getCreatedAppId());
+            this.setCreatedAccountId(object.getCreatedAccountId());
+            this.setCreatedDateTime(object.getCreatedDateTime());
+            this.setMarketingId(object.getMarketingId());
+        }
     }
 }

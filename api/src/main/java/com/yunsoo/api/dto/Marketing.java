@@ -3,17 +3,20 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.MarketingObject;
 import org.joda.time.DateTime;
+
+import java.util.List;
 
 /**
  * Created by:  haitao
  * Created on:  2015/1/25
  * Descriptions:
  */
-public class Marketing {
+public class Marketing implements OrgIdDetectable {
 
     @JsonProperty("id")
     private String id;
@@ -32,6 +35,9 @@ public class Marketing {
 
     @JsonProperty("type_code")
     private String typeCode;
+
+    @JsonProperty("status_code")
+    private String statusCode;
 
     @JsonProperty("budget")
     private Double budget;
@@ -57,6 +63,15 @@ public class Marketing {
 
     @JsonProperty("product_base_name")
     private String productBaseName;
+
+    @JsonProperty("org_name")
+    private String orgName;
+
+    @JsonProperty("comments")
+    private String comments;
+
+    @JsonProperty("marketing_rules")
+    private List<MktDrawRule> marketingRules;
 
 
     public String getId() {
@@ -163,6 +178,38 @@ public class Marketing {
         this.productBaseName = productBaseName;
     }
 
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    public List<MktDrawRule> getMarketingRules() {
+        return marketingRules;
+    }
+
+    public void setMarketingRules(List<MktDrawRule> marketingRules) {
+        this.marketingRules = marketingRules;
+    }
+
     public Marketing() {
 
     }
@@ -181,7 +228,10 @@ public class Marketing {
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
             this.setModifiedDateTime(object.getModifiedDateTime());
+            this.setStatusCode(object.getStatusCode());
+            this.setComments(object.getComments());
         }
+
     }
 
     public MarketingObject toMarketingObject() {
@@ -198,6 +248,8 @@ public class Marketing {
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());
         object.setModifiedDateTime(this.getModifiedDateTime());
+        object.setStatusCode(this.getStatusCode());
+        object.setComments(this.getComments());
         return object;
     }
 

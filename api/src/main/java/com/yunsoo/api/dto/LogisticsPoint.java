@@ -1,13 +1,26 @@
 package com.yunsoo.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yunsoo.api.dto.detectable.OrgIdDetectable;
+
 /**
  * Created by Jerry on 4/29/2015.
  */
-public class LogisticsPoint {
+public class LogisticsPoint implements OrgIdDetectable {
+
+    @JsonProperty("id")
     private String id;
+
+    @JsonProperty("name")
     private String name;
+
+    @JsonProperty("description")
     private String description;
+
+    @JsonProperty("location_id")
     private int locationId;
+
+    @JsonProperty("org_id")
     private String orgId;
 
     public String getId() {

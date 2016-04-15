@@ -54,7 +54,10 @@ public class AnalysisController {
         if (StringUtils.isEmpty(batchId))
             batchId = null;
 
-        List<ScanRecordAnalysisEntity> list = scanRecordAnalysisRepository.query(orgId, startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)), endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)), productBaseId, batchId);
+        DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        DateTime endDateTime =  endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+
+        List<ScanRecordAnalysisEntity> list = scanRecordAnalysisRepository.query(orgId, startDateTime, endDateTime, productBaseId, batchId);
         return list.stream().map(ScanRecordAnalysisEntity::toDataObject).collect(Collectors.toList());
     }
 
@@ -70,7 +73,10 @@ public class AnalysisController {
         if (StringUtils.isEmpty(batchId))
             batchId = null;
 
-        List<ScanRecordLocationAnalysisEntity> list = scanRecordLocationAnalysisRepository.query(orgId,  startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)), endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)), productBaseId, batchId);
+        DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        DateTime endDateTime =  endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+
+        List<ScanRecordLocationAnalysisEntity> list = scanRecordLocationAnalysisRepository.query(orgId,  startDateTime, endDateTime, productBaseId, batchId);
         return list.stream().map(ScanRecordLocationAnalysisEntity::toDataObject).collect(Collectors.toList());
     }
 

@@ -1,16 +1,22 @@
 package com.yunsoo.data.api;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan(basePackages = "com.yunsoo.data")
 @SpringBootApplication
 public class Application {
 
+    private static Log log = LogFactory.getLog(Application.class);
+
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-        
-        System.out.println("Run DataAPI by Spring Boot. Successfully started...");
+        ConfigurableApplicationContext app = SpringApplication.run(Application.class, args);
+        app.setId("data-api");
+
+        log.info(String.format("%s started...", app.getId()));
     }
 }

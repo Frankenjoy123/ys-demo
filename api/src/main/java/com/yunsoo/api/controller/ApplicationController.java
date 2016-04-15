@@ -2,7 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.ApplicationDomain;
 import com.yunsoo.api.dto.Application;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.ApplicationObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -25,9 +25,6 @@ public class ApplicationController {
 
     @Autowired
     private ApplicationDomain applicationDomain;
-
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
 
     @RequestMapping(value = "{appId}", method = RequestMethod.GET)
@@ -54,7 +51,7 @@ public class ApplicationController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Application create(@RequestBody @Valid Application application) {
         ApplicationObject applicationObject = application.toApplicationObject();
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         applicationObject.setCreatedAccountId(currentAccountId);
         applicationObject = applicationDomain.createApplication(applicationObject);
         return new Application(applicationObject);
@@ -63,7 +60,7 @@ public class ApplicationController {
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void patchUpdate(@PathVariable String id, @RequestBody Application application) {
         ApplicationObject applicationObject = application.toApplicationObject();
-        String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         applicationObject.setId(id);
         applicationObject.setModifiedAccountId(currentAccountId);
         applicationDomain.patchUpdateApplication(applicationObject);

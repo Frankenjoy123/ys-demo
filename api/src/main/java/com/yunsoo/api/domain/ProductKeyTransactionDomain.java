@@ -34,6 +34,12 @@ public class ProductKeyTransactionDomain {
         }, orderId, statusCode);
     }
 
+    public List<ProductKeyTransactionObject> getCommittedTransactionByOrderId(String orderId) {
+        String statusCode = LookupCodes.ProductKeyTransactionStatus.COMMITTED;
+        return dataAPIClient.get("productkeytransaction?order_id={0}&status_code={1}", new ParameterizedTypeReference<List<ProductKeyTransactionObject>>() {
+        }, orderId, statusCode);
+    }
+
     /**
      * get the quantity that has not been committed to the order
      *
@@ -101,7 +107,7 @@ public class ProductKeyTransactionDomain {
         long quantityLeft = quantity;
         for (ProductKeyOrder o : orders) {
             Long remain = o.getRemain();
-            remain -= getQuantityInTransaction(o.getId()); //subtract quantity in transaction which has not been commited
+            remain -= getQuantityInTransaction(o.getId()); //subtract quantity in transaction which has not been committed
             if (quantityLeft > 0
                     && remain != null && remain > 0
                     && (o.getProductBaseId() == null || o.getProductBaseId().equals(productBaseId))) {

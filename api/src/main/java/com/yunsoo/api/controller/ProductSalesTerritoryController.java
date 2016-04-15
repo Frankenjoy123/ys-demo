@@ -2,7 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.ProductSalesTerritoryDomain;
 import com.yunsoo.api.dto.ProductSalesTerritory;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.ProductSalesTerritoryObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -26,10 +26,6 @@ public class ProductSalesTerritoryController {
 
     @Autowired
     private ProductSalesTerritoryDomain productSalesTerritoryDomain;
-
-
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -67,7 +63,7 @@ public class ProductSalesTerritoryController {
         productSalesTerritoryObject.setProductKey(productSalesTerritory.getProductKey());
         productSalesTerritoryObject.setOrgAgencyId(productSalesTerritory.getOrgAgencyId());
         if (productSalesTerritory.getCreatedAccountId() == null) {
-            String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+            String currentAccountId = AuthUtils.getCurrentAccount().getId();
             productSalesTerritoryObject.setCreatedAccountId(currentAccountId);
         }
         if (productSalesTerritory.getCreatedDateTime() == null) {
@@ -98,7 +94,7 @@ public class ProductSalesTerritoryController {
         productSalesTerritoryObject.setProductKey(productSalesTerritory.getProductKey());
         productSalesTerritoryObject.setOrgAgencyId(productSalesTerritory.getOrgAgencyId());
         if (productSalesTerritory.getModifiedAccountId() == null) {
-            String currentAccountId = tokenAuthenticationService.getAuthentication().getDetails().getId();
+            String currentAccountId = AuthUtils.getCurrentAccount().getId();
             productSalesTerritoryObject.setModifiedAccountId(currentAccountId);
         }
         if (productSalesTerritory.getModifiedDateTime() == null) {

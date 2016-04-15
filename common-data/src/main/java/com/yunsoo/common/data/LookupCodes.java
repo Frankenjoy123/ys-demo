@@ -60,6 +60,7 @@ public class LookupCodes {
 
         public static final String CREATED = "created";
         public static final String AVAILABLE = "available";
+        public static final String DISABLED = "disabled";
     }
 
     public static class MessageStatus {
@@ -150,6 +151,34 @@ public class LookupCodes {
         public static final String DEACTIVATED = "deactivated";
     }
 
+    public static class OrgStatus {
+        private OrgStatus() {
+        }
+
+        public static final String AVAILABLE = "available";
+        public static final String DISABLED = "disabled";
+        public static final String CREATED = "created";
+    }
+
+    public static class BrandApplicationStatus {
+        private BrandApplicationStatus() {
+        }
+
+        public static final String APPROVED = "approved";
+        public static final String REJECTED = "rejected";
+        public static final String CREATED = "created";
+        public static final String PAID = "paid";
+    }
+
+    public static class OrgType {
+        private OrgType() {
+        }
+
+        public static final String TECH = "tech";
+        public static final String CARRIER = "carrier";
+        public static final String BRAND = "brand";
+    }
+
     public static class MktDrawPrizeStatus {
         private MktDrawPrizeStatus() {
         }
@@ -161,6 +190,41 @@ public class LookupCodes {
 
     }
 
+    public static class MktStatus {
+        private MktStatus() {
+        }
+
+        public static final String CREATED = "created";
+        public static final String AVAILABLE = "available";
+        public static final String PAID = "paid";
+        public static final String DISABLED = "disabled";
+        public static final String REJECTED = "rejected";
+    }
+
+    public static class PaymentStatus {
+        private PaymentStatus() {
+        }
+
+        public static final String CREATED = "created";
+        public static final String PAID = "paid";
+        public static final String FAILED = "failed";
+    }
+
+    public static class PaymentType {
+        private PaymentType() {
+        }
+
+        public static final String ALIPAY = "alipay";
+    }
+
+
+    public static class PermissionRegionType {
+        private PermissionRegionType() {
+        }
+
+        public static final String DEFAULT = "default";
+
+    }
 
 
     public enum LookupType {
@@ -181,13 +245,13 @@ public class LookupCodes {
             this.type = type;
         }
 
-        public static LookupType toLookupType(String typeCode){
-            if(typeCode == null)
-                return  null;
-           for(LookupType type : LookupType.values()){
-               if(typeCode.equals(type.type))
-                   return type;
-           }
+        public static LookupType toLookupType(String typeCode) {
+            if (typeCode == null)
+                return null;
+            for (LookupType type : LookupType.values()) {
+                if (typeCode.equals(type.type))
+                    return type;
+            }
             return null;
         }
 

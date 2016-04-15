@@ -2,7 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.ProductFileDomain;
 import com.yunsoo.api.dto.Package;
-import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.PackageBoundObject;
 import com.yunsoo.common.data.object.ProductFileObject;
 import com.yunsoo.common.util.DateTimeUtils;
@@ -44,8 +44,6 @@ public class PackageController {
     @Autowired
     private ProductFileDomain productFileDomain;
 
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
     @RequestMapping(value = "/{key}", method = RequestMethod.GET)
     public Package getDetailByKey(@PathVariable(value = "key") String key) {
@@ -86,7 +84,7 @@ public class PackageController {
         Iterator<String> itr = request.getFileNames();
         MultipartFile file = request.getFile(itr.next());
 
-        String createdBy = tokenAuthenticationService.getAuthentication().getDetails().getId();
+        String createdBy = AuthUtils.getCurrentAccount().getId();
 
         ProductFileObject productFileObject = new ProductFileObject();
         productFileObject.setFileName(file.getOriginalFilename());

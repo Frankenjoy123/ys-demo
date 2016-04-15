@@ -69,6 +69,10 @@ public class MktDrawPrize {
     @JsonProperty("scan_record")
     private ScanRecord scanRecord;
 
+    @JsonProperty("mkt_draw_rule")
+    private MktDrawRule mktDrawRule;
+
+
     public String getDrawRecordId() {
         return drawRecordId;
     }
@@ -203,6 +207,14 @@ public class MktDrawPrize {
 
     public void setScanRecord(ScanRecord scanRecord) {
         this.scanRecord = scanRecord;
+    }
+
+    public MktDrawRule getMktDrawRule() {
+        return mktDrawRule;
+    }
+
+    public void setMktDrawRule(MktDrawRule mktDrawRule) {
+        this.mktDrawRule = mktDrawRule;
     }
 
     public MktDrawPrize() {
