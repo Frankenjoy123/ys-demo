@@ -134,7 +134,7 @@ public class OrganizationController {
         accountObject.setPhone(returnObj.getContactMobile());
         accountObject.setOrgId(returnObj.getId());
         accountObject.setCreatedAccountId(currentAccountId);
-        AccountObject createdAccount = accountDomain.createAccount(accountObject);
+        AccountObject createdAccount = accountDomain.createAccount(accountObject, true);
         permissionAllocationDomain.allocateAdminPermissionToAccount(createdAccount.getId());
 
         return returnObj;

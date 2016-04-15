@@ -76,12 +76,13 @@ public class AccountDomain {
         return dataAPIClient.get("account/count" + query, Long.class);
     }
 
-    public AccountObject createAccount(AccountObject accountObject) {
-        String hashSalt = RandomUtils.generateString(8);
-        String password = hashPassword(accountObject.getPassword(), hashSalt);
-        accountObject.setHashSalt(hashSalt);
-        accountObject.setPassword(password);
-
+    public AccountObject createAccount(AccountObject accountObject, boolean generateHash) {
+        if(generateHash) {
+            String hashSalt = RandomUtils.generateString(8);
+            String password = hashPassword(accountObject.getPassword(), hashSalt);
+            accountObject.setHashSalt(hashSalt);
+            accountObject.setPassword(password);
+        }
         return createAccountWithSalt(accountObject);
     }
 

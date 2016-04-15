@@ -91,7 +91,7 @@ public class AccountController {
         AccountObject accountObject = toAccountObject(request);
         accountObject.setCreatedAccountId(currentAccountId);
 
-        return new Account(accountDomain.createAccount(accountObject));
+        return new Account(accountDomain.createAccount(accountObject, true));
     }
 
     @RequestMapping(value = "{id}/disable", method = RequestMethod.PATCH)
