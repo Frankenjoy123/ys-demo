@@ -24,6 +24,7 @@ import org.springframework.util.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -144,11 +145,15 @@ public class OrganizationDomain {
     }
 
     public void saveOrgLogo(String orgId, byte[] imageDataBytes) {
+        saveOrgLogo(orgId, new ByteArrayInputStream(imageDataBytes));
+    }
+
+    public void saveOrgLogo(String orgId, InputStream logoStream) {
         String logoImage128x128 = ORG_LOGO_IMAGE_128X128;
         String logoImage200x200 = ORG_LOGO_IMAGE_200X200;
         try {
             //128x128
-            ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
+            ImageProcessor imageProcessor = new ImageProcessor().read(logoStream);
             ByteArrayOutputStream logo128x128OutputStream = new ByteArrayOutputStream();
             imageProcessor.resize(128, 128).write(logo128x128OutputStream, "png");
             dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",

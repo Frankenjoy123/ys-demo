@@ -88,6 +88,7 @@ public class BrandApplicationController {
         return brandDomain.count(id, LookupCodes.BrandApplicationStatus.CREATED);
     }
 
+
     @RequestMapping(value = "{id}/approve", method = RequestMethod.PUT)
     public boolean approveBrandApplication(@PathVariable("id") String id){
         try {
@@ -98,6 +99,8 @@ public class BrandApplicationController {
             object.setTypeCode(LookupCodes.OrgType.BRAND);
             object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
             BrandObject createdBrand = organizationDomain.createBrand(object);
+
+            organizationDomain.saveOrgLogo(createdBrand.getId(), organizationDomain.getLogoImage(id, "image-128x128"));
 
             permissionDomain.putOrgRestrictionToDefaultPermissionRegion(object.getCarrierId(), createdBrand.getId());
 
