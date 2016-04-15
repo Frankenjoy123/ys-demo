@@ -193,7 +193,7 @@ public class MarketingController {
         if (!StringUtils.isEmpty(startTime.toString()))
             startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
         if (!StringUtils.isEmpty(endTime.toString()))
-            endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+            endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
         Page<MktDrawPrizeEntity> entityPage = mktDrawPrizeRepository.query(marketingId, accountType, statusCode, startDateTime, endDateTime, pageable);
 
