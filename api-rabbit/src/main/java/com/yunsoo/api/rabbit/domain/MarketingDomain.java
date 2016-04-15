@@ -6,8 +6,7 @@ import com.yunsoo.common.data.object.MktDrawPrizeObject;
 import com.yunsoo.common.data.object.MktDrawRecordObject;
 import com.yunsoo.common.data.object.MktDrawRuleObject;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.util.QueryStringBuilder;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -29,6 +28,17 @@ public class MarketingDomain {
     @Autowired
     private RestClient dataAPIClient;
 
+    public MarketingObject getMarketingById(String id) {
+        if (id == null) {
+            return null;
+        }
+        try {
+            return dataAPIClient.get("marketing/{id}", MarketingObject.class, id);
+        } catch (NotFoundException ignored) {
+            return null;
+        }
+    }
+
     public MktDrawRecordObject getMktDrawRecordByProductKey(String key) {
         return dataAPIClient.get("marketing/draw/{key}", MktDrawRecordObject.class, key);
     }
@@ -49,25 +59,20 @@ public class MarketingDomain {
         return dataAPIClient.post("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
     }
 
-    public void updateMktDrawPrize(MktDrawPrizeObject mktDrawPrizeObject){
+    public void updateMktDrawPrize(MktDrawPrizeObject mktDrawPrizeObject) {
         dataAPIClient.put("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
     }
 
 
-
-    public List<MktDrawRuleObject> getRuleList(String marketingId){
-        return dataAPIClient.get("marketing/drawRule/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>(){}, marketingId);
-
-    }
-
-    public MarketingObject getMarketing(String marketingId){
-        return dataAPIClient.get("marketing/{id}", MarketingObject.class, marketingId);
+    public List<MktDrawRuleObject> getRuleList(String marketingId) {
+        return dataAPIClient.get("marketing/drawRule/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>() {
+        }, marketingId);
 
     }
 
-    public MktDrawRuleObject getMktRandomPrize(String marketId){
+    public MktDrawRuleObject getMktRandomPrize(String marketId) {
         MarketingObject obj = dataAPIClient.get("marketing/{id}", MarketingObject.class, marketId);
-        if(obj.getBalance() <=0)
+        if (obj.getBalance() <= 0)
             return null;
 
         List<MktDrawRuleObject> ruleList = getRuleList(marketId);
@@ -75,15 +80,15 @@ public class MarketingDomain {
 
         Map<Double, MktDrawRuleObject> prizeArray = new HashMap<>();
 
-        for(MktDrawRuleObject rule : ruleList){
-            int ruleQuantity = (int)(rule.getProbability() * totalQuantity);
-            for(int i=0; i<ruleQuantity; i++){
+        for (MktDrawRuleObject rule : ruleList) {
+            int ruleQuantity = (int) (rule.getProbability() * totalQuantity);
+            for (int i = 0; i < ruleQuantity; i++) {
                 double index = Math.floor(Math.random() * totalQuantity);
-                while(prizeArray.containsKey(index)){
-                    index +=1;
-                    if(prizeArray.size() >= totalQuantity)
+                while (prizeArray.containsKey(index)) {
+                    index += 1;
+                    if (prizeArray.size() >= totalQuantity)
                         break;
-                    if(index > totalQuantity)
+                    if (index > totalQuantity)
                         index = index - totalQuantity;
                 }
 
@@ -92,7 +97,7 @@ public class MarketingDomain {
         }
 
         double index = Math.floor(Math.random() * totalQuantity);
-        if(prizeArray.containsKey(index) && obj.getBalance() >= prizeArray.get(index).getAmount())
+        if (prizeArray.containsKey(index) && obj.getBalance() >= prizeArray.get(index).getAmount())
             return prizeArray.get(index);
         else
             return null;
