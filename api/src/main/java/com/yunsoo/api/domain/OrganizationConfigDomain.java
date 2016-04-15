@@ -3,7 +3,6 @@ package com.yunsoo.api.domain;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yunsoo.api.Constants;
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.DomainDirectoryObject;
@@ -47,13 +46,13 @@ public class OrganizationConfigDomain {
         if (domain != null) {
             orgId = domain.getOrgId();
         }
-        if (orgId == null || orgId.length() == 0) {
-            orgId = Constants.Ids.YUNSU_ORG_ID;
-        }
         return getOrgConfigByOrgId(orgId);
     }
 
     public OrganizationConfigObject getOrgConfigByOrgId(String orgId) {
+        if (orgId == null) {
+            return null;
+        }
         ResourceInputStream resourceInputStream = fileDomain.getFile(getConfigFilePath(orgId));
         if (resourceInputStream == null) {
             return null;
