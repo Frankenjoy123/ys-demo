@@ -1,10 +1,7 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.Constants;
-import com.yunsoo.api.rabbit.domain.OrganizationDomain;
-import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
-import com.yunsoo.api.rabbit.domain.ProductDomain;
-import com.yunsoo.api.rabbit.domain.UserScanDomain;
+import com.yunsoo.api.rabbit.domain.*;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.api.rabbit.dto.WebScanRequest;
 import com.yunsoo.api.rabbit.dto.WebScanResponse;
@@ -46,6 +43,9 @@ public class WebScanController {
 
     @Autowired
     private UserScanDomain userScanDomain;
+
+    @Autowired
+    private MarketingDomain marketingDomain;
 
 
     //region 一物一码
@@ -234,8 +234,11 @@ public class WebScanController {
     private WebScanResponse.Marketing getMarketingInfo(String marketingId) {
         WebScanResponse.Marketing marketing = null;
         if (marketingId != null) {
-            marketing = new WebScanResponse.Marketing();
-            marketing.setId(marketingId);
+            MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+            if (marketingObject != null && LookupCodes.MktStatus.PAID.equals(marketingObject.getStatusCode())) {
+                marketing = new WebScanResponse.Marketing();
+                marketing.setId(marketingId);
+            }
         }
         return marketing;
     }
