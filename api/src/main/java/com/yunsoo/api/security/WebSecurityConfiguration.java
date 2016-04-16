@@ -51,6 +51,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/organization/*/brand_logo").permitAll()
                 .antMatchers(HttpMethod.POST, "/brand/**").permitAll()
                 .antMatchers(HttpMethod.PUT, "/brand").permitAll()
+                .antMatchers(HttpMethod.GET, "/brand/attachment/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/brand").permitAll()
                 .antMatchers("/payment/brand/**").permitAll()
                 .anyRequest().authenticated().and()

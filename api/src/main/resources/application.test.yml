@@ -17,7 +17,7 @@ yunsoo:
       baseurl: http://localhost:3080/
     processor:
       baseurl: http://localhost:4080/
-  product_key_base_url: http://t.m.yunsu.co:9080/
+  product_key_base_url: https://t-m.yunsu.co:9443/
   cache:
     type: redis
     redis:
@@ -35,7 +35,10 @@ yunsoo:
     key: e0opacdva54q9todmujp0vc5pwqlcj10
     account_name: 广州云溯科技有限公司
     email: zhe@yunsu.co
-    notify_url: http://api.test.yunsu.co:6080/marketing/alipay/notify
+    amount: 0.01
+    notify_url: http://test-api.yunsu.co:6080/marketing/alipay/notify
+    direct_return_url: http://test-enterprise.yunsu.co:9080/enterprise/brandapplication.html
+    direct_notify_url: http://test-api.yunsu.co:6080/payment/brand/alipay/notify
 
 spring:
   mvc:
