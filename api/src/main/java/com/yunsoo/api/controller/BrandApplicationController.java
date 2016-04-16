@@ -176,10 +176,10 @@ public class BrandApplicationController {
             existingBrand.setEmail(brand.getEmail());
             existingBrand.setComments(brand.getComments());
             existingBrand.setAttachment(brand.getAttachment());
-            if(brand.getAttachment().endsWith(","))
+            if(StringUtils.hasText(brand.getAttachment()) && brand.getAttachment().endsWith(","))
                 existingBrand.setAttachment(brand.getAttachment().substring(0, brand.getAttachment().length() -1 ));
             existingBrand.setInvestigatorComments(brand.getInvestigatorComments());
-            if(brand.getInvestigatorAttachment().endsWith(","))
+            if(StringUtils.hasText(brand.getInvestigatorAttachment()) && brand.getInvestigatorAttachment().endsWith(","))
                 existingBrand.setInvestigatorAttachment(brand.getInvestigatorAttachment().substring(0, brand.getInvestigatorAttachment().length() -1 ));
 
 
