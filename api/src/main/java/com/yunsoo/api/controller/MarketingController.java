@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -168,6 +169,7 @@ public class MarketingController {
 
     //create marketing plan
     @RequestMapping(value = "", method = RequestMethod.POST)
+    @PreAuthorize("hasPermission(#marketing.orgId, 'org', 'marketing:create')")
     public Marketing createMarketing(@RequestParam(value = "batchId", required = false) String batchId,
                                      @RequestBody Marketing marketing) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
