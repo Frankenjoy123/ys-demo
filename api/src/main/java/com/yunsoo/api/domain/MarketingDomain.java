@@ -109,13 +109,26 @@ public class MarketingDomain {
         return totalQuantity;
     }
 
-    public Long countProductKeysByMarketingId(String marketingId) {
-        Long totalQuantity = dataAPIClient.get("productkeybatch/sum/quantity?marketing_id=" + marketingId, Long.class);
+    public Long countProductKeysByMarketingId(String marketingId, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("marketing_id", marketingId)
+                .append("start_time", startTime)
+                .append("end_time", endTime)
+                .build();
+
+        Long totalQuantity = dataAPIClient.get("productkeybatch/sum/quantity" + query, Long.class);
         return totalQuantity;
     }
 
-    public Long countDrawRecordsByMarketingId(String marketingId) {
-        Long totalQuantity = dataAPIClient.get("marketing/drawRecord/sum?marketing_id=" + marketingId, Long.class);
+    public Long countDrawRecordsByMarketingId(String marketingId, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime) {
+
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("marketing_id", marketingId)
+                .append("start_time", startTime)
+                .append("end_time", endTime)
+                .build();
+
+        Long totalQuantity = dataAPIClient.get("marketing/drawRecord/sum" + query, Long.class);
         return totalQuantity;
     }
 
@@ -125,8 +138,16 @@ public class MarketingDomain {
     }
 
 
-    public Long countDrawPrizeByDrawRuleId(String drawRuleId) {
-        Long totalQuantity = dataAPIClient.get("marketing/drawPrize/sum?draw_rule_id=" + drawRuleId, Long.class);
+    public Long countDrawPrizeByDrawRuleId(String drawRuleId, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime) {
+
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("draw_rule_id", drawRuleId)
+                .append("start_time", startTime)
+                .append("end_time", endTime)
+                .build();
+
+        Long totalQuantity = dataAPIClient.get("marketing/drawPrize/sum" + query, Long.class);
+
         return totalQuantity;
     }
 

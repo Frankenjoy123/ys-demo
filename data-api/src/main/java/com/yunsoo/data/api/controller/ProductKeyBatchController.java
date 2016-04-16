@@ -15,6 +15,7 @@ import com.yunsoo.data.service.service.contract.ProductKeys;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -124,12 +125,22 @@ public class ProductKeyBatchController {
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "product_base_id", required = false) String productBaseId,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
-            @RequestParam(value = "marketing_id", required = false) String marketingId) {
+            @RequestParam(value = "marketing_id", required = false) String marketingId,
+            @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+            @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime) {
         Long sum;
         if (statusCodeIn != null && statusCodeIn.size() > 0) {
             sum = productKeyBatchRepository.sumQuantity(orgId, productBaseId, statusCodeIn);
         } else {
-            sum = productKeyBatchRepository.sumQuantity(orgId, productBaseId, marketingId);
+            DateTime startDateTime = null;
+            DateTime endDateTime = null;
+
+            if ((startTime != null) && !StringUtils.isEmpty(startTime.toString()))
+                startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+            if ((endTime != null) && !StringUtils.isEmpty(endTime.toString()))
+                endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+
+            sum = productKeyBatchRepository.sumQuantityMarketing(orgId, productBaseId, marketingId, startDateTime, endDateTime);
         }
         return sum == null ? 0L : sum;
     }

@@ -2,6 +2,9 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.MktDrawRecordEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
+import org.joda.time.DateTime;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -15,6 +18,14 @@ public interface MktDrawRecordRepository extends FindOneAndSaveRepository<MktDra
     List<MktDrawRecordEntity> findByProductKey(String productKey);
 
     Long countByMarketingId(String marketingId);
+
+    @Query("select count(o.id) from #{#entityName} o where " +
+            "(o.marketingId = :marketingId) " +
+            "and (:startTime is null or o.createdDateTime >= :startTime) " +
+            "and (:endTime is null or o.createdDateTime <= :endTime) ")
+    Long sumByMarketingId(@Param("marketingId") String orgId,
+                          @Param("startTime") DateTime startTime,
+                          @Param("endTime") DateTime endTime);
 
 
 }

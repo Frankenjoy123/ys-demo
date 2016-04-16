@@ -29,6 +29,13 @@ public interface MktDrawPrizeRepository extends FindOneAndSaveRepository<MktDraw
 
     Long countByDrawRuleId(String drawRuleId);
 
+    @Query("select count(o.drawRecordId) from #{#entityName} o where " +
+            "(o.drawRuleId = :drawRuleId) " +
+            "and (:startTime is null or o.createdDateTime >= :startTime) " +
+            "and (:endTime is null or o.createdDateTime <= :endTime) ")
+    Long sumDrawRuleId(@Param("drawRuleId") String drawRuleId, @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime);
+
+
     @Query("select o from #{#entityName} o where " +
             "(o.marketingId = :marketingId) " +
             "and (:accountType is null or o.accountType = :accountType) " +
