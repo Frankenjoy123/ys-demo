@@ -117,7 +117,7 @@ public class OrganizationDomain {
         object.setCreatedDateTime(DateTime.now());
         object.setTypeCode(LookupCodes.OrgType.BRAND);
         object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
-        if (object.getAttachment().endsWith(","))
+        if (StringUtils.hasText(object.getAttachment()) && object.getAttachment().endsWith(","))
             object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() - 1));
         return dataAPIClient.post("organization/brand", object, BrandObject.class);
     }

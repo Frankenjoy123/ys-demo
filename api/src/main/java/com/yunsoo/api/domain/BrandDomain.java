@@ -41,7 +41,7 @@ public class BrandDomain {
         String password =  HashUtils.sha1HexString(object.getPassword() + hashSalt);
         object.setHashSalt(hashSalt);
         object.setPassword(password);
-        if(object.getAttachment().endsWith(","))
+        if(StringUtils.hasText(object.getAttachment()) && object.getAttachment().endsWith(","))
             object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() -1 ));
         return dataAPIClient.post("brand", object, BrandObject.class);
     }
