@@ -1,10 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.*;
-import com.yunsoo.api.dto.Marketing;
-import com.yunsoo.api.dto.MktDrawPrize;
-import com.yunsoo.api.dto.MktDrawRule;
-import com.yunsoo.api.dto.ScanRecord;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.payment.ParameterNames;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
@@ -73,6 +70,51 @@ public class MarketingController {
         return new MktDrawRule(newMktDrawRuleObject);
     }
 
+    //query marketing plan by org id
+    @RequestMapping(value = "analysis", method = RequestMethod.GET)
+    public List<MarketingResult> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                             @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                             @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
+                                             Pageable pageable,
+                                             HttpServletResponse response) {
+        orgId = AuthUtils.fixOrgId(orgId);
+
+        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.PAID, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", marketingPage.toContentRange());
+        }
+
+        List<MarketingResult> marketingResultList = new ArrayList<>();
+
+        marketingPage.getContent().forEach(object -> {
+            MarketingResult marketingResult = new MarketingResult();
+
+            String marketingId = object.getId();
+            String marketingName = object.getName();
+            Long totalNumber = marketingDomain.countProductKeysByMarketingId(marketingId, startTime, endTime);
+            Long marketingNumber = marketingDomain.countDrawRecordsByMarketingId(marketingId, startTime, endTime);
+
+            marketingResult.setId(marketingId);
+            marketingResult.setName(marketingName);
+            marketingResult.setTotalNumber(totalNumber);
+            marketingResult.setMarketingNumber(marketingNumber);
+
+            List<MktDrawRule> mktDrawRuleList = marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
+            List<Long> prizeCountList = new ArrayList<>();
+
+            if (mktDrawRuleList.size() > 0) {
+                marketingResult.setRuleList(mktDrawRuleList);
+                for (MktDrawRule mktDrawRule : mktDrawRuleList) {
+                    Long ruleNumber = marketingDomain.countDrawPrizeByDrawRuleId(mktDrawRule.getId(), startTime, endTime);
+                    prizeCountList.add(ruleNumber);
+                }
+                marketingResult.setPrizeCountList(prizeCountList);
+            }
+            marketingResultList.add(marketingResult);
+        });
+        return marketingResultList;
+
+    }
 
 
     //query marketing plan by org id
@@ -195,27 +237,33 @@ public class MarketingController {
 
 
     @RequestMapping(value = "keys/sum/{id}", method = RequestMethod.GET)
-    public Long countKeysByMarketingId(@PathVariable(value = "id") String marketingId) {
+    public Long countKeysByMarketingId(@PathVariable(value = "id") String marketingId,
+                                       @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                       @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime) {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        return marketingDomain.countProductKeysByMarketingId(marketingId);
+        return marketingDomain.countProductKeysByMarketingId(marketingId, startTime, endTime);
     }
 
     @RequestMapping(value = "drawRecords/sum/{id}", method = RequestMethod.GET)
-    public Long countDrawRecordsByMarketingId(@PathVariable(value = "id") String marketingId) {
+    public Long countDrawRecordsByMarketingId(@PathVariable(value = "id") String marketingId,
+                                              @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                              @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime) {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        return marketingDomain.countDrawRecordsByMarketingId(marketingId);
+        return marketingDomain.countDrawRecordsByMarketingId(marketingId, startTime, endTime);
     }
 
     @RequestMapping(value = "drawPrize/sum/{id}", method = RequestMethod.GET)
-    public Long countDrawPrizeByDrawRuleId(@PathVariable(value = "id") String drawRuleId) {
+    public Long countDrawPrizeByDrawRuleId(@PathVariable(value = "id") String drawRuleId,
+                                           @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                           @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime) {
         if (drawRuleId == null)
             throw new BadRequestException("draw rule id can not be null");
 
-        return marketingDomain.countDrawPrizeByDrawRuleId(drawRuleId);
+        return marketingDomain.countDrawPrizeByDrawRuleId(drawRuleId, startTime, endTime);
     }
 
 
