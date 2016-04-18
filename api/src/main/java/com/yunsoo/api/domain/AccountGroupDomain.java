@@ -1,9 +1,11 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.DataAPIClient;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.GroupObject;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -51,6 +53,15 @@ public class AccountGroupDomain {
 
     public AccountGroupObject createAccountGroup(AccountGroupObject accountGroupObject) {
         return dataAPIClient.post("accountgroup", accountGroupObject, AccountGroupObject.class);
+    }
+
+    public void putAccountGroup(String accountId, String groupId) {
+        AccountGroupObject obj = new AccountGroupObject();
+        obj.setAccountId(accountId);
+        obj.setGroupId(groupId);
+        obj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
+        obj.setCreatedDateTime(DateTime.now());
+        dataAPIClient.put("accountgroup", obj);
     }
 
     public void deleteAccountGroupByAccountIdAndGroupId(String accountId, String groupId) {

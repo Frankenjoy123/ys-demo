@@ -58,10 +58,22 @@ public class AccountGroupController {
         return toAccountGroupObject(newEntity);
     }
 
+    @RequestMapping(value = "", method = RequestMethod.PUT)
+    public void put(@RequestBody @Valid AccountGroupObject obj) {
+        List<AccountGroupEntity> existItems = accountGroupRepository.findByAccountIdAndGroupId(obj.getAccountId(), obj.getGroupId());
+        if (existItems.size() == 0) {
+            AccountGroupEntity entity = toAccountGroupEntity(obj);
+            if (entity.getCreatedDateTime() == null) {
+                entity.setCreatedDateTime(DateTime.now());
+            }
+            accountGroupRepository.save(entity);
+        }
+    }
+
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteByAccountIdAndGroupId(@RequestParam(value = "account_id", required = false) String accountId,
-                                            @RequestParam(value = "group_id", required = false) String groupId) {
+    public void delete(@RequestParam(value = "account_id", required = false) String accountId,
+                       @RequestParam(value = "group_id", required = false) String groupId) {
         if (accountId == null) {
             if (groupId == null) {
                 throw new BadRequestException("accountId and groupId should not be null neither");
