@@ -135,7 +135,7 @@ public class BrandApplicationController {
             BrandObject object = brandDomain.getBrandById(id);
             object.setStatusCode(LookupCodes.BrandApplicationStatus.REJECTED);
             if(StringUtils.hasText(comments))
-                object.setComments(comments);
+                object.setInvestigatorComments(comments);
             brandDomain.updateBrand(object);
             return  true;
         }
@@ -161,7 +161,7 @@ public class BrandApplicationController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public void updateBrand(@PathVariable("id")String id, @RequestBody Brand brand) {
+    public void updateBrand(@PathVariable("id")String id, @RequestParam(value = "carrier", required = false) boolean inCarrier, @RequestBody Brand brand) {
         BrandObject existingBrand = brandDomain.getBrandById(id);
         if(existingBrand.getStatusCode().equals(LookupCodes.BrandApplicationStatus.APPROVED))
             throw new BadRequestException("could not update with status approved");
@@ -176,21 +176,23 @@ public class BrandApplicationController {
             existingBrand.setEmail(brand.getEmail());
             existingBrand.setComments(brand.getComments());
             existingBrand.setAttachment(brand.getAttachment());
-            if(brand.getAttachment().endsWith(","))
+            if(StringUtils.hasText(brand.getAttachment()) && brand.getAttachment().endsWith(","))
                 existingBrand.setAttachment(brand.getAttachment().substring(0, brand.getAttachment().length() -1 ));
             existingBrand.setInvestigatorComments(brand.getInvestigatorComments());
-            if(brand.getInvestigatorAttachment().endsWith(","))
+            if(StringUtils.hasText(brand.getInvestigatorAttachment()) && brand.getInvestigatorAttachment().endsWith(","))
                 existingBrand.setInvestigatorAttachment(brand.getInvestigatorAttachment().substring(0, brand.getInvestigatorAttachment().length() -1 ));
-
+            if(existingBrand.getStatusCode().equals(LookupCodes.BrandApplicationStatus.REJECTED) && !inCarrier){
+                if(StringUtils.hasText(existingBrand.getPaymentId()))
+                    existingBrand.setStatusCode(LookupCodes.BrandApplicationStatus.APPROVED);
+                else
+                    existingBrand.setStatusCode(LookupCodes.BrandApplicationStatus.CREATED);
+            }
 
             brandDomain.updateBrand(existingBrand);
         }
         else
             throw new NotFoundException("No such brand found");
     }
-
-
-
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<Brand> getByFilter(

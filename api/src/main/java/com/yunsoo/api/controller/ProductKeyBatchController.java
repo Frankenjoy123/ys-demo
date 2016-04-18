@@ -2,6 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.FileDomain;
+import com.yunsoo.api.domain.MarketingDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.ProductBase;
@@ -9,6 +10,7 @@ import com.yunsoo.api.dto.ProductBatchCollection;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyBatchRequest;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.support.YSFile;
@@ -53,6 +55,9 @@ public class ProductKeyBatchController {
 
     @Autowired
     private ProductBaseDomain productBaseDomain;
+
+    @Autowired
+    private MarketingDomain marketingDomain;
 
     @Autowired
     private ProductKeyDomain productKeyDomain;
@@ -228,6 +233,9 @@ public class ProductKeyBatchController {
             throw new NotFoundException("product key batch not found");
         }
         productKeyDomain.putMarketingId(id, marketingId);
+        MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+        marketingObject.setProductBaseId(productKeyDomain.getProductKeyBatchById(id).getProductBaseId());
+        marketingDomain.updateMarketing(marketingObject);
     }
 
 

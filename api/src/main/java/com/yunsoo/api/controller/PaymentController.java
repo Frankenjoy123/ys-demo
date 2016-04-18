@@ -44,11 +44,7 @@ public class PaymentController {
         paymentObject.setTradeNo(id);
         paymentObject.setTypeCode(LookupCodes.PaymentType.ALIPAY);
         PaymentObject pObject = paymentDomain.createAlipayPayment(paymentObject);
-        String paymentId = pObject.getId();
-        BrandObject brandObject = brandDomain.getBrandById(id);
-        brandObject.setPaymentId(paymentId);
-        brandDomain.updateBrand(brandObject);
-        Map<String, String> parametersMap = paymentDomain.getAlipaySubmitParametersByPaymentId(paymentId);
+        Map<String, String> parametersMap = paymentDomain.getAlipaySubmitParametersByPaymentId(pObject.getId());
         return parametersMap;
     }
 
@@ -74,7 +70,7 @@ public class PaymentController {
                 paymentDomain.updateAlipayPayment(paymentObject);
 
                 BrandObject brandObject = brandDomain.getBrandById(paymentObject.getBrandApplicationId());
-                brandObject.setStatusCode(LookupCodes.BrandApplicationStatus.PAID);
+                brandObject.setPaymentId(paymentId);
                 brandDomain.updateBrand(brandObject);
             } else {
                 paymentObject.setStatusCode(LookupCodes.PaymentStatus.FAILED);
@@ -103,7 +99,7 @@ public class PaymentController {
             paymentDomain.updateAlipayPayment(paymentObject);
 
             BrandObject brandObject = brandDomain.getBrandById(paymentObject.getBrandApplicationId());
-            brandObject.setStatusCode(LookupCodes.BrandApplicationStatus.PAID);
+            brandObject.setPaymentId(paymentId);
             brandDomain.updateBrand(brandObject);
         } else {
             paymentObject.setStatusCode(LookupCodes.PaymentStatus.FAILED);

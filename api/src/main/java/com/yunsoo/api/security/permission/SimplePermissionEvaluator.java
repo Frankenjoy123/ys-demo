@@ -84,6 +84,9 @@ public class SimplePermissionEvaluator implements PermissionEvaluator {
 
     private RestrictionExpression detectRestriction(Object targetDomainObject) {
         if (targetDomainObject instanceof Collection<?>) {
+            if (((Collection) targetDomainObject).size() == 0) {
+                return OrgRestrictionExpression.NONE;
+            }
             List<RestrictionExpression> restrictions = ((Collection<?>) targetDomainObject)
                     .stream()
                     .map(this::detectRestriction)

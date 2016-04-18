@@ -2,6 +2,7 @@ package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yunsoo.api.dto.detectable.OrgIdDetectable;
+import com.yunsoo.common.data.object.AccountObject;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
@@ -93,5 +94,17 @@ public class AccountRequest implements OrgIdDetectable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public AccountObject toAccountObject() {
+        AccountObject accountObject = new AccountObject();
+        accountObject.setOrgId(this.getOrgId());
+        accountObject.setIdentifier(this.getIdentifier());
+        accountObject.setEmail(this.getEmail());
+        accountObject.setFirstName(this.getFirstName());
+        accountObject.setLastName(this.getLastName());
+        accountObject.setPhone(this.getPhone());
+        accountObject.setPassword(this.getPassword());
+        return accountObject;
     }
 }

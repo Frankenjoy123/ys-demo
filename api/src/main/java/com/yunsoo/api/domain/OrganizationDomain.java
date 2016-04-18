@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
@@ -72,6 +73,7 @@ public class OrganizationDomain {
             return dataAPIClient.get("organization/{id}/brand/count", Integer.class, id);
     }
 
+    @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
     public void updateOrganizationStatus(String id, String status) {
         OrganizationObject org = getOrganizationById(id);
         org.setStatusCode(status);
@@ -117,7 +119,7 @@ public class OrganizationDomain {
         object.setCreatedDateTime(DateTime.now());
         object.setTypeCode(LookupCodes.OrgType.BRAND);
         object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
-        if (object.getAttachment().endsWith(","))
+        if (StringUtils.hasText(object.getAttachment()) && object.getAttachment().endsWith(","))
             object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() - 1));
         return dataAPIClient.post("organization/brand", object, BrandObject.class);
     }

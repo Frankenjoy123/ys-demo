@@ -126,11 +126,22 @@ public class MarketingController {
     //query marketing prize, provide API
     @RequestMapping(value = "/drawRecord/sum", method = RequestMethod.GET)
     public Long countDrawRecordByMarketingId(
-            @RequestParam(value = "marketing_id") String marketingId) {
+            @RequestParam(value = "marketing_id") String marketingId,
+            @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+            @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime) {
         if (marketingId == null) {
             throw new BadRequestException("marketing id is not valid");
         }
-        Long quantity = mktDrawRecordRepository.countByMarketingId(marketingId);
+
+        DateTime startDateTime = null;
+        DateTime endDateTime = null;
+
+        if ((startTime != null) && !StringUtils.isEmpty(startTime.toString()))
+            startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        if ((endTime != null) && !StringUtils.isEmpty(endTime.toString()))
+            endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+
+        Long quantity = mktDrawRecordRepository.sumByMarketingId(marketingId, startDateTime, endDateTime);
         return quantity;
     }
 
@@ -162,11 +173,21 @@ public class MarketingController {
     //query marketing prize, provide API
     @RequestMapping(value = "/drawPrize/sum", method = RequestMethod.GET)
     public Long countDrawPrizeByDrawRuleId(
-            @RequestParam(value = "draw_rule_id") String drawRuleId) {
+            @RequestParam(value = "draw_rule_id") String drawRuleId,
+            @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+            @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime) {
         if (drawRuleId == null) {
             throw new BadRequestException("draw rule id is not valid");
         }
-        Long quantity = mktDrawPrizeRepository.countByDrawRuleId(drawRuleId);
+        DateTime startDateTime = null;
+        DateTime endDateTime = null;
+
+        if ((startTime != null) && !StringUtils.isEmpty(startTime.toString()))
+            startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        if ((endTime != null) && !StringUtils.isEmpty(endTime.toString()))
+            endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+
+        Long quantity = mktDrawPrizeRepository.sumDrawRuleId(drawRuleId, startDateTime, endDateTime);
         return quantity;
     }
 
@@ -190,9 +211,9 @@ public class MarketingController {
         DateTime startDateTime = null;
         DateTime endDateTime = null;
 
-        if (!StringUtils.isEmpty(startTime.toString()))
+        if ((startTime != null) && !StringUtils.isEmpty(startTime.toString()))
             startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
-        if (!StringUtils.isEmpty(endTime.toString()))
+        if ((endTime != null) && !StringUtils.isEmpty(endTime.toString()))
             endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
         Page<MktDrawPrizeEntity> entityPage = mktDrawPrizeRepository.query(marketingId, accountType, statusCode, startDateTime, endDateTime, pageable);

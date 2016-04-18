@@ -3,6 +3,7 @@ package com.yunsoo.api.domain;
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.Page;
@@ -34,9 +35,13 @@ public class AccountDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+
+    @Autowired
+    private OrganizationDomain organizationDomain;
+
     private Log log = LogFactory.getLog(this.getClass());
 
-    @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
+    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
     public AccountObject getById(String accountId) {
         if (StringUtils.isEmpty(accountId)) {
             return null;
@@ -77,7 +82,7 @@ public class AccountDomain {
     }
 
     public AccountObject createAccount(AccountObject accountObject, boolean generateHash) {
-        if(generateHash) {
+        if (generateHash) {
             String hashSalt = RandomUtils.generateString(8);
             String password = hashPassword(accountObject.getPassword(), hashSalt);
             accountObject.setHashSalt(hashSalt);
@@ -93,7 +98,7 @@ public class AccountDomain {
         return dataAPIClient.post("account", accountObject, AccountObject.class);
     }
 
-    @CacheEvict(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
+    @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
     public void updatePassword(String accountId, String rawNewPassword) {
         if (!StringUtils.isEmpty(accountId)) {
             String hashSalt = RandomUtils.generateString(8);
@@ -105,8 +110,8 @@ public class AccountDomain {
         }
     }
 
-    @CacheEvict(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
-    public void updateStatus(String accountId, String statusCode){
+    @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
+    public void updateStatus(String accountId, String statusCode) {
         if (!StringUtils.isEmpty(accountId)) {
             AccountObject accountObject = new AccountObject();
             accountObject.setStatusCode(statusCode);
@@ -114,10 +119,11 @@ public class AccountDomain {
         }
     }
 
-
     public boolean isValidAccount(AccountObject accountObject) {
-        String statusCode = accountObject.getStatusCode();
-        return LookupCodes.AccountStatus.AVAILABLE.equals(statusCode);
+        OrganizationObject organizationObject = organizationDomain.getOrganizationById(accountObject.getOrgId());
+        return organizationObject != null
+                && LookupCodes.AccountStatus.AVAILABLE.equals(accountObject.getStatusCode())
+                && LookupCodes.OrgStatus.AVAILABLE.equals(organizationObject.getStatusCode());
     }
 
     public boolean validatePassword(String rawPassword, String hashSalt, String password) {
@@ -128,8 +134,6 @@ public class AccountDomain {
     private String hashPassword(String rawPassword, String hashSalt) {
         return HashUtils.sha1HexString(rawPassword + hashSalt);
     }
-
-
 
 
 }
