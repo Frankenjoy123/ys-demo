@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,11 +50,12 @@ public class AccountController {
     //region account
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'account:read')")
     public Account getById(@PathVariable("id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
-
         AccountObject accountObject = findAccountById(accountId);
+        if (!AuthUtils.isMe(accountId)) {
+            AuthUtils.checkPermission(accountObject.getOrgId(), "account", "read");
+        }
         return new Account(accountObject);
     }
 
@@ -75,6 +75,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "count", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'account:read')")
     public Long count(@RequestParam(value = "org_id", required = false) String orgId,
                       @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
         orgId = AuthUtils.fixOrgId(orgId); //auto fix current
@@ -88,7 +89,7 @@ public class AccountController {
     @PreAuthorize("hasPermission(#request.orgId, 'org', 'account:create')")
     public Account create(@Valid @RequestBody AccountRequest request) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
-        AccountObject accountObject = toAccountObject(request);
+        AccountObject accountObject = request.toAccountObject();
         accountObject.setCreatedAccountId(currentAccountId);
 
         return new Account(accountDomain.createAccount(accountObject, true));
@@ -114,7 +115,7 @@ public class AccountController {
         accountDomain.updateStatus(accountId, LookupCodes.AccountStatus.AVAILABLE);
     }
 
-    @RequestMapping(value = "{id}/resetpassword", method = RequestMethod.PATCH)
+    @RequestMapping(value = "{id}/resetPassword", method = RequestMethod.PATCH)
     public void changePassword(@PathVariable("id") String accountId, @RequestBody String newPassword) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         AccountObject accountObject = findAccountById(accountId);
@@ -126,7 +127,6 @@ public class AccountController {
 
     @RequestMapping(value = "current/password", method = RequestMethod.POST)
     public void updatePassword(@RequestBody AccountUpdatePasswordRequest accountPassword) {
-
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
 
         AccountObject accountObject = findAccountById(currentAccountId);
@@ -137,7 +137,7 @@ public class AccountController {
         String hashSalt = accountObject.getHashSalt();
 
         if (!accountDomain.validatePassword(rawOldPassword, hashSalt, password)) {
-            throw new UnprocessableEntityException("当前密码不匹配");
+            throw new UnprocessableEntityException("current password invalid");
         }
 
         accountDomain.updatePassword(currentAccountId, rawNewPassword);
@@ -150,7 +150,6 @@ public class AccountController {
     @RequestMapping(value = "{account_id}/group", method = RequestMethod.GET)
     public List<Group> getGroups(@PathVariable("account_id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
-        findAccountById(accountId);
         AccountObject accountObject = findAccountById(accountId);
         return accountGroupDomain.getGroups(accountObject).stream().map(Group::new).collect(Collectors.toList());
     }
@@ -242,21 +241,6 @@ public class AccountController {
         if (accountObject == null) {
             throw new NotFoundException("account not found");
         }
-        return accountObject;
-    }
-
-    private AccountObject toAccountObject(AccountRequest request) {
-        if (request == null) {
-            return null;
-        }
-        AccountObject accountObject = new AccountObject();
-        accountObject.setOrgId(request.getOrgId());
-        accountObject.setIdentifier(request.getIdentifier());
-        accountObject.setEmail(request.getEmail());
-        accountObject.setFirstName(request.getFirstName());
-        accountObject.setLastName(request.getLastName());
-        accountObject.setPhone(request.getPhone());
-        accountObject.setPassword(request.getPassword());
         return accountObject;
     }
 
