@@ -42,8 +42,9 @@ public abstract class RestrictionExpression extends ResourceExpression {
         private static final String TYPE = "org";
         private static final String PREFIX = TYPE + DELIMITER;
 
-        public static final OrgRestrictionExpression ANY = new OrgRestrictionExpression("*");
         public static final OrgRestrictionExpression CURRENT = new OrgRestrictionExpression("current");
+        public static final OrgRestrictionExpression ALL = new OrgRestrictionExpression("*");
+        public static final OrgRestrictionExpression NONE = new OrgRestrictionExpression("");
 
         public OrgRestrictionExpression(String expressionOrOrgId) {
             super(expressionOrOrgId);
@@ -60,7 +61,7 @@ public abstract class RestrictionExpression extends ResourceExpression {
             if (org == null || restriction == null || !(restriction instanceof OrgRestrictionExpression) || restriction.getValue() == null) {
                 return false;
             }
-            return org.equals("*") || org.equals(restriction.getValue());
+            return org.equals("*") || org.equals(restriction.getValue()) || "".equals(restriction.getValue());
         }
     }
 
