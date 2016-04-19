@@ -108,7 +108,7 @@ public class BrandApplicationController {
             accountObject.setEmail(object.getEmail());
             accountObject.setIdentifier(object.getIdentifier());
             accountObject.setFirstName(object.getContactName());
-            accountObject.setLastName(object.getName());
+            accountObject.setLastName("");
             accountObject.setPassword(object.getPassword());
             accountObject.setHashSalt(object.getHashSalt());
             accountObject.setPhone(object.getContactMobile());
