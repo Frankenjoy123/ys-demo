@@ -118,6 +118,46 @@ public class MarketingController {
 
     }
 
+    //query marketing result by marketing id
+    @RequestMapping(value = "marketinganalysis", method = RequestMethod.GET)
+    public MarketingResult getByFilter(@RequestParam(value = "marketing_id") String marketingId,
+                                       @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                       @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime) {
+        if (marketingId == null) {
+            throw new BadRequestException("marketing id should not be null");
+        }
+        MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+
+        if (marketingObject == null) {
+            throw new NotFoundException("marketing can not be found");
+        }
+
+        MarketingResult marketingResult = new MarketingResult();
+        List<MarketingResult> marketingResultList = new ArrayList<>();
+
+        String marketingName = marketingObject.getName();
+        Long totalNumber = marketingDomain.countProductKeysByMarketingId(marketingId, startTime, endTime);
+        Long marketingNumber = marketingDomain.countDrawRecordsByMarketingId(marketingId, startTime, endTime);
+
+        marketingResult.setId(marketingId);
+        marketingResult.setName(marketingName);
+        marketingResult.setTotalNumber(totalNumber);
+        marketingResult.setMarketingNumber(marketingNumber);
+
+        List<MktDrawRule> mktDrawRuleList = marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
+        List<Long> prizeCountList = new ArrayList<>();
+
+        if (mktDrawRuleList.size() > 0) {
+            marketingResult.setRuleList(mktDrawRuleList);
+            for (MktDrawRule mktDrawRule : mktDrawRuleList) {
+                Long ruleNumber = marketingDomain.countDrawPrizeByDrawRuleId(mktDrawRule.getId(), startTime, endTime);
+                prizeCountList.add(ruleNumber);
+            }
+            marketingResult.setPrizeCountList(prizeCountList);
+        }
+        return marketingResult;
+    }
+
 
     //query marketing plan by org id
     @RequestMapping(value = "", method = RequestMethod.GET)

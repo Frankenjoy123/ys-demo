@@ -230,13 +230,12 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "{id}/marketing_id", method = RequestMethod.PUT)
     public void putMarketingId(@PathVariable(value = "id") String id, @RequestBody(required = false) String marketingId) {
-        if (id == null) {
-            throw new NotFoundException("product key batch not found");
-        }
         productKeyDomain.putMarketingId(id, marketingId);
-        MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
-        marketingObject.setProductBaseId(productKeyDomain.getProductKeyBatchById(id).getProductBaseId());
-        marketingDomain.updateMarketing(marketingObject);
+        if (marketingId != null) {
+            MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+            marketingObject.setProductBaseId(productKeyDomain.getProductKeyBatchById(id).getProductBaseId());
+            marketingDomain.updateMarketing(marketingObject);
+        }
     }
 
 
