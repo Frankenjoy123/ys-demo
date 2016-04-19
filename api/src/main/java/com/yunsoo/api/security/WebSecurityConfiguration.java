@@ -42,7 +42,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/auth/login/**").permitAll()
-                .antMatchers("/marketing/alipay/notify").permitAll()
                 .antMatchers("/auth/accesstoken/**").permitAll()
                 .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
                 .antMatchers(HttpMethod.GET, "/image/*").permitAll()
@@ -53,6 +52,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/brand/*").permitAll()
                 .antMatchers(HttpMethod.GET, "/brand/attachment/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/brand").permitAll()
+                .antMatchers("/marketing/alipay/notify").permitAll()
                 .antMatchers("/payment/brand/**").permitAll()
                 .anyRequest().authenticated().and()
 

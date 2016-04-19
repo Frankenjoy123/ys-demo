@@ -113,6 +113,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission('current', 'org', 'product_key_batch:read')")
     public List<ProductKeyBatch> getByFilterPaged(@RequestParam(value = "product_base_id", required = false) String productBaseId,
                                                   @RequestParam(value = "is_package", required = false) Boolean isPackage,
                                                   @PageableDefault(page = 0, size = 1000)

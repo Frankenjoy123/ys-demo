@@ -1,6 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.OrganizationObject;
@@ -11,8 +12,6 @@ import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -39,7 +38,6 @@ public class AccountDomain {
     @Autowired
     private OrganizationDomain organizationDomain;
 
-    private Log log = LogFactory.getLog(this.getClass());
 
     @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
     public AccountObject getById(String accountId) {
@@ -91,11 +89,11 @@ public class AccountDomain {
         return createAccountWithSalt(accountObject);
     }
 
-    public AccountObject createAccountWithSalt(AccountObject accountObject) {
-        accountObject.setId(null);
-        accountObject.setCreatedDateTime(DateTime.now());
-        accountObject.setStatusCode(LookupCodes.AccountStatus.AVAILABLE);
-        return dataAPIClient.post("account", accountObject, AccountObject.class);
+    @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountObject.id)")
+    public void patchUpdate(AccountObject accountObject) {
+        accountObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
+        accountObject.setModifiedDateTime(DateTime.now());
+        dataAPIClient.patch("account/{id}", accountObject, accountObject.getId());
     }
 
     @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
@@ -106,6 +104,8 @@ public class AccountDomain {
             AccountObject accountObject = new AccountObject();
             accountObject.setPassword(password);
             accountObject.setHashSalt(hashSalt);
+            accountObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
+            accountObject.setModifiedDateTime(DateTime.now());
             dataAPIClient.patch("account/{id}", accountObject, accountId);
         }
     }
@@ -115,6 +115,8 @@ public class AccountDomain {
         if (!StringUtils.isEmpty(accountId)) {
             AccountObject accountObject = new AccountObject();
             accountObject.setStatusCode(statusCode);
+            accountObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
+            accountObject.setModifiedDateTime(DateTime.now());
             dataAPIClient.patch("account/{id}", accountObject, accountId);
         }
     }
@@ -135,5 +137,14 @@ public class AccountDomain {
         return HashUtils.sha1HexString(rawPassword + hashSalt);
     }
 
+    private AccountObject createAccountWithSalt(AccountObject accountObject) {
+        accountObject.setId(null);
+        accountObject.setStatusCode(LookupCodes.AccountStatus.AVAILABLE);
+        accountObject.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
+        accountObject.setCreatedDateTime(DateTime.now());
+        accountObject.setModifiedAccountId(null);
+        accountObject.setModifiedDateTime(null);
+        return dataAPIClient.post("account", accountObject, AccountObject.class);
+    }
 
 }

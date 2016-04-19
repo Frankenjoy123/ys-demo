@@ -50,6 +50,7 @@ public class ProductKeyOrderController {
 
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(returnObject, 'product_key_order:read')")
     public ProductKeyOrder getById(@PathVariable(value = "id") String id) {
         ProductKeyOrder productKeyOrder = productKeyOrderDomain.getById(id);
         if (productKeyOrder == null) {
@@ -91,7 +92,7 @@ public class ProductKeyOrderController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'productkeyorder:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'product_key_order:read')")
     public List<ProductKeyOrder> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                              @RequestParam(value = "available", required = false) Boolean available,
                                              @RequestParam(value = "active", required = false) Boolean active,
@@ -128,18 +129,14 @@ public class ProductKeyOrderController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#order, 'productkeyorder:create')")
+    @PreAuthorize("hasPermission(#order, 'product_key_order:create')")
     public ProductKeyOrder create(@Valid @RequestBody ProductKeyOrder order) {
-        String orgId = AuthUtils.getCurrentAccount().getOrgId();
-        String accountId = AuthUtils.getCurrentAccount().getId();
         order.setId(null);
-        if (order.getOrgId() == null || order.getOrgId().trim().isEmpty()) {
-            order.setOrgId(orgId);
-        }
+        order.setOrgId(AuthUtils.fixOrgId(order.getOrgId()));
         if (order.getProductBaseId() != null && order.getProductBaseId().length() == 0) {
             order.setProductBaseId(null);
         }
-        order.setCreatedAccountId(accountId);
+        order.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         order.setActive(true);
         order.setCreatedDateTime(DateTime.now());
         return productKeyOrderDomain.create(order);
