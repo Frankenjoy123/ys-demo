@@ -65,10 +65,12 @@ public class BrandController {
     public List<BrandObject> getByFilter(@RequestParam(value = "carrier_id", required = false) String carrierId,
                                          @RequestParam(value = "name", required = false) String name,
                                          @RequestParam(value = "status", required = false) String status,
+                                         @RequestParam(value = "has_payment", required = false) Boolean hasPayment,
+                                         @RequestParam(value = "search_text", required = false) String searchText,
                                          Pageable pageable,
                                          HttpServletResponse response) {
 
-        Page<BrandApplicationEntity> entityPage = repository.query(name, carrierId, status, pageable);
+        Page<BrandApplicationEntity> entityPage = repository.query(name, carrierId, status,hasPayment, searchText, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }

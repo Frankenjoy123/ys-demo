@@ -66,11 +66,14 @@ public class BrandDomain {
         return dataAPIClient.get("brand/count/" + query , Integer.class);
     }
 
-    public Page<BrandObject> getBrandList(String name, String carrierId, String status, Pageable pageable) {
+    public Page<BrandObject> getBrandList(String name, String carrierId, String status, Boolean hasPayment, String searchText, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("name", name)
                 .append("status", status)
-                .append("carrier_id", carrierId).append(pageable)
+                .append("carrier_id", carrierId)
+                .append("has_payment", hasPayment)
+                .append("search_text", searchText)
+                .append(pageable)
                 .build();
         return dataAPIClient.getPaged("brand" + query, new ParameterizedTypeReference<List<BrandObject>>() {
         }, name);

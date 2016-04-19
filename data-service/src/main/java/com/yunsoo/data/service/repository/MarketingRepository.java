@@ -23,8 +23,10 @@ public interface MarketingRepository extends CrudRepository<MarketingEntity, Str
     List<String> findMarketingIdByOrgId(String orgId);
 
 
-    @Query("select m from MarketingEntity m where orgId in :orgIds and ( :status is null or statusCode = :status) order by createdDateTime desc")
-    Page<MarketingEntity> query(@Param("orgIds")List<String> orgIds, @Param("status")String status, Pageable pageable);
+    @Query("select m from MarketingEntity m where orgId in :orgIds and ( :status is null or statusCode = :status) " +
+            "order by createdDateTime desc")
+    Page<MarketingEntity> query(@Param("orgIds")List<String> orgIds, @Param("status")String status,
+                                Pageable pageable);
 
 
     int countByOrgIdInAndStatusCode(@Param("orgIds")List<String> orgIds, @Param("status")String status );

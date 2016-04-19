@@ -166,9 +166,13 @@ public class OrganizationController {
     public  List<Brand> filterOrgBrand(@PathVariable(value = "id") String id,
                                        @RequestParam(value="status", required = false)String status,
                                        @RequestParam(value = "name", required = false) String name,
-                                       @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC) Pageable pageable,
+                                       @RequestParam(value = "search_text", required = false) String searchText,
+                                       Pageable pageable,
                                        HttpServletResponse response) {
-        Page<BrandObject> brandPage = organizationDomain.getOrgBrandList(id, name, status, pageable);
+        if(!StringUtils.hasText(searchText))
+            searchText = null;
+
+        Page<BrandObject> brandPage = organizationDomain.getOrgBrandList(id, name, status, searchText, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", brandPage.toContentRange());
         }

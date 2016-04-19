@@ -149,7 +149,7 @@ public class BrandApplicationController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Brand createBrand(@RequestBody Brand brand) {
 
-        Page<BrandObject> existingBrandList = brandDomain.getBrandList(brand.getName().trim(),null,null,null);
+        Page<BrandObject> existingBrandList = brandDomain.getBrandList(brand.getName().trim(),null,null,null,null, null);
         if(existingBrandList.getContent().size() == 0) {
 
             BrandObject object = brand.toBrand(brand);
@@ -199,11 +199,12 @@ public class BrandApplicationController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "carrier_id", required = false) String carrierId,
             @RequestParam(value = "status", required = false) String status,
-            Pageable pageable,
-
-            HttpServletResponse response) {
-
-        Page<BrandObject> brandPage = brandDomain.getBrandList(name, carrierId, status, pageable);
+            @RequestParam(value = "has_payment", required = false) Boolean hasPayment,
+            @RequestParam(value = "search_text", required = false) String searchText,
+            Pageable pageable, HttpServletResponse response) {
+        if(!StringUtils.hasText(searchText))
+            searchText = null;
+        Page<BrandObject> brandPage = brandDomain.getBrandList(name, carrierId, status, hasPayment, searchText, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", brandPage.toContentRange());
         }
@@ -263,7 +264,7 @@ public class BrandApplicationController {
         }
 
         //find account
-        List<BrandObject> existingBrandList = brandDomain.getBrandList(account.getOrganization().trim(), null,null,null).getContent();
+        List<BrandObject> existingBrandList = brandDomain.getBrandList(account.getOrganization().trim(),null,null,null, null ,null).getContent();
         if(existingBrandList.size() == 0)
             throw new UnauthorizedException("account is not valid");
         else{

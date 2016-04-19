@@ -129,10 +129,11 @@ public class OrganizationController {
     public List<BrandObject> getOrgBrandList(@PathVariable(value = "id") String id,
                                              @RequestParam(value="status", required = false)String status,
                                              @RequestParam(value = "name", required = false) String name,
+                                             @RequestParam(value = "search_text", required = false) String searchText,
                                              Pageable pageable,
                                              HttpServletResponse response) {
 
-        Page<BrandEntity> entityPage = brandRepository.filter(id, status, name, pageable);
+        Page<BrandEntity> entityPage = brandRepository.filter(id, status, name, searchText, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }

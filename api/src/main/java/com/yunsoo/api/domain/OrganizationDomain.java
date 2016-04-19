@@ -94,9 +94,9 @@ public class OrganizationDomain {
         });
     }
 
-    public Page<BrandObject> getOrgBrandList(String orgId, String orgName, String orgStatus, Pageable pageable) {
+    public Page<BrandObject> getOrgBrandList(String orgId, String orgName, String orgStatus, String searchText, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("name", orgName).append("status", orgStatus)
+                .append("name", orgName).append("status", orgStatus).append("search_text", searchText)
                 .append(pageable)
                 .build();
         return dataAPIClient.getPaged("organization/{id}/brand" + query, new ParameterizedTypeReference<List<BrandObject>>() {

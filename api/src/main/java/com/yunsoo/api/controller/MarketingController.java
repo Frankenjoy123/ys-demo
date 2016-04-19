@@ -80,7 +80,8 @@ public class MarketingController {
                                              HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
 
-        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.PAID, pageable);
+
+        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.PAID, null, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", marketingPage.toContentRange());
         }
@@ -123,16 +124,21 @@ public class MarketingController {
     public List<Marketing> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                        @RequestParam(value = "carrier_id", required = false) String carrierId,
                                        @RequestParam(value = "status", required = false) String status,
+                                       @RequestParam(value = "search_text", required = false) String searchText,
                                        Pageable pageable,
                                        HttpServletResponse response) {
 
         List<String> orgIds = null;
+
+        if(!StringUtils.hasText(searchText))
+            searchText = null;
+
         if(carrierId != null)
             orgIds = organizationDomain.getBrandIdsForCarrier(carrierId);
         else
             orgId = AuthUtils.fixOrgId(orgId);
 
-        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status, pageable);
+        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status,searchText, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", marketingPage.toContentRange());
         }
