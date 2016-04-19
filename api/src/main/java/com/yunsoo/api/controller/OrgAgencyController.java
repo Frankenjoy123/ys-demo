@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  */
 
 @RestController
-@RequestMapping(value = "/organizationagency")
+@RequestMapping(value = "/organizationAgency")
 public class OrgAgencyController {
 
     @Autowired
@@ -57,12 +57,8 @@ public class OrgAgencyController {
         if (pageable != null) {
             response.setHeader("Content-Range", orgAgencyPage.toContentRange());
         }
-        List<OrgAgency> orgAgencys = orgAgencyPage.map(p -> {
-            OrgAgency orgAgency = new OrgAgency(p);
-            return orgAgency;
-        }).getContent();
 
-        return orgAgencys;
+        return orgAgencyPage.map(OrgAgency::new).getContent();
     }
 
     //query locations

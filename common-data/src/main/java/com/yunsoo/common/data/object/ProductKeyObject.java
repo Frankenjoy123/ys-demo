@@ -43,6 +43,7 @@ public class ProductKeyObject implements Serializable {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
+    @JsonProperty("details")
     private String details;
 
 

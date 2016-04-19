@@ -19,7 +19,7 @@ import java.util.List;
  * Created by Jerry on 3/24/2015.
  */
 @RestController
-@RequestMapping("/logisticsaction")
+@RequestMapping("/logisticsAction")
 public class LogisticsActionController {
 
     @Autowired
@@ -28,7 +28,7 @@ public class LogisticsActionController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#logisticsAction, 'logisticsaction:create')")
+    @PreAuthorize("hasPermission(#logisticsAction, 'logistics_action:create')")
     public LogisticsAction create(@RequestBody LogisticsAction logisticsAction) {
 
         if (logisticsAction.getOrgId() == null || "current".equals(logisticsAction.getOrgId())) { //get current Organization
@@ -44,19 +44,18 @@ public class LogisticsActionController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'logisticsaction:read')")
+    @PostAuthorize("hasPermission(returnObject, 'logistics_action:read')")
     public LogisticsAction get(@PathVariable(value = "id") Integer id) {
 
         LogisticsCheckActionObject logisticsCheckActionObject = dataAPIClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, id);
         if (logisticsCheckActionObject == null)
             throw new NotFoundException("Logistics action not found id=" + id);
 
-        LogisticsAction returnAction = fromLogisticsCheckActionObject(logisticsCheckActionObject);
-        return returnAction;
+        return fromLogisticsCheckActionObject(logisticsCheckActionObject);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'logisticsaction:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'logistics_action:read')")
     public List<LogisticsAction> get(@RequestParam(value = "orgId", required = true) String orgId,
                                      @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {

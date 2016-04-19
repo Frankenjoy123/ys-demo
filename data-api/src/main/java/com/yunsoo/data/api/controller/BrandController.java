@@ -3,12 +3,10 @@ package com.yunsoo.data.api.controller;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AttachmentObject;
 import com.yunsoo.common.data.object.BrandObject;
-import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.AttachmentEntity;
 import com.yunsoo.data.service.entity.BrandApplicationEntity;
-import com.yunsoo.data.service.entity.OrganizationEntity;
 import com.yunsoo.data.service.repository.AttachmentRepository;
 import com.yunsoo.data.service.repository.BrandApplicationRepository;
 import org.joda.time.DateTime;
@@ -134,6 +132,7 @@ public class BrandController {
             brandObj.setPassword(brand.getPassword());
             brandObj.setInvestigatorAttachment(brand.getInvestigatorAttachment());
             brandObj.setInvestigatorComments(brand.getInvestigatorComments());
+            brandObj.setRejectReason(brand.getRejectReason());
             brandObj.setHashSalt(brand.getHashSalt());
             brandObj.setPaymentId(brand.getPaymentId());
         }
@@ -162,6 +161,7 @@ public class BrandController {
             entity.setPassword(brand.getPassword());
             entity.setInvestigatorAttachment(brand.getInvestigatorAttachment());
             entity.setInvestigatorComments(brand.getInvestigatorComments());
+            entity.setRejectReason(brand.getRejectReason());
             entity.setHashSalt(brand.getHashSalt());
             entity.setPaymentId(brand.getPaymentId());
             return entity;

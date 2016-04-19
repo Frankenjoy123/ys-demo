@@ -23,10 +23,6 @@ public class PermissionDomainTest {
     @Test
     public void test_getPermissionPolicies() {
         permissionDomain.getPermissionPolicies();
-        permissionDomain.getPermissionPolicies();
-        permissionDomain.getPermissionPolicies();
-        permissionDomain.getPermissionPolicyMap();
-        permissionDomain.getPermissionPolicyMap();
     }
 //
 //    @Test

@@ -85,6 +85,16 @@ public class BrandApplicationEntity {
     @Column(name = "investigator_comments")
     private String investigatorComments;
 
+    @Column(name = "reject_reason")
+    private String rejectReason;
+
+    public String getRejectReason() {
+        return rejectReason;
+    }
+
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
+    }
 
     public String getPassword() {
         return password;
