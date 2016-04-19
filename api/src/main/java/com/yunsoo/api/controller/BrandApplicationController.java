@@ -130,12 +130,12 @@ public class BrandApplicationController {
     }
 
     @RequestMapping(value = "{id}/reject", method = RequestMethod.PUT)
-    public boolean rejectBrandApplication(@PathVariable("id") String id, @RequestParam(name="comments", required = false) String comments) {
+    public boolean rejectBrandApplication(@PathVariable("id") String id, @RequestParam(name="reject_reason", required = false) String reject_reason) {
         try {
             BrandObject object = brandDomain.getBrandById(id);
             object.setStatusCode(LookupCodes.BrandApplicationStatus.REJECTED);
-            if(StringUtils.hasText(comments))
-                object.setInvestigatorComments(comments);
+            if(StringUtils.hasText(reject_reason))
+                object.setRejectReason(reject_reason);
             brandDomain.updateBrand(object);
             return  true;
         }
@@ -179,6 +179,8 @@ public class BrandApplicationController {
             if(StringUtils.hasText(brand.getAttachment()) && brand.getAttachment().endsWith(","))
                 existingBrand.setAttachment(brand.getAttachment().substring(0, brand.getAttachment().length() -1 ));
             existingBrand.setInvestigatorComments(brand.getInvestigatorComments());
+            existingBrand.setRejectReason(brand.getRejectReason());
+
             if(StringUtils.hasText(brand.getInvestigatorAttachment()) && brand.getInvestigatorAttachment().endsWith(","))
                 existingBrand.setInvestigatorAttachment(brand.getInvestigatorAttachment().substring(0, brand.getInvestigatorAttachment().length() -1 ));
             if(existingBrand.getStatusCode().equals(LookupCodes.BrandApplicationStatus.REJECTED) && !inCarrier){
