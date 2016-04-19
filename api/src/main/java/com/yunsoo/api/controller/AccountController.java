@@ -194,9 +194,7 @@ public class AccountController {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         AccountObject accountObject = findAccountById(accountId);
         AuthUtils.checkPermission(accountObject.getOrgId(), "account_group", "write");
-        if (groupIds.size() > 0) {
-            accountGroupDomain.putAccountGroupsByAccount(accountObject, groupIds);
-        }
+        accountGroupDomain.putAccountGroupsByAccount(accountObject, groupIds);
     }
 
     //delete account group under the account

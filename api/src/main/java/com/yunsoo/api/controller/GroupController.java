@@ -122,9 +122,7 @@ public class GroupController {
                                     @RequestBody List<String> accountIds) {
         GroupObject group = findGroupById(groupId);
         AuthUtils.checkPermission(group.getOrgId(), "account_group", "write");
-        if (accountIds.size() > 0) {
-            accountGroupDomain.putAccountGroupsByGroup(group, accountIds);
-        }
+        accountGroupDomain.putAccountGroupsByGroup(group, accountIds);
     }
 
     //delete account group under the group
