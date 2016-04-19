@@ -90,12 +90,26 @@ public class AccountController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#request.orgId, 'org', 'account:create')")
-    public Account create(@Valid @RequestBody AccountRequest request) {
-        String currentAccountId = AuthUtils.getCurrentAccount().getId();
+    public Account create(@RequestBody @Valid AccountRequest request) {
         AccountObject accountObject = request.toAccountObject();
-        accountObject.setCreatedAccountId(currentAccountId);
-
         return new Account(accountDomain.createAccount(accountObject, true));
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public void patchUpdateAccount(@PathVariable("id") String accountId,
+                                   @RequestBody Account account) {
+        accountId = AuthUtils.fixAccountId(accountId);
+        AccountObject accountObject = findAccountById(accountId);
+        if (!AuthUtils.isMe(accountId)) {
+            AuthUtils.checkPermission(accountObject.getOrgId(), "account", "write");
+        }
+        AccountObject accountObjectNew = new AccountObject();
+        accountObjectNew.setId(accountId);
+        accountObjectNew.setFirstName(account.getFirstName());
+        accountObjectNew.setLastName(account.getLastName());
+        accountObjectNew.setEmail(account.getEmail());
+        accountObjectNew.setPhone(account.getPhone());
+        accountDomain.patchUpdate(accountObjectNew);
     }
 
     @RequestMapping(value = "{id}/disable", method = RequestMethod.PATCH)

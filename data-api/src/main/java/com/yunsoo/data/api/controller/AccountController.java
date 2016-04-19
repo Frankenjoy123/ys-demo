@@ -36,11 +36,7 @@ public class AccountController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public AccountObject getById(@PathVariable String id) {
-        AccountEntity entity = accountRepository.findOne(id);
-        if (entity == null) {
-            throw new NotFoundException("Account not found by [id: " + id + "]");
-        }
-        return toAccountObject(entity);
+        return toAccountObject(findAccountById(id));
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -102,10 +98,8 @@ public class AccountController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void patchUpdate(@PathVariable String id, @RequestBody AccountObject accountObject) {
-        AccountEntity entity = accountRepository.findOne(id);
-        if (entity == null) {
-            throw new NotFoundException("Account not found by [id: " + id + "]");
-        }
+        AccountEntity entity =  findAccountById(id);
+
         //identifier
         String identifier = accountObject.getIdentifier();
         if (identifier != null && !identifier.equals(entity.getIdentifier())) {
@@ -138,6 +132,14 @@ public class AccountController {
                 ? DateTime.now() : accountObject.getModifiedDateTime());
 
         accountRepository.save(entity);
+    }
+
+    private AccountEntity findAccountById(String accountId) {
+        AccountEntity entity = accountRepository.findOne(accountId);
+        if (entity == null) {
+            throw new NotFoundException("account not found by [id: " + accountId + "]");
+        }
+        return entity;
     }
 
     private AccountObject toAccountObject(AccountEntity entity) {

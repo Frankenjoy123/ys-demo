@@ -1,8 +1,10 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.DataAPIClient;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.GroupObject;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -42,13 +44,20 @@ public class GroupDomain {
     }
 
     public GroupObject create(GroupObject groupObject) {
+        groupObject.setId(null);
+        groupObject.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
+        groupObject.setCreatedDateTime(DateTime.now());
+        groupObject.setModifiedAccountId(null);
+        groupObject.setModifiedDatetime(null);
         return dataAPIClient.post("group", groupObject, GroupObject.class);
     }
 
     public void patchUpdate(GroupObject groupObject) {
         try {
+            groupObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getOrgId());
+            groupObject.setModifiedDatetime(DateTime.now());
             dataAPIClient.patch("group/{id}", groupObject, groupObject.getId());
-        }catch (NotFoundException ex){
+        } catch (NotFoundException ex) {
             throw new NotFoundException("group not found");
         }
     }

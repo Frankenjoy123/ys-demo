@@ -6,7 +6,6 @@ import com.yunsoo.api.domain.GroupDomain;
 import com.yunsoo.api.dto.Account;
 import com.yunsoo.api.dto.Group;
 import com.yunsoo.api.dto.PermissionEntry;
-import com.yunsoo.api.security.AuthAccount;
 import com.yunsoo.api.security.authorization.AuthorizationService;
 import com.yunsoo.api.security.permission.PermissionService;
 import com.yunsoo.api.util.AuthUtils;
@@ -14,7 +13,6 @@ import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.GroupObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -70,31 +68,20 @@ public class GroupController {
     @PreAuthorize("hasPermission(#group, 'group:create')")
     public Group create(@RequestBody @Valid Group group) {
         GroupObject groupObject = group.toGroupObject();
-        AuthAccount currentAccount = AuthUtils.getCurrentAccount();
-
-        groupObject.setId(null);
         groupObject.setOrgId(AuthUtils.fixOrgId(groupObject.getOrgId()));
-        groupObject.setCreatedAccountId(currentAccount.getId());
-        groupObject.setCreatedDateTime(DateTime.now());
-        groupObject.setModifiedAccountId(null);
-        groupObject.setModifiedDatetime(null);
         groupObject = groupDomain.create(groupObject);
         return new Group(groupObject);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
-    public void patchUpdate(@PathVariable("id") String id, @RequestBody Group group) {
+    public void patchUpdateGroup(@PathVariable("id") String id, @RequestBody Group group) {
         GroupObject groupObject = findGroupById(id);
         AuthUtils.checkPermission(groupObject.getOrgId(), "group", "write");
-        if (group.getName() != null) {
-            groupObject.setName(group.getName());
-        }
-        if (group.getDescription() != null) {
-            groupObject.setDescription(group.getDescription());
-        }
-        groupObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getOrgId());
-        groupObject.setModifiedDatetime(DateTime.now());
-        groupDomain.patchUpdate(groupObject);
+        GroupObject groupObjectNew = new GroupObject();
+        groupObjectNew.setId(id);
+        groupObjectNew.setName(group.getName());
+        groupObjectNew.setDescription(group.getDescription());
+        groupDomain.patchUpdate(groupObjectNew);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
@@ -152,6 +139,8 @@ public class GroupController {
 
     //endregion
 
+    //region permission
+
     @RequestMapping(value = "{group_id}/permission", method = RequestMethod.GET)
     public List<PermissionEntry> getAllPermissionByGroupId(@PathVariable("group_id") String groupId) {
         GroupObject group = findGroupById(groupId);
@@ -165,6 +154,7 @@ public class GroupController {
         return permissionEntries.stream().map(PermissionEntry::new).collect(Collectors.toList());
     }
 
+    //endregion
 
     private AccountObject findAccountById(String accountId) {
         AccountObject accountObject = accountDomain.getById(accountId);
