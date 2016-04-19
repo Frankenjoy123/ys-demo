@@ -46,7 +46,11 @@ public class GroupDomain {
     }
 
     public void patchUpdate(GroupObject groupObject) {
-        dataAPIClient.patch("group/{id}", groupObject, groupObject.getId());
+        try {
+            dataAPIClient.patch("group/{id}", groupObject, groupObject.getId());
+        }catch (NotFoundException ex){
+            throw new NotFoundException("group not found");
+        }
     }
 
     public void deleteGroupById(String id) {

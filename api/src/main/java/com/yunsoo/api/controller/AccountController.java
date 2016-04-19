@@ -2,18 +2,18 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.AccountGroupDomain;
+import com.yunsoo.api.domain.GroupDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.security.authorization.AuthorizationService;
 import com.yunsoo.api.security.permission.PermissionService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.AccountObject;
+import com.yunsoo.common.data.object.GroupObject;
 import com.yunsoo.common.web.client.Page;
-import com.yunsoo.common.web.exception.ConflictException;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -37,6 +37,9 @@ public class AccountController {
 
     @Autowired
     private AccountDomain accountDomain;
+
+    @Autowired
+    private GroupDomain groupDomain;
 
     @Autowired
     private AccountGroupDomain accountGroupDomain;
@@ -151,28 +154,35 @@ public class AccountController {
     public List<Group> getGroups(@PathVariable("account_id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         AccountObject accountObject = findAccountById(accountId);
+        if (!AuthUtils.isMe(accountId)) {
+            AuthUtils.checkPermission(accountObject.getOrgId(), "account_group", "read");
+        }
         return accountGroupDomain.getGroups(accountObject).stream().map(Group::new).collect(Collectors.toList());
     }
 
-    //create account group under the account
-    @RequestMapping(value = "{account_id}/group/{group_id}", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public String createAccountGroup(@PathVariable(value = "account_id") String accountId,
-                                     @PathVariable(value = "group_id") String groupId) {
+    @RequestMapping(value = "{account_id}/group/{group_id}", method = RequestMethod.PUT)
+    public void putAccountGroup(@PathVariable(value = "account_id") String accountId,
+                                @PathVariable(value = "group_id") String groupId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
-        findAccountById(accountId);
-        String currentAccountId = AuthUtils.getCurrentAccount().getId();
-        AccountGroupObject exists = accountGroupDomain.getAccountGroupByAccountIdAndGroupId(accountId, groupId);
-        if (exists != null) {
-            throw new ConflictException("account id: " + accountId + "group id: " + groupId + "already exist.");
+        AccountObject accountObject = findAccountById(accountId);
+        GroupObject groupObject = findGroupById(groupId);
+        if (!accountObject.getOrgId().equals(groupObject.getOrgId())) {
+            throw new BadRequestException("account and group are not in the same organization");
         }
-        AccountGroupObject accountGroupObject = new AccountGroupObject();
-        accountGroupObject.setAccountId(accountId);
-        accountGroupObject.setGroupId(groupId);
-        accountGroupObject.setCreatedAccountId(currentAccountId);
-        accountGroupObject.setCreatedDateTime(DateTime.now());
-        accountGroupDomain.createAccountGroup(accountGroupObject);
-        return groupId;
+        AuthUtils.checkPermission(accountObject.getOrgId(), "account_group", "write");
+        accountGroupDomain.putAccountGroup(accountId, groupId);
+    }
+
+    //update account group under the account
+    @RequestMapping(value = "{account_id}/group", method = RequestMethod.PUT)
+    public void updateAccountGroups(@PathVariable(value = "account_id") String accountId,
+                                    @RequestBody List<String> groupIds) {
+        accountId = AuthUtils.fixAccountId(accountId); //auto fix current
+        AccountObject accountObject = findAccountById(accountId);
+        AuthUtils.checkPermission(accountObject.getOrgId(), "account_group", "write");
+        if (groupIds.size() > 0) {
+            accountGroupDomain.putAccountGroupsByAccount(accountObject, groupIds);
+        }
     }
 
     //delete account group under the account
@@ -181,32 +191,9 @@ public class AccountController {
     public void deleteAccountGroup(@PathVariable(value = "account_id") String accountId,
                                    @PathVariable(value = "group_id") String groupId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
-        findAccountById(accountId);
+        AccountObject accountObject = findAccountById(accountId);
+        AuthUtils.checkPermission(accountObject.getOrgId(), "account_group", "write");
         accountGroupDomain.deleteAccountGroupByAccountIdAndGroupId(accountId, groupId);
-    }
-
-    //update account group under the account
-    @RequestMapping(value = "{account_id}/group", method = RequestMethod.PUT)
-    public void updateAccountGroup(@PathVariable(value = "account_id") String accountId,
-                                   @RequestBody @Valid List<String> groupIds) {
-        findAccountById(accountId);
-        String currentAccountId = AuthUtils.getCurrentAccount().getId();
-        List<String> originalGroupIds = accountGroupDomain.getAccountGroupByAccountId(accountId).stream()
-                .map(AccountGroupObject::getGroupId)
-                .collect(Collectors.toList());
-        //delete original but not in the new groupId list
-        originalGroupIds.stream().filter(gId -> !groupIds.contains(gId)).forEach(gId -> {
-            accountGroupDomain.deleteAccountGroupByAccountIdAndGroupId(accountId, gId);
-        });
-        //add not in the original groupId list
-        groupIds.stream().filter(gId -> !originalGroupIds.contains(gId)).forEach(gId -> {
-            AccountGroupObject accountGroupObject = new AccountGroupObject();
-            accountGroupObject.setAccountId(accountId);
-            accountGroupObject.setGroupId(gId);
-            accountGroupObject.setCreatedAccountId(currentAccountId);
-            accountGroupObject.setCreatedDateTime(DateTime.now());
-            accountGroupDomain.createAccountGroup(accountGroupObject);
-        });
     }
 
     //endregion
@@ -244,4 +231,11 @@ public class AccountController {
         return accountObject;
     }
 
+    private GroupObject findGroupById(String id) {
+        GroupObject groupObject = groupDomain.getById(id);
+        if (groupObject == null) {
+            throw new NotFoundException("group not found");
+        }
+        return groupObject;
+    }
 }

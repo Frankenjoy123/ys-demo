@@ -46,18 +46,6 @@ public class AccountGroupController {
         return entities.stream().map(this::toAccountGroupObject).collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public AccountGroupObject create(@RequestBody @Valid AccountGroupObject object) {
-        AccountGroupEntity entity = toAccountGroupEntity(object);
-        entity.setId(null);
-        if (entity.getCreatedDateTime() == null) {
-            entity.setCreatedDateTime(DateTime.now());
-        }
-        AccountGroupEntity newEntity = accountGroupRepository.save(entity);
-        return toAccountGroupObject(newEntity);
-    }
-
     @RequestMapping(value = "", method = RequestMethod.PUT)
     public void put(@RequestBody @Valid AccountGroupObject obj) {
         List<AccountGroupEntity> existItems = accountGroupRepository.findByAccountIdAndGroupId(obj.getAccountId(), obj.getGroupId());

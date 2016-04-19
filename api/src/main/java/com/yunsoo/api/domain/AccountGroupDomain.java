@@ -51,10 +51,6 @@ public class AccountGroupDomain {
         return accountGroupObjects.get(0);
     }
 
-    public AccountGroupObject createAccountGroup(AccountGroupObject accountGroupObject) {
-        return dataAPIClient.post("accountgroup", accountGroupObject, AccountGroupObject.class);
-    }
-
     public void putAccountGroup(String accountId, String groupId) {
         AccountGroupObject obj = new AccountGroupObject();
         obj.setAccountId(accountId);
@@ -62,6 +58,45 @@ public class AccountGroupDomain {
         obj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         obj.setCreatedDateTime(DateTime.now());
         dataAPIClient.put("accountgroup", obj);
+    }
+
+    public void putAccountGroupsByAccount(AccountObject account, List<String> groupIds) {
+        String accountId = account.getId();
+        List<String> originalGroupIds = getAccountGroupByAccountId(accountId)
+                .stream()
+                .map(AccountGroupObject::getGroupId)
+                .collect(Collectors.toList());
+        List<String> allGroupIds = groupDomain.getByOrgId(account.getOrgId()).stream().map(GroupObject::getId).collect(Collectors.toList());
+        //delete original but not in the new groupId list
+        originalGroupIds.stream().filter(gId -> !groupIds.contains(gId)).forEach(gId -> {
+            deleteAccountGroupByAccountIdAndGroupId(accountId, gId);
+        });
+        //add not in the original groupId list
+        groupIds.stream()
+                .filter(gId -> gId != null && allGroupIds.contains(gId) && !originalGroupIds.contains(gId))
+                .forEach(gId -> {
+                    putAccountGroup(accountId, gId);
+                });
+    }
+
+    public void putAccountGroupsByGroup(GroupObject group, List<String> accountIds) {
+        String groupId = group.getId();
+        List<String> originalAccountIds = getAccountGroupByGroupId(groupId)
+                .stream()
+                .map(AccountGroupObject::getAccountId)
+                .collect(Collectors.toList());
+        List<String> allAccountIds = accountDomain.getByOrgId(group.getOrgId(), null).getContent()
+                .stream().map(AccountObject::getId).collect(Collectors.toList());
+        //delete original but not in the new accountId list
+        originalAccountIds.stream().filter(aId -> !accountIds.contains(aId)).forEach(aId -> {
+            deleteAccountGroupByAccountIdAndGroupId(aId, groupId);
+        });
+        //add not in the original accountId list
+        accountIds.stream()
+                .filter(aId -> aId != null && allAccountIds.contains(aId) && !originalAccountIds.contains(aId))
+                .forEach(aId -> {
+                    putAccountGroup(aId, groupId);
+                });
     }
 
     public void deleteAccountGroupByAccountIdAndGroupId(String accountId, String groupId) {
@@ -75,8 +110,8 @@ public class AccountGroupDomain {
         if (accountGroupObjects.size() == 0) {
             return new ArrayList<>();
         }
-        List<GroupObject> allGroups = groupDomain.getByOrgId(accountObject.getOrgId());
         List<String> groupIds = accountGroupObjects.stream().map(AccountGroupObject::getGroupId).collect(Collectors.toList());
+        List<GroupObject> allGroups = groupDomain.getByOrgId(accountObject.getOrgId());
         return allGroups.stream().filter(g -> groupIds.contains(g.getId())).collect(Collectors.toList());
     }
 
