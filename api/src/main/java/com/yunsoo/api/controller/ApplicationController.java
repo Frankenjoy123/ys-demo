@@ -8,6 +8,7 @@ import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +38,7 @@ public class ApplicationController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission('*', 'org', 'application:read')")
     public List<Application> getByFilter(@RequestParam(value = "type_code", required = false) String typeCode,
                                          @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
                                          Pageable pageable,
@@ -49,6 +51,7 @@ public class ApplicationController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
+    @PreAuthorize("hasPermission('*', 'org', 'application:create')")
     public Application create(@RequestBody @Valid Application application) {
         ApplicationObject applicationObject = application.toApplicationObject();
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
@@ -58,6 +61,7 @@ public class ApplicationController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    @PreAuthorize("hasPermission('*', 'org', 'application:write')")
     public void patchUpdate(@PathVariable String id, @RequestBody Application application) {
         ApplicationObject applicationObject = application.toApplicationObject();
         String currentAccountId = AuthUtils.getCurrentAccount().getId();

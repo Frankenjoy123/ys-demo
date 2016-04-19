@@ -120,6 +120,7 @@ public class MarketingController {
 
     //query marketing plan by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(returnObject, 'marketing:read')")
     public List<Marketing> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                        @RequestParam(value = "carrier_id", required = false) String carrierId,
                                        @RequestParam(value = "status", required = false) String status,
@@ -127,7 +128,7 @@ public class MarketingController {
                                        HttpServletResponse response) {
 
         List<String> orgIds = null;
-        if(carrierId != null)
+        if (carrierId != null)
             orgIds = organizationDomain.getBrandIdsForCarrier(carrierId);
         else
             orgId = AuthUtils.fixOrgId(orgId);
@@ -145,8 +146,8 @@ public class MarketingController {
             if (pbo != null) {
                 marketing.setProductBaseName(pbo.getName());
             }
-            if(carrierId != null){
-                if(orgList.containsKey(marketing.getOrgId()))
+            if (carrierId != null) {
+                if (orgList.containsKey(marketing.getOrgId()))
                     marketing.setOrgName(orgList.get(marketing.getOrgId()));
                 else {
                     OrganizationObject org = organizationDomain.getOrganizationById(marketing.getOrgId());
@@ -176,10 +177,7 @@ public class MarketingController {
         MarketingObject marketingObject = marketing.toMarketingObject();
         marketingObject.setCreatedAccountId(currentAccountId);
         marketingObject.setCreatedDateTime(DateTime.now());
-        if (StringUtils.hasText(marketing.getOrgId()))
-            marketingObject.setOrgId(marketing.getOrgId());
-        else
-            marketingObject.setOrgId(AuthUtils.getCurrentAccount().getOrgId());
+        marketingObject.setOrgId(AuthUtils.fixOrgId(marketing.getOrgId()));
 
         MarketingObject mktObject;
         if (batchId != null) {
@@ -207,6 +205,7 @@ public class MarketingController {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
         if (marketingObject != null) {
+            AuthUtils.checkPermission(marketingObject.getOrgId(), "marketing", "write");
             marketingObject.setName(marketing.getName());
             marketingObject.setWishes(marketing.getWishes());
             marketingObject.setBudget(marketing.getBudget());
@@ -235,7 +234,6 @@ public class MarketingController {
 
 
     }
-
 
 
     @RequestMapping(value = "keys/sum/{id}", method = RequestMethod.GET)
@@ -270,29 +268,29 @@ public class MarketingController {
 
 
     @RequestMapping(value = "{id}/active", method = RequestMethod.PUT)
-    public void enableMarketing(@PathVariable(value = "id")String id, @RequestParam(value="comments", required = false)String comments){
+    public void enableMarketing(@PathVariable(value = "id") String id, @RequestParam(value = "comments", required = false) String comments) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
-        if(marketingObject != null) {
+        if (marketingObject != null) {
             marketingObject.setStatusCode(LookupCodes.MktStatus.PAID);
             marketingObject.setModifiedDateTime(DateTime.now());
             marketingObject.setModifiedAccountId(currentAccountId);
-            if(StringUtils.hasText(comments))
-                marketingObject.setComments(marketingObject.getComments() == null ? "": marketingObject.getComments() + comments + ";");
+            if (StringUtils.hasText(comments))
+                marketingObject.setComments(marketingObject.getComments() == null ? "" : marketingObject.getComments() + comments + ";");
             marketingDomain.updateMarketing(marketingObject);
         }
     }
 
     @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
-    public void disableMarketing(@PathVariable(value = "id")String id, @RequestParam(value="comments", required = false)String comments){
+    public void disableMarketing(@PathVariable(value = "id") String id, @RequestParam(value = "comments", required = false) String comments) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
-        if(marketingObject != null) {
+        if (marketingObject != null) {
             marketingObject.setStatusCode(LookupCodes.MktStatus.DISABLED);
             marketingObject.setModifiedDateTime(DateTime.now());
             marketingObject.setModifiedAccountId(currentAccountId);
-            if(StringUtils.hasText(comments))
-                marketingObject.setComments(marketingObject.getComments() == null ? "": marketingObject.getComments() + comments + ";");
+            if (StringUtils.hasText(comments))
+                marketingObject.setComments(marketingObject.getComments() == null ? "" : marketingObject.getComments() + comments + ";");
             marketingDomain.updateMarketing(marketingObject);
         }
     }
@@ -422,16 +420,17 @@ public class MarketingController {
         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.INVALID);
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
     }
+
     @RequestMapping(value = "/count/unpaid")
-    public int countUnpaidMarketing(@RequestParam("org_ids")List<String> orgIds){
-        if(orgIds == null || orgIds.size() == 0)
+    public int countUnpaidMarketing(@RequestParam("org_ids") List<String> orgIds) {
+        if (orgIds == null || orgIds.size() == 0)
             throw new BadRequestException("org ids can not be null");
 
         return marketingDomain.countMarketing(orgIds, LookupCodes.MktStatus.CREATED);
     }
 
     @RequestMapping(value = "statistics")
-    public List<Marketing> marketingStatistics(@RequestParam("org_ids")List<String> orgIds, Pageable pageable){
+    public List<Marketing> marketingStatistics(@RequestParam("org_ids") List<String> orgIds, Pageable pageable) {
         List<MarketingObject> statisticsObjectList = marketingDomain.statisticsMarketing(orgIds, Arrays.asList(LookupCodes.MktStatus.PAID, LookupCodes.MktStatus.AVAILABLE), pageable);
         return statisticsObjectList.stream().map(Marketing::new).collect(Collectors.toList());
     }

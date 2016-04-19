@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * Descriptions:
  */
 @RestController
-@RequestMapping(value = "/productsalesterritory")
+@RequestMapping(value = "/productSalesTerritory")
 public class ProductSalesTerritoryController {
 
     @Autowired

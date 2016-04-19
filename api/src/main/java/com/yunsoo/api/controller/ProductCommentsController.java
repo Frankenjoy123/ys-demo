@@ -23,7 +23,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping(value = "/productcomments")
+@RequestMapping(value = "/productComments")
 public class ProductCommentsController {
 
     @Autowired
@@ -58,7 +58,7 @@ public class ProductCommentsController {
         return new ProductComments(object);
     }
 
-    @RequestMapping(value = "/totalcount", method = RequestMethod.GET)
+    @RequestMapping(value = "/totalCount", method = RequestMethod.GET)
     public Long countByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
         orgId = AuthUtils.fixOrgId(orgId);
         if (orgId == null)

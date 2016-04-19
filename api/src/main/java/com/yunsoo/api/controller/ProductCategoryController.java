@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * Descriptions:
  */
 @RestController
-@RequestMapping(value = "/productcategory")
+@RequestMapping(value = "/productCategory")
 public class ProductCategoryController {
 
     @Autowired

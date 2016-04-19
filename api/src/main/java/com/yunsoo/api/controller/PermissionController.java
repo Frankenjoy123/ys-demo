@@ -7,6 +7,7 @@ import com.yunsoo.api.dto.PermissionPolicy;
 import com.yunsoo.api.dto.PermissionResource;
 import com.yunsoo.api.util.AuthUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,6 +40,7 @@ public class PermissionController {
     }
 
     @RequestMapping(value = "/resource", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission('*', 'org', 'permission_resource:read)")
     public List<PermissionResource> getResources() {
         Map<String, PermissionAction> actionMap = new HashMap<>();
         permissionDomain.getPermissionActions().forEach(a -> {
@@ -48,11 +50,13 @@ public class PermissionController {
     }
 
     @RequestMapping(value = "/action", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission('*', 'org', 'permission_action:read)")
     public List<PermissionAction> getActions() {
         return permissionDomain.getPermissionActions().stream().map(PermissionAction::new).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/policy", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission('*', 'org', 'permission_policy:read)")
     public List<PermissionPolicy> getAllPolicies() {
         return permissionDomain.getPermissionPolicies().stream().map(PermissionPolicy::new).collect(Collectors.toList());
     }
