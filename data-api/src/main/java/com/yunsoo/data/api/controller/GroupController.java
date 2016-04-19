@@ -27,7 +27,7 @@ public class GroupController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public GroupObject getById(@PathVariable("id") String id) {
-        GroupEntity entity = getGroupEntityById(id);
+        GroupEntity entity = findGroupById(id);
         return toGroupObject(entity);
     }
 
@@ -53,7 +53,7 @@ public class GroupController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void patchUpdate(@PathVariable("id") String id, @RequestBody GroupObject object) {
-        GroupEntity entity = getGroupEntityById(id);
+        GroupEntity entity = findGroupById(id);
         if (object.getName() != null) {
             entity.setName(object.getName());
         }
@@ -74,7 +74,7 @@ public class GroupController {
         }
     }
 
-    private GroupEntity getGroupEntityById(String id) {
+    private GroupEntity findGroupById(String id) {
         GroupEntity entity = groupRepository.findOne(id);
         if (entity == null) {
             throw new NotFoundException("group not found by [id: " + id + "]");
