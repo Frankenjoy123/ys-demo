@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,7 @@ public class ProductKeyOrderController {
 
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(returnObject, 'product_key_order:read')")
+    @PostAuthorize("hasPermission(returnObject, 'product_key_order:read')")
     public ProductKeyOrder getById(@PathVariable(value = "id") String id) {
         ProductKeyOrder productKeyOrder = productKeyOrderDomain.getById(id);
         if (productKeyOrder == null) {

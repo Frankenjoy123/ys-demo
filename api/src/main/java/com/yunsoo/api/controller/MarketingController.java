@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -120,7 +121,7 @@ public class MarketingController {
 
     //query marketing plan by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(returnObject, 'marketing:read')")
+    @PostAuthorize("hasPermission(returnObject, 'marketing:read')")
     public List<Marketing> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                        @RequestParam(value = "carrier_id", required = false) String carrierId,
                                        @RequestParam(value = "status", required = false) String status,
