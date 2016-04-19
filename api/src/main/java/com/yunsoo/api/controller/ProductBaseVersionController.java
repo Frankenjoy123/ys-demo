@@ -119,7 +119,7 @@ public class ProductBaseVersionController {
             }
         }
 
-        productBases.forEach(productBase -> productBase.setFollowingUsersTotalNumber(followingDomain.getFollowingUsersCountByProductBaseId(productBase.getId())));
+        //productBases.forEach(productBase -> productBase.setFollowingUsersTotalNumber(followingDomain.getFollowingUsersCountByProductBaseId(productBase.getId())));
 
         return productBases;
     }

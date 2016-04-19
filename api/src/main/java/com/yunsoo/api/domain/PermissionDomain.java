@@ -108,19 +108,6 @@ public class PermissionDomain {
         });
     }
 
-    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'policyMap')")
-    public Map<String, PermissionPolicyObject> getPermissionPolicyMap() {
-        Map<String, PermissionPolicyObject> policyMap = new HashMap<>();
-        List<PermissionPolicyObject> policyList = getPermissionPolicies();
-        policyList.forEach(p -> {
-            if (p != null) {
-                policyMap.put(p.getCode(), p);
-            }
-        });
-
-        return policyMap;
-    }
-
     //endregion
 
     public List<PermissionInstance> extendPermissions(List<PermissionInstance> permissions) {

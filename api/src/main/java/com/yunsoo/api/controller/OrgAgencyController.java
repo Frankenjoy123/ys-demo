@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  */
 
 @RestController
-@RequestMapping(value = "/organizationagency")
+@RequestMapping(value = "/organizationAgency")
 public class OrgAgencyController {
 
     @Autowired

@@ -131,7 +131,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "sum/quantity", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'productkeybatch:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'product_key_batch:read')")
     public Long sumQuantity(
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "product_base_id", required = false) String productBaseId) {
@@ -140,7 +140,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "sum/time", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'productkeybatch:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'product_key_batch:read')")
     public Long sumQuantityTime(
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "product_base_id", required = false) String productBaseId) {
