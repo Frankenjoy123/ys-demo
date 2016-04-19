@@ -4,7 +4,6 @@ import com.yunsoo.api.domain.ProductKeyOrderDomain;
 import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.api.util.AuthUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +24,7 @@ public class ProductKeyCreditController {
 
 
     @RequestMapping(value = "")
-    @PreAuthorize("hasPermission(#orgId, 'org', 'product_key_credit:read')")
+    //@PreAuthorize("hasPermission(#orgId, 'org', 'product_key_credit:read')")
     public List<ProductKeyCredit> calculate(@RequestParam(value = "org_id", required = false) String orgId,
                                             @RequestParam(value = "product_base_id", required = false) String productBaseId) {
         orgId = AuthUtils.fixOrgId(orgId);
