@@ -25,7 +25,7 @@ public class ProductKeyCreditController {
 
 
     @RequestMapping(value = "")
-    @PreAuthorize("hasPermission('#orgId', 'org', 'product_key_credit:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'product_key_credit:read')")
     public List<ProductKeyCredit> calculate(@RequestParam(value = "org_id", required = false) String orgId,
                                             @RequestParam(value = "product_base_id", required = false) String productBaseId) {
         orgId = AuthUtils.fixOrgId(orgId);
