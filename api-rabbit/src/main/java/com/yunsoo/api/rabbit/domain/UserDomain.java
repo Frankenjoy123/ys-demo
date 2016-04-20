@@ -112,10 +112,13 @@ public class UserDomain {
     }
 
     public UserObject createUser(UserObject userObject) {
-        List<UserObject> existingUser = dataAPIClient.get("user?open_id={openid}", new ParameterizedTypeReference<List<UserObject>>(){},userObject.getOauthOpenid());
-        if(existingUser.size() > 0)
-            return existingUser.get(0);
-
+        if (StringUtils.hasText(userObject.getOauthOpenid())) {
+            List<UserObject> existingUser = dataAPIClient.get("user?open_id={openid}", new ParameterizedTypeReference<List<UserObject>>() {
+            }, userObject.getOauthOpenid());
+            if (existingUser.size() > 0) {
+                return existingUser.get(0);
+            }
+        }
         //check phone
         if (userObject.getPhone() != null) {
             checkPhoneExists(userObject.getPhone(), null);
