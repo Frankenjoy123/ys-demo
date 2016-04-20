@@ -1,10 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
-import com.yunsoo.api.dto.Lookup;
-import com.yunsoo.api.dto.PermissionInstance;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression;
-import com.yunsoo.api.util.WildcardMatcher;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.PermissionActionObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
@@ -16,10 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -32,9 +28,6 @@ public class PermissionDomain {
 
     @Autowired
     private RestClient dataAPIClient;
-
-    @Autowired
-    private LookupDomain lookupDomain;
 
 
     @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'resourceList')")
@@ -110,23 +103,4 @@ public class PermissionDomain {
 
     //endregion
 
-    public List<PermissionInstance> extendPermissions(List<PermissionInstance> permissions) {
-        List<String> resources = lookupDomain.getLookupListByType(LookupCodes.LookupType.PermissionResource, true)
-                .stream().map(Lookup::getCode).collect(Collectors.toList());
-        List<PermissionInstance> result = new ArrayList<>();
-        permissions.forEach(p -> {
-            String resourceCode = p.getResourceCode();
-            String actionCode = p.getActionCode();
-            String orgId = p.getOrgId();
-            if (StringUtils.isEmpty(resourceCode) || StringUtils.isEmpty(actionCode)) {
-                return;
-            }
-            if (!resourceCode.equals("*") && resourceCode.contains("*")) {
-                resources.stream().filter(i -> WildcardMatcher.match(resourceCode, i)).forEach(r -> result.add(new PermissionInstance(r, actionCode, orgId)));
-            } else {
-                result.add(new PermissionInstance(resourceCode, actionCode, orgId));
-            }
-        });
-        return result;
-    }
 }

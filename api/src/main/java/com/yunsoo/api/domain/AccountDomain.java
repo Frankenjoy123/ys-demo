@@ -61,6 +61,12 @@ public class AccountDomain {
         return accountObjects[0];
     }
 
+    public List<AccountObject> getByOrgId(String orgId) {
+        return dataAPIClient.get("account?org_id={orgId}", new ParameterizedTypeReference<List<AccountObject>>() {
+        }, orgId);
+    }
+
+    public Page<AccountObject> getByOrgId(String orgId, Pageable pageable) {
     public Page<AccountObject> getByOrgId(String orgId, String searchText, DateTime start, DateTime end, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId).append("search_text", searchText)
