@@ -85,7 +85,7 @@ public class AccountGroupDomain {
                 .stream()
                 .map(AccountGroupObject::getAccountId)
                 .collect(Collectors.toList());
-        List<String> allAccountIds = accountDomain.getByOrgId(group.getOrgId(), null).getContent()
+        List<String> allAccountIds = accountDomain.getByOrgId(group.getOrgId())
                 .stream().map(AccountObject::getId).collect(Collectors.toList());
         //delete original but not in the new accountId list
         originalAccountIds.stream().filter(aId -> !accountIds.contains(aId)).forEach(aId -> {
@@ -122,7 +122,7 @@ public class AccountGroupDomain {
             return new ArrayList<>();
         }
         List<String> accountIds = accountGroupObjects.stream().map(AccountGroupObject::getAccountId).collect(Collectors.toList());
-        List<AccountObject> allAccounts = accountDomain.getByOrgId(groupObject.getOrgId(), null).getContent();
+        List<AccountObject> allAccounts = accountDomain.getByOrgId(groupObject.getOrgId());
         return allAccounts.stream().filter(a -> accountIds.contains(a.getId())).collect(Collectors.toList());
     }
 

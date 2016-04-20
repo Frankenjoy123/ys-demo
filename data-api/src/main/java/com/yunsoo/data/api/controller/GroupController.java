@@ -2,13 +2,17 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.GroupObject;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.GroupEntity;
 import com.yunsoo.data.service.repository.GroupRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,9 +36,14 @@ public class GroupController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<GroupObject> getByOrgId(@RequestParam("org_id") String orgId) {
-        List<GroupEntity> entities = groupRepository.findByOrgId(orgId);
-        return entities.stream().map(this::toGroupObject).collect(Collectors.toList());
+    public List<GroupObject> getByFilter(@RequestParam("org_id") String orgId,
+                                         Pageable pageable,
+                                         HttpServletResponse response) {
+        Page<GroupEntity> entityPage = groupRepository.findByOrgId(orgId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+        return entityPage.getContent().stream().map(this::toGroupObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

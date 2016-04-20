@@ -3,10 +3,13 @@ package com.yunsoo.api.domain;
 import com.yunsoo.api.client.DataAPIClient;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.GroupObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -41,6 +44,15 @@ public class GroupDomain {
     public List<GroupObject> getByOrgId(String orgId) {
         return dataAPIClient.get("group?org_id={orgId}", new ParameterizedTypeReference<List<GroupObject>>() {
         }, orgId);
+    }
+
+    public Page<GroupObject> getByOrgId(String orgId, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append(pageable)
+                .build();
+        return dataAPIClient.getPaged("group" + query, new ParameterizedTypeReference<List<GroupObject>>() {
+        });
     }
 
     public GroupObject create(GroupObject groupObject) {

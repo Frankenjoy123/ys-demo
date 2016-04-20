@@ -11,14 +11,17 @@ import com.yunsoo.api.security.permission.PermissionService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.GroupObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,9 +61,16 @@ public class GroupController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'group:read')")
-    public List<Group> getByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {
+    public List<Group> getByOrgId(@RequestParam(value = "org_id", required = false) String orgId,
+                                  Pageable pageable,
+                                  HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
-        return groupDomain.getByOrgId(orgId).stream().map(Group::new).collect(Collectors.toList());
+
+        Page<GroupObject> groupPage = groupDomain.getByOrgId(orgId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", groupPage.toContentRange());
+        }
+        return groupPage.map(Group::new).getContent();
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
