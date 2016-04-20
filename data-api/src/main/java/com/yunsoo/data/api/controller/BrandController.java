@@ -10,9 +10,12 @@ import com.yunsoo.data.service.entity.BrandApplicationEntity;
 import com.yunsoo.data.service.repository.AttachmentRepository;
 import com.yunsoo.data.service.repository.BrandApplicationRepository;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -65,10 +68,11 @@ public class BrandController {
                                          @RequestParam(value = "status", required = false) String status,
                                          @RequestParam(value = "has_payment", required = false) Boolean hasPayment,
                                          @RequestParam(value = "search_text", required = false) String searchText,
-                                         Pageable pageable,
-                                         HttpServletResponse response) {
+                                         @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startDateTime,
+                                         @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endDateTime,
+                                         Pageable pageable,  HttpServletResponse response) {
 
-        Page<BrandApplicationEntity> entityPage = repository.query(name, carrierId, status,hasPayment, searchText, pageable);
+        Page<BrandApplicationEntity> entityPage = repository.query(name, carrierId, status,hasPayment, startDateTime, endDateTime, searchText, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
@@ -77,6 +81,7 @@ public class BrandController {
                 .collect(Collectors.toList());
 
     }
+
 
     @RequestMapping(value = "/attachment", method = RequestMethod.POST)
     public AttachmentObject createAttachment(@RequestBody AttachmentObject attachment) {

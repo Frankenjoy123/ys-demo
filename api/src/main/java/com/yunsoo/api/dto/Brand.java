@@ -275,7 +275,7 @@ public class Brand extends Organization {
             object.setCreatedDateTime(brand.getCreatedDateTime());
             object.setCreatedAccountId(brand.getCreatedAccountId());
             object.setDescription(brand.getDescription());
-            object.setName(brand.getName());
+            object.setName(brand.getName().trim());
             object.setTypeCode(brand.getTypeCode());
             object.setComments(brand.getComments());
             object.setBusinessLicenseEnd(brand.getBusinessLicenseEnd());
@@ -288,7 +288,7 @@ public class Brand extends Organization {
             object.setContactMobile(brand.getContactMobile());
             object.setEmail(brand.getEmail());
             object.setAttachment(brand.getAttachment());
-            object.setIdentifier(brand.getIdentifier());
+            object.setIdentifier(brand.getIdentifier().trim());
             object.setPassword(brand.getPassword());
             object.setInvestigatorAttachment(brand.getInvestigatorAttachment());
             object.setInvestigatorComments(brand.getInvestigatorComments());

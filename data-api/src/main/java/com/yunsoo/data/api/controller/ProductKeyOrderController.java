@@ -41,6 +41,11 @@ public class ProductKeyOrderController {
         }
         return toProductKeyOrderObject(entity);
     }
+    @RequestMapping(value = "{id}/product", method = RequestMethod.GET)
+    public List<String> getProductBaseIds(@PathVariable("id") String orgId){
+        return productKeyOrderRepository.findProductBaseIdByOrgId(orgId);
+    }
+
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyOrderObject> getByFilter(
@@ -49,10 +54,12 @@ public class ProductKeyOrderController {
             @RequestParam(value = "remain_ge", required = false) Long remainGE,
             @RequestParam(value = "expire_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime expireDateTimeGE,
             @RequestParam(value = "product_base_id", required = false) String productBaseId,
+            @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startDateTime,
+            @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endDateTime,
             Pageable pageable,
             HttpServletResponse response) {
 
-        Page<ProductKeyOrderEntity> entityPage = productKeyOrderRepository.query(orgId, active, remainGE, expireDateTimeGE, productBaseId, pageable);
+        Page<ProductKeyOrderEntity> entityPage = productKeyOrderRepository.query(orgId, active, remainGE, expireDateTimeGE, productBaseId, startDateTime, endDateTime, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }

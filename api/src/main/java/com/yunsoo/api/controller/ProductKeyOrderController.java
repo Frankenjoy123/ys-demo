@@ -14,6 +14,8 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -100,13 +102,16 @@ public class ProductKeyOrderController {
                                              @RequestParam(value = "remain_ge", required = false) Long remainGE,
                                              @RequestParam(value = "expire_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime expireDateTimeGE,
                                              @RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                             Pageable pageable,
+                                             @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
+                                             @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
+                                             @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)Pageable pageable,
                                              HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
 
         Page<ProductKeyOrder> orderPage = available != null && available
                 ? productKeyOrderDomain.getAvailableOrdersByOrgId(orgId, pageable)
-                : productKeyOrderDomain.getOrdersByFilter(orgId, active, remainGE, expireDateTimeGE, productBaseId, pageable);
+                : productKeyOrderDomain.
+                getOrdersByFilter(orgId, active, remainGE, expireDateTimeGE, productBaseId, startTime, endTime, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", orderPage.toContentRange());

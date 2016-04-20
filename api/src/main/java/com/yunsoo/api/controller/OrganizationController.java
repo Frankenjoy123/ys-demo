@@ -17,11 +17,13 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -167,12 +169,13 @@ public class OrganizationController {
                                        @RequestParam(value="status", required = false)String status,
                                        @RequestParam(value = "name", required = false) String name,
                                        @RequestParam(value = "search_text", required = false) String searchText,
+                                       @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
+                                       @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
                                        Pageable pageable,
                                        HttpServletResponse response) {
         if(!StringUtils.hasText(searchText))
             searchText = null;
-
-        Page<BrandObject> brandPage = organizationDomain.getOrgBrandList(id, name, status, searchText, pageable);
+        Page<BrandObject> brandPage = organizationDomain.getOrgBrandList(id, name, status, searchText, startTime, endTime, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", brandPage.toContentRange());
         }

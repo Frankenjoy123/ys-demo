@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -42,12 +43,15 @@ public class AccountController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<AccountObject> getByFilter(@RequestParam("org_id") String orgId,
                                            @RequestParam(value = "identifier", required = false) String identifier,
+                                           @RequestParam(value = "search_text", required = false) String searchText,
+                                           @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startDateTime,
+                                           @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endDateTime,
                                            Pageable pageable,
                                            HttpServletResponse response) {
         List<AccountEntity> entities;
 
         if (StringUtils.isEmpty(identifier)) {
-            Page<AccountEntity> entityPage = accountRepository.findByOrgIdOrderByCreatedDateTimeDesc(orgId, pageable);
+            Page<AccountEntity> entityPage = accountRepository.query(orgId, searchText, startDateTime, endDateTime, pageable);
             if (pageable != null) {
                 response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
             }

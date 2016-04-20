@@ -52,7 +52,7 @@ public class ProductKeyOrderDomain {
      * @return
      */
     public Page<ProductKeyOrder> getAvailableOrdersByOrgId(String orgId, Pageable pageable) {
-        return getOrdersByFilter(orgId, true, null, DateTime.now(), null, pageable);
+        return getOrdersByFilter(orgId, true, null, DateTime.now(), null, null, null, pageable);
     }
 
     /**
@@ -64,13 +64,15 @@ public class ProductKeyOrderDomain {
      * @param pageable
      * @return
      */
-    public Page<ProductKeyOrder> getOrdersByFilter(String orgId, Boolean active, Long remainGE, DateTime expireDateTimeGE, String productBaseId, Pageable pageable) {
+    public Page<ProductKeyOrder> getOrdersByFilter(String orgId, Boolean active, Long remainGE, DateTime expireDateTimeGE, String productBaseId, DateTime start, DateTime end,Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .append("active", active)
                 .append("remain_ge", remainGE)
                 .append("expire_datetime_ge", expireDateTimeGE)
                 .append("product_base_id", productBaseId)
+                .append("start_datetime", start)
+                .append("end_datetime", end)
                 .append(pageable)
                 .build();
 
@@ -90,7 +92,7 @@ public class ProductKeyOrderDomain {
         List<ProductKeyCredit> credits = new ArrayList<>();
         Map<String, ProductKeyCredit> creditMap = new HashMap<>();
         // search orders by [active = true and expire_datetime >= now], including remain is 0
-        List<ProductKeyOrder> orders = getOrdersByFilter(orgId, true, null, DateTime.now(), productBaseId, null).getContent();
+        List<ProductKeyOrder> orders = getOrdersByFilter(orgId, true, null, DateTime.now(), productBaseId, null, null, null).getContent();
 
         orders.forEach(o -> {
             if (o != null) {

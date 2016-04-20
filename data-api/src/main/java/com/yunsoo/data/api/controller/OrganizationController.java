@@ -13,6 +13,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -130,10 +131,12 @@ public class OrganizationController {
                                              @RequestParam(value="status", required = false)String status,
                                              @RequestParam(value = "name", required = false) String name,
                                              @RequestParam(value = "search_text", required = false) String searchText,
+                                             @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startDateTime,
+                                             @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endDateTime,
                                              Pageable pageable,
                                              HttpServletResponse response) {
 
-        Page<BrandEntity> entityPage = brandRepository.filter(id, status, name, searchText, pageable);
+        Page<BrandEntity> entityPage = brandRepository.filter(id, status, name, searchText, startDateTime, endDateTime, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
