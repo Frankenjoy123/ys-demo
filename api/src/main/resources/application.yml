@@ -31,10 +31,10 @@ yunsoo:
     key: e0opacdva54q9todmujp0vc5pwqlcj10
     account_name: 广州云溯科技有限公司
     email: zhe@yunsu.co
-    amount: 0.1
+    amount: 0.01
     notify_url: http://dev.yunsu.co:6080/marketing/alipay/notify
-    direct_return_url: http://127.0.0.1/enterprise/brandapplication.html
-    direct_notify_url: http://127.0.0.1:6080/payment/brand/alipay/notify
+    direct_return_url: http://dev.yunsu.co:9080/enterprise/brandapplication.html
+    direct_notify_url: http://dev.yunsu.co:6080/payment/brand/alipay/notify
 spring:
   profiles.active: local
   mvc:
@@ -55,7 +55,8 @@ yunsoo:
     type: local
   alipay:
     notify_url: http://115.192.221.38:6080/marketing/alipay/notify
-
+    direct_return_url: http://localhost/enterprise/brandapplication.html
+    direct_notify_url: http://localhost:6080/payment/brand/alipay/notify
 
 ---
 spring:
@@ -75,3 +76,5 @@ yunsoo:
       host: dev-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn
   alipay:
     notify_url: http://dev.yunsu.co:6080/marketing/alipay/notify
+    direct_return_url: http://dev.yunsu.co:9080/enterprise/brandapplication.html
+    direct_notify_url: http://dev.yunsu.co:6080/payment/brand/alipay/notify
