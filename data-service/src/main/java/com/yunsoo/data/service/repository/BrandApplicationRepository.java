@@ -19,7 +19,7 @@ public interface BrandApplicationRepository  extends CrudRepository<BrandApplica
             "and (:name is null or be.brandName = :name) and (:status is null or be.statusCode = :status)  " +
             "and (:searchText is null or be.brandName like :searchText or be.contactName like :searchText or be.contactMobile like :searchText or be.email like :searchText)" +
             "and (:hasPayment is null or (:hasPayment = true and be.paymentId is not null)" +
-            "or (:hasPayment = false and (be.paymentId is null or be.paymentId = '')))" )
+            "or (:hasPayment = false and (be.paymentId is null or be.paymentId = ''))) order by be.createdDateTime desc" )
     Page<BrandApplicationEntity> query(@Param("name")String name, @Param("carrierId")String carrier_id,
             @Param("status")String status, @Param(value = "hasPayment") Boolean hasPayment,  @Param("searchText")String searchText, Pageable pageable);
 

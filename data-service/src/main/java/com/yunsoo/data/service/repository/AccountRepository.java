@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface AccountRepository extends FindOneAndSaveRepository<AccountEntity, String> {
 
-    Page<AccountEntity> findByOrgId(String orgId, Pageable pageable);
+    Page<AccountEntity> findByOrgIdOrderByCreatedDateTimeDesc(String orgId, Pageable pageable);
 
     List<AccountEntity> findByOrgIdAndIdentifier(String orgId, String identifier);
 

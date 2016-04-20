@@ -47,7 +47,7 @@ public class AccountController {
         List<AccountEntity> entities;
 
         if (StringUtils.isEmpty(identifier)) {
-            Page<AccountEntity> entityPage = accountRepository.findByOrgId(orgId, pageable);
+            Page<AccountEntity> entityPage = accountRepository.findByOrgIdOrderByCreatedDateTimeDesc(orgId, pageable);
             if (pageable != null) {
                 response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
             }
