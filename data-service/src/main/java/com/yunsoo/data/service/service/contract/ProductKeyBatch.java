@@ -21,7 +21,6 @@ public class ProductKeyBatch {
     private String createdAccountId;
     private DateTime createdDateTime;
     private List<String> productKeyTypeCodes;
-    private String productKeysUri;
     private Integer restQuantity;
     private String marketingId;
 
@@ -111,14 +110,6 @@ public class ProductKeyBatch {
 
     public void setProductKeyTypeCodes(List<String> productKeyTypeCodes) {
         this.productKeyTypeCodes = productKeyTypeCodes;
-    }
-
-    public String getProductKeysUri() {
-        return productKeysUri;
-    }
-
-    public void setProductKeysUri(String productKeysUri) {
-        this.productKeysUri = productKeysUri;
     }
 
     public String getMarketingId() {

@@ -25,7 +25,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -39,9 +38,6 @@ import java.util.List;
  */
 @Service("productKeyBatchService")
 public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
-
-    private static final int KEY_LENGTH = 22;
-    private static final byte[] DELIMITER2 = new byte[]{0x3B}; //;
 
     private Log log = LogFactory.getLog(this.getClass());
 
@@ -70,21 +66,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
             return null;
         }
 
-        List<List<String>> keys;
-        //move old file location to keys.pks
-        if (batchEntity.getProductKeysUri() != null && batchEntity.getProductKeysUri().length() > 0) {
-            String bucketName = awsProperties.getS3().getBucketName();
-            String s3Key = batchEntity.getProductKeysUri().split("/", 2)[1];
-            keys = getProductKeyListFromS3Old(bucketName, s3Key);
-            if (keys != null) {
-                saveProductKeyListToS3(batchEntity.getOrgId(), batchId, batchEntity.getQuantity(), batchEntity.getProductKeyTypeCodes(), keys);
-                batchEntity.setProductKeysUri(null);
-                productKeyBatchRepository.save(batchEntity);
-                s3ItemDao.deleteItem(bucketName, s3Key);
-            }
-        } else {
-            keys = getProductKeyListFromS3(batchEntity.getOrgId(), batchId);
-        }
+        List<List<String>> keys = getProductKeyListFromS3(batchEntity.getOrgId(), batchId);
 
         if (keys == null) {
             return null;
@@ -232,34 +214,6 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         s3ItemDao.putItem(bucketName, s3Key, inputStream, metadata);
     }
 
-    private List<List<String>> getProductKeyListFromS3Old(String bucketName, String s3Key) {
-        S3Object s3Object = fileService.getFile(bucketName, s3Key);
-        if (s3Object == null) {
-            return null;
-        }
-        S3ObjectInputStream inputStream = s3Object.getObjectContent();
-        byte[] buffer;
-        try {
-            buffer = IOUtils.toByteArray(inputStream);
-        } catch (IOException e) {
-            log.error("getProductKeyListFromS3Old exception", e);
-            return null;
-        }
-        List<List<String>> result = new ArrayList<>();
-        int step = KEY_LENGTH + 1;
-        List<String> keys = new ArrayList<>();
-        for (int i = 0; i < buffer.length; i += step) {
-            String key = new String(buffer, i, KEY_LENGTH);
-            keys.add(key);
-            byte delimiter = buffer[i + KEY_LENGTH];
-            if (delimiter == DELIMITER2[0]) {
-                result.add(keys);
-                keys = new ArrayList<>();
-            }
-        }
-        return result;
-    }
-
     private List<List<String>> getProductKeyListFromS3(String orgId, String batchId) {
         String bucketName = awsProperties.getS3().getBucketName();
         String s3Key = formatProductKeyBatchKeysS3Key(orgId, batchId);
@@ -322,7 +276,6 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         if (codes != null) {
             batch.setProductKeyTypeCodes(Arrays.asList(StringUtils.commaDelimitedListToStringArray(codes)));
         }
-        batch.setProductKeysUri(entity.getProductKeysUri());
         batch.setMarketingId(entity.getMarketingId());
         return batch;
     }
@@ -346,7 +299,6 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         if (codes != null) {
             entity.setProductKeyTypeCodes(StringUtils.collectionToCommaDelimitedString(codes));
         }
-        entity.setProductKeysUri(batch.getProductKeysUri());
         entity.setMarketingId(batch.getMarketingId());
         return entity;
     }
