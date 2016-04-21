@@ -28,6 +28,11 @@ public class ProductKeyController {
         return toProductKeyObject(productKey);
     }
 
+    @RequestMapping(value = "{key}/disabled", method = RequestMethod.PUT)
+    public void disableKey(@PathVariable(value = "key") String key, @RequestBody Boolean disabled) {
+        productKeyService.setDisabled(key, disabled);
+    }
+
     @RequestMapping(value = "batch", method = RequestMethod.PUT)
     public void batchSave(@RequestBody ProductKeyBatchDetailedObject batch) {
         ProductObject productObject = batch.getProductTemplate();
@@ -39,15 +44,6 @@ public class ProductKeyController {
             productTemplate.setManufacturingDateTime(productObject.getManufacturingDateTime());
         }
         productKeyService.batchSave(batch.getId(), batch.getProductKeyTypeCodes(), batch.getProductKeys(), productTemplate);
-    }
-
-    @RequestMapping(value = "{key}/disabled", method = RequestMethod.PUT)
-    public void disableKey(@PathVariable(value = "key") String key, @RequestBody Boolean disabled) {
-        ProductKey productKey = productKeyService.get(key);
-        if (productKey == null) {
-            throw new NotFoundException("ProductKey " + key);
-        }
-        productKeyService.setDisabled(key, disabled);
     }
 
     private ProductKeyObject toProductKeyObject(ProductKey productKey) {

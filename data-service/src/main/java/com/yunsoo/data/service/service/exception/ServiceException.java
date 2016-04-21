@@ -14,7 +14,7 @@ public class ServiceException extends RuntimeException {
     }
 
     public ServiceException(Type type, String message) {
-        super(message);
+        super(message != null ? message : type.getDefaultMessage());
         this.type = type;
     }
 
@@ -24,6 +24,10 @@ public class ServiceException extends RuntimeException {
 
     public static ServiceException notFound(String message) {
         return new ServiceException(Type.NotFound, message);
+    }
+
+    public static ServiceException internalServerError(String message) {
+        return new ServiceException(Type.InternalServerError, message);
     }
 
     public enum Type {
