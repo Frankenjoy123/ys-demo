@@ -69,8 +69,9 @@ public class ProductKeyServiceImpl implements ProductKeyService {
         Assert.notEmpty(productKeys, "productKeys must not be empty or null");
 
         DateTime now = DateTime.now();
-        List<ProductModel> productModelList = new ArrayList<>(productKeys.size() * productKeyTypeCodes.size());
-        if (productKeyTypeCodes.size() == 1) {
+        int productKeyTypeCodesSize = productKeyTypeCodes.size();
+        List<ProductModel> productModelList = new ArrayList<>(productKeys.size() * productKeyTypeCodesSize);
+        if (productKeyTypeCodesSize == 1) {
             productKeys.stream().forEach(keys -> {
                 if (keys != null && keys.size() > 0) {
                     ProductModel productModel = generateProductModel(productTemplate);
@@ -83,10 +84,10 @@ public class ProductKeyServiceImpl implements ProductKeyService {
             });
         } else { //multi keys for each product
             productKeys.stream().forEach(keys -> {
-                if (keys != null && keys.size() >= productKeyTypeCodes.size()) {
+                if (keys != null && keys.size() >= productKeyTypeCodesSize) {
                     Set<String> keySet = new HashSet<>();
                     String primaryKey = keys.get(0);
-                    for (int j = 0; j < productKeyTypeCodes.size(); j++) {
+                    for (int j = 0; j < productKeyTypeCodesSize; j++) {
                         String key = keys.get(j);
                         keySet.add(key);
                         ProductModel productModel = generateProductModel(productTemplate);
@@ -112,9 +113,7 @@ public class ProductKeyServiceImpl implements ProductKeyService {
         if (productTemplate != null) {
             model.setProductBaseId(productTemplate.getProductBaseId());
             model.setProductStatusCode(productTemplate.getProductStatusCode());
-            if (productTemplate.getManufacturingDateTime() != null) {
-                model.setManufacturingDateTime(productTemplate.getManufacturingDateTime());
-            }
+            model.setManufacturingDateTime(productTemplate.getManufacturingDateTime());
         }
         return model;
     }
