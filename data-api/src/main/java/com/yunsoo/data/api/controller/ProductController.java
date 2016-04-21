@@ -24,7 +24,7 @@ public class ProductController {
     public ProductObject getByKey(@PathVariable(value = "key") String key) {
         Product product = productService.getByKey(key);
         if (product == null) {
-            throw new NotFoundException("product key not found");
+            throw new NotFoundException("product not found");
         }
         return toProductObject(product);
     }
