@@ -82,7 +82,7 @@ public class MarketingController {
         orgId = AuthUtils.fixOrgId(orgId);
 
 
-        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.PAID, null, pageable);
+        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.PAID, null, null, null, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", marketingPage.toContentRange());
         }
@@ -165,22 +165,30 @@ public class MarketingController {
     @PostAuthorize("hasPermission(returnObject, 'marketing:read')")
     public List<Marketing> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                        @RequestParam(value = "carrier_id", required = false) String carrierId,
+                                       @RequestParam(value = "product_base_id", required = false) String productBaseId,
                                        @RequestParam(value = "status", required = false) String status,
                                        @RequestParam(value = "search_text", required = false) String searchText,
+                                       @RequestParam(value = "need_rules", required = false) Boolean needRules,
+                                       @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
+                                       @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
                                        Pageable pageable,
                                        HttpServletResponse response) {
 
         List<String> orgIds = null;
 
-        if(!StringUtils.hasText(searchText))
-            searchText = null;
-
-        if(carrierId != null)
-            orgIds = organizationDomain.getBrandIdsForCarrier(carrierId);
+        if(carrierId != null) {
+            if(orgId != null) {
+                orgIds = new ArrayList<>();
+                orgIds.add(orgId);
+                orgId = null;
+            }
+            else
+                orgIds = organizationDomain.getBrandIdsForCarrier(carrierId);
+        }
         else
             orgId = AuthUtils.fixOrgId(orgId);
 
-        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status,searchText, pageable);
+        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status,searchText, startTime, endTime, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", marketingPage.toContentRange());
         }
@@ -204,10 +212,12 @@ public class MarketingController {
                     }
                 }
             }
-            List<MktDrawRuleObject> mktDrawRuleObjectList = marketingDomain.getRuleList(object.getId());
-            if (mktDrawRuleObjectList != null) {
-                List<MktDrawRule> mktDrawRuleList = mktDrawRuleObjectList.stream().map(MktDrawRule::new).collect(Collectors.toList());
-                marketing.setMarketingRules(mktDrawRuleList);
+            if(needRules == null || needRules){
+                List<MktDrawRuleObject> mktDrawRuleObjectList = marketingDomain.getRuleList(object.getId());
+                if (mktDrawRuleObjectList != null) {
+                    List<MktDrawRule> mktDrawRuleList = mktDrawRuleObjectList.stream().map(MktDrawRule::new).collect(Collectors.toList());
+                    marketing.setMarketingRules(mktDrawRuleList);
+                }
             }
             marketingList.add(marketing);
         });
