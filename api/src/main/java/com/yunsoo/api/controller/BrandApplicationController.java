@@ -1,7 +1,10 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.*;
-import com.yunsoo.api.dto.*;
+import com.yunsoo.api.dto.AccountLoginRequest;
+import com.yunsoo.api.dto.Attachment;
+import com.yunsoo.api.dto.Brand;
+import com.yunsoo.api.dto.Payment;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
@@ -16,7 +19,6 @@ import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
@@ -117,7 +119,7 @@ public class BrandApplicationController {
             accountObject.setOrgId(createdBrand.getId());
             accountObject.setCreatedAccountId(currentAccountId);
             AccountObject createdAccount = accountDomain.createAccount(accountObject, false);
-            permissionAllocationDomain.allocateAdminPermissionToAccount(createdAccount.getId());
+            permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
 
             object.setId(id);
             object.setCreatedDateTime(applicationDatetime);

@@ -137,7 +137,7 @@ public class OrganizationController {
         accountObject.setOrgId(returnObj.getId());
         accountObject.setCreatedAccountId(currentAccountId);
         AccountObject createdAccount = accountDomain.createAccount(accountObject, true);
-        permissionAllocationDomain.allocateAdminPermissionToAccount(createdAccount.getId());
+        permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
 
         return returnObj;
     }
