@@ -2,8 +2,8 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.GroupEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Created by  : Lijian
@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface GroupRepository extends FindOneAndSaveRepository<GroupEntity, String> {
 
-    List<GroupEntity> findByOrgId(String orgId);
+    Page<GroupEntity> findByOrgId(String orgId, Pageable pageable);
 
     void delete(String id);
 }

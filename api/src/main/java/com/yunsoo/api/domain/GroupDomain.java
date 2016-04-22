@@ -1,10 +1,15 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.DataAPIClient;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.GroupObject;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.QueryStringBuilder;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -41,12 +46,32 @@ public class GroupDomain {
         }, orgId);
     }
 
+    public Page<GroupObject> getByOrgId(String orgId, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append(pageable)
+                .build();
+        return dataAPIClient.getPaged("group" + query, new ParameterizedTypeReference<List<GroupObject>>() {
+        });
+    }
+
     public GroupObject create(GroupObject groupObject) {
+        groupObject.setId(null);
+        groupObject.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
+        groupObject.setCreatedDateTime(DateTime.now());
+        groupObject.setModifiedAccountId(null);
+        groupObject.setModifiedDatetime(null);
         return dataAPIClient.post("group", groupObject, GroupObject.class);
     }
 
     public void patchUpdate(GroupObject groupObject) {
-        dataAPIClient.patch("group/{id}", groupObject, groupObject.getId());
+        try {
+            groupObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getOrgId());
+            groupObject.setModifiedDatetime(DateTime.now());
+            dataAPIClient.patch("group/{id}", groupObject, groupObject.getId());
+        } catch (NotFoundException ex) {
+            throw new NotFoundException("group not found");
+        }
     }
 
     public void deleteGroupById(String id) {

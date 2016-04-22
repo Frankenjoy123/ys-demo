@@ -44,6 +44,7 @@ public class ProductBaseController {
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductBaseObject> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                               @RequestParam(value = "ids", required = false) List<String> ids,
                                                Pageable pageable,
                                                HttpServletResponse response) {
         Page<ProductBaseEntity> entityPage;

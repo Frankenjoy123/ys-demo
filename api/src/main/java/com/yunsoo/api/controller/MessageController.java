@@ -177,32 +177,6 @@ public class MessageController {
         return builder.body(new InputStreamResource(resourceInputStream));
     }
 
-
-    private Message toMessage(MessageObject object) {
-        if (object == null) {
-            return null;
-        }
-        Message message = new Message();
-        message.setId(object.getId());
-        message.setOrgId(object.getOrgId());
-        message.setTitle(object.getTitle());
-        message.setStatusCode(object.getStatusCode());
-        message.setTypeCode(object.getTypeCode());
-        message.setCreatedAccountId(object.getCreatedAccountId());
-        message.setCreatedDateTime(object.getCreatedDateTime());
-        message.setModifiedAccountId(object.getModifiedAccountId());
-        message.setModifiedDateTime(object.getModifiedDateTime());
-        return message;
-    }
-
-    private MessageObject findMessageById(String id) {
-        MessageObject messageObject = messageDomain.getMessageById(id);
-        if (messageObject == null) {
-            throw new NotFoundException("message not found");
-        }
-        return messageObject;
-    }
-
     @RequestMapping(value = "{id}/coverimage", method = RequestMethod.PUT)
     public void putMessageCoverImage(@PathVariable(value = "id") String id,
                                      @RequestBody @Valid MessageImageRequest messageImageRequest) {
@@ -224,5 +198,12 @@ public class MessageController {
         return messageBodyImage;
     }
 
+    private MessageObject findMessageById(String id) {
+        MessageObject messageObject = messageDomain.getMessageById(id);
+        if (messageObject == null) {
+            throw new NotFoundException("message not found");
+        }
+        return messageObject;
+    }
 
 }

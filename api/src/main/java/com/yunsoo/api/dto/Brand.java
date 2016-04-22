@@ -67,6 +67,17 @@ public class Brand extends Organization {
     @JsonProperty("investigator_comments")
     private String investigatorComments;
 
+    @JsonProperty("reject_reason")
+    private String rejectReason;
+
+    public String getRejectReason() {
+        return rejectReason;
+    }
+
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
+    }
+
     private List<Attachment> attachmentList;
 
     private List<Attachment> investigatorAttachmentList;
@@ -252,6 +263,7 @@ public class Brand extends Organization {
             setPassword("******");
             setInvestigatorAttachment(object.getInvestigatorAttachment());
             setInvestigatorComments(object.getInvestigatorComments());
+            setRejectReason(object.getRejectReason());
         }
     }
 
@@ -263,7 +275,7 @@ public class Brand extends Organization {
             object.setCreatedDateTime(brand.getCreatedDateTime());
             object.setCreatedAccountId(brand.getCreatedAccountId());
             object.setDescription(brand.getDescription());
-            object.setName(brand.getName());
+            object.setName(brand.getName().trim());
             object.setTypeCode(brand.getTypeCode());
             object.setComments(brand.getComments());
             object.setBusinessLicenseEnd(brand.getBusinessLicenseEnd());
@@ -276,10 +288,11 @@ public class Brand extends Organization {
             object.setContactMobile(brand.getContactMobile());
             object.setEmail(brand.getEmail());
             object.setAttachment(brand.getAttachment());
-            object.setIdentifier(brand.getIdentifier());
+            object.setIdentifier(brand.getIdentifier().trim());
             object.setPassword(brand.getPassword());
             object.setInvestigatorAttachment(brand.getInvestigatorAttachment());
             object.setInvestigatorComments(brand.getInvestigatorComments());
+            object.setRejectReason(brand.getRejectReason());
             return object;
         }
 

@@ -13,6 +13,7 @@ import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
@@ -66,11 +67,15 @@ public class BrandDomain {
         return dataAPIClient.get("brand/count/" + query , Integer.class);
     }
 
-    public Page<BrandObject> getBrandList(String name, String carrierId, String status, Pageable pageable) {
+    public Page<BrandObject> getBrandList(String name, String carrierId, String status, Boolean hasPayment, String searchText, DateTime start, DateTime end, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("name", name)
                 .append("status", status)
-                .append("carrier_id", carrierId).append(pageable)
+                .append("carrier_id", carrierId)
+                .append("has_payment", hasPayment)
+                .append("search_text", searchText)
+                .append("start_datetime", start).append("end_datetime", end)
+                .append(pageable)
                 .build();
         return dataAPIClient.getPaged("brand" + query, new ParameterizedTypeReference<List<BrandObject>>() {
         }, name);

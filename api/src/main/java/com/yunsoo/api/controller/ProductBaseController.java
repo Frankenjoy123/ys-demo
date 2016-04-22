@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -96,7 +95,7 @@ public class ProductBaseController {
             return pb;
         }).getContent();
 
-        productBases.forEach(productBase -> productBase.setFollowingUsersTotalNumber(followingDomain.getFollowingUsersCountByProductBaseId(productBase.getId())));
+        //productBases.forEach(productBase -> productBase.setFollowingUsersTotalNumber(followingDomain.getFollowingUsersCountByProductBaseId(productBase.getId())));
 
         return productBases;
     }

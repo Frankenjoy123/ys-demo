@@ -45,6 +45,7 @@ public class ProductObject implements Serializable {
     @JsonProperty("manufacturing_datetime")
     private DateTime manufacturingDateTime;
 
+    @JsonProperty("details")
     private String details;
 
 

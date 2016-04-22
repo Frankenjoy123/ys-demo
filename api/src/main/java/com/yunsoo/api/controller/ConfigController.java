@@ -70,7 +70,7 @@ public class ConfigController {
     }
 
     @RequestMapping(value = "organization", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission('#orgId', 'org', 'organization_config:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization_config:read')")
     public OrganizationConfig getConfig(@RequestParam(value = "org_id", required = false) String orgId) {
         orgId = AuthUtils.fixOrgId(orgId);
         OrganizationObject org = findOrg(orgId);
@@ -84,7 +84,7 @@ public class ConfigController {
     }
 
     @RequestMapping(value = "organization", method = RequestMethod.PUT)
-    @PreAuthorize("hasPermission('#orgId', 'org', 'organization_config:write')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization_config:write')")
     public void putConfig(@RequestParam(value = "org_id", required = false) String orgId,
                           @RequestBody OrganizationConfig config) {
         orgId = AuthUtils.fixOrgId(orgId);

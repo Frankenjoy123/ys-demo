@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -36,22 +37,21 @@ public class AccountController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public AccountObject getById(@PathVariable String id) {
-        AccountEntity entity = accountRepository.findOne(id);
-        if (entity == null) {
-            throw new NotFoundException("Account not found by [id: " + id + "]");
-        }
-        return toAccountObject(entity);
+        return toAccountObject(findAccountById(id));
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<AccountObject> getByFilter(@RequestParam("org_id") String orgId,
                                            @RequestParam(value = "identifier", required = false) String identifier,
+                                           @RequestParam(value = "search_text", required = false) String searchText,
+                                           @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startDateTime,
+                                           @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endDateTime,
                                            Pageable pageable,
                                            HttpServletResponse response) {
         List<AccountEntity> entities;
 
         if (StringUtils.isEmpty(identifier)) {
-            Page<AccountEntity> entityPage = accountRepository.findByOrgId(orgId, pageable);
+            Page<AccountEntity> entityPage = accountRepository.query(orgId, searchText, startDateTime, endDateTime, pageable);
             if (pageable != null) {
                 response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
             }
@@ -102,10 +102,8 @@ public class AccountController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void patchUpdate(@PathVariable String id, @RequestBody AccountObject accountObject) {
-        AccountEntity entity = accountRepository.findOne(id);
-        if (entity == null) {
-            throw new NotFoundException("Account not found by [id: " + id + "]");
-        }
+        AccountEntity entity =  findAccountById(id);
+
         //identifier
         String identifier = accountObject.getIdentifier();
         if (identifier != null && !identifier.equals(entity.getIdentifier())) {
@@ -138,6 +136,14 @@ public class AccountController {
                 ? DateTime.now() : accountObject.getModifiedDateTime());
 
         accountRepository.save(entity);
+    }
+
+    private AccountEntity findAccountById(String accountId) {
+        AccountEntity entity = accountRepository.findOne(accountId);
+        if (entity == null) {
+            throw new NotFoundException("account not found by [id: " + accountId + "]");
+        }
+        return entity;
     }
 
     private AccountObject toAccountObject(AccountEntity entity) {

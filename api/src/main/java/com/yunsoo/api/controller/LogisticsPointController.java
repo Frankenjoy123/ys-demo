@@ -28,7 +28,7 @@ public class LogisticsPointController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#logisticsPoint, 'logisticspoint:create')")
+    @PreAuthorize("hasPermission(#logisticsPoint, 'logistics_point:create')")
     public LogisticsPoint create(@RequestBody LogisticsPoint logisticsPoint) {
 
         if (logisticsPoint.getOrgId() == null || "current".equals(logisticsPoint.getOrgId())) { //get current Organization
@@ -45,7 +45,7 @@ public class LogisticsPointController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'logisticspoint:read')")
+    @PostAuthorize("hasPermission(returnObject, 'logistics_point:read')")
     public LogisticsPoint get(@PathVariable(value = "id") String id) {
 
         LogisticsCheckPointObject logisticsCheckPointObject = dataAPIClient.get("logisticscheckpoint/{id}", LogisticsCheckPointObject.class, id);
@@ -58,7 +58,7 @@ public class LogisticsPointController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'logisticspoint:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'logistics_point:read')")
     public List<LogisticsPoint> get(@RequestParam(value = "orgId", required = true) String orgId,
                                                 @RequestParam(value = "pageIndex", required = false, defaultValue = "0") Integer pageIndex,
                                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
@@ -83,7 +83,7 @@ public class LogisticsPointController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
-    @PreAuthorize("hasPermission(#logisticsPoint, 'logistics_point:wrtie')")
+    @PreAuthorize("hasPermission(#logisticsPoint, 'logistics_point:write')")
     public void patch(@RequestBody LogisticsPoint logisticsPoint) {
 
         if (logisticsPoint.getOrgId() == null || "current".equals(logisticsPoint.getOrgId())) { //get current Organization

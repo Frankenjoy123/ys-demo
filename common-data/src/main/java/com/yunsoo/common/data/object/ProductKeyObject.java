@@ -43,8 +43,6 @@ public class ProductKeyObject implements Serializable {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
-    private String details;
-
 
     public String getProductKey() {
         return productKey;
@@ -108,13 +106,5 @@ public class ProductKeyObject implements Serializable {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
     }
 }

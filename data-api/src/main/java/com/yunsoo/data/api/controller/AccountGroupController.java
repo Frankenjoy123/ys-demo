@@ -46,22 +46,22 @@ public class AccountGroupController {
         return entities.stream().map(this::toAccountGroupObject).collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public AccountGroupObject create(@RequestBody @Valid AccountGroupObject object) {
-        AccountGroupEntity entity = toAccountGroupEntity(object);
-        entity.setId(null);
-        if (entity.getCreatedDateTime() == null) {
-            entity.setCreatedDateTime(DateTime.now());
+    @RequestMapping(value = "", method = RequestMethod.PUT)
+    public void put(@RequestBody @Valid AccountGroupObject obj) {
+        List<AccountGroupEntity> existItems = accountGroupRepository.findByAccountIdAndGroupId(obj.getAccountId(), obj.getGroupId());
+        if (existItems.size() == 0) {
+            AccountGroupEntity entity = toAccountGroupEntity(obj);
+            if (entity.getCreatedDateTime() == null) {
+                entity.setCreatedDateTime(DateTime.now());
+            }
+            accountGroupRepository.save(entity);
         }
-        AccountGroupEntity newEntity = accountGroupRepository.save(entity);
-        return toAccountGroupObject(newEntity);
     }
 
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteByAccountIdAndGroupId(@RequestParam(value = "account_id", required = false) String accountId,
-                                            @RequestParam(value = "group_id", required = false) String groupId) {
+    public void delete(@RequestParam(value = "account_id", required = false) String accountId,
+                       @RequestParam(value = "group_id", required = false) String groupId) {
         if (accountId == null) {
             if (groupId == null) {
                 throw new BadRequestException("accountId and groupId should not be null neither");

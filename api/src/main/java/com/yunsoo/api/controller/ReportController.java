@@ -26,7 +26,7 @@ public class ReportController {
     @Autowired
     private FileDomain fileDomain;
 
-    @RequestMapping(value = "myorganization/{type}/{period}", method = RequestMethod.GET)
+    @RequestMapping(value = "myOrganization/{type}/{period}", method = RequestMethod.GET)
     @PreAuthorize("hasPermission('current', 'org', 'reports:read')")
     public ResponseEntity get(@PathVariable(value = "type") String type,
                               @PathVariable(value = "period") String period) {

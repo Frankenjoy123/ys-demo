@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
             //get the primary product key
             productModel = productDao.getByKey(productModel.getPrimaryProductKey());
         }
-        if (productModel == null || productModel.getProductBaseId() == null) {
+        if (productModel == null) {
             return null;
         }
 
@@ -57,10 +57,6 @@ public class ProductServiceImpl implements ProductService {
         Assert.notNull(product, "product must not be null");
         Assert.notNull(product.getProductKey(), "productKey must not be null");
 
-        String statusCode = product.getProductStatusCode();
-        DateTime manufacturingDateTime = product.getManufacturingDateTime();
-        String details = product.getDetails();
-
         ProductModel productModel = productDao.getByKey(product.getProductKey());
         if (productModel == null
                 || (productModel.getProductKeyDisabled() != null && productModel.getProductKeyDisabled())) {
@@ -74,6 +70,9 @@ public class ProductServiceImpl implements ProductService {
             throw ServiceException.notFound("product not found"); //product not found
         }
 
+        String statusCode = product.getProductStatusCode();
+        DateTime manufacturingDateTime = product.getManufacturingDateTime();
+        String details = product.getDetails();
         if (statusCode != null) productModel.setProductStatusCode(statusCode);
         if (manufacturingDateTime != null) productModel.setManufacturingDateTime(manufacturingDateTime);
         if (details != null) productModel.setDetails(details);

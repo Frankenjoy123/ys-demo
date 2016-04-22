@@ -14,8 +14,11 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -50,6 +53,7 @@ public class ProductKeyOrderController {
 
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'product_key_order:read')")
     public ProductKeyOrder getById(@PathVariable(value = "id") String id) {
         ProductKeyOrder productKeyOrder = productKeyOrderDomain.getById(id);
         if (productKeyOrder == null) {
@@ -66,7 +70,7 @@ public class ProductKeyOrderController {
             if (productKeyTransactionHashMap.containsKey(transaction.getProductKeyBatchId()))
                 transaction.setKeyBatch(productKeyTransactionHashMap.get(transaction.getProductKeyBatchId()));
             else {
-                ProductKeyBatch batch = new ProductKeyBatch(productKeyDomain.getPkBatchById(transaction.getProductKeyBatchId()));
+                ProductKeyBatch batch = new ProductKeyBatch(productKeyDomain.getProductKeyBatchObjectById(transaction.getProductKeyBatchId()));
                 transaction.setKeyBatch(batch);
                 productKeyTransactionHashMap.put(transaction.getProductKeyBatchId(), batch);
             }
@@ -91,20 +95,23 @@ public class ProductKeyOrderController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'productkeyorder:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'product_key_order:read')")
     public List<ProductKeyOrder> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                              @RequestParam(value = "available", required = false) Boolean available,
                                              @RequestParam(value = "active", required = false) Boolean active,
                                              @RequestParam(value = "remain_ge", required = false) Long remainGE,
                                              @RequestParam(value = "expire_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime expireDateTimeGE,
                                              @RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                             Pageable pageable,
+                                             @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
+                                             @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
+                                             @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)Pageable pageable,
                                              HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
 
         Page<ProductKeyOrder> orderPage = available != null && available
                 ? productKeyOrderDomain.getAvailableOrdersByOrgId(orgId, pageable)
-                : productKeyOrderDomain.getOrdersByFilter(orgId, active, remainGE, expireDateTimeGE, productBaseId, pageable);
+                : productKeyOrderDomain.
+                getOrdersByFilter(orgId, active, remainGE, expireDateTimeGE, productBaseId, startTime, endTime, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", orderPage.toContentRange());
@@ -128,18 +135,14 @@ public class ProductKeyOrderController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#order, 'productkeyorder:create')")
+    @PreAuthorize("hasPermission(#order, 'product_key_order:create')")
     public ProductKeyOrder create(@Valid @RequestBody ProductKeyOrder order) {
-        String orgId = AuthUtils.getCurrentAccount().getOrgId();
-        String accountId = AuthUtils.getCurrentAccount().getId();
         order.setId(null);
-        if (order.getOrgId() == null || order.getOrgId().trim().isEmpty()) {
-            order.setOrgId(orgId);
-        }
+        order.setOrgId(AuthUtils.fixOrgId(order.getOrgId()));
         if (order.getProductBaseId() != null && order.getProductBaseId().length() == 0) {
             order.setProductBaseId(null);
         }
-        order.setCreatedAccountId(accountId);
+        order.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         order.setActive(true);
         order.setCreatedDateTime(DateTime.now());
         return productKeyOrderDomain.create(order);

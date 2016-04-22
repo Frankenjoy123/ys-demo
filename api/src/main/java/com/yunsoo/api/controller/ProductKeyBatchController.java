@@ -113,6 +113,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission('current', 'org', 'product_key_batch:read')")
     public List<ProductKeyBatch> getByFilterPaged(@RequestParam(value = "product_base_id", required = false) String productBaseId,
                                                   @RequestParam(value = "is_package", required = false) Boolean isPackage,
                                                   @PageableDefault(page = 0, size = 1000)
@@ -130,7 +131,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "sum/quantity", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'productkeybatch:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'product_key_batch:read')")
     public Long sumQuantity(
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "product_base_id", required = false) String productBaseId) {
@@ -139,7 +140,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "sum/time", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'productkeybatch:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'product_key_batch:read')")
     public Long sumQuantityTime(
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "product_base_id", required = false) String productBaseId) {
@@ -229,13 +230,12 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "{id}/marketing_id", method = RequestMethod.PUT)
     public void putMarketingId(@PathVariable(value = "id") String id, @RequestBody(required = false) String marketingId) {
-        if (id == null) {
-            throw new NotFoundException("product key batch not found");
-        }
         productKeyDomain.putMarketingId(id, marketingId);
-        MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
-        marketingObject.setProductBaseId(productKeyDomain.getProductKeyBatchById(id).getProductBaseId());
-        marketingDomain.updateMarketing(marketingObject);
+        if (marketingId != null) {
+            MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+            marketingObject.setProductBaseId(productKeyDomain.getProductKeyBatchById(id).getProductBaseId());
+            marketingDomain.updateMarketing(marketingObject);
+        }
     }
 
 
