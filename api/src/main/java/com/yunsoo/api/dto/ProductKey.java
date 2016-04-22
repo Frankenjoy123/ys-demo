@@ -2,7 +2,8 @@ package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.data.object.ProductKeyObject;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 import java.util.Set;
@@ -103,4 +104,19 @@ public class ProductKey {
         this.createdDateTime = createdDateTime;
     }
 
+    public ProductKey() {
+    }
+
+    public ProductKey(ProductKeyObject object) {
+        if (object != null) {
+            this.setProductKey(object.getProductKey());
+            this.setProductKeyTypeCode(object.getProductKeyTypeCode());
+            this.setProductKeyDisabled(object.isProductKeyDisabled());
+            this.setPrimary(object.isPrimary());
+            this.setProductKeyBatchId(object.getProductKeyBatchId());
+            this.setPrimaryProductKey(object.getPrimaryProductKey());
+            this.setProductKeySet(object.getProductKeySet());
+            this.setCreatedDateTime(object.getCreatedDateTime());
+        }
+    }
 }

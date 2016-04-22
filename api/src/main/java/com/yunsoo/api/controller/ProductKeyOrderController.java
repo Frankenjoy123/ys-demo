@@ -70,7 +70,7 @@ public class ProductKeyOrderController {
             if (productKeyTransactionHashMap.containsKey(transaction.getProductKeyBatchId()))
                 transaction.setKeyBatch(productKeyTransactionHashMap.get(transaction.getProductKeyBatchId()));
             else {
-                ProductKeyBatch batch = new ProductKeyBatch(productKeyDomain.getPkBatchById(transaction.getProductKeyBatchId()));
+                ProductKeyBatch batch = new ProductKeyBatch(productKeyDomain.getProductKeyBatchObjectById(transaction.getProductKeyBatchId()));
                 transaction.setKeyBatch(batch);
                 productKeyTransactionHashMap.put(transaction.getProductKeyBatchId(), batch);
             }
