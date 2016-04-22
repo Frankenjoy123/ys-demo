@@ -238,7 +238,7 @@ public class MarketingController {
 
         MarketingObject mktObject;
         if (batchId != null) {
-            ProductKeyBatchObject batchObject = productKeyDomain.getPkBatchById(batchId);
+            ProductKeyBatchObject batchObject = productKeyDomain.getProductKeyBatchObjectById(batchId);
             if (batchObject != null) {
                 marketingObject.setOrgId(batchObject.getOrgId());
                 marketingObject.setProductBaseId(batchObject.getProductBaseId());

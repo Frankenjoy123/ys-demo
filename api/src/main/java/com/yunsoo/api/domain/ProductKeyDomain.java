@@ -69,7 +69,7 @@ public class ProductKeyDomain {
     private String productKeyBaseUrl;
 
 
-    //ProductKey
+    //region ProductKey
 
     public ProductKeyObject getProductKey(String productKey) {
         try {
@@ -79,6 +79,15 @@ public class ProductKeyDomain {
         }
     }
 
+    public void setProductKeyDisabled(String productKey, Boolean disabled) {
+        try {
+            dataAPIClient.put("productkey/{key}/disabled", disabled, productKey);
+        } catch (NotFoundException ex) {
+            throw new NotFoundException("product key not found. " + productKey);
+        }
+    }
+
+    //endregion
 
     //ProductKeyBatch
 
@@ -89,8 +98,12 @@ public class ProductKeyDomain {
                 lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus));
     }
 
-    public ProductKeyBatchObject getPkBatchById(String id) {
-        return dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id);
+    public ProductKeyBatchObject getProductKeyBatchObjectById(String id) {
+        try {
+            return dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id);
+        } catch (NotFoundException ignored) {
+            return null;
+        }
     }
 
 

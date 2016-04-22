@@ -1,6 +1,9 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.ProductDomain;
+import com.yunsoo.api.domain.ProductKeyDomain;
+import com.yunsoo.api.dto.Product;
+import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +27,19 @@ public class ProductController {
     @Autowired
     private ProductDomain productDomain;
 
-    //todo: change ProductObject to product dto
+    @Autowired
+    private ProductKeyDomain productKeyDomain;
+
+
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
-    public ProductObject get(@PathVariable(value = "key") String key) {
-        return findProduct(key);
+    public Product get(@PathVariable(value = "key") String key) {
+        ProductObject productObject = findProduct(key);
+        Product product = new Product(productObject);
+        ProductKeyBatchObject productKeyBatchObject = productKeyDomain.getProductKeyBatchObjectById(productObject.getProductKeyBatchId());
+        if (productKeyBatchObject != null) {
+            product.setOrgId(productKeyBatchObject.getOrgId());
+        }
+        return product;
     }
 
     @RequestMapping(value = "/{key}/active", method = RequestMethod.POST)
@@ -54,50 +66,15 @@ public class ProductController {
     public void putDetails(@PathVariable(value = "key") String key,
                            @RequestBody String details) {
         ProductObject productObject = new ProductObject();
+        productObject.setProductKey(key);
         productObject.setDetails(details);
-        productDomain.patchUpdateProduct(key, productObject);
+        productDomain.patchUpdateProduct(productObject);
     }
-
-//    @RequestMapping(value = "/delete/file", method = RequestMethod.POST)
-//    public Boolean UploadFile(MultipartHttpServletRequest request, HttpServletResponse response) throws IOException, IllegalAccessException {
-//
-//        String createdAccountId = AuthUtils.getCurrentAccount().getId();
-//        AccountObject accountObject = accountDomain.getById(createdAccountId);
-//        if (accountObject == null) {
-//            throw new IllegalAccessException("Current account is not valid to delete product keys.");
-//        }
-//        String orgId = accountObject.getOrgId();
-//
-//        Iterator<String> itr = request.getFileNames();
-//        MultipartFile file = request.getFile(itr.next());
-//        boolean batchResult = false;
-//        try {
-//            InputStreamReader in = new InputStreamReader(file.getInputStream());
-//            BufferedReader reader = new BufferedReader(in);
-//            // StringBuilder content = new StringBuilder();
-//            String line = null;
-//            String[] dataArray;
-//            List<String> productKeys = new ArrayList<>();
-//            while ((line = reader.readLine()) != null) {
-//                if (StringUtils.isEmpty(line.replaceAll("\\r\\n", ""))) {
-//                    continue;
-//                }
-//            }
-//            dataArray = line.split(";");
-//            reader.close();
-//            batchResult = productDomain.batchDeleteProducts(dataArray, orgId);
-//
-//        } catch (NotAcceptableException ex) {
-//            throw new NotAcceptableException("文件中有不规范的产品码，请检查。");
-//        }
-//
-//        return batchResult;
-//    }
 
     private ProductObject findProduct(String key) {
         ProductObject productObject = productDomain.getProduct(key);
         if (productObject == null) {
-            throw new NotFoundException("product not found");
+            throw new NotFoundException("product not found by key " + key);
         }
         return productObject;
     }

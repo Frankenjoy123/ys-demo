@@ -29,18 +29,26 @@ public class ProductDomain {
 
     public void activeProduct(String key) {
         ProductObject productObject = new ProductObject();
+        productObject.setProductKey(key);
         productObject.setProductStatusCode(LookupCodes.ProductStatus.ACTIVATED);
-        dataAPIClient.patch("product/{key}", productObject, key);
+        patchUpdateProduct(productObject);
     }
 
     public void deleteProduct(String key) {
         ProductObject productObject = new ProductObject();
+        productObject.setProductKey(key);
         productObject.setProductStatusCode(LookupCodes.ProductStatus.DELETED);
-        dataAPIClient.patch("product/{key}", productObject, key);
+        patchUpdateProduct(productObject);
     }
 
-    public void patchUpdateProduct(String key, ProductObject productObject) {
-        dataAPIClient.patch("product/{key}", productObject, key);
+    public void patchUpdateProduct(ProductObject productObject) {
+        if (productObject != null && productObject.getProductKey() != null) {
+            try {
+                dataAPIClient.patch("product/{key}", productObject, productObject.getProductKey());
+            } catch (NotFoundException ex) {
+                throw new NotFoundException("product not found by key " + productObject.getProductKey());
+            }
+        }
     }
 
 }
