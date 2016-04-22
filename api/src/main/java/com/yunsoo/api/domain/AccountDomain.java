@@ -66,9 +66,9 @@ public class AccountDomain {
         }, orgId);
     }
 
-    public Page<AccountObject> getByOrgId(String orgId, String searchText, DateTime start, DateTime end, Pageable pageable) {
+    public Page<AccountObject> getByOrgId(String orgId, String status, String searchText, DateTime start, DateTime end, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId).append("search_text", searchText)
+                .append("org_id", orgId).append("status", status).append("search_text", searchText)
                 .append("start_datetime", start).append("end_datetime", end)
                 .append(pageable)
                 .build();

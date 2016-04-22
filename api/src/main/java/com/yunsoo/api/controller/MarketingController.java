@@ -82,7 +82,7 @@ public class MarketingController {
         orgId = AuthUtils.fixOrgId(orgId);
 
 
-        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.PAID, null, null, null, pageable);
+        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.PAID, null, null, null, null, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", marketingPage.toContentRange());
         }
@@ -188,7 +188,7 @@ public class MarketingController {
         else
             orgId = AuthUtils.fixOrgId(orgId);
 
-        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status,searchText, startTime, endTime, pageable);
+        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status, searchText, startTime, endTime, productBaseId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", marketingPage.toContentRange());
         }

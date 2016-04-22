@@ -25,11 +25,11 @@ public interface MarketingRepository extends CrudRepository<MarketingEntity, Str
 
 
     @Query("select m from MarketingEntity m where orgId in :orgIds and ( :status is null or statusCode = :status) " +
-            "and (:searchText is null or m.name like :searchText) " +
+            "and (:searchText is null or m.name like :searchText) and (:product is null or m.productBaseId like :product) " +
             "and (:endTime is null or m.createdDateTime <= :endTime) and  (:startTime is null or m.createdDateTime >= :startTime) " +
             "order by createdDateTime desc")
     Page<MarketingEntity> query(@Param("orgIds")List<String> orgIds, @Param("status")String status,
-                                @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime,
+                                @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime, @Param("product")String productBaseId,
                                 @Param("searchText")String searchText, Pageable pageable);
 
 

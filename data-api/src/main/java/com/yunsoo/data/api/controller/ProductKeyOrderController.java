@@ -56,10 +56,13 @@ public class ProductKeyOrderController {
             @RequestParam(value = "product_base_id", required = false) String productBaseId,
             @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startDateTime,
             @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endDateTime,
+            @RequestParam(value = "is_carrier_site", required = false) Boolean isCarrierSite,
             Pageable pageable,
             HttpServletResponse response) {
 
-        Page<ProductKeyOrderEntity> entityPage = productKeyOrderRepository.query(orgId, active, remainGE, expireDateTimeGE, productBaseId, startDateTime, endDateTime, pageable);
+        if(isCarrierSite == null)
+            isCarrierSite = false;
+        Page<ProductKeyOrderEntity> entityPage = productKeyOrderRepository.query(orgId, active, remainGE, expireDateTimeGE, productBaseId, startDateTime, endDateTime, isCarrierSite, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }

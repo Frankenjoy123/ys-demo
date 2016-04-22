@@ -87,9 +87,10 @@ public class MarketingDomain {
 
 
 
-    public Page<MarketingObject> getMarketingList(String orgId, List<String> orgIds, String status, String searchText, DateTime start, DateTime end, Pageable pageable) {
+    public Page<MarketingObject> getMarketingList(String orgId, List<String> orgIds, String status, String searchText, DateTime start, DateTime end, String productBaseId, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId).append("org_ids", orgIds).append("status", status)
+                .append("product_base_id", productBaseId)
                 .append("search_text", searchText).append("start_datetime", start).append("end_datetime", end)
                 .append(pageable)
                 .build();

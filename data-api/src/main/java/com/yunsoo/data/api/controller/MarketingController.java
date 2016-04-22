@@ -105,13 +105,15 @@ public class MarketingController {
                                              @RequestParam(value = "search_text", required = false) String searchText,
                                              @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
                                              @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
+                                             @RequestParam(value = "product_base_id", required = false) String productBaseId,
+
                                              Pageable pageable,
                                              HttpServletResponse response) {
         Page<MarketingEntity> entityPage = null;
         if(orgId != null)
             entityPage = marketingRepository.findByOrgIdAndStatusCodeNot(orgId, LookupCodes.MktStatus.DISABLED, pageable);
         else if (orgIds != null && orgIds.size() > 0){
-            entityPage = marketingRepository.query(orgIds, status, startTime, endTime, searchText, pageable);
+            entityPage = marketingRepository.query(orgIds, status, startTime, endTime, searchText, productBaseId, pageable);
         }
         else
             throw new BadRequestException("one of the request parameter org_id or org_ids is required");

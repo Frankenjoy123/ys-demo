@@ -67,6 +67,7 @@ public class AccountController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'account:read')")
     public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                     @RequestParam(value = "status", required = false) String status,
                                      @RequestParam(value = "search_text", required = false) String searchText,
                                      @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
                                      @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
@@ -74,7 +75,7 @@ public class AccountController {
                                      Pageable pageable,
                                      HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId); //auto fix current
-        Page<AccountObject> accountPage = accountDomain.getByOrgId(orgId, searchText, startTime, endTime, pageable);
+        Page<AccountObject> accountPage = accountDomain.getByOrgId(orgId, status, searchText, startTime, endTime, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", accountPage.toContentRange());
         }
