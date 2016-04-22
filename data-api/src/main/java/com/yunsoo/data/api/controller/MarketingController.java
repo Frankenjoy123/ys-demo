@@ -109,7 +109,7 @@ public class MarketingController {
                                              HttpServletResponse response) {
         Page<MarketingEntity> entityPage = null;
         if(orgId != null)
-            entityPage = marketingRepository.findByOrgIdAndStatusCodeNot(orgId, LookupCodes.MktStatus.DISABLED, pageable);
+            entityPage = marketingRepository.findByOrgIdAndStatusCodeIn(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
         else if (orgIds != null && orgIds.size() > 0){
             entityPage = marketingRepository.query(orgIds, status, startTime, endTime, searchText, pageable);
         }
@@ -155,7 +155,7 @@ public class MarketingController {
         if (orgId == null) {
             throw new BadRequestException("orgId id is not valid");
         }
-        Long quantity = marketingRepository.countByOrgId(orgId);
+        Long quantity = marketingRepository.countByOrgIdAndStatusCodeIn(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS);
         return quantity;
     }
 
@@ -355,7 +355,8 @@ public class MarketingController {
     public void deleteMarketing(@PathVariable(value = "id") String id) {
         MarketingEntity entity = marketingRepository.findOne(id);
         if (entity != null) {
-            marketingRepository.delete(id);
+            entity.setStatusCode(LookupCodes.MktStatus.DELETED);
+            marketingRepository.save(entity);
         }
     }
 
