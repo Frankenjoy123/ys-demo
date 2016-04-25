@@ -29,6 +29,12 @@ public class MktDrawRuleEntity {
     @Column(name = "amount")
     private Integer amount;
 
+    @Column(name = "total_quantity")
+    private Integer totalQuantity;
+
+    @Column(name = "available_quantity")
+    private Integer availableQuantity;
+
     @Column(name = "probability")
     private Double probability;
 
@@ -80,6 +86,22 @@ public class MktDrawRuleEntity {
 
     public void setAmount(Integer amount) {
         this.amount = amount;
+    }
+
+    public Integer getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(Integer totalQuantity) {
+        this.totalQuantity = totalQuantity;
+    }
+
+    public Integer getAvailableQuantity() {
+        return availableQuantity;
+    }
+
+    public void setAvailableQuantity(Integer availableQuantity) {
+        this.availableQuantity = availableQuantity;
     }
 
     public Double getProbability() {
