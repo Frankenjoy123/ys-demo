@@ -58,6 +58,7 @@ public class AccountController {
     //region account
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
+
     public Account getById(@PathVariable("id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         AccountObject accountObject = findAccountById(accountId);
