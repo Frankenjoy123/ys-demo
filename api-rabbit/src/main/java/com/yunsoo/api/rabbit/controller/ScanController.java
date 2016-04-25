@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -91,6 +92,9 @@ public class ScanController {
         product.setId(productBaseObject.getId());
         product.setName(productBaseObject.getName());
         product.setDescription(productBaseObject.getDescription());
+        if (StringUtils.hasText(productBaseObject.getImage())) {
+            product.setImageUrl(String.format("/image/%s", productBaseObject.getImage()));
+        }
         product.setShelfLife(productBaseObject.getShelfLife());
         product.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
         //specific product info
@@ -100,8 +104,7 @@ public class ScanController {
         scanResponse.setProduct(product);
 
         //get organization info
-        OrganizationObject organizationObject = getOrganizationById(productBaseObject.getOrgId());
-        scanResponse.setOrganization(toOrganization(organizationObject));
+        scanResponse.setOrganization(toOrganization(getOrganizationById(productBaseObject.getOrgId())));
 
         //set current scan record
         scanResponse.setScanRecord(toScanRecord(userScanRecordObject));
@@ -194,10 +197,13 @@ public class ScanController {
             security = new ScanResponse.Security();
             Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 1));
             List<UserScanRecordObject> userScanRecordObjects = userScanRecordObjectPage.getContent();
-            security.setScanCount(userScanRecordObjectPage.getCount() == null ? 0 : userScanRecordObjectPage.getCount());
+            int scanCount = userScanRecordObjectPage.getCount() == null ? 0 : userScanRecordObjectPage.getCount();
+            security.setScanCount(scanCount);
             if (userScanRecordObjects.size() > 0) {
                 security.setFirstScan(toScanRecord(userScanRecordObjects.get(0)));
             }
+            //set real if it's the first scan, otherwise set to uncertain.
+            security.setVerificationResult(scanCount <= 1 ? Constants.VerificationResult.REAL : Constants.VerificationResult.UNCERTAIN);
         }
         return security;
     }

@@ -85,6 +85,9 @@ public class ScanResponse {
         @JsonProperty("description")
         private String description;
 
+        @JsonProperty("image_url")
+        private String imageUrl;
+
         @JsonProperty("shelf_life")
         private Integer shelfLife;
 
@@ -130,6 +133,14 @@ public class ScanResponse {
 
         public void setDescription(String description) {
             this.description = description;
+        }
+
+        public String getImageUrl() {
+            return imageUrl;
+        }
+
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
         }
 
         public Integer getShelfLife() {
@@ -365,11 +376,22 @@ public class ScanResponse {
 
     public static class Security {
 
+        @JsonProperty("verification_result")
+        private String verificationResult;
+
         @JsonProperty("scan_count")
         private int scanCount;
 
         @JsonProperty("first_scan")
         private ScanRecord firstScan;
+
+        public String getVerificationResult() {
+            return verificationResult;
+        }
+
+        public void setVerificationResult(String verificationResult) {
+            this.verificationResult = verificationResult;
+        }
 
         public int getScanCount() {
             return scanCount;
