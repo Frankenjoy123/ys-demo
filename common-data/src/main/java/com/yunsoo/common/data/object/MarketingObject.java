@@ -22,6 +22,9 @@ public class MarketingObject {
     @JsonProperty("wishes")
     private String wishes;
 
+    @JsonProperty("quantity")
+    private Integer quantity;
+
     @JsonProperty("org_id")
     private String orgId;
 
@@ -58,6 +61,17 @@ public class MarketingObject {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("start_datetime")
+    private DateTime startDateTime;
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("end_datetime")
+    private DateTime endDateTime;
+
 
     public String getId() {
         return id;
@@ -172,5 +186,29 @@ public class MarketingObject {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public DateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(DateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public DateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(DateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 }
