@@ -124,8 +124,9 @@ public class UserFollowDomain {
         for (UserProductFollowing userFollowing : resultPage) {
             ProductBaseObject productBase = productBaseDomain.getProductBaseById(userFollowing.getProductBaseId());
             if (productBase != null) {
-                userFollowing.setProductName(productBase.getName());
+                userFollowing.setProductBaseName(productBase.getName());
                 userFollowing.setProductBaseDesc(productBase.getDescription());
+                userFollowing.setProductBaseImageUrl(productBaseDomain.getProductBaseImageUrl(productBase.getImage()));
                 userFollowing.setOrgId(productBase.getOrgId());
                 userFollowing.setCommentsCount(productCommentsDomain.getProductCommentsCount(userFollowing.getProductBaseId()));
             } else {

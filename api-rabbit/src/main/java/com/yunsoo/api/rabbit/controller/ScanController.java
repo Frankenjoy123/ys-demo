@@ -93,7 +93,7 @@ public class ScanController {
         product.setName(productBaseObject.getName());
         product.setDescription(productBaseObject.getDescription());
         if (StringUtils.hasText(productBaseObject.getImage())) {
-            product.setImageUrl(String.format("/image/%s", productBaseObject.getImage()));
+            product.setImageUrl(productBaseDomain.getProductBaseImageUrl(productBaseObject.getImage()));
         }
         product.setShelfLife(productBaseObject.getShelfLife());
         product.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
