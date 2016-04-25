@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.AccountDomain;
 import com.yunsoo.api.domain.AccountGroupDomain;
 import com.yunsoo.api.domain.GroupDomain;
+import com.yunsoo.api.domain.PermissionAllocationDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.security.authorization.AuthorizationService;
 import com.yunsoo.api.security.permission.PermissionService;
@@ -52,6 +53,8 @@ public class AccountController {
     @Autowired
     private PermissionService permissionService;
 
+    @Autowired PermissionAllocationDomain permissionAllocationDomain;
+
     //region account
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -98,6 +101,17 @@ public class AccountController {
     public Account create(@RequestBody @Valid AccountRequest request) {
         AccountObject accountObject = request.toAccountObject();
         return new Account(accountDomain.createAccount(accountObject, true));
+    }
+
+    @RequestMapping(value = "/carrier", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission(#request.orgId, 'org', 'account:create')")
+    public Account createCarrier(@RequestBody @Valid AccountRequest request) {
+        AccountObject accountObject = request.toAccountObject();
+        Account createdAccount = new Account(accountDomain.createAccount(accountObject, true));
+        permissionAllocationDomain.allocateAdminPermissionOnDefaultRegionToAccount(createdAccount.getId());
+        permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
+        return createdAccount;
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
