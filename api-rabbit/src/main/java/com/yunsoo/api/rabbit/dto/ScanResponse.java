@@ -7,29 +7,27 @@ import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
-import java.util.List;
-
 /**
  * Created by:   Lijian
- * Created on:   2016-02-17
+ * Created on:   2016-04-25
  * Descriptions:
  */
-public class WebScanResponse {
+public class ScanResponse {
 
-    //产品基本信息
     @JsonProperty("product")
     private Product product;
 
-    //生产企业信息
     @JsonProperty("organization")
     private Organization organization;
 
-    //防伪
+    @JsonProperty("scan_record")
+    private ScanRecord scanRecord;
+
     @JsonProperty("security")
     private Security security;
 
-    @JsonProperty("marketing")
-    private Marketing marketing;
+    @JsonProperty("social")
+    private Social social;
 
 
     public Product getProduct() {
@@ -48,6 +46,14 @@ public class WebScanResponse {
         this.organization = organization;
     }
 
+    public ScanRecord getScanRecord() {
+        return scanRecord;
+    }
+
+    public void setScanRecord(ScanRecord scanRecord) {
+        this.scanRecord = scanRecord;
+    }
+
     public Security getSecurity() {
         return security;
     }
@@ -56,13 +62,14 @@ public class WebScanResponse {
         this.security = security;
     }
 
-    public Marketing getMarketing() {
-        return marketing;
+    public Social getSocial() {
+        return social;
     }
 
-    public void setMarketing(Marketing marketing) {
-        this.marketing = marketing;
+    public void setSocial(Social social) {
+        this.social = social;
     }
+
 
     public static class Product {
 
@@ -71,15 +78,6 @@ public class WebScanResponse {
 
         @JsonProperty("id")
         private String id; //productBaseId
-
-        @JsonProperty("batch_id")
-        private String batchId;
-
-        @JsonProperty("batch_no")
-        private String batchNo;
-
-        @JsonProperty("category")
-        private ProductCategory category;
 
         @JsonProperty("name")
         private String name;
@@ -101,15 +99,6 @@ public class WebScanResponse {
         @JsonProperty("manufacturing_datetime")
         private DateTime manufacturingDatetime;
 
-        @JsonProperty("details")
-        private String details;
-
-        @JsonProperty("batch_details")
-        private String batchDetails;
-
-        @JsonProperty("key_details")
-        private String keyDetails;
-
 
         public String getKey() {
             return key;
@@ -125,30 +114,6 @@ public class WebScanResponse {
 
         public void setId(String id) {
             this.id = id;
-        }
-
-        public String getBatchId() {
-            return batchId;
-        }
-
-        public void setBatchId(String batchId) {
-            this.batchId = batchId;
-        }
-
-        public String getBatchNo() {
-            return batchNo;
-        }
-
-        public void setBatchNo(String batchNo) {
-            this.batchNo = batchNo;
-        }
-
-        public ProductCategory getCategory() {
-            return category;
-        }
-
-        public void setCategory(ProductCategory category) {
-            this.category = category;
         }
 
         public String getName() {
@@ -198,30 +163,6 @@ public class WebScanResponse {
         public void setManufacturingDatetime(DateTime manufacturingDatetime) {
             this.manufacturingDatetime = manufacturingDatetime;
         }
-
-        public String getDetails() {
-            return details;
-        }
-
-        public void setDetails(String details) {
-            this.details = details;
-        }
-
-        public String getBatchDetails() {
-            return batchDetails;
-        }
-
-        public void setBatchDetails(String batchDetails) {
-            this.batchDetails = batchDetails;
-        }
-
-        public String getKeyDetails() {
-            return keyDetails;
-        }
-
-        public void setKeyDetails(String keyDetails) {
-            this.keyDetails = keyDetails;
-        }
     }
 
     public static class Organization {
@@ -237,9 +178,6 @@ public class WebScanResponse {
 
         @JsonProperty("description")
         private String description;
-
-        @JsonProperty("details")
-        private String details;
 
 
         public String getId() {
@@ -274,49 +212,6 @@ public class WebScanResponse {
             this.description = description;
         }
 
-        public String getDetails() {
-            return details;
-        }
-
-        public void setDetails(String details) {
-            this.details = details;
-        }
-    }
-
-    public static class Security {
-
-        @JsonProperty("scan_count")
-        private int scanCount;
-
-        @JsonProperty("first_scan")
-        private ScanRecord firstScan;
-
-        @JsonProperty("scan_records")
-        private List<ScanRecord> scanRecords;
-
-        public int getScanCount() {
-            return scanCount;
-        }
-
-        public void setScanCount(int scanCount) {
-            this.scanCount = scanCount;
-        }
-
-        public ScanRecord getFirstScan() {
-            return firstScan;
-        }
-
-        public void setFirstScan(ScanRecord firstScan) {
-            this.firstScan = firstScan;
-        }
-
-        public List<ScanRecord> getScanRecords() {
-            return scanRecords;
-        }
-
-        public void setScanRecords(List<ScanRecord> scanRecords) {
-            this.scanRecords = scanRecords;
-        }
     }
 
     public static class ScanRecord {
@@ -333,8 +228,11 @@ public class WebScanResponse {
         @JsonProperty("product_base_id")
         private String productBaseId;
 
-        @JsonProperty("ysid")
-        private String ysid;
+        @JsonProperty("device_id")
+        private String deviceId;
+
+        @JsonProperty("ip")
+        private String ip;
 
         @JsonProperty("longitude")
         private Double longitude;
@@ -392,12 +290,20 @@ public class WebScanResponse {
             this.productBaseId = productBaseId;
         }
 
-        public String getYsid() {
-            return ysid;
+        public String getDeviceId() {
+            return deviceId;
         }
 
-        public void setYsid(String ysid) {
-            this.ysid = ysid;
+        public void setDeviceId(String deviceId) {
+            this.deviceId = deviceId;
+        }
+
+        public String getIp() {
+            return ip;
+        }
+
+        public void setIp(String ip) {
+            this.ip = ip;
         }
 
         public Double getLongitude() {
@@ -457,19 +363,53 @@ public class WebScanResponse {
         }
     }
 
-    public static class Marketing {
+    public static class Security {
 
-        @JsonProperty("id")
-        private String id;
+        @JsonProperty("scan_count")
+        private int scanCount;
 
+        @JsonProperty("first_scan")
+        private ScanRecord firstScan;
 
-        public String getId() {
-            return id;
+        public int getScanCount() {
+            return scanCount;
         }
 
-        public void setId(String id) {
-            this.id = id;
+        public void setScanCount(int scanCount) {
+            this.scanCount = scanCount;
+        }
+
+        public ScanRecord getFirstScan() {
+            return firstScan;
+        }
+
+        public void setFirstScan(ScanRecord firstScan) {
+            this.firstScan = firstScan;
         }
     }
 
+    public static class Social {
+
+        @JsonProperty("org_following")
+        private Boolean orgFollowing;
+
+        @JsonProperty("product_following")
+        private Boolean productFollowing;
+
+        public Boolean getOrgFollowing() {
+            return orgFollowing;
+        }
+
+        public void setOrgFollowing(Boolean orgFollowing) {
+            this.orgFollowing = orgFollowing;
+        }
+
+        public Boolean getProductFollowing() {
+            return productFollowing;
+        }
+
+        public void setProductFollowing(Boolean productFollowing) {
+            this.productFollowing = productFollowing;
+        }
+    }
 }
