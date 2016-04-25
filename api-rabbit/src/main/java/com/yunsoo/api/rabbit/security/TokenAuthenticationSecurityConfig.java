@@ -46,6 +46,7 @@ public class TokenAuthenticationSecurityConfig extends WebSecurityConfigurerAdap
                 //.antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/application/**").permitAll()
                 .antMatchers("/auth/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/image/*").permitAll()
                 .antMatchers("/message/**").permitAll()
                 .antMatchers("/organization/**").permitAll()
                 .antMatchers("/productbase/**").permitAll()
