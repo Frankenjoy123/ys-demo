@@ -1,8 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
-import com.yunsoo.api.rabbit.dto.ProductBaseDetails;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.Page;
@@ -18,6 +16,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -80,24 +79,15 @@ public class ProductBaseDomain {
         }
     }
 
-    @Deprecated
-    //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId, 'details' )")
-    public ProductBaseDetails getProductBaseDetailsById(String productBaseId) {
-        try {
-            ProductBaseObject productBaseObject = getProductBaseById(productBaseId);
-            ResourceInputStream stream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json", productBaseObject.getOrgId(), productBaseId, productBaseObject.getVersion());
-            return new ObjectMapper().readValue(stream, ProductBaseDetails.class);
-        } catch (Exception ex) {
-            log.error("get detail data from s3 failed.", ex);
-            return null;
-        }
-    }
-
     public ProductCategory getProductCategoryById(String id) {
         if (id == null) {
             return null;
         }
         return dataAPIClient.get("productcategory/{id}", ProductCategory.class, id);
+    }
+
+    public String getProductBaseImageUrl(String imageName) {
+        return StringUtils.hasText(imageName) ? String.format("/image/%s", imageName) : null;
     }
 
 }

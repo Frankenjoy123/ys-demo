@@ -24,10 +24,13 @@ public class UserProductFollowing {
     private String productBaseId;
 
     @JsonProperty("product_base_name")
-    private String productName;
+    private String productBaseName;
 
     @JsonProperty("product_base_desc")
     private String productBaseDesc;
+
+    @JsonProperty("product_base_image_url")
+    private String productBaseImageUrl;
 
     @JsonProperty("org_id")
     private String orgId;
@@ -57,12 +60,12 @@ public class UserProductFollowing {
         this.productBaseId = productBaseId;
     }
 
-    public String getProductName() {
-        return productName;
+    public String getProductBaseName() {
+        return productBaseName;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setProductBaseName(String productBaseName) {
+        this.productBaseName = productBaseName;
     }
 
     public String getProductBaseDesc() {
@@ -71,6 +74,14 @@ public class UserProductFollowing {
 
     public void setProductBaseDesc(String productBaseDesc) {
         this.productBaseDesc = productBaseDesc;
+    }
+
+    public String getProductBaseImageUrl() {
+        return productBaseImageUrl;
+    }
+
+    public void setProductBaseImageUrl(String productBaseImageUrl) {
+        this.productBaseImageUrl = productBaseImageUrl;
     }
 
     public String getOrgId() {
@@ -97,15 +108,14 @@ public class UserProductFollowing {
         this.createdDateTime = createdDateTime;
     }
 
-
     public UserProductFollowing() {
     }
 
     public UserProductFollowing(UserProductFollowingObject object) {
         if (object != null) {
-            this.userId = object.getUserId();
-            this.productBaseId = object.getProductBaseId();
-            this.createdDateTime = object.getCreatedDateTime();
+            this.setUserId(object.getUserId());
+            this.setProductBaseId(object.getProductBaseId());
+            this.setCreatedDateTime(object.getCreatedDateTime());
         }
     }
 }

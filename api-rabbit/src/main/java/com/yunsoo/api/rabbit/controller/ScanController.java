@@ -1,36 +1,27 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.Constants;
-import com.yunsoo.api.rabbit.biz.ValidateProduct;
 import com.yunsoo.api.rabbit.domain.*;
-import com.yunsoo.api.rabbit.dto.*;
-import com.yunsoo.api.rabbit.object.ValidationResult;
+import com.yunsoo.api.rabbit.dto.ScanRequest;
+import com.yunsoo.api.rabbit.dto.ScanResponse;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.api.rabbit.security.UserAuthentication;
+import com.yunsoo.api.rabbit.util.IpUtils;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
-import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.util.KeyGenerator;
+import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.client.Page;
-import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by:   Zhe
@@ -47,12 +38,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/scan")
 public class ScanController {
-
-    @Autowired
-    private RestClient dataAPIClient;
-
-    @Autowired
-    private LogisticsDomain logisticsDomain;
 
     @Autowired
     private UserScanDomain userScanDomain;
@@ -74,198 +59,180 @@ public class ScanController {
 
     private Log log = LogFactory.getLog(this.getClass());
 
-    //能够访问所有的Key,为移动客户端调用，因此每次Scan都save扫描记录。
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ScanResult scan(
-            @RequestHeader(value = Constants.HttpHeaderName.APP_ID, required = false) String appId,
-            @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
-            @RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
-            @RequestBody ScanRequest scanRequest) {
-        String productKey = scanRequest.getKey();
-
-        //validate input
-        if (!KeyGenerator.validate(productKey)) {
-            throw new BadRequestException("key not valid");
-        }
-        //1. get userId
+    public ScanResponse postScan(@RequestHeader(value = Constants.HttpHeaderName.APP_ID, required = true) String appId,
+                                 @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
+                                 @RequestHeader(value = Constants.HttpHeaderName.ACCESS_TOKEN, required = false) String accessToken,
+                                 @RequestBody ScanRequest scanRequest,
+                                 HttpServletRequest httpServletRequest) {
+        String key = scanRequest.getKey();
+        String ip = IpUtils.getIpFromRequest(httpServletRequest);
         UserAuthentication userAuthentication = tokenAuthenticationService.getAuthentication(accessToken);
         String userId = userAuthentication != null ? userAuthentication.getDetails().getId() : Constants.Ids.ANONYMOUS_USER_ID;
 
-        ScanResult scanResult = new ScanResult();
-        scanResult.setUserId(userId);
-        scanResult.setKey(productKey);
+        //search product by key
+        ProductObject productObject = getProductByKey(key);
 
-        //2. get product information
-        ProductObject productObject = productDomain.getProduct(productKey);
-        Product product = productDomain.getProductFromProductObject(productObject);
-        if (product == null) {
-            log.warn(String.format("product not found by [key: %s]", productKey));
-            scanResult.setValidationResult(ValidationResult.Fake);
-            return scanResult;
+        //save scan record
+        UserScanRecordObject userScanRecordObject = saveScanRecord(
+                key,
+                userId,
+                productObject.getProductBaseId(),
+                productObject.getProductKeyBatchId(),
+                appId,
+                deviceId,
+                ip,
+                scanRequest);
+
+        ScanResponse scanResponse = new ScanResponse();
+
+        //get product info
+        ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
+        ScanResponse.Product product = new ScanResponse.Product();
+        product.setId(productBaseObject.getId());
+        product.setName(productBaseObject.getName());
+        product.setDescription(productBaseObject.getDescription());
+        if (StringUtils.hasText(productBaseObject.getImage())) {
+            product.setImageUrl(productBaseDomain.getProductBaseImageUrl(productBaseObject.getImage()));
         }
-        scanResult.setProduct(product);
+        product.setShelfLife(productBaseObject.getShelfLife());
+        product.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
+        //specific product info
+        product.setKey(key);
+        product.setStatusCode(productObject.getProductStatusCode());
+        product.setManufacturingDatetime(productObject.getManufacturingDateTime());
+        scanResponse.setProduct(product);
 
-        //3. retrieve scan records
-        List<ScanRecord> scanRecordList = userScanDomain.getScanRecordsByProductKey(scanRequest.getKey(), null)
-                .map(ScanRecord::new)
-                .getContent();
-        scanResult.setScanRecordList(scanRecordList);
-        scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
+        //get organization info
+        scanResponse.setOrganization(toOrganization(getOrganizationById(productBaseObject.getOrgId())));
 
-        //4. retrieve logistics information
-        scanResult.setLogisticsList(getLogisticsInfo(scanRequest.getKey()));
+        //set current scan record
+        scanResponse.setScanRecord(toScanRecord(userScanRecordObject));
 
-        //5. get company information.
-        OrganizationObject organizationObject = organizationDomain.getById(product.getOrgId());
-        scanResult.setManufacturer(new Organization(organizationObject));
+        //get security info
+        scanResponse.setSecurity(getSecurityInfo(productObject));
 
-        //6. following info
+        //social info
+        ScanResponse.Social social = new ScanResponse.Social();
         if (scanRequest.getAutoFollowing() != null && scanRequest.getAutoFollowing()) {
             // ensure user following the company, and set the followed status in result.
-            userFollowDomain.ensureUserOrganizationFollowing(userId, organizationObject.getId());
+            userFollowDomain.ensureUserOrganizationFollowing(userId, productBaseObject.getOrgId());
             // ensure user following the product
-            userFollowDomain.ensureUserProductFollowing(userId, product.getProductBaseId());
-            scanResult.setFollowedOrg(true);
-            scanResult.setLikedProduct(true);
+            userFollowDomain.ensureUserProductFollowing(userId, productObject.getProductBaseId());
+            social.setOrgFollowing(true);
+            social.setProductFollowing(true);
         } else {
-            UserOrganizationFollowingObject userOrganizationFollowingObject = userFollowDomain.getUserOrganizationFollowingByUserIdAndOrgId(userId, organizationObject.getId());
-            UserProductFollowingObject userProductFollowingObject = userFollowDomain.getUserProductFollowingByUserIdAndProductBaseId(userId, product.getProductBaseId());
-            scanResult.setFollowedOrg(userOrganizationFollowingObject != null);
-            scanResult.setLikedProduct(userProductFollowingObject != null);
+            UserOrganizationFollowingObject userOrganizationFollowingObject = userFollowDomain.getUserOrganizationFollowingByUserIdAndOrgId(userId, productBaseObject.getOrgId());
+            UserProductFollowingObject userProductFollowingObject = userFollowDomain.getUserProductFollowingByUserIdAndProductBaseId(userId, productObject.getProductBaseId());
+            social.setOrgFollowing(userOrganizationFollowingObject != null);
+            social.setProductFollowing(userProductFollowingObject != null);
         }
+        scanResponse.setSocial(social);
 
-        //7. set validation result by our validation strategy.
-        scanResult.setValidationResult(ValidateProduct.validateProduct(scanResult.getProduct(), userId, scanRecordList));
+        return scanResponse;
+    }
 
-        //8. save scan Record
-        UserScanRecordObject userScanRecordObject = scanRequest.toUserScanRecordObject();
+
+    private ProductObject getProductByKey(String key) {
+        if (!KeyGenerator.validate(key)) {
+            throw new NotFoundException("product not found");
+        }
+        ProductObject productObject = productDomain.getProduct(key);
+        if (productObject == null || productObject.getProductBaseId() == null) {
+            throw new NotFoundException("product not found");
+        }
+        return productObject;
+    }
+
+    private ProductBaseObject getProductBaseById(String productBaseId) {
+        if (!ObjectIdGenerator.validate(productBaseId)) {
+            throw new NotFoundException("product not found");
+        }
+        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
+        if (productBaseObject == null) {
+            log.error("product not found by id: " + productBaseId);
+            throw new NotFoundException("product not found");
+        }
+        return productBaseObject;
+    }
+
+    private OrganizationObject getOrganizationById(String orgId) {
+        OrganizationObject organizationObject = organizationDomain.getById(orgId);
+        if (organizationObject == null) {
+            log.error("organization not found by id: " + orgId);
+            throw new NotFoundException("organization not found");
+        }
+        return organizationObject;
+    }
+
+    private UserScanRecordObject saveScanRecord(String productKey,
+                                                String userId,
+                                                String productBaseId,
+                                                String productKeyBatchId,
+                                                String appId,
+                                                String deviceId,
+                                                String ip,
+                                                ScanRequest scanRequest) {
+        UserScanRecordObject userScanRecordObject = new UserScanRecordObject();
         userScanRecordObject.setProductKey(productKey);
         userScanRecordObject.setUserId(userId);
-        userScanRecordObject.setProductBaseId(product.getProductBaseId());
-        userScanRecordObject.setProductKeyBatchId(productObject.getProductKeyBatchId());
+        userScanRecordObject.setProductBaseId(productBaseId);
+        userScanRecordObject.setProductKeyBatchId(productKeyBatchId);
         userScanRecordObject.setAppId(appId);
         userScanRecordObject.setDeviceId(deviceId);
-        if (userScanRecordObject.getDetails() == null) {
-            userScanRecordObject.setDetails("匿名用户扫描");
-        }
-        userScanDomain.createScanRecord(userScanRecordObject);
-
-        return scanResult;
+        userScanRecordObject.setIp(ip);
+        userScanRecordObject.setLongitude(scanRequest.getLongitude());
+        userScanRecordObject.setLatitude(scanRequest.getLatitude());
+        userScanRecordObject.setProvince(scanRequest.getProvince());
+        userScanRecordObject.setCity(scanRequest.getCity());
+        userScanRecordObject.setAddress(scanRequest.getAddress());
+        userScanRecordObject.setDetails(scanRequest.getDetails());
+        return userScanDomain.createScanRecord(userScanRecordObject);
     }
 
-    //能够访问所有的Key,为WebScan调用，因此每次Scan都!!不会save扫描记录。
-    @RequestMapping(value = "{key}", method = RequestMethod.GET)
-    public ScanResult getScanResult(@PathVariable(value = "key") String key) {
-        //1. validate input
-        if (!KeyGenerator.validate(key)) {
-            throw new BadRequestException("key not valid");
-        }
-
-        ScanResult scanResult = new ScanResult();
-        scanResult.setKey(key);
-
-        //2. get product information
-        ProductObject productObject = productDomain.getProduct(key);
-        Product product = productDomain.getProductFromProductObject(productObject);
-        if (product == null) {
-            log.warn(String.format("product not found by [key: %s]", key));
-            scanResult.setValidationResult(ValidationResult.Fake);
-            return scanResult;
-        }
-        scanResult.setProduct(product);
-
-        //3. retrieve scan records
-        List<ScanRecord> scanRecordList = userScanDomain.getScanRecordsByProductKey(key, null)
-                .map(ScanRecord::new)
-                .getContent();
-        scanResult.setScanRecordList(scanRecordList);
-        scanResult.setScanCounter(scanRecordList.size() + 1); //设置当前是第几次被最终用户扫描 - 根据用户扫描记录表.
-
-        //4. retrieve logistics information
-        scanResult.setLogisticsList(getLogisticsInfo(key));
-
-        //5. get company information.
-        OrganizationObject organizationObject = organizationDomain.getById(product.getOrgId());
-        scanResult.setManufacturer(new Organization(organizationObject));
-
-        //6. set validation result by our validation strategy.
-        scanResult.setValidationResult(scanRecordList.size() == 0 ? ValidationResult.Real : ValidationResult.Uncertain);
-
-        return scanResult;
-    }
-
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
-                    value = "Results page you want to retrieve (0..N)"),
-            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
-                    value = "Number of records per page."),
-            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
-                    value = "Sorting criteria in the format: property(,asc|desc). " +
-                            "Default sort is: createdDateTime,desc. " +
-                            "Multiple sort criteria are supported.")
-    })
-    @RequestMapping(value = "/record", method = RequestMethod.GET)
-    public List<ScanRecord> getScanRecordsByFilter(
-            @RequestParam(value = "product_key", required = false) String productKey,
-            @ApiIgnore
-            @PageableDefault(page = 0, size = 10, sort = "createdDateTime", direction = Sort.Direction.DESC)
-            Pageable pageable,
-            HttpServletResponse response) {
-        Page<UserScanRecordObject> page;
-        if (!StringUtils.isEmpty(productKey)) {
-            //get the scan records by product key include other user's
-            page = userScanDomain.getScanRecordsByProductKey(productKey, pageable);
-        } else {
-            //get the scan records for current user only
-            String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-            page = userScanDomain.getScanRecordsByUserId(userId, pageable);
-        }
-
-        if (pageable != null) {
-            response.setHeader("Content-Range", page.toContentRange());
-        }
-        List<ScanRecord> scanRecords = page.map(ScanRecord::new).getContent();
-        fillProductInfo(scanRecords);
-        return scanRecords;
-    }
-
-
-    private List<Logistics> getLogisticsInfo(String key) {
-        List<LogisticsPath> logisticsPaths;
-        try {
-            logisticsPaths = logisticsDomain.getLogisticsPathsOrderByStartDate(key);
-        } catch (NotFoundException ex) {
-            return null;
-        }
-
-        List<Logistics> logisticsList = new ArrayList<>();
-        for (LogisticsPath path : logisticsPaths) {
-            Logistics logistics = new Logistics();
-            logistics.setOrgId(path.getStartCheckPointObject().getOrgId());
-            logistics.setOrgName(path.getStartCheckPointOrgObject().getName());
-            logistics.setMessage(path.getActionObject().getName());
-            logistics.setLocation(path.getStartCheckPointObject().getName());
-            logistics.setDateTime(DateTimeUtils.toString(path.getStartDate()));
-            logisticsList.add(logistics);
-        }
-        return logisticsList;
-    }
-
-    private void fillProductInfo(List<ScanRecord> scanRecords) {
-        Map<String, ProductBaseObject> map = new HashMap<>();
-        for (ScanRecord scanRecord : scanRecords) {
-            ProductBaseObject productBaseObject = map.get(scanRecord.getProductBaseId());
-            if (productBaseObject == null) {
-                productBaseObject = productBaseDomain.getProductBaseById(scanRecord.getProductBaseId());
-                if (productBaseObject != null) {
-                    map.put(productBaseObject.getId(), productBaseObject);
-                }
+    private ScanResponse.Security getSecurityInfo(ProductObject productObject) {
+        ScanResponse.Security security = null;
+        if (LookupCodes.ProductKeyType.QR_SECURE.equals(productObject.getProductKeyTypeCode())) {
+            //防伪码
+            security = new ScanResponse.Security();
+            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 1));
+            List<UserScanRecordObject> userScanRecordObjects = userScanRecordObjectPage.getContent();
+            int scanCount = userScanRecordObjectPage.getCount() == null ? 0 : userScanRecordObjectPage.getCount();
+            security.setScanCount(scanCount);
+            if (userScanRecordObjects.size() > 0) {
+                security.setFirstScan(toScanRecord(userScanRecordObjects.get(0)));
             }
-            if (productBaseObject != null) {
-                scanRecord.setProductName(productBaseObject.getName());
-                scanRecord.setProductDescription(productBaseObject.getDescription());
-            }
+            //set real if it's the first scan, otherwise set to uncertain.
+            security.setVerificationResult(scanCount <= 1 ? Constants.VerificationResult.REAL : Constants.VerificationResult.UNCERTAIN);
         }
+        return security;
+    }
+
+    private ScanResponse.Organization toOrganization(OrganizationObject organizationObject) {
+        ScanResponse.Organization organization = new ScanResponse.Organization();
+        organization.setId(organizationObject.getId());
+        organization.setName(organizationObject.getName());
+        organization.setStatusCode(organizationObject.getStatusCode());
+        organization.setDescription(organizationObject.getDescription());
+        return organization;
+    }
+
+    private ScanResponse.ScanRecord toScanRecord(UserScanRecordObject userScanRecordObject) {
+        ScanResponse.ScanRecord scanRecord = new ScanResponse.ScanRecord();
+        scanRecord.setId(userScanRecordObject.getId());
+        scanRecord.setUserId(userScanRecordObject.getUserId());
+        scanRecord.setProductKey(userScanRecordObject.getProductKey());
+        scanRecord.setProductBaseId(userScanRecordObject.getProductBaseId());
+        scanRecord.setDeviceId(userScanRecordObject.getDeviceId());
+        scanRecord.setIp(userScanRecordObject.getIp());
+        scanRecord.setLongitude(userScanRecordObject.getLongitude());
+        scanRecord.setLatitude(userScanRecordObject.getLatitude());
+        scanRecord.setProvince(userScanRecordObject.getProvince());
+        scanRecord.setCity(userScanRecordObject.getCity());
+        scanRecord.setAddress(userScanRecordObject.getAddress());
+        scanRecord.setDetails(userScanRecordObject.getDetails());
+        scanRecord.setCreatedDateTime(userScanRecordObject.getCreatedDateTime());
+        return scanRecord;
     }
 
 }

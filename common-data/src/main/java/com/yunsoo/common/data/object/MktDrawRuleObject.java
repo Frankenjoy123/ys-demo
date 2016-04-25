@@ -26,6 +26,12 @@ public class MktDrawRuleObject {
     @JsonProperty("amount")
     private Integer amount;
 
+    @JsonProperty("total_quantity")
+    private Integer totalQuantity;
+
+    @JsonProperty("available_quantity")
+    private Integer availableQuantity;
+
     @JsonProperty("probability")
     private double probability;
 
@@ -78,6 +84,22 @@ public class MktDrawRuleObject {
 
     public void setAmount(Integer amount) {
         this.amount = amount;
+    }
+
+    public Integer getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(Integer totalQuantity) {
+        this.totalQuantity = totalQuantity;
+    }
+
+    public Integer getAvailableQuantity() {
+        return availableQuantity;
+    }
+
+    public void setAvailableQuantity(Integer availableQuantity) {
+        this.availableQuantity = availableQuantity;
     }
 
     public double getProbability() {
