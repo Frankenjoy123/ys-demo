@@ -46,6 +46,10 @@ jdbc:
 spring:
   profiles: local
 
+yunsoo:
+  processor:
+    environment: local
+
 logging:
   file: c:/logs/processor.log
   level:
