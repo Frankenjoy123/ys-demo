@@ -1,4 +1,6 @@
-package com.yunsoo.processor.task;
+package com.yunsoo.processor.task.executor;
+
+import com.yunsoo.processor.task.Task;
 
 /**
  * Created by:   Lijian
@@ -10,7 +12,7 @@ public interface TaskExecutor {
     /**
      * main logic of execution
      */
-    void execute();
+    void execute(Task task);
 
     /**
      * default timeout

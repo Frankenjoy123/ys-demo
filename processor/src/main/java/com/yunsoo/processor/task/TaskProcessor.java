@@ -1,5 +1,6 @@
 package com.yunsoo.processor.task;
 
+import com.yunsoo.processor.task.executor.TaskExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
@@ -55,7 +56,7 @@ public class TaskProcessor {
                 }
 
                 //async execute task
-                worker.executeAsync(executor, taskCode);
+                worker.executeAsync(executor, task);
             }
         }
     }
@@ -78,12 +79,13 @@ public class TaskProcessor {
         private TaskService taskService;
 
         @Async
-        public void executeAsync(TaskExecutor executor, String taskCode) {
+        public void executeAsync(TaskExecutor executor, Task task) {
+            String taskCode = task.getCode();
             try {
                 log.info(String.format("task {code: %s} start executing", taskCode));
                 DateTime start = DateTime.now();
 
-                executor.execute();
+                executor.execute(task);
 
                 DateTime end = DateTime.now();
                 long duration = (end.getMillis() - start.getMillis()) / 1000;
