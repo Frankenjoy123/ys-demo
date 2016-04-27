@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
-import com.yunsoo.common.data.object.BrandApplicationHistoryObject2;
+import com.yunsoo.common.data.object.BrandApplicationHistoryObject;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 
@@ -226,14 +226,14 @@ public class BrandApplicationHistory {
     }
 
 
-    public BrandApplicationHistory(BrandApplicationHistoryObject2 object){
+    public BrandApplicationHistory(BrandApplicationHistoryObject object){
         if(object != null)
             BeanUtils.copyProperties(object, this);
     }
 
-    public static BrandApplicationHistoryObject2 toBrandApplicationHistoryObject(BrandApplicationHistory history){
+    public static BrandApplicationHistoryObject toBrandApplicationHistoryObject(BrandApplicationHistory history){
         if(history!=null){
-            BrandApplicationHistoryObject2 object = new BrandApplicationHistoryObject2();
+            BrandApplicationHistoryObject object = new BrandApplicationHistoryObject();
             BeanUtils.copyProperties(history, object);
             return object;
         }

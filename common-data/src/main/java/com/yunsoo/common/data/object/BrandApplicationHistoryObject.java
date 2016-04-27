@@ -10,7 +10,7 @@ import org.joda.time.DateTime;
 /**
  * Created by yan on 4/27/2016.
  */
-public class BrandApplicationHistoryObject2 {
+public class BrandApplicationHistoryObject {
 
     private String id;
 

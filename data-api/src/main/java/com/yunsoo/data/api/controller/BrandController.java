@@ -2,7 +2,7 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AttachmentObject;
-import com.yunsoo.common.data.object.BrandApplicationHistoryObject2;
+import com.yunsoo.common.data.object.BrandApplicationHistoryObject;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
@@ -127,7 +127,7 @@ public class BrandController {
     }
 
     @RequestMapping(value = "/history", method = RequestMethod.GET)
-    public List<BrandApplicationHistoryObject2> getHistoryList(@RequestParam("id")String id){
+    public List<BrandApplicationHistoryObject> getHistoryList(@RequestParam("id")String id){
         return historyRepository.findByBrandId(id).stream().map(this::brandApplicationHistoryObject).collect(Collectors.toList());
     }
 
@@ -219,9 +219,9 @@ public class BrandController {
 
     }
 
-    private BrandApplicationHistoryObject2 brandApplicationHistoryObject(BrandApplicationHistoryEntity entity){
+    private BrandApplicationHistoryObject brandApplicationHistoryObject(BrandApplicationHistoryEntity entity){
         if(entity !=null){
-            BrandApplicationHistoryObject2 object = new BrandApplicationHistoryObject2();
+            BrandApplicationHistoryObject object = new BrandApplicationHistoryObject();
             BeanUtils.copyProperties(entity, object);
             return object;
         }
