@@ -8,14 +8,8 @@ import com.yunsoo.common.data.object.MktDrawRuleObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
-import com.yunsoo.data.service.entity.MarketingEntity;
-import com.yunsoo.data.service.entity.MktDrawPrizeEntity;
-import com.yunsoo.data.service.entity.MktDrawRecordEntity;
-import com.yunsoo.data.service.entity.MktDrawRuleEntity;
-import com.yunsoo.data.service.repository.MarketingRepository;
-import com.yunsoo.data.service.repository.MktDrawPrizeRepository;
-import com.yunsoo.data.service.repository.MktDrawRecordRepository;
-import com.yunsoo.data.service.repository.MktDrawRuleRepository;
+import com.yunsoo.data.service.entity.*;
+import com.yunsoo.data.service.repository.*;
 import com.yunsoo.data.service.service.ProductService;
 import com.yunsoo.data.service.service.contract.Product;
 import org.joda.time.DateTime;
@@ -53,6 +47,10 @@ public class MarketingController {
 
     @Autowired
     private MktDrawRecordRepository mktDrawRecordRepository;
+
+    @Autowired
+    private ProductKeyBatchRepository productKeyBatchRepository;
+
 
     @Autowired
     private ProductService productService;
@@ -359,6 +357,13 @@ public class MarketingController {
         if (entity != null) {
             entity.setStatusCode(LookupCodes.MktStatus.DELETED);
             marketingRepository.save(entity);
+        }
+        List<ProductKeyBatchEntity> productKeyBatchEntities = productKeyBatchRepository.findByMarketingId(id);
+        if (productKeyBatchEntities != null) {
+            for (ProductKeyBatchEntity pkEntity : productKeyBatchEntities) {
+                pkEntity.setMarketingId(null);
+            }
+            productKeyBatchRepository.save(productKeyBatchEntities);
         }
     }
 

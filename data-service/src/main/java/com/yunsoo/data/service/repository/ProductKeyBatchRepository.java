@@ -67,4 +67,10 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
 
     ProductKeyBatchEntity findFirstByOrgIdOrderByIdDesc(String orgId);
 
+    List<ProductKeyBatchEntity> save(Iterable<ProductKeyBatchEntity> entities);
+
+    List<ProductKeyBatchEntity> findByMarketingId(String marketingId);
+
+
+
 }
