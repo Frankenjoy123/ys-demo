@@ -5,11 +5,15 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Table;
 
 /**
  * Created by yan on 4/26/2016.
  */
+@Entity
+@Table(name="brand_application_history")
 public class BrandApplicationHistoryEntity {
 
     @javax.persistence.Id

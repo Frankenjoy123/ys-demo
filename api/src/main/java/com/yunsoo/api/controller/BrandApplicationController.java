@@ -156,7 +156,14 @@ public class BrandApplicationController {
     public Brand createBrand(@RequestBody Brand brand) {
         Page<BrandObject> existingBrandList = brandDomain.getBrandList(brand.getName().trim(),null,null,null,null, null, null, null);
         if(existingBrandList.getContent().size() == 0) {
-            String currentAccountId = AuthUtils.getCurrentAccount().getId();
+            String currentAccountId = null;
+            try {
+                currentAccountId = AuthUtils.getCurrentAccount().getId();
+            }
+            catch (UnauthorizedException ex){
+
+            }
+
             BrandObject object = brand.toBrand(brand);
             object.setCreatedAccountId(currentAccountId);
             Brand returnObj = new Brand(brandDomain.createBrand(object));
@@ -172,6 +179,15 @@ public class BrandApplicationController {
         if(existingBrand.getStatusCode().equals(LookupCodes.BrandApplicationStatus.APPROVED))
             throw new BadRequestException("could not update with status approved");
         if(existingBrand !=null) {
+            String currentAccountId = null;
+            try {
+                currentAccountId = AuthUtils.getCurrentAccount().getId();
+            }
+            catch (UnauthorizedException ex){
+
+            }
+
+            existingBrand.setCreatedAccountId(currentAccountId);
             existingBrand.setBusinessSphere(brand.getBusinessSphere());
             existingBrand.setBusinessLicenseStart(brand.getBusinessLicenseStart());
             existingBrand.setBusinessLicenseEnd(brand.getBusinessLicenseEnd());
