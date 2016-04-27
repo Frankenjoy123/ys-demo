@@ -135,11 +135,13 @@ public class BrandApplicationController {
 
     @RequestMapping(value = "{id}/reject", method = RequestMethod.PUT)
     public boolean rejectBrandApplication(@PathVariable("id") String id, @RequestParam(name="reject_reason", required = false) String reject_reason) {
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
         try {
             BrandObject object = brandDomain.getBrandById(id);
             object.setStatusCode(LookupCodes.BrandApplicationStatus.REJECTED);
             if(StringUtils.hasText(reject_reason))
                 object.setRejectReason(reject_reason);
+            object.setCreatedAccountId(currentAccountId);
             brandDomain.updateBrand(object);
             return  true;
         }
@@ -152,11 +154,11 @@ public class BrandApplicationController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Brand createBrand(@RequestBody Brand brand) {
-
         Page<BrandObject> existingBrandList = brandDomain.getBrandList(brand.getName().trim(),null,null,null,null, null, null, null);
         if(existingBrandList.getContent().size() == 0) {
-
+            String currentAccountId = AuthUtils.getCurrentAccount().getId();
             BrandObject object = brand.toBrand(brand);
+            object.setCreatedAccountId(currentAccountId);
             Brand returnObj = new Brand(brandDomain.createBrand(object));
             return returnObj;
         }
