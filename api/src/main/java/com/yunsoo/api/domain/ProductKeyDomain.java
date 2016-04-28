@@ -6,7 +6,7 @@ import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.message.ProductKeyBatchMassage;
+import com.yunsoo.common.data.message.ProductKeyBatchCreateMessage;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
@@ -190,16 +190,15 @@ public class ProductKeyDomain {
         log.info(String.format("ProductKeyBatch status changed [id: %s, statusCode: %s]", newBatchObj.getId(), newBatchObj.getStatusCode()));
 
         //send sqs message to processor
-        ProductKeyBatchMassage sqsMessage = new ProductKeyBatchMassage();
+        ProductKeyBatchCreateMessage sqsMessage = new ProductKeyBatchCreateMessage();
         sqsMessage.setProductKeyBatchId(newBatchObj.getId());
-        if (newBatchObj.getProductBaseId() != null) {
-            sqsMessage.setProductStatusCode(LookupCodes.ProductStatus.ACTIVATED);  //default activated
-        }
+        sqsMessage.setProductStatusCode(LookupCodes.ProductStatus.ACTIVATED);  //default activated
+
         try {
-            processorClient.post("sqs/productkeybatch", sqsMessage, ProductKeyBatchMassage.class);
-            log.info(String.format("ProductKeyBatchMassage posted to sqs %s", sqsMessage));
+            processorClient.put("sqs/message/{payloadName}", sqsMessage, ProductKeyBatchCreateMessage.PAYLOAD_NAME);
+            log.info(String.format("ProductKeyBatchCreateMessage put to sqs %s", sqsMessage));
         } catch (Exception ex) {
-            log.error(String.format("ProductKeyBatchMassage posting to sqs failed [message: %s]", ex.getMessage()), ex);
+            log.error(String.format("ProductKeyBatchCreateMessage put to sqs failed [message: %s]", ex.getMessage()), ex);
         }
 
         return toProductKeyBatch(newBatchObj, lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType), lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus));

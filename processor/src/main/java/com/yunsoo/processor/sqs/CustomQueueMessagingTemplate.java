@@ -1,6 +1,7 @@
-package com.yunsoo.processor.config;
+package com.yunsoo.processor.sqs;
 
 import com.amazonaws.services.sqs.AmazonSQS;
+import com.yunsoo.common.util.StringFormatter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.cloud.aws.core.env.ResourceIdResolver;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 /**
  * Created by:   yan
- * Created on:   8/28/2015
+ * Created on:   2015-08-28
  * Descriptions:
  */
 public class CustomQueueMessagingTemplate extends QueueMessagingTemplate {
@@ -25,15 +26,14 @@ public class CustomQueueMessagingTemplate extends QueueMessagingTemplate {
 
     }
 
-    public <T> void convertAndSend(String destinationName, T payload, Map<String, Object> headers, Long delaySeconds) throws MessagingException {
+    public <T> void convertAndSend(String destinationName, T payload, Map<String, Object> headers, long delaySeconds) throws MessagingException {
         QueueMessageChannel channel = resolveMessageChannelByLogicalName(destinationName);
         Message<?> message = doConvert(payload, headers, null);
-
         boolean success = channel.send(message, delaySeconds);
-        if(!success){
-            log.error("Send message to SQS failed. message body: " + String.valueOf(message.getPayload()));
+        if (!success) {
+            log.error("send message to SQS failed. " + StringFormatter.formatMap("message", payload));
+            throw new MessagingException(message, "send message to SQS failed.");
         }
-
     }
 
 }
