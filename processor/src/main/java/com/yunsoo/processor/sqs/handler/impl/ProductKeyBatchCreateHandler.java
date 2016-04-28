@@ -101,9 +101,4 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<ProductKeyBa
                 "seconds", (DateTime.now().getMillis() - startDateTime.getMillis()) / 1000.0));
     }
 
-    @Override
-    public long getTimeout() {
-        return 20 * 60 * 1000; //20
-    }
-
 }

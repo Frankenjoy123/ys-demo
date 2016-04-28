@@ -9,10 +9,4 @@ public interface MessageHandler<T> {
 
     void process(T message);
 
-
-    /**
-     * @return millisecond of timeout for the task executing
-     */
-    long getTimeout();
-
 }
