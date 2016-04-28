@@ -48,6 +48,11 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<ProductKeyBa
             log.error("product key batch not found " + StringFormatter.formatMap("id", productKeyBatchId));
             throw new RuntimeException("product key batch not found");
         }
+        if (!LookupCodes.ProductKeyBatchStatus.CREATING.equals(productKeyBatchObject.getStatusCode())) {
+            log.error("productkeybatch status is not valid " + StringFormatter.formatMap(
+                    "message", message, "productKeyBatchStatusCode", productKeyBatchObject.getStatusCode()));
+            throw new RuntimeException("product key batch status is not valid");
+        }
 
         List<List<String>> productKeys = productKeyDomain.getProductKeys(productKeyBatchObject);
         if (productKeys == null) {
