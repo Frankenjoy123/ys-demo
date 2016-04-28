@@ -21,16 +21,8 @@ public class ProductKeyBatch {
     private String createdAccountId;
     private DateTime createdDateTime;
     private List<String> productKeyTypeCodes;
-    private Integer restQuantity;
     private String marketingId;
 
-    public Integer getRestQuantity() {
-        return restQuantity;
-    }
-
-    public void setRestQuantity(Integer restQuantity) {
-        this.restQuantity = restQuantity;
-    }
 
     public String getId() {
         return id;

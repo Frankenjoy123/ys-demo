@@ -153,7 +153,6 @@ public class ProductKeyDomain {
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {
         batchObj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         batchObj.setCreatedDateTime(DateTime.now());
-        batchObj.setRestQuantity(batchObj.getQuantity());
         String productBaseId = batchObj.getProductBaseId();
         List<String> productKeyTypes = batchObj.getProductKeyTypeCodes();
         //boolean isPackageKey = productKeyTypes.size() == 1 && LookupCodes.ProductKeyType.PACKAGE.equals(productKeyTypes.get(0));
