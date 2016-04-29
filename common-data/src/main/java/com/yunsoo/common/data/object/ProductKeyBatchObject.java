@@ -49,20 +49,9 @@ public class ProductKeyBatchObject implements Serializable {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
 
-    @JsonProperty("rest_quantity")
-    private Integer restQuantity;
-
     @JsonProperty("marketing_id")
     private String marketingId;
 
-
-    public Integer getRestQuantity() {
-        return restQuantity;
-    }
-
-    public void setRestQuantity(Integer restQuantity) {
-        this.restQuantity = restQuantity;
-    }
 
     public String getId() {
         return id;

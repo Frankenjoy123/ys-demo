@@ -349,6 +349,50 @@ public class MarketingController {
         return toMktDrawRuleObject(newEntity);
     }
 
+    //create marketing draw rule list provide API
+    @RequestMapping(value = "/drawRule/list", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public MktDrawRuleObject createDrawRuleList(@RequestBody List<MktDrawRuleObject> mktDrawRuleObjectList) {
+
+        if (mktDrawRuleObjectList == null || mktDrawRuleObjectList.size() == 0) {
+            return null;
+        }
+        List<MktDrawRuleEntity> mktDrawRuleEntities = new ArrayList<>();
+        for (MktDrawRuleObject object : mktDrawRuleObjectList) {
+            MktDrawRuleEntity entity = toMktDrawRuleEntity(object);
+            mktDrawRuleEntities.add(entity);
+        }
+        for (MktDrawRuleEntity mktDrawRuleentity : mktDrawRuleEntities) {
+            mktDrawRuleentity.setId(null); //make sure it's insert
+            mktDrawRuleentity.setCreatedDateTime(DateTime.now());
+        }
+
+        List<MktDrawRuleEntity> newEntities = mktDrawRuleRepository.save(mktDrawRuleEntities);
+
+        return toMktDrawRuleObject(newEntities.get(0));
+
+    }
+
+    @RequestMapping(value = "/drawRule/list", method = RequestMethod.PUT)
+    public void updateMktDrawRuleList(@RequestBody List<MktDrawRuleObject> mktDrawRuleObjectList) {
+        if (mktDrawRuleObjectList == null || mktDrawRuleObjectList.size() == 0) {
+            return;
+        }
+
+        List<MktDrawRuleEntity> mktDrawRuleEntities = new ArrayList<>();
+        for (MktDrawRuleObject object : mktDrawRuleObjectList) {
+
+            MktDrawRuleEntity oldEntity = findMktDrawRuleById(object.getId());
+            MktDrawRuleEntity entity = toMktDrawRuleEntity(object);
+            entity.setCreatedDateTime(oldEntity.getCreatedDateTime());
+            entity.setCreatedAccountId(oldEntity.getCreatedAccountId());
+            mktDrawRuleEntities.add(entity);
+        }
+
+        mktDrawRuleRepository.save(mktDrawRuleEntities);
+    }
+
+
     //delete marketing plan
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)

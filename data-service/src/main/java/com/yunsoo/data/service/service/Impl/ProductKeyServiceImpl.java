@@ -1,11 +1,14 @@
 package com.yunsoo.data.service.service.Impl;
 
+import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.data.service.dao.ProductDao;
 import com.yunsoo.data.service.dbmodel.dynamodb.ProductModel;
 import com.yunsoo.data.service.service.ProductKeyService;
 import com.yunsoo.data.service.service.contract.Product;
 import com.yunsoo.data.service.service.contract.ProductKey;
 import com.yunsoo.data.service.service.exception.ServiceException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,8 @@ import java.util.Set;
  */
 @Service("productKeyService")
 public class ProductKeyServiceImpl implements ProductKeyService {
+
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private ProductDao productDao;
@@ -53,24 +58,36 @@ public class ProductKeyServiceImpl implements ProductKeyService {
                           List<String> productKeyTypeCodes,
                           List<List<String>> productKeys,
                           Product productTemplate) {
+        Assert.notNull(productKeyBatchId, "productKeyBatchId must not be null");
+        Assert.notEmpty(productKeyTypeCodes, "productKeyTypeIds must not be empty or null");
+        Assert.notEmpty(productKeys, "productKeys must not be empty or null");
+
+        if (productTemplate == null) {
+            productTemplate = new Product();
+        }
+
+        DateTime startDateTime = DateTime.now();
         //generate ProductModel List
-        List<ProductModel> productModels
-                = generateProductModelList(productKeyBatchId, productKeyTypeCodes, productKeys, productTemplate);
+        List<ProductModel> productModels = generateProductModelList(productKeyBatchId, productKeyTypeCodes, productKeys, productTemplate);
 
         //save productModel
         productDao.batchSave(productModels);
 
+        log.info("batch save product keys successfully. " + StringFormatter.formatMap(
+                "productKeyBatchId", productKeyBatchId,
+                "productKeyTypeCodes.size", productKeyTypeCodes.size(),
+                "productKeys.size", productKeys.size(),
+                "seconds", (DateTime.now().getMillis() - startDateTime.getMillis()) / 1000.0));
     }
 
     private List<ProductModel> generateProductModelList(String productKeyBatchId,
                                                         List<String> productKeyTypeCodes,
                                                         List<List<String>> productKeys,
                                                         Product productTemplate) {
-        Assert.notNull(productKeyBatchId, "productKeyBatchId must not be null");
-        Assert.notEmpty(productKeyTypeCodes, "productKeyTypeIds must not be empty or null");
-        Assert.notEmpty(productKeys, "productKeys must not be empty or null");
+        if (productTemplate.getCreatedDateTime() == null) {
+            productTemplate.setCreatedDateTime(DateTime.now());
+        }
 
-        DateTime now = DateTime.now();
         int productKeyTypeCodesSize = productKeyTypeCodes.size();
         List<ProductModel> productModelList = new ArrayList<>(productKeys.size() * productKeyTypeCodesSize);
         if (productKeyTypeCodesSize == 1) {
@@ -80,7 +97,6 @@ public class ProductKeyServiceImpl implements ProductKeyService {
                     productModel.setProductKey(keys.get(0));
                     productModel.setProductKeyTypeCode(productKeyTypeCodes.get(0));
                     productModel.setProductKeyBatchId(productKeyBatchId);
-                    productModel.setCreatedDateTime(now);
                     productModelList.add(productModel);
                 }
             });
@@ -96,7 +112,6 @@ public class ProductKeyServiceImpl implements ProductKeyService {
                         productModel.setProductKey(key);
                         productModel.setProductKeyTypeCode(productKeyTypeCodes.get(j));
                         productModel.setProductKeyBatchId(productKeyBatchId);
-                        productModel.setCreatedDateTime(now);
                         if (j == 0) {
                             productModel.setProductKeySet(keySet);
                         } else {
@@ -112,11 +127,10 @@ public class ProductKeyServiceImpl implements ProductKeyService {
 
     private ProductModel generateProductModel(Product productTemplate) {
         ProductModel model = new ProductModel();
-        if (productTemplate != null) {
-            model.setProductBaseId(productTemplate.getProductBaseId());
-            model.setProductStatusCode(productTemplate.getProductStatusCode());
-            model.setManufacturingDateTime(productTemplate.getManufacturingDateTime());
-        }
+        model.setProductBaseId(productTemplate.getProductBaseId());
+        model.setProductStatusCode(productTemplate.getProductStatusCode());
+        model.setCreatedDateTime(productTemplate.getCreatedDateTime());
+        model.setManufacturingDateTime(productTemplate.getManufacturingDateTime());
         return model;
     }
 }

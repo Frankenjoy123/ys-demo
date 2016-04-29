@@ -152,9 +152,6 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         if (batch.getStatusCode() != null) {
             entity.setStatusCode(batch.getStatusCode());
         }
-        if (batch.getRestQuantity() != null) {
-            entity.setRestQuantity(batch.getRestQuantity());
-        }
         if (batch.getMarketingId() != null) {
             entity.setMarketingId(batch.getMarketingId());
         }
@@ -271,7 +268,6 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         batch.setCreatedAppId(entity.getCreatedAppId());
         batch.setCreatedAccountId(entity.getCreatedAccountId());
         batch.setCreatedDateTime(entity.getCreatedDateTime());
-        batch.setRestQuantity(entity.getRestQuantity());
         String codes = entity.getProductKeyTypeCodes();
         if (codes != null) {
             batch.setProductKeyTypeCodes(Arrays.asList(StringUtils.commaDelimitedListToStringArray(codes)));
@@ -294,7 +290,6 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         entity.setCreatedAppId(batch.getCreatedAppId());
         entity.setCreatedAccountId(batch.getCreatedAccountId());
         entity.setCreatedDateTime(batch.getCreatedDateTime());
-        entity.setRestQuantity(batch.getRestQuantity());
         List<String> codes = batch.getProductKeyTypeCodes();
         if (codes != null) {
             entity.setProductKeyTypeCodes(StringUtils.collectionToCommaDelimitedString(codes));

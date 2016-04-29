@@ -1,5 +1,6 @@
 package com.yunsoo.processor.task;
 
+import com.yunsoo.processor.task.executor.TaskExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
@@ -35,27 +36,28 @@ public class TaskProcessor {
 
     public void process() {
         List<Task> tasks = taskService.getRunnable();
-        log.info(String.format("processor start running and found %d available tasks", tasks.size()));
-        for (int i = 0; i < tasks.size() && i < MAX_PROCESSING_COUNT; i++) {
-            Task task = tasks.get(i);
-            String taskCode = task.getCode();
+        if (tasks.size() > 0) {
+            log.info(String.format("processor found %d available tasks", tasks.size()));
+            for (int i = 0; i < tasks.size() && i < MAX_PROCESSING_COUNT; i++) {
+                Task task = tasks.get(i);
+                String taskCode = task.getCode();
 
-            TaskExecutor executor = getTaskExecutor(task);
-            if (executor == null) {
-                log.warn(String.format("no corresponding executor bean found for task {code: %s, executor: %s}", taskCode, task.getExecutor()));
-                continue; //no corresponding executor bean found in the context
+                TaskExecutor executor = getTaskExecutor(task);
+                if (executor == null) {
+                    log.warn(String.format("no corresponding executor bean found for task {code: %s, executor: %s}", taskCode, task.getExecutor()));
+                    continue; //no corresponding executor bean found in the context
+                }
+
+                long timeout = executor.getTimeout() > 0 ? executor.getTimeout() : DEFAULT_TIMEOUT;
+                task = taskService.lock(taskCode, timeout);
+                if (task == null) {
+                    log.warn(String.format("lock task {code: %s} failed", taskCode));
+                    continue; //lock failed and try next task
+                }
+
+                //async execute task
+                worker.executeAsync(executor, task);
             }
-
-            long timeout = executor.getTimeout() > 0 ? executor.getTimeout() : DEFAULT_TIMEOUT;
-            task = taskService.lock(taskCode, timeout);
-            if (task == null) {
-                log.warn(String.format("lock task {code: %s} failed", taskCode));
-                continue; //lock failed and try next task
-            }
-
-            //async execute task
-            worker.executeAsync(executor, taskCode);
-
         }
     }
 
@@ -77,12 +79,13 @@ public class TaskProcessor {
         private TaskService taskService;
 
         @Async
-        public void executeAsync(TaskExecutor executor, String taskCode) {
+        public void executeAsync(TaskExecutor executor, Task task) {
+            String taskCode = task.getCode();
             try {
                 log.info(String.format("task {code: %s} start executing", taskCode));
                 DateTime start = DateTime.now();
 
-                executor.execute();
+                executor.execute(task);
 
                 DateTime end = DateTime.now();
                 long duration = (end.getMillis() - start.getMillis()) / 1000;

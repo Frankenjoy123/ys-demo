@@ -1,7 +1,8 @@
-package com.yunsoo.processor.task.impl;
+package com.yunsoo.processor.task.executor.impl;
 
-import com.yunsoo.processor.task.TaskExecutor;
+import com.yunsoo.processor.task.Task;
 import com.yunsoo.processor.task.annotation.Executor;
+import com.yunsoo.processor.task.executor.TaskExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -16,7 +17,7 @@ public class HealthCheckTaskExecutor implements TaskExecutor {
     private Log log = LogFactory.getLog(getClass());
 
     @Override
-    public void execute() {
+    public void execute(Task task) {
 //        List<String> orderIds = orderService.getNotClosedOrderIds();
 //        log.info(String.format("found %d orders not closed", orderIds.size()));
 //

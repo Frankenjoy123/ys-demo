@@ -54,6 +54,15 @@ public class MarketingDomain {
         return dataAPIClient.post("marketing/drawRule", mktDrawRuleObject, MktDrawRuleObject.class);
     }
 
+    public MktDrawRuleObject createMktDrawRuleList(List<MktDrawRuleObject> mktDrawRuleObjectList) {
+        return dataAPIClient.post("marketing/drawRule/list", mktDrawRuleObjectList, MktDrawRuleObject.class);
+    }
+
+    public void updateMktDrawRuleList(List<MktDrawRuleObject> mktDrawRuleObjectList) {
+        dataAPIClient.put("marketing/drawRule/list", mktDrawRuleObjectList);
+    }
+
+
     public MarketingObject getMarketingById(String id) {
         try {
             return dataAPIClient.get("marketing/{id}", MarketingObject.class, id);

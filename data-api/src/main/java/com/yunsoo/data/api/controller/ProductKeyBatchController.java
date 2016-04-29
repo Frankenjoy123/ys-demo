@@ -161,15 +161,6 @@ public class ProductKeyBatchController {
         return sum == null ? 0L : sum;
     }
 
-    @RequestMapping(value = "/exists", method = RequestMethod.GET)
-    public boolean existsProductKeyBatch(@RequestParam(value = "quantity", required = false) Integer quantity,
-                                         @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
-
-        Integer count = productKeyBatchRepository.countByRestQuantityLessThanAndStatusCodeIn(quantity, statusCodeIn);
-        return count > 0;
-    }
-
-
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ProductKeyBatchObject create(@RequestBody ProductKeyBatchObject batchObj) {
@@ -220,7 +211,6 @@ public class ProductKeyBatchController {
         batchObj.setCreatedAccountId(batch.getCreatedAccountId());
         batchObj.setCreatedDateTime(batch.getCreatedDateTime());
         batchObj.setProductKeyTypeCodes(batch.getProductKeyTypeCodes());
-        batchObj.setRestQuantity(batch.getRestQuantity());
         batchObj.setMarketingId(batch.getMarketingId());
         return batchObj;
     }
@@ -242,7 +232,6 @@ public class ProductKeyBatchController {
         object.setCreatedAppId(entity.getCreatedAppId());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
-        object.setRestQuantity(entity.getRestQuantity());
         object.setMarketingId(entity.getMarketingId());
         return object;
     }
@@ -262,7 +251,6 @@ public class ProductKeyBatchController {
         batch.setCreatedAccountId(batchObj.getCreatedAccountId());
         batch.setCreatedDateTime(batchObj.getCreatedDateTime());
         batch.setProductKeyTypeCodes(batchObj.getProductKeyTypeCodes());
-        batch.setRestQuantity(batchObj.getRestQuantity());
         batch.setMarketingId(batchObj.getMarketingId());
         return batch;
     }

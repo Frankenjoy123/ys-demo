@@ -72,6 +72,66 @@ public class MarketingController {
         return new MktDrawRule(newMktDrawRuleObject);
     }
 
+    @RequestMapping(value = "drawRule/list", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public MktDrawRule createMktDrawRuleList(@RequestBody List<MktDrawRule> mktDrawRuleList) {
+        if (mktDrawRuleList == null || mktDrawRuleList.size() == 0) {
+            throw new BadRequestException("marketing draw rule list can not be null");
+        }
+        List<MktDrawRuleObject> mktDrawRuleObjectList = new ArrayList<>();
+        for (MktDrawRule mktDrawRule : mktDrawRuleList) {
+            String marketingId = mktDrawRule.getMarketingId();
+            MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+            if (marketingObject == null) {
+                throw new NotFoundException("marketing can not be found by the id");
+            }
+            MktDrawRuleObject mktDrawRuleObject = mktDrawRule.toMktDrawRuleObject();
+            String currentUserId = AuthUtils.getCurrentAccount().getId();
+            mktDrawRuleObject.setCreatedAccountId(currentUserId);
+            mktDrawRuleObject.setCreatedDateTime(DateTime.now());
+            mktDrawRuleObjectList.add(mktDrawRuleObject);
+        }
+
+        MktDrawRuleObject newMktDrawRuleObject = marketingDomain.createMktDrawRuleList(mktDrawRuleObjectList);
+        return new MktDrawRule(newMktDrawRuleObject);
+    }
+
+    @RequestMapping(value = "/drawRule/list", method = RequestMethod.PUT)
+    public void updateMktDrawRuleList(@RequestBody List<MktDrawRule> mktDrawRuleList) {
+        if (mktDrawRuleList == null || mktDrawRuleList.size() == 0) {
+            throw new BadRequestException("marketing draw rule list can not be null");
+        }
+
+        List<MktDrawRuleObject> mktDrawRuleObjectList = new ArrayList<>();
+        for (MktDrawRule mktDrawRule : mktDrawRuleList) {
+
+            MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktDrawRuleById(mktDrawRule.getId());
+            if (mktDrawRuleObject == null) {
+                throw new NotFoundException("marketing draw rule can not be found");
+            }
+            String marketingId = mktDrawRule.getMarketingId();
+            MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+            if (marketingObject == null) {
+                throw new NotFoundException("marketing can not be found by the id");
+            }
+
+            String currentUserId = AuthUtils.getCurrentAccount().getId();
+            mktDrawRuleObject.setComments(mktDrawRule.getComments());
+            mktDrawRuleObject.setAmount(mktDrawRule.getAmount());
+            mktDrawRuleObject.setProbability(mktDrawRule.getProbability());
+            mktDrawRuleObject.setModifiedAccountId(currentUserId);
+            mktDrawRuleObject.setModifiedDateTime(DateTime.now());
+            mktDrawRuleObject.setTotalQuantity(mktDrawRule.getTotalQuantity());
+            mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getAvailableQuantity());
+
+            mktDrawRuleObjectList.add(mktDrawRuleObject);
+        }
+
+        marketingDomain.updateMktDrawRuleList(mktDrawRuleObjectList);
+    }
+
+
+
     //query marketing plan by org id
     @RequestMapping(value = "analysis", method = RequestMethod.GET)
     public List<MarketingResult> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,

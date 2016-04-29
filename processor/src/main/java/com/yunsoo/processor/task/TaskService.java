@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Created by:   Lijian
@@ -33,7 +32,8 @@ public class TaskService {
 
 
     public List<Task> getAll() {
-        return StreamSupport.stream(taskRepository.findByEnvironment(config.getEnvironment()).spliterator(), false)
+        return taskRepository.findByEnvironment(config.getEnvironment())
+                .stream()
                 .map(Task::new)
                 .collect(Collectors.toList());
     }
@@ -86,7 +86,8 @@ public class TaskService {
     }
 
     public List<Task> getRunnable() {
-        return StreamSupport.stream(taskRepository.findByEnvironmentAndEnabledTrue(config.getEnvironment()).spliterator(), false)
+        return taskRepository.findByEnvironmentAndEnabledTrue(config.getEnvironment())
+                .stream()
                 .filter(this::isRunnable)
                 .map(Task::new)
                 .collect(Collectors.toList());

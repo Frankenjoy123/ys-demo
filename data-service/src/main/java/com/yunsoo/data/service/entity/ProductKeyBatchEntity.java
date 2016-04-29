@@ -52,19 +52,9 @@ public class ProductKeyBatchEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
-    @Column(name = "rest_quantity")
-    private int restQuantity;
-
     @Column(name = "marketing_id")
     private String marketingId;
 
-    public int getRestQuantity() {
-        return restQuantity;
-    }
-
-    public void setRestQuantity(int restQuantity) {
-        this.restQuantity = restQuantity;
-    }
 
     public String getId() {
         return id;
@@ -167,7 +157,6 @@ public class ProductKeyBatchEntity {
         batchObj.setCreatedAppId(entity.getCreatedAppId());
         batchObj.setCreatedAccountId(entity.getCreatedAccountId());
         batchObj.setCreatedDateTime(entity.getCreatedDateTime());
-        batchObj.setRestQuantity(entity.getRestQuantity());
         String codes = entity.getProductKeyTypeCodes();
         if (codes != null) {
             batchObj.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
