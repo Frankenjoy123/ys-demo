@@ -126,9 +126,9 @@ public class BrandController {
         return repository.countByCarrierIdAndStatusCode(carrierId, status);
     }
 
-    @RequestMapping(value = "/history", method = RequestMethod.GET)
-    public List<BrandApplicationHistoryObject> getHistoryList(@RequestParam("id")String id){
-        return historyRepository.findByBrandId(id).stream().map(this::brandApplicationHistoryObject).collect(Collectors.toList());
+    @RequestMapping(value = "{id}/history", method = RequestMethod.GET)
+    public List<BrandApplicationHistoryObject> getHistoryList(@PathVariable("id")String id){
+        return historyRepository.findByBrandIdOrderByCreatedDateTimeDesc(id).stream().map(this::brandApplicationHistoryObject).collect(Collectors.toList());
     }
 
 
@@ -236,6 +236,7 @@ public class BrandController {
             hEntity.setBrandId(entity.getId());
             hEntity.setId(null);
             hEntity.setCreatedAccountId(accountId);
+            hEntity.setCreatedDateTime(DateTime.now());
             return hEntity;
         }
         else

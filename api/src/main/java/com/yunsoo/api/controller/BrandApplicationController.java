@@ -1,10 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.*;
-import com.yunsoo.api.dto.AccountLoginRequest;
-import com.yunsoo.api.dto.Attachment;
-import com.yunsoo.api.dto.Brand;
-import com.yunsoo.api.dto.Payment;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
@@ -32,7 +29,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -321,6 +320,27 @@ public class BrandApplicationController {
 
 
 
+    }
+
+    @RequestMapping(value = "{id}/history", method = RequestMethod.GET)
+    public List<BrandApplicationHistory> getHistoryById(@PathVariable("id") String id){
+        List<BrandApplicationHistory> historyList = brandDomain.getBrandApplicationHistory(id).stream().map(BrandApplicationHistory::new).collect(Collectors.toList());
+        Map<String, Account> accountMap = new HashMap<>();
+        historyList.forEach( history -> {
+                    if(StringUtils.hasText(history.getCreatedAccountId())){
+                        if(accountMap.containsKey(history.getCreatedAccountId()))
+                            history.setAccount(accountMap.get(history.getCreatedAccountId()));
+                        else{
+                            Account account = new Account(accountDomain.getById(history.getCreatedAccountId()));
+                            history.setAccount(account);
+                            accountMap.put(history.getCreatedAccountId(), account);
+                        }
+                    }
+                }
+
+        );
+
+        return historyList;
     }
 
 }

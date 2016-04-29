@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface BrandApplicationHistoryRepository extends CrudRepository<BrandApplicationHistoryEntity, String> {
 
-    List<BrandApplicationHistoryEntity> findByBrandId(String id);
+    List<BrandApplicationHistoryEntity> findByBrandIdOrderByCreatedDateTimeDesc(String id);
 }
