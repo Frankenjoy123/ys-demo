@@ -1,7 +1,7 @@
 package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.MktDrawRuleEntity;
-import org.springframework.data.repository.CrudRepository;
+import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
 
 import java.util.List;
 
@@ -10,6 +10,11 @@ import java.util.List;
  * Created on  : 2016/1/25
  * Descriptions:
  */
-public interface MktDrawRuleRepository extends CrudRepository<MktDrawRuleEntity, String> {
+public interface MktDrawRuleRepository extends FindOneAndSaveRepository<MktDrawRuleEntity, String> {
     List<MktDrawRuleEntity> findByMarketingIdOrderByAmountDesc(String marketingId);
+
+    List<MktDrawRuleEntity> save(Iterable<MktDrawRuleEntity> entities);
+
+    void delete(String id);
+
 }
