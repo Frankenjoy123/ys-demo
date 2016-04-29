@@ -78,6 +78,17 @@ public class BrandApplicationHistory {
     @JsonProperty("payment_id")
     private String paymentId;
 
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
     public String getPaymentId() {
         return paymentId;
     }
