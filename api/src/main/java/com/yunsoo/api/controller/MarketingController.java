@@ -114,7 +114,8 @@ public class MarketingController {
                 String currentUserId = AuthUtils.getCurrentAccount().getId();
                 mktObject.setCreatedAccountId(currentUserId);
                 mktObject.setCreatedDateTime(DateTime.now());
-                marketingDomain.createMktDrawRule(mktObject);
+                MktDrawRuleObject newMktDrawRuleObject = marketingDomain.createMktDrawRule(mktObject);
+                newRuleIds.add(newMktDrawRuleObject.getId());
             } else {
                 String marketingId = mktDrawRule.getMarketingId();
                 originalMarketingId = marketingId;
