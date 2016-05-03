@@ -231,7 +231,7 @@ public class MarketingController {
                                        @RequestParam(value = "need_rules", required = false) Boolean needRules,
                                        @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
                                        @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
-                                       Pageable pageable,
+                                       @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC) Pageable pageable,
                                        HttpServletResponse response) {
 
         List<String> orgIds = null;

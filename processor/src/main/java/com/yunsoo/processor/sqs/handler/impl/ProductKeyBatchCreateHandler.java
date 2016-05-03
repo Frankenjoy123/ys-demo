@@ -4,6 +4,7 @@ import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.message.ProductKeyBatchCreateMessage;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.util.StringFormatter;
+import com.yunsoo.processor.domain.LogDomain;
 import com.yunsoo.processor.domain.ProductKeyDomain;
 import com.yunsoo.processor.sqs.MessageService;
 import com.yunsoo.processor.sqs.handler.MessageHandler;
@@ -35,6 +36,9 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<ProductKeyBa
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private LogDomain logDomain;
 
     @Override
     public void process(ProductKeyBatchCreateMessage message) {
@@ -76,19 +80,22 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<ProductKeyBa
 
             batchStartDateTime = DateTime.now();
             productKeyDomain.batchCreateProductKeys(productKeyBatchObject, subList, productStatusCode);
+            DateTime batchEndDateTime = DateTime.now();
 
             log.info("batch saved productKeys " + StringFormatter.formatMap(
                     "count", toIndex - i,
-                    "seconds", (DateTime.now().getMillis() - batchStartDateTime.getMillis()) / 1000.0));
+                    "seconds", (batchEndDateTime.getMillis() - batchStartDateTime.getMillis()) / 1000.0));
 
-            if (toIndex < quantity && timeOutDateTime.getMillis() < DateTime.now().getMillis()) {
+            if (toIndex < quantity && timeOutDateTime.getMillis() < batchEndDateTime.getMillis()) {
                 //timeout
                 log.info("timeout processing productKeyBatch " + StringFormatter.formatMap(
                         "message", message,
                         "processedCount", toIndex - continueOffset,
-                        "seconds", (DateTime.now().getMillis() - startDateTime.getMillis()) / 1000.0));
+                        "seconds", (batchEndDateTime.getMillis() - startDateTime.getMillis()) / 1000.0));
+
                 message.setContinueOffset(toIndex);
                 messageService.sendMessage(message, DELAY_SECONDS); //send another new message with delay seconds
+                log.info("continuous message sent " + StringFormatter.formatMap("message", message));
                 return;
             }
         }
@@ -96,6 +103,10 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<ProductKeyBa
         //finished successfully
         productKeyDomain.updateProductKeyBatchStatus(productKeyBatchId, LookupCodes.ProductKeyBatchStatus.AVAILABLE);
 
+        logDomain.logInfo("product_key_batch_create",
+                "finished " + StringFormatter.formatMap("total seconds", (DateTime.now().getMillis() - productKeyBatchObject.getCreatedDateTime().getMillis()) / 1000.0),
+                productKeyBatchId,
+                "product_key_batch_id");
         log.info("finished processing productKeyBatch " + StringFormatter.formatMap(
                 "message", message,
                 "seconds", (DateTime.now().getMillis() - startDateTime.getMillis()) / 1000.0));

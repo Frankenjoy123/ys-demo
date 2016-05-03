@@ -75,6 +75,27 @@ public class BrandApplicationHistoryObject {
         return id;
     }
 
+    @JsonProperty("payment_id")
+    private String paymentId;
+
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
+    }
+
     public void setId(String id) {
         this.id = id;
     }

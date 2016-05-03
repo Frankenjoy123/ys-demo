@@ -1,4 +1,4 @@
-package com.yunsoo.api.rabbit.util;
+package com.yunsoo.api.util;
 
 import javax.servlet.http.HttpServletRequest;
 

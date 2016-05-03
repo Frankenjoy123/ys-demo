@@ -261,7 +261,7 @@ public class Brand extends Organization {
             setEmail(object.getEmail());
             setAttachment(object.getAttachment());
             setIdentifier(object.getIdentifier());
-            setPassword("******");
+            //setPassword("******");
             setInvestigatorAttachment(object.getInvestigatorAttachment());
             setInvestigatorComments(object.getInvestigatorComments());
             setRejectReason(object.getRejectReason());

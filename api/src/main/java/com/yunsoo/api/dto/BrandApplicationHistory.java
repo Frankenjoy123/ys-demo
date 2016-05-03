@@ -73,6 +73,38 @@ public class BrandApplicationHistory {
     @JsonProperty("reject_reason")
     private String rejectReason;
 
+    private Account account;
+
+    @JsonProperty("payment_id")
+    private String paymentId;
+
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
     public String getId() {
         return id;
     }

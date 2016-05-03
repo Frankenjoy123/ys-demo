@@ -1,12 +1,15 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.util.IpUtils;
 import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import org.joda.time.DateTime;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,8 +22,14 @@ import java.util.Map;
 @RequestMapping(value = "/debug")
 public class DebugController {
 
+    @RequestMapping(value = "ip", method = RequestMethod.GET)
+    public String echo(HttpServletRequest request) {
+        return IpUtils.getIpFromRequest(request);
+    }
+
+
     //id
-    @RequestMapping(value = "tools/id")
+    @RequestMapping(value = "tools/id", method = RequestMethod.GET)
     public Map<String, String> newId() {
         String id = ObjectIdGenerator.getNew();
         DateTime generatedDateTime = new DateTime(ObjectIdGenerator.getGeneratedDateFromId(id));
@@ -30,7 +39,7 @@ public class DebugController {
         return result;
     }
 
-    @RequestMapping(value = "tools/id/{id}")
+    @RequestMapping(value = "tools/id/{id}", method = RequestMethod.GET)
     public Map<String, String> newId(@PathVariable String id) {
         DateTime generatedDateTime = new DateTime(ObjectIdGenerator.getGeneratedDateFromId(id));
         Map<String, String> result = new HashMap<>();

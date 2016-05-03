@@ -1,6 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.common.data.object.AttachmentObject;
+import com.yunsoo.common.data.object.BrandApplicationHistoryObject;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.RandomUtils;
@@ -65,6 +66,11 @@ public class BrandDomain {
                 .append("status", status)
                 .build();
         return dataAPIClient.get("brand/count/" + query , Integer.class);
+    }
+
+    public List<BrandApplicationHistoryObject> getBrandApplicationHistory(String id){
+        return dataAPIClient.get("brand/{id}/history", new ParameterizedTypeReference<List<BrandApplicationHistoryObject>>() {
+        }, id);
     }
 
     public Page<BrandObject> getBrandList(String name, String carrierId, String status, Boolean hasPayment, String searchText, DateTime start, DateTime end, Pageable pageable) {
