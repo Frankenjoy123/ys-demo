@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.common.data.message.ProductKeyBatchCreateMessage;
 import com.yunsoo.common.util.StringFormatter;
+import com.yunsoo.processor.domain.LogDomain;
 import com.yunsoo.processor.sqs.handler.impl.ProductKeyBatchCreateHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +32,9 @@ public class MessageService {
     private static ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     private Log log = LogFactory.getLog(this.getClass());
+
+    @Autowired
+    private LogDomain logDomain;
 
     @Autowired
     private CustomQueueMessagingTemplate queueMessagingTemplate;
@@ -79,7 +83,13 @@ public class MessageService {
 
         switch (payloadType) {
             case ProductKeyBatchCreateMessage.PAYLOAD_NAME:
-                productKeyBatchCreateHandler.process(parseMessage(message, ProductKeyBatchCreateMessage.class));
+                ProductKeyBatchCreateMessage messageObj = null;
+                try {
+                    messageObj = parseMessage(message, ProductKeyBatchCreateMessage.class);
+                    productKeyBatchCreateHandler.process(messageObj);
+                } catch (Exception e) {
+                    logDomain.logError("product_key_batch_create", e.getMessage(), messageObj != null ? messageObj.getProductKeyBatchId() : null, "product_key_batch_id");
+                }
                 break;
             default:
                 throw new RuntimeException("PayloadType invalid");
@@ -93,7 +103,6 @@ public class MessageService {
             throw new RuntimeException("message type not recognized");
         }
     }
-
 
     private <T> T parseMessage(String messageStr, Class<T> type) {
         try {
