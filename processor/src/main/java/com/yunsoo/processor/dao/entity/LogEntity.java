@@ -17,7 +17,7 @@ public class LogEntity {
 
     @Id
     @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.processor.dao.util.IdGenerator")
     @Column(name = "id")
     private String id;
 
