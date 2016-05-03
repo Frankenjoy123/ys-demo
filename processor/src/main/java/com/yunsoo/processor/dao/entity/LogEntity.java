@@ -1,12 +1,10 @@
 package com.yunsoo.processor.dao.entity;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by:   Lijian
@@ -18,6 +16,8 @@ import javax.persistence.Table;
 public class LogEntity {
 
     @Id
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
     private String id;
 
