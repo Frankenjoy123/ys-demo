@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 public final class IpUtils {
 
     public static String getIpFromRequest(HttpServletRequest request) {
-        String ipAddress = request.getHeader("x-real-ip");
+        String ipAddress = request.getHeader("x-client-ip");
         if (validate(ipAddress)) {
             return ipAddress;
         }
@@ -18,6 +18,11 @@ public final class IpUtils {
         ipAddress = request.getHeader("x-forwarded-for");
         if (validate(ipAddress)) {
             return ipAddress.split(",")[0].split(":")[0];
+        }
+
+        ipAddress = request.getHeader("x-real-ip");
+        if (validate(ipAddress)) {
+            return ipAddress;
         }
 
         ipAddress = request.getRemoteAddr();
