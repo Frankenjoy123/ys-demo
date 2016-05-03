@@ -1,34 +1,29 @@
-package com.yunsoo.common.data.object;
+package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.object.AccountLoginLogObject;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
-
-import java.io.Serializable;
 
 /**
  * Created by:   Lijian
  * Created on:   2016-05-03
  * Descriptions:
  */
-public class AccountLoginLogObject implements Serializable {
+public class AccountLoginLog {
 
     @JsonProperty("id")
     private String id;
 
-    @NotEmpty(message = "account_id must not be null or empty")
     @JsonProperty("account_id")
     private String accountId;
 
-    @NotEmpty(message = "app_id must not be null or empty")
     @JsonProperty("app_id")
     private String appId;
 
-    @NotEmpty(message = "channel must not be null or empty")
     @JsonProperty("channel")
     private String channel;
 
@@ -109,5 +104,21 @@ public class AccountLoginLogObject implements Serializable {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public AccountLoginLog() {
+    }
+
+    public AccountLoginLog(AccountLoginLogObject obj) {
+        if (obj != null) {
+            this.setId(obj.getId());
+            this.setAccountId(obj.getAccountId());
+            this.setAppId(obj.getAppId());
+            this.setChannel(obj.getChannel());
+            this.setDeviceId(obj.getDeviceId());
+            this.setIp(obj.getIp());
+            this.setUserAgent(obj.getUserAgent());
+            this.setCreatedDateTime(obj.getCreatedDateTime());
+        }
     }
 }
