@@ -328,6 +328,9 @@ public class MarketingController {
             marketingObject.setBudget(marketing.getBudget());
             marketingObject.setModifiedDateTime(DateTime.now());
             marketingObject.setModifiedAccountId(currentAccountId);
+            marketingObject.setQuantity(marketing.getQuantity());
+            marketingObject.setStartDateTime(marketing.getStartDateTime());
+            marketingObject.setEndDateTime(marketing.getEndDateTime());
             marketingDomain.updateMarketing(marketingObject);
         }
     }

@@ -504,6 +504,9 @@ public class MarketingController {
         object.setModifiedDateTime(entity.getModifiedDateTime());
         object.setStatusCode(entity.getStatusCode());
         object.setComments(entity.getComments());
+        object.setQuantity(entity.getQuantity());
+        object.setStartDateTime(entity.getStartDateTime());
+        object.setEndDateTime(entity.getEndDateTime());
         return object;
     }
 
@@ -522,6 +525,8 @@ public class MarketingController {
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
+        object.setTotalQuantity(entity.getTotalQuantity());
+
         return object;
     }
 
@@ -585,6 +590,9 @@ public class MarketingController {
         entity.setModifiedDateTime(object.getModifiedDateTime());
         entity.setStatusCode(object.getStatusCode());
         entity.setComments(object.getComments());
+        entity.setQuantity(object.getQuantity());
+        entity.setStartDateTime(object.getStartDateTime());
+        entity.setEndDateTime(object.getEndDateTime());
         return entity;
     }
 
@@ -603,6 +611,7 @@ public class MarketingController {
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());
+        entity.setTotalQuantity(object.getTotalQuantity());
         return entity;
     }
 
