@@ -185,6 +185,11 @@ public class MarketingDomain {
         dataAPIClient.delete("marketing/{id}", id);
     }
 
+    public void deleteMktDrawRuleById(String id) {
+        dataAPIClient.delete("marketing/drawRule/rule/{id}", id);
+    }
+
+
     public Page<MktDrawPrizeObject> getMktDrawPrizeByFilter(String marketingId, String accountType, String statusCode, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("marketing_id", marketingId)

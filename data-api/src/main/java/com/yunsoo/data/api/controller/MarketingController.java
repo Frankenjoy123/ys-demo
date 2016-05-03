@@ -426,6 +426,19 @@ public class MarketingController {
         }
     }
 
+    //delete marketing rule by rule Id
+    @RequestMapping(value = "/drawRule/rule/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMarketingRuleById(@PathVariable(value = "id") String id) {
+        MktDrawRuleEntity mktDrawRuleEntity = mktDrawRuleRepository.findOne(id);
+        if (mktDrawRuleEntity != null) {
+            mktDrawRuleRepository.delete(id);
+        }
+    }
+
+
+
+
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.GET)
     public List<MktDrawRuleObject> findMarketingRulesById(@PathVariable(value = "id")String marketingId){
         List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderByAmountDesc(marketingId);

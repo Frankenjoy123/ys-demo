@@ -102,29 +102,46 @@ public class MarketingController {
             throw new BadRequestException("marketing draw rule list can not be null");
         }
 
+        String originalMarketingId = null;
+        List<String> newRuleIds = new ArrayList<>();
+
         List<MktDrawRuleObject> mktDrawRuleObjectList = new ArrayList<>();
         for (MktDrawRule mktDrawRule : mktDrawRuleList) {
 
             MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktDrawRuleById(mktDrawRule.getId());
             if (mktDrawRuleObject == null) {
-                throw new NotFoundException("marketing draw rule can not be found");
-            }
-            String marketingId = mktDrawRule.getMarketingId();
-            MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
-            if (marketingObject == null) {
-                throw new NotFoundException("marketing can not be found by the id");
-            }
+                MktDrawRuleObject mktObject = mktDrawRule.toMktDrawRuleObject();
+                String currentUserId = AuthUtils.getCurrentAccount().getId();
+                mktObject.setCreatedAccountId(currentUserId);
+                mktObject.setCreatedDateTime(DateTime.now());
+                marketingDomain.createMktDrawRule(mktObject);
+            } else {
+                String marketingId = mktDrawRule.getMarketingId();
+                originalMarketingId = marketingId;
+                newRuleIds.add(mktDrawRule.getId());
+                MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+                if (marketingObject == null) {
+                    throw new NotFoundException("marketing can not be found by the id");
+                }
 
-            String currentUserId = AuthUtils.getCurrentAccount().getId();
-            mktDrawRuleObject.setComments(mktDrawRule.getComments());
-            mktDrawRuleObject.setAmount(mktDrawRule.getAmount());
-            mktDrawRuleObject.setProbability(mktDrawRule.getProbability());
-            mktDrawRuleObject.setModifiedAccountId(currentUserId);
-            mktDrawRuleObject.setModifiedDateTime(DateTime.now());
-            mktDrawRuleObject.setTotalQuantity(mktDrawRule.getTotalQuantity());
-            mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getAvailableQuantity());
+                String currentUserId = AuthUtils.getCurrentAccount().getId();
+                mktDrawRuleObject.setComments(mktDrawRule.getComments());
+                mktDrawRuleObject.setAmount(mktDrawRule.getAmount());
+                mktDrawRuleObject.setProbability(mktDrawRule.getProbability());
+                mktDrawRuleObject.setModifiedAccountId(currentUserId);
+                mktDrawRuleObject.setModifiedDateTime(DateTime.now());
+                mktDrawRuleObject.setTotalQuantity(mktDrawRule.getTotalQuantity());
+                mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getAvailableQuantity());
 
-            mktDrawRuleObjectList.add(mktDrawRuleObject);
+                mktDrawRuleObjectList.add(mktDrawRuleObject);
+            }
+        }
+
+        List<MktDrawRuleObject> originalMktDrawRuleObjectList = marketingDomain.getRuleList(originalMarketingId);
+        for (MktDrawRuleObject tmpObject : originalMktDrawRuleObjectList) {
+            if (!newRuleIds.contains(tmpObject.getId())) {
+                marketingDomain.deleteMktDrawRuleById(tmpObject.getId());
+            }
         }
 
         marketingDomain.updateMktDrawRuleList(mktDrawRuleObjectList);
