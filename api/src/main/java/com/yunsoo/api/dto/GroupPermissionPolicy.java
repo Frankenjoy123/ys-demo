@@ -93,7 +93,7 @@ public class GroupPermissionPolicy {
             this.setOrgId(object.getOrgId());
             this.setPolicyCode(object.getPolicyCode());
             this.setCreatedAccountId(object.getCreatedAccountId());
-            this.setCreatedDateTime(object.getCreatedDatetime());
+            this.setCreatedDateTime(object.getCreatedDateTime());
         }
     }
     public GroupPermissionPolicyObject toGroupPermissionPolicyObject() {
@@ -103,7 +103,7 @@ public class GroupPermissionPolicy {
         object.setOrgId(this.getOrgId());
         object.setPolicyCode(this.getPolicyCode());
         object.setCreatedAccountId(this.getCreatedAccountId());
-        object.setCreatedDatetime(this.getCreatedDateTime());
+        object.setCreatedDateTime(this.getCreatedDateTime());
         return object;
     }
 

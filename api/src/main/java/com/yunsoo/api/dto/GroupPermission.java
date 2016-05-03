@@ -108,7 +108,7 @@ public class GroupPermission {
             this.setResourceCode(object.getResourceCode());
             this.setActionCode(object.getActionCode());
             this.setCreatedAccountId(object.getCreatedAccountId());
-            this.setCreatedDateTime(object.getCreatedDatetime());
+            this.setCreatedDateTime(object.getCreatedDateTime());
         }
     }
 
@@ -120,7 +120,7 @@ public class GroupPermission {
         object.setResourceCode(this.getResourceCode());
         object.setActionCode(this.getActionCode());
         object.setCreatedAccountId(this.getCreatedAccountId());
-        object.setCreatedDatetime(this.getCreatedDateTime());
+        object.setCreatedDateTime(this.getCreatedDateTime());
         return object;
     }
 }
