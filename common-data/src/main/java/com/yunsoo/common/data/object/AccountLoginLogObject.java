@@ -44,7 +44,7 @@ public class AccountLoginLogObject implements Serializable {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
-    private DateTime createdDatetime;
+    private DateTime createdDateTime;
 
 
     public String getId() {
@@ -103,11 +103,11 @@ public class AccountLoginLogObject implements Serializable {
         this.userAgent = userAgent;
     }
 
-    public DateTime getCreatedDatetime() {
-        return createdDatetime;
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
     }
 
-    public void setCreatedDatetime(DateTime createdDatetime) {
-        this.createdDatetime = createdDatetime;
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 }

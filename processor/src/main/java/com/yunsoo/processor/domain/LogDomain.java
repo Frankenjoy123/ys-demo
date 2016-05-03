@@ -5,6 +5,8 @@ import com.yunsoo.processor.config.ProcessorConfigProperties;
 import com.yunsoo.processor.dao.entity.LogEntity;
 import com.yunsoo.processor.dao.repository.LogRepository;
 import com.yunsoo.processor.domain.object.LogObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -24,27 +26,28 @@ public class LogDomain {
     private static final String LEVEL_WARNING = "warning";
     private static final String LEVEL_ERROR = "error";
 
+    private Log log = LogFactory.getLog(this.getClass());
+
     @Autowired
     private LogRepository logRepository;
 
     @Autowired
     private ProcessorConfigProperties config;
 
-
     public Page<LogObject> getLogByFilter(String eventName,
                                           String level,
                                           String identifier,
                                           String identifierName,
-                                          DateTime createdDatetimeStart,
-                                          DateTime createdDatetimeEnd,
+                                          DateTime createdDateTimeStart,
+                                          DateTime createdDateTimeEnd,
                                           Pageable pageable) {
         org.springframework.data.domain.Page<LogEntity> entities = logRepository.findByFilter(
                 eventName,
                 level,
                 identifier,
                 identifierName,
-                createdDatetimeStart,
-                createdDatetimeEnd,
+                createdDateTimeStart,
+                createdDateTimeEnd,
                 pageable);
         return new Page<>(
                 entities.getContent().stream().map(this::toLogObject).collect(Collectors.toList()),
@@ -80,7 +83,11 @@ public class LogDomain {
         logObject.setId(null);
         logObject.setProcessorName(config.getName());
         logObject.setCreatedDateTime(DateTime.now());
-        logRepository.save(toLogEntity(logObject));
+        try {
+            logRepository.save(toLogEntity(logObject));
+        } catch (Exception e) {
+            log.error("save log failed", e);
+        }
     }
 
     private LogEntity toLogEntity(LogObject obj) {

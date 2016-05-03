@@ -31,8 +31,8 @@ public class AccountLoginLogController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public AccountLoginLogObject saveLog(@RequestBody @Valid AccountLoginLogObject obj) {
         obj.setId(null);
-        if (obj.getCreatedDatetime() == null) {
-            obj.setCreatedDatetime(DateTime.now());
+        if (obj.getCreatedDateTime() == null) {
+            obj.setCreatedDateTime(DateTime.now());
         }
         AccountLoginLogEntity entity = accountLoginLogRepository.save(toAccountLoginLogEntity(obj));
         return toAccountLoginLogObject(entity);
@@ -64,7 +64,7 @@ public class AccountLoginLogController {
         entity.setDeviceId(obj.getDeviceId());
         entity.setIp(obj.getIp());
         entity.setUserAgent(obj.getUserAgent());
-        entity.setCreatedDatetime(obj.getCreatedDatetime());
+        entity.setCreatedDateTime(obj.getCreatedDateTime());
         return entity;
     }
 
@@ -80,7 +80,7 @@ public class AccountLoginLogController {
         obj.setDeviceId(entity.getDeviceId());
         obj.setIp(entity.getIp());
         obj.setUserAgent(entity.getUserAgent());
-        obj.setCreatedDatetime(entity.getCreatedDatetime());
+        obj.setCreatedDateTime(entity.getCreatedDateTime());
         return obj;
     }
 

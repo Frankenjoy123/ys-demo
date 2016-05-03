@@ -2,11 +2,17 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.DataAPIClient;
 import com.yunsoo.common.data.object.AccountLoginLogObject;
+import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -24,6 +30,16 @@ public class AccountLoginLogDomain {
 
     private Log log = LogFactory.getLog(this.getClass());
 
+
+    public Page<AccountLoginLogObject> getByAccountId(String accountId, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("account_id", accountId)
+                .append(pageable)
+                .build();
+        return dataAPIClient.getPaged("accountLoginLog" + query, new ParameterizedTypeReference<List<AccountLoginLogObject>>() {
+        });
+    }
+
     public void savePasswordLogin(String accountId,
                                   String appId,
                                   String deviceId,
@@ -36,7 +52,7 @@ public class AccountLoginLogDomain {
         accountLoginLogObject.setDeviceId(deviceId);
         accountLoginLogObject.setIp(ip);
         accountLoginLogObject.setUserAgent(userAgent);
-        accountLoginLogObject.setCreatedDatetime(DateTime.now());
+        accountLoginLogObject.setCreatedDateTime(DateTime.now());
 
         saveLog(accountLoginLogObject);
     }
@@ -53,7 +69,7 @@ public class AccountLoginLogDomain {
         accountLoginLogObject.setDeviceId(deviceId);
         accountLoginLogObject.setIp(ip);
         accountLoginLogObject.setUserAgent(userAgent);
-        accountLoginLogObject.setCreatedDatetime(DateTime.now());
+        accountLoginLogObject.setCreatedDateTime(DateTime.now());
 
         saveLog(accountLoginLogObject);
     }
@@ -61,7 +77,7 @@ public class AccountLoginLogDomain {
     private void saveLog(AccountLoginLogObject accountLoginLogObject) {
         try {
             accountLoginLogObject.setId(null);
-            accountLoginLogObject.setCreatedDatetime(DateTime.now());
+            accountLoginLogObject.setCreatedDateTime(DateTime.now());
             dataAPIClient.post("accountLoginLog", accountLoginLogObject, AccountLoginLogObject.class);
         } catch (Exception e) {
             log.error("accountLoginLog exception", e);

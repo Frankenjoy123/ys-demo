@@ -3,11 +3,11 @@ package com.yunsoo.api.rabbit.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.LogisticsCheckActionObject;
 import com.yunsoo.common.data.object.LogisticsCheckPointObject;
 import com.yunsoo.common.data.object.OrganizationObject;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
