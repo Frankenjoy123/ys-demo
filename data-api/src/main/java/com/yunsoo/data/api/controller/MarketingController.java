@@ -111,7 +111,7 @@ public class MarketingController {
         if(orgId != null)
             entityPage = marketingRepository.findByOrgIdAndStatusCodeIn(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
         else if (orgIds != null && orgIds.size() > 0){
-            entityPage = marketingRepository.query(orgIds, status, startTime, endTime, searchText, productBaseId, pageable);
+            entityPage = marketingRepository.query(orgIds, status, startTime, endTime,  productBaseId, searchText, pageable);
         }
         else
             throw new BadRequestException("one of the request parameter org_id or org_ids is required");

@@ -18,7 +18,7 @@ public interface BrandApplicationRepository  extends CrudRepository<BrandApplica
 
     @Query("select be from BrandApplicationEntity be where (:carrierId is null or be.carrierId = :carrierId) " +
             "and (:name is null or be.brandName = :name) and (:status is null or be.statusCode = :status)  " +
-            "and (:searchText is null or be.brandName like :searchText or be.contactName like :searchText or be.contactMobile like :searchText or be.email like :searchText)" +
+            "and (:searchText is null or be.brandName like ('%' || :searchText || '%') or be.contactName like ('%' || :searchText || '%') or be.contactMobile like ('%' || :searchText || '%') or be.email like ('%' || :searchText || '%'))" +
             "and (:endTime is null or be.createdDateTime <= :endTime) and  (:startTime is null or be.createdDateTime >= :startTime) " +
             "and (:hasPayment is null or (:hasPayment = true and be.paymentId is not null)" +
             "or (:hasPayment = false and (be.paymentId is null or be.paymentId = '')))")
