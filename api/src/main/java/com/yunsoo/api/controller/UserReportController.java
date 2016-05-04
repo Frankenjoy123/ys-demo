@@ -50,7 +50,7 @@ public class UserReportController {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
         List<String> productBaseIds = new ArrayList<>();
         if (productBaseId == null) {
-            productBaseIds = productBaseDomain.getProductBaseByOrgId(orgId, null).getContent().stream().map(item -> item.getId()).collect(Collectors.toList());
+            productBaseIds = productBaseDomain.getProductBaseByOrgId(orgId, null, null, null, null, null).getContent().stream().map(item -> item.getId()).collect(Collectors.toList());
         } else
             productBaseIds.add(productBaseId);
 

@@ -7,9 +7,11 @@ import com.yunsoo.data.service.entity.ProductBaseEntity;
 import com.yunsoo.data.service.repository.ProductBaseRepository;
 import com.yunsoo.data.service.util.EntityUtils;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -45,11 +47,27 @@ public class ProductBaseController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductBaseObject> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                                @RequestParam(value = "ids", required = false) List<String> ids,
+                                               @RequestParam(value = "pro_name", required = false) String proName,
+                                               @RequestParam(value = "create_account", required = false) String createAccount,
+                                               @RequestParam(value = "create_datetime_start", required = false)
+                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                               @RequestParam(value = "create_datetime_end", required = false)
+                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
                                                Pageable pageable,
                                                HttpServletResponse response) {
+
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
         Page<ProductBaseEntity> entityPage;
         if (orgId != null) {
-            entityPage = productBaseRepository.findByDeletedFalseAndOrgId(orgId, pageable);
+            entityPage = productBaseRepository.findByFilter(orgId, proName, createAccount, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
         } else {
             entityPage = productBaseRepository.findByDeletedFalse(pageable);
         }
