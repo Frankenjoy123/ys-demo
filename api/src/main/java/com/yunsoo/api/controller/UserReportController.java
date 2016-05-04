@@ -15,6 +15,8 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +48,7 @@ public class UserReportController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<UserReport> getByFilter(@RequestParam(value = "product_base_id", required = false) String productBaseId, Pageable pageable, HttpServletResponse response) {
+    public List<UserReport> getByFilter(@RequestParam(value = "product_base_id", required = false) String productBaseId, @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC) Pageable pageable, HttpServletResponse response) {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
         List<String> productBaseIds = new ArrayList<>();
         if (productBaseId == null) {

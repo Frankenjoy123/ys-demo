@@ -2,6 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountDomain;
+import com.yunsoo.api.domain.AccountLoginLogDomain;
 import com.yunsoo.api.domain.AccountTokenDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.AccountLoginRequest;
@@ -10,6 +11,7 @@ import com.yunsoo.api.dto.Token;
 import com.yunsoo.api.security.AuthAccount;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.IpUtils;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AccountTokenObject;
 import com.yunsoo.common.data.object.OrganizationObject;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -45,6 +48,9 @@ public class AuthController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
+    @Autowired
+    private AccountLoginLogDomain accountLoginLogDomain;
+
     private Log log = LogFactory.getLog(this.getClass());
 
     /**
@@ -59,7 +65,9 @@ public class AuthController {
     public AccountLoginResponse login(
             @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
-            @RequestBody @Valid AccountLoginRequest account) {
+            @RequestHeader(value = "User-Agent", required = false) String userAgent,
+            @RequestBody @Valid AccountLoginRequest account,
+            HttpServletRequest httpServletRequest) {
 
         log.info(String.format("password login request from [appId: %s, deviceId: %s]", appId, deviceId));
 
@@ -124,6 +132,8 @@ public class AuthController {
         //login successfully
         log.info(String.format("password login successfully, [id: %s, orgId: %s, identifier: %s, appId: %s, deviceId: %s]",
                 accountId, orgId, identifier, appId, deviceId));
+        accountLoginLogDomain.savePasswordLogin(accountId, appId, deviceId, IpUtils.getIpFromRequest(httpServletRequest), userAgent);
+
         return new AccountLoginResponse(permanentToken, accessToken);
     }
 
@@ -137,7 +147,9 @@ public class AuthController {
     public AccountLoginResponse login(
             @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
-            @RequestBody Token loginToken) {
+            @RequestHeader(value = "User-Agent", required = false) String userAgent,
+            @RequestBody Token loginToken,
+            HttpServletRequest httpServletRequest) {
 
         log.info(String.format("token login request from [appId: %s, deviceId: %s]", appId, deviceId));
 
@@ -178,6 +190,8 @@ public class AuthController {
         //login successfully
         log.info(String.format("token login successfully, [id: %s, orgId: %s, identifier: %s, appId: %s, deviceId: %s]",
                 accountId, orgId, identifier, appId, deviceId));
+        accountLoginLogDomain.saveTokenLogin(accountId, appId, deviceId, IpUtils.getIpFromRequest(httpServletRequest), userAgent);
+
         return new AccountLoginResponse(permanentToken, accessToken);
     }
 

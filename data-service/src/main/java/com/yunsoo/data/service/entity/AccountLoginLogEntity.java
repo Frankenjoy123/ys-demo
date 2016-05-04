@@ -7,13 +7,13 @@ import org.joda.time.DateTime;
 import javax.persistence.*;
 
 /**
- * Created by  : Lijian
- * Created on  : 2015/4/20
+ * Created by:   Lijian
+ * Created on:   2016-05-03
  * Descriptions:
  */
 @Entity
-@Table(name = "account_token")
-public class AccountTokenEntity {
+@Table(name = "account_login_log")
+public class AccountLoginLogEntity {
 
     @Id
     @GeneratedValue(generator = "idGenerator")
@@ -27,18 +27,17 @@ public class AccountTokenEntity {
     @Column(name = "app_id")
     private String appId;
 
+    @Column(name = "channel")
+    private String channel;
+
     @Column(name = "device_id")
     private String deviceId;
 
-    @Column(name = "permanent_token")
-    private String permanentToken;
+    @Column(name = "ip")
+    private String ip;
 
-    @Column(name = "permanent_token_expires_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime permanentTokenExpiresDateTime;
-
-    @Column(name = "created_account_id")
-    private String createdAccountId;
+    @Column(name = "user_agent")
+    private String userAgent;
 
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -69,6 +68,14 @@ public class AccountTokenEntity {
         this.appId = appId;
     }
 
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
     public String getDeviceId() {
         return deviceId;
     }
@@ -77,28 +84,20 @@ public class AccountTokenEntity {
         this.deviceId = deviceId;
     }
 
-    public String getPermanentToken() {
-        return permanentToken;
+    public String getIp() {
+        return ip;
     }
 
-    public void setPermanentToken(String permanentToken) {
-        this.permanentToken = permanentToken;
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
-    public DateTime getPermanentTokenExpiresDateTime() {
-        return permanentTokenExpiresDateTime;
+    public String getUserAgent() {
+        return userAgent;
     }
 
-    public void setPermanentTokenExpiresDateTime(DateTime permanentTokenExpiresDateTime) {
-        this.permanentTokenExpiresDateTime = permanentTokenExpiresDateTime;
-    }
-
-    public String getCreatedAccountId() {
-        return createdAccountId;
-    }
-
-    public void setCreatedAccountId(String createdAccountId) {
-        this.createdAccountId = createdAccountId;
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 
     public DateTime getCreatedDateTime() {

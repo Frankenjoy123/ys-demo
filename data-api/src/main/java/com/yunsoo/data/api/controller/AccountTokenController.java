@@ -86,7 +86,7 @@ public class AccountTokenController {
         object.setPermanentToken(entity.getPermanentToken());
         object.setPermanentTokenExpiresDateTime(entity.getPermanentTokenExpiresDateTime());
         object.setCreatedAccountId(entity.getCreatedAccountId());
-        object.setCreatedDateTime(entity.getCreatedDatetime());
+        object.setCreatedDateTime(entity.getCreatedDateTime());
         return object;
     }
 
@@ -102,7 +102,7 @@ public class AccountTokenController {
         entity.setPermanentToken(object.getPermanentToken());
         entity.setPermanentTokenExpiresDateTime(object.getPermanentTokenExpiresDateTime());
         entity.setCreatedAccountId(object.getAccountId());
-        entity.setCreatedDatetime(object.getCreatedDateTime());
+        entity.setCreatedDateTime(object.getCreatedDateTime());
         return entity;
     }
 }

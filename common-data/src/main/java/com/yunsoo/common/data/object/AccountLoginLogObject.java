@@ -5,39 +5,41 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
 
 /**
- * Created by  : Lijian
- * Created on  : 2015/4/20
+ * Created by:   Lijian
+ * Created on:   2016-05-03
  * Descriptions:
  */
-public class AccountTokenObject implements Serializable {
+public class AccountLoginLogObject implements Serializable {
 
     @JsonProperty("id")
     private String id;
 
+    @NotEmpty(message = "account_id must not be null or empty")
     @JsonProperty("account_id")
     private String accountId;
 
+    @NotEmpty(message = "app_id must not be null or empty")
     @JsonProperty("app_id")
     private String appId;
+
+    @NotEmpty(message = "channel must not be null or empty")
+    @JsonProperty("channel")
+    private String channel;
 
     @JsonProperty("device_id")
     private String deviceId;
 
-    @JsonProperty("permanent_token")
-    private String permanentToken;
+    @JsonProperty("ip")
+    private String ip;
 
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("permanent_token_expires_datetime")
-    private DateTime permanentTokenExpiresDateTime;
-
-    @JsonProperty("created_account_id")
-    private String createdAccountId;
+    @JsonProperty("user_agent")
+    private String userAgent;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -69,6 +71,14 @@ public class AccountTokenObject implements Serializable {
         this.appId = appId;
     }
 
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
     public String getDeviceId() {
         return deviceId;
     }
@@ -77,28 +87,20 @@ public class AccountTokenObject implements Serializable {
         this.deviceId = deviceId;
     }
 
-    public String getPermanentToken() {
-        return permanentToken;
+    public String getIp() {
+        return ip;
     }
 
-    public void setPermanentToken(String permanentToken) {
-        this.permanentToken = permanentToken;
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
-    public DateTime getPermanentTokenExpiresDateTime() {
-        return permanentTokenExpiresDateTime;
+    public String getUserAgent() {
+        return userAgent;
     }
 
-    public void setPermanentTokenExpiresDateTime(DateTime permanentTokenExpiresDateTime) {
-        this.permanentTokenExpiresDateTime = permanentTokenExpiresDateTime;
-    }
-
-    public String getCreatedAccountId() {
-        return createdAccountId;
-    }
-
-    public void setCreatedAccountId(String createdAccountId) {
-        this.createdAccountId = createdAccountId;
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
 
     public DateTime getCreatedDateTime() {

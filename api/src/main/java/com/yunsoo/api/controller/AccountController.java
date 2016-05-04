@@ -1,14 +1,12 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.AccountDomain;
-import com.yunsoo.api.domain.AccountGroupDomain;
-import com.yunsoo.api.domain.GroupDomain;
-import com.yunsoo.api.domain.PermissionAllocationDomain;
+import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.security.authorization.AuthorizationService;
 import com.yunsoo.api.security.permission.PermissionService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.AccountLoginLogObject;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.GroupObject;
 import com.yunsoo.common.web.client.Page;
@@ -53,7 +51,11 @@ public class AccountController {
     @Autowired
     private PermissionService permissionService;
 
-    @Autowired PermissionAllocationDomain permissionAllocationDomain;
+    @Autowired
+    private PermissionAllocationDomain permissionAllocationDomain;
+
+    @Autowired
+    private AccountLoginLogDomain accountLoginLogDomain;
 
     //region account
 
@@ -254,6 +256,24 @@ public class AccountController {
     }
 
     //endregion
+
+    @RequestMapping(value = "{account_id}/loginLog", method = RequestMethod.GET)
+    public List<AccountLoginLog> getAccountLoginLogByAccountId(@PathVariable("account_id") String accountId,
+                                                               @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
+                                                               Pageable pageable,
+                                                               HttpServletResponse response) {
+        accountId = AuthUtils.fixAccountId(accountId); //auto fix current
+
+        if (!AuthUtils.isMe(accountId)) {
+            AccountObject accountObject = findAccountById(accountId);
+            AuthUtils.checkPermission(accountObject.getOrgId(), "login_log", "read");
+        }
+        Page<AccountLoginLogObject> page = accountLoginLogDomain.getByAccountId(accountId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", page.toContentRange());
+        }
+        return page.getContent().stream().map(AccountLoginLog::new).collect(Collectors.toList());
+    }
 
     private AccountObject findAccountById(String accountId) {
         AccountObject accountObject = accountDomain.getById(accountId);
