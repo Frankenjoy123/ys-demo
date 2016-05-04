@@ -200,7 +200,7 @@ public class ProductKeyBatchController {
     @RequestMapping(value = "product_batch_group", method = RequestMethod.GET)
     public List<ProductBatchCollection> getProductBatchCollection() {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
-        Page<ProductBaseObject> pageProductBase = productBaseDomain.getProductBaseByOrgId(orgId, null);
+        Page<ProductBaseObject> pageProductBase = productBaseDomain.getProductBaseByOrgId(orgId, null, null, null, null, null);
         Page<ProductKeyBatch> pageBatch = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, null, false, null);
 
 
@@ -237,7 +237,6 @@ public class ProductKeyBatchController {
             marketingDomain.updateMarketing(marketingObject);
         }
     }
-
 
 
     @RequestMapping(value = "{id}/details", method = RequestMethod.GET)

@@ -97,7 +97,7 @@ public class ProductBaseVersionController {
                                          Pageable pageable,
                                          HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable);
+        Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable, null, null, null, null);
         if (pageable != null) {
             response.setHeader("Content-Range", productBasePage.toContentRange());
         }
