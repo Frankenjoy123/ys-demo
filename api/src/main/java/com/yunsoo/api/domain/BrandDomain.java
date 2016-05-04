@@ -94,6 +94,12 @@ public class BrandDomain {
         return dataAPIClient.get("brand/attachment" + query, new ParameterizedTypeReference<List<AttachmentObject>>(){});
     }
 
+    public List<AttachmentObject> getAttachmentList(List<String> attachmentIds){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("ids", attachmentIds).build();
+        return dataAPIClient.get("brand/attachment" + query, new ParameterizedTypeReference<List<AttachmentObject>>(){});
+    }
+
     public AttachmentObject createAttachment(MultipartFile file) {
         String fileName = file.getOriginalFilename();
         String s3FileName = "attachment/" + RandomUtils.generateStringWithDate();

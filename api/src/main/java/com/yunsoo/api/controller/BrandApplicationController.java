@@ -280,6 +280,14 @@ public class BrandApplicationController {
         return builder.body(new InputStreamResource(resourceInputStream));
     }
 
+    @RequestMapping(value = "attachment", method = RequestMethod.GET)
+    public List<Attachment> getAttachmentList(@RequestParam(value = "ids") List<String> attachmentIds){
+         return
+        brandDomain.getAttachmentList(attachmentIds).stream().map(Attachment::new).collect(Collectors.toList());
+    }
+
+
+
     @RequestMapping(value = "login", method = RequestMethod.POST)
     public Brand login(@RequestBody AccountLoginRequest account, @RequestParam(name = "summarize", required = false) boolean summarize) {
         //validate parameters
