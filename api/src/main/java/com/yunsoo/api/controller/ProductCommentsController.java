@@ -10,6 +10,8 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +38,7 @@ public class ProductCommentsController {
                                                             @RequestParam(value = "score_le", required = false) Integer scoreLE,
                                                             @RequestParam(value = "last_comment_datetime_ge", required = false)
                                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime lastCommentDatetimeGE,
+                                                            @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                                             Pageable pageable,
                                                             HttpServletResponse response) {
         if (productBaseId == null || productBaseId.isEmpty()) {
