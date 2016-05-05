@@ -93,6 +93,11 @@ public class ProductKeyBatchController {
     public List<ProductKeyBatchObject> getByFilterPaged(
             @RequestParam(value = "org_id") String orgId,
             @RequestParam(value = "product_base_id", required = false) String productBaseId,
+            @RequestParam(value = "create_account", required = false) String createAccount,
+            @RequestParam(value = "create_datetime_start", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+            @RequestParam(value = "create_datetime_end", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
             @RequestParam(value = "is_package", required = false) Boolean isPackage,
             @PageableDefault(size = 1000)
@@ -103,8 +108,19 @@ public class ProductKeyBatchController {
         if (isPackage != null) {
             if (isPackage)
                 entityPage = productKeyBatchRepository.findByOrgIdAndProductKeyTypeCodesAndStatusCodeIn(orgId, LookupCodes.ProductKeyType.PACKAGE, statusCodeIn, pageable);
-            else
-                entityPage = productKeyBatchRepository.findByOrgIdAndProductKeyTypeCodesNotAndStatusCodeIn(orgId, LookupCodes.ProductKeyType.PACKAGE, statusCodeIn, pageable);
+            else {
+
+                DateTime createdDateTimeStartTo = null;
+                DateTime createdDateTimeEndTo = null;
+
+                if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+                    createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+                if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+                    createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+                entityPage = productKeyBatchRepository.findByFilter(orgId, productBaseId, createAccount, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+            }
         } else if (productBaseId == null) {
             entityPage = productKeyBatchRepository.findByOrgIdAndStatusCodeIn(orgId, statusCodeIn, pageable);
 
