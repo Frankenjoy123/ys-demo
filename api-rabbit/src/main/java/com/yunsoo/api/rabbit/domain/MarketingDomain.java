@@ -76,6 +76,12 @@ public class MarketingDomain {
         if (obj.getBalance() <= 0)
             return null;
 
+        if ((obj.getStartDateTime() != null) && (obj.getEndDateTime() != null)) {
+            DateTime currentDateTime = DateTime.now();
+            if ((currentDateTime.compareTo(obj.getStartDateTime()) < 0) || (obj.getEndDateTime().compareTo(currentDateTime) < 0)) {
+                return null;
+            }
+        }
         List<MktDrawRuleObject> ruleList = getRuleList(marketId);
         List<MktDrawRuleObject> newRuleList = new ArrayList<>();
 
