@@ -33,7 +33,7 @@ public class MktDrawPrizeEntity {
     private String drawRuleId;
 
     @Column(name = "amount")
-    private Integer amount;
+    private Double amount;
 
     @Column(name = "mobile")
     private String mobile;
@@ -104,11 +104,11 @@ public class MktDrawPrizeEntity {
         this.drawRuleId = drawRuleId;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 

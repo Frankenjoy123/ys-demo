@@ -24,7 +24,7 @@ public class MktDrawRuleObject {
     private String prizeTypeCode;
 
     @JsonProperty("amount")
-    private Integer amount;
+    private Double amount;
 
     @JsonProperty("total_quantity")
     private Integer totalQuantity;
@@ -78,11 +78,11 @@ public class MktDrawRuleObject {
         this.prizeTypeCode = prizeTypeCode;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
