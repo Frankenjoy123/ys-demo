@@ -546,6 +546,7 @@ public class MarketingController {
         object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
         object.setTotalQuantity(entity.getTotalQuantity());
+        object.setAvailableQuantity(entity.getAvailableQuantity());
 
         return object;
     }
@@ -632,6 +633,7 @@ public class MarketingController {
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());
         entity.setTotalQuantity(object.getTotalQuantity());
+        entity.setAvailableQuantity(object.getAvailableQuantity());
         return entity;
     }
 
