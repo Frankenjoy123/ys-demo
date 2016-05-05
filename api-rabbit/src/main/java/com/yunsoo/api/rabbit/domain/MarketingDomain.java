@@ -80,7 +80,7 @@ public class MarketingDomain {
         List<MktDrawRuleObject> newRuleList = new ArrayList<>();
 
         for (MktDrawRuleObject object : ruleList) {
-            if (object.getAvailableQuantity() > 0) {
+            if ((object.getAvailableQuantity() != null) && (object.getAvailableQuantity() > 0)) {
                 newRuleList.add(object);
             }
         }
@@ -93,7 +93,7 @@ public class MarketingDomain {
 
         Map<Double, MktDrawRuleObject> prizeArray = new HashMap<>();
 
-        for (MktDrawRuleObject rule : newRuleList) {
+        for (MktDrawRuleObject rule : ruleList) {
             int ruleQuantity = (int) (rule.getProbability() * totalQuantity);
             for (int i = 0; i < ruleQuantity; i++) {
                 double index = Math.floor(Math.random() * totalQuantity);
