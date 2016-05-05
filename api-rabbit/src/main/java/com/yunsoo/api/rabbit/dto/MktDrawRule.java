@@ -27,6 +27,12 @@ public class MktDrawRule {
     @JsonProperty("amount")
     private Integer amount;
 
+    @JsonProperty("total_quantity")
+    private Integer totalQuantity;
+
+    @JsonProperty("available_quantity")
+    private Integer availableQuantity;
+
     @JsonProperty("probability")
     private double probability;
 
@@ -129,6 +135,22 @@ public class MktDrawRule {
         this.modifiedDateTime = modifiedDateTime;
     }
 
+    public Integer getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(Integer totalQuantity) {
+        this.totalQuantity = totalQuantity;
+    }
+
+    public Integer getAvailableQuantity() {
+        return availableQuantity;
+    }
+
+    public void setAvailableQuantity(Integer availableQuantity) {
+        this.availableQuantity = availableQuantity;
+    }
+
     public MktDrawRule() {
     }
 
@@ -138,6 +160,8 @@ public class MktDrawRule {
             this.setMarketingId(object.getMarketingId());
             this.setPrizeTypeCode(object.getPrizeTypeCode());
             this.setAmount(object.getAmount());
+            this.setTotalQuantity(object.getTotalQuantity());
+            this.setAvailableQuantity(object.getAvailableQuantity());
             this.setProbability(object.getProbability());
             this.setComments(object.getComments());
             this.setCreatedAccountId(object.getCreatedAccountId());
@@ -154,6 +178,8 @@ public class MktDrawRule {
         object.setMarketingId(this.getMarketingId());
         object.setPrizeTypeCode(this.getPrizeTypeCode());
         object.setAmount(this.getAmount());
+        object.setTotalQuantity(this.getTotalQuantity());
+        object.setAvailableQuantity(this.getAvailableQuantity());
         object.setProbability(this.getProbability());
         object.setComments(this.getComments());
         object.setCreatedAccountId(this.getCreatedAccountId());

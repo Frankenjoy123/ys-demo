@@ -182,20 +182,40 @@ public class MarketingController {
 
             List<MktDrawRule> mktDrawRuleList = marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
             List<Long> prizeCountList = new ArrayList<>();
+            List<MktDrawPrizeResult> mktDrawPrizeResultList = new ArrayList();
 
             if (mktDrawRuleList.size() > 0) {
                 marketingResult.setRuleList(mktDrawRuleList);
                 for (MktDrawRule mktDrawRule : mktDrawRuleList) {
                     Long ruleNumber = marketingDomain.countDrawPrizeByDrawRuleId(mktDrawRule.getId(), startTime, endTime);
                     prizeCountList.add(ruleNumber);
+
+                    MktDrawPrizeResult obj = new MktDrawPrizeResult();
+                    obj.setId(mktDrawRule.getId());
+                    obj.setName(mktDrawRule.getComments());
+                    obj.setAvailableNumber(mktDrawRule.getAvailableQuantity());
+                    obj.setAvailableAmount(mktDrawRule.getAmount() * mktDrawRule.getAvailableQuantity());
+                    obj.setTotalNumber(mktDrawRule.getTotalQuantity());
+                    Double avaliableNum = mktDrawRule.getAvailableQuantity().doubleValue();
+                    Double totalNum = mktDrawRule.getTotalQuantity().doubleValue();
+                    Double percentageAmount = avaliableNum / totalNum;
+                    obj.setPercentageAmount(percentageAmount);
+                    obj.setUsedNumber(ruleNumber.intValue());
+
+                    Double usedNum = ruleNumber.doubleValue();
+                    Double percentageUsed = usedNum / totalNum;
+                    obj.setPercentageUsed(percentageUsed);
+                    mktDrawPrizeResultList.add(obj);
                 }
                 marketingResult.setPrizeCountList(prizeCountList);
+                marketingResult.setPrizeResultList(mktDrawPrizeResultList);
             }
             marketingResultList.add(marketingResult);
         });
         return marketingResultList;
 
     }
+
 
     //query marketing result by marketing id
     @RequestMapping(value = "marketinganalysis", method = RequestMethod.GET)
@@ -213,6 +233,7 @@ public class MarketingController {
 
         MarketingResult marketingResult = new MarketingResult();
         List<MarketingResult> marketingResultList = new ArrayList<>();
+        List<MktDrawPrizeResult> mktDrawPrizeResultList = new ArrayList<>();
 
         String marketingName = marketingObject.getName();
         Long totalNumber = marketingDomain.countProductKeysByMarketingId(marketingId, startTime, endTime);
@@ -231,8 +252,28 @@ public class MarketingController {
             for (MktDrawRule mktDrawRule : mktDrawRuleList) {
                 Long ruleNumber = marketingDomain.countDrawPrizeByDrawRuleId(mktDrawRule.getId(), startTime, endTime);
                 prizeCountList.add(ruleNumber);
+
+                MktDrawPrizeResult obj = new MktDrawPrizeResult();
+                obj.setId(mktDrawRule.getId());
+                obj.setName(mktDrawRule.getComments());
+                obj.setAvailableNumber(mktDrawRule.getAvailableQuantity());
+                obj.setAvailableAmount(mktDrawRule.getAmount() * mktDrawRule.getAvailableQuantity());
+                obj.setTotalNumber(mktDrawRule.getTotalQuantity());
+                Double avaliableNum = mktDrawRule.getAvailableQuantity().doubleValue();
+                Double totalNum = mktDrawRule.getTotalQuantity().doubleValue();
+                Double percentageAmount = avaliableNum / totalNum;
+                obj.setPercentageAmount(percentageAmount);
+                obj.setUsedNumber(ruleNumber.intValue());
+
+                Double usedNum = ruleNumber.doubleValue();
+                Double percentageUsed = usedNum / totalNum;
+                obj.setPercentageUsed(percentageUsed);
+                mktDrawPrizeResultList.add(obj);
+
+
             }
             marketingResult.setPrizeCountList(prizeCountList);
+            marketingResult.setPrizeResultList(mktDrawPrizeResultList);
         }
         return marketingResult;
     }
@@ -313,6 +354,7 @@ public class MarketingController {
         marketingObject.setCreatedAccountId(currentAccountId);
         marketingObject.setCreatedDateTime(DateTime.now());
         marketingObject.setOrgId(AuthUtils.fixOrgId(marketing.getOrgId()));
+        marketingObject.setBalance(marketing.getBudget());
 
         MarketingObject mktObject;
         if (batchId != null) {
