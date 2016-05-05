@@ -108,13 +108,16 @@ public class MarketingController {
                                              Pageable pageable,
                                              HttpServletResponse response) {
         Page<MarketingEntity> entityPage = null;
-        if(orgId != null)
-            entityPage = marketingRepository.findByOrgIdAndStatusCodeIn(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
-        else if (orgIds != null && orgIds.size() > 0){
-            entityPage = marketingRepository.query(orgIds, status, startTime, endTime,  productBaseId, searchText, pageable);
+        if ((status != null) && (orgId != null)) {
+            entityPage = marketingRepository.findByOrgIdAndStatusCode(orgId, status, pageable);
+        } else {
+            if (orgId != null)
+                entityPage = marketingRepository.findByOrgIdAndStatusCodeIn(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
+            else if (orgIds != null && orgIds.size() > 0) {
+                entityPage = marketingRepository.query(orgIds, status, startTime, endTime, productBaseId, searchText, pageable);
+            } else
+                throw new BadRequestException("one of the request parameter org_id or org_ids is required");
         }
-        else
-            throw new BadRequestException("one of the request parameter org_id or org_ids is required");
 
 
         if (pageable != null) {
