@@ -27,5 +27,7 @@ public interface BrandApplicationRepository  extends CrudRepository<BrandApplica
                                        @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime,
                                        @Param("searchText")String searchText, Pageable pageable);
 
-    int countByCarrierIdAndStatusCode(@Param("carrierId")String carrierId, @Param("status")String status);
+    int countByCarrierIdAndStatusCodeAndPaymentIdIsNull(@Param("carrierId")String carrierId, @Param("status")String status);
+
+    int countByCarrierIdAndStatusCodeAndPaymentIdIsNotNull(@Param("carrierId")String carrierId, @Param("status")String status);
 }

@@ -122,8 +122,11 @@ public class BrandController {
     }
 
     @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public int getPendingApprovalBrand(@RequestParam("carrier_id") String carrierId, @RequestParam("status") String status) {
-        return repository.countByCarrierIdAndStatusCode(carrierId, status);
+    public int getPendingApprovalBrand(@RequestParam("carrier_id") String carrierId, @RequestParam("status") String status, @RequestParam("paid") boolean paid) {
+        if(paid)
+            return repository.countByCarrierIdAndStatusCodeAndPaymentIdIsNotNull(carrierId, status);
+        else
+            return repository.countByCarrierIdAndStatusCodeAndPaymentIdIsNull(carrierId, status);
     }
 
     @RequestMapping(value = "{id}/history", method = RequestMethod.GET)
