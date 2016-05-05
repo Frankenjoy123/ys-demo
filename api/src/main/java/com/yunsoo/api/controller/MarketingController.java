@@ -313,6 +313,7 @@ public class MarketingController {
         marketingObject.setCreatedAccountId(currentAccountId);
         marketingObject.setCreatedDateTime(DateTime.now());
         marketingObject.setOrgId(AuthUtils.fixOrgId(marketing.getOrgId()));
+        marketingObject.setBalance(marketing.getBudget());
 
         MarketingObject mktObject;
         if (batchId != null) {

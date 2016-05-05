@@ -111,7 +111,7 @@ public class MarketingController {
         if(orgId != null)
             entityPage = marketingRepository.findByOrgIdAndStatusCodeIn(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
         else if (orgIds != null && orgIds.size() > 0){
-            entityPage = marketingRepository.query(orgIds, status, startTime, endTime, searchText, productBaseId, pageable);
+            entityPage = marketingRepository.query(orgIds, status, startTime, endTime,  productBaseId, searchText, pageable);
         }
         else
             throw new BadRequestException("one of the request parameter org_id or org_ids is required");
@@ -295,6 +295,11 @@ public class MarketingController {
         marketing.setBalance(marketing.getBalance() - mktDrawPrizeObject.getAmount());
         marketingRepository.save(marketing);
 
+        MktDrawRuleEntity mktDrawRuleEntity = mktDrawRuleRepository.findOne(mktDrawPrizeObject.getDrawRuleId());
+        if (mktDrawRuleEntity.getAvailableQuantity() != null) {
+            mktDrawRuleEntity.setAvailableQuantity(mktDrawRuleEntity.getAvailableQuantity() - 1);
+            mktDrawRuleRepository.save(mktDrawRuleEntity);
+        }
 
         return toMktDrawPrizeObject(newEntity);
     }
@@ -345,6 +350,7 @@ public class MarketingController {
     @ResponseStatus(HttpStatus.CREATED)
     public MktDrawRuleObject createDrawRule(@RequestBody MktDrawRuleObject mktDrawRuleObject) {
         MktDrawRuleEntity entity = toMktDrawRuleEntity(mktDrawRuleObject);
+        entity.setAvailableQuantity(entity.getTotalQuantity());
         MktDrawRuleEntity newEntity = mktDrawRuleRepository.save(entity);
         return toMktDrawRuleObject(newEntity);
     }
@@ -365,6 +371,7 @@ public class MarketingController {
         for (MktDrawRuleEntity mktDrawRuleentity : mktDrawRuleEntities) {
             mktDrawRuleentity.setId(null); //make sure it's insert
             mktDrawRuleentity.setCreatedDateTime(DateTime.now());
+            mktDrawRuleentity.setAvailableQuantity(mktDrawRuleentity.getTotalQuantity());
         }
 
         List<MktDrawRuleEntity> newEntities = mktDrawRuleRepository.save(mktDrawRuleEntities);
@@ -539,6 +546,7 @@ public class MarketingController {
         object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
         object.setTotalQuantity(entity.getTotalQuantity());
+        object.setAvailableQuantity(entity.getAvailableQuantity());
 
         return object;
     }
@@ -625,6 +633,7 @@ public class MarketingController {
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());
         entity.setTotalQuantity(object.getTotalQuantity());
+        entity.setAvailableQuantity(object.getAvailableQuantity());
         return entity;
     }
 

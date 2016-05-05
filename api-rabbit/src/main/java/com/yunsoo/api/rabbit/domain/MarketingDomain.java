@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,8 +76,26 @@ public class MarketingDomain {
         if (obj.getBalance() <= 0)
             return null;
 
+        if ((obj.getStartDateTime() != null) && (obj.getEndDateTime() != null)) {
+            DateTime currentDateTime = DateTime.now();
+            if ((currentDateTime.compareTo(obj.getStartDateTime()) < 0) || (obj.getEndDateTime().compareTo(currentDateTime) < 0)) {
+                return null;
+            }
+        }
         List<MktDrawRuleObject> ruleList = getRuleList(marketId);
+        List<MktDrawRuleObject> newRuleList = new ArrayList<>();
+
+        for (MktDrawRuleObject object : ruleList) {
+            if ((object.getAvailableQuantity() != null) && (object.getAvailableQuantity() > 0)) {
+                newRuleList.add(object);
+            }
+        }
         Long totalQuantity = dataAPIClient.get("productkeybatch/sum/quantity?marketing_id=" + marketId, Long.class);
+        ;
+        Integer sumQuantity = obj.getQuantity();
+        if ((sumQuantity != null) || (sumQuantity > 0)) {
+            totalQuantity = new Long(sumQuantity);
+        }
 
         Map<Double, MktDrawRuleObject> prizeArray = new HashMap<>();
 
