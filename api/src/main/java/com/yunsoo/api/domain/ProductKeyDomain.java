@@ -107,7 +107,7 @@ public class ProductKeyDomain {
     }
 
 
-    public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Boolean isPackage, Pageable pageable) {
+    public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Boolean isPackage, String createAccount, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
         String[] statusCodes = new String[]{
                 LookupCodes.ProductKeyBatchStatus.CREATING,
                 LookupCodes.ProductKeyBatchStatus.AVAILABLE
@@ -117,6 +117,10 @@ public class ProductKeyDomain {
             query = query.append("org_id", orgId)
                     .append("is_package", isPackage)
                     .append("status_code_in", statusCodes)
+                    .append("product_base_id", productBaseId)
+                    .append("create_account", createAccount)
+                    .append("create_datetime_start", createdDateTimeStart)
+                    .append("create_datetime_end", createdDateTimeEnd)
                     .append(pageable);
         else
             query = query.append("org_id", orgId)
