@@ -29,6 +29,10 @@ public class MarketingResult {
     @JsonProperty("prize_count_list")
     private List<Long> prizeCountList;
 
+    @JsonProperty("prize_result_list")
+    private List<MktDrawPrizeResult> prizeResultList;
+
+
     public String getId() {
         return id;
     }
@@ -75,6 +79,14 @@ public class MarketingResult {
 
     public void setPrizeCountList(List<Long> prizeCountList) {
         this.prizeCountList = prizeCountList;
+    }
+
+    public List<MktDrawPrizeResult> getPrizeResultList() {
+        return prizeResultList;
+    }
+
+    public void setPrizeResultList(List<MktDrawPrizeResult> prizeResultList) {
+        this.prizeResultList = prizeResultList;
     }
 
     public MarketingResult() {
