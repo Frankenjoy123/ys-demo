@@ -7,6 +7,7 @@ import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AttachmentObject;
 import com.yunsoo.common.data.object.BrandObject;
+import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.Page;
@@ -91,9 +92,9 @@ public class BrandApplicationController {
     }
 
 
-    @RequestMapping(value = "count/created", method = RequestMethod.GET)
-    public int count(@RequestParam(value = "carrier_id") String id) {
-        return brandDomain.count(id, LookupCodes.BrandApplicationStatus.CREATED);
+    @RequestMapping(value = "count", method = RequestMethod.GET)
+    public int count(@RequestParam(value = "carrier_id") String id, @RequestParam("status") String status, @RequestParam(value = "paid") boolean paid) {
+        return brandDomain.count(id, status, paid);
     }
 
     @RequestMapping(value = "{id}/approve", method = RequestMethod.PUT)
@@ -158,20 +159,26 @@ public class BrandApplicationController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Brand createBrand(@RequestBody Brand brand) {
-        Page<BrandObject> existingBrandList = brandDomain.getBrandList(brand.getName().trim(), null, null, null, null, null, null, null);
-        if (existingBrandList.getContent().size() == 0) {
-            String currentAccountId = null;
-            try {
-                currentAccountId = AuthUtils.getCurrentAccount().getId();
-            } catch (UnauthorizedException ex) {
+        OrganizationObject existingOrg = organizationDomain.getOrganizationByName(brand.getName().trim());
+        if(existingOrg == null) {
 
-            }
+            Page<BrandObject> existingBrandList = brandDomain.getBrandList(brand.getName().trim(), null, null, null, null, null, null, null);
+            if (existingBrandList.getContent().size() == 0) {
+                String currentAccountId = null;
+                try {
+                    currentAccountId = AuthUtils.getCurrentAccount().getId();
+                } catch (UnauthorizedException ex) {
 
-            BrandObject object = brand.toBrand(brand);
-            object.setCreatedAccountId(currentAccountId);
-            Brand returnObj = new Brand(brandDomain.createBrand(object));
-            return returnObj;
-        } else
+                }
+
+                BrandObject object = brand.toBrand(brand);
+                object.setCreatedAccountId(currentAccountId);
+                Brand returnObj = new Brand(brandDomain.createBrand(object));
+                return returnObj;
+            } else
+                throw new ConflictException("same brand name application existed");
+        }
+        else
             throw new ConflictException("same brand name application existed");
     }
 

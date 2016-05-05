@@ -61,9 +61,9 @@ public class BrandDomain {
     }
 
 
-    public int count(String id, String status){
+    public int count(String id, String status, boolean paid){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("carrier_id", id)
-                .append("status", status)
+                .append("status", status).append("paid", paid)
                 .build();
         return dataAPIClient.get("brand/count/" + query , Integer.class);
     }
