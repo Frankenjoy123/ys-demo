@@ -36,9 +36,9 @@ yunsoo:
     account_name: 广州云溯科技有限公司
     email: zhe@yunsu.co
     amount: 0.01
-    notify_url: http://test-api.yunsu.co:6080/marketing/alipay/notify
-    direct_return_url: http://test-enterprise.yunsu.co:9080/enterprise/brandapplication.html
-    direct_notify_url: http://test-api.yunsu.co:6080/payment/brand/alipay/notify
+    notify_url: https://test-api.yunsu.co:6443/marketing/alipay/notify
+    direct_return_url: https://test-enterprise.yunsu.co:9443/enterprise/brandapplication.html
+    direct_notify_url: https://test-api.yunsu.co:6443/payment/brand/alipay/notify
 
 spring:
   mvc:
