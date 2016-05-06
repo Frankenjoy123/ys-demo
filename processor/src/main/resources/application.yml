@@ -24,12 +24,6 @@ yunsoo:
   client:
     dataapi:
       baseurl: http://localhost:3080/
-  sqs:
-    message:
-      delayseconds: 60
-    handler:
-      max: 5000
-      batch: 1000
 
 jdbc:
   processor:
