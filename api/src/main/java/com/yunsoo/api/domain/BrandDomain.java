@@ -1,6 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.common.data.object.AttachmentObject;
+import com.yunsoo.common.data.object.BrandApplicationHistoryObject;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.RandomUtils;
@@ -60,11 +61,16 @@ public class BrandDomain {
     }
 
 
-    public int count(String id, String status){
+    public int count(String id, String status, boolean paid){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("carrier_id", id)
-                .append("status", status)
+                .append("status", status).append("paid", paid)
                 .build();
         return dataAPIClient.get("brand/count/" + query , Integer.class);
+    }
+
+    public List<BrandApplicationHistoryObject> getBrandApplicationHistory(String id){
+        return dataAPIClient.get("brand/{id}/history", new ParameterizedTypeReference<List<BrandApplicationHistoryObject>>() {
+        }, id);
     }
 
     public Page<BrandObject> getBrandList(String name, String carrierId, String status, Boolean hasPayment, String searchText, DateTime start, DateTime end, Pageable pageable) {
@@ -85,6 +91,12 @@ public class BrandDomain {
     public List<AttachmentObject> getAttachmentList(String attachmentIds){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("ids", StringUtils.commaDelimitedListToStringArray(attachmentIds)).build();
+        return dataAPIClient.get("brand/attachment" + query, new ParameterizedTypeReference<List<AttachmentObject>>(){});
+    }
+
+    public List<AttachmentObject> getAttachmentList(List<String> attachmentIds){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("ids", attachmentIds).build();
         return dataAPIClient.get("brand/attachment" + query, new ParameterizedTypeReference<List<AttachmentObject>>(){});
     }
 

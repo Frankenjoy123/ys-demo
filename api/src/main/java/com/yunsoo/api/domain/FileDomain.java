@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -36,6 +37,7 @@ public class FileDomain {
         try {
             return dataAPIClient.getResourceInputStream("file/s3?path={path}", path);
         } catch (NotFoundException ignored) {
+            log.warn("file not found in s3. " + StringFormatter.formatMap("path", path));
             return null;
         }
     }

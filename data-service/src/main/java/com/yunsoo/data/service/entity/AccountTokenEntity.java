@@ -42,7 +42,7 @@ public class AccountTokenEntity {
 
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdDatetime;
+    private DateTime createdDateTime;
 
 
     public String getId() {
@@ -101,11 +101,11 @@ public class AccountTokenEntity {
         this.createdAccountId = createdAccountId;
     }
 
-    public DateTime getCreatedDatetime() {
-        return createdDatetime;
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
     }
 
-    public void setCreatedDatetime(DateTime createdDatetime) {
-        this.createdDatetime = createdDatetime;
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 }

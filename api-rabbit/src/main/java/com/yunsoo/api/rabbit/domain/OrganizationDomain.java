@@ -38,7 +38,9 @@ public class OrganizationDomain {
 
     @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(),#id )")
     public OrganizationObject getById(String id) {
-        log.debug("cache missing on organization." + id);
+        if (id == null || id.length() == 0) {
+            return null;
+        }
         try {
             return dataAPIClient.get("organization/{id}", OrganizationObject.class, id);
         } catch (NotFoundException ex) {

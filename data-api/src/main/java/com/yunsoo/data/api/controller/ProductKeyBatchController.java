@@ -93,6 +93,11 @@ public class ProductKeyBatchController {
     public List<ProductKeyBatchObject> getByFilterPaged(
             @RequestParam(value = "org_id") String orgId,
             @RequestParam(value = "product_base_id", required = false) String productBaseId,
+            @RequestParam(value = "create_account", required = false) String createAccount,
+            @RequestParam(value = "create_datetime_start", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+            @RequestParam(value = "create_datetime_end", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
             @RequestParam(value = "is_package", required = false) Boolean isPackage,
             @PageableDefault(size = 1000)
@@ -103,8 +108,19 @@ public class ProductKeyBatchController {
         if (isPackage != null) {
             if (isPackage)
                 entityPage = productKeyBatchRepository.findByOrgIdAndProductKeyTypeCodesAndStatusCodeIn(orgId, LookupCodes.ProductKeyType.PACKAGE, statusCodeIn, pageable);
-            else
-                entityPage = productKeyBatchRepository.findByOrgIdAndProductKeyTypeCodesNotAndStatusCodeIn(orgId, LookupCodes.ProductKeyType.PACKAGE, statusCodeIn, pageable);
+            else {
+
+                DateTime createdDateTimeStartTo = null;
+                DateTime createdDateTimeEndTo = null;
+
+                if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+                    createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+                if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+                    createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+                entityPage = productKeyBatchRepository.findByFilter(orgId, productBaseId, createAccount, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+            }
         } else if (productBaseId == null) {
             entityPage = productKeyBatchRepository.findByOrgIdAndStatusCodeIn(orgId, statusCodeIn, pageable);
 
@@ -161,15 +177,6 @@ public class ProductKeyBatchController {
         return sum == null ? 0L : sum;
     }
 
-    @RequestMapping(value = "/exists", method = RequestMethod.GET)
-    public boolean existsProductKeyBatch(@RequestParam(value = "quantity", required = false) Integer quantity,
-                                         @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
-
-        Integer count = productKeyBatchRepository.countByRestQuantityLessThanAndStatusCodeIn(quantity, statusCodeIn);
-        return count > 0;
-    }
-
-
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ProductKeyBatchObject create(@RequestBody ProductKeyBatchObject batchObj) {
@@ -220,7 +227,6 @@ public class ProductKeyBatchController {
         batchObj.setCreatedAccountId(batch.getCreatedAccountId());
         batchObj.setCreatedDateTime(batch.getCreatedDateTime());
         batchObj.setProductKeyTypeCodes(batch.getProductKeyTypeCodes());
-        batchObj.setRestQuantity(batch.getRestQuantity());
         batchObj.setMarketingId(batch.getMarketingId());
         return batchObj;
     }
@@ -242,7 +248,6 @@ public class ProductKeyBatchController {
         object.setCreatedAppId(entity.getCreatedAppId());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
-        object.setRestQuantity(entity.getRestQuantity());
         object.setMarketingId(entity.getMarketingId());
         return object;
     }
@@ -262,7 +267,6 @@ public class ProductKeyBatchController {
         batch.setCreatedAccountId(batchObj.getCreatedAccountId());
         batch.setCreatedDateTime(batchObj.getCreatedDateTime());
         batch.setProductKeyTypeCodes(batchObj.getProductKeyTypeCodes());
-        batch.setRestQuantity(batchObj.getRestQuantity());
         batch.setMarketingId(batchObj.getMarketingId());
         return batch;
     }

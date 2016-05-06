@@ -3,9 +3,9 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.GroupPermissionPolicyObject;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
@@ -93,7 +93,7 @@ public class GroupPermissionPolicy {
             this.setOrgId(object.getOrgId());
             this.setPolicyCode(object.getPolicyCode());
             this.setCreatedAccountId(object.getCreatedAccountId());
-            this.setCreatedDateTime(object.getCreatedDatetime());
+            this.setCreatedDateTime(object.getCreatedDateTime());
         }
     }
     public GroupPermissionPolicyObject toGroupPermissionPolicyObject() {
@@ -103,7 +103,7 @@ public class GroupPermissionPolicy {
         object.setOrgId(this.getOrgId());
         object.setPolicyCode(this.getPolicyCode());
         object.setCreatedAccountId(this.getCreatedAccountId());
-        object.setCreatedDatetime(this.getCreatedDateTime());
+        object.setCreatedDateTime(this.getCreatedDateTime());
         return object;
     }
 

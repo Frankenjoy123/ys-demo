@@ -20,7 +20,7 @@ public class WebScanResponse {
     @JsonProperty("product")
     private Product product;
 
-    //生成企业信息
+    //生产企业信息
     @JsonProperty("organization")
     private Organization organization;
 
@@ -70,7 +70,7 @@ public class WebScanResponse {
         private String key;
 
         @JsonProperty("id")
-        private String id;
+        private String id; //productBaseId
 
         @JsonProperty("batch_id")
         private String batchId;

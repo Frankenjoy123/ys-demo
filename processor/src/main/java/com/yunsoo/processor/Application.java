@@ -1,7 +1,10 @@
 package com.yunsoo.processor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -10,14 +13,16 @@ import org.springframework.context.annotation.ComponentScan;
  * Descriptions:
  */
 
-@ComponentScan(basePackages = {"com.yunsoo"})
+@ComponentScan(basePackages = {"com.yunsoo.processor"})
 @SpringBootApplication
 public class Application {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+    private static Log log = LogFactory.getLog(Application.class);
 
-        System.out.println("processor started...");
+    public static void main(String[] args) {
+        ConfigurableApplicationContext app = SpringApplication.run(Application.class, args);
+
+        log.info(String.format("%s started...", app.getId()));
     }
 
 }

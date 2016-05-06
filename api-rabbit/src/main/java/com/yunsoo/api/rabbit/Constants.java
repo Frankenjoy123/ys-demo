@@ -25,4 +25,10 @@ public final class Constants {
         public static final String YSID = "YSID";
     }
 
+    public static class VerificationResult {
+        public static final String REAL = "real";
+        public static final String UNCERTAIN = "uncertain";
+        public static final String FAKE = "fake";
+    }
+
 }

@@ -8,14 +8,8 @@ import com.yunsoo.common.data.object.MktDrawRuleObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
-import com.yunsoo.data.service.entity.MarketingEntity;
-import com.yunsoo.data.service.entity.MktDrawPrizeEntity;
-import com.yunsoo.data.service.entity.MktDrawRecordEntity;
-import com.yunsoo.data.service.entity.MktDrawRuleEntity;
-import com.yunsoo.data.service.repository.MarketingRepository;
-import com.yunsoo.data.service.repository.MktDrawPrizeRepository;
-import com.yunsoo.data.service.repository.MktDrawRecordRepository;
-import com.yunsoo.data.service.repository.MktDrawRuleRepository;
+import com.yunsoo.data.service.entity.*;
+import com.yunsoo.data.service.repository.*;
 import com.yunsoo.data.service.service.ProductService;
 import com.yunsoo.data.service.service.contract.Product;
 import org.joda.time.DateTime;
@@ -53,6 +47,10 @@ public class MarketingController {
 
     @Autowired
     private MktDrawRecordRepository mktDrawRecordRepository;
+
+    @Autowired
+    private ProductKeyBatchRepository productKeyBatchRepository;
+
 
     @Autowired
     private ProductService productService;
@@ -105,16 +103,21 @@ public class MarketingController {
                                              @RequestParam(value = "search_text", required = false) String searchText,
                                              @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
                                              @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
+                                             @RequestParam(value = "product_base_id", required = false) String productBaseId,
+
                                              Pageable pageable,
                                              HttpServletResponse response) {
         Page<MarketingEntity> entityPage = null;
-        if(orgId != null)
-            entityPage = marketingRepository.findByOrgIdAndStatusCodeNot(orgId, LookupCodes.MktStatus.DISABLED, pageable);
-        else if (orgIds != null && orgIds.size() > 0){
-            entityPage = marketingRepository.query(orgIds, status, startTime, endTime, searchText, pageable);
+        if ((status != null) && (orgId != null)) {
+            entityPage = marketingRepository.findByOrgIdAndStatusCode(orgId, status, pageable);
+        } else {
+            if (orgId != null)
+                entityPage = marketingRepository.findByOrgIdAndStatusCodeIn(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
+            else if (orgIds != null && orgIds.size() > 0) {
+                entityPage = marketingRepository.query(orgIds, status, startTime, endTime, productBaseId, searchText, pageable);
+            } else
+                throw new BadRequestException("one of the request parameter org_id or org_ids is required");
         }
-        else
-            throw new BadRequestException("one of the request parameter org_id or org_ids is required");
 
 
         if (pageable != null) {
@@ -155,7 +158,7 @@ public class MarketingController {
         if (orgId == null) {
             throw new BadRequestException("orgId id is not valid");
         }
-        Long quantity = marketingRepository.countByOrgId(orgId);
+        Long quantity = marketingRepository.countByOrgIdAndStatusCodeIn(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS);
         return quantity;
     }
 
@@ -295,6 +298,11 @@ public class MarketingController {
         marketing.setBalance(marketing.getBalance() - mktDrawPrizeObject.getAmount());
         marketingRepository.save(marketing);
 
+        MktDrawRuleEntity mktDrawRuleEntity = mktDrawRuleRepository.findOne(mktDrawPrizeObject.getDrawRuleId());
+        if (mktDrawRuleEntity.getAvailableQuantity() != null) {
+            mktDrawRuleEntity.setAvailableQuantity(mktDrawRuleEntity.getAvailableQuantity() - 1);
+            mktDrawRuleRepository.save(mktDrawRuleEntity);
+        }
 
         return toMktDrawPrizeObject(newEntity);
     }
@@ -345,9 +353,55 @@ public class MarketingController {
     @ResponseStatus(HttpStatus.CREATED)
     public MktDrawRuleObject createDrawRule(@RequestBody MktDrawRuleObject mktDrawRuleObject) {
         MktDrawRuleEntity entity = toMktDrawRuleEntity(mktDrawRuleObject);
+        entity.setAvailableQuantity(entity.getTotalQuantity());
         MktDrawRuleEntity newEntity = mktDrawRuleRepository.save(entity);
         return toMktDrawRuleObject(newEntity);
     }
+
+    //create marketing draw rule list provide API
+    @RequestMapping(value = "/drawRule/list", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public MktDrawRuleObject createDrawRuleList(@RequestBody List<MktDrawRuleObject> mktDrawRuleObjectList) {
+
+        if (mktDrawRuleObjectList == null || mktDrawRuleObjectList.size() == 0) {
+            return null;
+        }
+        List<MktDrawRuleEntity> mktDrawRuleEntities = new ArrayList<>();
+        for (MktDrawRuleObject object : mktDrawRuleObjectList) {
+            MktDrawRuleEntity entity = toMktDrawRuleEntity(object);
+            mktDrawRuleEntities.add(entity);
+        }
+        for (MktDrawRuleEntity mktDrawRuleentity : mktDrawRuleEntities) {
+            mktDrawRuleentity.setId(null); //make sure it's insert
+            mktDrawRuleentity.setCreatedDateTime(DateTime.now());
+            mktDrawRuleentity.setAvailableQuantity(mktDrawRuleentity.getTotalQuantity());
+        }
+
+        List<MktDrawRuleEntity> newEntities = mktDrawRuleRepository.save(mktDrawRuleEntities);
+
+        return toMktDrawRuleObject(newEntities.get(0));
+
+    }
+
+    @RequestMapping(value = "/drawRule/list", method = RequestMethod.PUT)
+    public void updateMktDrawRuleList(@RequestBody List<MktDrawRuleObject> mktDrawRuleObjectList) {
+        if (mktDrawRuleObjectList == null || mktDrawRuleObjectList.size() == 0) {
+            return;
+        }
+
+        List<MktDrawRuleEntity> mktDrawRuleEntities = new ArrayList<>();
+        for (MktDrawRuleObject object : mktDrawRuleObjectList) {
+
+            MktDrawRuleEntity oldEntity = findMktDrawRuleById(object.getId());
+            MktDrawRuleEntity entity = toMktDrawRuleEntity(object);
+            entity.setCreatedDateTime(oldEntity.getCreatedDateTime());
+            entity.setCreatedAccountId(oldEntity.getCreatedAccountId());
+            mktDrawRuleEntities.add(entity);
+        }
+
+        mktDrawRuleRepository.save(mktDrawRuleEntities);
+    }
+
 
     //delete marketing plan
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
@@ -355,7 +409,15 @@ public class MarketingController {
     public void deleteMarketing(@PathVariable(value = "id") String id) {
         MarketingEntity entity = marketingRepository.findOne(id);
         if (entity != null) {
-            marketingRepository.delete(id);
+            entity.setStatusCode(LookupCodes.MktStatus.DELETED);
+            marketingRepository.save(entity);
+        }
+        List<ProductKeyBatchEntity> productKeyBatchEntities = productKeyBatchRepository.findByMarketingId(id);
+        if (productKeyBatchEntities != null) {
+            for (ProductKeyBatchEntity pkEntity : productKeyBatchEntities) {
+                pkEntity.setMarketingId(null);
+            }
+            productKeyBatchRepository.save(productKeyBatchEntities);
         }
     }
 
@@ -373,6 +435,19 @@ public class MarketingController {
             }
         }
     }
+
+    //delete marketing rule by rule Id
+    @RequestMapping(value = "/drawRule/rule/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMarketingRuleById(@PathVariable(value = "id") String id) {
+        MktDrawRuleEntity mktDrawRuleEntity = mktDrawRuleRepository.findOne(id);
+        if (mktDrawRuleEntity != null) {
+            mktDrawRuleRepository.delete(id);
+        }
+    }
+
+
+
 
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.GET)
     public List<MktDrawRuleObject> findMarketingRulesById(@PathVariable(value = "id")String marketingId){
@@ -452,6 +527,9 @@ public class MarketingController {
         object.setModifiedDateTime(entity.getModifiedDateTime());
         object.setStatusCode(entity.getStatusCode());
         object.setComments(entity.getComments());
+        object.setQuantity(entity.getQuantity());
+        object.setStartDateTime(entity.getStartDateTime());
+        object.setEndDateTime(entity.getEndDateTime());
         return object;
     }
 
@@ -470,6 +548,9 @@ public class MarketingController {
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
+        object.setTotalQuantity(entity.getTotalQuantity());
+        object.setAvailableQuantity(entity.getAvailableQuantity());
+
         return object;
     }
 
@@ -533,6 +614,9 @@ public class MarketingController {
         entity.setModifiedDateTime(object.getModifiedDateTime());
         entity.setStatusCode(object.getStatusCode());
         entity.setComments(object.getComments());
+        entity.setQuantity(object.getQuantity());
+        entity.setStartDateTime(object.getStartDateTime());
+        entity.setEndDateTime(object.getEndDateTime());
         return entity;
     }
 
@@ -551,6 +635,8 @@ public class MarketingController {
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());
+        entity.setTotalQuantity(object.getTotalQuantity());
+        entity.setAvailableQuantity(object.getAvailableQuantity());
         return entity;
     }
 

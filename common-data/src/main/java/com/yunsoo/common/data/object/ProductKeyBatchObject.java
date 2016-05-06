@@ -3,8 +3,8 @@ package com.yunsoo.common.data.object;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
@@ -49,20 +49,9 @@ public class ProductKeyBatchObject implements Serializable {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
 
-    @JsonProperty("rest_quantity")
-    private Integer restQuantity;
-
     @JsonProperty("marketing_id")
     private String marketingId;
 
-
-    public Integer getRestQuantity() {
-        return restQuantity;
-    }
-
-    public void setRestQuantity(Integer restQuantity) {
-        this.restQuantity = restQuantity;
-    }
 
     public String getId() {
         return id;

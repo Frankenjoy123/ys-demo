@@ -10,8 +10,11 @@ import com.yunsoo.api.security.permission.expression.PrincipalExpression.Account
 import com.yunsoo.api.security.permission.expression.PrincipalExpression.GroupPrincipalExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
+import com.yunsoo.api.security.permission.expression.RestrictionExpression.RegionRestrictionExpression;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.PermissionAllocationObject;
+import com.yunsoo.common.data.object.PermissionRegionObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
@@ -43,6 +46,12 @@ public class PermissionAllocationDomain {
 
     @Autowired
     private AccountGroupDomain accountGroupDomain;
+
+    @Autowired
+    private AccountDomain accountDomain;
+
+    @Autowired
+    private PermissionDomain permissionDomain;
 
 
     //@Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'permissionEntries/'+#accountId)")
@@ -89,11 +98,23 @@ public class PermissionAllocationDomain {
                 });
     }
 
-    public void allocateAdminPermissionToAccount(String accountId) {
+    public void allocateAdminPermissionOnCurrentOrgToAccount(String accountId) {
         Assert.hasText(accountId, "accountId not valid");
         allocatePermission(
                 new AccountPrincipalExpression(accountId),
                 OrgRestrictionExpression.CURRENT,
+                SimplePermissionExpression.ADMIN,
+                PermissionEntry.Effect.allow);
+    }
+
+    public void allocateAdminPermissionOnDefaultRegionToAccount(String accountId) {
+        AccountObject accountObject = accountDomain.getById(accountId);
+        Assert.notNull(accountObject, "account not valid");
+
+        PermissionRegionObject defaultPR = permissionDomain.getOrCreateDefaultPermissionRegion(accountObject.getOrgId());
+        allocatePermission(
+                new AccountPrincipalExpression(accountId),
+                new RegionRestrictionExpression(defaultPR.getId()),
                 SimplePermissionExpression.ADMIN,
                 PermissionEntry.Effect.allow);
     }

@@ -23,7 +23,7 @@ import java.util.List;
  * Descriptions:
  */
 @RestController
-@RequestMapping("/userfollowing")
+@RequestMapping("/userFollowing")
 public class UserFollowingController {
 
     @Autowired

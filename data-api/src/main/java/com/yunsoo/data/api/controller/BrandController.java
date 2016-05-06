@@ -2,20 +2,22 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AttachmentObject;
+import com.yunsoo.common.data.object.BrandApplicationHistoryObject;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.AttachmentEntity;
 import com.yunsoo.data.service.entity.BrandApplicationEntity;
+import com.yunsoo.data.service.entity.BrandApplicationHistoryEntity;
 import com.yunsoo.data.service.repository.AttachmentRepository;
+import com.yunsoo.data.service.repository.BrandApplicationHistoryRepository;
 import com.yunsoo.data.service.repository.BrandApplicationRepository;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +37,9 @@ public class BrandController {
     @Autowired
     private AttachmentRepository attachmentRepository;
 
+    @Autowired
+    private BrandApplicationHistoryRepository historyRepository;
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public BrandObject getById(@PathVariable(value = "id") String id) {
         BrandApplicationEntity brandApplicationEntity = repository.findOne(id);
@@ -52,6 +57,9 @@ public class BrandController {
         brandApplicationEntity.setStatusCode(LookupCodes.BrandApplicationStatus.CREATED);
         brandApplicationEntity.setId(null);
         repository.save(brandApplicationEntity);
+        BrandApplicationHistoryEntity historyEntity = brandApplicationHistoryEntity(brandApplicationEntity, brand.getCreatedAccountId());
+        historyRepository.save(historyEntity);
+
         return toBrandObject(brandApplicationEntity);
     }
 
@@ -59,6 +67,10 @@ public class BrandController {
     public BrandObject update(@RequestBody BrandObject brand) {
         BrandApplicationEntity brandApplicationEntity = toBrandEntity(brand);
         repository.save(brandApplicationEntity);
+
+        BrandApplicationHistoryEntity historyEntity = brandApplicationHistoryEntity(brandApplicationEntity, brand.getCreatedAccountId());
+        historyRepository.save(historyEntity);
+
         return toBrandObject(brandApplicationEntity);
     }
 
@@ -110,8 +122,16 @@ public class BrandController {
     }
 
     @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public int getPendingApprovalBrand(@RequestParam("carrier_id") String carrierId, @RequestParam("status") String status) {
-        return repository.countByCarrierIdAndStatusCode(carrierId, status);
+    public int getPendingApprovalBrand(@RequestParam("carrier_id") String carrierId, @RequestParam("status") String status, @RequestParam("paid") boolean paid) {
+        if(paid)
+            return repository.countByCarrierIdAndStatusCodeAndPaymentIdIsNotNull(carrierId, status);
+        else
+            return repository.countByCarrierIdAndStatusCodeAndPaymentIdIsNull(carrierId, status);
+    }
+
+    @RequestMapping(value = "{id}/history", method = RequestMethod.GET)
+    public List<BrandApplicationHistoryObject> getHistoryList(@PathVariable("id")String id){
+        return historyRepository.findByBrandIdOrderByCreatedDateTimeDesc(id).stream().map(this::brandApplicationHistoryObject).collect(Collectors.toList());
     }
 
 
@@ -200,6 +220,30 @@ public class BrandController {
         attachmentObj.setModifiedDateTime(attachment.getModifiedDateTime());
         return attachmentObj;
 
+    }
+
+    private BrandApplicationHistoryObject brandApplicationHistoryObject(BrandApplicationHistoryEntity entity){
+        if(entity !=null){
+            BrandApplicationHistoryObject object = new BrandApplicationHistoryObject();
+            BeanUtils.copyProperties(entity, object);
+            return object;
+        }
+        else
+            return null;
+    }
+
+    private  BrandApplicationHistoryEntity brandApplicationHistoryEntity(BrandApplicationEntity entity, String accountId){
+        if(entity !=null){
+            BrandApplicationHistoryEntity hEntity = new BrandApplicationHistoryEntity();
+            BeanUtils.copyProperties(entity, hEntity);
+            hEntity.setBrandId(entity.getId());
+            hEntity.setId(null);
+            hEntity.setCreatedAccountId(accountId);
+            hEntity.setCreatedDateTime(DateTime.now());
+            return hEntity;
+        }
+        else
+            return null;
     }
 
 }

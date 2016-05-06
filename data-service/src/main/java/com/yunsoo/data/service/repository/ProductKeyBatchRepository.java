@@ -1,5 +1,6 @@
 package com.yunsoo.data.service.repository;
 
+import com.yunsoo.data.service.entity.ProductBaseEntity;
 import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
 import org.joda.time.DateTime;
@@ -17,6 +18,15 @@ import java.util.List;
  */
 public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<ProductKeyBatchEntity, String> {
 
+    @Query("select o from #{#entityName} o where (:orgId is null or o.orgId = :orgId) and (o.statusCode in ('creating', 'available')) " +
+            "and (:productBaseId is null or :productBaseId = '' or o.productBaseId = :productBaseId) " +
+            "and (o.productKeyTypeCodes != 'package') " +
+            "and (:createAccount is null or :createAccount = '' or o.createdAccountId = :createAccount) and (:createdDateTimeStart is null or o.createdDateTime >= :createdDateTimeStart) " +
+            "and (:createdDateTimeEnd is null or o.createdDateTime <= :createdDateTimeEnd)")
+    Page<ProductKeyBatchEntity> findByFilter(@Param("orgId") String orgId, @Param("productBaseId") String productBaseId, @Param("createAccount") String createAccount,
+                                             @Param("createdDateTimeStart") DateTime createdDateTimeStart,
+                                             @Param("createdDateTimeEnd") DateTime createdDateTimeEnd, Pageable pageable);
+
     Page<ProductKeyBatchEntity> findByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodes, Pageable pageable);
 
     Page<ProductKeyBatchEntity> findByOrgIdAndProductBaseIdAndStatusCodeIn(String orgId, String productBaseId, List<String> statusCodes, Pageable pageable);
@@ -28,7 +38,7 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
             "and (:startTime is null or o.createdDateTime >= :startTime) " +
             "and (:endTime is null or o.createdDateTime <= :endTime) ")
     Long sumQuantityMarketing(@Param("orgId") String orgId,
-                     @Param("productBaseId") String productBaseId,
+                              @Param("productBaseId") String productBaseId,
                               @Param("marketingId") String marketingId,
                               @Param("startTime") DateTime startTime,
                               @Param("endTime") DateTime endTime);
@@ -46,11 +56,9 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
             "and (:productBaseId is null or o.productBaseId = :productBaseId) " +
             "and o.createdDateTime >=:startTime and o.createdDateTime <= :endTime")
     Long sumQuantityTime(@Param("orgId") String orgId,
-                     @Param("productBaseId") String productBaseId,
-                     @Param("startTime") DateTime startTime,
-                     @Param("endTime") DateTime endTime);
-
-    Integer countByRestQuantityLessThanAndStatusCodeIn(Integer quantity,  List<String> statusCodeIn);
+                         @Param("productBaseId") String productBaseId,
+                         @Param("startTime") DateTime startTime,
+                         @Param("endTime") DateTime endTime);
 
     Page<ProductKeyBatchEntity> findByOrgIdAndProductKeyTypeCodesAndStatusCodeIn(String orgId, String typeCode, List<String> statusCodeIn, Pageable pageable);
 
@@ -61,10 +69,15 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
             "and productKeyTypeCodes != 'package'" +
             "and statusCode in ('creating', 'available') " +
             "and (:productBaseId is null or o.productBaseId = :productBaseId) " +
-            "and createdDateTime >=:startTime and createdDateTime <= :endTime" )
+            "and createdDateTime >=:startTime and createdDateTime <= :endTime")
     List<ProductKeyBatchEntity> queryDailyKeyUsageReport(@Param("orgId") String orgId,
-                     @Param("productBaseId") String productBaseId, @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime);
+                                                         @Param("productBaseId") String productBaseId, @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime);
 
     ProductKeyBatchEntity findFirstByOrgIdOrderByIdDesc(String orgId);
+
+    List<ProductKeyBatchEntity> save(Iterable<ProductKeyBatchEntity> entities);
+
+    List<ProductKeyBatchEntity> findByMarketingId(String marketingId);
+
 
 }

@@ -3,9 +3,9 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.MktDrawRuleObject;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
@@ -25,7 +25,13 @@ public class MktDrawRule {
     private String prizeTypeCode;
 
     @JsonProperty("amount")
-    private Integer amount;
+    private Double amount;
+
+    @JsonProperty("total_quantity")
+    private Integer totalQuantity;
+
+    @JsonProperty("available_quantity")
+    private Integer availableQuantity;
 
     @JsonProperty("probability")
     private double probability;
@@ -73,12 +79,28 @@ public class MktDrawRule {
         this.prizeTypeCode = prizeTypeCode;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public Integer getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(Integer totalQuantity) {
+        this.totalQuantity = totalQuantity;
+    }
+
+    public Integer getAvailableQuantity() {
+        return availableQuantity;
+    }
+
+    public void setAvailableQuantity(Integer availableQuantity) {
+        this.availableQuantity = availableQuantity;
     }
 
     public double getProbability() {
@@ -138,6 +160,8 @@ public class MktDrawRule {
             this.setMarketingId(object.getMarketingId());
             this.setPrizeTypeCode(object.getPrizeTypeCode());
             this.setAmount(object.getAmount());
+            this.setTotalQuantity(object.getTotalQuantity());
+            this.setAvailableQuantity(object.getAvailableQuantity());
             this.setProbability(object.getProbability());
             this.setComments(object.getComments());
             this.setCreatedAccountId(object.getCreatedAccountId());
@@ -153,6 +177,8 @@ public class MktDrawRule {
         object.setMarketingId(this.getMarketingId());
         object.setPrizeTypeCode(this.getPrizeTypeCode());
         object.setAmount(this.getAmount());
+        object.setTotalQuantity(this.getTotalQuantity());
+        object.setAvailableQuantity(this.getAvailableQuantity());
         object.setProbability(this.getProbability());
         object.setComments(this.getComments());
         object.setCreatedAccountId(this.getCreatedAccountId());

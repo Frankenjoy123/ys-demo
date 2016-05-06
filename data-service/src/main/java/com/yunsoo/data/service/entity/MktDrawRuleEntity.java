@@ -27,7 +27,13 @@ public class MktDrawRuleEntity {
     private String prizeTypeCode;
 
     @Column(name = "amount")
-    private Integer amount;
+    private Double amount;
+
+    @Column(name = "total_quantity")
+    private Integer totalQuantity;
+
+    @Column(name = "available_quantity")
+    private Integer availableQuantity;
 
     @Column(name = "probability")
     private Double probability;
@@ -74,12 +80,28 @@ public class MktDrawRuleEntity {
         this.prizeTypeCode = prizeTypeCode;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public Integer getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(Integer totalQuantity) {
+        this.totalQuantity = totalQuantity;
+    }
+
+    public Integer getAvailableQuantity() {
+        return availableQuantity;
+    }
+
+    public void setAvailableQuantity(Integer availableQuantity) {
+        this.availableQuantity = availableQuantity;
     }
 
     public Double getProbability() {

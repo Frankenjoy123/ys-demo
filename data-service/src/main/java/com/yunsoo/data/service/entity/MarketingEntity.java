@@ -27,6 +27,9 @@ public class MarketingEntity {
     @Column(name = "wishes")
     private String wishes;
 
+    @Column(name = "quantity")
+    private Integer quantity;
+
     @Column(name = "org_id")
     private String orgId;
 
@@ -62,6 +65,14 @@ public class MarketingEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modifiedDateTime;
 
+    @Column(name = "start_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime startDateTime;
+
+    @Column(name = "end_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime endDateTime;
+
     public String getId() {
         return id;
     }
@@ -84,6 +95,14 @@ public class MarketingEntity {
 
     public void setWishes(String wishes) {
         this.wishes = wishes;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     public String getOrgId() {
@@ -172,5 +191,21 @@ public class MarketingEntity {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public DateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(DateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public DateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(DateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 }

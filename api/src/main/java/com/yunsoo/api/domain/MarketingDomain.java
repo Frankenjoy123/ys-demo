@@ -54,6 +54,15 @@ public class MarketingDomain {
         return dataAPIClient.post("marketing/drawRule", mktDrawRuleObject, MktDrawRuleObject.class);
     }
 
+    public MktDrawRuleObject createMktDrawRuleList(List<MktDrawRuleObject> mktDrawRuleObjectList) {
+        return dataAPIClient.post("marketing/drawRule/list", mktDrawRuleObjectList, MktDrawRuleObject.class);
+    }
+
+    public void updateMktDrawRuleList(List<MktDrawRuleObject> mktDrawRuleObjectList) {
+        dataAPIClient.put("marketing/drawRule/list", mktDrawRuleObjectList);
+    }
+
+
     public MarketingObject getMarketingById(String id) {
         try {
             return dataAPIClient.get("marketing/{id}", MarketingObject.class, id);
@@ -87,9 +96,10 @@ public class MarketingDomain {
 
 
 
-    public Page<MarketingObject> getMarketingList(String orgId, List<String> orgIds, String status, String searchText, DateTime start, DateTime end, Pageable pageable) {
+    public Page<MarketingObject> getMarketingList(String orgId, List<String> orgIds, String status, String searchText, DateTime start, DateTime end, String productBaseId, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId).append("org_ids", orgIds).append("status", status)
+                .append("product_base_id", productBaseId)
                 .append("search_text", searchText).append("start_datetime", start).append("end_datetime", end)
                 .append(pageable)
                 .build();
@@ -173,8 +183,12 @@ public class MarketingDomain {
 
     public void deleteMarketingById(String id) {
         dataAPIClient.delete("marketing/{id}", id);
-        dataAPIClient.delete("marketing/drawRule/{id}", id);
     }
+
+    public void deleteMktDrawRuleById(String id) {
+        dataAPIClient.delete("marketing/drawRule/rule/{id}", id);
+    }
+
 
     public Page<MktDrawPrizeObject> getMktDrawPrizeByFilter(String marketingId, String accountType, String statusCode, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -215,7 +229,7 @@ public class MarketingDomain {
                 String drawRecordId = object.getDrawRecordId();
                 String account = object.getPrizeAccount();
                 String accountName = object.getPrizeAccountName();
-                Integer amount = object.getAmount();
+                Double amount = object.getAmount();
                 detail_data += drawRecordId + "^" + account + "^" + accountName + "^" + amount.toString() + "^" + "alipay prize" + "|";
                 batchNum++;
                 batchFee = batchFee.add(new BigDecimal(amount.toString()));

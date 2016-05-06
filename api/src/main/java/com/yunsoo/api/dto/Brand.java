@@ -3,10 +3,11 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.BrandObject;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -260,7 +261,7 @@ public class Brand extends Organization {
             setEmail(object.getEmail());
             setAttachment(object.getAttachment());
             setIdentifier(object.getIdentifier());
-            setPassword("******");
+            //setPassword("******");
             setInvestigatorAttachment(object.getInvestigatorAttachment());
             setInvestigatorComments(object.getInvestigatorComments());
             setRejectReason(object.getRejectReason());
@@ -288,7 +289,8 @@ public class Brand extends Organization {
             object.setContactMobile(brand.getContactMobile());
             object.setEmail(brand.getEmail());
             object.setAttachment(brand.getAttachment());
-            object.setIdentifier(brand.getIdentifier().trim());
+            if(StringUtils.hasText(brand.getIdentifier()))
+                object.setIdentifier(brand.getIdentifier().trim());
             object.setPassword(brand.getPassword());
             object.setInvestigatorAttachment(brand.getInvestigatorAttachment());
             object.setInvestigatorComments(brand.getInvestigatorComments());

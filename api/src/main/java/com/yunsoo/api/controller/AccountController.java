@@ -1,13 +1,12 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.AccountDomain;
-import com.yunsoo.api.domain.AccountGroupDomain;
-import com.yunsoo.api.domain.GroupDomain;
+import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.security.authorization.AuthorizationService;
 import com.yunsoo.api.security.permission.PermissionService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.AccountLoginLogObject;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.GroupObject;
 import com.yunsoo.common.web.client.Page;
@@ -52,9 +51,16 @@ public class AccountController {
     @Autowired
     private PermissionService permissionService;
 
+    @Autowired
+    private PermissionAllocationDomain permissionAllocationDomain;
+
+    @Autowired
+    private AccountLoginLogDomain accountLoginLogDomain;
+
     //region account
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
+
     public Account getById(@PathVariable("id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         AccountObject accountObject = findAccountById(accountId);
@@ -67,6 +73,7 @@ public class AccountController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'account:read')")
     public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                     @RequestParam(value = "status", required = false) String status,
                                      @RequestParam(value = "search_text", required = false) String searchText,
                                      @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
                                      @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
@@ -74,7 +81,7 @@ public class AccountController {
                                      Pageable pageable,
                                      HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId); //auto fix current
-        Page<AccountObject> accountPage = accountDomain.getByOrgId(orgId, searchText, startTime, endTime, pageable);
+        Page<AccountObject> accountPage = accountDomain.getByOrgId(orgId, status, searchText, startTime, endTime, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", accountPage.toContentRange());
         }
@@ -97,6 +104,17 @@ public class AccountController {
     public Account create(@RequestBody @Valid AccountRequest request) {
         AccountObject accountObject = request.toAccountObject();
         return new Account(accountDomain.createAccount(accountObject, true));
+    }
+
+    @RequestMapping(value = "/carrier", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission(#request.orgId, 'org', 'account:create')")
+    public Account createCarrier(@RequestBody @Valid AccountRequest request) {
+        AccountObject accountObject = request.toAccountObject();
+        Account createdAccount = new Account(accountDomain.createAccount(accountObject, true));
+        permissionAllocationDomain.allocateAdminPermissionOnDefaultRegionToAccount(createdAccount.getId());
+        permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
+        return createdAccount;
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
@@ -238,6 +256,24 @@ public class AccountController {
     }
 
     //endregion
+
+    @RequestMapping(value = "{account_id}/loginLog", method = RequestMethod.GET)
+    public List<AccountLoginLog> getAccountLoginLogByAccountId(@PathVariable("account_id") String accountId,
+                                                               @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
+                                                               Pageable pageable,
+                                                               HttpServletResponse response) {
+        accountId = AuthUtils.fixAccountId(accountId); //auto fix current
+
+        if (!AuthUtils.isMe(accountId)) {
+            AccountObject accountObject = findAccountById(accountId);
+            AuthUtils.checkPermission(accountObject.getOrgId(), "login_log", "read");
+        }
+        Page<AccountLoginLogObject> page = accountLoginLogDomain.getByAccountId(accountId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", page.toContentRange());
+        }
+        return page.getContent().stream().map(AccountLoginLog::new).collect(Collectors.toList());
+    }
 
     private AccountObject findAccountById(String accountId) {
         AccountObject accountObject = accountDomain.getById(accountId);

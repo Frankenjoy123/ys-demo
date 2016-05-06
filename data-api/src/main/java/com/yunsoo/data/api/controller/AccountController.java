@@ -43,6 +43,7 @@ public class AccountController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<AccountObject> getByFilter(@RequestParam("org_id") String orgId,
                                            @RequestParam(value = "identifier", required = false) String identifier,
+                                           @RequestParam(value = "status", required = false) String status,
                                            @RequestParam(value = "search_text", required = false) String searchText,
                                            @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startDateTime,
                                            @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endDateTime,
@@ -51,7 +52,7 @@ public class AccountController {
         List<AccountEntity> entities;
 
         if (StringUtils.isEmpty(identifier)) {
-            Page<AccountEntity> entityPage = accountRepository.query(orgId, searchText, startDateTime, endDateTime, pageable);
+            Page<AccountEntity> entityPage = accountRepository.query(orgId, status, searchText, startDateTime, endDateTime, pageable);
             if (pageable != null) {
                 response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
             }

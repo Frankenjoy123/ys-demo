@@ -3,8 +3,8 @@ package com.yunsoo.common.data.object;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
@@ -37,7 +37,7 @@ public class AccountPermissionObject implements Serializable {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
-    private DateTime createdDatetime;
+    private DateTime createdDateTime;
 
     public String getId() {
         return id;
@@ -87,11 +87,11 @@ public class AccountPermissionObject implements Serializable {
         this.createdAccountId = createdAccountId;
     }
 
-    public DateTime getCreatedDatetime() {
-        return createdDatetime;
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
     }
 
-    public void setCreatedDatetime(DateTime createdDatetime) {
-        this.createdDatetime = createdDatetime;
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 }

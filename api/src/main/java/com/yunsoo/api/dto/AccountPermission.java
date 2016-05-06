@@ -3,9 +3,9 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.AccountPermissionObject;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
@@ -105,7 +105,7 @@ public class AccountPermission {
             this.setResourceCode(object.getResourceCode());
             this.setActionCode(object.getActionCode());
             this.setCreatedAccountId(object.getCreatedAccountId());
-            this.setCreatedDateTime(object.getCreatedDatetime());
+            this.setCreatedDateTime(object.getCreatedDateTime());
         }
     }
 
@@ -117,7 +117,7 @@ public class AccountPermission {
         object.setResourceCode(this.getResourceCode());
         object.setActionCode(this.getActionCode());
         object.setCreatedAccountId(this.getCreatedAccountId());
-        object.setCreatedDatetime(this.getCreatedDateTime());
+        object.setCreatedDateTime(this.getCreatedDateTime());
         return object;
     }
 }

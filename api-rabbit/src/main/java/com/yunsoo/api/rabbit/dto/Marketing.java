@@ -3,9 +3,9 @@ package com.yunsoo.api.rabbit.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.MarketingObject;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
@@ -23,6 +23,10 @@ public class Marketing {
 
     @JsonProperty("wishes")
     private String wishes;
+
+    @JsonProperty("quantity")
+    private Integer quantity;
+
 
     @JsonProperty("org_id")
     private String orgId;
@@ -57,6 +61,18 @@ public class Marketing {
 
     @JsonProperty("product_base_name")
     private String productBaseName;
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("start_datetime")
+    private DateTime startDateTime;
+
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("end_datetime")
+    private DateTime endDateTime;
+
 
 
     public String getId() {
@@ -163,6 +179,30 @@ public class Marketing {
         this.productBaseName = productBaseName;
     }
 
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public DateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(DateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public DateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(DateTime endDateTime) {
+        this.endDateTime = endDateTime;
+    }
+
     public Marketing() {
 
     }
@@ -181,6 +221,10 @@ public class Marketing {
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
             this.setModifiedDateTime(object.getModifiedDateTime());
+            this.setQuantity(object.getQuantity());
+            this.setStartDateTime(object.getStartDateTime());
+            this.setEndDateTime(object.getEndDateTime());
+
         }
     }
 
@@ -198,6 +242,10 @@ public class Marketing {
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());
         object.setModifiedDateTime(this.getModifiedDateTime());
+        object.setQuantity(this.getQuantity());
+        object.setStartDateTime(this.getStartDateTime());
+        object.setEndDateTime(this.getEndDateTime());
+
         return object;
     }
 

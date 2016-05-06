@@ -28,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -115,6 +116,11 @@ public class ProductKeyBatchController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PostAuthorize("hasPermission('current', 'org', 'product_key_batch:read')")
     public List<ProductKeyBatch> getByFilterPaged(@RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                  @RequestParam(value = "create_account", required = false) String createAccount,
+                                                  @RequestParam(value = "create_datetime_start", required = false)
+                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                  @RequestParam(value = "create_datetime_end", required = false)
+                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
                                                   @RequestParam(value = "is_package", required = false) Boolean isPackage,
                                                   @PageableDefault(page = 0, size = 1000)
                                                   @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
@@ -122,7 +128,7 @@ public class ProductKeyBatchController {
                                                   HttpServletResponse response) {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
         Page<ProductKeyBatch> productKeyBatchPage;
-        productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, isPackage, pageable);
+        productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, isPackage, createAccount, createdDateTimeStart, createdDateTimeEnd, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", productKeyBatchPage.toContentRange());
@@ -200,8 +206,8 @@ public class ProductKeyBatchController {
     @RequestMapping(value = "product_batch_group", method = RequestMethod.GET)
     public List<ProductBatchCollection> getProductBatchCollection() {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
-        Page<ProductBaseObject> pageProductBase = productBaseDomain.getProductBaseByOrgId(orgId, null);
-        Page<ProductKeyBatch> pageBatch = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, null, false, null);
+        Page<ProductBaseObject> pageProductBase = productBaseDomain.getProductBaseByOrgId(orgId, null, null, null, null, null);
+        Page<ProductKeyBatch> pageBatch = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, null, false, null, null, null, null);
 
 
         return pageProductBase.getContent().stream().map(p -> {
@@ -237,7 +243,6 @@ public class ProductKeyBatchController {
             marketingDomain.updateMarketing(marketingObject);
         }
     }
-
 
 
     @RequestMapping(value = "{id}/details", method = RequestMethod.GET)

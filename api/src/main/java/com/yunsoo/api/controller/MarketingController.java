@@ -72,6 +72,84 @@ public class MarketingController {
         return new MktDrawRule(newMktDrawRuleObject);
     }
 
+    @RequestMapping(value = "drawRule/list", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public MktDrawRule createMktDrawRuleList(@RequestBody List<MktDrawRule> mktDrawRuleList) {
+        if (mktDrawRuleList == null || mktDrawRuleList.size() == 0) {
+            throw new BadRequestException("marketing draw rule list can not be null");
+        }
+        List<MktDrawRuleObject> mktDrawRuleObjectList = new ArrayList<>();
+        for (MktDrawRule mktDrawRule : mktDrawRuleList) {
+            String marketingId = mktDrawRule.getMarketingId();
+            MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+            if (marketingObject == null) {
+                throw new NotFoundException("marketing can not be found by the id");
+            }
+            MktDrawRuleObject mktDrawRuleObject = mktDrawRule.toMktDrawRuleObject();
+            String currentUserId = AuthUtils.getCurrentAccount().getId();
+            mktDrawRuleObject.setCreatedAccountId(currentUserId);
+            mktDrawRuleObject.setCreatedDateTime(DateTime.now());
+            mktDrawRuleObjectList.add(mktDrawRuleObject);
+        }
+
+        MktDrawRuleObject newMktDrawRuleObject = marketingDomain.createMktDrawRuleList(mktDrawRuleObjectList);
+        return new MktDrawRule(newMktDrawRuleObject);
+    }
+
+    @RequestMapping(value = "/drawRule/list", method = RequestMethod.PUT)
+    public void updateMktDrawRuleList(@RequestBody List<MktDrawRule> mktDrawRuleList) {
+        if (mktDrawRuleList == null || mktDrawRuleList.size() == 0) {
+            throw new BadRequestException("marketing draw rule list can not be null");
+        }
+
+        String originalMarketingId = null;
+        List<String> newRuleIds = new ArrayList<>();
+
+        List<MktDrawRuleObject> mktDrawRuleObjectList = new ArrayList<>();
+        for (MktDrawRule mktDrawRule : mktDrawRuleList) {
+
+            MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktDrawRuleById(mktDrawRule.getId());
+            if (mktDrawRuleObject == null) {
+                MktDrawRuleObject mktObject = mktDrawRule.toMktDrawRuleObject();
+                String currentUserId = AuthUtils.getCurrentAccount().getId();
+                mktObject.setCreatedAccountId(currentUserId);
+                mktObject.setCreatedDateTime(DateTime.now());
+                MktDrawRuleObject newMktDrawRuleObject = marketingDomain.createMktDrawRule(mktObject);
+                newRuleIds.add(newMktDrawRuleObject.getId());
+            } else {
+                String marketingId = mktDrawRule.getMarketingId();
+                originalMarketingId = marketingId;
+                newRuleIds.add(mktDrawRule.getId());
+                MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+                if (marketingObject == null) {
+                    throw new NotFoundException("marketing can not be found by the id");
+                }
+
+                String currentUserId = AuthUtils.getCurrentAccount().getId();
+                mktDrawRuleObject.setComments(mktDrawRule.getComments());
+                mktDrawRuleObject.setAmount(mktDrawRule.getAmount());
+                mktDrawRuleObject.setProbability(mktDrawRule.getProbability());
+                mktDrawRuleObject.setModifiedAccountId(currentUserId);
+                mktDrawRuleObject.setModifiedDateTime(DateTime.now());
+                mktDrawRuleObject.setTotalQuantity(mktDrawRule.getTotalQuantity());
+                mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getAvailableQuantity());
+
+                mktDrawRuleObjectList.add(mktDrawRuleObject);
+            }
+        }
+
+        List<MktDrawRuleObject> originalMktDrawRuleObjectList = marketingDomain.getRuleList(originalMarketingId);
+        for (MktDrawRuleObject tmpObject : originalMktDrawRuleObjectList) {
+            if (!newRuleIds.contains(tmpObject.getId())) {
+                marketingDomain.deleteMktDrawRuleById(tmpObject.getId());
+            }
+        }
+
+        marketingDomain.updateMktDrawRuleList(mktDrawRuleObjectList);
+    }
+
+
+
     //query marketing plan by org id
     @RequestMapping(value = "analysis", method = RequestMethod.GET)
     public List<MarketingResult> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
@@ -82,7 +160,7 @@ public class MarketingController {
         orgId = AuthUtils.fixOrgId(orgId);
 
 
-        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.PAID, null, null, null, pageable);
+        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.PAID, null, null, null, null, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", marketingPage.toContentRange());
         }
@@ -104,20 +182,40 @@ public class MarketingController {
 
             List<MktDrawRule> mktDrawRuleList = marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
             List<Long> prizeCountList = new ArrayList<>();
+            List<MktDrawPrizeResult> mktDrawPrizeResultList = new ArrayList();
 
             if (mktDrawRuleList.size() > 0) {
                 marketingResult.setRuleList(mktDrawRuleList);
                 for (MktDrawRule mktDrawRule : mktDrawRuleList) {
                     Long ruleNumber = marketingDomain.countDrawPrizeByDrawRuleId(mktDrawRule.getId(), startTime, endTime);
                     prizeCountList.add(ruleNumber);
+
+                    MktDrawPrizeResult obj = new MktDrawPrizeResult();
+                    obj.setId(mktDrawRule.getId());
+                    obj.setName(mktDrawRule.getComments());
+                    obj.setAvailableNumber(mktDrawRule.getAvailableQuantity());
+                    obj.setAvailableAmount(mktDrawRule.getAmount() * mktDrawRule.getAvailableQuantity());
+                    obj.setTotalNumber(mktDrawRule.getTotalQuantity());
+                    Double avaliableNum = mktDrawRule.getAvailableQuantity().doubleValue();
+                    Double totalNum = mktDrawRule.getTotalQuantity().doubleValue();
+                    Double percentageAmount = avaliableNum / totalNum;
+                    obj.setPercentageAmount(percentageAmount);
+                    obj.setUsedNumber(ruleNumber.intValue());
+
+                    Double usedNum = ruleNumber.doubleValue();
+                    Double percentageUsed = usedNum / totalNum;
+                    obj.setPercentageUsed(percentageUsed);
+                    mktDrawPrizeResultList.add(obj);
                 }
                 marketingResult.setPrizeCountList(prizeCountList);
+                marketingResult.setPrizeResultList(mktDrawPrizeResultList);
             }
             marketingResultList.add(marketingResult);
         });
         return marketingResultList;
 
     }
+
 
     //query marketing result by marketing id
     @RequestMapping(value = "marketinganalysis", method = RequestMethod.GET)
@@ -135,6 +233,7 @@ public class MarketingController {
 
         MarketingResult marketingResult = new MarketingResult();
         List<MarketingResult> marketingResultList = new ArrayList<>();
+        List<MktDrawPrizeResult> mktDrawPrizeResultList = new ArrayList<>();
 
         String marketingName = marketingObject.getName();
         Long totalNumber = marketingDomain.countProductKeysByMarketingId(marketingId, startTime, endTime);
@@ -153,8 +252,28 @@ public class MarketingController {
             for (MktDrawRule mktDrawRule : mktDrawRuleList) {
                 Long ruleNumber = marketingDomain.countDrawPrizeByDrawRuleId(mktDrawRule.getId(), startTime, endTime);
                 prizeCountList.add(ruleNumber);
+
+                MktDrawPrizeResult obj = new MktDrawPrizeResult();
+                obj.setId(mktDrawRule.getId());
+                obj.setName(mktDrawRule.getComments());
+                obj.setAvailableNumber(mktDrawRule.getAvailableQuantity());
+                obj.setAvailableAmount(mktDrawRule.getAmount() * mktDrawRule.getAvailableQuantity());
+                obj.setTotalNumber(mktDrawRule.getTotalQuantity());
+                Double avaliableNum = mktDrawRule.getAvailableQuantity().doubleValue();
+                Double totalNum = mktDrawRule.getTotalQuantity().doubleValue();
+                Double percentageAmount = avaliableNum / totalNum;
+                obj.setPercentageAmount(percentageAmount);
+                obj.setUsedNumber(ruleNumber.intValue());
+
+                Double usedNum = ruleNumber.doubleValue();
+                Double percentageUsed = usedNum / totalNum;
+                obj.setPercentageUsed(percentageUsed);
+                mktDrawPrizeResultList.add(obj);
+
+
             }
             marketingResult.setPrizeCountList(prizeCountList);
+            marketingResult.setPrizeResultList(mktDrawPrizeResultList);
         }
         return marketingResult;
     }
@@ -171,7 +290,7 @@ public class MarketingController {
                                        @RequestParam(value = "need_rules", required = false) Boolean needRules,
                                        @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
                                        @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
-                                       Pageable pageable,
+                                       @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC) Pageable pageable,
                                        HttpServletResponse response) {
 
         List<String> orgIds = null;
@@ -188,7 +307,7 @@ public class MarketingController {
         else
             orgId = AuthUtils.fixOrgId(orgId);
 
-        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status,searchText, startTime, endTime, pageable);
+        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status, searchText, startTime, endTime, productBaseId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", marketingPage.toContentRange());
         }
@@ -235,6 +354,7 @@ public class MarketingController {
         marketingObject.setCreatedAccountId(currentAccountId);
         marketingObject.setCreatedDateTime(DateTime.now());
         marketingObject.setOrgId(AuthUtils.fixOrgId(marketing.getOrgId()));
+        marketingObject.setBalance(marketing.getBudget());
 
         MarketingObject mktObject;
         if (batchId != null) {
@@ -268,6 +388,9 @@ public class MarketingController {
             marketingObject.setBudget(marketing.getBudget());
             marketingObject.setModifiedDateTime(DateTime.now());
             marketingObject.setModifiedAccountId(currentAccountId);
+            marketingObject.setQuantity(marketing.getQuantity());
+            marketingObject.setStartDateTime(marketing.getStartDateTime());
+            marketingObject.setEndDateTime(marketing.getEndDateTime());
             marketingDomain.updateMarketing(marketingObject);
         }
     }

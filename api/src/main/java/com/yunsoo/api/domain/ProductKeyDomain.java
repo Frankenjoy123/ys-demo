@@ -6,7 +6,7 @@ import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.message.ProductKeyBatchMassage;
+import com.yunsoo.common.data.message.ProductKeyBatchCreateMessage;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
@@ -107,7 +107,7 @@ public class ProductKeyDomain {
     }
 
 
-    public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Boolean isPackage, Pageable pageable) {
+    public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Boolean isPackage, String createAccount, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
         String[] statusCodes = new String[]{
                 LookupCodes.ProductKeyBatchStatus.CREATING,
                 LookupCodes.ProductKeyBatchStatus.AVAILABLE
@@ -117,6 +117,10 @@ public class ProductKeyDomain {
             query = query.append("org_id", orgId)
                     .append("is_package", isPackage)
                     .append("status_code_in", statusCodes)
+                    .append("product_base_id", productBaseId)
+                    .append("create_account", createAccount)
+                    .append("create_datetime_start", createdDateTimeStart)
+                    .append("create_datetime_end", createdDateTimeEnd)
                     .append(pageable);
         else
             query = query.append("org_id", orgId)
@@ -153,7 +157,6 @@ public class ProductKeyDomain {
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {
         batchObj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         batchObj.setCreatedDateTime(DateTime.now());
-        batchObj.setRestQuantity(batchObj.getQuantity());
         String productBaseId = batchObj.getProductBaseId();
         List<String> productKeyTypes = batchObj.getProductKeyTypeCodes();
         //boolean isPackageKey = productKeyTypes.size() == 1 && LookupCodes.ProductKeyType.PACKAGE.equals(productKeyTypes.get(0));
@@ -190,16 +193,15 @@ public class ProductKeyDomain {
         log.info(String.format("ProductKeyBatch status changed [id: %s, statusCode: %s]", newBatchObj.getId(), newBatchObj.getStatusCode()));
 
         //send sqs message to processor
-        ProductKeyBatchMassage sqsMessage = new ProductKeyBatchMassage();
+        ProductKeyBatchCreateMessage sqsMessage = new ProductKeyBatchCreateMessage();
         sqsMessage.setProductKeyBatchId(newBatchObj.getId());
-        if (newBatchObj.getProductBaseId() != null) {
-            sqsMessage.setProductStatusCode(LookupCodes.ProductStatus.ACTIVATED);  //default activated
-        }
+        sqsMessage.setProductStatusCode(LookupCodes.ProductStatus.ACTIVATED);  //default activated
+
         try {
-            processorClient.post("sqs/productkeybatch", sqsMessage, ProductKeyBatchMassage.class);
-            log.info(String.format("ProductKeyBatchMassage posted to sqs %s", sqsMessage));
+            processorClient.put("sqs/message/{payloadName}", sqsMessage, ProductKeyBatchCreateMessage.PAYLOAD_NAME);
+            log.info(String.format("ProductKeyBatchCreateMessage put to sqs %s", sqsMessage));
         } catch (Exception ex) {
-            log.error(String.format("ProductKeyBatchMassage posting to sqs failed [message: %s]", ex.getMessage()), ex);
+            log.error(String.format("ProductKeyBatchCreateMessage put to sqs failed [message: %s]", ex.getMessage()), ex);
         }
 
         return toProductKeyBatch(newBatchObj, lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType), lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus));

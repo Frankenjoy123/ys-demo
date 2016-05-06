@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.api.dto.detectable.OrgIdDetectable;
-import com.yunsoo.common.data.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.data.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.data.object.MarketingObject;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -26,6 +26,9 @@ public class Marketing implements OrgIdDetectable {
 
     @JsonProperty("wishes")
     private String wishes;
+
+    @JsonProperty("quantity")
+    private Integer quantity;
 
     @JsonProperty("org_id")
     private String orgId;
@@ -60,6 +63,18 @@ public class Marketing implements OrgIdDetectable {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("start_datetime")
+    private DateTime startDateTime;
+
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("end_datetime")
+    private DateTime endDateTime;
+
 
     @JsonProperty("product_base_name")
     private String productBaseName;
@@ -96,6 +111,14 @@ public class Marketing implements OrgIdDetectable {
 
     public void setWishes(String wishes) {
         this.wishes = wishes;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     public String getOrgId() {
@@ -170,6 +193,22 @@ public class Marketing implements OrgIdDetectable {
         this.modifiedDateTime = modifiedDateTime;
     }
 
+    public DateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(DateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public DateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(DateTime endDateTime) {
+        this.endDateTime = endDateTime;
+    }
+
     public String getProductBaseName() {
         return productBaseName;
     }
@@ -219,6 +258,7 @@ public class Marketing implements OrgIdDetectable {
             this.setId(object.getId());
             this.setName(object.getName());
             this.setWishes(object.getWishes());
+            this.setQuantity(object.getQuantity());
             this.setOrgId(object.getOrgId());
             this.setProductBaseId(object.getProductBaseId());
             this.setTypeCode(object.getTypeCode());
@@ -228,6 +268,8 @@ public class Marketing implements OrgIdDetectable {
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
             this.setModifiedDateTime(object.getModifiedDateTime());
+            this.setStartDateTime(object.getStartDateTime());
+            this.setEndDateTime(object.getEndDateTime());
             this.setStatusCode(object.getStatusCode());
             this.setComments(object.getComments());
         }
@@ -239,6 +281,7 @@ public class Marketing implements OrgIdDetectable {
         object.setId(this.getId());
         object.setName(this.getName());
         object.setWishes(this.getWishes());
+        object.setQuantity(this.getQuantity());
         object.setOrgId(this.getOrgId());
         object.setProductBaseId(this.getProductBaseId());
         object.setTypeCode(this.getTypeCode());
@@ -248,6 +291,8 @@ public class Marketing implements OrgIdDetectable {
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());
         object.setModifiedDateTime(this.getModifiedDateTime());
+        object.setStartDateTime(this.getStartDateTime());
+        object.setEndDateTime(this.getEndDateTime());
         object.setStatusCode(this.getStatusCode());
         object.setComments(this.getComments());
         return object;

@@ -1,8 +1,7 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.common.data.object.ProductKeyBatchDetailedObject;
+import com.yunsoo.common.data.object.ProductKeyBatchCreateObject;
 import com.yunsoo.common.data.object.ProductKeyObject;
-import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.service.ProductKeyService;
 import com.yunsoo.data.service.service.contract.Product;
@@ -34,16 +33,14 @@ public class ProductKeyController {
     }
 
     @RequestMapping(value = "batch", method = RequestMethod.PUT)
-    public void batchSave(@RequestBody ProductKeyBatchDetailedObject batch) {
-        ProductObject productObject = batch.getProductTemplate();
-        Product productTemplate = null;
-        if (productObject != null) {
-            productTemplate = new Product();
-            productTemplate.setProductBaseId(productObject.getProductBaseId());
-            productTemplate.setProductStatusCode(productObject.getProductStatusCode());
-            productTemplate.setManufacturingDateTime(productObject.getManufacturingDateTime());
-        }
-        productKeyService.batchSave(batch.getId(), batch.getProductKeyTypeCodes(), batch.getProductKeys(), productTemplate);
+    public void batchSave(@RequestBody ProductKeyBatchCreateObject object) {
+        Product productTemplate = new Product();
+        productTemplate.setProductBaseId(object.getProductBaseId());
+        productTemplate.setProductStatusCode(object.getProductStatusCode());
+        productTemplate.setCreatedDateTime(object.getCreatedDateTime());
+        productTemplate.setManufacturingDateTime(object.getManufacturingDateTime());
+
+        productKeyService.batchSave(object.getProductKeyBatchId(), object.getProductKeyTypeCodes(), object.getProductKeys(), productTemplate);
     }
 
     private ProductKeyObject toProductKeyObject(ProductKey productKey) {
