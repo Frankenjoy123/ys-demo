@@ -98,9 +98,7 @@ public class MarketingController {
             throw new NotFoundException("product can not be found by the key");
         }
         MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
-        if (mktDrawPrizeObject.getAccountType() == null || mktDrawPrizeObject.getAccountType() == "") {
-            mktDrawPrizeObject.setAccountType("webchat");
-        }
+
         MktDrawPrizeObject newMktDrawPrizeObject = marketingDomain.createMktDrawPrize(mktDrawPrizeObject);
         return new MktDrawPrize(newMktDrawPrizeObject);
     }
@@ -111,9 +109,7 @@ public class MarketingController {
             throw new BadRequestException("marketing draw record can not be null");
         }
         MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
-        if (mktDrawPrizeObject.getAccountType() == null || mktDrawPrizeObject.getAccountType() == "") {
-            mktDrawPrizeObject.setAccountType("webchat");
-        }
+
         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
     }
