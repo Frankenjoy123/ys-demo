@@ -13,6 +13,7 @@ import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
@@ -235,6 +236,12 @@ public class WebScanController {
         WebScanResponse.Marketing marketing = null;
         if (marketingId != null) {
             MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+            if ((marketingObject.getStartDateTime() != null) && (marketingObject.getEndDateTime() != null)) {
+                DateTime currentDateTime = DateTime.now();
+                if ((currentDateTime.compareTo(marketingObject.getStartDateTime()) < 0) || (marketingObject.getEndDateTime().compareTo(currentDateTime) < 0)) {
+                    return null;
+                }
+            }
             if (marketingObject != null && LookupCodes.MktStatus.PAID.equals(marketingObject.getStatusCode())) {
                 marketing = new WebScanResponse.Marketing();
                 marketing.setId(marketingId);
