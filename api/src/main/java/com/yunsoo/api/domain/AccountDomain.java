@@ -136,7 +136,8 @@ public class AccountDomain {
     }
 
     public boolean validatePassword(String rawPassword, String hashSalt, String password) {
-        return rawPassword != null && hashSalt != null && hashPassword(rawPassword, hashSalt).equals(password);
+        return rawPassword != null && rawPassword.length() > 0
+                && hashSalt != null && hashPassword(rawPassword, hashSalt).equals(password);
     }
 
 
