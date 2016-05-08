@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.Constants;
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
@@ -146,7 +147,9 @@ public class AccountDomain {
     private AccountObject createAccountWithSalt(AccountObject accountObject) {
         accountObject.setId(null);
         accountObject.setStatusCode(LookupCodes.AccountStatus.AVAILABLE);
-        accountObject.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
+        if (!Constants.Ids.SYSTEM_ACCOUNT_ID.equals(accountObject.getCreatedAccountId())) {
+            accountObject.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
+        }
         accountObject.setCreatedDateTime(DateTime.now());
         accountObject.setModifiedAccountId(null);
         accountObject.setModifiedDateTime(null);
