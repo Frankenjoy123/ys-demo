@@ -236,13 +236,11 @@ public class WebScanController {
         WebScanResponse.Marketing marketing = null;
         if (marketingId != null) {
             MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
-            if ((marketingObject.getStartDateTime() != null) && (marketingObject.getEndDateTime() != null)) {
-                DateTime currentDateTime = DateTime.now();
-                if ((currentDateTime.compareTo(marketingObject.getStartDateTime()) < 0) || (marketingObject.getEndDateTime().compareTo(currentDateTime) < 0)) {
-                    return null;
-                }
-            }
-            if (marketingObject != null && LookupCodes.MktStatus.PAID.equals(marketingObject.getStatusCode())) {
+            long now = DateTime.now().getMillis();
+            if (marketingObject != null
+                    && (marketingObject.getStartDateTime() == null || marketingObject.getStartDateTime().getMillis() <= now)
+                    && (marketingObject.getEndDateTime() == null || marketingObject.getEndDateTime().getMillis() >= now)
+                    && LookupCodes.MktStatus.PAID.equals(marketingObject.getStatusCode())) {
                 marketing = new WebScanResponse.Marketing();
                 marketing.setId(marketingId);
             }
