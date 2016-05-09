@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.security.authorization.AuthorizationService;
@@ -64,7 +65,7 @@ public class AccountController {
     public Account getById(@PathVariable("id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         AccountObject accountObject = findAccountById(accountId);
-        if (!AuthUtils.isMe(accountId)) {
+        if (!AuthUtils.isMe(accountId) && !Constants.Ids.SYSTEM_ACCOUNT_ID.equals(accountId)) {
             AuthUtils.checkPermission(accountObject.getOrgId(), "account", "read");
         }
         return new Account(accountObject);

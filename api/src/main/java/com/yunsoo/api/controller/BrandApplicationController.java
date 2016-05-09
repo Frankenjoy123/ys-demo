@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
@@ -27,7 +28,6 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -123,7 +123,7 @@ public class BrandApplicationController {
             accountObject.setHashSalt(object.getHashSalt());
             accountObject.setPhone(object.getContactMobile());
             accountObject.setOrgId(createdBrand.getId());
-            accountObject.setCreatedAccountId(currentAccountId);
+            accountObject.setCreatedAccountId(Constants.Ids.SYSTEM_ACCOUNT_ID);
             AccountObject createdAccount = accountDomain.createAccount(accountObject, false);
             permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
 
