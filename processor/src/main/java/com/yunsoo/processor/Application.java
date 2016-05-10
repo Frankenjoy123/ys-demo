@@ -21,7 +21,6 @@ public class Application {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext app = SpringApplication.run(Application.class, args);
-        app.setId("processor");
 
         log.info(String.format("%s started...", app.getId()));
     }

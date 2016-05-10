@@ -27,7 +27,7 @@ public class MktDrawRuleEntity {
     private String prizeTypeCode;
 
     @Column(name = "amount")
-    private Integer amount;
+    private Double amount;
 
     @Column(name = "total_quantity")
     private Integer totalQuantity;
@@ -80,11 +80,11 @@ public class MktDrawRuleEntity {
         this.prizeTypeCode = prizeTypeCode;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 

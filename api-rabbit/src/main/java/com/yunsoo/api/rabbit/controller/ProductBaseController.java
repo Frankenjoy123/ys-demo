@@ -78,16 +78,9 @@ public class ProductBaseController {
     }
 
     @RequestMapping(value = "{product_base_id}/details", method = RequestMethod.GET)
-    public ResponseEntity<?> getProductBaseDetails(
-            @PathVariable(value = "product_base_id") String productBaseId) {
-        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
-        if (productBaseObject == null) {
-            throw new NotFoundException("product base not found by [id: " + productBaseId + "]");
-        }
-        String orgId = productBaseObject.getOrgId();
-        Integer version = productBaseObject.getVersion();
-        String path = String.format("organization/%s/product_base/%s/%s/details.json", orgId, productBaseId, version);
-        ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+    public ResponseEntity<?> getProductBaseDetails(@PathVariable(value = "product_base_id") String productBaseId) {
+        ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
+        ResourceInputStream resourceInputStream = getProductBaseFile(productBaseObject, "details.json");
         if (resourceInputStream == null) {
             throw new NotFoundException("product base details not found");
         }
@@ -95,5 +88,36 @@ public class ProductBaseController {
         bodyBuilder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
         bodyBuilder.contentLength(resourceInputStream.getContentLength());
         return bodyBuilder.body(new InputStreamResource(resourceInputStream));
+    }
+
+    @RequestMapping(value = "{product_base_id}/adminPageInfo", method = RequestMethod.GET)
+    public ResponseEntity<?> getProductBaseAdminPageInfo(@PathVariable(value = "product_base_id") String productBaseId) {
+        ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
+        ResourceInputStream resourceInputStream = getProductBaseFile(productBaseObject, "admin_page_info.json");
+        if (resourceInputStream == null) {
+            throw new NotFoundException("product base details not found");
+        }
+        ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
+        bodyBuilder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
+        bodyBuilder.contentLength(resourceInputStream.getContentLength());
+        return bodyBuilder.body(new InputStreamResource(resourceInputStream));
+    }
+
+    private ProductBaseObject findProductBaseById(String id) {
+        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(id);
+        if (productBaseObject == null) {
+            throw new NotFoundException("product base not found by [id: " + id + "]");
+        }
+        return productBaseObject;
+    }
+
+    private ResourceInputStream getProductBaseFile(ProductBaseObject productBaseObject, String relativePath) {
+        String path = String.format("organization/%s/product_base/%s/%s/%s",
+                productBaseObject.getOrgId(), productBaseObject.getId(), productBaseObject.getVersion(), relativePath);
+        ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+        if (resourceInputStream == null) {
+            throw new NotFoundException();
+        }
+        return resourceInputStream;
     }
 }

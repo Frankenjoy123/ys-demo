@@ -14,8 +14,8 @@ cloud:
       static: cn-north-1
 
 spring:
-  mvc:
-    throw-exception-if-no-handler-found: true
+  application.name: 'processor'
+  mvc.throw-exception-if-no-handler-found: true
 
 logging:
   file: /var/log/processor.log
@@ -29,9 +29,14 @@ yunsoo:
   client:
     dataapi:
       baseurl: http://localhost:3080/
-  sqs:
-    message:
-      delayseconds: 60
-    handler:
-      max: 5000
-      batch: 1000
+
+jdbc:
+  processor:
+    driver_class_name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://test-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: admin201512
+    initial_size: 10
+    max_idle: 20
+    test_on_borrow: true
+    validation_query: select 1

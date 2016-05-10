@@ -18,15 +18,18 @@ import java.util.List;
 public interface MarketingRepository extends CrudRepository<MarketingEntity, String> {
     Page<MarketingEntity> findByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodes, Pageable pageable);
 
+    Page<MarketingEntity> findByOrgIdAndStatusCode(String orgId, String statusCode, Pageable pageable);
+
     Long countByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodes);
 
     @Query("select m.id from MarketingEntity m where orgId = ?1")
     List<String> findMarketingIdByOrgId(String orgId);
 
 
-    @Query("select m from MarketingEntity m where orgId in :orgIds and ( :status is null or statusCode = :status) " +
+    @Query("select m from MarketingEntity m where orgId in :orgIds and ( :status is null or m.statusCode = :status) " +
             "and (:searchText is null or m.name like ('%' || :searchText || '%')) and (:product is null or m.productBaseId = :product) " +
-            "and (:endTime is null or m.createdDateTime <= :endTime) and  (:startTime is null or m.createdDateTime >= :startTime) " )
+            "and (:endTime is null or m.createdDateTime <= :endTime) and  (:startTime is null or m.createdDateTime >= :startTime) " +
+            "and m.statusCode<>'deleted' " )
     Page<MarketingEntity> query(@Param("orgIds")List<String> orgIds, @Param("status")String status,
                                 @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime, @Param("product")String productBaseId,
                                 @Param("searchText")String searchText, Pageable pageable);

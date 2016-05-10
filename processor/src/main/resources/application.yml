@@ -14,9 +14,9 @@ cloud:
       static: cn-north-1
 
 spring:
+  application.name: 'processor'
   profiles.active: local
-  mvc:
-    throw-exception-if-no-handler-found: true
+  mvc.throw-exception-if-no-handler-found: true
 
 yunsoo:
   debug: true
@@ -24,12 +24,6 @@ yunsoo:
   client:
     dataapi:
       baseurl: http://localhost:3080/
-  sqs:
-    message:
-      delayseconds: 60
-    handler:
-      max: 5000
-      batch: 1000
 
 jdbc:
   processor:

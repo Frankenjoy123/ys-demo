@@ -13,9 +13,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by  : Haitao
@@ -71,6 +69,7 @@ public class MarketingDomain {
 
     }
 
+
     public MktDrawRuleObject getMktRandomPrize(String marketId) {
         MarketingObject obj = dataAPIClient.get("marketing/{id}", MarketingObject.class, marketId);
         if (obj.getBalance() <= 0)
@@ -85,11 +84,6 @@ public class MarketingDomain {
         List<MktDrawRuleObject> ruleList = getRuleList(marketId);
         List<MktDrawRuleObject> newRuleList = new ArrayList<>();
 
-        for (MktDrawRuleObject object : ruleList) {
-            if ((object.getAvailableQuantity() != null) && (object.getAvailableQuantity() > 0)) {
-                newRuleList.add(object);
-            }
-        }
         Long totalQuantity = dataAPIClient.get("productkeybatch/sum/quantity?marketing_id=" + marketId, Long.class);
         ;
         Integer sumQuantity = obj.getQuantity();
@@ -97,9 +91,45 @@ public class MarketingDomain {
             totalQuantity = new Long(sumQuantity);
         }
 
-        Map<Double, MktDrawRuleObject> prizeArray = new HashMap<>();
+        for (MktDrawRuleObject object : ruleList) {
+            if ((object.getAvailableQuantity() != null) && (object.getAvailableQuantity() > 0)) {
+                newRuleList.add(object);
+            } else if (object.getAvailableQuantity() == 0) {
+                totalQuantity = totalQuantity - object.getTotalQuantity();
+            }
+        }
 
-        for (MktDrawRuleObject rule : ruleList) {
+        double prizeIndex = Math.floor(Math.random() * totalQuantity);
+
+        Double indexBefore = new Double(0);
+        Double indexAfter = new Double(0);
+
+        for (int i = 0; i < newRuleList.size(); i++) {
+            indexAfter += newRuleList.get(i).getTotalQuantity();
+            if ((prizeIndex >= indexBefore) && (prizeIndex < indexAfter)) {
+                if (obj.getBalance() >= newRuleList.get(i).getAmount()) {
+                    return newRuleList.get(i);
+                }
+            } else {
+                indexBefore = indexAfter;
+            }
+        }
+        return null;
+
+
+        /*Map<Double, MktDrawRuleObject> prizeArray = new HashMap<>();
+        Double index = new Double(0);
+
+        for (MktDrawRuleObject rule : newRuleList) {
+
+            int ruleQuantity = rule.getTotalQuantity();
+            for(int i = 0; i < ruleQuantity; i++) {
+                if(prizeArray.size() >= totalQuantity)
+                    break;
+                prizeArray.put(index, rule);
+                index += 1;
+            }
+
             int ruleQuantity = (int) (rule.getProbability() * totalQuantity);
             for (int i = 0; i < ruleQuantity; i++) {
                 double index = Math.floor(Math.random() * totalQuantity);
@@ -115,11 +145,10 @@ public class MarketingDomain {
             }
         }
 
-        double index = Math.floor(Math.random() * totalQuantity);
-        if (prizeArray.containsKey(index) && obj.getBalance() >= prizeArray.get(index).getAmount())
+        if (prizeArray.containsKey(prizeIndex) && obj.getBalance() >= prizeArray.get(index).getAmount())
             return prizeArray.get(index);
         else
-            return null;
+            return null;*/
 
     }
 }

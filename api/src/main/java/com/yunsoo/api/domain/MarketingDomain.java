@@ -229,7 +229,7 @@ public class MarketingDomain {
                 String drawRecordId = object.getDrawRecordId();
                 String account = object.getPrizeAccount();
                 String accountName = object.getPrizeAccountName();
-                Integer amount = object.getAmount();
+                Double amount = object.getAmount();
                 detail_data += drawRecordId + "^" + account + "^" + accountName + "^" + amount.toString() + "^" + "alipay prize" + "|";
                 batchNum++;
                 batchFee = batchFee.add(new BigDecimal(amount.toString()));

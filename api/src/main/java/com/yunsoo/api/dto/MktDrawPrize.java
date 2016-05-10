@@ -30,7 +30,7 @@ public class MktDrawPrize {
     private String drawRuleId;
 
     @JsonProperty("amount")
-    private Integer amount;
+    private Double amount;
 
     @JsonProperty("mobile")
     private String mobile;
@@ -113,11 +113,11 @@ public class MktDrawPrize {
         this.drawRuleId = drawRuleId;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
