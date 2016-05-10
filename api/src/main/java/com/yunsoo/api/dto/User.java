@@ -44,6 +44,31 @@ public class User implements Serializable {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
+    @JsonProperty("email")
+    private String email;
+
+    @JsonProperty("age")
+    private Integer age;
+
+    @JsonProperty("sex")
+    private Boolean sex;
+
+    @JsonProperty("province")
+    private String province;
+
+    @JsonProperty("city")
+    private String city;
+
+    @JsonProperty("oauth_type_code")
+    private String oauthTypeCode;
+
+    @JsonProperty("gravatar_url")
+    private String gravatarUrl;
+
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("modified_datetime")
+    private DateTime modifiedDateTime;
 
     public String getId() {
         return id;
@@ -109,6 +134,70 @@ public class User implements Serializable {
         this.createdDateTime = createdDateTime;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Boolean getSex() {
+        return sex;
+    }
+
+    public void setSex(Boolean sex) {
+        this.sex = sex;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getOauthTypeCode() {
+        return oauthTypeCode;
+    }
+
+    public void setOauthTypeCode(String oauthTypeCode) {
+        this.oauthTypeCode = oauthTypeCode;
+    }
+
+    public String getGravatarUrl() {
+        return gravatarUrl;
+    }
+
+    public void setGravatarUrl(String gravatarUrl) {
+        this.gravatarUrl = gravatarUrl;
+    }
+
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
+    }
+
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
+    }
+
     public User() {
     }
 
@@ -121,6 +210,14 @@ public class User implements Serializable {
             this.deviceId = object.getDeviceId();
             this.createdDateTime = object.getCreatedDateTime();
             this.point = object.getPoint();
+            this.setAge(object.getAge());
+            this.setEmail(object.getEmail());
+            this.setSex(object.getSex());
+            this.setProvince(object.getProvince());
+            this.setCity(object.getCity());
+            this.setOauthTypeCode(object.getOauthTypeCode());
+            this.setGravatarUrl(object.getGravatarUrl());
+            this.setModifiedDateTime(object.getModifiedDateTime());
         }
     }
 
