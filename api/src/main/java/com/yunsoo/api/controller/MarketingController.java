@@ -131,8 +131,14 @@ public class MarketingController {
                 mktDrawRuleObject.setProbability(mktDrawRule.getProbability());
                 mktDrawRuleObject.setModifiedAccountId(currentUserId);
                 mktDrawRuleObject.setModifiedDateTime(DateTime.now());
+                if (mktDrawRuleObject.getAvailableQuantity() != null) {
+                    mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getTotalQuantity() - mktDrawRuleObject.getTotalQuantity() + mktDrawRuleObject.getAvailableQuantity());
+                } else {
+                    mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getTotalQuantity());
+                }
                 mktDrawRuleObject.setTotalQuantity(mktDrawRule.getTotalQuantity());
-                mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getAvailableQuantity());
+
+//                mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getAvailableQuantity());
 
                 mktDrawRuleObjectList.add(mktDrawRuleObject);
             }
