@@ -521,6 +521,7 @@ public class MarketingController {
         object.setTypeCode(entity.getTypeCode());
         object.setBudget(entity.getBudget());
         object.setBalance(entity.getBalance());
+        object.setPrizeTypeCode(entity.getPrizeTypeCode());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
@@ -608,6 +609,7 @@ public class MarketingController {
         entity.setTypeCode(object.getTypeCode());
         entity.setBudget(object.getBudget());
         entity.setBalance(object.getBalance());
+        entity.setPrizeTypeCode(object.getPrizeTypeCode());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());

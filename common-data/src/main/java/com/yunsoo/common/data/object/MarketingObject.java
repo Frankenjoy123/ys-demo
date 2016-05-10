@@ -46,6 +46,9 @@ public class MarketingObject {
     @JsonProperty("balance")
     private Double balance;
 
+    @JsonProperty("prize_type_code")
+    private String prizeTypeCode;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -135,6 +138,14 @@ public class MarketingObject {
 
     public void setBalance(Double balance) {
         this.balance = balance;
+    }
+
+    public String getPrizeTypeCode() {
+        return prizeTypeCode;
+    }
+
+    public void setPrizeTypeCode(String prizeTypeCode) {
+        this.prizeTypeCode = prizeTypeCode;
     }
 
     public String getCreatedAccountId() {
