@@ -10,8 +10,9 @@ multipart:
   max-request-size: 4MB
 
 spring:
-  mvc:
-    throw-exception-if-no-handler-found: true
+  profiles.active: test
+  application.name: 'api-rabbit'
+  mvc.throw-exception-if-no-handler-found: true
 
 logging:
   file: /var/log/api-rabbit.log

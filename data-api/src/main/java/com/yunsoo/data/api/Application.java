@@ -15,7 +15,6 @@ public class Application {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext app = SpringApplication.run(Application.class, args);
-        app.setId("data-api");
 
         log.info(String.format("%s started...", app.getId()));
     }
