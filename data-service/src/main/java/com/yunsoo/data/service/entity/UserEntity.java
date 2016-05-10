@@ -30,6 +30,21 @@ public class UserEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "age")
+    private Integer age;
+
+    @Column(name = "sex")
+    private Boolean sex;
+
+    @Column(name = "province")
+    private String province;
+
+    @Column(name = "city")
+    private String city;
+
     @Column(name = "status_code")
     private String statusCode;
 
@@ -39,6 +54,12 @@ public class UserEntity {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "oauth_type_code")
+    private String oauthTypeCode;
+
+    @Column(name = "gravatar_url")
+    private String gravatarUrl;
+
     @Column(name = "oauth_openid")
     private String oauthOpenid;
 
@@ -46,6 +67,9 @@ public class UserEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
+    @Column(name = "modified_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime modifiedDateTime;
 
     public String getId() {
         return id;
@@ -117,5 +141,69 @@ public class UserEntity {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Boolean getSex() {
+        return sex;
+    }
+
+    public void setSex(Boolean sex) {
+        this.sex = sex;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getOauthTypeCode() {
+        return oauthTypeCode;
+    }
+
+    public void setOauthTypeCode(String oauthTypeCode) {
+        this.oauthTypeCode = oauthTypeCode;
+    }
+
+    public String getGravatarUrl() {
+        return gravatarUrl;
+    }
+
+    public void setGravatarUrl(String gravatarUrl) {
+        this.gravatarUrl = gravatarUrl;
+    }
+
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
+    }
+
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 }

@@ -29,6 +29,27 @@ public class UserObject implements Serializable {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("email")
+    private String email;
+
+    @JsonProperty("age")
+    private Integer age;
+
+    @JsonProperty("sex")
+    private Boolean sex;
+
+    @JsonProperty("province")
+    private String province;
+
+    @JsonProperty("city")
+    private String city;
+
+    @JsonProperty("oauth_type_code")
+    private String oauthTypeCode;
+
+    @JsonProperty("gravatar_url")
+    private String gravatarUrl;
+
     @NotEmpty(message = "status_code must not be null or empty")
     @JsonProperty("status_code")
     private String statusCode;
@@ -47,6 +68,10 @@ public class UserObject implements Serializable {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("modified_datetime")
+    private DateTime modifiedDateTime;
 
     public String getId() {
         return id;
@@ -118,5 +143,69 @@ public class UserObject implements Serializable {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Boolean getSex() {
+        return sex;
+    }
+
+    public void setSex(Boolean sex) {
+        this.sex = sex;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getOauthTypeCode() {
+        return oauthTypeCode;
+    }
+
+    public void setOauthTypeCode(String oauthTypeCode) {
+        this.oauthTypeCode = oauthTypeCode;
+    }
+
+    public String getGravatarUrl() {
+        return gravatarUrl;
+    }
+
+    public void setGravatarUrl(String gravatarUrl) {
+        this.gravatarUrl = gravatarUrl;
+    }
+
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
+    }
+
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 }

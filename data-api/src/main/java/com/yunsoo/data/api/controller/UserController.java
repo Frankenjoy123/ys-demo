@@ -55,9 +55,8 @@ public class UserController {
             entityPage = userRepository.findByPhone(phone, pageable);
         } else if (!StringUtils.isEmpty(deviceId)) {
             entityPage = userRepository.findByDeviceId(deviceId, pageable);
-        }
-        else if(!StringUtils.isEmpty(openId)){
-             entityPage = userRepository.findByOauthOpenid(openId, pageable);
+        } else if (!StringUtils.isEmpty(openId)) {
+            entityPage = userRepository.findByOauthOpenid(openId, pageable);
         } else if (pointGE != null || pointLE != null) {
             entityPage = userRepository.query(pointGE, pointLE, pageable);
         } else {
@@ -119,6 +118,31 @@ public class UserController {
         if (userObject.getOauthOpenid() != null) {
             entity.setOauthOpenid(userObject.getOauthOpenid());
         }
+        if (userObject.getAge() != null) {
+            entity.setAge(userObject.getAge());
+        }
+        if (userObject.getSex() != null) {
+            entity.setSex(userObject.getSex());
+        }
+        if (userObject.getEmail() != null) {
+            entity.setEmail(userObject.getEmail());
+        }
+        if (userObject.getGravatarUrl() != null) {
+            entity.setGravatarUrl(userObject.getGravatarUrl());
+        }
+        if (userObject.getCity() != null) {
+            entity.setCity(userObject.getCity());
+        }
+        if (userObject.getOauthTypeCode() != null) {
+            entity.setOauthTypeCode(userObject.getOauthTypeCode());
+        }
+        if (userObject.getProvince() != null) {
+            entity.setProvince(userObject.getProvince());
+        }
+        if (userObject.getModifiedDateTime() != null) {
+            entity.setModifiedDateTime(userObject.getModifiedDateTime());
+        }
+
         userRepository.save(entity);
     }
 
@@ -150,6 +174,14 @@ public class UserController {
         object.setAddress(entity.getAddress());
         object.setOauthOpenid(entity.getOauthOpenid());
         object.setCreatedDateTime(entity.getCreatedDateTime());
+        object.setAge(entity.getAge());
+        object.setSex(entity.getSex());
+        object.setEmail(entity.getEmail());
+        object.setGravatarUrl(entity.getGravatarUrl());
+        object.setCity(entity.getCity());
+        object.setOauthTypeCode(entity.getOauthTypeCode());
+        object.setProvince(entity.getProvince());
+        object.setModifiedDateTime(entity.getModifiedDateTime());
         return object;
     }
 
@@ -167,6 +199,14 @@ public class UserController {
         entity.setAddress(object.getAddress());
         entity.setOauthOpenid(object.getOauthOpenid());
         entity.setCreatedDateTime(object.getCreatedDateTime());
+        entity.setAge(object.getAge());
+        entity.setSex(object.getSex());
+        entity.setEmail(object.getEmail());
+        entity.setGravatarUrl(object.getGravatarUrl());
+        entity.setCity(object.getCity());
+        entity.setOauthTypeCode(object.getOauthTypeCode());
+        entity.setProvince(object.getProvince());
+        entity.setModifiedDateTime(object.getModifiedDateTime());
         return entity;
     }
 
