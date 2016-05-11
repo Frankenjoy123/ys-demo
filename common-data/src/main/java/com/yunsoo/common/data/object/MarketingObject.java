@@ -75,6 +75,9 @@ public class MarketingObject {
     @JsonProperty("end_datetime")
     private DateTime endDateTime;
 
+    @JsonProperty("rules_text")
+    private String rulesText;
+
 
     public String getId() {
         return id;
@@ -221,5 +224,13 @@ public class MarketingObject {
 
     public void setEndDateTime(DateTime endDateTime) {
         this.endDateTime = endDateTime;
+    }
+
+    public String getRulesText() {
+        return rulesText;
+    }
+
+    public void setRulesText(String rulesText) {
+        this.rulesText = rulesText;
     }
 }

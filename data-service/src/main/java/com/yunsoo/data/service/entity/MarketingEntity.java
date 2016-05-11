@@ -76,6 +76,10 @@ public class MarketingEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime endDateTime;
 
+    @Column(name = "rules_text")
+    private String rulesText;
+
+
     public String getId() {
         return id;
     }
@@ -218,5 +222,13 @@ public class MarketingEntity {
 
     public void setEndDateTime(DateTime endDateTime) {
         this.endDateTime = endDateTime;
+    }
+
+    public String getRulesText() {
+        return rulesText;
+    }
+
+    public void setRulesText(String rulesText) {
+        this.rulesText = rulesText;
     }
 }

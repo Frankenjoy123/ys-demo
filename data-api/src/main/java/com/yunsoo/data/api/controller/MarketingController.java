@@ -542,6 +542,7 @@ public class MarketingController {
         object.setQuantity(entity.getQuantity());
         object.setStartDateTime(entity.getStartDateTime());
         object.setEndDateTime(entity.getEndDateTime());
+        object.setRulesText(entity.getRulesText());
         return object;
     }
 
@@ -630,6 +631,7 @@ public class MarketingController {
         entity.setQuantity(object.getQuantity());
         entity.setStartDateTime(object.getStartDateTime());
         entity.setEndDateTime(object.getEndDateTime());
+        entity.setRulesText(object.getRulesText());
         return entity;
     }
 

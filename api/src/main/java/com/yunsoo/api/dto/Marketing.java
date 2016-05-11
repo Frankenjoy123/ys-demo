@@ -88,6 +88,9 @@ public class Marketing implements OrgIdDetectable {
     @JsonProperty("comments")
     private String comments;
 
+    @JsonProperty("rules_text")
+    private String rulesText;
+
     @JsonProperty("marketing_rules")
     private List<MktDrawRule> marketingRules;
 
@@ -260,6 +263,14 @@ public class Marketing implements OrgIdDetectable {
         this.marketingRules = marketingRules;
     }
 
+    public String getRulesText() {
+        return rulesText;
+    }
+
+    public void setRulesText(String rulesText) {
+        this.rulesText = rulesText;
+    }
+
     public Marketing() {
 
     }
@@ -284,6 +295,7 @@ public class Marketing implements OrgIdDetectable {
             this.setEndDateTime(object.getEndDateTime());
             this.setStatusCode(object.getStatusCode());
             this.setComments(object.getComments());
+            this.setRulesText(object.getRulesText());
         }
 
     }
@@ -308,6 +320,7 @@ public class Marketing implements OrgIdDetectable {
         object.setEndDateTime(this.getEndDateTime());
         object.setStatusCode(this.getStatusCode());
         object.setComments(this.getComments());
+        object.setRulesText(this.getRulesText());
         return object;
     }
 
