@@ -426,7 +426,7 @@ public class MarketingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMarketingRuleByMarketingId(@PathVariable(value = "id") String id) {
         if (id != null) {
-            List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderByAmountDesc(id);
+            List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderById(id);
             if (mktDrawRuleEntities.size() > 0) {
                 for (MktDrawRuleEntity entity : mktDrawRuleEntities) {
                     String mktDrawRuleId = entity.getId();
@@ -451,7 +451,7 @@ public class MarketingController {
 
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.GET)
     public List<MktDrawRuleObject> findMarketingRulesById(@PathVariable(value = "id")String marketingId){
-        List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderByAmountDesc(marketingId);
+        List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderById(marketingId);
         return mktDrawRuleEntities.stream().map(this::toMktDrawRuleObject).collect(Collectors.toList());
     }
 
