@@ -402,9 +402,22 @@ public class MarketingController {
         mktDrawRuleRepository.save(mktDrawRuleEntities);
     }
 
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    public List<String> getBatchIds(@PathVariable(value = "id") String id) {
+
+        List<ProductKeyBatchEntity> productKeyBatchEntities = productKeyBatchRepository.findByMarketingId(id);
+
+        List<String> batchIds = new ArrayList<>();
+        if (productKeyBatchEntities != null) {
+            for (ProductKeyBatchEntity pkEntity : productKeyBatchEntities) {
+                batchIds.add(pkEntity.getBatchNo());
+            }
+        }
+        return batchIds;
+    }
 
     //delete marketing plan
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMarketing(@PathVariable(value = "id") String id) {
         MarketingEntity entity = marketingRepository.findOne(id);
@@ -445,8 +458,6 @@ public class MarketingController {
             mktDrawRuleRepository.delete(id);
         }
     }
-
-
 
 
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.GET)

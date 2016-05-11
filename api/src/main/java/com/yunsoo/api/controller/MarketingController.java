@@ -536,6 +536,15 @@ public class MarketingController {
         return marketing;
     }
 
+    @RequestMapping(value = "delete/{id}", method = RequestMethod.GET)
+    public List<String> getMarketingBatchNos(@PathVariable(value = "id") String id) {
+        MarketingObject marketingObject = marketingDomain.getMarketingById(id);
+        List<String> batchNos = null;
+        if (marketingObject != null) {
+            batchNos = marketingDomain.getBatchNosById(id);
+        }
+        return batchNos;
+    }
 
     //delete marketing plan by id
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
