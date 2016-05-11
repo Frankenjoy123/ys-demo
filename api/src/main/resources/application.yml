@@ -9,6 +9,11 @@ multipart:
   max-file-size: 20MB
   max-request-size: 20MB
 
+spring:
+  profiles.active: local
+  application.name: 'api'
+  mvc.throw-exception-if-no-handler-found: true
+
 yunsoo:
   debug: true
   environment: dev
@@ -35,10 +40,6 @@ yunsoo:
     notify_url: http://dev.yunsu.co:6080/marketing/alipay/notify
     direct_return_url: http://dev.yunsu.co:9080/enterprise/brandapplication.html
     direct_notify_url: http://dev.yunsu.co:6080/payment/brand/alipay/notify
-spring:
-  profiles.active: local
-  mvc:
-    throw-exception-if-no-handler-found: true
 
 ---
 spring:

@@ -426,7 +426,7 @@ public class MarketingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMarketingRuleByMarketingId(@PathVariable(value = "id") String id) {
         if (id != null) {
-            List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderByAmountDesc(id);
+            List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderById(id);
             if (mktDrawRuleEntities.size() > 0) {
                 for (MktDrawRuleEntity entity : mktDrawRuleEntities) {
                     String mktDrawRuleId = entity.getId();
@@ -451,7 +451,7 @@ public class MarketingController {
 
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.GET)
     public List<MktDrawRuleObject> findMarketingRulesById(@PathVariable(value = "id")String marketingId){
-        List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderByAmountDesc(marketingId);
+        List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderById(marketingId);
         return mktDrawRuleEntities.stream().map(this::toMktDrawRuleObject).collect(Collectors.toList());
     }
 
@@ -521,6 +521,7 @@ public class MarketingController {
         object.setTypeCode(entity.getTypeCode());
         object.setBudget(entity.getBudget());
         object.setBalance(entity.getBalance());
+        object.setPrizeTypeCode(entity.getPrizeTypeCode());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
@@ -608,6 +609,7 @@ public class MarketingController {
         entity.setTypeCode(object.getTypeCode());
         entity.setBudget(object.getBudget());
         entity.setBalance(object.getBalance());
+        entity.setPrizeTypeCode(object.getPrizeTypeCode());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
