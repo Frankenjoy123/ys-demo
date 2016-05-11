@@ -67,13 +67,21 @@ public class Marketing {
     @JsonProperty("start_datetime")
     private DateTime startDateTime;
 
+    @JsonProperty("product_type_code")
+    private String prizeTypeCode;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("end_datetime")
     private DateTime endDateTime;
 
+    public String getPrizeTypeCode() {
+        return prizeTypeCode;
+    }
 
+    public void setPrizeTypeCode(String prizeTypeCode) {
+        this.prizeTypeCode = prizeTypeCode;
+    }
 
     public String getId() {
         return id;
@@ -224,7 +232,6 @@ public class Marketing {
             this.setQuantity(object.getQuantity());
             this.setStartDateTime(object.getStartDateTime());
             this.setEndDateTime(object.getEndDateTime());
-
         }
     }
 
