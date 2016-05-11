@@ -397,6 +397,7 @@ public class MarketingController {
             marketingObject.setQuantity(marketing.getQuantity());
             marketingObject.setStartDateTime(marketing.getStartDateTime());
             marketingObject.setEndDateTime(marketing.getEndDateTime());
+            marketingObject.setPrizeTypeCode(marketing.getPrizeTypeCode());
             marketingDomain.updateMarketing(marketingObject);
         }
     }
