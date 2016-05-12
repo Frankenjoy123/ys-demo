@@ -10,8 +10,10 @@ import com.yunsoo.common.data.object.UserConfigObject;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,6 +49,14 @@ public class UserController {
         }
         return new User(user);
     }
+    @RequestMapping(value = "/oauth/{id}", method = RequestMethod.GET)
+    public User getUserByOAuthId(@PathVariable(value = "id") String openId, @RequestParam(value="type") String oAuthType){
+        UserObject user = userDomain.getUserByOpenIdAndType(openId, oAuthType);
+        if (user == null) {
+            throw new NotFoundException(40401, "user not found by [openid:" + openId + "] and [open type: ]" + oAuthType);
+        }
+        return new User(user);
+    }
 
     @RequestMapping( method = RequestMethod.POST)
     public User create(@RequestBody User user) {
@@ -61,6 +71,7 @@ public class UserController {
         userId = fixUserId(userId);
         UserObject userObject = user.toUserObject();
         userObject.setId(userId);
+        userObject.setModifiedDateTime(DateTime.now());
         userDomain.patchUpdateUser(userObject);
     }
 

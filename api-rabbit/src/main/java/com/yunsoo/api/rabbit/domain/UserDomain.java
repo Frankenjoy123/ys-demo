@@ -53,6 +53,16 @@ public class UserDomain {
         }
     }
 
+    public UserObject getUserByOpenIdAndType(String openId, String type){
+        List<UserObject> userObjects = dataAPIClient.get("user?open_id={openId}&oauth_type={type}", new ParameterizedTypeReference<List<UserObject>>() {
+        }, openId, type);
+        if (userObjects.size() == 0) {
+            return null;
+        } else {
+            return userObjects.get(userObjects.size() - 1);
+        }
+    }
+
     public UserObject getUserByPhone(String phone) {
         if (StringUtils.isEmpty(phone)) {
             return null;
@@ -113,10 +123,9 @@ public class UserDomain {
 
     public UserObject createUser(UserObject userObject) {
         if (StringUtils.hasText(userObject.getOauthOpenid())) {
-            List<UserObject> existingUser = dataAPIClient.get("user?open_id={openid}", new ParameterizedTypeReference<List<UserObject>>() {
-            }, userObject.getOauthOpenid());
-            if (existingUser.size() > 0) {
-                return existingUser.get(0);
+            UserObject existingUser = getUserByOpenIdAndType(userObject.getOauthOpenid(), userObject.getOauthTypeCode());
+            if (existingUser != null) {
+                throw new ConflictException("same openId and type already registered by another user");
             }
         }
         //check phone
