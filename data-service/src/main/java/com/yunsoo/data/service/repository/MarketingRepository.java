@@ -16,9 +16,9 @@ import java.util.List;
  * Descriptions:
  */
 public interface MarketingRepository extends CrudRepository<MarketingEntity, String> {
-    Page<MarketingEntity> findByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodes, Pageable pageable);
+    Page<MarketingEntity> findByOrgIdAndStatusCodeInOrderByCreatedDateTimeDesc(String orgId, List<String> statusCodes, Pageable pageable);
 
-    Page<MarketingEntity> findByOrgIdAndStatusCode(String orgId, String statusCode, Pageable pageable);
+    Page<MarketingEntity> findByOrgIdAndStatusCodeOrderByCreatedDateTimeDesc(String orgId, String statusCode, Pageable pageable);
 
     Long countByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodes);
 

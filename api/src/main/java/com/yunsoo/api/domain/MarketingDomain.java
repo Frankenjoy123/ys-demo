@@ -2,6 +2,7 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.api.payment.AlipayParameters;
 import com.yunsoo.api.payment.ParameterNames;
+import com.yunsoo.common.data.object.BrandApplicationHistoryObject;
 import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.data.object.MktDrawPrizeObject;
 import com.yunsoo.common.data.object.MktDrawRuleObject;
@@ -179,6 +180,11 @@ public class MarketingDomain {
 
     public void updateMarketing(MarketingObject marketingObject){
         dataAPIClient.put("marketing/{id}", marketingObject, marketingObject.getId());
+    }
+
+    public List<String> getBatchNosById(String id) {
+        return dataAPIClient.get("marketing/delete/{id}", new ParameterizedTypeReference<List<String>>() {
+        }, id);
     }
 
     public void deleteMarketingById(String id) {
