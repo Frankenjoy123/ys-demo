@@ -109,10 +109,10 @@ public class MarketingController {
                                              HttpServletResponse response) {
         Page<MarketingEntity> entityPage = null;
         if ((status != null) && (orgId != null)) {
-            entityPage = marketingRepository.findByOrgIdAndStatusCode(orgId, status, pageable);
+            entityPage = marketingRepository.findByOrgIdAndStatusCodeOrderByCreatedDateTimeDesc(orgId, status, pageable);
         } else {
             if (orgId != null)
-                entityPage = marketingRepository.findByOrgIdAndStatusCodeIn(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
+                entityPage = marketingRepository.findByOrgIdAndStatusCodeInOrderByCreatedDateTimeDesc(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
             else if (orgIds != null && orgIds.size() > 0) {
                 entityPage = marketingRepository.query(orgIds, status, startTime, endTime, productBaseId, searchText, pageable);
             } else
