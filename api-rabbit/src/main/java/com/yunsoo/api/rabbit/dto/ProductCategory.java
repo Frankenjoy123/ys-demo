@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yunsoo.common.data.object.ProductCategoryObject;
 
 /**
  * Created by  : Zhe
@@ -61,5 +62,18 @@ public class ProductCategory {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public ProductCategory() {
+    }
+
+    public ProductCategory(ProductCategoryObject obj) {
+        if (obj != null) {
+            this.setId(obj.getId());
+            this.setName(obj.getName());
+            this.setDescription(obj.getDescription());
+            this.setParentId(obj.getParentId());
+            this.setActive(obj.isActive());
+        }
     }
 }

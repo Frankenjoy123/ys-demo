@@ -32,6 +32,9 @@ VALUES ('2m70vq78rw9f0oxpgtv', 'account/2k0rahgcybh0l5uxtep', 'org/*', '*:*', 'a
 #domain_directory
 INSERT INTO domain_directory (name, description, org_id) VALUES ('*', '云溯科技', '2k0r1l55i2rs5544wz5');
 
+#product_category
+INSERT INTO product_category (id, name, description, parent_id, active) VALUES ('0', '未知', '未知', '-1', TRUE);
+
 #permission_action
 INSERT INTO permission_action (code, name, description) VALUES ('*', '完全控制', '完全控制');
 INSERT INTO permission_action (code, name, description) VALUES ('create', '新建', '新建');
