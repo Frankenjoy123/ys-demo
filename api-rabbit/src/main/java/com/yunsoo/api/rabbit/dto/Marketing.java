@@ -70,13 +70,13 @@ public class Marketing {
     @JsonProperty("start_datetime")
     private DateTime startDateTime;
 
-    @JsonProperty("product_type_code")
-    private String prizeTypeCode;
-
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("end_datetime")
     private DateTime endDateTime;
+
+    @JsonProperty("rules_text")
+    private String rulesText;
 
     public String getPrizeTypeCode() {
         return prizeTypeCode;
@@ -150,13 +150,6 @@ public class Marketing {
         this.balance = balance;
     }
 
-    public String getPrizeTypeCode() {
-        return prizeTypeCode;
-    }
-
-    public void setPrizeTypeCode(String prizeTypeCode) {
-        this.prizeTypeCode = prizeTypeCode;
-    }
 
     public String getCreatedAccountId() {
         return createdAccountId;
@@ -220,6 +213,14 @@ public class Marketing {
 
     public void setEndDateTime(DateTime endDateTime) {
         this.endDateTime = endDateTime;
+    }
+
+    public String getRulesText() {
+        return rulesText;
+    }
+
+    public void setRulesText(String rulesText) {
+        this.rulesText = rulesText;
     }
 
     public Marketing() {
