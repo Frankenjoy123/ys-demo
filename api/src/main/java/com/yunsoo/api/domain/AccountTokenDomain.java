@@ -6,9 +6,14 @@ import com.yunsoo.common.web.client.RestClient;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 /**
@@ -25,8 +30,43 @@ public class AccountTokenDomain {
     @Autowired
     private RestClient dataAPIClient;
 
-    public AccountTokenObject getByPermanentToken(String permanentToken) {
-        return dataAPIClient.get("accounttoken?permanent_token={0}", AccountTokenObject.class, permanentToken);
+
+    public AccountTokenObject getNonExpiredByPermanentToken(String permanentToken) {
+        if (!StringUtils.hasText(permanentToken)) {
+            return null;
+        }
+        List<AccountTokenObject> accountTokenObjects = dataAPIClient.get("accounttoken?permanent_token={0}", new ParameterizedTypeReference<List<AccountTokenObject>>() {
+        }, permanentToken);
+        for (AccountTokenObject at : accountTokenObjects) {
+            if (at.getPermanentTokenExpiresDateTime() == null || at.getPermanentTokenExpiresDateTime().isAfterNow()) {
+                return at;
+            }
+        }
+        return null;
+    }
+
+    public List<AccountTokenObject> getNonExpiredByDeviceId(String deviceId) {
+        if (!StringUtils.hasText(deviceId)) {
+            return new ArrayList<>();
+        }
+        List<AccountTokenObject> accountTokenObjects = dataAPIClient.get("accounttoken?device_id={0}", new ParameterizedTypeReference<List<AccountTokenObject>>() {
+        }, deviceId);
+        return accountTokenObjects.stream()
+                .filter(at -> at.getPermanentTokenExpiresDateTime() == null || at.getPermanentTokenExpiresDateTime().isAfterNow())
+                .collect(Collectors.toList());
+    }
+
+    public void expirePermanentTokenByDeviceId(String deviceId) {
+        List<AccountTokenObject> accountTokenObjects = getNonExpiredByDeviceId(deviceId);
+        for (AccountTokenObject at : accountTokenObjects) {
+            expirePermanentTokenById(at.getId());
+        }
+    }
+
+    public void expirePermanentTokenById(String accountTokenId) {
+        AccountTokenObject accountTokenObject = new AccountTokenObject();
+        accountTokenObject.setPermanentTokenExpiresDateTime(DateTime.now());
+        dataAPIClient.patch("accounttoken/{id}", accountTokenObject, accountTokenId);
     }
 
     /**
