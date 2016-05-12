@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Jerry
@@ -33,16 +34,21 @@ public class AccountTokenController {
         if (entity == null) {
             throw new NotFoundException("AccountToken not found by [id: " + id + "]");
         }
-        return fromAccountTokenEntity(entity);
+        return toAccountTokenObject(entity);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public AccountTokenObject getByPermanentToken(@RequestParam(value = "permanent_token") String permanentToken) {
-        List<AccountTokenEntity> entities = accountTokenRepository.findByPermanentToken(permanentToken);
-        if (entities.isEmpty()) {
-            throw new NotFoundException("AccountToken not found by [permanentToken: " + permanentToken + "]");
+    public List<AccountTokenObject> getByFilter(@RequestParam(value = "permanent_token", required = false) String permanentToken,
+                                                @RequestParam(value = "device_id", required = false) String deviceId) {
+        List<AccountTokenEntity> entities;
+        if (StringUtils.hasText(permanentToken)) {
+            entities = accountTokenRepository.findByPermanentToken(permanentToken);
+        } else if (StringUtils.hasText(deviceId)) {
+            entities = accountTokenRepository.findByDeviceId(deviceId);
+        } else {
+            throw new BadRequestException("filter parameters are missing");
         }
-        return fromAccountTokenEntity(entities.get(0));
+        return entities.stream().map(this::toAccountTokenObject).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -58,7 +64,7 @@ public class AccountTokenController {
         accountToken.setId(null); //make sure it's create
         AccountTokenEntity entity = toAccountTokenEntity(accountToken);
         AccountTokenEntity newEntity = accountTokenRepository.save(entity);
-        return fromAccountTokenEntity(newEntity);
+        return toAccountTokenObject(newEntity);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
@@ -74,7 +80,7 @@ public class AccountTokenController {
     }
 
 
-    private AccountTokenObject fromAccountTokenEntity(AccountTokenEntity entity) {
+    private AccountTokenObject toAccountTokenObject(AccountTokenEntity entity) {
         if (entity == null) {
             return null;
         }

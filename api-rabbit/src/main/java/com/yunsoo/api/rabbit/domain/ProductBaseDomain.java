@@ -3,6 +3,7 @@ package com.yunsoo.api.rabbit.domain;
 import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
@@ -21,6 +22,7 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by  : Lijian
@@ -33,6 +35,9 @@ public class ProductBaseDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+
+    @Autowired
+    private LookupDomain lookupDomain;
 
     private Log log = LogFactory.getLog(this.getClass());
 
@@ -83,7 +88,11 @@ public class ProductBaseDomain {
         if (id == null) {
             return null;
         }
-        return dataAPIClient.get("productcategory/{id}", ProductCategory.class, id);
+        Map<String, ProductCategoryObject> map = lookupDomain.getProductCategoryMap();
+        if (map.containsKey(id)) {
+            return new ProductCategory(map.get(id));
+        }
+        return null;
     }
 
     public String getProductBaseImageUrl(String imageName) {

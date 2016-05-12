@@ -1,9 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
-import com.yunsoo.api.rabbit.dto.Product;
-import com.yunsoo.api.rabbit.dto.ProductCategory;
-import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -63,42 +60,6 @@ public class ProductDomain {
             return null;
         }
     }
-
-    //Retrieve Product key, ProductBase entry and Product-Category entry from Backend.
-    public Product getProductFromProductObject(ProductObject productObject) {
-        if (productObject == null) {
-            return null;
-        }
-        Product product = new Product();
-        product.setProductKey(productObject.getProductKey());
-        product.setStatusCode(productObject.getProductStatusCode());
-        product.setManufacturingDateTime(productObject.getManufacturingDateTime());
-        product.setCreatedDateTime(productObject.getCreatedDateTime());
-
-        //fill with ProductBase information.
-        String productBaseId = productObject.getProductBaseId();
-        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
-        if (productBaseObject != null) {
-            product.setProductBaseId(productBaseId);
-            product.setBarcode(productBaseObject.getBarcode());
-            product.setComment(productBaseObject.getComments());
-            product.setName(productBaseObject.getName());
-            product.setOrgId(productBaseObject.getOrgId());
-
-            //fill with ProductCategory information.
-            ProductCategory productCategory = getProductCategoryById(productBaseObject.getCategoryId());
-            product.setProductCategory(productCategory);
-        }
-        return product;
-    }
-
-    public ProductCategory getProductCategoryById(String id) {
-        if (id == null) {
-            return null;
-        }
-        return dataAPIClient.get("productcategory/{id}", ProductCategory.class, id);
-    }
-
 
     public Long getCommentsScore(String productBaseId) {
         return dataAPIClient.get("productcomments/avgscore/{id}", Long.class, productBaseId);
