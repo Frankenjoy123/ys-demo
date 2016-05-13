@@ -318,8 +318,9 @@ public class MarketingController {
             orgId = AuthUtils.fixOrgId(orgId);
 
         List<Marketing> marketingList = new ArrayList<>();
-        if(orgId == null || orgIds.size() == 0)
+        if (orgId == null && (orgIds == null || orgIds.size() == 0)) {
             return marketingList;
+        }
 
         Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status, searchText, startTime, endTime, productBaseId, pageable);
         if (pageable != null) {
