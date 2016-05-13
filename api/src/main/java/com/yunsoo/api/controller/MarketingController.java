@@ -313,12 +313,16 @@ public class MarketingController {
         else
             orgId = AuthUtils.fixOrgId(orgId);
 
+        List<Marketing> marketingList = new ArrayList<>();
+        if(orgId == null || orgIds.size() == 0)
+            return marketingList;
+
         Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status, searchText, startTime, endTime, productBaseId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", marketingPage.toContentRange());
         }
 
-        List<Marketing> marketingList = new ArrayList<>();
+
         Map<String, String> orgList = new HashMap<>();
         marketingPage.getContent().forEach(object -> {
             Marketing marketing = new Marketing(object);
