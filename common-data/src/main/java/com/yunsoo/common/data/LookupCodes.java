@@ -190,6 +190,17 @@ public class LookupCodes {
 
     }
 
+    public static class MktType {
+        private MktType() {
+        }
+
+        public static final String DRAW = "DRAW";
+        public static final String REDPACKETS = "REDPACKETS";
+        public static final String ENVELOPE = "ENVELOPE";
+
+    }
+
+
     public static class MktStatus {
         private MktStatus() {
         }
