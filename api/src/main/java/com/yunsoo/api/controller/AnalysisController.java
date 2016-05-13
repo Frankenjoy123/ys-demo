@@ -1,13 +1,9 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.AnalysisDomain;
-import com.yunsoo.api.dto.KeyUsageReport;
-import com.yunsoo.api.dto.ScanAnalysisReport;
-import com.yunsoo.api.dto.ScanLocationAnalysisReport;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
-import com.yunsoo.common.data.object.ProductKeyBatchObject;
-import com.yunsoo.common.data.object.ScanRecordAnalysisObject;
-import com.yunsoo.common.data.object.ScanRecordLocationAnalysisObject;
+import com.yunsoo.common.data.object.*;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
@@ -53,10 +49,11 @@ public class AnalysisController {
         Map<DateTime, Integer> uvData = data.stream().collect(Collectors.groupingBy(ScanRecordAnalysisObject::getScanDate, Collectors.summingInt(ScanRecordAnalysisObject::getUv)))
                 .entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
                     throw new IllegalStateException();
-                }, LinkedHashMap::new));;
+                }, LinkedHashMap::new));
+        ;
 
 
-        DateTime startDateTime =  startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(0));
+        DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(0));
         DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(0)).plusMinutes(10);
 
 
@@ -178,7 +175,7 @@ public class AnalysisController {
 
     @RequestMapping(value = "/key_usage_report", method = RequestMethod.GET)
     public KeyUsageReport getKeyUsageReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
-                                            @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)org.joda.time.LocalDate endTime,
+                                            @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
                                             @RequestParam(value = "product_base_id", required = false) String productBaseId) {
         LocalDate now = LocalDate.now();
         if (startTime == null) {
@@ -197,7 +194,7 @@ public class AnalysisController {
                 }, LinkedHashMap::new));
 
 
-        DateTime startDateTime =  startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(0));
+        DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(0));
         DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(0)).plusMinutes(10);
         List<String> dateList = new ArrayList<String>();
         List<Integer> quantityList = new ArrayList<Integer>();
@@ -207,7 +204,7 @@ public class AnalysisController {
             dateList.add(dateString);
             startDateTime = startDateTime.plusDays(1);
             int quantity = 0;
-            if (quantityMap.containsKey(dateString)){
+            if (quantityMap.containsKey(dateString)) {
                 quantity = quantityMap.get(dateString);
             }
             quantityList.add(quantity);
@@ -219,10 +216,222 @@ public class AnalysisController {
         report.setQuantity(quantityList.stream().mapToInt(Integer::intValue).toArray());
 
         return report;
-
-
     }
 
+    @RequestMapping(value = "/market_user_area_report", method = RequestMethod.GET)
+    public MarketUserCategoryAndValueReport getMarketUserAreaReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                                    @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
+                                                                    @RequestParam(value = "marketing_id", required = false) String marketing_id) {
+        LocalDate now = LocalDate.now();
+        if (startTime == null) {
+            startTime = now.plusDays(-90);
+        }
+        if (endTime == null) {
+            endTime = now.plusDays(-1);
+        }
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
+        List<MarketUserAreaAnalysisObject> list = analysisDomain.getMarketUserAreaReport(orgId, marketing_id, startTime, endTime);
+        Map<String, Integer> quantityMap = list.stream()
+                .collect(Collectors.groupingBy(MarketUserAreaAnalysisObject::getTagName, Collectors.summingInt(MarketUserAreaAnalysisObject::getCount)))
+                .entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
+                    throw new IllegalStateException();
+                }, LinkedHashMap::new));
+        List<LuTagObject> tags = analysisDomain.getTags();
+        List<String> categories = tags.stream().filter(t -> t.getCategory() == 1).map(t -> {
+            return t.getTagName() + "消费者";
+        }).collect(Collectors.toList());
+        List<Integer> values = categories.stream().map(t -> {
+            if (quantityMap.containsKey(t)) {
+                return quantityMap.get(t);
+            } else {
+                return 0;
+            }
+        }).collect(Collectors.toList());
+        MarketUserCategoryAndValueReport report = new MarketUserCategoryAndValueReport();
+        report.setDataCategory(categories.toArray(new String[0]));
+        report.setQuantity(values.stream().mapToInt(Integer::intValue).toArray());
+        return report;
+    }
+
+    @RequestMapping(value = "/market_user_gender_report", method = RequestMethod.GET)
+    public MarketUserCategoryAndValueReport getMarketUserGenderReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                                      @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
+                                                                      @RequestParam(value = "marketing_id", required = false) String marketing_id) {
+        LocalDate now = LocalDate.now();
+        if (startTime == null) {
+            startTime = now.plusDays(-90);
+        }
+        if (endTime == null) {
+            endTime = now.plusDays(-1);
+        }
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
+        List<MarketUserGenderAnalysisObject> list = analysisDomain.getMarketUserGenderReport(orgId, marketing_id, startTime, endTime);
+        Map<String, Integer> quantityMap = list.stream()
+                .collect(Collectors.groupingBy(t -> {
+                    switch (t.getGender()) {
+                        case 1://女
+                            return "女";
+                        case 0:
+                            return "男";
+                        default:
+                            return "未知";
+                    }
+
+                }, Collectors.summingInt(MarketUserGenderAnalysisObject::getCount)))
+                .entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
+                    throw new IllegalStateException();
+                }, LinkedHashMap::new));
+
+        List<LuTagObject> tags = analysisDomain.getTags();
+        List<String> categories = tags.stream().filter(t -> t.getCategory() == 2).map(LuTagObject::getTagName).collect(Collectors.toList());
+        List<Integer> values = tags.stream().filter(t -> t.getCategory() == 2).map(t -> {
+            if (quantityMap.containsKey(t.getTagName())) {
+                return quantityMap.get(t.getTagName());
+            } else {
+                return 0;
+            }
+        }).collect(Collectors.toList());
+        MarketUserCategoryAndValueReport report = new MarketUserCategoryAndValueReport();
+        report.setDataCategory(categories.toArray(new String[0]));
+        report.setQuantity(values.stream().mapToInt(Integer::intValue).toArray());
+
+        return report;
+    }
+
+    @RequestMapping(value = "/market_user_device_report", method = RequestMethod.GET)
+    public MarketUserCategoryAndValueReport getMarketUserDeviceReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                                      @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
+                                                                      @RequestParam(value = "marketing_id", required = false) String marketing_id) {
+        LocalDate now = LocalDate.now();
+        if (startTime == null) {
+            startTime = now.plusDays(-90);
+        }
+        if (endTime == null) {
+            endTime = now.plusDays(-1);
+        }
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
+        List<MarketUserDeviceAnalysisObject> list = analysisDomain.getMarketUserDeviceReport(orgId, marketing_id, startTime, endTime);
+        Map<String, Integer> quantityMap = list.stream()
+                .collect(Collectors.groupingBy(u->{
+                    if (u.getDevice().equalsIgnoreCase("other")) {
+                        return "其他";
+                    }
+                    return u.getDevice();
+
+                }, Collectors.summingInt(MarketUserDeviceAnalysisObject::getCount)))
+                .entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
+                    throw new IllegalStateException();
+                }, LinkedHashMap::new));
+
+        List<LuTagObject> tags = analysisDomain.getTags();
+        List<String> categories = tags.stream().filter(t -> t.getCategory() == 3).map(LuTagObject::getTagName).collect(Collectors.toList());
+        List<Integer> values = tags.stream().filter(t -> t.getCategory() == 3).map(t -> {
+            if (quantityMap.containsKey(t.getTagName())) {
+                return quantityMap.get(t.getTagName());
+            } else {
+                return 0;
+            }
+        }).collect(Collectors.toList());
+        MarketUserCategoryAndValueReport report = new MarketUserCategoryAndValueReport();
+        report.setDataCategory(categories.toArray(new String[0]));
+        report.setQuantity(values.stream().mapToInt(Integer::intValue).toArray());
+        return report;
+    }
+
+    @RequestMapping(value = "/market_user_usage_report", method = RequestMethod.GET)
+    public MarketUserCategoryAndValueReport getMarketUserUsageReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                                     @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
+                                                                     @RequestParam(value = "marketing_id", required = false) String marketing_id) {
+        LocalDate now = LocalDate.now();
+        if (startTime == null) {
+            startTime = now.plusDays(-90);
+        }
+        if (endTime == null) {
+            endTime = now.plusDays(-1);
+        }
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
+        List<MarketUserUsageAnalysisObject> list = analysisDomain.getMarketUserUsageReport(orgId, marketing_id, startTime, endTime);
+        Map<String, Integer> quantityMap = list.stream()
+                .collect(Collectors.groupingBy(MarketUserUsageAnalysisObject::getTimeSpan, Collectors.summingInt(MarketUserUsageAnalysisObject::getCount)))
+                .entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
+                    throw new IllegalStateException();
+                }, LinkedHashMap::new));
+
+//        MarketUserCategoryAndValueReport report = new MarketUserCategoryAndValueReport();
+//        report.setDataCategory(quantityMap.keySet().toArray(new String[0]));
+//        report.setQuantity(quantityMap.values().stream().mapToInt(Integer::intValue).toArray());
+        List<LuTagObject> tags = analysisDomain.getTags();
+        List<String> categories = tags.stream().filter(t -> t.getCategory() == 4).map(LuTagObject::getTagName).collect(Collectors.toList());
+        List<Integer> values = tags.stream().filter(t -> t.getCategory() == 4).map(t -> {
+            if (quantityMap.containsKey(t.getTagName())) {
+                return quantityMap.get(t.getTagName());
+            } else {
+                return 0;
+            }
+        }).collect(Collectors.toList());
+        MarketUserCategoryAndValueReport report = new MarketUserCategoryAndValueReport();
+        report.setDataCategory(categories.toArray(new String[0]));
+        report.setQuantity(values.stream().mapToInt(Integer::intValue).toArray());
+
+        return report;
+    }
+
+    @RequestMapping(value = "/market_user_location_report", method = RequestMethod.GET)
+    public MarketUserLocationReport getMarketUserLocationReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                                @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
+                                                                @RequestParam(value = "marketing_id", required = false) String marketing_id) {
+        LocalDate now = LocalDate.now();
+        if (startTime == null) {
+            startTime = now.plusDays(-90);
+        }
+        if (endTime == null) {
+            endTime = now.plusDays(-1);
+        }
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
+        List<MarketUserLocationAnalysisObject> list = analysisDomain.getMarketUserLocationReport(orgId, marketing_id, startTime, endTime);
+        Map<String, Integer> quantityMap = list.stream()
+                .collect(Collectors.groupingBy(MarketUserLocationAnalysisObject::getProvince, Collectors.summingInt(MarketUserLocationAnalysisObject::getCount)))
+                .entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
+                    throw new IllegalStateException();
+                }, LinkedHashMap::new));
 
 
+        MarketUserLocationReport report = new MarketUserLocationReport();
+        MarketUserLocationReport.NameValue[] data = quantityMap.entrySet().stream().map(entry -> {
+
+            MarketUserLocationReport.NameValue nv = new MarketUserLocationReport.NameValue();
+            nv.setName(entry.getKey());
+            nv.setCount(entry.getValue());
+            return nv;
+        }).toArray(MarketUserLocationReport.NameValue[]::new);
+        report.setProvinceData(data);
+        return report;
+    }
+
+    @RequestMapping(value = "/market_user_analysis", method = RequestMethod.GET)
+    public MarketUserAnalysisReport getMarketUserAnalysisReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                                @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
+                                                                @RequestParam(value = "marketing_id", required = false) String marketing_id) {
+        MarketUserAnalysisReport report = new MarketUserAnalysisReport();
+
+        MarketUserLocationReport locationReport = getMarketUserLocationReport(startTime, endTime, marketing_id);
+        MarketUserCategoryAndValueReport genderReport = getMarketUserGenderReport(startTime, endTime, marketing_id);
+        MarketUserCategoryAndValueReport deviceReport = getMarketUserDeviceReport(startTime, endTime, marketing_id);
+        MarketUserCategoryAndValueReport usageReport = getMarketUserUsageReport(startTime, endTime, marketing_id);
+        MarketUserCategoryAndValueReport areaReport = getMarketUserAreaReport(startTime, endTime, marketing_id);
+
+
+        report.setLocationReport(locationReport);
+        report.setGenderReport(genderReport);
+        report.setDeviceReport(deviceReport);
+        report.setUsageReport(usageReport);
+        report.setAreaReport(areaReport);
+
+        return report;
+    }
 }

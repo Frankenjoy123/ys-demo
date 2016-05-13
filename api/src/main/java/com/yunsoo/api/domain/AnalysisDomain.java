@@ -1,11 +1,11 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.common.data.object.ProductKeyBatchObject;
-import com.yunsoo.common.data.object.ScanRecordAnalysisObject;
-import com.yunsoo.common.data.object.ScanRecordLocationAnalysisObject;
+import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +16,7 @@ import java.util.List;
  */
 
 @Component
+@ObjectCacheConfig
 public class AnalysisDomain {
 
     @Autowired
@@ -44,6 +45,52 @@ public class AnalysisDomain {
                 .build();
         return dataAPIClient.get("analysis/batch_key_report" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
         });
+    }
+
+
+    public List<MarketUserAreaAnalysisObject> getMarketUserAreaReport(String orgId, String marketing_id, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("marketing_id", marketing_id)
+                .build();
+        return dataAPIClient.get("analysis/market_user_area" + query, new ParameterizedTypeReference<List<MarketUserAreaAnalysisObject>>() {
+        });
+    }
+
+    public List<MarketUserDeviceAnalysisObject> getMarketUserDeviceReport(String orgId, String marketing_id, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("marketing_id", marketing_id)
+                .build();
+        return dataAPIClient.get("analysis/market_user_device" + query, new ParameterizedTypeReference<List<MarketUserDeviceAnalysisObject>>() {
+        });
+    }
+
+    public List<MarketUserGenderAnalysisObject> getMarketUserGenderReport(String orgId, String marketing_id, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("marketing_id", marketing_id)
+                .build();
+        return dataAPIClient.get("analysis/market_user_gender" + query, new ParameterizedTypeReference<List<MarketUserGenderAnalysisObject>>() {
+        });
+    }
+
+    public List<MarketUserUsageAnalysisObject> getMarketUserUsageReport(String orgId, String marketing_id, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("marketing_id", marketing_id)
+                .build();
+        return dataAPIClient.get("analysis/market_user_usage" + query, new ParameterizedTypeReference<List<MarketUserUsageAnalysisObject>>() {
+        });
+    }
+
+    public List<MarketUserLocationAnalysisObject> getMarketUserLocationReport(String orgId, String marketing_id, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("marketing_id", marketing_id)
+                .build();
+        return dataAPIClient.get("analysis/market_user_location" + query, new ParameterizedTypeReference<List<MarketUserLocationAnalysisObject>>() {
+        });
+    }
+
+    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).TAGS.toString(), 'all')")
+    public List<LuTagObject> getTags() {
+        return dataAPIClient.get("analysis/market_user_tags", new ParameterizedTypeReference<List<LuTagObject>>() { });
     }
 
 
