@@ -36,6 +36,9 @@ public class WebScanRequest {
     @JsonProperty("user_agent")
     private String userAgent;
 
+    @JsonProperty("user_id")
+    private String userId;
+
     public String getYsid() {
         return ysid;
     }
@@ -108,4 +111,11 @@ public class WebScanRequest {
         this.userAgent = userAgent;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }

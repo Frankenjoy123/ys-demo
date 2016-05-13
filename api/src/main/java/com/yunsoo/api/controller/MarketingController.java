@@ -131,8 +131,14 @@ public class MarketingController {
                 mktDrawRuleObject.setProbability(mktDrawRule.getProbability());
                 mktDrawRuleObject.setModifiedAccountId(currentUserId);
                 mktDrawRuleObject.setModifiedDateTime(DateTime.now());
+                if (mktDrawRuleObject.getAvailableQuantity() != null) {
+                    mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getTotalQuantity() - mktDrawRuleObject.getTotalQuantity() + mktDrawRuleObject.getAvailableQuantity());
+                } else {
+                    mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getTotalQuantity());
+                }
                 mktDrawRuleObject.setTotalQuantity(mktDrawRule.getTotalQuantity());
-                mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getAvailableQuantity());
+
+//                mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getAvailableQuantity());
 
                 mktDrawRuleObjectList.add(mktDrawRuleObject);
             }
@@ -160,7 +166,7 @@ public class MarketingController {
         orgId = AuthUtils.fixOrgId(orgId);
 
 
-        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.PAID, null, null, null, null, pageable);
+        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.AVALAIBLESTATUS, null, null, null, null, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", marketingPage.toContentRange());
         }
@@ -391,6 +397,8 @@ public class MarketingController {
             marketingObject.setQuantity(marketing.getQuantity());
             marketingObject.setStartDateTime(marketing.getStartDateTime());
             marketingObject.setEndDateTime(marketing.getEndDateTime());
+            marketingObject.setPrizeTypeCode(marketing.getPrizeTypeCode());
+            marketingObject.setRulesText(marketing.getRulesText());
             marketingDomain.updateMarketing(marketingObject);
         }
     }
@@ -529,6 +537,15 @@ public class MarketingController {
         return marketing;
     }
 
+    @RequestMapping(value = "delete/{id}", method = RequestMethod.GET)
+    public List<String> getMarketingBatchNos(@PathVariable(value = "id") String id) {
+        MarketingObject marketingObject = marketingDomain.getMarketingById(id);
+        List<String> batchNos = null;
+        if (marketingObject != null) {
+            batchNos = marketingDomain.getBatchNosById(id);
+        }
+        return batchNos;
+    }
 
     //delete marketing plan by id
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
@@ -575,6 +592,12 @@ public class MarketingController {
         mktDrawRuleObject.setProbability(mktDrawRule.getProbability());
         mktDrawRuleObject.setModifiedAccountId(currentUserId);
         mktDrawRuleObject.setModifiedDateTime(DateTime.now());
+        if (mktDrawRuleObject.getAvailableQuantity() != null) {
+            mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getTotalQuantity() - mktDrawRuleObject.getTotalQuantity() + mktDrawRuleObject.getAvailableQuantity());
+        } else {
+            mktDrawRuleObject.setAvailableQuantity(mktDrawRule.getTotalQuantity());
+        }
+        mktDrawRuleObject.setTotalQuantity(mktDrawRule.getTotalQuantity());
 
         marketingDomain.updateMktDrawRule(mktDrawRuleObject);
     }
@@ -604,21 +627,36 @@ public class MarketingController {
     @RequestMapping(value = "/count/unpaid")
     public int countUnpaidMarketing(@RequestParam("org_ids") List<String> orgIds) {
         if (orgIds == null || orgIds.size() == 0)
-            throw new BadRequestException("org ids can not be null");
+            return 0;
 
         return marketingDomain.countMarketing(orgIds, LookupCodes.MktStatus.CREATED);
     }
 
     @RequestMapping(value = "statistics")
     public List<Marketing> marketingStatistics(@RequestParam("org_ids") List<String> orgIds, Pageable pageable) {
+        if(orgIds.size() == 0)
+            return new ArrayList<Marketing>();
         List<MarketingObject> statisticsObjectList = marketingDomain.statisticsMarketing(orgIds, Arrays.asList(LookupCodes.MktStatus.PAID, LookupCodes.MktStatus.AVAILABLE), pageable);
         return statisticsObjectList.stream().map(Marketing::new).collect(Collectors.toList());
     }
 
     //alipay batch transfer
     @RequestMapping(value = "alipay_batchtransfer", method = RequestMethod.GET)
-    public Map<String, String> batchTransfer() {
-        Map<String, String> parametersMap = marketingDomain.getAlipayBatchTansferParameters();
+    public Map<String, String> batchTransfer(@RequestParam(value = "marketing_id") String marketingId,
+                                             @RequestParam(value = "account_type") String accountType,
+                                             @RequestParam(value = "status_code") String statusCode,
+                                             @RequestParam(value = "start_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                             @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
+                                             @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
+                                             Pageable pageable,
+                                             HttpServletResponse response) {
+
+        Page<MktDrawPrizeObject> mktDrawPrizeObjectPage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, statusCode, startTime, endTime, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", mktDrawPrizeObjectPage.toContentRange());
+        }
+        List<MktDrawPrize> mktDrawPrizeList = mktDrawPrizeObjectPage.map(MktDrawPrize::new).getContent();
+        Map<String, String> parametersMap = marketingDomain.getAlipayBatchTansferParameters(mktDrawPrizeList);
         List<String> keys = new ArrayList<>(parametersMap.keySet());
         keys.sort(null);
         return parametersMap;

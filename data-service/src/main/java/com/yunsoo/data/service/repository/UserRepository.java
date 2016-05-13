@@ -18,7 +18,7 @@ public interface UserRepository extends FindOneAndSaveRepository<UserEntity, Str
 
     List<UserEntity> findByPhone(String phone);
 
-    Page<UserEntity> findByOauthOpenid(String openId, Pageable pageable);
+    Page<UserEntity> findByOauthOpenidAndOauthTypeCode(String openId, String oauthType, Pageable pageable);
 
     Page<UserEntity> findByDeviceId(String deviceId, Pageable pageable);
 

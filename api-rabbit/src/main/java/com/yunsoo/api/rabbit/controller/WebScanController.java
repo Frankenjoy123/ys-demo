@@ -291,6 +291,7 @@ public class WebScanController {
         userScanRecordObject.setAddress(webScanRequest.getAddress());
         userScanRecordObject.setDetails(webScanRequest.getDetails());
         userScanRecordObject.setUserAgent(webScanRequest.getUserAgent());
+        userScanRecordObject.setUserId(webScanRequest.getUserId());
         return userScanDomain.createScanRecord(userScanRecordObject);
     }
 

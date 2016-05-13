@@ -11,7 +11,7 @@ import java.util.List;
  * Descriptions:
  */
 public interface MktDrawRuleRepository extends FindOneAndSaveRepository<MktDrawRuleEntity, String> {
-    List<MktDrawRuleEntity> findByMarketingIdOrderByAmountDesc(String marketingId);
+    List<MktDrawRuleEntity> findByMarketingIdOrderById(String marketingId);
 
     List<MktDrawRuleEntity> save(Iterable<MktDrawRuleEntity> entities);
 

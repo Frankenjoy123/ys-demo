@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,16 +170,22 @@ public class ProductKeyOrderController {
 
     @RequestMapping(value = "/count/total", method = RequestMethod.GET)
     public long countTotal(@RequestParam("org_ids") List<String> orgIds) {
+        if(orgIds.size()==0)
+            return 0;
         return productKeyOrderDomain.count(orgIds, true);
     }
 
     @RequestMapping(value = "/count/remain", method = RequestMethod.GET)
     public long countRemain(@RequestParam("org_ids") List<String> orgIds) {
+        if(orgIds.size()==0)
+            return 0;
         return productKeyOrderDomain.count(orgIds, false);
     }
 
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     public List<ProductKeyOrder> statistics(@RequestParam("org_ids") List<String> orgIds, Pageable pageable) {
+        if(orgIds.size()==0)
+            return new ArrayList<ProductKeyOrder>();
         return productKeyOrderDomain.statistics(orgIds, pageable);
     }
 

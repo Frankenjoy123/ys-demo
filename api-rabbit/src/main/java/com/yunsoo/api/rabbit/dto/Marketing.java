@@ -43,6 +43,9 @@ public class Marketing {
     @JsonProperty("balance")
     private Double balance;
 
+    @JsonProperty("prize_type_code")
+    private String prizeTypeCode;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -73,6 +76,8 @@ public class Marketing {
     @JsonProperty("end_datetime")
     private DateTime endDateTime;
 
+    @JsonProperty("rules_text")
+    private String rulesText;
 
 
     public String getId() {
@@ -139,6 +144,14 @@ public class Marketing {
         this.balance = balance;
     }
 
+    public String getPrizeTypeCode() {
+        return prizeTypeCode;
+    }
+
+    public void setPrizeTypeCode(String prizeTypeCode) {
+        this.prizeTypeCode = prizeTypeCode;
+    }
+
     public String getCreatedAccountId() {
         return createdAccountId;
     }
@@ -203,6 +216,14 @@ public class Marketing {
         this.endDateTime = endDateTime;
     }
 
+    public String getRulesText() {
+        return rulesText;
+    }
+
+    public void setRulesText(String rulesText) {
+        this.rulesText = rulesText;
+    }
+
     public Marketing() {
 
     }
@@ -217,6 +238,7 @@ public class Marketing {
             this.setTypeCode(object.getTypeCode());
             this.setBudget(object.getBudget());
             this.setBalance(object.getBalance());
+            this.setPrizeTypeCode(object.getPrizeTypeCode());
             this.setCreatedAccountId(object.getCreatedAccountId());
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
@@ -224,7 +246,7 @@ public class Marketing {
             this.setQuantity(object.getQuantity());
             this.setStartDateTime(object.getStartDateTime());
             this.setEndDateTime(object.getEndDateTime());
-
+            this.setRulesText(object.getRulesText());
         }
     }
 
@@ -238,6 +260,7 @@ public class Marketing {
         object.setTypeCode(this.getTypeCode());
         object.setBudget(this.getBudget());
         object.setBalance(this.getBalance());
+        object.setPrizeTypeCode(this.getPrizeTypeCode());
         object.setCreatedAccountId(this.getCreatedAccountId());
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());
@@ -245,7 +268,7 @@ public class Marketing {
         object.setQuantity(this.getQuantity());
         object.setStartDateTime(this.getStartDateTime());
         object.setEndDateTime(this.getEndDateTime());
-
+        object.setRulesText(this.getRulesText());
         return object;
     }
 

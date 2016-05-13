@@ -11,8 +11,8 @@ multipart:
 
 spring:
   profiles.active: local
-  mvc:
-    throw-exception-if-no-handler-found: true
+  application.name: 'api-rabbit'
+  mvc.throw-exception-if-no-handler-found: true
 
 yunsoo:
   debug: true
