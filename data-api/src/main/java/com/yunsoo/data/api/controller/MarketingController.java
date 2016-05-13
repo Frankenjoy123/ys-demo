@@ -298,11 +298,25 @@ public class MarketingController {
         marketing.setBalance(marketing.getBalance() - mktDrawPrizeObject.getAmount());
         marketingRepository.save(marketing);
 
-        MktDrawRuleEntity mktDrawRuleEntity = mktDrawRuleRepository.findOne(mktDrawPrizeObject.getDrawRuleId());
-        if (mktDrawRuleEntity.getAvailableQuantity() != null) {
-            mktDrawRuleEntity.setAvailableQuantity(mktDrawRuleEntity.getAvailableQuantity() - 1);
-            mktDrawRuleRepository.save(mktDrawRuleEntity);
+
+        if(marketing.getTypeCode().equals(LookupCodes.MktTypeCode.ENVELOPE)){
+            List<MktDrawRuleEntity> drawRuleEntityList = mktDrawRuleRepository.findByMarketingIdOrderById(marketing.getId());
+            drawRuleEntityList.forEach(mktDrawRuleEntity -> {
+                if (mktDrawRuleEntity.getAvailableQuantity() != null) {
+                    mktDrawRuleEntity.setAvailableQuantity(mktDrawRuleEntity.getAvailableQuantity() - 1);
+                    mktDrawRuleRepository.save(mktDrawRuleEntity);
+                }
+            });
         }
+        else{
+            MktDrawRuleEntity mktDrawRuleEntity = mktDrawRuleRepository.findOne(mktDrawPrizeObject.getDrawRuleId());
+            if (mktDrawRuleEntity.getAvailableQuantity() != null) {
+                mktDrawRuleEntity.setAvailableQuantity(mktDrawRuleEntity.getAvailableQuantity() - 1);
+                mktDrawRuleRepository.save(mktDrawRuleEntity);
+            }
+
+        }
+
 
         return toMktDrawPrizeObject(newEntity);
     }
