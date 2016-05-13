@@ -28,7 +28,7 @@ public interface ProductBaseRepository extends FindOneAndSaveRepository<ProductB
 
     @Query("select o from #{#entityName} o where (:orgId is null or o.orgId = :orgId) and (:proName is null or :proName = '' or o.name like ('%' || :proName || '%'))  " +
             "and (:createAccount is null or :createAccount = '' or o.createdAccountId = :createAccount) and (:createdDateTimeStart is null or o.createdDateTime >= :createdDateTimeStart) " +
-            "and (:createdDateTimeEnd is null or o.createdDateTime <= :createdDateTimeEnd)")
+            "and (:createdDateTimeEnd is null or o.createdDateTime <= :createdDateTimeEnd) and (o.deleted = false)")
     Page<ProductBaseEntity> findByFilter(@Param("orgId") String orgId, @Param("proName") String proName, @Param("createAccount") String createAccount,
                                          @Param("createdDateTimeStart") DateTime createdDateTimeStart,
                                          @Param("createdDateTimeEnd") DateTime createdDateTimeEnd, Pageable pageable);

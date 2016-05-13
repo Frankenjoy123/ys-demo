@@ -178,6 +178,7 @@ public class MarketingController {
 
             String marketingId = object.getId();
             String marketingName = object.getName();
+            String marketingTypeCode = object.getTypeCode();
             Long totalNumber = marketingDomain.countProductKeysByMarketingId(marketingId, startTime, endTime);
             Long marketingNumber = marketingDomain.countDrawRecordsByMarketingId(marketingId, startTime, endTime);
 
@@ -185,6 +186,7 @@ public class MarketingController {
             marketingResult.setName(marketingName);
             marketingResult.setTotalNumber(totalNumber);
             marketingResult.setMarketingNumber(marketingNumber);
+            marketingResult.setTypeCode(marketingTypeCode);
 
             List<MktDrawRule> mktDrawRuleList = marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
             List<Long> prizeCountList = new ArrayList<>();
@@ -242,6 +244,7 @@ public class MarketingController {
         List<MktDrawPrizeResult> mktDrawPrizeResultList = new ArrayList<>();
 
         String marketingName = marketingObject.getName();
+        String marketingTypeCode = marketingObject.getTypeCode();
         Long totalNumber = marketingDomain.countProductKeysByMarketingId(marketingId, startTime, endTime);
         Long marketingNumber = marketingDomain.countDrawRecordsByMarketingId(marketingId, startTime, endTime);
 
@@ -249,6 +252,7 @@ public class MarketingController {
         marketingResult.setName(marketingName);
         marketingResult.setTotalNumber(totalNumber);
         marketingResult.setMarketingNumber(marketingNumber);
+        marketingResult.setTypeCode(marketingTypeCode);
 
         List<MktDrawRule> mktDrawRuleList = marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
         List<Long> prizeCountList = new ArrayList<>();
