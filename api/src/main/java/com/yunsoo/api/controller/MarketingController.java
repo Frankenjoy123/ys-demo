@@ -627,13 +627,15 @@ public class MarketingController {
     @RequestMapping(value = "/count/unpaid")
     public int countUnpaidMarketing(@RequestParam("org_ids") List<String> orgIds) {
         if (orgIds == null || orgIds.size() == 0)
-            throw new BadRequestException("org ids can not be null");
+            return 0;
 
         return marketingDomain.countMarketing(orgIds, LookupCodes.MktStatus.CREATED);
     }
 
     @RequestMapping(value = "statistics")
     public List<Marketing> marketingStatistics(@RequestParam("org_ids") List<String> orgIds, Pageable pageable) {
+        if(orgIds.size() == 0)
+            return new ArrayList<Marketing>();
         List<MarketingObject> statisticsObjectList = marketingDomain.statisticsMarketing(orgIds, Arrays.asList(LookupCodes.MktStatus.PAID, LookupCodes.MktStatus.AVAILABLE), pageable);
         return statisticsObjectList.stream().map(Marketing::new).collect(Collectors.toList());
     }
