@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.api.dto.detectable.OrgIdDetectable;
+import com.yunsoo.common.data.object.DeviceObject;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -152,5 +153,43 @@ public class Device implements OrgIdDetectable {
 
     public void setModifiedDatetime(DateTime modifiedDatetime) {
         this.modifiedDatetime = modifiedDatetime;
+    }
+
+    public Device() {
+    }
+
+    public Device(DeviceObject obj) {
+        if (obj == null) {
+            return;
+        }
+        this.setId(obj.getId());
+        this.setOrgId(obj.getOrgId());
+        this.setLoginAccountId(obj.getLoginAccountId());
+        this.setName(obj.getName());
+        this.setOs(obj.getOs());
+        this.setCheckPointId(obj.getCheckPointId());
+        this.setStatusCode(obj.getStatusCode());
+        this.setComments(obj.getComments());
+        this.setCreatedAccountId(obj.getCreatedAccountId());
+        this.setCreatedDateTime(obj.getCreatedDateTime());
+        this.setModifiedAccountId(obj.getModifiedAccountId());
+        this.setModifiedDatetime(obj.getModifiedDatetime());
+    }
+
+    public DeviceObject toDeviceObject() {
+        DeviceObject deviceObject = new DeviceObject();
+        deviceObject.setId(this.getId());
+        deviceObject.setOrgId(this.getOrgId());
+        deviceObject.setLoginAccountId(this.getLoginAccountId());
+        deviceObject.setName(this.getName());
+        deviceObject.setOs(this.getOs());
+        deviceObject.setCheckPointId(this.getCheckPointId());
+        deviceObject.setStatusCode(this.getStatusCode());
+        deviceObject.setComments(this.getComments());
+        deviceObject.setCreatedAccountId(this.getCreatedAccountId());
+        deviceObject.setCreatedDateTime(this.getCreatedDateTime());
+        deviceObject.setModifiedAccountId(this.getModifiedAccountId());
+        deviceObject.setModifiedDatetime(this.getModifiedDatetime());
+        return deviceObject;
     }
 }

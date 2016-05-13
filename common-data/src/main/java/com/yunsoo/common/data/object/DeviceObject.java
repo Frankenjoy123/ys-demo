@@ -17,10 +17,10 @@ import java.io.Serializable;
  */
 public class DeviceObject implements Serializable {
 
-    @NotEmpty(message = "id must not be null or empty")
     @JsonProperty("id")
     private String id;
 
+    @NotEmpty(message = "org_id must not be null or empty")
     @JsonProperty("org_id")
     private String orgId;
 
@@ -33,6 +33,7 @@ public class DeviceObject implements Serializable {
     @JsonProperty("os")
     private String os;
 
+    @NotEmpty(message = "status_code must not be null or empty")
     @JsonProperty("status_code")
     private String statusCode;
 
@@ -42,6 +43,7 @@ public class DeviceObject implements Serializable {
     @JsonProperty("check_point_id")
     private String checkPointId;
 
+    @NotEmpty(message = "created_account_id must not be null or empty")
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
