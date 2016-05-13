@@ -642,8 +642,21 @@ public class MarketingController {
 
     //alipay batch transfer
     @RequestMapping(value = "alipay_batchtransfer", method = RequestMethod.GET)
-    public Map<String, String> batchTransfer() {
-        Map<String, String> parametersMap = marketingDomain.getAlipayBatchTansferParameters();
+    public Map<String, String> batchTransfer(@RequestParam(value = "marketing_id") String marketingId,
+                                             @RequestParam(value = "account_type") String accountType,
+                                             @RequestParam(value = "status_code") String statusCode,
+                                             @RequestParam(value = "start_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                             @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
+                                             @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
+                                             Pageable pageable,
+                                             HttpServletResponse response) {
+
+        Page<MktDrawPrizeObject> mktDrawPrizeObjectPage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, statusCode, startTime, endTime, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", mktDrawPrizeObjectPage.toContentRange());
+        }
+        List<MktDrawPrize> mktDrawPrizeList = mktDrawPrizeObjectPage.map(MktDrawPrize::new).getContent();
+        Map<String, String> parametersMap = marketingDomain.getAlipayBatchTansferParameters(mktDrawPrizeList);
         List<String> keys = new ArrayList<>(parametersMap.keySet());
         keys.sort(null);
         return parametersMap;
