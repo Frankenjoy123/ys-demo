@@ -299,7 +299,7 @@ public class MarketingController {
         marketingRepository.save(marketing);
 
 
-        if(marketing.getTypeCode().equals(LookupCodes.MktTypeCode.ENVELOPE)){
+        if(marketing.getTypeCode().equals(LookupCodes.MktType.ENVELOPE)){
             List<MktDrawRuleEntity> drawRuleEntityList = mktDrawRuleRepository.findByMarketingIdOrderById(marketing.getId());
             drawRuleEntityList.forEach(mktDrawRuleEntity -> {
                 if (mktDrawRuleEntity.getAvailableQuantity() != null) {
