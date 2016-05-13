@@ -43,10 +43,12 @@ public class DeviceController {
             Pageable pageable,
             HttpServletResponse response) {
         Page<DeviceEntity> entityPage;
-        if (StringUtils.hasText(accountId)) {
-            entityPage = deviceRepository.findByLoginAccountId(accountId, pageable);
-        } else if (StringUtils.hasText(orgId)) {
-            entityPage = deviceRepository.findByOrgId(orgId, pageable);
+        if (StringUtils.hasText(orgId)) {
+            if (StringUtils.hasText(accountId)) {
+                entityPage = deviceRepository.findByOrgIdAndLoginAccountId(orgId, accountId, pageable);
+            } else {
+                entityPage = deviceRepository.findByOrgId(orgId, pageable);
+            }
         } else {
             entityPage = deviceRepository.findAll(pageable);
         }
@@ -58,35 +60,60 @@ public class DeviceController {
                 .collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public DeviceObject create(@Valid @RequestBody DeviceObject deviceObject) {
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    public void save(@PathVariable(value = "id") String id, @RequestBody @Valid DeviceObject deviceObject) {
         DeviceEntity entity = toDeviceEntity(deviceObject);
+        entity.setId(id);
         if (entity.getCreatedDateTime() == null) {
             entity.setCreatedDateTime(DateTime.now());
         }
-        return toDeviceObject(deviceRepository.save(entity));
-    }
-
-    @RequestMapping(value = "", method = RequestMethod.PUT)
-    public void update(@RequestBody DeviceObject deviceObject) {
-        DeviceEntity entityOld = findById(deviceObject.getId());
-        DeviceEntity entity = toDeviceEntity(deviceObject);
-
-        entity.setCreatedAccountId(entityOld.getCreatedAccountId());
-        entity.setCreatedDateTime(entityOld.getCreatedDateTime());
         if (entity.getModifiedDatetime() == null) {
             entity.setModifiedDatetime(DateTime.now());
         }
         deviceRepository.save(entity);
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public void patchUpdate(@PathVariable(value = "id") String id, @RequestBody @Valid DeviceObject deviceObject) {
+        DeviceEntity entity = findById(id);
+        if (deviceObject.getName() != null) {
+            entity.setName(deviceObject.getName());
+        }
+        if (deviceObject.getOs() != null) {
+            entity.setOs(deviceObject.getOs());
+        }
+        if (deviceObject.getStatusCode() != null) {
+            entity.setStatusCode(deviceObject.getStatusCode());
+        }
+        if (deviceObject.getCheckPointId() != null) {
+            entity.setCheckPointId(deviceObject.getCheckPointId());
+        }
+        if (deviceObject.getComments() != null) {
+            entity.setComments(deviceObject.getComments());
+        }
+        if (deviceObject.getModifiedAccountId() != null) {
+            entity.setModifiedAccountId(deviceObject.getModifiedAccountId());
+        }
+        if (deviceObject.getModifiedDatetime() != null) {
+            entity.setModifiedDatetime(deviceObject.getModifiedDatetime());
+        }
+        deviceRepository.save(entity);
+    }
+
     private DeviceEntity findById(String id) {
-        DeviceEntity entity = deviceRepository.findById(id);
+        DeviceEntity entity = deviceRepository.findOne(id);
         if (entity == null) {
             throw new NotFoundException("device not found by id [id: " + id + "]");
         }
         return entity;
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable(value = "id") String id) {
+        if (deviceRepository.findOne(id) != null) {
+            deviceRepository.delete(id);
+        }
     }
 
     private DeviceEntity toDeviceEntity(DeviceObject deviceObject) {

@@ -76,6 +76,8 @@ public class Marketing {
     @JsonProperty("end_datetime")
     private DateTime endDateTime;
 
+    @JsonProperty("rules_text")
+    private String rulesText;
 
 
     public String getId() {
@@ -214,6 +216,14 @@ public class Marketing {
         this.endDateTime = endDateTime;
     }
 
+    public String getRulesText() {
+        return rulesText;
+    }
+
+    public void setRulesText(String rulesText) {
+        this.rulesText = rulesText;
+    }
+
     public Marketing() {
 
     }
@@ -236,7 +246,7 @@ public class Marketing {
             this.setQuantity(object.getQuantity());
             this.setStartDateTime(object.getStartDateTime());
             this.setEndDateTime(object.getEndDateTime());
-
+            this.setRulesText(object.getRulesText());
         }
     }
 
@@ -258,7 +268,7 @@ public class Marketing {
         object.setQuantity(this.getQuantity());
         object.setStartDateTime(this.getStartDateTime());
         object.setEndDateTime(this.getEndDateTime());
-
+        object.setRulesText(this.getRulesText());
         return object;
     }
 

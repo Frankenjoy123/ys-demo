@@ -46,6 +46,7 @@ public class UserController {
                                         @RequestParam(value = "point_ge", required = false) Integer pointGE,
                                         @RequestParam(value = "point_le", required = false) Integer pointLE,
                                         @RequestParam(value = "open_id", required = false) String openId,
+                                        @RequestParam(value = "oauth_type", required = false) String oauthType,
                                         Pageable pageable,
                                         HttpServletResponse response) {
         Page<UserEntity> entityPage;
@@ -56,7 +57,7 @@ public class UserController {
         } else if (!StringUtils.isEmpty(deviceId)) {
             entityPage = userRepository.findByDeviceId(deviceId, pageable);
         } else if (!StringUtils.isEmpty(openId)) {
-            entityPage = userRepository.findByOauthOpenid(openId, pageable);
+            entityPage = userRepository.findByOauthOpenidAndOauthTypeCode(openId, oauthType, pageable);
         } else if (pointGE != null || pointLE != null) {
             entityPage = userRepository.query(pointGE, pointLE, pageable);
         } else {

@@ -45,11 +45,21 @@ public class DeviceDomain {
         });
     }
 
-    public DeviceObject create(DeviceObject deviceObject) {
-        return dataAPIClient.post("device", deviceObject, DeviceObject.class);
+    public void patchUpdate(DeviceObject deviceObject) {
+        try {
+            dataAPIClient.patch("device/{id}", deviceObject, deviceObject.getId());
+        } catch (NotFoundException ex) {
+            throw new NotFoundException("device not found by id: " + deviceObject.getId());
+        }
     }
 
-    public void update(DeviceObject deviceObject) {
-        dataAPIClient.put("device", deviceObject, DeviceObject.class);
+    public void put(DeviceObject deviceObject) {
+        dataAPIClient.put("device/{id}", deviceObject, deviceObject.getId());
+    }
+
+    public void delete(String id) {
+        if (StringUtils.hasText(id)) {
+            dataAPIClient.delete("device/{id}", id);
+        }
     }
 }

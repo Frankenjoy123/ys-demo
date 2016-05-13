@@ -108,15 +108,19 @@ public class MarketingController {
                                              Pageable pageable,
                                              HttpServletResponse response) {
         Page<MarketingEntity> entityPage = null;
-        if ((status != null) && (orgId != null)) {
-            entityPage = marketingRepository.findByOrgIdAndStatusCode(orgId, status, pageable);
+        if ((status != null) && (orgId != null) && (!LookupCodes.MktStatus.AVALAIBLESTATUS.equals(status))) {
+            entityPage = marketingRepository.findByOrgIdAndStatusCodeOrderByCreatedDateTimeDesc(orgId, status, pageable);
         } else {
-            if (orgId != null)
-                entityPage = marketingRepository.findByOrgIdAndStatusCodeIn(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
-            else if (orgIds != null && orgIds.size() > 0) {
-                entityPage = marketingRepository.query(orgIds, status, startTime, endTime, productBaseId, searchText, pageable);
-            } else
-                throw new BadRequestException("one of the request parameter org_id or org_ids is required");
+            if (LookupCodes.MktStatus.AVALAIBLESTATUS.equals(status)) {
+                entityPage = marketingRepository.findByOrgIdAndStatusCodeInOrderByCreatedDateTimeDesc(orgId, LookupCodes.MktStatus.ANALYZE_STATUS, pageable);
+            } else {
+                if (orgId != null)
+                    entityPage = marketingRepository.findByOrgIdAndStatusCodeInOrderByCreatedDateTimeDesc(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
+                else if (orgIds != null && orgIds.size() > 0) {
+                    entityPage = marketingRepository.query(orgIds, status, startTime, endTime, productBaseId, searchText, pageable);
+                } else
+                    throw new BadRequestException("one of the request parameter org_id or org_ids is required");
+            }
         }
 
 
@@ -298,11 +302,25 @@ public class MarketingController {
         marketing.setBalance(marketing.getBalance() - mktDrawPrizeObject.getAmount());
         marketingRepository.save(marketing);
 
-        MktDrawRuleEntity mktDrawRuleEntity = mktDrawRuleRepository.findOne(mktDrawPrizeObject.getDrawRuleId());
-        if (mktDrawRuleEntity.getAvailableQuantity() != null) {
-            mktDrawRuleEntity.setAvailableQuantity(mktDrawRuleEntity.getAvailableQuantity() - 1);
-            mktDrawRuleRepository.save(mktDrawRuleEntity);
+
+        if(marketing.getTypeCode().equals(LookupCodes.MktType.ENVELOPE)){
+            List<MktDrawRuleEntity> drawRuleEntityList = mktDrawRuleRepository.findByMarketingIdOrderById(marketing.getId());
+            drawRuleEntityList.forEach(mktDrawRuleEntity -> {
+                if (mktDrawRuleEntity.getAvailableQuantity() != null) {
+                    mktDrawRuleEntity.setAvailableQuantity(mktDrawRuleEntity.getAvailableQuantity() - 1);
+                    mktDrawRuleRepository.save(mktDrawRuleEntity);
+                }
+            });
         }
+        else{
+            MktDrawRuleEntity mktDrawRuleEntity = mktDrawRuleRepository.findOne(mktDrawPrizeObject.getDrawRuleId());
+            if (mktDrawRuleEntity.getAvailableQuantity() != null) {
+                mktDrawRuleEntity.setAvailableQuantity(mktDrawRuleEntity.getAvailableQuantity() - 1);
+                mktDrawRuleRepository.save(mktDrawRuleEntity);
+            }
+
+        }
+
 
         return toMktDrawPrizeObject(newEntity);
     }
@@ -402,9 +420,22 @@ public class MarketingController {
         mktDrawRuleRepository.save(mktDrawRuleEntities);
     }
 
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    public List<String> getBatchIds(@PathVariable(value = "id") String id) {
+
+        List<ProductKeyBatchEntity> productKeyBatchEntities = productKeyBatchRepository.findByMarketingId(id);
+
+        List<String> batchIds = new ArrayList<>();
+        if (productKeyBatchEntities != null) {
+            for (ProductKeyBatchEntity pkEntity : productKeyBatchEntities) {
+                batchIds.add(pkEntity.getBatchNo());
+            }
+        }
+        return batchIds;
+    }
 
     //delete marketing plan
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMarketing(@PathVariable(value = "id") String id) {
         MarketingEntity entity = marketingRepository.findOne(id);
@@ -445,8 +476,6 @@ public class MarketingController {
             mktDrawRuleRepository.delete(id);
         }
     }
-
-
 
 
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.GET)
@@ -531,6 +560,7 @@ public class MarketingController {
         object.setQuantity(entity.getQuantity());
         object.setStartDateTime(entity.getStartDateTime());
         object.setEndDateTime(entity.getEndDateTime());
+        object.setRulesText(entity.getRulesText());
         return object;
     }
 
@@ -619,6 +649,7 @@ public class MarketingController {
         entity.setQuantity(object.getQuantity());
         entity.setStartDateTime(object.getStartDateTime());
         entity.setEndDateTime(object.getEndDateTime());
+        entity.setRulesText(object.getRulesText());
         return entity;
     }
 

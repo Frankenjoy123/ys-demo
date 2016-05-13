@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.dto.MktDrawPrize;
 import com.yunsoo.api.payment.AlipayParameters;
 import com.yunsoo.api.payment.ParameterNames;
 import com.yunsoo.common.data.object.MarketingObject;
@@ -181,6 +182,11 @@ public class MarketingDomain {
         dataAPIClient.put("marketing/{id}", marketingObject, marketingObject.getId());
     }
 
+    public List<String> getBatchNosById(String id) {
+        return dataAPIClient.get("marketing/delete/{id}", new ParameterizedTypeReference<List<String>>() {
+        }, id);
+    }
+
     public void deleteMarketingById(String id) {
         dataAPIClient.delete("marketing/{id}", id);
     }
@@ -214,7 +220,7 @@ public class MarketingDomain {
     }
 
 
-    public Map<String, String> getAlipayBatchTansferParameters() {
+    public Map<String, String> getAlipayBatchTansferParameters(List<MktDrawPrize> mktDrawPrizeList) {
 
         AlipayParameters parameters = new AlipayParameters("batch_trans_notify", pid, key);
         //order info
@@ -222,10 +228,10 @@ public class MarketingDomain {
         String detail_data = "";
         Integer batchNum = 0;
         BigDecimal batchFee = new BigDecimal("0");
-        List<MktDrawPrizeObject> mktDrawPrizeObjectList = dataAPIClient.get("marketing/alipay_batchtransfer", new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
-        });
-        if (mktDrawPrizeObjectList.size() > 0) {
-            for (MktDrawPrizeObject object : mktDrawPrizeObjectList) {
+//        List<MktDrawPrizeObject> mktDrawPrizeObjectList = dataAPIClient.get("marketing/alipay_batchtransfer", new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
+//        });
+        if (mktDrawPrizeList.size() > 0) {
+            for (MktDrawPrize object : mktDrawPrizeList) {
                 String drawRecordId = object.getDrawRecordId();
                 String account = object.getPrizeAccount();
                 String accountName = object.getPrizeAccountName();
