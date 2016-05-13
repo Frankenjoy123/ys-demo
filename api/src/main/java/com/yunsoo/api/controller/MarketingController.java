@@ -166,7 +166,7 @@ public class MarketingController {
         orgId = AuthUtils.fixOrgId(orgId);
 
 
-        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.PAID, null, null, null, null, pageable);
+        Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.AVALAIBLESTATUS, null, null, null, null, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", marketingPage.toContentRange());
         }

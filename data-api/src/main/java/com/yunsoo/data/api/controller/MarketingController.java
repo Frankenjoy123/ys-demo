@@ -108,15 +108,19 @@ public class MarketingController {
                                              Pageable pageable,
                                              HttpServletResponse response) {
         Page<MarketingEntity> entityPage = null;
-        if ((status != null) && (orgId != null)) {
+        if ((status != null) && (orgId != null) && (!LookupCodes.MktStatus.AVALAIBLESTATUS.equals(status))) {
             entityPage = marketingRepository.findByOrgIdAndStatusCodeOrderByCreatedDateTimeDesc(orgId, status, pageable);
         } else {
-            if (orgId != null)
-                entityPage = marketingRepository.findByOrgIdAndStatusCodeInOrderByCreatedDateTimeDesc(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
-            else if (orgIds != null && orgIds.size() > 0) {
-                entityPage = marketingRepository.query(orgIds, status, startTime, endTime, productBaseId, searchText, pageable);
-            } else
-                throw new BadRequestException("one of the request parameter org_id or org_ids is required");
+            if (LookupCodes.MktStatus.AVALAIBLESTATUS.equals(status)) {
+                entityPage = marketingRepository.findByOrgIdAndStatusCodeInOrderByCreatedDateTimeDesc(orgId, LookupCodes.MktStatus.ANALYZE_STATUS, pageable);
+            } else {
+                if (orgId != null)
+                    entityPage = marketingRepository.findByOrgIdAndStatusCodeInOrderByCreatedDateTimeDesc(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
+                else if (orgIds != null && orgIds.size() > 0) {
+                    entityPage = marketingRepository.query(orgIds, status, startTime, endTime, productBaseId, searchText, pageable);
+                } else
+                    throw new BadRequestException("one of the request parameter org_id or org_ids is required");
+            }
         }
 
 
