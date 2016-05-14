@@ -510,11 +510,12 @@ public class MarketingController {
         List<MktDrawPrize> mktDrawPrizeList = new ArrayList<>();
         mktDrawPrizePage.getContent().forEach(object -> {
             MktDrawPrize mktDrawPrize = new MktDrawPrize(object);
-            MarketingObject mkto = marketingDomain.getMarketingById(object.getMarketingId());
-            if (mkto != null) {
-                String productBaseId = mkto.getProductBaseId();
+            String productBaseId = marketingDomain.getProductBaseIdByScanRecordId(object.getScanRecordId());
+            if (productBaseId != null) {
                 ProductBaseObject pbo = productBaseDomain.getProductBaseById(productBaseId);
-                mktDrawPrize.setProductBaseName(pbo.getName());
+                if (pbo != null) {
+                    mktDrawPrize.setProductBaseName(pbo.getName());
+                }
             }
             String scanRecordId = object.getScanRecordId();
             UserScanRecordObject userScanRecordObject = userScanDomain.getScanRecordById(scanRecordId);
