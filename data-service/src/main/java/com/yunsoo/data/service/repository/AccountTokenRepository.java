@@ -13,4 +13,7 @@ import java.util.List;
 public interface AccountTokenRepository extends FindOneAndSaveRepository<AccountTokenEntity, String> {
 
     List<AccountTokenEntity> findByPermanentToken(String permanentToken);
+
+    List<AccountTokenEntity> findByDeviceId(String deviceId);
+
 }

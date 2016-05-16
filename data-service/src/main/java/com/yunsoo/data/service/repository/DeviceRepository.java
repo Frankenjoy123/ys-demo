@@ -13,11 +13,11 @@ import org.springframework.data.domain.Pageable;
  */
 public interface DeviceRepository extends FindOneAndSaveRepository<DeviceEntity, String> {
 
-    DeviceEntity findById(String id);
-
     Page<DeviceEntity> findByOrgId(String orgId, Pageable pageable);
 
-    Page<DeviceEntity> findByLoginAccountId(String createdAccountId, Pageable pageable);
+    Page<DeviceEntity> findByOrgIdAndLoginAccountId(String orgId, String createdAccountId, Pageable pageable);
 
     Page<DeviceEntity> findAll(Pageable pageable);
+
+    void delete(String id);
 }

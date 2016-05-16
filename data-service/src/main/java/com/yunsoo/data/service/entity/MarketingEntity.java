@@ -51,6 +51,9 @@ public class MarketingEntity {
     @Column(name = "comments")
     private String comments;
 
+    @Column(name = "prize_type_code")
+    private String prizeTypeCode;
+
     @Column(name = "created_account_id")
     private String createdAccountId;
 
@@ -72,6 +75,10 @@ public class MarketingEntity {
     @Column(name = "end_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime endDateTime;
+
+    @Column(name = "rules_text")
+    private String rulesText;
+
 
     public String getId() {
         return id;
@@ -145,6 +152,14 @@ public class MarketingEntity {
         this.balance = balance;
     }
 
+    public String getPrizeTypeCode() {
+        return prizeTypeCode;
+    }
+
+    public void setPrizeTypeCode(String prizeTypeCode) {
+        this.prizeTypeCode = prizeTypeCode;
+    }
+
     public String getCreatedAccountId() {
         return createdAccountId;
     }
@@ -207,5 +222,13 @@ public class MarketingEntity {
 
     public void setEndDateTime(DateTime endDateTime) {
         this.endDateTime = endDateTime;
+    }
+
+    public String getRulesText() {
+        return rulesText;
+    }
+
+    public void setRulesText(String rulesText) {
+        this.rulesText = rulesText;
     }
 }

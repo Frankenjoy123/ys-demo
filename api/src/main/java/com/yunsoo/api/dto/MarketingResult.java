@@ -16,6 +16,8 @@ public class MarketingResult {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("type_code")
+    private String typeCode;
 
     @JsonProperty("marketing_number")
     private Long marketingNumber;
@@ -47,6 +49,14 @@ public class MarketingResult {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
     public Long getMarketingNumber() {

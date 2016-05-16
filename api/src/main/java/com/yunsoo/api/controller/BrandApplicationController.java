@@ -283,7 +283,7 @@ public class BrandApplicationController {
         if (resourceInputStream.getContentLength() > 0) {
             builder.contentLength(resourceInputStream.getContentLength());
         }
-        builder.header("Content-Disposition", "filename=" + URLEncoder.encode(currentObj.getOriginalFileName(), "UTF-8"));
+        builder.header("Content-Disposition", "attachment;filename=" + URLEncoder.encode(currentObj.getOriginalFileName(), "UTF-8"));
         return builder.body(new InputStreamResource(resourceInputStream));
     }
 

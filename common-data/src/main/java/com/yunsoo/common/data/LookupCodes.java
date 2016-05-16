@@ -190,6 +190,17 @@ public class LookupCodes {
 
     }
 
+    public static class MktType {
+        private MktType() {
+        }
+
+        public static final String DRAW = "DRAW";
+        public static final String REDPACKETS = "REDPACKETS";
+        public static final String ENVELOPE = "ENVELOPE";
+
+    }
+
+
     public static class MktStatus {
         private MktStatus() {
         }
@@ -200,8 +211,9 @@ public class LookupCodes {
         public static final String DISABLED = "disabled";
         public static final String REJECTED = "rejected";
         public static final String DELETED = "deleted";
+        public static final String AVALAIBLESTATUS = "availablestatus";
         public static final List<String> AVALAIBLE_STATUS = Arrays.asList("created", "available", "disabled", "paid");
-
+        public static final List<String> ANALYZE_STATUS = Arrays.asList("available", "disabled", "paid");
     }
 
     public static class PaymentStatus {

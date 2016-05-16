@@ -14,7 +14,8 @@ public enum CacheType {
     PRODUCT_BATCH("product_batch"),
     PRODUCT_CATEGORY("product_category"),
     PERMISSION("permission"),
-    DOMAIN_DIRECTORY("domain_directory");
+    DOMAIN_DIRECTORY("domain_directory"),
+    TAGS("market_tags");
 
 
     private String typeName;

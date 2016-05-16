@@ -75,46 +75,76 @@ public class MarketingDomain {
         if (obj.getBalance() <= 0)
             return null;
 
-        if ((obj.getStartDateTime() != null) && (obj.getEndDateTime() != null)) {
-            DateTime currentDateTime = DateTime.now();
-            if ((currentDateTime.compareTo(obj.getStartDateTime()) < 0) || (obj.getEndDateTime().compareTo(currentDateTime) < 0)) {
+
+//        if((obj.getStartDateTime() != null && obj.getStartDateTime().isAfterNow())
+//                || (obj.getEndDateTime() !=null && obj.getEndDateTime().isBeforeNow()))
+//        {
+//            return null;
+//        }
+        if (!LookupCodes.MktType.ENVELOPE.equals(obj.getTypeCode())) {
+            List<MktDrawRuleObject> ruleList = getRuleList(marketId);
+            List<MktDrawRuleObject> newRuleList = new ArrayList<>();
+
+            Long totalQuantity = dataAPIClient.get("productkeybatch/sum/quantity?marketing_id=" + marketId, Long.class);
+            ;
+            Integer sumQuantity = obj.getQuantity();
+            if ((sumQuantity != null) || (sumQuantity > 0)) {
+                totalQuantity = new Long(sumQuantity);
+            }
+
+            for (MktDrawRuleObject object : ruleList) {
+                if ((object.getAvailableQuantity() != null) && (object.getAvailableQuantity() > 0)) {
+                    newRuleList.add(object);
+                } else if (object.getAvailableQuantity() == 0) {
+                    totalQuantity = totalQuantity - object.getTotalQuantity();
+                }
+            }
+
+            double prizeIndex = Math.floor(Math.random() * totalQuantity);
+
+            Double indexBefore = new Double(0);
+            Double indexAfter = new Double(0);
+
+            for (int i = 0; i < newRuleList.size(); i++) {
+                indexAfter += newRuleList.get(i).getTotalQuantity();
+                if ((prizeIndex >= indexBefore) && (prizeIndex < indexAfter)) {
+                    if (obj.getBalance() >= newRuleList.get(i).getAmount()) {
+                        return newRuleList.get(i);
+                    }
+                } else {
+                    indexBefore = indexAfter;
+                }
+            }
+            return null;
+        } else {
+            List<MktDrawRuleObject> envelopeRuleList = getRuleList(marketId);
+            if (envelopeRuleList == null || envelopeRuleList.size() != 2 || envelopeRuleList.get(0).getAvailableQuantity() < 1) {
+                return null;
+            }
+            Long totalEnvelopeQuantity = dataAPIClient.get("productkeybatch/sum/quantity?marketing_id=" + marketId, Long.class);
+            ;
+            Integer sumEnvelopeQuantity = obj.getQuantity();
+            if ((sumEnvelopeQuantity != null) || (sumEnvelopeQuantity > 0)) {
+                totalEnvelopeQuantity = new Long(sumEnvelopeQuantity);
+            }
+            double prizeEnvelopeIndex = Math.floor(Math.random() * totalEnvelopeQuantity);
+            if (prizeEnvelopeIndex <= new Double(envelopeRuleList.get(0).getTotalQuantity())) {
+                Double amountMin = envelopeRuleList.get(0).getAmount();
+                Double amountMax = envelopeRuleList.get(1).getAmount();
+                if (amountMin > amountMax) {
+                    Double temp = amountMin;
+                    amountMin = amountMax;
+                    amountMax = temp;
+                }
+                Double randomAmount = amountMin + Math.floor(Math.random() * (amountMax - amountMin));
+                MktDrawRuleObject envelopeMktDrawRuleObject = envelopeRuleList.get(0);
+                envelopeMktDrawRuleObject.setAmount(randomAmount);
+                return envelopeMktDrawRuleObject;
+
+            } else {
                 return null;
             }
         }
-        List<MktDrawRuleObject> ruleList = getRuleList(marketId);
-        List<MktDrawRuleObject> newRuleList = new ArrayList<>();
-
-        Long totalQuantity = dataAPIClient.get("productkeybatch/sum/quantity?marketing_id=" + marketId, Long.class);
-        ;
-        Integer sumQuantity = obj.getQuantity();
-        if ((sumQuantity != null) || (sumQuantity > 0)) {
-            totalQuantity = new Long(sumQuantity);
-        }
-
-        for (MktDrawRuleObject object : ruleList) {
-            if ((object.getAvailableQuantity() != null) && (object.getAvailableQuantity() > 0)) {
-                newRuleList.add(object);
-            } else if (object.getAvailableQuantity() == 0) {
-                totalQuantity = totalQuantity - object.getTotalQuantity();
-            }
-        }
-
-        double prizeIndex = Math.floor(Math.random() * totalQuantity);
-
-        Double indexBefore = new Double(0);
-        Double indexAfter = new Double(0);
-
-        for (int i = 0; i < newRuleList.size(); i++) {
-            indexAfter += newRuleList.get(i).getTotalQuantity();
-            if ((prizeIndex >= indexBefore) && (prizeIndex < indexAfter)) {
-                if (obj.getBalance() >= newRuleList.get(i).getAmount()) {
-                    return newRuleList.get(i);
-                }
-            } else {
-                indexBefore = indexAfter;
-            }
-        }
-        return null;
 
 
         /*Map<Double, MktDrawRuleObject> prizeArray = new HashMap<>();

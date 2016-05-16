@@ -48,6 +48,9 @@ public class Marketing implements OrgIdDetectable {
     @JsonProperty("balance")
     private Double balance;
 
+    @JsonProperty("prize_type_code")
+    private String prizeTypeCode;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -84,6 +87,9 @@ public class Marketing implements OrgIdDetectable {
 
     @JsonProperty("comments")
     private String comments;
+
+    @JsonProperty("rules_text")
+    private String rulesText;
 
     @JsonProperty("marketing_rules")
     private List<MktDrawRule> marketingRules;
@@ -159,6 +165,14 @@ public class Marketing implements OrgIdDetectable {
 
     public void setBalance(Double balance) {
         this.balance = balance;
+    }
+
+    public String getPrizeTypeCode() {
+        return prizeTypeCode;
+    }
+
+    public void setPrizeTypeCode(String prizeTypeCode) {
+        this.prizeTypeCode = prizeTypeCode;
     }
 
     public String getCreatedAccountId() {
@@ -249,6 +263,14 @@ public class Marketing implements OrgIdDetectable {
         this.marketingRules = marketingRules;
     }
 
+    public String getRulesText() {
+        return rulesText;
+    }
+
+    public void setRulesText(String rulesText) {
+        this.rulesText = rulesText;
+    }
+
     public Marketing() {
 
     }
@@ -264,6 +286,7 @@ public class Marketing implements OrgIdDetectable {
             this.setTypeCode(object.getTypeCode());
             this.setBudget(object.getBudget());
             this.setBalance(object.getBalance());
+            this.setPrizeTypeCode(object.getPrizeTypeCode());
             this.setCreatedAccountId(object.getCreatedAccountId());
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
@@ -272,6 +295,7 @@ public class Marketing implements OrgIdDetectable {
             this.setEndDateTime(object.getEndDateTime());
             this.setStatusCode(object.getStatusCode());
             this.setComments(object.getComments());
+            this.setRulesText(object.getRulesText());
         }
 
     }
@@ -287,6 +311,7 @@ public class Marketing implements OrgIdDetectable {
         object.setTypeCode(this.getTypeCode());
         object.setBudget(this.getBudget());
         object.setBalance(this.getBalance());
+        object.setPrizeTypeCode(this.getPrizeTypeCode());
         object.setCreatedAccountId(this.getCreatedAccountId());
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());
@@ -295,6 +320,7 @@ public class Marketing implements OrgIdDetectable {
         object.setEndDateTime(this.getEndDateTime());
         object.setStatusCode(this.getStatusCode());
         object.setComments(this.getComments());
+        object.setRulesText(this.getRulesText());
         return object;
     }
 
