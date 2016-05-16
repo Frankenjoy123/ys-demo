@@ -8,6 +8,7 @@ import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
@@ -116,13 +117,18 @@ public class OrganizationDomain {
     }
 
     public BrandObject createBrand(BrandObject object) {
-        object.setId(null);
-        object.setCreatedDateTime(DateTime.now());
-        object.setTypeCode(LookupCodes.OrgType.BRAND);
-        object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
-        if (StringUtils.hasText(object.getAttachment()) && object.getAttachment().endsWith(","))
-            object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() - 1));
-        return dataAPIClient.post("organization/brand", object, BrandObject.class);
+        OrganizationObject existingOrg = getOrganizationByName(object.getName().trim());
+        if(existingOrg!=null)
+            throw new ConflictException("same brand name application existed");
+        else {
+            object.setId(null);
+            object.setCreatedDateTime(DateTime.now());
+            object.setTypeCode(LookupCodes.OrgType.BRAND);
+            object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
+            if (StringUtils.hasText(object.getAttachment()) && object.getAttachment().endsWith(","))
+                object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() - 1));
+            return dataAPIClient.post("organization/brand", object, BrandObject.class);
+        }
     }
 
     public void saveBrandAttachment(String orgId, byte[] attachment, String contentType) {
