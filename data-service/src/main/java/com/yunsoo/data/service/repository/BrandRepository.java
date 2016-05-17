@@ -26,6 +26,11 @@ public interface BrandRepository extends CrudRepository<BrandEntity, String> {
                              @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime,
                              Pageable pageable);
 
+    @Query(" select be from BrandEntity be inner join be.organization o where be.carrierId= :carrierId and " +
+            "(:name is null or o.name like ('%' || :name || '%'))" +
+            "order by o.createdDateTime Desc")
+    Page<BrandEntity> filterByName(@Param("carrierId")String carrierId, @Param("name")String name, Pageable pageable);
+
     @Query("select be.orgId from BrandEntity be where carrierId = ?1")
     List<String> findOrgIdByCarrierId(String carrierId);
 

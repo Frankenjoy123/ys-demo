@@ -183,6 +183,23 @@ public class OrganizationController {
         return brandPage.map(Brand::new).getContent();
     }
 
+    @RequestMapping(value = "/{id}/brand/name", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
+    public  List<Brand> filterOrgBrandByName(@PathVariable(value = "id") String id,
+                                       @RequestParam(value = "name", required = false) String name,
+                                       Pageable pageable,
+                                       HttpServletResponse response) {
+        if(!StringUtils.hasText(name))
+            name = null;
+        Page<BrandObject> brandPage = organizationDomain.getOrgBrandListByName(id, name, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", brandPage.toContentRange());
+        }
+
+        return brandPage.map(Brand::new).getContent();
+    }
+
+
     @RequestMapping(value = "{id}/logo/{imageName}", method = RequestMethod.GET)
     public ResponseEntity<?> getLogo(
             @PathVariable(value = "id") String id,
