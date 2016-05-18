@@ -46,7 +46,7 @@ spring:
   profiles: local
 
 logging:
-  file: c:/logs/api.log
+  file: c:/logs/yunsoo/api.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'ERROR'
@@ -64,7 +64,7 @@ spring:
   profiles: dev
 
 logging:
-  file: /var/log/api.log
+  file: /var/log/yunsoo/api.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'

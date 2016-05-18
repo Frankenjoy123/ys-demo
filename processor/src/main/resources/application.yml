@@ -45,7 +45,7 @@ yunsoo:
     environment: local
 
 logging:
-  file: c:/logs/processor.log
+  file: c:/logs/yunsoo/processor.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'
@@ -55,7 +55,7 @@ spring:
   profiles: dev
 
 logging:
-  file: /var/log/processor.log
+  file: /var/log/yunsoo/processor.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'
