@@ -89,6 +89,7 @@ public class MessageService {
                     productKeyBatchCreateHandler.process(messageObj);
                 } catch (Exception e) {
                     logDomain.logError("product_key_batch_create", e.getMessage(), messageObj != null ? messageObj.getProductKeyBatchId() : null, "product_key_batch_id");
+                    throw e;
                 }
                 break;
             default:

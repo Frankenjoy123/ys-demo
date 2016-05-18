@@ -6,6 +6,7 @@ import com.yunsoo.api.payment.ParameterNames;
 import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.data.object.MktDrawPrizeObject;
 import com.yunsoo.common.data.object.MktDrawRuleObject;
+import com.yunsoo.common.data.object.UserScanRecordObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -71,6 +72,16 @@ public class MarketingDomain {
             return null;
         }
     }
+
+    public String getProductBaseIdByScanRecordId(String id) {
+        try {
+            UserScanRecordObject userScanRecordObject = dataAPIClient.get("userScanRecord/{id}", UserScanRecordObject.class, id);
+            return userScanRecordObject.getProductBaseId();
+        } catch (NotFoundException ignored) {
+            return null;
+        }
+    }
+
 
     public MktDrawRuleObject getMktDrawRuleById(String id) {
         try {

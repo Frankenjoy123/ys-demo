@@ -318,8 +318,9 @@ public class MarketingController {
             orgId = AuthUtils.fixOrgId(orgId);
 
         List<Marketing> marketingList = new ArrayList<>();
-        if(orgId == null || orgIds.size() == 0)
+        if (orgId == null && (orgIds == null || orgIds.size() == 0)) {
             return marketingList;
+        }
 
         Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status, searchText, startTime, endTime, productBaseId, pageable);
         if (pageable != null) {
@@ -509,11 +510,12 @@ public class MarketingController {
         List<MktDrawPrize> mktDrawPrizeList = new ArrayList<>();
         mktDrawPrizePage.getContent().forEach(object -> {
             MktDrawPrize mktDrawPrize = new MktDrawPrize(object);
-            MarketingObject mkto = marketingDomain.getMarketingById(object.getMarketingId());
-            if (mkto != null) {
-                String productBaseId = mkto.getProductBaseId();
+            String productBaseId = marketingDomain.getProductBaseIdByScanRecordId(object.getScanRecordId());
+            if (productBaseId != null) {
                 ProductBaseObject pbo = productBaseDomain.getProductBaseById(productBaseId);
-                mktDrawPrize.setProductBaseName(pbo.getName());
+                if (pbo != null) {
+                    mktDrawPrize.setProductBaseName(pbo.getName());
+                }
             }
             String scanRecordId = object.getScanRecordId();
             UserScanRecordObject userScanRecordObject = userScanDomain.getScanRecordById(scanRecordId);
