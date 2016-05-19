@@ -19,7 +19,7 @@ spring:
     generate_ddl: false
 
 logging:
-  file: /var/log/data-api.log
+  file: /var/log/yunsoo/data-api.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'

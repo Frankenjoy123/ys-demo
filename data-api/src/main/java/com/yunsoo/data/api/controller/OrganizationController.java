@@ -145,6 +145,20 @@ public class OrganizationController {
 
     }
 
+    @RequestMapping(value = "{id}/brand/name", method = RequestMethod.GET)
+    public List<BrandObject> getOrgBrandListByName(@PathVariable(value = "id") String id,
+                                             @RequestParam(value = "name", required = false) String name,
+                                             Pageable pageable,
+                                             HttpServletResponse response) {
+
+        Page<BrandEntity> entityPage = brandRepository.filterByName(id, name, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+        return entityPage.map(this::toBrandObject).getContent();
+    }
+
+
     @RequestMapping(value = "{id}/brandIds", method = RequestMethod.GET)
     public List<String> getOrgBrandListIds(@PathVariable(value = "id") String id) {
 

@@ -105,6 +105,16 @@ public class OrganizationDomain {
         }, orgId);
     }
 
+    public Page<BrandObject> getOrgBrandListByName(String orgId, String orgName, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("name", orgName)
+                .append(pageable)
+                .build();
+        return dataAPIClient.getPaged("organization/{id}/brand/name" + query, new ParameterizedTypeReference<List<BrandObject>>() {
+        }, orgId);
+    }
+
+
     public List<String> getBrandIdsForCarrier(String carrierId) {
         return dataAPIClient.get("organization/{id}/brandIds", new ParameterizedTypeReference<List<String>>() {
         }, carrierId);

@@ -15,7 +15,7 @@ spring:
   mvc.throw-exception-if-no-handler-found: true
 
 logging:
-  file: /var/log/api-rabbit.log
+  file: /var/log/yunsoo/api-rabbit.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'
