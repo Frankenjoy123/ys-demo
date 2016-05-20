@@ -238,9 +238,7 @@ public class AnalysisController {
                     throw new IllegalStateException();
                 }, LinkedHashMap::new));
         List<LuTagObject> tags = analysisDomain.getTags();
-        List<String> categories = tags.stream().filter(t -> t.getCategory() == 1).map(t -> {
-            return t.getTagName() + "消费者";
-        }).collect(Collectors.toList());
+        List<String> categories = tags.stream().filter(t -> t.getCategory() == 1).map(LuTagObject::getTagName).collect(Collectors.toList());
         List<Integer> values = categories.stream().map(t -> {
             if (quantityMap.containsKey(t)) {
                 return quantityMap.get(t);

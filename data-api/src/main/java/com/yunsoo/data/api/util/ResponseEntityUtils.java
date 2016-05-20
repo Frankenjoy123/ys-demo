@@ -28,12 +28,14 @@ public class ResponseEntityUtils {
         S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
 
         InputStreamReader isr = new InputStreamReader(s3ObjectInputStream);
+        /*
         String charset = isr.getEncoding();
         if(charset.toLowerCase().equals("cp1252"));
             charset = "GBK";
-
+*/
         ObjectMetadata metadata = s3Object.getObjectMetadata();
-        String contentType = metadata.getContentType() + "; charset=" + charset;
+     //   String contentType = metadata.getContentType() + "; charset=" + charset;
+        String contentType = metadata.getContentType();
         long contentLength = metadata.getContentLength();
 
         ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
@@ -47,7 +49,7 @@ public class ResponseEntityUtils {
 
         ByteArrayInputStream resultInputStream = new ByteArrayInputStream(StreamUtils.copyToByteArray(s3ObjectInputStream));
         s3ObjectInputStream.close();
-        isr.close();
+     //   isr.close();
         return bodyBuilder.body(new InputStreamResource(resultInputStream));
     }
 

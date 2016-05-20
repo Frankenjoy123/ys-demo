@@ -131,6 +131,7 @@ public class ProductCommentsController {
         object.setScore(entity.getScore());
         object.setUserId(entity.getUserId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
+        object.setAddress(entity.getAddress());
         return object;
     }
 
@@ -145,6 +146,7 @@ public class ProductCommentsController {
         entity.setScore(object.getScore());
         entity.setUserId(object.getUserId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
+        entity.setAddress(object.getAddress());
         return entity;
     }
 
