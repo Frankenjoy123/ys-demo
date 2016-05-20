@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,10 +24,20 @@ import java.util.Map;
 public class DebugController {
 
     @RequestMapping(value = "ip", method = RequestMethod.GET)
-    public String echo(HttpServletRequest request) {
+    public String ip(HttpServletRequest request) {
         return IpUtils.getIpFromRequest(request);
     }
 
+    @RequestMapping(value = "headers", method = RequestMethod.GET)
+    public Map<String, Object> headers(HttpServletRequest request) {
+        Map<String, Object> headers = new HashMap<>();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            headers.put(name, request.getHeader(name));
+        }
+        return headers;
+    }
 
     //id
     @RequestMapping(value = "tools/id", method = RequestMethod.GET)
