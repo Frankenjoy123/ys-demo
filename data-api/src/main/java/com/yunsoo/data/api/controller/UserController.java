@@ -8,9 +8,11 @@ import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.UserEntity;
 import com.yunsoo.data.service.repository.UserRepository;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -67,6 +69,41 @@ public class UserController {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
         return entityPage.getContent().stream().map(this::toUserObject).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/query", method = RequestMethod.GET)
+    public List<UserObject> queryUser(@RequestParam(value = "sex", required = false) Boolean sex,
+                                      @RequestParam(value = "phone", required = false) String phone,
+                                      @RequestParam(value = "name", required = false) String name,
+                                      @RequestParam(value = "province", required = false) String province,
+                                      @RequestParam(value = "city", required = false) String city,
+                                      @RequestParam(value = "age_start", required = false) Integer ageStart,
+                                      @RequestParam(value = "age_end", required = false) Integer ageEnd,
+                                      @RequestParam(value = "create_datetime_start", required = false)
+                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                      @RequestParam(value = "create_datetime_end", required = false)
+                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                      Pageable pageable,
+                                      HttpServletResponse response) {
+
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        Page<UserEntity> entityPage = userRepository.findByFilter(sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStartTo, createdDateTimeEndTo,pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toUserObject)
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
