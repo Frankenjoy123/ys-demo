@@ -28,13 +28,13 @@ public class ApplicationObject implements Serializable {
     @JsonProperty("version")
     private String version;
 
-    @NotEmpty(message = "type_code must not be null or empty")
-    @JsonProperty("type_code")
-    private String typeCode;
-
     @NotEmpty(message = "status_code must not be null or empty")
     @JsonProperty("status_code")
     private String statusCode;
+
+    @NotEmpty(message = "type_code must not be null or empty")
+    @JsonProperty("type_code")
+    private String typeCode;
 
     @JsonProperty("description")
     private String description;
@@ -60,14 +60,6 @@ public class ApplicationObject implements Serializable {
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
 
-    public String getSystemVersion() {
-        return systemVersion;
-    }
-
-    public void setSystemVersion(String systemVersion) {
-        this.systemVersion = systemVersion;
-    }
-
     public String getId() {
         return id;
     }
@@ -92,14 +84,6 @@ public class ApplicationObject implements Serializable {
         this.version = version;
     }
 
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
-
     public String getStatusCode() {
         return statusCode;
     }
@@ -108,12 +92,28 @@ public class ApplicationObject implements Serializable {
         this.statusCode = statusCode;
     }
 
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getSystemVersion() {
+        return systemVersion;
+    }
+
+    public void setSystemVersion(String systemVersion) {
+        this.systemVersion = systemVersion;
     }
 
     public String getCreatedAccountId() {

@@ -8,6 +8,7 @@ import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,7 @@ public class ApplicationController {
 
 
     @RequestMapping(value = "{appId}", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission('*', 'org', 'application:read')")
     public Application getById(@PathVariable("appId") String appId) {
         ApplicationObject applicationObject = applicationDomain.getApplicationById(appId);
         if (applicationObject == null) {
@@ -51,11 +53,10 @@ public class ApplicationController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('*', 'org', 'application:create')")
     public Application create(@RequestBody @Valid Application application) {
         ApplicationObject applicationObject = application.toApplicationObject();
-        String currentAccountId = AuthUtils.getCurrentAccount().getId();
-        applicationObject.setCreatedAccountId(currentAccountId);
         applicationObject = applicationDomain.createApplication(applicationObject);
         return new Application(applicationObject);
     }
