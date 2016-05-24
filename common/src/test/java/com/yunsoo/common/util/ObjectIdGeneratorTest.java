@@ -3,8 +3,6 @@ package com.yunsoo.common.util;
 import org.junit.Test;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by:   Lijian
@@ -14,7 +12,7 @@ import java.util.Set;
 public class ObjectIdGeneratorTest {
 
     @Test
-    public void test_getNew(){
+    public void test_getNew() {
         String id = ObjectIdGenerator.getNew();
         System.out.println(id);
         System.out.println(ObjectIdGenerator.getNew());
@@ -27,22 +25,25 @@ public class ObjectIdGeneratorTest {
     @Test
     public void test_getNewIds() {
         for (int i = 0; i < 34; i++) {
-            System.out.println(ObjectIdGenerator.getNew());
+            String id = ObjectIdGenerator.getNew();
+            System.out.println(id);
+            System.out.println(ObjectIdGenerator.validate(id));
         }
     }
 
     @Test
     public void test_getNew100m() {
         Date date = new Date();
-        Set<String> set = new HashSet<>();
+//        Set<String> set = new HashSet<>();
         for (int i = 0; i < 1000000; i++) {
             String id = ObjectIdGenerator.getNew();
-            if (set.contains(id)) {
-                throw new RuntimeException("Id duplicated: " + id);
-            }
-            set.add(id);
+            ObjectIdGenerator.validate(id);
+//            if (set.contains(id)) {
+//                throw new RuntimeException("Id duplicated: " + id);
+//            }
+//            set.add(id);
         }
         System.out.println("generate 100m time: " + (new Date().getTime() - date.getTime()));
-        System.out.println(set.size());
+        //System.out.println(set.size());
     }
 }
