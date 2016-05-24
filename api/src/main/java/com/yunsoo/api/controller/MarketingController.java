@@ -190,7 +190,7 @@ public class MarketingController {
 
             List<MktDrawRule> mktDrawRuleList = marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
             List<Long> prizeCountList = new ArrayList<>();
-            List<MktDrawPrizeResult> mktDrawPrizeResultList = new ArrayList();
+            List<MktDrawPrizeResult> mktDrawPrizeResultList = new ArrayList<>();
 
             if (mktDrawRuleList.size() > 0) {
                 marketingResult.setRuleList(mktDrawRuleList);

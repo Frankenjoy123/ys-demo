@@ -23,19 +23,22 @@ public class Application {
     @JsonProperty("name")
     private String name;
 
-    @NotEmpty(message = "name must not be null or empty")
+    @NotEmpty(message = "version must not be null or empty")
     @JsonProperty("version")
     private String version;
-
-    @NotEmpty(message = "name must not be null or empty")
-    @JsonProperty("type_code")
-    private String typeCode;
 
     @JsonProperty("status_code")
     private String statusCode;
 
+    @NotEmpty(message = "type_code must not be null or empty")
+    @JsonProperty("type_code")
+    private String typeCode;
+
     @JsonProperty("description")
     private String description;
+
+    @JsonProperty("system_version")
+    private String systemVersion;
 
     @JsonProperty("created_account_id")
     private String createdAccountId;
@@ -77,14 +80,6 @@ public class Application {
         this.version = version;
     }
 
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
-
     public String getStatusCode() {
         return statusCode;
     }
@@ -93,12 +88,28 @@ public class Application {
         this.statusCode = statusCode;
     }
 
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getSystemVersion() {
+        return systemVersion;
+    }
+
+    public void setSystemVersion(String systemVersion) {
+        this.systemVersion = systemVersion;
     }
 
     public String getCreatedAccountId() {
@@ -141,9 +152,10 @@ public class Application {
             this.id = object.getId();
             this.name = object.getName();
             this.version = object.getVersion();
-            this.typeCode = object.getTypeCode();
             this.statusCode = object.getStatusCode();
+            this.typeCode = object.getTypeCode();
             this.description = object.getDescription();
+            this.systemVersion = object.getSystemVersion();
             this.createdAccountId = object.getCreatedAccountId();
             this.createdDateTime = object.getCreatedDateTime();
             this.modifiedAccountId = object.getModifiedAccountId();
@@ -156,9 +168,10 @@ public class Application {
         object.setId(this.id);
         object.setName(this.name);
         object.setVersion(this.version);
-        object.setTypeCode(this.typeCode);
         object.setStatusCode(this.statusCode);
+        object.setTypeCode(this.typeCode);
         object.setDescription(this.description);
+        object.setSystemVersion(this.systemVersion);
         object.setCreatedAccountId(this.createdAccountId);
         object.setCreatedDateTime(this.createdDateTime);
         object.setModifiedAccountId(this.modifiedAccountId);

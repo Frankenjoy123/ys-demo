@@ -16,8 +16,9 @@ public final class IpUtils {
         }
 
         ipAddress = request.getHeader("x-forwarded-for");
+        ipAddress = ipAddress == null ? null : ipAddress.split(",")[0].split(":")[0];
         if (validate(ipAddress)) {
-            return ipAddress.split(",")[0].split(":")[0];
+            return ipAddress;
         }
 
         ipAddress = request.getHeader("x-real-ip");

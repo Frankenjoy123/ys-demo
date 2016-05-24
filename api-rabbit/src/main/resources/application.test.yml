@@ -26,7 +26,7 @@ yunsoo:
   environment: test
   client:
     dataapi:
-      baseurl: http://localhost:3080/ #todo: use load balance address instead
+      baseurl: http://localhost:3080/
   access_token:
     expires_minutes: 5256000
     hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU

@@ -29,16 +29,6 @@ public class ApplicationController {
     @Autowired
     private ApplicationRepository applicationRepository;
 
-    @RequestMapping(value = "/latest", method = RequestMethod.GET)
-    public ApplicationObject getLatestVersion(@RequestParam(value = "type_code") String typeCode,
-                                              @RequestParam(value = "system_version") String systemVersion) {
-        ApplicationEntity entity = applicationRepository.findFirstByTypeCodeAndSystemVersionLessThanEqualOrderByCreatedDateTimeDesc(typeCode, systemVersion);
-        if (entity == null) {
-            throw new NotFoundException("application not found by [type code: " + typeCode + "]");
-        }
-        return toApplicationObject(entity);
-    }
-
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public ApplicationObject getById(@PathVariable String id) {
         ApplicationEntity entity = applicationRepository.findOne(id);
@@ -96,11 +86,11 @@ public class ApplicationController {
         if (applicationObject.getVersion() != null) {
             entity.setVersion(applicationObject.getVersion());
         }
-        if (applicationObject.getTypeCode() != null) {
-            entity.setTypeCode(applicationObject.getTypeCode());
-        }
         if (applicationObject.getStatusCode() != null) {
             entity.setStatusCode(applicationObject.getStatusCode());
+        }
+        if (applicationObject.getTypeCode() != null) {
+            entity.setTypeCode(applicationObject.getTypeCode());
         }
         if (applicationObject.getDescription() != null) {
             entity.setDescription(applicationObject.getDescription());
@@ -112,6 +102,15 @@ public class ApplicationController {
         applicationRepository.save(entity);
     }
 
+    @RequestMapping(value = "/latest", method = RequestMethod.GET)
+    public ApplicationObject getLatestVersion(@RequestParam(value = "type_code") String typeCode,
+                                              @RequestParam(value = "system_version") String systemVersion) {
+        ApplicationEntity entity = applicationRepository.findFirstByTypeCodeAndSystemVersionLessThanEqualOrderByCreatedDateTimeDesc(typeCode, systemVersion);
+        if (entity == null) {
+            throw new NotFoundException("application not found by [type code: " + typeCode + "]");
+        }
+        return toApplicationObject(entity);
+    }
 
     private ApplicationObject toApplicationObject(ApplicationEntity entity) {
         if (entity == null) {
@@ -121,14 +120,14 @@ public class ApplicationController {
         object.setId(entity.getId());
         object.setName(entity.getName());
         object.setVersion(entity.getVersion());
-        object.setTypeCode(entity.getTypeCode());
         object.setStatusCode(entity.getStatusCode());
+        object.setTypeCode(entity.getTypeCode());
         object.setDescription(entity.getDescription());
+        object.setSystemVersion(entity.getSystemVersion());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
-        object.setSystemVersion(entity.getSystemVersion());
         return object;
     }
 
@@ -140,14 +139,14 @@ public class ApplicationController {
         entity.setId(object.getId());
         entity.setName(object.getName());
         entity.setVersion(object.getVersion());
-        entity.setTypeCode(object.getTypeCode());
         entity.setStatusCode(object.getStatusCode());
+        entity.setTypeCode(object.getTypeCode());
         entity.setDescription(object.getDescription());
+        entity.setSystemVersion(object.getSystemVersion());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());
-        entity.setSystemVersion(object.getSystemVersion());
         return entity;
     }
 
