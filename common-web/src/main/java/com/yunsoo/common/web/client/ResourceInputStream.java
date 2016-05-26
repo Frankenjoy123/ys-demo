@@ -1,5 +1,9 @@
 package com.yunsoo.common.web.client;
 
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -43,5 +47,16 @@ public class ResourceInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         return inputStream != null ? inputStream.read() : 0;
+    }
+
+    public ResponseEntity<?> toResponseEntity() {
+        ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
+        if (contentType != null) {
+            bodyBuilder.contentType(MediaType.parseMediaType(contentType));
+        }
+        if (contentLength > 0) {
+            bodyBuilder.contentLength(contentLength);
+        }
+        return bodyBuilder.body(new InputStreamResource(inputStream));
     }
 }

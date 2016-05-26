@@ -8,6 +8,7 @@ import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 /**
  * Created by:   Lijian
@@ -18,6 +19,7 @@ public final class ObjectIdGenerator {
     private static final int MACHINE_IDENTIFIER;
     private static final short PROCESS_IDENTIFIER;
     private static final AtomicInteger NEXT_COUNTER = new AtomicInteger(new SecureRandom().nextInt());
+    private static final Pattern ID_REGEXP = Pattern.compile("^[0-9A-Za-z]{19}$");
 
     /**
      * @return id, 19 length string, Example: 2kqkwehe64b29xb6gl9
@@ -27,7 +29,7 @@ public final class ObjectIdGenerator {
     }
 
     public static boolean validate(String id) {
-        return id != null && id.length() == 19;
+        return id != null && id.length() == 19 && ID_REGEXP.matcher(id).matches();
     }
 
     public static Date getGeneratedDateFromId(String id) {

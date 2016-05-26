@@ -44,6 +44,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/login/**").permitAll()
                 .antMatchers("/auth/accesstoken/**").permitAll()
                 .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
+                .antMatchers(HttpMethod.GET, "/application/*/config").permitAll()
                 .antMatchers(HttpMethod.GET, "/image/*").permitAll()
                 .antMatchers(HttpMethod.GET, "/config/organization/public").permitAll()
                 .antMatchers(HttpMethod.GET, "/organization/*/logo/*").permitAll()
