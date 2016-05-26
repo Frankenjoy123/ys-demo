@@ -1,9 +1,11 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.EMRUserDomain;
+import com.yunsoo.api.domain.UserBlockDomain;
 import com.yunsoo.api.dto.EMRUser;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.EMRUserObject;
+import com.yunsoo.common.data.object.UserBlockObject;
 import com.yunsoo.common.web.client.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/emr/user")
@@ -23,6 +24,9 @@ public class EMRUserController {
 
     @Autowired
     private EMRUserDomain emrUserDomain;
+
+    @Autowired
+    private UserBlockDomain userBlockDomain;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<EMRUser> queryUser(@RequestParam(value = "org_id", required = false) String orgId,
@@ -47,8 +51,19 @@ public class EMRUserController {
             response.setHeader("Content-Range", entityPage.toContentRange());
         }
 
-        return entityPage.getContent().stream()
-                .map(EMRUser::new)
-                .collect(Collectors.toList());
+        List<EMRUser> emrUsers = entityPage.map(emr -> {
+            EMRUser user = new EMRUser(emr);
+
+            List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
+            if (userBlockObjects == null || userBlockObjects.size() == 0) {
+                user.setBlocked(false);
+            } else {
+                user.setBlocked(true);
+            }
+
+            return user;
+        }).getContent();
+
+        return emrUsers;
     }
 }

@@ -59,6 +59,9 @@ public class EMRUser implements Serializable {
     @JsonProperty("wx_openid")
     private String wxOpenid;
 
+    @JsonProperty("blocked")
+    private Boolean blocked;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("join_datetime")
@@ -190,6 +193,14 @@ public class EMRUser implements Serializable {
 
     public void setJoinDateTime(DateTime joinDateTime) {
         this.joinDateTime = joinDateTime;
+    }
+
+    public Boolean getBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(Boolean blocked) {
+        this.blocked = blocked;
     }
 
     public EMRUser() {
