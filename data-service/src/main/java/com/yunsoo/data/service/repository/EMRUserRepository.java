@@ -26,4 +26,85 @@ public interface EMRUserRepository extends FindOneAndSaveRepository<EMRUserEntit
                                      @Param("ageStart") Integer ageStart, @Param("ageEnd") Integer ageEnd,
                                      @Param("createdDateTimeStart") DateTime createdDateTimeStart,
                                      @Param("createdDateTimeEnd") DateTime createdDateTimeEnd, Pageable pageable);
+
+
+    @Query("select u from #{#entityName} u inner join  u.eventEntities ev where ev.name = 'scan' " +
+            "and ev.orgId = :orgId " +
+            "and (:productBaseId is null or ev.productBaseId >= :productBaseId) " +
+            "and (:province is null or :province = '' or u.province like ('%' || :province || '%')) " +
+            "and (:city is null or :city = '' or u.city like ('%' || :city || '%')) " +
+            "and (:createdDateTimeStart is null or ev.scanDateTime >= :createdDateTimeStart) " +
+            "and (:createdDateTimeEnd is null or ev.scanDateTime <= :createdDateTimeEnd)")
+    Page<EMRUserEntity> findEventUsersFilterByScan(@Param("orgId") String orgId,
+                                                   @Param("productBaseId") String productBaseId,
+                                                   @Param("province") String province, @Param("city") String city,
+                                                   @Param("createdDateTimeStart") DateTime createdDateTimeStart,
+                                                   @Param("createdDateTimeEnd") DateTime createdDateTimeEnd,
+                                                   Pageable pageable);
+
+
+    @Query("select u from #{#entityName} u inner join  u.eventEntities ev where ev.name = 'scan' " +
+            "and ev.orgId = :orgId " +
+            "and (:productBaseId is null or ev.productBaseId >= :productBaseId) " +
+            "and ev.wxOpenId is not null " +
+            "and (:province is null or :province = '' or u.province like ('%' || :province || '%')) " +
+            "and (:city is null or :city = '' or u.city like ('%' || :city || '%')) " +
+            "and (:createdDateTimeStart is null or ev.scanDateTime >= :createdDateTimeStart) " +
+            "and (:createdDateTimeEnd is null or ev.scanDateTime <= :createdDateTimeEnd)")
+    Page<EMRUserEntity> findEventUsersFilterByWX(@Param("orgId") String orgId,
+                                                 @Param("productBaseId") String productBaseId,
+                                                 @Param("province") String province, @Param("city") String city,
+                                                 @Param("createdDateTimeStart") DateTime createdDateTimeStart,
+                                                 @Param("createdDateTimeEnd") DateTime createdDateTimeEnd,
+                                                 Pageable pageable);
+
+
+    @Query("select u from #{#entityName} u inner join  u.eventEntities ev where ev.name = 'draw' " +
+            "and ev.orgId = :orgId " +
+            "and (:productBaseId is null or ev.productBaseId >= :productBaseId) " +
+            "and ev.wxOpenId is not null " +
+            "and (:province is null or :province = '' or u.province like ('%' || :province || '%')) " +
+            "and (:city is null or :city = '' or u.city like ('%' || :city || '%')) " +
+            "and (:createdDateTimeStart is null or ev.scanDateTime >= :createdDateTimeStart) " +
+            "and (:createdDateTimeEnd is null or ev.scanDateTime <= :createdDateTimeEnd)")
+    Page<EMRUserEntity> findEventUsersFilterByDraw(@Param("orgId") String orgId,
+                                                   @Param("productBaseId") String productBaseId,
+                                                   @Param("province") String province, @Param("city") String city,
+                                                   @Param("createdDateTimeStart") DateTime createdDateTimeStart,
+                                                   @Param("createdDateTimeEnd") DateTime createdDateTimeEnd,
+                                                   Pageable pageable);
+
+    @Query("select u from #{#entityName} u inner join  u.eventEntities ev where ev.name = 'draw' " +
+            "and ev.orgId = :orgId " +
+            "and (:productBaseId is null or ev.productBaseId >= :productBaseId) " +
+            "and ev.wxOpenId is not null " +
+            "and ev.isPriced = 1 " +
+            "and (:province is null or :province = '' or u.province like ('%' || :province || '%')) " +
+            "and (:city is null or :city = '' or u.city like ('%' || :city || '%')) " +
+            "and (:createdDateTimeStart is null or ev.scanDateTime >= :createdDateTimeStart) " +
+            "and (:createdDateTimeEnd is null or ev.scanDateTime <= :createdDateTimeEnd)")
+    Page<EMRUserEntity> findEventUsersFilterByWin(@Param("orgId") String orgId,
+                                                  @Param("productBaseId") String productBaseId,
+                                                  @Param("province") String province, @Param("city") String city,
+                                                  @Param("createdDateTimeStart") DateTime createdDateTimeStart,
+                                                  @Param("createdDateTimeEnd") DateTime createdDateTimeEnd,
+                                                  Pageable pageable);
+
+    @Query("select u from #{#entityName} u inner join  u.eventEntities ev where ev.name = 'draw' " +
+            "and ev.orgId = :orgId " +
+            "and (:productBaseId is null or ev.productBaseId >= :productBaseId) " +
+            "and ev.wxOpenId is not null " +
+            "and ev.isPriced = 1 " +
+            "and ev.priceStatusCode in ('submit','paid')  " +
+            "and (:province is null or :province = '' or u.province like ('%' || :province || '%')) " +
+            "and (:city is null or :city = '' or u.city like ('%' || :city || '%')) " +
+            "and (:createdDateTimeStart is null or ev.scanDateTime >= :createdDateTimeStart) " +
+            "and (:createdDateTimeEnd is null or ev.scanDateTime <= :createdDateTimeEnd)")
+    Page<EMRUserEntity> findEventUsersFilterByReward(@Param("orgId") String orgId,
+                                                     @Param("productBaseId") String productBaseId,
+                                                     @Param("province") String province, @Param("city") String city,
+                                                     @Param("createdDateTimeStart") DateTime createdDateTimeStart,
+                                                     @Param("createdDateTimeEnd") DateTime createdDateTimeEnd,
+                                                     Pageable pageable);
+
 }

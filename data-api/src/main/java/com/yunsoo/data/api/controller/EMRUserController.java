@@ -63,6 +63,170 @@ public class EMRUserController {
                 .collect(Collectors.toList());
     }
 
+
+    @RequestMapping(value = "/scan", method = RequestMethod.GET)
+    public List<EMRUserObject> findEventUsersFilterByScan(@RequestParam(value = "org_id", required = false) String orgId,
+                                                          @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                          @RequestParam(value = "province", required = false) String province,
+                                                          @RequestParam(value = "city", required = false) String city,
+                                                          @RequestParam(value = "create_datetime_start", required = false)
+                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                          @RequestParam(value = "create_datetime_end", required = false)
+                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                          Pageable pageable,
+                                                          HttpServletResponse response) {
+
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByScan(orgId,productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toEMRUserObject)
+                .collect(Collectors.toList());
+    }
+
+
+    @RequestMapping(value = "/draw", method = RequestMethod.GET)
+    public List<EMRUserObject> findEventUsersFilterByDraw(@RequestParam(value = "org_id", required = false) String orgId,
+                                                          @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                          @RequestParam(value = "province", required = false) String province,
+                                                          @RequestParam(value = "city", required = false) String city,
+                                                          @RequestParam(value = "create_datetime_start", required = false)
+                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                          @RequestParam(value = "create_datetime_end", required = false)
+                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                          Pageable pageable,
+                                                          HttpServletResponse response) {
+
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByDraw(orgId,productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toEMRUserObject)
+                .collect(Collectors.toList());
+    }
+
+
+    @RequestMapping(value = "/wx", method = RequestMethod.GET)
+    public List<EMRUserObject> findEventUsersFilterByWX(@RequestParam(value = "org_id", required = false) String orgId,
+                                                        @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                        @RequestParam(value = "province", required = false) String province,
+                                                        @RequestParam(value = "city", required = false) String city,
+                                                        @RequestParam(value = "create_datetime_start", required = false)
+                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                        @RequestParam(value = "create_datetime_end", required = false)
+                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                        Pageable pageable,
+                                                        HttpServletResponse response) {
+
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByWX(orgId, productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toEMRUserObject)
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/win", method = RequestMethod.GET)
+    public List<EMRUserObject> findEventUsersFilterByWin(@RequestParam(value = "org_id", required = false) String orgId,
+                                                         @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                         @RequestParam(value = "province", required = false) String province,
+                                                         @RequestParam(value = "city", required = false) String city,
+                                                         @RequestParam(value = "create_datetime_start", required = false)
+                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                         @RequestParam(value = "create_datetime_end", required = false)
+                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                         Pageable pageable,
+                                                         HttpServletResponse response) {
+
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByWin(orgId,productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toEMRUserObject)
+                .collect(Collectors.toList());
+    }
+
+
+    @RequestMapping(value = "/reward", method = RequestMethod.GET)
+    public List<EMRUserObject> findEventUsersFilterByReward(@RequestParam(value = "org_id", required = false) String orgId,
+                                                            @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                            @RequestParam(value = "province", required = false) String province,
+                                                            @RequestParam(value = "city", required = false) String city,
+                                                            @RequestParam(value = "create_datetime_start", required = false)
+                                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                            @RequestParam(value = "create_datetime_end", required = false)
+                                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                            Pageable pageable,
+                                                            HttpServletResponse response) {
+
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByReward(orgId, productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toEMRUserObject)
+                .collect(Collectors.toList());
+    }
+
     private EMRUserObject toEMRUserObject(EMRUserEntity entity) {
         if (entity == null) {
             return null;

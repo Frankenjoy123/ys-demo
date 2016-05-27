@@ -1,16 +1,17 @@
 package com.yunsoo.data.service.entity;
 
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.*;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "emr_user")
-public class EMRUserEntity {
+public class EMRUserEntity implements Serializable {
 
     @Id
     @Column(name = "id")
@@ -61,6 +62,14 @@ public class EMRUserEntity {
     @Column(name = "join_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime joinDateTime;
+
+
+    @OneToMany(targetEntity = EMREventEntity.class, fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name="user_id", referencedColumnName="user_id", insertable = false, updatable = false),
+            @JoinColumn(name="org_id", referencedColumnName="org_id",insertable = false, updatable = false)
+    })
+    private Set<EMREventEntity> eventEntities;
 
     public String getId() {
         return id;
@@ -188,5 +197,13 @@ public class EMRUserEntity {
 
     public void setJoinDateTime(DateTime joinDateTime) {
         this.joinDateTime = joinDateTime;
+    }
+
+    public Set<EMREventEntity> getEventEntities() {
+        return eventEntities;
+    }
+
+    public void setEventEntities(Set<EMREventEntity> eventEntities) {
+        this.eventEntities = eventEntities;
     }
 }
