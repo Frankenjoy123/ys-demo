@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +47,11 @@ public class AnalysisController {
     @Autowired
     private LuTagRepository luTagRepository;
     // E 营销方案
+
+    //S 消费者漏斗分析
+    @Autowired
+    private EMREventRepository eventRepository;
+
 
     @Autowired
     private ProductKeyBatchRepository productKeyBatchRepository;
@@ -205,6 +211,39 @@ public class AnalysisController {
         List<LuTagEntity> list = luTagRepository.findAll();
         return list.stream().map(LuTagEntity::toDataObject).collect(Collectors.toList());
     }
+
+    // int[] 1222,222,22,2,0
+    @RequestMapping(value = "/user/funnel", method = RequestMethod.GET)
+    public int[] queryUserFunnel(@RequestParam(value = "org_id") String orgId,
+                                 @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                 @RequestParam(value = "province", required = false) String province,
+                                 @RequestParam(value = "city", required = false) String city,
+                                 @RequestParam(value = "create_datetime_start", required = false)
+                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                 @RequestParam(value = "create_datetime_end", required = false)
+                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+
+        DateTime startDateTime = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        DateTime endDateTime =  createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+        List<Integer> result = new ArrayList<>();
+        int scanCount = eventRepository.scanCount(orgId, productBaseId, province, city,  startDateTime, endDateTime);
+        result.add(scanCount);
+
+        int wxCount = eventRepository.wxCount(orgId, productBaseId, province, city,  startDateTime, endDateTime);
+        result.add(wxCount);
+
+        int drawCount = eventRepository.drawCount(orgId, productBaseId, province, city,  startDateTime, endDateTime);
+        result.add(drawCount);
+
+        int winCount = eventRepository.winCount(orgId, productBaseId, province, city,  startDateTime, endDateTime);
+        result.add(winCount);
+
+        int rewardCount = eventRepository.rewardCount(orgId, productBaseId, province, city,  startDateTime, endDateTime);
+        result.add(rewardCount);
+
+        return result.stream().mapToInt(Integer::intValue).toArray();
+    }
+
 
 
 

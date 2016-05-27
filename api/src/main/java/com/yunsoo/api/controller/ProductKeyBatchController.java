@@ -87,9 +87,9 @@ public class ProductKeyBatchController {
 
         byte[] data = productKeyDomain.getProductKeysByBatchId(id);
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/vnd+ys.pks"))
+                .contentType(MediaType.parseMediaType("application/vnd+ys.txt"))
                 .contentLength(data.length)
-                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + ".pks\"")
+                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + ".txt\"")
                 .body(new InputStreamResource(new ByteArrayInputStream(data)));
     }
 

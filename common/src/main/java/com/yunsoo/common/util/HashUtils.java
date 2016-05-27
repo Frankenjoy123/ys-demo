@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
  * Created on  : 2015/4/21
  * Descriptions:
  */
-public class HashUtils {
+public final class HashUtils {
 
     public static byte[] md5(byte[] src) {
         return hash(src, "MD5");

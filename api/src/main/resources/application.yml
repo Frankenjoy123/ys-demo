@@ -52,6 +52,7 @@ logging:
     org.hibernate: 'ERROR'
 
 yunsoo:
+  environment: local
   cache:
     type: local
   alipay:

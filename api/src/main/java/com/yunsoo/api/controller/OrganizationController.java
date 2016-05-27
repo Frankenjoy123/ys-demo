@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
@@ -131,11 +132,11 @@ public class OrganizationController {
         accountObject.setEmail(returnObj.getEmail());
         accountObject.setIdentifier("admin");
         accountObject.setFirstName(returnObj.getContactName());
-        accountObject.setLastName(returnObj.getName());
+        accountObject.setLastName("");
         accountObject.setPassword("admin");
         accountObject.setPhone(returnObj.getContactMobile());
         accountObject.setOrgId(returnObj.getId());
-        accountObject.setCreatedAccountId(currentAccountId);
+        accountObject.setCreatedAccountId(Constants.Ids.SYSTEM_ACCOUNT_ID);
         AccountObject createdAccount = accountDomain.createAccount(accountObject, true);
         permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
 

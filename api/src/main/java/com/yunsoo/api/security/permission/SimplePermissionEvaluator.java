@@ -36,7 +36,7 @@ public class SimplePermissionEvaluator implements PermissionEvaluator {
      */
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
-        if (authentication == null || targetDomainObject == null || !(permission instanceof String)) {
+        if (authentication == null || !(authentication instanceof AccountAuthentication) || targetDomainObject == null || !(permission instanceof String)) {
             log.error("arguments issue: " + StringFormatter.formatMap("targetDomainObject", targetDomainObject, "permission", permission));
             return false;
         }
@@ -59,7 +59,7 @@ public class SimplePermissionEvaluator implements PermissionEvaluator {
      */
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
-        if (authentication == null || targetType == null || !(permission instanceof String)) {
+        if (authentication == null || !(authentication instanceof AccountAuthentication) || targetType == null || !(permission instanceof String)) {
             log.error("arguments issue: " + StringFormatter.formatMap("targetId", targetId, "targetType", targetType, "permission", permission));
             return false;
         }
