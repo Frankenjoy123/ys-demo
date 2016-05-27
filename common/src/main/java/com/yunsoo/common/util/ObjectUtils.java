@@ -11,7 +11,7 @@ import java.io.IOException;
  * Created on:   11/26/2015
  * Descriptions:
  */
-public class ObjectUtils {
+public final class ObjectUtils {
 
     private static ObjectMapper MAPPER = new ObjectMapper();
 
