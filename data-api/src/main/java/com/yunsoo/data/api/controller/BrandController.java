@@ -189,6 +189,7 @@ public class BrandController {
             entity.setRejectReason(brand.getRejectReason());
             entity.setHashSalt(brand.getHashSalt());
             entity.setPaymentId(brand.getPaymentId());
+
             return entity;
         }
         return null;

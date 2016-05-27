@@ -52,6 +52,17 @@ public class BrandEntity {
     @Column(name = "attachment")
     private String attachment;
 
+    @Column(name = "category_id")
+    private String categoryId;
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
     public String getAttachment() {
         return attachment;
     }

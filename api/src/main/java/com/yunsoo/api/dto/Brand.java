@@ -71,6 +71,17 @@ public class Brand extends Organization {
     @JsonProperty("reject_reason")
     private String rejectReason;
 
+    @JsonProperty("category_id")
+    private String categoryId;
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
     public String getRejectReason() {
         return rejectReason;
     }
