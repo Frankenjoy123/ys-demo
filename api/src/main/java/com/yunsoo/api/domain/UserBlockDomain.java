@@ -26,11 +26,9 @@ public class UserBlockDomain {
         });
     }
 
-    public void delete(String userId, String ysId, String orgId) {
+    public void delete(String userBlockId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("user_id", userId)
-                .append("ys_id", ysId)
-                .append("org_id", orgId)
+                .append("user_block_id", userBlockId)
                 .build();
 
         dataAPIClient.delete("user/block" + query);

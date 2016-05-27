@@ -56,9 +56,9 @@ public class EMRUserController {
 
             List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
             if (userBlockObjects == null || userBlockObjects.size() == 0) {
-                user.setBlocked(false);
+                user.setUserBlockId("");
             } else {
-                user.setBlocked(true);
+                user.setUserBlockId(userBlockObjects.get(0).getId());
             }
 
             return user;
