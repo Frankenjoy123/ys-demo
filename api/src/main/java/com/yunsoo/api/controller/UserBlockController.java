@@ -43,12 +43,8 @@ public class UserBlockController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.DELETE)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'user_block:write')")
-    public void delete(@RequestParam(value = "user_id", required = false) String userId,
-                       @RequestParam(value = "ys_id", required = false) String ysId,
-                       @RequestParam(value = "org_id", required = false) String orgId) {
+    public void delete(@RequestParam(value = "user_block_id", required = false) String userBlockId) {
 
-        orgId = AuthUtils.fixOrgId(orgId);
-        userBlockDomain.delete(userId, ysId, orgId);
+        userBlockDomain.delete(userBlockId);
     }
 }
