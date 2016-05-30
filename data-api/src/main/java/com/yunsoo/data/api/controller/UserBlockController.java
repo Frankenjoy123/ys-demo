@@ -6,6 +6,7 @@ import com.yunsoo.data.service.repository.UserBlockRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -52,21 +53,9 @@ public class UserBlockController {
 
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@RequestParam(value = "user_id", required = false) String userId,
-                       @RequestParam(value = "ys_id", required = false) String ysId,
-                       @RequestParam(value = "org_id", required = false) String orgId) {
-
-        if (orgId == null || orgId.equals("")) {
-            return;
-        }
-
-        if ((userId == null || userId.equals("")) && (ysId == null || ysId.equals(""))) {
-            return;
-        }
-
-        List<UserBlockEntity> entityPage = userBlockRepository.findByFilter(userId, ysId, orgId);
-        for (UserBlockEntity entity : entityPage) {
-            userBlockRepository.delete(entity.getId());
+    public void delete(@RequestParam(value = "user_block_id", required = false) String userBlockId) {
+        if (!StringUtils.isEmpty(userBlockId)) {
+            userBlockRepository.delete(userBlockId);
         }
     }
 
