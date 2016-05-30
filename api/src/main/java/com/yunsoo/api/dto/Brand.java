@@ -276,6 +276,7 @@ public class Brand extends Organization {
             setInvestigatorAttachment(object.getInvestigatorAttachment());
             setInvestigatorComments(object.getInvestigatorComments());
             setRejectReason(object.getRejectReason());
+            setCategoryId(object.getCategoryId());
         }
     }
 
@@ -306,6 +307,7 @@ public class Brand extends Organization {
             object.setInvestigatorAttachment(brand.getInvestigatorAttachment());
             object.setInvestigatorComments(brand.getInvestigatorComments());
             object.setRejectReason(brand.getRejectReason());
+            object.setCategoryId(brand.getCategoryId());
             return object;
         }
 

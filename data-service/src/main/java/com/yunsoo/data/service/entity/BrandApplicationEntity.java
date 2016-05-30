@@ -88,6 +88,17 @@ public class BrandApplicationEntity {
     @Column(name = "reject_reason")
     private String rejectReason;
 
+    @Column(name = "category_id")
+    private String categoryId;
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
     public String getRejectReason() {
         return rejectReason;
     }

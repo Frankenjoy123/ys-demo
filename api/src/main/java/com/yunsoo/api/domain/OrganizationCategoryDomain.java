@@ -11,6 +11,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,14 +31,25 @@ public class OrganizationCategoryDomain {
         });
     }
 
-    public void saveList(List<OrganizationCategory> orgCategoryList){
+    public OrganizationCategoryObject getById(String id){
+        return dataAPIClient.get("orgcategory/" + id, OrganizationCategoryObject.class);
+    }
+
+    public void saveList(String orgId, List<OrganizationCategory> orgCategoryList){
+        List<OrganizationCategoryObject> objectList = new ArrayList<>();
         orgCategoryList.forEach(organizationCategory -> {
             OrganizationCategoryObject object=organizationCategory.toOrganizationCategoryObject();
-            if(StringUtils.hasText(object.getId()))
-                dataAPIClient.post("orgcategory", object, OrganizationCategoryObject.class );
-            else
-                dataAPIClient.put("orgcategory/{id}", object, organizationCategory.getId());
+
+            if(!(StringUtils.hasText(object.getId()) && StringUtils.hasText(object.getOrgId()))){
+                object.setOrgId(orgId);
+                object.setId(null);
+            }
+
+            objectList.add(object);
+
         });
+
+        dataAPIClient.put("orgcategory", objectList);
     }
 
 

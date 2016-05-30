@@ -160,6 +160,7 @@ public class BrandController {
             brandObj.setRejectReason(brand.getRejectReason());
             brandObj.setHashSalt(brand.getHashSalt());
             brandObj.setPaymentId(brand.getPaymentId());
+            brandObj.setCategoryId(brand.getCategoryId());
         }
         return brandObj;
     }
@@ -189,7 +190,7 @@ public class BrandController {
             entity.setRejectReason(brand.getRejectReason());
             entity.setHashSalt(brand.getHashSalt());
             entity.setPaymentId(brand.getPaymentId());
-
+            entity.setCategoryId(brand.getCategoryId());
             return entity;
         }
         return null;
