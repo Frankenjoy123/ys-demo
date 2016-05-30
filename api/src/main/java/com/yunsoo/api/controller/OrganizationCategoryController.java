@@ -5,6 +5,7 @@ import com.yunsoo.api.dto.OrganizationCategory;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.OrganizationCategoryObject;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,17 @@ public class OrganizationCategoryController {
 
     @Autowired
     private OrganizationCategoryDomain domain;
+
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public OrganizationCategory getById(@PathVariable("id")String id){
+        OrganizationCategoryObject object = domain.getById(id);
+        if(object == null)
+            throw new NotFoundException("org categaory not found wiht id:" + id);
+
+        return new OrganizationCategory(object);
+
+    }
+
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<OrganizationCategory> getByFilter(@RequestParam(value = "org_id", required = false) String orgId){

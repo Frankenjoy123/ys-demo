@@ -31,6 +31,10 @@ public class OrganizationCategoryDomain {
         });
     }
 
+    public OrganizationCategoryObject getById(String id){
+        return dataAPIClient.get("orgcategory/" + id, OrganizationCategoryObject.class);
+    }
+
     public void saveList(String orgId, List<OrganizationCategory> orgCategoryList){
         List<OrganizationCategoryObject> objectList = new ArrayList<>();
         orgCategoryList.forEach(organizationCategory -> {
