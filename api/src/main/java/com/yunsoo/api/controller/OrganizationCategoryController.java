@@ -2,6 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.OrganizationCategoryDomain;
 import com.yunsoo.api.dto.OrganizationCategory;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.OrganizationCategoryObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,9 @@ public class OrganizationCategoryController {
     private OrganizationCategoryDomain domain;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<OrganizationCategory> getByFilter(@RequestParam("org_id") String id){
-        List<OrganizationCategoryObject> objectList = domain.getCategoriesByOrgId(id);
+    public List<OrganizationCategory> getByFilter(@RequestParam(value = "org_id", required = false) String orgId){
+        orgId = AuthUtils.fixOrgId(orgId);
+        List<OrganizationCategoryObject> objectList = domain.getCategoriesByOrgId(orgId);
         return objectList.stream().map(OrganizationCategory::new).collect(Collectors.toList());
     }
 
@@ -32,8 +34,8 @@ public class OrganizationCategoryController {
     public void saveOrganizationCategory(@RequestBody List<OrganizationCategory> categoryList){
         if(categoryList == null)
             throw new BadRequestException("could not update organization category list without content");
-
-        domain.saveList(categoryList);
+        String orgId = AuthUtils.fixOrgId(null);
+        domain.saveList(orgId, categoryList);
     }
 
 }

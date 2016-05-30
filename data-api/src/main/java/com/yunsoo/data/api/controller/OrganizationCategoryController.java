@@ -41,27 +41,20 @@ public class OrganizationCategoryController {
             entities = repository.findByOrgId(null);
          return entities.stream().map(this::toOrganizationCategoryObject).collect(Collectors.toList());
     }
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public OrganizationCategoryObject save(@RequestBody OrganizationCategoryObject object){
-        if(object == null)
-            throw new BadRequestException("Parameter could not be null");
-        OrganizationCategoryEntity entity = toOrganizationCategoryEntity(object);
-        repository.save(entity);
-        return toOrganizationCategoryObject(entity);
-    }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable("id")String id, @RequestBody OrganizationCategoryObject object){
-        if(object == null)
+    public void update(@RequestBody List<OrganizationCategoryObject> objectList){
+        if(objectList == null)
             throw new BadRequestException("Parameter could not be null");
-        OrganizationCategoryEntity existingEntity = repository.findOne(id);
-        if(existingEntity == null)
-            throw new NotFoundException("organization category does not existed with id:" + id);
+        List<OrganizationCategoryEntity> existsObjList = repository.findByOrgId(objectList.get(0).getOrgId());
+        List<OrganizationCategoryEntity> entityList = objectList.stream().map(this::toOrganizationCategoryEntity).collect(Collectors.toList());
+        existsObjList.forEach(item->{
+            if(!entityList.contains(item))
+                repository.delete(item);
+        });
 
-        OrganizationCategoryEntity entity = toOrganizationCategoryEntity(object);
-        repository.save(entity);
+        repository.save(entityList);
     }
 
 

@@ -1,6 +1,8 @@
 package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.OrganizationCategoryEntity;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -13,4 +15,6 @@ public interface OrganizationCategoryRepository extends CrudRepository<Organizat
     List<OrganizationCategoryEntity> findByOrgId(String id);
 
     List<OrganizationCategoryEntity> findAll();
+
+    Long deleteByOrgId(String orgId);
 }

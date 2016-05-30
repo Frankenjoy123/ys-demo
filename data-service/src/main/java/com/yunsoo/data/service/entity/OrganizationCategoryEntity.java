@@ -71,4 +71,30 @@ public class OrganizationCategoryEntity {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OrganizationCategoryEntity)) return false;
+
+        OrganizationCategoryEntity entity = (OrganizationCategoryEntity) o;
+
+        if (active != entity.active) return false;
+        if (!id.equals(entity.id)) return false;
+        if (!name.equals(entity.name)) return false;
+        if ((description!=null && !description.equals(entity.description))
+                || (description == null && entity.description != null)) return false;
+        return orgId.equals(entity.orgId);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + description.hashCode();
+        result = 31 * result + orgId.hashCode();
+        result = 31 * result + (active ? 1 : 0);
+        return result;
+    }
 }
