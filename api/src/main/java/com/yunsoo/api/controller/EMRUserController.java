@@ -66,4 +66,20 @@ public class EMRUserController {
 
         return emrUsers;
     }
+
+    @RequestMapping(value = "funnel", method = RequestMethod.GET)
+    public List<Integer> queryUserFunnel(@RequestParam(value = "org_id", required = false) String orgId,
+                                         @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                         @RequestParam(value = "province", required = false) String province,
+                                         @RequestParam(value = "city", required = false) String city,
+                                         @RequestParam(value = "create_datetime_start", required = false)
+                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                         @RequestParam(value = "create_datetime_end", required = false)
+                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        List<Integer> result = emrUserDomain.getEMRUserFunnelCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+
+        return result;
+    }
 }

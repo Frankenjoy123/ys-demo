@@ -32,7 +32,21 @@ public class EMRUserDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("emr/user" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {});
+        return dataAPIClient.getPaged("emr/user" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
+        });
     }
 
+    public List<Integer> getEMRUserFunnelCount(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("province", province)
+                .append("city", city)
+                .append("create_datetime_start", createdDateTimeStart)
+                .append("create_datetime_end", createdDateTimeEnd)
+                .build();
+
+        return dataAPIClient.get("analysis/user/funnel" + query, new ParameterizedTypeReference<List<Integer>>() {
+        });
+    }
 }
