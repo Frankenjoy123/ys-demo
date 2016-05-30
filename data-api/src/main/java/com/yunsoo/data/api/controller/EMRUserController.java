@@ -85,6 +85,8 @@ public class EMRUserController {
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
 
+        productBaseId = productBaseId.equals("") ? null : productBaseId;
+
         Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByScan(orgId,productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
 
         if (pageable != null) {
@@ -117,6 +119,8 @@ public class EMRUserController {
 
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        productBaseId = productBaseId.equals("") ? null : productBaseId;
 
         Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByDraw(orgId,productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
 
@@ -151,6 +155,8 @@ public class EMRUserController {
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
 
+        productBaseId = productBaseId.equals("") ? null : productBaseId;
+
         Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByWX(orgId, productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
 
         if (pageable != null) {
@@ -182,6 +188,8 @@ public class EMRUserController {
 
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        productBaseId = productBaseId.equals("") ? null : productBaseId;
 
         Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByWin(orgId,productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
 
@@ -215,6 +223,8 @@ public class EMRUserController {
 
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        productBaseId = productBaseId.equals("") ? null : productBaseId;
 
         Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByReward(orgId, productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
 
