@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/emr/user")
@@ -65,5 +66,141 @@ public class EMRUserController {
         }).getContent();
 
         return emrUsers;
+    }
+
+    @RequestMapping(value = "scan", method = RequestMethod.GET)
+    public List<EMRUser> queryScanUser(@RequestParam(value = "org_id", required = false) String orgId,
+                                       @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                       @RequestParam(value = "province", required = false) String province,
+                                       @RequestParam(value = "city", required = false) String city,
+                                       @RequestParam(value = "create_datetime_start", required = false)
+                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                       @RequestParam(value = "create_datetime_end", required = false)
+                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                       Pageable pageable,
+                                       HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMRUserObject> entityPage = emrUserDomain.getEMRScanUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", entityPage.toContentRange());
+        }
+
+        return entityPage.getContent().stream()
+                .map(EMRUser::new)
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "draw", method = RequestMethod.GET)
+    public List<EMRUser> queryDrawUser(@RequestParam(value = "org_id", required = false) String orgId,
+                                       @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                       @RequestParam(value = "province", required = false) String province,
+                                       @RequestParam(value = "city", required = false) String city,
+                                       @RequestParam(value = "create_datetime_start", required = false)
+                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                       @RequestParam(value = "create_datetime_end", required = false)
+                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                       Pageable pageable,
+                                       HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMRUserObject> entityPage = emrUserDomain.getEMRDrawUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", entityPage.toContentRange());
+        }
+
+        return entityPage.getContent().stream()
+                .map(EMRUser::new)
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "wx", method = RequestMethod.GET)
+    public List<EMRUser> queryWXUser(@RequestParam(value = "org_id", required = false) String orgId,
+                                     @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                     @RequestParam(value = "province", required = false) String province,
+                                     @RequestParam(value = "city", required = false) String city,
+                                     @RequestParam(value = "create_datetime_start", required = false)
+                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                     @RequestParam(value = "create_datetime_end", required = false)
+                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                     Pageable pageable,
+                                     HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMRUserObject> entityPage = emrUserDomain.getEMRWXUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", entityPage.toContentRange());
+        }
+
+        return entityPage.getContent().stream()
+                .map(EMRUser::new)
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "win", method = RequestMethod.GET)
+    public List<EMRUser> queryWinUser(@RequestParam(value = "org_id", required = false) String orgId,
+                                      @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                      @RequestParam(value = "province", required = false) String province,
+                                      @RequestParam(value = "city", required = false) String city,
+                                      @RequestParam(value = "create_datetime_start", required = false)
+                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                      @RequestParam(value = "create_datetime_end", required = false)
+                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                      Pageable pageable,
+                                      HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMRUserObject> entityPage = emrUserDomain.getEMRWinUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", entityPage.toContentRange());
+        }
+
+        return entityPage.getContent().stream()
+                .map(EMRUser::new)
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "reward", method = RequestMethod.GET)
+    public List<EMRUser> queryRewardUser(@RequestParam(value = "org_id", required = false) String orgId,
+                                         @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                         @RequestParam(value = "province", required = false) String province,
+                                         @RequestParam(value = "city", required = false) String city,
+                                         @RequestParam(value = "create_datetime_start", required = false)
+                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                         @RequestParam(value = "create_datetime_end", required = false)
+                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                         Pageable pageable,
+                                         HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMRUserObject> entityPage = emrUserDomain.getEMRRewardUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", entityPage.toContentRange());
+        }
+
+        return entityPage.getContent().stream()
+                .map(EMRUser::new)
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "funnel", method = RequestMethod.GET)
+    public List<Integer> queryUserFunnel(@RequestParam(value = "org_id", required = false) String orgId,
+                                         @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                         @RequestParam(value = "province", required = false) String province,
+                                         @RequestParam(value = "city", required = false) String city,
+                                         @RequestParam(value = "create_datetime_start", required = false)
+                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                         @RequestParam(value = "create_datetime_end", required = false)
+                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        List<Integer> result = emrUserDomain.getEMRUserFunnelCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+
+        return result;
     }
 }

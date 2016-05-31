@@ -71,7 +71,7 @@ public class AnalysisController {
             batchId = null;
 
         DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
-        DateTime endDateTime =  endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+        DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
         List<ScanRecordAnalysisEntity> list = scanRecordAnalysisRepository.query(orgId, startDateTime, endDateTime, productBaseId, batchId);
         return list.stream().map(ScanRecordAnalysisEntity::toDataObject).collect(Collectors.toList());
@@ -83,16 +83,16 @@ public class AnalysisController {
                                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
                                                                     @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
                                                                     @RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                                                    @RequestParam(value = "batch_id",required = false) String batchId) {
+                                                                    @RequestParam(value = "batch_id", required = false) String batchId) {
         if (StringUtils.isEmpty(productBaseId))
             productBaseId = null;
         if (StringUtils.isEmpty(batchId))
             batchId = null;
 
         DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
-        DateTime endDateTime =  endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+        DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
-        List<ScanRecordLocationAnalysisEntity> list = scanRecordLocationAnalysisRepository.query(orgId,  startDateTime, endDateTime, productBaseId, batchId);
+        List<ScanRecordLocationAnalysisEntity> list = scanRecordLocationAnalysisRepository.query(orgId, startDateTime, endDateTime, productBaseId, batchId);
         return list.stream().map(ScanRecordLocationAnalysisEntity::toDataObject).collect(Collectors.toList());
     }
 
@@ -108,7 +108,7 @@ public class AnalysisController {
             productBaseId = null;
 
         DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
-        DateTime endDateTime =  endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+        DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
         List<ProductKeyBatchEntity> list = productKeyBatchRepository.queryDailyKeyUsageReport(orgId, productBaseId, startDateTime, endDateTime);
         return list.stream().map(ProductKeyBatchEntity::toDataObject).collect(Collectors.toList());
@@ -117,16 +117,16 @@ public class AnalysisController {
     //TODO 新增营销报表，城市微群, tag_name 为重点
     @RequestMapping(value = "/market_user_area", method = RequestMethod.GET)
     public List<MarketUserAreaAnalysisObject> queryMarketUserArea(@RequestParam(value = "org_id") String orgId,
-                                                                    @RequestParam(value = "start_time")
-                                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
-                                                                    @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
-                                                                    @RequestParam(value = "marketing_id", required = false) String marketingId
-                                                                  ) {
+                                                                  @RequestParam(value = "start_time")
+                                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                                  @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
+                                                                  @RequestParam(value = "marketing_id", required = false) String marketingId
+    ) {
         if (StringUtils.isEmpty(marketingId))
             marketingId = null;
 
         DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
-        DateTime endDateTime =  endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+        DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
         List<MarketUserAreaAnalysisEntity> list = marketUserAreaAnalysisRepository.query(orgId, startDateTime, endDateTime, marketingId);
         return list.stream().map(MarketUserAreaAnalysisEntity::toDataObject).collect(Collectors.toList());
@@ -135,16 +135,16 @@ public class AnalysisController {
     // TODO 新增营销报表，设备分析 (other 可能要改为多语言，改成其他）
     @RequestMapping(value = "/market_user_device", method = RequestMethod.GET)
     public List<MarketUserDeviceAnalysisObject> queryMarketUserDevice(@RequestParam(value = "org_id") String orgId,
-                                                    @RequestParam(value = "start_time")
-                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
-                                                    @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
-                                                    @RequestParam(value = "marketing_id", required = false) String marketingId
+                                                                      @RequestParam(value = "start_time")
+                                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                                      @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
+                                                                      @RequestParam(value = "marketing_id", required = false) String marketingId
     ) {
         if (StringUtils.isEmpty(marketingId))
             marketingId = null;
 
         DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
-        DateTime endDateTime =  endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+        DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
         List<MarketUserDeviceAnalysisEntity> list = marketUserDeviceAnalysisRepository.query(orgId, startDateTime, endDateTime, marketingId);
         return list.stream().map(MarketUserDeviceAnalysisEntity::toDataObject).collect(Collectors.toList());
@@ -162,7 +162,7 @@ public class AnalysisController {
             marketingId = null;
 
         DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
-        DateTime endDateTime =  endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+        DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
         List<MarketUserGenderAnalysisEntity> list = marketUserGenderAnalysisRepository.query(orgId, startDateTime, endDateTime, marketingId);
         return list.stream().map(MarketUserGenderAnalysisEntity::toDataObject).collect(Collectors.toList());
@@ -171,25 +171,6 @@ public class AnalysisController {
     // TODO  新增营销报表，使用习惯 0-6 6-8 8-12 12-14 14-16 16-18 18-22 22-24
     @RequestMapping(value = "/market_user_usage", method = RequestMethod.GET)
     public List<MarketUserUsageAnalysisObject> queryMarketUserUsage(@RequestParam(value = "org_id") String orgId,
-                                                                      @RequestParam(value = "start_time")
-                                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
-                                                                      @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
-                                                                      @RequestParam(value = "marketing_id", required = false) String marketingId
-    ) {
-        if (StringUtils.isEmpty(marketingId))
-            marketingId = null;
-
-        DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
-        DateTime endDateTime =  endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
-
-        List<MarketUserUsageAnalysisEntity> list = marketUserUsageAnalysisRepository.query(orgId, startDateTime, endDateTime, marketingId);
-        return list.stream().map(MarketUserUsageAnalysisEntity::toDataObject).collect(Collectors.toList());
-    }
-
-
-    // TODO  新增营销报表，用户地域分析
-    @RequestMapping(value = "/market_user_location", method = RequestMethod.GET)
-    public List<MarketUserLocationAnalysisObject> queryMarketUserLocaiton(@RequestParam(value = "org_id") String orgId,
                                                                     @RequestParam(value = "start_time")
                                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
                                                                     @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
@@ -199,11 +180,31 @@ public class AnalysisController {
             marketingId = null;
 
         DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
-        DateTime endDateTime =  endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+        DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+
+        List<MarketUserUsageAnalysisEntity> list = marketUserUsageAnalysisRepository.query(orgId, startDateTime, endDateTime, marketingId);
+        return list.stream().map(MarketUserUsageAnalysisEntity::toDataObject).collect(Collectors.toList());
+    }
+
+
+    // TODO  新增营销报表，用户地域分析
+    @RequestMapping(value = "/market_user_location", method = RequestMethod.GET)
+    public List<MarketUserLocationAnalysisObject> queryMarketUserLocaiton(@RequestParam(value = "org_id") String orgId,
+                                                                          @RequestParam(value = "start_time")
+                                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                                          @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
+                                                                          @RequestParam(value = "marketing_id", required = false) String marketingId
+    ) {
+        if (StringUtils.isEmpty(marketingId))
+            marketingId = null;
+
+        DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
         List<MarketUserLocationAnalysisEntity> list = marketUserLocationAnalysisRepository.query(orgId, startDateTime, endDateTime, marketingId);
         return list.stream().map(MarketUserLocationAnalysisEntity::toDataObject).collect(Collectors.toList());
     }
+
     // TODO  新增营销报表，用户地域分析
     @RequestMapping(value = "/market_user_tags", method = RequestMethod.GET)
     public List<LuTagObject> queryMarketUserTag() {
@@ -221,30 +222,37 @@ public class AnalysisController {
                                  @RequestParam(value = "create_datetime_start", required = false)
                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
                                  @RequestParam(value = "create_datetime_end", required = false)
-                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
 
-        DateTime startDateTime = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
-        DateTime endDateTime =  createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+        DateTime startDateTime = null;
+        DateTime endDateTime = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            startDateTime = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            endDateTime = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        productBaseId = productBaseId.equals("") ? null : productBaseId;
+
         List<Integer> result = new ArrayList<>();
-        int scanCount = eventRepository.scanCount(orgId, productBaseId, province, city,  startDateTime, endDateTime);
+        int scanCount = eventRepository.scanCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
         result.add(scanCount);
 
-        int wxCount = eventRepository.wxCount(orgId, productBaseId, province, city,  startDateTime, endDateTime);
+        int wxCount = eventRepository.wxCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
         result.add(wxCount);
 
-        int drawCount = eventRepository.drawCount(orgId, productBaseId, province, city,  startDateTime, endDateTime);
+        int drawCount = eventRepository.drawCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
         result.add(drawCount);
 
-        int winCount = eventRepository.winCount(orgId, productBaseId, province, city,  startDateTime, endDateTime);
+        int winCount = eventRepository.winCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
         result.add(winCount);
 
-        int rewardCount = eventRepository.rewardCount(orgId, productBaseId, province, city,  startDateTime, endDateTime);
+        int rewardCount = eventRepository.rewardCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
         result.add(rewardCount);
 
         return result.stream().mapToInt(Integer::intValue).toArray();
     }
-
-
 
 
 }
