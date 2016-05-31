@@ -197,6 +197,7 @@ public class LookupCodes {
         public static final String DRAW = "DRAW";
         public static final String REDPACKETS = "REDPACKETS";
         public static final String ENVELOPE = "ENVELOPE";
+        public static final String SHAKE = "SHAKE";
 
     }
 

@@ -278,4 +278,15 @@ public class ProductKeyBatchController {
         fileDomain.putFile(path, new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE));
     }
 
+    @RequestMapping(value = "/marketing/{id}", method = RequestMethod.GET)
+    public List<ProductKeyBatch> getKeybatchByMarketingId(@PathVariable(value = "id") String marketingId) {
+
+        if (marketingId == null)
+            throw new BadRequestException("marketing id can not be null");
+
+        return productKeyDomain.getProductKeybatchByMarketingId(marketingId).stream().map(ProductKeyBatch::new).collect(Collectors.toList());
+
+    }
+
+
 }
