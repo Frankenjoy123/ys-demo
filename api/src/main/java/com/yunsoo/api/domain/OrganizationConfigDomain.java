@@ -63,14 +63,14 @@ public class OrganizationConfigDomain {
         if (orgObject == null) {
             configObject = getDefaultConfigObject();
         } else {
-            configObject = getConfigObject(getConfigFilePath(orgId));
+            configObject = getConfigObject(orgId);
             if (configObject == null) configObject = new OrganizationConfigObject();
 
             //extend carrier config if it's brand
             if (LookupCodes.OrgType.BRAND.equals(orgObject.getTypeCode())) {
                 BrandObject brandObject = organizationDomain.getBrandById(orgId);
                 if (brandObject != null) {
-                    extend(configObject, getConfigObject(getConfigFilePath(brandObject.getCarrierId())));
+                    extend(configObject, getConfigObject(brandObject.getCarrierId()));
                 }
             }
         }
@@ -93,8 +93,7 @@ public class OrganizationConfigDomain {
     public void saveConfig(String orgId, Map<String, Object> configItems) {
         if (orgId == null || configItems == null || configItems.size() == 0) return;
 
-        String path = getConfigFilePath(orgId);
-        OrganizationConfigObject configObject = getConfigObject(path);
+        OrganizationConfigObject configObject = getConfigObject(orgId);
         if (configObject == null) configObject = new OrganizationConfigObject();
         if (configObject.getVersion() == null) configObject.setVersion(OrganizationConfigObject.VERSION);
         if (configObject.getItems() == null) configObject.setItems(new HashMap<>());
@@ -116,13 +115,7 @@ public class OrganizationConfigDomain {
 
         configObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
         configObject.setModifiedDateTime(DateTime.now());
-        byte[] buffer;
-        try {
-            buffer = objectMapper.writeValueAsBytes(configObject);
-            fileDomain.putFile(path, new ResourceInputStream(new ByteArrayInputStream(buffer), buffer.length, MediaType.APPLICATION_JSON_UTF8_VALUE));
-        } catch (JsonProcessingException e) {
-            log.error("organization config read exception " + StringFormatter.formatMap("path", path), e);
-        }
+        saveConfigObject(orgId, configObject);
     }
 
 
@@ -146,7 +139,8 @@ public class OrganizationConfigDomain {
         }
     }
 
-    private OrganizationConfigObject getConfigObject(String path) {
+    private OrganizationConfigObject getConfigObject(String orgId) {
+        String path = getConfigFilePath(orgId);
         ResourceInputStream resourceInputStream = fileDomain.getFile(path);
         if (resourceInputStream == null) return null;
         try {
@@ -154,6 +148,18 @@ public class OrganizationConfigDomain {
         } catch (IOException e) {
             log.error("organization config read exception " + StringFormatter.formatMap("path", path), e);
             return null;
+        }
+    }
+
+    private void saveConfigObject(String orgId, OrganizationConfigObject configObject) {
+        String path = getConfigFilePath(orgId);
+        if (path == null) return;
+        byte[] buffer;
+        try {
+            buffer = objectMapper.writeValueAsBytes(configObject);
+            fileDomain.putFile(path, new ResourceInputStream(new ByteArrayInputStream(buffer), buffer.length, MediaType.APPLICATION_JSON_UTF8_VALUE));
+        } catch (JsonProcessingException e) {
+            log.error("organization config read exception " + StringFormatter.formatMap("path", path), e);
         }
     }
 
