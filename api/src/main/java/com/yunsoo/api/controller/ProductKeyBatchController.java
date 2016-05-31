@@ -5,10 +5,7 @@ import com.yunsoo.api.domain.FileDomain;
 import com.yunsoo.api.domain.MarketingDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
-import com.yunsoo.api.dto.ProductBase;
-import com.yunsoo.api.dto.ProductBatchCollection;
-import com.yunsoo.api.dto.ProductKeyBatch;
-import com.yunsoo.api.dto.ProductKeyBatchRequest;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -40,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -279,14 +277,30 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "/marketing/{id}", method = RequestMethod.GET)
-    public List<ProductKeyBatch> getKeybatchByMarketingId(@PathVariable(value = "id") String marketingId) {
+    public List<ProductKeyBatchInfo> getKeybatchInfoByMarketingId(@PathVariable(value = "id") String marketingId) {
 
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        return productKeyDomain.getProductKeybatchByMarketingId(marketingId).stream().map(ProductKeyBatch::new).collect(Collectors.toList());
+        List<ProductKeyBatchInfo> productKeyBatchInfoList = new ArrayList<>();
 
+        List<ProductKeyBatch> productKeyBatches = productKeyDomain.getProductKeybatchByMarketingId(marketingId).stream().map(ProductKeyBatch::new).collect(Collectors.toList());
+        if ((productKeyBatches != null) && (productKeyBatches.size() > 0)) {
+            for (ProductKeyBatch productKeyBatch : productKeyBatches) {
+                ProductKeyBatchInfo object = new ProductKeyBatchInfo();
+                object.setId(productKeyBatch.getId());
+                object.setBatchNo(productKeyBatch.getBatchNo());
+                object.setProductBaseId(productKeyBatch.getProductBaseId());
+                object.setCreatedDateTime(productKeyBatch.getCreatedDateTime());
+                ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productKeyBatch.getProductBaseId());
+                if (productBaseObject != null) {
+                    object.setProductBaseName(productBaseObject.getName());
+                }
+                productKeyBatchInfoList.add(object);
+
+            }
+        }
+        return productKeyBatchInfoList;
     }
-
 
 }
