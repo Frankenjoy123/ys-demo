@@ -166,7 +166,7 @@ public class OrganizationConfigDomain {
     }
 
     private String getConfigFilePath(String orgId) {
-        return ObjectIdGenerator.validate(orgId) ? String.format("organization/%s/config/config.json", orgId) : null;
+        return ObjectIdGenerator.validate(orgId) ? String.format("organization/%s/config.json", orgId) : null;
     }
 
 }
