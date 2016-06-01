@@ -50,8 +50,17 @@ public class OrganizationCategoryController {
         List<OrganizationCategoryEntity> existsObjList = repository.findByOrgId(objectList.get(0).getOrgId());
         List<OrganizationCategoryEntity> entityList = objectList.stream().map(this::toOrganizationCategoryEntity).collect(Collectors.toList());
         existsObjList.forEach(item->{
-            if(!entityList.contains(item))
+            boolean delete = true;
+            for(OrganizationCategoryEntity entity : entityList){
+                if(entity.getId().equals(item.getId())){
+                    delete = false;
+                    break;
+                }
+            }
+
+            if(delete)
                 repository.delete(item);
+
         });
 
         repository.save(entityList);

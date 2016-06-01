@@ -8,6 +8,7 @@ import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Created by:   Lijian
@@ -21,8 +22,11 @@ public class OrganizationConfigObject implements Serializable {
     @JsonProperty("version")
     private String version;
 
-    @JsonProperty("enterprise")
-    private Enterprise enterprise;
+    @JsonProperty("descriptions")
+    private String descriptions;
+
+    @JsonProperty("items")
+    private Map<String, Item> items;
 
     @JsonProperty("modified_account_id")
     private String modifiedAccountId;
@@ -41,12 +45,20 @@ public class OrganizationConfigObject implements Serializable {
         this.version = version;
     }
 
-    public Enterprise getEnterprise() {
-        return enterprise;
+    public String getDescriptions() {
+        return descriptions;
     }
 
-    public void setEnterprise(Enterprise enterprise) {
-        this.enterprise = enterprise;
+    public void setDescriptions(String descriptions) {
+        this.descriptions = descriptions;
+    }
+
+    public Map<String, Item> getItems() {
+        return items;
+    }
+
+    public void setItems(Map<String, Item> items) {
+        this.items = items;
     }
 
     public String getModifiedAccountId() {
@@ -65,96 +77,30 @@ public class OrganizationConfigObject implements Serializable {
         this.modifiedDateTime = modifiedDateTime;
     }
 
-    @com.fasterxml.jackson.annotation.JsonIgnoreType
-    public static class Version {
 
-        @JsonProperty("version")
-        private String version;
+    public static class Item {
 
-        public String getVersion() {
-            return version;
+        @JsonProperty("access")
+        private String access;
+
+        @JsonProperty("value")
+        private Object value;
+
+
+        public String getAccess() {
+            return access;
         }
 
-        public void setVersion(String version) {
-            this.version = version;
-        }
-    }
-
-    public static class Enterprise {
-
-        @JsonProperty("name")
-        private String name;
-
-        @JsonProperty("login")
-        private Login login;
-
-        public String getName() {
-            return name;
+        public void setAccess(String access) {
+            this.access = access;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public Object getValue() {
+            return value;
         }
 
-        public Login getLogin() {
-            return login;
-        }
-
-        public void setLogin(Login login) {
-            this.login = login;
-        }
-
-
-        public static class Login {
-
-            @JsonProperty("background_image")
-            private String backgroundImage;
-
-            @JsonProperty("band_application_link")
-            private BandApplicationLink bandApplicationLink;
-
-            public String getBackgroundImage() {
-                return backgroundImage;
-            }
-
-            public void setBackgroundImage(String backgroundImage) {
-                this.backgroundImage = backgroundImage;
-            }
-
-
-            public BandApplicationLink getBandApplicationLink() {
-                return bandApplicationLink;
-            }
-
-            public void setBandApplicationLink(BandApplicationLink bandApplicationLink) {
-                this.bandApplicationLink = bandApplicationLink;
-            }
-
-            public static class BandApplicationLink {
-
-                @JsonProperty("name")
-                private String name;
-
-                @JsonProperty("url")
-                private String url;
-
-                public String getName() {
-                    return name;
-                }
-
-                public void setName(String name) {
-                    this.name = name;
-                }
-
-                public String getUrl() {
-                    return url;
-                }
-
-                public void setUrl(String url) {
-                    this.url = url;
-                }
-            }
-
+        public void setValue(Object value) {
+            this.value = value;
         }
     }
 

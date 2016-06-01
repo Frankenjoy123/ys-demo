@@ -12,10 +12,12 @@ import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -48,6 +50,8 @@ public class WebScanController {
     @Autowired
     private MarketingDomain marketingDomain;
 
+    @Autowired
+    private UserBlockDomain userBlockDomain;
 
     //region 一物一码
 
@@ -109,6 +113,17 @@ public class WebScanController {
         if (userAgent != null && ysid == null) {
             //set cookie YSID
             setCookie(httpServletResponse, webScanRequest.getYsid());
+        }
+
+        ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
+        String usId = userScanRecordObject.getYsid();
+
+        if (!StringUtils.isEmpty(userScanRecordObject.getUserId()))
+            usId = null;
+
+        List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(userScanRecordObject.getUserId(), usId, productBaseObject.getOrgId());
+        if (!(userBlockObjects == null || userBlockObjects.size() == 0)) {
+            throw new ForbiddenException("you are forbidden!");
         }
 
         return toScanRecord(userScanRecordObject);

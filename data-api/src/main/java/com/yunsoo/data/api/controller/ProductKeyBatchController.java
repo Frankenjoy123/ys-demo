@@ -211,6 +211,16 @@ public class ProductKeyBatchController {
         productKeyBatchRepository.save(entity);
     }
 
+    @RequestMapping(value = "/marketing/{id}", method = RequestMethod.GET)
+    public List<ProductKeyBatchObject> getKeybatchByMarketingId(@PathVariable(value = "id") String marketingId) {
+
+        List<ProductKeyBatchEntity> productKeyBatchEntities = productKeyBatchRepository.findByMarketingId(marketingId);
+
+        return productKeyBatchEntities.stream()
+                .map(this::toProductKeyBatchObject)
+                .collect(Collectors.toList());
+    }
+
 
     private ProductKeyBatchObject toProductKeyBatchObject(ProductKeyBatch batch) {
         if (batch == null) {

@@ -215,6 +215,12 @@ public class ProductKeyDomain {
         dataAPIClient.put("productkeybatch/{id}/marketing_id", marketingId, id);
     }
 
+    public List<ProductKeyBatchObject> getProductKeybatchByMarketingId(String marketingId) {
+        return dataAPIClient.get("productkeybatch/marketing/{id}", new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
+        }, marketingId);
+    }
+
+
 
     public byte[] getProductKeysByBatchId(String id) {
         ProductKeysObject object = dataAPIClient.get("productkeybatch/{batchId}/keys", ProductKeysObject.class, id);

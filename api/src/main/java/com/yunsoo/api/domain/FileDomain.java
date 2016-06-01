@@ -34,10 +34,13 @@ public class FileDomain {
     }
 
     public ResourceInputStream getFile(String path) {
+        if (path == null || path.length() < 0) {
+            return null;
+        }
         try {
             return dataAPIClient.getResourceInputStream("file/s3?path={path}", path);
         } catch (NotFoundException ignored) {
-            log.warn("file not found in s3. " + StringFormatter.formatMap("path", path));
+            log.warn("file not found in s3 " + StringFormatter.formatMap("path", path));
             return null;
         }
     }
