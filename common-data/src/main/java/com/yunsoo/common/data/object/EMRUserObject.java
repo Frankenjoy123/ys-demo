@@ -62,6 +62,13 @@ public class EMRUserObject implements Serializable {
     @JsonProperty("join_datetime")
     private DateTime joinDateTime;
 
+    @JsonProperty("ip")
+    private String ip;
+
+    @JsonProperty("device")
+    private String device;
+
+
     public String getId() {
         return id;
     }
@@ -188,5 +195,21 @@ public class EMRUserObject implements Serializable {
 
     public void setJoinDateTime(DateTime joinDateTime) {
         this.joinDateTime = joinDateTime;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
     }
 }

@@ -215,7 +215,7 @@ public class AnalysisController {
 
     // int[] 1222,222,22,2,0
     @RequestMapping(value = "/user/funnel", method = RequestMethod.GET)
-    public int[] queryUserFunnel(@RequestParam(value = "org_id") String orgId,
+    public EMRUserReportObject queryUserFunnel(@RequestParam(value = "org_id") String orgId,
                                  @RequestParam(value = "product_base_id", required = false) String productBaseId,
                                  @RequestParam(value = "province", required = false) String province,
                                  @RequestParam(value = "city", required = false) String city,
@@ -233,25 +233,34 @@ public class AnalysisController {
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             endDateTime = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
 
-        productBaseId = productBaseId.equals("") ? null : productBaseId;
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
 
-        List<Integer> result = new ArrayList<>();
-        int scanCount = eventRepository.scanCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
-        result.add(scanCount);
+        List<Integer> eventCount = new ArrayList<>();
+        List<Integer> userCount = new ArrayList<>();
+       int[] scanData = eventRepository.scanCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        eventCount.add(scanData[0]);
+        userCount.add(scanData[1]);
 
-        int wxCount = eventRepository.wxCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
-        result.add(wxCount);
+        int[] wxCount = eventRepository.wxCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        eventCount.add(wxCount[0]);
+        userCount.add(wxCount[1]);
 
-        int drawCount = eventRepository.drawCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
-        result.add(drawCount);
+        int[] drawCount = eventRepository.drawCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        eventCount.add(drawCount[0]);
+        userCount.add(drawCount[1]);
 
-        int winCount = eventRepository.winCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
-        result.add(winCount);
+        int[] winCount = eventRepository.winCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        eventCount.add(winCount[0]);
+        userCount.add(winCount[1]);
 
-        int rewardCount = eventRepository.rewardCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
-        result.add(rewardCount);
+        int[] rewardCount = eventRepository.rewardCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        eventCount.add(rewardCount[0]);
+        userCount.add(rewardCount[1]);
 
-        return result.stream().mapToInt(Integer::intValue).toArray();
+        EMRUserReportObject report = new EMRUserReportObject();
+        report.setEventCount(eventCount);
+        report.setUserCount(userCount);
+        return report;
     }
 
 
