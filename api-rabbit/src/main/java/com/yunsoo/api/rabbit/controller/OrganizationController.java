@@ -1,11 +1,17 @@
 package com.yunsoo.api.rabbit.controller;
 
+import com.yunsoo.api.rabbit.domain.BrandDomain;
 import com.yunsoo.api.rabbit.domain.OrganizationDomain;
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
+import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.api.rabbit.dto.ProductBase;
+import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.data.object.ProductObject;
+import com.yunsoo.common.util.KeyGenerator;
+import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -28,10 +34,16 @@ import java.util.List;
 public class OrganizationController {
 
     @Autowired
+    private ProductDomain productDomain;
+
+    @Autowired
     private OrganizationDomain organizationDomain;
 
     @Autowired
     private ProductBaseDomain productBaseDomain;
+
+    @Autowired
+    private BrandDomain brandDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Organization getOrganizationById(@PathVariable(value = "id") String id) {
@@ -41,13 +53,14 @@ public class OrganizationController {
         }
         return new Organization(object);
     }
+
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<Organization> getByFilter(){
-        return  organizationDomain.getOrganizationList();
+    public List<Organization> getByFilter() {
+        return organizationDomain.getOrganizationList();
     }
 
     @RequestMapping(value = "{id}/productbase", method = RequestMethod.GET)
-    public List<ProductBase> getProductsByOrgId(@PathVariable(value = "id")String orgId, Pageable pageable, HttpServletResponse response){
+    public List<ProductBase> getProductsByOrgId(@PathVariable(value = "id") String orgId, Pageable pageable, HttpServletResponse response) {
         Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", productBasePage.toContentRange());
@@ -55,6 +68,41 @@ public class OrganizationController {
         return productBasePage.map(ProductBase::new).getContent();
     }
 
+    private ProductObject getProductByKey(String key) {
+        if (!KeyGenerator.validate(key)) {
+            throw new NotFoundException("product not found");
+        }
+        ProductObject productObject = productDomain.getProduct(key);
+        if (productObject == null || productObject.getProductBaseId() == null) {
+            throw new NotFoundException("product not found");
+        }
+        return productObject;
+    }
+
+    private ProductBaseObject getProductBaseById(String productBaseId) {
+        if (!ObjectIdGenerator.validate(productBaseId)) {
+            throw new NotFoundException("product not found");
+        }
+        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
+        if (productBaseObject == null) {
+            throw new NotFoundException("product not found");
+        }
+        return productBaseObject;
+    }
+
+    @RequestMapping(value = "/{key}/brand/contactMobile", method = RequestMethod.GET)
+    public String getBrandPhoneById(@PathVariable(value = "key") String key) {
+
+        ProductObject productObject = getProductByKey(key);
+        ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
+        BrandObject brandObject = brandDomain.getBrandById(productBaseObject.getOrgId());
+
+        if (brandObject == null) {
+            throw new NotFoundException("brand organization not found by [id: " + brandObject.getId() + "]");
+        }
+
+        return brandObject.getContactMobile();
+    }
 
     @RequestMapping(value = "{id}/logo", method = RequestMethod.GET)
     public ResponseEntity<?> getOrganizationLogo(
