@@ -49,6 +49,11 @@ public class EMREventEntity implements Serializable {
     @Column(name = "wx_openid")
     private String wxOpenId;
 
+    @Column(name = "marketing_id")
+    private String marketingId;
+
+
+
     @OneToOne(targetEntity = EMRUserEntity.class, optional = true)
     @JoinColumns({
             @JoinColumn(name="user_id", referencedColumnName="user_id", insertable = false, updatable = false),
@@ -158,5 +163,13 @@ public class EMREventEntity implements Serializable {
 
     public void setYsId(String ysId) {
         this.ysId = ysId;
+    }
+
+    public String getMarketingId() {
+        return marketingId;
+    }
+
+    public void setMarketingId(String marketingId) {
+        this.marketingId = marketingId;
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -261,6 +262,21 @@ public class AnalysisController {
         report.setEventCount(eventCount);
         report.setUserCount(userCount);
         return report;
+    }
+
+    // TODO  新增营销报表，用户地域分析
+    @RequestMapping(value = "/market_win_user_location", method = RequestMethod.GET)
+    public List<MarketWinUserLocationAnalysisObject> queryMarketUserLocaiton(@RequestParam(value = "marketing_id") String marketingId)
+     {
+        List<Object[]> list = eventRepository.queryRewardLocationReport(marketingId);
+        return list.stream().map(this::toMarketWinUserLocationAnalysisObject).collect(Collectors.toList());
+    }
+
+    private MarketWinUserLocationAnalysisObject toMarketWinUserLocationAnalysisObject(Object[] object) {
+        MarketWinUserLocationAnalysisObject data = new MarketWinUserLocationAnalysisObject();
+        data.setProvince(object[0] == null ? "未知地区" : (String)object[0]);
+        data.setCount(((Long) object[1]).intValue());
+        return data;
     }
 
 
