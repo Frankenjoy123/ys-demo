@@ -30,7 +30,7 @@ public interface EMRUserRepository extends FindOneAndSaveRepository<EMRUserEntit
     @Query("select distinct u from #{#entityName} u inner join  u.eventEntities ev where ev.name = 'scan' " +
             "and ev.orgId = :orgId " +
             "and (:productBaseId is null or ev.productBaseId = :productBaseId) " +
-            "and ev.wxOpenId is not null " +
+            "and u.wxOpenId is not null " +
             "and (:province is null or :province = '' or u.province like ('%' || :province || '%')) " +
             "and (:city is null or :city = '' or u.city like ('%' || :city || '%')) " +
             "and (:createdDateTimeStart is null or ev.scanDateTime >= :createdDateTimeStart) " +
@@ -46,7 +46,7 @@ public interface EMRUserRepository extends FindOneAndSaveRepository<EMRUserEntit
     @Query("select distinct u from #{#entityName} u inner join  u.eventEntities ev where ev.name = 'draw' " +
             "and ev.orgId = :orgId " +
             "and (:productBaseId is null or ev.productBaseId = :productBaseId) " +
-            "and ev.wxOpenId is not null " +
+            "and u.wxOpenId is not null " +
             "and ev.isPriced is not null " +
             "and (:province is null or :province = '' or u.province like ('%' || :province || '%')) " +
             "and (:city is null or :city = '' or u.city like ('%' || :city || '%')) " +
@@ -62,7 +62,7 @@ public interface EMRUserRepository extends FindOneAndSaveRepository<EMRUserEntit
     @Query("select distinct u from #{#entityName} u inner join  u.eventEntities ev where ev.name = 'draw' " +
             "and ev.orgId = :orgId " +
             "and (:productBaseId is null or ev.productBaseId = :productBaseId) " +
-            "and ev.wxOpenId is not null " +
+            "and u.wxOpenId is not null " +
             "and ev.isPriced = 1 " +
             "and (:province is null or :province = '' or u.province like ('%' || :province || '%')) " +
             "and (:city is null or :city = '' or u.city like ('%' || :city || '%')) " +
@@ -78,7 +78,7 @@ public interface EMRUserRepository extends FindOneAndSaveRepository<EMRUserEntit
     @Query("select distinct u from #{#entityName} u inner join  u.eventEntities ev where ev.name = 'draw' " +
             "and ev.orgId = :orgId " +
             "and (:productBaseId is null or ev.productBaseId = :productBaseId) " +
-            "and ev.wxOpenId is not null " +
+            "and u.wxOpenId is not null " +
             "and ev.isPriced = 1 " +
             "and ev.priceStatusCode in ('submit','paid')  " +
             "and (:province is null or :province = '' or u.province like ('%' || :province || '%')) " +

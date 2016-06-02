@@ -49,7 +49,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
     }
 
     private int[] query(String action, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, int level) {
-        String sql = "select count(1), count(distinct ifnull(ev.user_id, ev.ys_id)) from emr_event ev where ev.name= :eventName" +
+        String sql = "select count(1), count(distinct u.id) from emr_event ev inner join emr_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id or ev.ys_id = u.ys_id) where ev.name= :eventName" +
                 " and ev.org_id =:orgId ";
 
         HashMap<String, Object> parameters = new HashMap<>();
@@ -77,7 +77,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         }
 
         if (level > 0) {
-            sql = sql + " and ev.wx_openid is not null";
+            sql = sql + " and u.wx_openid is not null";
         }
 
         if (level > 1) {
