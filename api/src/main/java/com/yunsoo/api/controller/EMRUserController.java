@@ -11,6 +11,8 @@ import com.yunsoo.common.data.object.UserBlockObject;
 import com.yunsoo.common.web.client.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,6 +46,7 @@ public class EMRUserController {
                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
                                    @RequestParam(value = "create_datetime_end", required = false)
                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                   @SortDefault(value = "joinDateTime", direction = Sort.Direction.DESC)
                                    Pageable pageable,
                                    HttpServletResponse response) {
 
