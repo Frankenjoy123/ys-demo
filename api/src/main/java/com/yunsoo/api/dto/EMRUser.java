@@ -67,6 +67,12 @@ public class EMRUser implements Serializable {
     @JsonProperty("join_datetime")
     private DateTime joinDateTime;
 
+    @JsonProperty("ip")
+    private String ip;
+
+    @JsonProperty("device")
+    private String device;
+
     public String getId() {
         return id;
     }
@@ -203,6 +209,22 @@ public class EMRUser implements Serializable {
         this.userBlockId = userBlockId;
     }
 
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
+    }
+
     public EMRUser() {
     }
 
@@ -224,6 +246,8 @@ public class EMRUser implements Serializable {
             this.setCity(object.getCity());
             this.setProvince(object.getProvince());
             this.setJoinDateTime(object.getJoinDateTime());
+            this.setIp(object.getIp());
+            this.setDevice(object.getDevice());
         }
     }
 
