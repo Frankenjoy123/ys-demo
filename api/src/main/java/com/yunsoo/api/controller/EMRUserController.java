@@ -3,8 +3,10 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.EMRUserDomain;
 import com.yunsoo.api.domain.UserBlockDomain;
 import com.yunsoo.api.dto.EMRUser;
+import com.yunsoo.api.dto.EMRUserReport;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.EMRUserObject;
+import com.yunsoo.common.data.object.EMRUserReportObject;
 import com.yunsoo.common.data.object.UserBlockObject;
 import com.yunsoo.common.web.client.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,7 +191,7 @@ public class EMRUserController {
     }
 
     @RequestMapping(value = "funnel", method = RequestMethod.GET)
-    public List<Integer> queryUserFunnel(@RequestParam(value = "org_id", required = false) String orgId,
+    public EMRUserReport queryUserFunnel(@RequestParam(value = "org_id", required = false) String orgId,
                                          @RequestParam(value = "product_base_id", required = false) String productBaseId,
                                          @RequestParam(value = "province", required = false) String province,
                                          @RequestParam(value = "city", required = false) String city,
@@ -199,8 +201,8 @@ public class EMRUserController {
                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        List<Integer> result = emrUserDomain.getEMRUserFunnelCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+        EMRUserReportObject userReportObject = emrUserDomain.getEMRUserFunnelCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
 
-        return result;
+        return new EMRUserReport(userReportObject);
     }
 }

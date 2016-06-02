@@ -1,15 +1,16 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.common.data.object.EMRUserObject;
-import com.yunsoo.common.web.client.Page;
-import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
+        import com.yunsoo.common.data.object.EMRUserObject;
+        import com.yunsoo.common.data.object.EMRUserReportObject;
+        import com.yunsoo.common.web.client.Page;
+        import com.yunsoo.common.web.client.RestClient;
+        import com.yunsoo.common.web.util.QueryStringBuilder;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.core.ParameterizedTypeReference;
+        import org.springframework.data.domain.Pageable;
+        import org.springframework.stereotype.Component;
 
-import java.util.List;
+        import java.util.List;
 
 @Component
 public class EMRUserDomain {
@@ -111,7 +112,7 @@ public class EMRUserDomain {
         });
     }
 
-    public List<Integer> getEMRUserFunnelCount(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd) {
+    public EMRUserReportObject getEMRUserFunnelCount(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .append("product_base_id", productBaseId)
@@ -121,7 +122,7 @@ public class EMRUserDomain {
                 .append("create_datetime_end", createdDateTimeEnd)
                 .build();
 
-        return dataAPIClient.get("analysis/user/funnel" + query, new ParameterizedTypeReference<List<Integer>>() {
+        return dataAPIClient.get("analysis/user/funnel" + query, new ParameterizedTypeReference<EMRUserReportObject>() {
         });
     }
 }
