@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -67,8 +68,8 @@ public class TaskFileEntryController {
         return entityPage.getContent().stream().map(this::toTaskFileEntryObject).collect(Collectors.toList());
     }
 
-
     @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public TaskFileEntryObject create(@RequestBody @Valid TaskFileEntryObject obj) {
         TaskFileEntryEntity entity = toTaskFileEntryEntity(obj);
         if (entity.getCreatedDateTime() == null) {
@@ -77,6 +78,17 @@ public class TaskFileEntryController {
         entity = taskFileEntryRepository.save(entity);
         return toTaskFileEntryObject(entity);
     }
+
+    @RequestMapping(value = "{id}/statusCode", method = RequestMethod.PUT)
+    public void updateStatusCode(@PathVariable("id") String fileId, @RequestBody String statusCode) {
+        TaskFileEntryEntity entity = taskFileEntryRepository.findOne(fileId);
+        if (entity == null) {
+            throw new NotFoundException("taskFileEntry not found by [id: " + fileId + "]");
+        }
+        entity.setStatusCode(statusCode);
+        taskFileEntryRepository.save(entity);
+    }
+
 
     private TaskFileEntryObject toTaskFileEntryObject(TaskFileEntryEntity entity) {
         if (entity == null) {

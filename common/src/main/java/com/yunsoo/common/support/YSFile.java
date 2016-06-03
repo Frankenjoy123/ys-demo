@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  */
 public class YSFile {
     public static final String EXT_PKS = "PKS"; //product keys file
-    public static final String EXT_PPK = "PPK"; //product package & product keys relationship file
+    public static final String EXT_TF = "TF"; //task file
 
     private static final String VER_1_0 = "1.0";
     private static final String DEFAULT_VER = VER_1_0;
