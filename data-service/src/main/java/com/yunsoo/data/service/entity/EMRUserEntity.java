@@ -63,6 +63,11 @@ public class EMRUserEntity implements Serializable {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime joinDateTime;
 
+    @Column(name = "latest_event_ip")
+    private String ip;
+
+    @Column(name = "latest_event_device")
+    private String device;
 
     @OneToMany(targetEntity = EMREventEntity.class, fetch = FetchType.LAZY)
     @JoinColumns({
@@ -205,5 +210,21 @@ public class EMRUserEntity implements Serializable {
 
     public void setEventEntities(Set<EMREventEntity> eventEntities) {
         this.eventEntities = eventEntities;
+    }
+
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 }

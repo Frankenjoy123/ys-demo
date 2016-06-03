@@ -242,6 +242,24 @@ public class LookupCodes {
 
     }
 
+    public static class TaskFileType {
+        private TaskFileType() {
+        }
+
+        public static final String PACKAGE = "package";
+        public static final String TRACE = "trace";
+    }
+
+    public static class TaskFileStatus {
+        private TaskFileStatus() {
+        }
+
+        public static final String CREATED = "created";
+        public static final String UPLOADED = "uploaded";
+        public static final String PROCESSING = "processing";
+        public static final String FINISHED = "finished";
+    }
+
 
     public enum LookupType {
 

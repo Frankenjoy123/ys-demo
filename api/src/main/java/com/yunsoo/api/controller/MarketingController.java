@@ -624,6 +624,15 @@ public class MarketingController {
 
     }
 
+    @RequestMapping(value = "market_win_user_location/{id}", method = RequestMethod.GET)
+    public List<MarketWinUserLocationAnalysis> getMarketWinUserLocationReportByMarketingId(@PathVariable(value = "id") String marketingId) {
+        if (marketingId == null) {
+            throw new BadRequestException("marketing id can not be null");
+        }
+        List<MarketWinUserLocationAnalysisObject> mktWinUserLocationAnalysisObjectList = marketingDomain.getMarketWinUserLocationReportByMarketingId(marketingId);
+        return mktWinUserLocationAnalysisObjectList.stream().map(MarketWinUserLocationAnalysis::new).collect(Collectors.toList());
+    }
+
     @RequestMapping(value = "drawPrize/disable/{id}", method = RequestMethod.GET)
     public void disableMktDrawPrize(@PathVariable(value = "id") String id) {
         if (id == null) {

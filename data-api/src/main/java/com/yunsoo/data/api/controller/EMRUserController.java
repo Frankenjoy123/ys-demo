@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.StringUtils;
@@ -85,17 +86,20 @@ public class EMRUserController {
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
 
-        productBaseId = productBaseId.equals("") ? null : productBaseId;
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
 
-        Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByScan(orgId,productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+        List<EMRUserEntity> list = emrUserRepository.findEventUsersFilterByScan(orgId, productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+
+        int totalCount = emrUserRepository.countEventUsersFilterByScan(orgId, productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo);
+
+        Page<EMRUserEntity> entityPage = new PageImpl<EMRUserEntity>(list.stream().collect(Collectors.toList()),
+                pageable, totalCount);
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
         }
 
-        return entityPage.getContent().stream()
-                .map(this::toEMRUserObject)
-                .collect(Collectors.toList());
+        return entityPage.getContent().stream().map(this::toEMRUserObject).collect(Collectors.toList());
     }
 
 
@@ -120,9 +124,9 @@ public class EMRUserController {
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
 
-        productBaseId = productBaseId.equals("") ? null : productBaseId;
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
 
-        Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByDraw(orgId,productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+        Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByDraw(orgId, productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
@@ -155,7 +159,7 @@ public class EMRUserController {
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
 
-        productBaseId = productBaseId.equals("") ? null : productBaseId;
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
 
         Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByWX(orgId, productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
 
@@ -189,9 +193,9 @@ public class EMRUserController {
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
 
-        productBaseId = productBaseId.equals("") ? null : productBaseId;
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
 
-        Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByWin(orgId,productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+        Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByWin(orgId, productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
@@ -224,7 +228,7 @@ public class EMRUserController {
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
 
-        productBaseId = productBaseId.equals("") ? null : productBaseId;
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
 
         Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByReward(orgId, productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
 
@@ -258,6 +262,8 @@ public class EMRUserController {
         object.setCity(entity.getCity());
         object.setProvince(entity.getProvince());
         object.setJoinDateTime(entity.getJoinDateTime());
+        object.setIp(entity.getIp());
+        object.setDevice(entity.getDevice());
         return object;
     }
 
