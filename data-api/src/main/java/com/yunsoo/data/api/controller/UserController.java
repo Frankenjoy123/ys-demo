@@ -142,7 +142,7 @@ public class UserController {
             entity.setDeviceId(userObject.getDeviceId());
         }
         if (userObject.getName() != null) {
-            entity.setName(userObject.getName());
+            entity.setName( userObject.getName());
         }
         if (userObject.getStatusCode() != null) {
             entity.setStatusCode(userObject.getStatusCode());

@@ -19,11 +19,13 @@ public interface BrandRepository extends CrudRepository<BrandEntity, String> {
     @Query(" select be from BrandEntity be inner join be.organization o where be.carrierId= :carrierId and " +
             "( :status is null or o.statusCode = :status) and ( :name is null or o.name= :name) " +
             "and (:endTime is null or o.createdDateTime <= :endTime) and  (:startTime is null or o.createdDateTime >= :startTime) " +
-            "and (:searchText is null or o.name like ('%' || :searchText || '%') or be.contactName like ('%' || :searchText || '%') or be.contactMobile like ('%' || :searchText || '%') or be.email like ('%' || :searchText || '%'))" +
+            "and (:searchText is null or o.name like ('%' || :searchText || '%') or be.contactName like ('%' || :searchText || '%') or be.contactMobile like ('%' || :searchText || '%') or be.email like ('%' || :searchText || '%')) " +
+            "and ( :categoryId is null or be.categoryId = :categoryId)" +
             "order by o.createdDateTime Desc")
     Page<BrandEntity> filter(@Param("carrierId")String carrierId, @Param("status")String status,
                              @Param("name")String name, @Param("searchText")String searchText,
                              @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime,
+                             @Param("categoryId") String categoryId,
                              Pageable pageable);
 
     @Query(" select be from BrandEntity be inner join be.organization o where be.carrierId= :carrierId and " +

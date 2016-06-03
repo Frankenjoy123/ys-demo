@@ -170,13 +170,14 @@ public class OrganizationController {
                                        @RequestParam(value="status", required = false)String status,
                                        @RequestParam(value = "name", required = false) String name,
                                        @RequestParam(value = "search_text", required = false) String searchText,
+                                       @RequestParam(value = "category_id", required = false) String categoryId,
                                        @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
                                        @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
                                        Pageable pageable,
                                        HttpServletResponse response) {
         if(!StringUtils.hasText(searchText))
             searchText = null;
-        Page<BrandObject> brandPage = organizationDomain.getOrgBrandList(id, name, status, searchText, startTime, endTime, pageable);
+        Page<BrandObject> brandPage = organizationDomain.getOrgBrandList(id, name, status, searchText, startTime, endTime, categoryId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", brandPage.toContentRange());
         }
