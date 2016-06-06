@@ -133,10 +133,11 @@ public class OrganizationController {
                                              @RequestParam(value = "search_text", required = false) String searchText,
                                              @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startDateTime,
                                              @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endDateTime,
+                                             @RequestParam(value = "category_id", required = false) String categoryId,
                                              Pageable pageable,
                                              HttpServletResponse response) {
 
-        Page<BrandEntity> entityPage = brandRepository.filter(id, status, name, searchText, startDateTime, endDateTime, pageable);
+        Page<BrandEntity> entityPage = brandRepository.filter(id, status, name, searchText, startDateTime, endDateTime, categoryId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
