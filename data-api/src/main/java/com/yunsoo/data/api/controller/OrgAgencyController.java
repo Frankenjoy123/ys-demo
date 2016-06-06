@@ -113,6 +113,9 @@ public class OrgAgencyController {
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
+        object.setAgencyResponsible(entity.getAgencyResponsible());
+        object.setAgencyCode(entity.getAgencyCode());
+        object.setAgencyPhone(entity.getAgencyPhone());
         return object;
     }
 
@@ -133,6 +136,9 @@ public class OrgAgencyController {
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());
+        entity.setAgencyResponsible(object.getAgencyResponsible());
+        entity.setAgencyCode(object.getAgencyCode());
+        entity.setAgencyPhone(object.getAgencyPhone());
         return entity;
     }
 }

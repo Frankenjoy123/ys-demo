@@ -33,11 +33,20 @@ public class OrgAgencyEntity {
     @Column(name = "parent_id")
     private String parentId;
 
+    @Column(name = "agency_responsible")
+    private String agencyResponsible;
+
+    @Column(name = "agency_code")
+    private String agencyCode;
+
     @Column(name = "address")
     private String address;
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "agency_phone")
+    private String agencyPhone;
 
     @Column(name = "status_code")
     private String statusCode;
@@ -150,5 +159,29 @@ public class OrgAgencyEntity {
 
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
+    }
+
+    public String getAgencyResponsible() {
+        return agencyResponsible;
+    }
+
+    public void setAgencyResponsible(String agencyResponsible) {
+        this.agencyResponsible = agencyResponsible;
+    }
+
+    public String getAgencyCode() {
+        return agencyCode;
+    }
+
+    public void setAgencyCode(String agencyCode) {
+        this.agencyCode = agencyCode;
+    }
+
+    public String getAgencyPhone() {
+        return agencyPhone;
+    }
+
+    public void setAgencyPhone(String agencyPhone) {
+        this.agencyPhone = agencyPhone;
     }
 }

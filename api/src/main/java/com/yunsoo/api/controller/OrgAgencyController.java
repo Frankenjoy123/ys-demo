@@ -91,6 +91,9 @@ public class OrgAgencyController {
         orgAgencyObject.setAddress(orgAgency.getAddress());
         orgAgencyObject.setDescription(orgAgency.getDescription());
         orgAgencyObject.setParentId(orgAgency.getParentId());
+        orgAgencyObject.setAgencyResponsible(orgAgency.getAgencyResponsible());
+        orgAgencyObject.setAgencyCode(orgAgency.getAgencyCode());
+        orgAgencyObject.setAgencyPhone(orgAgency.getAgencyPhone());
         orgAgencyObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getOrgId());
         orgAgencyObject.setModifiedDateTime(DateTime.now());
         orgAgencyDomain.updateOrgAgency(orgAgencyObject);
