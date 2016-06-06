@@ -35,7 +35,7 @@ public class OrgAgencyController {
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public OrgAgencyObject getById(@PathVariable(value = "id") String id) {
         OrgAgencyEntity entity = orgAgencyRepository.findOne(id);
-        if (entity == null || LookupCodes.OrgAgencyStatus.DEACTIVATED.equals(entity.getStatusCode())) {
+        if (entity == null || LookupCodes.OrgAgencyStatus.DELETED.equals(entity.getStatusCode())) {
             throw new NotFoundException("organization agency not found by [id:" + id + "]");
         }
         return toOrgAgencyObject(entity);
@@ -46,7 +46,7 @@ public class OrgAgencyController {
     public List<OrgAgencyObject> getByFilter(@RequestParam(value = "org_id") String orgId,
                                              Pageable pageable,
                                              HttpServletResponse response) {
-        Page<OrgAgencyEntity> entityPage = orgAgencyRepository.findByOrgIdAndStatusCode(orgId, LookupCodes.OrgAgencyStatus.ACTIVATED, pageable);
+        Page<OrgAgencyEntity> entityPage = orgAgencyRepository.findByOrgIdAndStatusCodeIn(orgId, LookupCodes.OrgAgencyStatus.AVALAIBLE_STATUS, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
@@ -78,7 +78,7 @@ public class OrgAgencyController {
     public void update(@PathVariable(value = "id") String id,
                        @RequestBody OrgAgencyObject orgAgencyObject) {
         OrgAgencyEntity oldentity = orgAgencyRepository.findOne(id);
-        if (oldentity != null && LookupCodes.OrgAgencyStatus.ACTIVATED.equals(oldentity.getStatusCode())) {
+        if (oldentity != null && !LookupCodes.OrgAgencyStatus.DELETED.equals(oldentity.getStatusCode())) {
             OrgAgencyEntity entity = toOrgAgencyEntity(orgAgencyObject);
             orgAgencyRepository.save(entity);
         }
@@ -89,8 +89,8 @@ public class OrgAgencyController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "id") String id) {
         OrgAgencyEntity entity = orgAgencyRepository.findOne(id);
-        if (entity != null && LookupCodes.OrgAgencyStatus.ACTIVATED.equals(entity.getStatusCode())) {
-            entity.setStatusCode(LookupCodes.OrgAgencyStatus.DEACTIVATED);
+        if (entity != null && !LookupCodes.OrgAgencyStatus.DELETED.equals(entity.getStatusCode())) {
+            entity.setStatusCode(LookupCodes.OrgAgencyStatus.DELETED);
             orgAgencyRepository.save(entity);
         }
     }

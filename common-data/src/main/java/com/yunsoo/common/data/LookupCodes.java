@@ -149,6 +149,8 @@ public class LookupCodes {
 
         public static final String ACTIVATED = "activated";
         public static final String DEACTIVATED = "deactivated";
+        public static final String DELETED = "deleted";
+        public static final List<String> AVALAIBLE_STATUS = Arrays.asList("activated", "deactivated");
     }
 
     public static class OrgStatus {

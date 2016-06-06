@@ -5,6 +5,8 @@ import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * Created by  : haitao
  * Created on  : 2015/9/2
@@ -12,6 +14,6 @@ import org.springframework.data.domain.Pageable;
  */
 public interface OrgAgencyRepository extends FindOneAndSaveRepository<OrgAgencyEntity, String> {
 
-    Page<OrgAgencyEntity> findByOrgIdAndStatusCode(String orgId, String statusCode, Pageable pageable);
+    Page<OrgAgencyEntity> findByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodes, Pageable pageable);
 
 }

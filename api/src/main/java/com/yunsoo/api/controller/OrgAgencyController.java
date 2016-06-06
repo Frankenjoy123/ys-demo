@@ -106,7 +106,7 @@ public class OrgAgencyController {
     public void delete(@PathVariable(value = "id") String id) {
         OrgAgencyObject orgAgencyObject = orgAgencyDomain.getOrgAgencyById(id);
         if (orgAgencyObject != null) {
-            if (LookupCodes.OrgAgencyStatus.DEACTIVATED.equals(orgAgencyObject.getStatusCode())) {
+            if (LookupCodes.OrgAgencyStatus.DELETED.equals(orgAgencyObject.getStatusCode())) {
                 throw new UnprocessableEntityException("illegal operation");
             }
             orgAgencyDomain.deleteOrgAgency(id);
