@@ -131,7 +131,7 @@ public class OrgAgencyController {
 
     private OrgAgencyObject findOrgAgencyById(String id) {
         OrgAgencyObject orgAgencyObject = orgAgencyDomain.getOrgAgencyById(id);
-        if (orgAgencyObject == null || LookupCodes.OrgAgencyStatus.DEACTIVATED.equals(orgAgencyObject.getStatusCode())) {
+        if (orgAgencyObject == null || LookupCodes.OrgAgencyStatus.DELETED.equals(orgAgencyObject.getStatusCode())) {
             throw new NotFoundException("organization agency not found");
         }
         return orgAgencyObject;
