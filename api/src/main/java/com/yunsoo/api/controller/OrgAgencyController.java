@@ -113,6 +113,21 @@ public class OrgAgencyController {
         }
     }
 
+    @RequestMapping(value = "{id}/enable", method = RequestMethod.PUT)
+    public void activeAgency(@PathVariable("id") String agencyId) {
+        OrgAgencyObject orgAgencyObject = orgAgencyDomain.getOrgAgencyById(agencyId);
+        if (LookupCodes.OrgAgencyStatus.DEACTIVATED.equals(orgAgencyObject.getStatusCode())) {
+            orgAgencyDomain.updateStatus(agencyId, LookupCodes.OrgAgencyStatus.ACTIVATED);
+        }
+    }
+
+    @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
+    public void deactiveAgency(@PathVariable("id") String agencyId) {
+        OrgAgencyObject orgAgencyObject = orgAgencyDomain.getOrgAgencyById(agencyId);
+        if (LookupCodes.OrgAgencyStatus.ACTIVATED.equals(orgAgencyObject.getStatusCode())) {
+            orgAgencyDomain.updateStatus(agencyId, LookupCodes.OrgAgencyStatus.DEACTIVATED);
+        }
+    }
 
     private OrgAgencyObject findOrgAgencyById(String id) {
         OrgAgencyObject orgAgencyObject = orgAgencyDomain.getOrgAgencyById(id);
