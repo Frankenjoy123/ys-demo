@@ -7,9 +7,11 @@ import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.OrgAgencyEntity;
 import com.yunsoo.data.service.repository.OrgAgencyRepository;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -44,10 +46,23 @@ public class OrgAgencyController {
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<OrgAgencyObject> getByFilter(@RequestParam(value = "org_id") String orgId,
+                                             @RequestParam(value = "search_text", required = false) String searchText,
+                                             @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startDateTime,
+                                             @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endDateTime,
                                              Pageable pageable,
                                              HttpServletResponse response) {
-        Page<OrgAgencyEntity> entityPage = orgAgencyRepository.findByOrgIdAndStatusCodeIn(orgId, LookupCodes.OrgAgencyStatus.AVALAIBLE_STATUS, pageable);
+//        Page<OrgAgencyEntity> entityPage = orgAgencyRepository.findByOrgIdAndStatusCodeIn(orgId, LookupCodes.OrgAgencyStatus.AVALAIBLE_STATUS, pageable);
 
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (startDateTime != null && !StringUtils.isEmpty(startDateTime.toString()))
+            createdDateTimeStartTo = startDateTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (endDateTime != null && !StringUtils.isEmpty(endDateTime.toString()))
+            createdDateTimeEndTo = endDateTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        Page<OrgAgencyEntity> entityPage = orgAgencyRepository.query(orgId, searchText, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
