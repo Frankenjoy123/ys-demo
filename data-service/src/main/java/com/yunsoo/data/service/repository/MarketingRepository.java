@@ -34,6 +34,14 @@ public interface MarketingRepository extends CrudRepository<MarketingEntity, Str
                                 @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime, @Param("product")String productBaseId,
                                 @Param("searchText")String searchText, Pageable pageable);
 
+    @Query("select m from MarketingEntity m where (:orgId is null or m.orgId = :orgId)" +
+            "and (:searchText is null or m.name like ('%' || :searchText || '%')) and (:product is null or :product = '' or m.productBaseId = :product) " +
+            "and (:endTime is null or m.createdDateTime <= :endTime) and  (:startTime is null or m.createdDateTime >= :startTime) " +
+            "and m.statusCode<>'deleted' " + "order by m.createdDateTime Desc")
+    Page<MarketingEntity> queryMkt(@Param("orgId") String orgId,
+                                   @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime, @Param("product") String productBaseId,
+                                   @Param("searchText") String searchText, Pageable pageable);
+
 
     int countByOrgIdInAndStatusCode(@Param("orgIds")List<String> orgIds, @Param("status")String status );
 
