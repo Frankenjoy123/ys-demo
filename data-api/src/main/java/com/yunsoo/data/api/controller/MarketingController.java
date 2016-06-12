@@ -101,8 +101,8 @@ public class MarketingController {
                                              @RequestParam(value = "org_ids", required = false) List<String> orgIds ,
                                              @RequestParam(value = "status", required = false) String status,
                                              @RequestParam(value = "search_text", required = false) String searchText,
-                                             @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startDateTime,
-                                             @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endDateTime,
+                                             @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
+                                             @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
                                              @RequestParam(value = "product_base_id", required = false) String productBaseId,
 
                                              Pageable pageable,
@@ -114,16 +114,10 @@ public class MarketingController {
             if (LookupCodes.MktStatus.AVALAIBLESTATUS.equals(status)) {
                 entityPage = marketingRepository.findByOrgIdAndStatusCodeInOrderByCreatedDateTimeDesc(orgId, LookupCodes.MktStatus.ANALYZE_STATUS, pageable);
             } else {
-                DateTime startTime = null;
-                DateTime endTime = null;
-                if (startDateTime != null && !StringUtils.isEmpty(startDateTime.toString()))
-                    startTime = startDateTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
-
-                if (endDateTime != null && !StringUtils.isEmpty(endDateTime.toString()))
-                    endTime = endDateTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
-                if (orgId != null) {
+                if (orgId != null)
+//                    entityPage = marketingRepository.findByOrgIdAndStatusCodeInOrderByCreatedDateTimeDesc(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
                     entityPage = marketingRepository.queryMkt(orgId, startTime, endTime, productBaseId, searchText, pageable);
-                }
+
                 else if (orgIds != null && orgIds.size() > 0) {
                     entityPage = marketingRepository.query(orgIds, status, startTime, endTime, productBaseId, searchText, pageable);
                 } else
