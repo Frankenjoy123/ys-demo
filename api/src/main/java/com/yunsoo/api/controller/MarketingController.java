@@ -298,8 +298,8 @@ public class MarketingController {
                                        @RequestParam(value = "status", required = false) String status,
                                        @RequestParam(value = "search_text", required = false) String searchText,
                                        @RequestParam(value = "need_rules", required = false) Boolean needRules,
-                                       @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
-                                       @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
+                                       @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                       @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
                                        @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC) Pageable pageable,
                                        HttpServletResponse response) {
 
