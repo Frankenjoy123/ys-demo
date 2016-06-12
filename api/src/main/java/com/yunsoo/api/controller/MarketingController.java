@@ -51,6 +51,9 @@ public class MarketingController {
     @Autowired
     private OrganizationDomain organizationDomain;
 
+    @Autowired
+    private UserDomain userDomain;
+
 
     @RequestMapping(value = "drawRule", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -521,6 +524,13 @@ public class MarketingController {
             UserScanRecordObject userScanRecordObject = userScanDomain.getScanRecordById(scanRecordId);
             if (userScanRecordObject != null) {
                 mktDrawPrize.setScanRecord(new ScanRecord(userScanRecordObject));
+                String userId = userScanRecordObject.getUserId();
+                if (userId != null) {
+                    UserObject userObject = userDomain.getUserById(userId);
+                    if ((userObject != null) && (userObject.getGravatarUrl() != null)) {
+                        mktDrawPrize.setGravatarUrl(userObject.getGravatarUrl());
+                    }
+                }
             }
             MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktDrawRuleById(object.getDrawRuleId());
             if (mktDrawRuleObject != null) {

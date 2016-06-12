@@ -3,6 +3,7 @@ package com.yunsoo.api.domain;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -34,5 +35,14 @@ public class UserDomain {
         return dataAPIClient.getPaged("user/query" + query, new ParameterizedTypeReference<List<UserObject>>() {
         });
     }
+
+    public UserObject getUserById(String id) {
+        try {
+            return dataAPIClient.get("user/{id}", UserObject.class, id);
+        } catch (NotFoundException ignored) {
+            return null;
+        }
+    }
+
 
 }
