@@ -23,9 +23,11 @@ public class EMREventEntity implements Serializable {
     @Column(name = "ys_id")
     private String ysId;
 
-
     @Column(name = "name")
     private String name;
+
+    @Column(name = "ip")
+    private String ip;
 
     @Column(name = "province")
     private String province;
@@ -35,6 +37,15 @@ public class EMREventEntity implements Serializable {
 
     @Column(name = "product_base_id")
     private String productBaseId;
+
+    @Column(name = "product_name")
+    private String productName;
+
+    @Column(name = "product_key")
+    private String productKey;
+
+    @Column(name = "key_batch_id")
+    private String keyBatchId;
 
     @Column(name = "price_status_code")
     private String priceStatusCode;
@@ -46,18 +57,20 @@ public class EMREventEntity implements Serializable {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime scanDateTime;
 
+    @Column(name = "event_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime eventDateTime;
+
     @Column(name = "wx_openid")
     private String wxOpenId;
 
     @Column(name = "marketing_id")
     private String marketingId;
 
-
-
     @OneToOne(targetEntity = EMRUserEntity.class, optional = true)
     @JoinColumns({
-            @JoinColumn(name="user_id", referencedColumnName="user_id", insertable = false, updatable = false),
-            @JoinColumn(name="org_id", referencedColumnName="org_id",insertable = false, updatable = false)
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false),
+            @JoinColumn(name = "org_id", referencedColumnName = "org_id", insertable = false, updatable = false)
     })
     private EMRUserEntity userEntity;
 
@@ -133,6 +146,14 @@ public class EMREventEntity implements Serializable {
         this.scanDateTime = scanDateTime;
     }
 
+    public DateTime getEventDateTime() {
+        return eventDateTime;
+    }
+
+    public void setEventDateTime(DateTime eventDateTime) {
+        this.eventDateTime = eventDateTime;
+    }
+
     public String getUserId() {
         return userId;
     }
@@ -171,5 +192,37 @@ public class EMREventEntity implements Serializable {
 
     public void setMarketingId(String marketingId) {
         this.marketingId = marketingId;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getProductKey() {
+        return productKey;
+    }
+
+    public void setProductKey(String productKey) {
+        this.productKey = productKey;
+    }
+
+    public String getKeyBatchId() {
+        return keyBatchId;
+    }
+
+    public void setKeyBatchId(String keyBatchId) {
+        this.keyBatchId = keyBatchId;
     }
 }

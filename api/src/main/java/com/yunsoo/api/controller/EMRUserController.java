@@ -33,6 +33,17 @@ public class EMRUserController {
     @Autowired
     private UserBlockDomain userBlockDomain;
 
+    @RequestMapping(value = "id", method = RequestMethod.GET)
+    public EMRUser getUser(@RequestParam(value = "org_id", required = false) String orgId,
+                           @RequestParam(value = "user_id", required = false) String userId,
+                           @RequestParam(value = "ys_id", required = false) String ysId) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        EMRUserObject emrUserObject = emrUserDomain.getEMRUser(orgId, userId, ysId);
+
+        return new EMRUser(emrUserObject);
+    }
+
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<EMRUser> queryUser(@RequestParam(value = "org_id", required = false) String orgId,
                                    @RequestParam(value = "sex", required = false) Boolean sex,

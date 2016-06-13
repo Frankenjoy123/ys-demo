@@ -1,22 +1,32 @@
 package com.yunsoo.api.domain;
 
-        import com.yunsoo.common.data.object.EMRUserObject;
-        import com.yunsoo.common.data.object.EMRUserReportObject;
-        import com.yunsoo.common.web.client.Page;
-        import com.yunsoo.common.web.client.RestClient;
-        import com.yunsoo.common.web.util.QueryStringBuilder;
-        import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.core.ParameterizedTypeReference;
-        import org.springframework.data.domain.Pageable;
-        import org.springframework.stereotype.Component;
+import com.yunsoo.common.data.object.EMRUserObject;
+import com.yunsoo.common.data.object.EMRUserReportObject;
+import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.util.QueryStringBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
 
-        import java.util.List;
+import java.util.List;
 
 @Component
 public class EMRUserDomain {
 
     @Autowired
     private RestClient dataAPIClient;
+
+    public EMRUserObject getEMRUser(String orgId, String userId, String ysId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("user_id", userId)
+                .append("ys_id", ysId)
+                .build();
+
+        return dataAPIClient.get("emr/user/id" + query, EMRUserObject.class);
+    }
 
     public Page<EMRUserObject> getEMRUserList(String orgId, Boolean sex, String phone, String name, String province, String city, Integer ageStart, Integer ageEnd, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
