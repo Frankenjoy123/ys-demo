@@ -115,7 +115,9 @@ public class MarketingController {
                 entityPage = marketingRepository.findByOrgIdAndStatusCodeInOrderByCreatedDateTimeDesc(orgId, LookupCodes.MktStatus.ANALYZE_STATUS, pageable);
             } else {
                 if (orgId != null)
-                    entityPage = marketingRepository.findByOrgIdAndStatusCodeInOrderByCreatedDateTimeDesc(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
+//                    entityPage = marketingRepository.findByOrgIdAndStatusCodeInOrderByCreatedDateTimeDesc(orgId, LookupCodes.MktStatus.AVALAIBLE_STATUS, pageable);
+                    entityPage = marketingRepository.queryMkt(orgId, startTime, endTime, productBaseId, searchText, pageable);
+
                 else if (orgIds != null && orgIds.size() > 0) {
                     entityPage = marketingRepository.query(orgIds, status, startTime, endTime, productBaseId, searchText, pageable);
                 } else
