@@ -262,6 +262,12 @@ public class LookupCodes {
         public static final String FINISHED = "finished";
     }
 
+    public static class MktPrizeCostType{
+        private MktPrizeCostType(){}
+
+        public static final String MOBILE_FEE = "mobile fee";
+        public static final String MOBILE_FLOW = "mobile flow";
+    }
     public static class UserEvent {
         private UserEvent() {
         }
