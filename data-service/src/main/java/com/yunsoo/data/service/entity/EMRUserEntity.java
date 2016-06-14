@@ -71,10 +71,18 @@ public class EMRUserEntity implements Serializable {
 
     @OneToMany(targetEntity = EMREventEntity.class, fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name="user_id", referencedColumnName="user_id", insertable = false, updatable = false),
-            @JoinColumn(name="org_id", referencedColumnName="org_id",insertable = false, updatable = false)
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false),
+            @JoinColumn(name = "org_id", referencedColumnName = "org_id", insertable = false, updatable = false)
     })
     private Set<EMREventEntity> eventEntities;
+
+    @OneToMany(targetEntity = UserTagEntity.class, fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false),
+            @JoinColumn(name = "ys_id", referencedColumnName = "ys_id", insertable = false, updatable = false),
+            @JoinColumn(name = "org_id", referencedColumnName = "org_id", insertable = false, updatable = false)
+    })
+    private Set<UserTagEntity> userTagEntities;
 
     public String getId() {
         return id;
@@ -210,6 +218,14 @@ public class EMRUserEntity implements Serializable {
 
     public void setEventEntities(Set<EMREventEntity> eventEntities) {
         this.eventEntities = eventEntities;
+    }
+
+    public Set<UserTagEntity> getUserTagEntities() {
+        return userTagEntities;
+    }
+
+    public void setUserTagEntities(Set<UserTagEntity> userTagEntities) {
+        this.userTagEntities = userTagEntities;
     }
 
     public String getDevice() {

@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class EMRUserObject implements Serializable {
 
@@ -68,6 +68,16 @@ public class EMRUserObject implements Serializable {
     @JsonProperty("device")
     private String device;
 
+    @JsonProperty("user_tags")
+    private List<UserTagObject> userTagObjects;
+
+    public List<UserTagObject> getUserTagObjects() {
+        return userTagObjects;
+    }
+
+    public void setUserTagObjects(List<UserTagObject> userTagObjects) {
+        this.userTagObjects = userTagObjects;
+    }
 
     public String getId() {
         return id;

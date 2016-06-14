@@ -28,7 +28,7 @@ public class EMRUserDomain {
         return dataAPIClient.get("emr/user/id" + query, EMRUserObject.class);
     }
 
-    public Page<EMRUserObject> getEMRUserList(String orgId, Boolean sex, String phone, String name, String province, String city, Integer ageStart, Integer ageEnd, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
+    public Page<EMRUserObject> getEMRUserList(String orgId, Boolean sex, String phone, String name, String province, String city, Integer ageStart, Integer ageEnd, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, String userTags, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .append("sex", sex)
@@ -36,6 +36,7 @@ public class EMRUserDomain {
                 .append("name", name)
                 .append("province", province)
                 .append("city", city)
+                .append("user_tags", userTags)
                 .append("age_start", ageStart)
                 .append("age_end", ageEnd)
                 .append("create_datetime_start", createdDateTimeStart)
