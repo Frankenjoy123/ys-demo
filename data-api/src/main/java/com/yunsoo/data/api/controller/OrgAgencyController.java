@@ -7,9 +7,11 @@ import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.OrgAgencyEntity;
 import com.yunsoo.data.service.repository.OrgAgencyRepository;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +37,7 @@ public class OrgAgencyController {
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public OrgAgencyObject getById(@PathVariable(value = "id") String id) {
         OrgAgencyEntity entity = orgAgencyRepository.findOne(id);
-        if (entity == null || LookupCodes.OrgAgencyStatus.DEACTIVATED.equals(entity.getStatusCode())) {
+        if (entity == null || LookupCodes.OrgAgencyStatus.DELETED.equals(entity.getStatusCode())) {
             throw new NotFoundException("organization agency not found by [id:" + id + "]");
         }
         return toOrgAgencyObject(entity);
@@ -44,10 +46,23 @@ public class OrgAgencyController {
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<OrgAgencyObject> getByFilter(@RequestParam(value = "org_id") String orgId,
+                                             @RequestParam(value = "search_text", required = false) String searchText,
+                                             @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startDateTime,
+                                             @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endDateTime,
                                              Pageable pageable,
                                              HttpServletResponse response) {
-        Page<OrgAgencyEntity> entityPage = orgAgencyRepository.findByOrgIdAndStatusCode(orgId, LookupCodes.OrgAgencyStatus.ACTIVATED, pageable);
+//        Page<OrgAgencyEntity> entityPage = orgAgencyRepository.findByOrgIdAndStatusCodeIn(orgId, LookupCodes.OrgAgencyStatus.AVALAIBLE_STATUS, pageable);
 
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (startDateTime != null && !StringUtils.isEmpty(startDateTime.toString()))
+            createdDateTimeStartTo = startDateTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (endDateTime != null && !StringUtils.isEmpty(endDateTime.toString()))
+            createdDateTimeEndTo = endDateTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        Page<OrgAgencyEntity> entityPage = orgAgencyRepository.query(orgId, searchText, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
@@ -78,7 +93,7 @@ public class OrgAgencyController {
     public void update(@PathVariable(value = "id") String id,
                        @RequestBody OrgAgencyObject orgAgencyObject) {
         OrgAgencyEntity oldentity = orgAgencyRepository.findOne(id);
-        if (oldentity != null && LookupCodes.OrgAgencyStatus.ACTIVATED.equals(oldentity.getStatusCode())) {
+        if (oldentity != null && !LookupCodes.OrgAgencyStatus.DELETED.equals(oldentity.getStatusCode())) {
             OrgAgencyEntity entity = toOrgAgencyEntity(orgAgencyObject);
             orgAgencyRepository.save(entity);
         }
@@ -89,8 +104,8 @@ public class OrgAgencyController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "id") String id) {
         OrgAgencyEntity entity = orgAgencyRepository.findOne(id);
-        if (entity != null && LookupCodes.OrgAgencyStatus.ACTIVATED.equals(entity.getStatusCode())) {
-            entity.setStatusCode(LookupCodes.OrgAgencyStatus.DEACTIVATED);
+        if (entity != null && !LookupCodes.OrgAgencyStatus.DELETED.equals(entity.getStatusCode())) {
+            entity.setStatusCode(LookupCodes.OrgAgencyStatus.DELETED);
             orgAgencyRepository.save(entity);
         }
     }
@@ -113,6 +128,9 @@ public class OrgAgencyController {
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
+        object.setAgencyResponsible(entity.getAgencyResponsible());
+        object.setAgencyCode(entity.getAgencyCode());
+        object.setAgencyPhone(entity.getAgencyPhone());
         return object;
     }
 
@@ -133,6 +151,9 @@ public class OrgAgencyController {
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
         entity.setModifiedDateTime(object.getModifiedDateTime());
+        entity.setAgencyResponsible(object.getAgencyResponsible());
+        entity.setAgencyCode(object.getAgencyCode());
+        entity.setAgencyPhone(object.getAgencyPhone());
         return entity;
     }
 }

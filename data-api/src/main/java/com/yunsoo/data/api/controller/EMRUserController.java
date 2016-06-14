@@ -28,6 +28,16 @@ public class EMRUserController {
     @Autowired
     private EMRUserRepository emrUserRepository;
 
+    @RequestMapping(value = "id", method = RequestMethod.GET)
+    public EMRUserObject getUser(@RequestParam(value = "org_id", required = false) String orgId,
+                                 @RequestParam(value = "user_id", required = false) String userId,
+                                 @RequestParam(value = "ys_id", required = false) String ysId) {
+
+        EMRUserEntity entity = emrUserRepository.getUser(orgId, userId, ysId);
+
+        return toEMRUserObject(entity);
+    }
+
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<EMRUserObject> findByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                             @RequestParam(value = "sex", required = false) Boolean sex,

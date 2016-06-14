@@ -149,6 +149,8 @@ public class LookupCodes {
 
         public static final String ACTIVATED = "activated";
         public static final String DEACTIVATED = "deactivated";
+        public static final String DELETED = "deleted";
+        public static final List<String> AVALAIBLE_STATUS = Arrays.asList("activated", "deactivated");
     }
 
     public static class OrgStatus {
@@ -265,6 +267,15 @@ public class LookupCodes {
 
         public static final String MOBILE_FEE = "mobile fee";
         public static final String MOBILE_FLOW = "mobile flow";
+    }
+    public static class UserEvent {
+        private UserEvent() {
+        }
+
+        public static final String PURCHASE_URL = "purchase_url";
+        public static final String STORE_URL = "store_url";
+        public static final String CLICK = "click";
+        public static final String SHARE = "share";
     }
 
     public enum LookupType {

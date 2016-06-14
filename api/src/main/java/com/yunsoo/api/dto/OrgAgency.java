@@ -33,6 +33,15 @@ public class OrgAgency implements OrgIdDetectable {
     @JsonProperty("parent_id")
     private String parentId;
 
+    @JsonProperty("agency_responsible")
+    private String agencyResponsible;
+
+    @JsonProperty("agency_code")
+    private String agencyCode;
+
+    @JsonProperty("agency_phone")
+    private String agencyPhone;
+
     @JsonProperty("address")
     private String address;
 
@@ -154,6 +163,30 @@ public class OrgAgency implements OrgIdDetectable {
         this.modifiedDateTime = modifiedDateTime;
     }
 
+    public String getAgencyResponsible() {
+        return agencyResponsible;
+    }
+
+    public void setAgencyResponsible(String agencyResponsible) {
+        this.agencyResponsible = agencyResponsible;
+    }
+
+    public String getAgencyCode() {
+        return agencyCode;
+    }
+
+    public void setAgencyCode(String agencyCode) {
+        this.agencyCode = agencyCode;
+    }
+
+    public String getAgencyPhone() {
+        return agencyPhone;
+    }
+
+    public void setAgencyPhone(String agencyPhone) {
+        this.agencyPhone = agencyPhone;
+    }
+
     public OrgAgency() {
     }
 
@@ -171,6 +204,9 @@ public class OrgAgency implements OrgIdDetectable {
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
             this.setModifiedDateTime(object.getModifiedDateTime());
+            this.setAgencyResponsible(object.getAgencyResponsible());
+            this.setAgencyCode(object.getAgencyCode());
+            this.setAgencyPhone(object.getAgencyPhone());
         }
     }
 
@@ -188,6 +224,9 @@ public class OrgAgency implements OrgIdDetectable {
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());
         object.setModifiedDateTime(this.getModifiedDateTime());
+        object.setAgencyResponsible(this.getAgencyResponsible());
+        object.setAgencyCode(this.getAgencyCode());
+        object.setAgencyPhone(this.getAgencyPhone());
         return object;
     }
 

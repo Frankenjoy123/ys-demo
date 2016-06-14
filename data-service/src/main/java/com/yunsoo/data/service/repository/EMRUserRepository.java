@@ -13,6 +13,12 @@ import java.util.List;
 
 public interface EMRUserRepository extends FindOneAndSaveRepository<EMRUserEntity, String>, CustomEMRUserRepository {
 
+    @Query("select o from #{#entityName} o where " +
+            "(:orgId is null or :orgId = '' or o.orgId = :orgId) " +
+            "and (:userId is null or :userId = '' or o.userId = :userId) " +
+            "and (:ysId is null or :ysId = '' or o.ysId = :ysId) ")
+    EMRUserEntity getUser(@Param("orgId") String orgId, @Param("userId") String userId, @Param("ysId") String ysId);
+
     @Query("select o from #{#entityName} o where (:sex is null or o.sex = :sex) and (:phone is null or :phone = '' or o.phone like ('%' || :phone || '%'))  " +
             "and (:name is null or :name = '' or o.name like ('%' || :name || '%')) " +
             "and (:orgId is null or :orgId = '' or o.orgId = :orgId) " +

@@ -7,47 +7,24 @@ import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
-import java.util.List;
+import java.io.Serializable;
 
-/**
- * Created by  : Haitao
- * Created on  : 2015/9/2
- * Descriptions:
- */
-public class OrgAgencyObject {
+public class TagObject implements Serializable {
 
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("name")
-    private String name;
-
     @JsonProperty("org_id")
     private String orgId;
 
-    @JsonProperty("location_ids")
-    private List<String> locationIds;
+    @JsonProperty("name")
+    private String name;
 
-    @JsonProperty("parent_id")
-    private String parentId;
+    @JsonProperty("comments")
+    private String comments;
 
-    @JsonProperty("agency_responsible")
-    private String agencyResponsible;
-
-    @JsonProperty("agency_code")
-    private String agencyCode;
-
-    @JsonProperty("address")
-    private String address;
-
-    @JsonProperty("description")
-    private String description;
-
-    @JsonProperty("agency_phone")
-    private String agencyPhone;
-
-    @JsonProperty("status_code")
-    private String statusCode;
+    @JsonProperty("deleted")
+    private Boolean deleted;
 
     @JsonProperty("created_account_id")
     private String createdAccountId;
@@ -81,22 +58,6 @@ public class OrgAgencyObject {
         this.orgId = orgId;
     }
 
-    public List<String> getLocationIds() {
-        return locationIds;
-    }
-
-    public void setLocationIds(List<String> locationIds) {
-        this.locationIds = locationIds;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
     public String getName() {
         return name;
     }
@@ -105,28 +66,20 @@ public class OrgAgencyObject {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
+    public String getComments() {
+        return comments;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
-    public String getDescription() {
-        return description;
+    public Boolean getDeleted() {
+        return deleted;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 
     public String getCreatedAccountId() {
@@ -159,29 +112,5 @@ public class OrgAgencyObject {
 
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
-    }
-
-    public String getAgencyResponsible() {
-        return agencyResponsible;
-    }
-
-    public void setAgencyResponsible(String agencyResponsible) {
-        this.agencyResponsible = agencyResponsible;
-    }
-
-    public String getAgencyCode() {
-        return agencyCode;
-    }
-
-    public void setAgencyCode(String agencyCode) {
-        this.agencyCode = agencyCode;
-    }
-
-    public String getAgencyPhone() {
-        return agencyPhone;
-    }
-
-    public void setAgencyPhone(String agencyPhone) {
-        this.agencyPhone = agencyPhone;
     }
 }

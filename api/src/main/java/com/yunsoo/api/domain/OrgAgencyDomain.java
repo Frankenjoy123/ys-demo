@@ -1,15 +1,18 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.LocationObject;
 import com.yunsoo.common.data.object.OrgAgencyObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -33,9 +36,10 @@ public class OrgAgencyDomain {
         }
     }
 
-    public Page<OrgAgencyObject> getOrgAgencyByOrgId(String orgId, Pageable pageable) {
+    public Page<OrgAgencyObject> getOrgAgencyByOrgId(String orgId, String searchText, org.joda.time.LocalDate start, org.joda.time.LocalDate end, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId)
+                .append("org_id", orgId).append("search_text", searchText)
+                .append("start_datetime", start).append("end_datetime", end)
                 .append(pageable)
                 .build();
 
@@ -59,6 +63,18 @@ public class OrgAgencyDomain {
 
     public void updateOrgAgency(OrgAgencyObject orgAgencyObject) {
         dataAPIClient.put("organizationagency/{id}", orgAgencyObject, orgAgencyObject.getId());
+    }
+
+    public void updateStatus(String agencyId, String statusCode) {
+        if (!StringUtils.isEmpty(agencyId)) {
+            OrgAgencyObject orgAgencyObject = getOrgAgencyById(agencyId);
+            if (orgAgencyObject != null) {
+                orgAgencyObject.setStatusCode(statusCode);
+                orgAgencyObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
+                orgAgencyObject.setModifiedDateTime(DateTime.now());
+                dataAPIClient.put("organizationagency/{id}", orgAgencyObject, agencyId);
+            }
+        }
     }
 
     public void deleteOrgAgency(String id) {
