@@ -1,9 +1,11 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.EMRUserObject;
+import com.yunsoo.common.data.object.EMRUserProductEventStasticsObject;
 import com.yunsoo.common.data.object.UserTagObject;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.EMRUserEntity;
+import com.yunsoo.data.service.entity.EMRUserProductEventStatistics;
 import com.yunsoo.data.service.entity.UserTagEntity;
 import com.yunsoo.data.service.repository.EMRUserRepository;
 import com.yunsoo.data.service.repository.UserTagRepository;
@@ -269,6 +271,49 @@ public class EMRUserController {
         return entityPage.getContent().stream()
                 .map(this::toEMRUserObject)
                 .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/event_stats", method = RequestMethod.GET)
+    public List<EMRUserProductEventStasticsObject> queryUserEventStats(@RequestParam(value = "org_id", required = true) String orgId,
+                                                            @RequestParam(value = "ys_id", required = false) String ysId,
+                                                            @RequestParam(value = "user_id", required = false) String userId,
+                                                            @RequestParam(value = "create_datetime_start", required = false)
+                                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                            @RequestParam(value = "create_datetime_end", required = false)
+                                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                            HttpServletResponse response) {
+
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        List<EMRUserProductEventStatistics> result = emrUserRepository.queryUserEventStatistics(orgId, userId, ysId, createdDateTimeStartTo, createdDateTimeEndTo);
+
+        return result.stream()
+                .map(this::toEMRUserProductEventStasticsObject)
+                .collect(Collectors.toList());
+    }
+
+
+    private EMRUserProductEventStasticsObject toEMRUserProductEventStasticsObject(EMRUserProductEventStatistics entity)
+    {
+        if(entity == null)return null;
+        EMRUserProductEventStasticsObject object = new EMRUserProductEventStasticsObject();
+        object.setDrawCount(entity.getDrawCount());
+        object.setOrgId(entity.getOrgId());
+        object.setProductBaseId(entity.getProductBaseId());
+        object.setProductName(entity.getProductName());
+        object.setRewardCount(entity.getRewardCount());
+        object.setScanCount(entity.getScanCount());
+        object.setWinCount(entity.getWinCount());
+        //object.setWxScanCount(entity.getWxScanCount());
+
+        return object;
     }
 
     private EMRUserObject toEMRUserObject(EMRUserEntity entity) {
