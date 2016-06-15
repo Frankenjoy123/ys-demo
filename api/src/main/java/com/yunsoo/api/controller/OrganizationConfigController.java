@@ -4,6 +4,7 @@ import com.yunsoo.api.domain.DomainDirectoryDomain;
 import com.yunsoo.api.domain.OrganizationConfigDomain;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.DomainDirectoryObject;
+import com.yunsoo.common.data.object.OrganizationConfigObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +49,7 @@ public class OrganizationConfigController {
     @RequestMapping(value = "{id}/config", method = RequestMethod.PUT)
     @PreAuthorize("hasPermission(#orgId, 'org', 'organization_config:write')")
     public void putConfig(@PathVariable(value = "id") String orgId,
-                          @RequestBody Map<String, Object> configItems) {
+                          @RequestBody Map<String, OrganizationConfigObject.Item> configItems) {
         orgId = AuthUtils.fixOrgId(orgId);
         organizationConfigDomain.saveConfig(orgId, configItems);
     }
