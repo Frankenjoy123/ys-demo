@@ -1,4 +1,5 @@
-CREATE DEFINER=`admin`@`%` PROCEDURE `sp_run_location_analysis`(chooseDate date)
+DELIMITER $$
+CREATE DEFINER=`root`@`%` PROCEDURE `sp_run_location_analysis`(chooseDate date)
 BEGIN
 
 SET SQL_SAFE_UPDATES = 0;
@@ -103,4 +104,5 @@ drop table tmp_user_scan_location_record;
 drop table tmp_user_scan_record_location_analysis;
 
 
-END
+END$$
+DELIMITER ;
