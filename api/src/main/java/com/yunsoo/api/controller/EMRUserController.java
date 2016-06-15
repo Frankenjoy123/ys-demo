@@ -51,6 +51,7 @@ public class EMRUserController {
                                    @RequestParam(value = "name", required = false) String name,
                                    @RequestParam(value = "province", required = false) String province,
                                    @RequestParam(value = "city", required = false) String city,
+                                   @RequestParam(value = "user_tags", required = false) String userTags,
                                    @RequestParam(value = "age_start", required = false) Integer ageStart,
                                    @RequestParam(value = "age_end", required = false) Integer ageEnd,
                                    @RequestParam(value = "create_datetime_start", required = false)
@@ -62,7 +63,7 @@ public class EMRUserController {
                                    HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<EMRUserObject> entityPage = emrUserDomain.getEMRUserList(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStart, createdDateTimeEnd, pageable);
+        Page<EMRUserObject> entityPage = emrUserDomain.getEMRUserList(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStart, createdDateTimeEnd, userTags, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", entityPage.toContentRange());

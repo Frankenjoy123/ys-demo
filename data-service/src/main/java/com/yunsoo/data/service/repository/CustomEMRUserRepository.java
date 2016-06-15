@@ -1,10 +1,9 @@
 package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.EMRUserEntity;
+import com.yunsoo.data.service.entity.EMRUserProductEventStatistics;
 import org.joda.time.DateTime;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -24,5 +23,8 @@ public interface CustomEMRUserRepository {
                                      String province,  String city,
                                      DateTime createdDateTimeStart,
                                     DateTime createdDateTimeEnd);
+
+    List<EMRUserProductEventStatistics> queryUserEventStatistics(String orgId, String userId, String ysId, DateTime createdDateTimeStart,
+                                                                 DateTime createdDateTimeEnd);
 
 }

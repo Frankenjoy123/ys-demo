@@ -1,9 +1,14 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.EMRUserObject;
+import com.yunsoo.common.data.object.EMRUserProductEventStasticsObject;
+import com.yunsoo.common.data.object.UserTagObject;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.EMRUserEntity;
+import com.yunsoo.data.service.entity.EMRUserProductEventStatistics;
+import com.yunsoo.data.service.entity.UserTagEntity;
 import com.yunsoo.data.service.repository.EMRUserRepository;
+import com.yunsoo.data.service.repository.UserTagRepository;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +34,9 @@ public class EMRUserController {
     @Autowired
     private EMRUserRepository emrUserRepository;
 
+    @Autowired
+    private UserTagRepository userTagRepository;
+
     @RequestMapping(value = "id", method = RequestMethod.GET)
     public EMRUserObject getUser(@RequestParam(value = "org_id", required = false) String orgId,
                                  @RequestParam(value = "user_id", required = false) String userId,
@@ -35,7 +44,12 @@ public class EMRUserController {
 
         EMRUserEntity entity = emrUserRepository.getUser(orgId, userId, ysId);
 
-        return toEMRUserObject(entity);
+        EMRUserObject object = toEMRUserObject(entity);
+        List<UserTagEntity> userTagEntities = userTagRepository.findByFilter(userId, ysId, orgId);
+        List<UserTagObject> userTagObjects = userTagEntities.stream().map(this::toUserTagObject).collect(Collectors.toList());
+        object.setUserTagObjects(userTagObjects);
+
+        return object;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -47,6 +61,7 @@ public class EMRUserController {
                                             @RequestParam(value = "city", required = false) String city,
                                             @RequestParam(value = "age_start", required = false) Integer ageStart,
                                             @RequestParam(value = "age_end", required = false) Integer ageEnd,
+                                            @RequestParam(value = "user_tags", required = false) String userTags,
                                             @RequestParam(value = "create_datetime_start", required = false)
                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
                                             @RequestParam(value = "create_datetime_end", required = false)
@@ -63,7 +78,14 @@ public class EMRUserController {
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
 
-        Page<EMRUserEntity> entityPage = emrUserRepository.findByFilter(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+        List<String> tags;
+        if (userTags != null && !StringUtils.isEmpty(userTags)) {
+            tags = Arrays.asList(userTags.split(","));
+        } else {
+            tags = null;
+        }
+
+        Page<EMRUserEntity> entityPage = emrUserRepository.findByFilter(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStartTo, createdDateTimeEndTo, tags, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
@@ -251,6 +273,49 @@ public class EMRUserController {
                 .collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/event_stats", method = RequestMethod.GET)
+    public List<EMRUserProductEventStasticsObject> queryUserEventStats(@RequestParam(value = "org_id", required = true) String orgId,
+                                                            @RequestParam(value = "ys_id", required = false) String ysId,
+                                                            @RequestParam(value = "user_id", required = false) String userId,
+                                                            @RequestParam(value = "create_datetime_start", required = false)
+                                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                            @RequestParam(value = "create_datetime_end", required = false)
+                                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                            HttpServletResponse response) {
+
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        List<EMRUserProductEventStatistics> result = emrUserRepository.queryUserEventStatistics(orgId, userId, ysId, createdDateTimeStartTo, createdDateTimeEndTo);
+
+        return result.stream()
+                .map(this::toEMRUserProductEventStasticsObject)
+                .collect(Collectors.toList());
+    }
+
+
+    private EMRUserProductEventStasticsObject toEMRUserProductEventStasticsObject(EMRUserProductEventStatistics entity)
+    {
+        if(entity == null)return null;
+        EMRUserProductEventStasticsObject object = new EMRUserProductEventStasticsObject();
+        object.setDrawCount(entity.getDrawCount());
+        object.setOrgId(entity.getOrgId());
+        object.setProductBaseId(entity.getProductBaseId());
+        object.setProductName(entity.getProductName());
+        object.setRewardCount(entity.getRewardCount());
+        object.setScanCount(entity.getScanCount());
+        object.setWinCount(entity.getWinCount());
+        //object.setWxScanCount(entity.getWxScanCount());
+
+        return object;
+    }
+
     private EMRUserObject toEMRUserObject(EMRUserEntity entity) {
         if (entity == null) {
             return null;
@@ -274,6 +339,24 @@ public class EMRUserController {
         object.setJoinDateTime(entity.getJoinDateTime());
         object.setIp(entity.getIp());
         object.setDevice(entity.getDevice());
+        return object;
+    }
+
+    private UserTagObject toUserTagObject(UserTagEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        UserTagObject object = new UserTagObject();
+        object.setId(entity.getId());
+        object.setUserId(entity.getUserId());
+        object.setYsId(entity.getYsId());
+        object.setOrgId(entity.getOrgId());
+        object.setTagId(entity.getTagId());
+        object.setTagName(entity.getTagName());
+        object.setCreatedAccountId(entity.getCreatedAccountId());
+        object.setCreatedDateTime(entity.getCreatedDateTime());
+
         return object;
     }
 

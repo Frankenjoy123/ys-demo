@@ -19,19 +19,21 @@ public interface EMRUserRepository extends FindOneAndSaveRepository<EMRUserEntit
             "and (:ysId is null or :ysId = '' or o.ysId = :ysId) ")
     EMRUserEntity getUser(@Param("orgId") String orgId, @Param("userId") String userId, @Param("ysId") String ysId);
 
-    @Query("select o from #{#entityName} o where (:sex is null or o.sex = :sex) and (:phone is null or :phone = '' or o.phone like ('%' || :phone || '%'))  " +
+    @Query("select distinct o from #{#entityName} o left join o.userTagEntities ut where (:sex is null or o.sex = :sex) and (:phone is null or :phone = '' or o.phone like ('%' || :phone || '%'))  " +
             "and (:name is null or :name = '' or o.name like ('%' || :name || '%')) " +
             "and (:orgId is null or :orgId = '' or o.orgId = :orgId) " +
             "and (:province is null or :province = '' or o.province like ('%' || :province || '%')) " +
             "and (:city is null or :city = '' or o.city like ('%' || :city || '%')) " +
             "and ((:ageStart is null or (o.age >= :ageStart)) and (:ageEnd is null or (o.age <= :ageEnd))) " +
             "and (:createdDateTimeStart is null or o.joinDateTime >= :createdDateTimeStart) " +
-            "and (:createdDateTimeEnd is null or o.joinDateTime <= :createdDateTimeEnd)")
+            "and (:createdDateTimeEnd is null or o.joinDateTime <= :createdDateTimeEnd) " +
+            "and (:userTags is null or ut.tagId in :userTags)")
     Page<EMRUserEntity> findByFilter(@Param("orgId") String orgId, @Param("sex") Boolean sex, @Param("phone") String phone, @Param("name") String name,
                                      @Param("province") String province, @Param("city") String city,
                                      @Param("ageStart") Integer ageStart, @Param("ageEnd") Integer ageEnd,
                                      @Param("createdDateTimeStart") DateTime createdDateTimeStart,
-                                     @Param("createdDateTimeEnd") DateTime createdDateTimeEnd, Pageable pageable);
+                                     @Param("createdDateTimeEnd") DateTime createdDateTimeEnd,
+                                     @Param("userTags") List<String> userTags, Pageable pageable);
 
     @Query("select distinct u from #{#entityName} u inner join  u.eventEntities ev where ev.name = 'scan' " +
             "and ev.orgId = :orgId " +
