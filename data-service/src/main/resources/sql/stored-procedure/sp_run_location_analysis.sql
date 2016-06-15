@@ -10,7 +10,7 @@ create temporary table tmp_user_scan_location_record
 (
 	id varchar(32), 
 	user_id  char(19), 
-	product_key varchar(22), 
+	product_key varchar(22) binary, 
 	product_base_id char(19), 
 	app_id char(19), 
 	ysid varchar(32), 
@@ -61,7 +61,7 @@ create temporary table tmp_user_scan_record_location_analysis
 	province varchar(20), 
 	city varchar(20), 
 	user_id varchar(32), -- ysid或者userid
-	product_key varchar(22)
+	product_key varchar(22) binary
  );
  
  -- 插入城市名符合的数据
