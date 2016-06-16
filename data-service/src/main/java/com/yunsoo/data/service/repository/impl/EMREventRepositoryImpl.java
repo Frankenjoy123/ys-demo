@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by yqy09_000 on 5/31/2016.
@@ -63,7 +64,9 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         for (String key : parameters.keySet()) {
             query.setParameter(key, parameters.get(key));
         }
-        return  (EMREventEntity)query.getSingleResult();
+        List list =  query.getResultList();
+        if(list.isEmpty()) return null;
+        return  (EMREventEntity)list.get(0);
     }
 
     @Override
