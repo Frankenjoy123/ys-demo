@@ -29,7 +29,7 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
 
     @Override
     public List<EMRUserEntity> findEventUsersFilterByScan(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Pageable pageable) {
-        String sql = "SELECT distinct usr.* FROM emr_event ev inner join emr_user usr on ev.org_id = usr.org_id and (ev.user_id = usr.user_id or ev.ys_id = usr.ys_id)"  +
+        String sql = "SELECT distinct usr.* FROM emr_event ev inner join emr_user usr on ev.org_id = usr.org_id and (ev.user_id = usr.user_id and ev.ys_id = usr.ys_id)"  +
                 " where ev.name = 'scan' and ev.org_id = :orgId";
 
         HashMap<String, Object> parameters = new HashMap<>();
@@ -71,7 +71,7 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
 
     @Override
     public int countEventUsersFilterByScan(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        String sql = "SELECT count(distinct usr.id) FROM emr_event ev inner join emr_user usr on (ev.user_id = usr.user_id or ev.ys_id = usr.ys_id) and ev.org_id = usr.org_id" +
+        String sql = "SELECT count(distinct usr.id) FROM emr_event ev inner join emr_user usr on (ev.user_id = usr.user_id and ev.ys_id = usr.ys_id) and ev.org_id = usr.org_id" +
                 " where ev.name = 'scan' and ev.org_id = :orgId";
 
         HashMap<String, Object> parameters = new HashMap<>();
