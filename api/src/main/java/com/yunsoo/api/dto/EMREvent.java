@@ -56,7 +56,7 @@ public class EMREvent implements Serializable {
     private String priceStatusCode;
 
     @JsonProperty("is_priced")
-    private int isPriced;
+    private Integer isPriced;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -178,11 +178,11 @@ public class EMREvent implements Serializable {
         this.priceStatusCode = priceStatusCode;
     }
 
-    public int getIsPriced() {
+    public Integer getIsPriced() {
         return isPriced;
     }
 
-    public void setIsPriced(int isPriced) {
+    public void setIsPriced(Integer isPriced) {
         this.isPriced = isPriced;
     }
 

@@ -48,8 +48,13 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         return query("draw",orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 4);
     }
 
+    @Override
+    public EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId) {
+        return null;
+    }
+
     private int[] query(String action, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, int level) {
-        String sql = "select count(1), count(distinct u.id) from emr_event ev inner join emr_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id or ev.ys_id = u.ys_id) where ev.name= :eventName" +
+        String sql = "select count(1), count(distinct u.id) from emr_event ev inner join emr_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.name= :eventName" +
                 " and ev.org_id =:orgId ";
 
         HashMap<String, Object> parameters = new HashMap<>();

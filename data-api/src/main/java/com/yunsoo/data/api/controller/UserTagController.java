@@ -46,6 +46,12 @@ public class UserTagController {
         for (UserTagObject userTagObject : userTagObjects) {
             UserTagEntity userTagEntity = toUserTagEntity(userTagObject);
             userTagEntity.setId(null);
+
+            if (userTagEntity.getUserId() == null)
+                userTagEntity.setUserId("");
+            if (userTagEntity.getYsId() == null)
+                userTagEntity.setYsId("");
+
             userTagEntities.add(userTagEntity);
         }
 

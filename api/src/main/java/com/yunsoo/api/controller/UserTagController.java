@@ -4,6 +4,7 @@ import com.yunsoo.api.domain.UserTagDomain;
 import com.yunsoo.api.dto.UserTag;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.UserTagObject;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,11 +42,17 @@ public class UserTagController {
                        @RequestBody List<UserTag> userTags) {
 
         orgId = AuthUtils.fixOrgId(orgId);
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
 
         List<UserTagObject> userTagObjects = new ArrayList<>();
 
         if (userTags != null && userTags.size() > 0) {
             for (UserTag tag : userTags) {
+
+                tag.setOrgId(orgId);
+                tag.setCreatedAccountId(currentAccountId);
+                tag.setCreatedDateTime(DateTime.now());
+
                 userTagObjects.add(toUserTagObject(tag));
             }
         }
