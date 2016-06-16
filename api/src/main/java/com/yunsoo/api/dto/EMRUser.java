@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.object.EMRUserObject;
+import com.yunsoo.common.data.object.PeriodUserConsumptionStatsObject;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
@@ -72,6 +73,17 @@ public class EMRUser implements Serializable {
     @JsonProperty("device")
     private String device;
 
+    @JsonProperty("latest_consumption")
+    private EMREvent emrEvent;
+
+    public EMREvent getEmrEvent() {
+        return emrEvent;
+    }
+
+    public void setEmrEvent(EMREvent emrEvent) {
+        this.emrEvent = emrEvent;
+    }
+
     @JsonProperty("event_statics")
     private List<EMRUserProductEventStastics> emrUserProductEventStasticses;
 
@@ -81,6 +93,17 @@ public class EMRUser implements Serializable {
 
     public void setEmrUserProductEventStasticses(List<EMRUserProductEventStastics> emrUserProductEventStasticses) {
         this.emrUserProductEventStasticses = emrUserProductEventStasticses;
+    }
+
+    @JsonProperty("period_consumption_stats")
+    private PeriodUserConsumptionStats periodUserConsumptionStats;
+
+    public PeriodUserConsumptionStats getPeriodUserConsumptionStats() {
+        return periodUserConsumptionStats;
+    }
+
+    public void setPeriodUserConsumptionStats(PeriodUserConsumptionStats periodUserConsumptionStats) {
+        this.periodUserConsumptionStats = periodUserConsumptionStats;
     }
 
     public String getId() {

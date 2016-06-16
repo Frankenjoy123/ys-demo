@@ -7,7 +7,6 @@ import com.yunsoo.data.service.entity.EMREventEntity;
 import com.yunsoo.data.service.repository.EMREventRepository;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.DurationFieldType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -70,7 +69,7 @@ public class EMREventController {
      * @param response
      * @return
      */
-    @RequestMapping(value = "/latest_consumption", method = RequestMethod.GET)
+    @RequestMapping(value = "latest_consumption", method = RequestMethod.GET)
     public EMREventObject findLatestConsumption(@RequestParam(value = "org_id", required = true) String orgId,
                                                 @RequestParam(value = "user_id", required = false) String userId,
                                                 @RequestParam(value = "ys_id", required = false) String ysId,
@@ -79,7 +78,7 @@ public class EMREventController {
         return toEMREventObject(entity);
     }
 
-    @RequestMapping(value = "/period_consumption_stats", method = RequestMethod.GET)
+    @RequestMapping(value = "period_consumption_stats", method = RequestMethod.GET)
     public PeriodUserConsumptionStatsObject findLatestConsumption(@RequestParam(value = "org_id", required = true) String orgId,
                                                                   @RequestParam(value = "user_id", required = false) String userId,
                                                                   @RequestParam(value = "ys_id", required = false) String ysId,
