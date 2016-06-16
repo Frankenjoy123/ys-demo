@@ -22,7 +22,7 @@ dependencies {
     compile 'com.amazonaws:aws-java-sdk-dynamodb:1.10.52'
     compile 'com.amazonaws:aws-java-sdk-s3:1.10.52'
 
-    runtime 'mysql:mysql-connector-java:5.1.38'
+    runtime 'mysql:mysql-connector-java:6.0.2'
     runtime 'com.h2database:h2'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'

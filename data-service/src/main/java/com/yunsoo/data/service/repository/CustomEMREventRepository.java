@@ -1,5 +1,6 @@
 package com.yunsoo.data.service.repository;
 
+import com.yunsoo.data.service.entity.EMREventEntity;
 import com.yunsoo.data.service.entity.EMRUserEntity;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Pageable;
@@ -33,4 +34,6 @@ public interface CustomEMREventRepository {
                   DateTime createdDateTimeStart,
                   DateTime createdDateTimeEnd);
 
+    EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId);
+    int periodConsumptionCount(String orgId, String userId, String ysId,DateTime eventDateTimeStart, DateTime eventDateTimeEnd);
 }

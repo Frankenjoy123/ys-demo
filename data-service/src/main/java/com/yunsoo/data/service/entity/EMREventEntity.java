@@ -51,7 +51,7 @@ public class EMREventEntity implements Serializable {
     private String priceStatusCode;
 
     @Column(name = "is_priced")
-    private int isPriced;
+    private Integer isPriced;
 
     @Column(name = "scan_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -66,13 +66,6 @@ public class EMREventEntity implements Serializable {
 
     @Column(name = "marketing_id")
     private String marketingId;
-
-    @OneToOne(targetEntity = EMRUserEntity.class, optional = true)
-    @JoinColumns({
-            @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false),
-            @JoinColumn(name = "org_id", referencedColumnName = "org_id", insertable = false, updatable = false)
-    })
-    private EMRUserEntity userEntity;
 
     public String getId() {
         return id;
@@ -122,11 +115,11 @@ public class EMREventEntity implements Serializable {
         this.priceStatusCode = priceStatusCode;
     }
 
-    public int getIsPriced() {
+    public Integer getIsPriced() {
         return isPriced;
     }
 
-    public void setIsPriced(int isPriced) {
+    public void setIsPriced(Integer isPriced) {
         this.isPriced = isPriced;
     }
 
@@ -160,14 +153,6 @@ public class EMREventEntity implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public EMRUserEntity getUserEntity() {
-        return userEntity;
-    }
-
-    public void setUserEntity(EMRUserEntity userEntity) {
-        this.userEntity = userEntity;
     }
 
     public String getProductBaseId() {

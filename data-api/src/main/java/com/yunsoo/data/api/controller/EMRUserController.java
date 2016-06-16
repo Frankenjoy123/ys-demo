@@ -85,7 +85,9 @@ public class EMRUserController {
             tags = null;
         }
 
-        Page<EMRUserEntity> entityPage = emrUserRepository.findByFilter(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStartTo, createdDateTimeEndTo, tags, pageable);
+        Page<EMRUserEntity> entityPage = emrUserRepository.findByFilter(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStartTo, createdDateTimeEndTo,
+                tags == null || tags.size() == 0 ? null : tags,
+                tags == null || tags.size() == 0, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
@@ -275,13 +277,13 @@ public class EMRUserController {
 
     @RequestMapping(value = "/event_stats", method = RequestMethod.GET)
     public List<EMRUserProductEventStasticsObject> queryUserEventStats(@RequestParam(value = "org_id", required = true) String orgId,
-                                                            @RequestParam(value = "ys_id", required = false) String ysId,
-                                                            @RequestParam(value = "user_id", required = false) String userId,
-                                                            @RequestParam(value = "create_datetime_start", required = false)
-                                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
-                                                            @RequestParam(value = "create_datetime_end", required = false)
-                                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
-                                                            HttpServletResponse response) {
+                                                                       @RequestParam(value = "ys_id", required = false) String ysId,
+                                                                       @RequestParam(value = "user_id", required = false) String userId,
+                                                                       @RequestParam(value = "create_datetime_start", required = false)
+                                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                                       @RequestParam(value = "create_datetime_end", required = false)
+                                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                                       HttpServletResponse response) {
 
         DateTime createdDateTimeStartTo = null;
         DateTime createdDateTimeEndTo = null;
@@ -300,9 +302,8 @@ public class EMRUserController {
     }
 
 
-    private EMRUserProductEventStasticsObject toEMRUserProductEventStasticsObject(EMRUserProductEventStatistics entity)
-    {
-        if(entity == null)return null;
+    private EMRUserProductEventStasticsObject toEMRUserProductEventStasticsObject(EMRUserProductEventStatistics entity) {
+        if (entity == null) return null;
         EMRUserProductEventStasticsObject object = new EMRUserProductEventStasticsObject();
         object.setDrawCount(entity.getDrawCount());
         object.setOrgId(entity.getOrgId());

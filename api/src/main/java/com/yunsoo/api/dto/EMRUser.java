@@ -6,11 +6,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.object.EMRUserObject;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 public class EMRUser implements Serializable {
 
@@ -72,6 +71,17 @@ public class EMRUser implements Serializable {
 
     @JsonProperty("device")
     private String device;
+
+    @JsonProperty("event_statics")
+    private List<EMRUserProductEventStastics> emrUserProductEventStasticses;
+
+    public List<EMRUserProductEventStastics> getEmrUserProductEventStasticses() {
+        return emrUserProductEventStasticses;
+    }
+
+    public void setEmrUserProductEventStasticses(List<EMRUserProductEventStastics> emrUserProductEventStasticses) {
+        this.emrUserProductEventStasticses = emrUserProductEventStasticses;
+    }
 
     public String getId() {
         return id;
