@@ -42,7 +42,7 @@ jdbc:
     max_idle: 10
     test_on_borrow: true
     validation_query: select 1
-    init_sql: SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+    initSQL: SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
 ---
 spring:
   profiles: local
