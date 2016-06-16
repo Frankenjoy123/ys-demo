@@ -1,16 +1,12 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.domain.EMREventDomain;
 import com.yunsoo.api.domain.EMRUserDomain;
 import com.yunsoo.api.domain.EMRUserProductEventStasticsDomain;
 import com.yunsoo.api.domain.UserBlockDomain;
-import com.yunsoo.api.dto.EMRUser;
-import com.yunsoo.api.dto.EMRUserProductEventStastics;
-import com.yunsoo.api.dto.EMRUserReport;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
-import com.yunsoo.common.data.object.EMRUserObject;
-import com.yunsoo.common.data.object.EMRUserProductEventStasticsObject;
-import com.yunsoo.common.data.object.EMRUserReportObject;
-import com.yunsoo.common.data.object.UserBlockObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +33,9 @@ public class EMRUserController {
     private UserBlockDomain userBlockDomain;
 
     @Autowired
+    private EMREventDomain emrEventDomain;
+
+    @Autowired
     private EMRUserProductEventStasticsDomain emrUserProductEventStasticsDomain;
 
     @RequestMapping(value = "id", method = RequestMethod.GET)
@@ -60,6 +59,12 @@ public class EMRUserController {
                 .collect(Collectors.toList());
 
         emrUser.setEmrUserProductEventStasticses(emrUserProductEventStasticses);
+
+        EMREventObject emrEventObject = emrEventDomain.getLatestEMREvent(orgId, userId, ysId);
+        emrUser.setEmrEvent(new EMREvent(emrEventObject));
+
+        PeriodUserConsumptionStatsObject periodUserConsumptionStatsObject = emrEventDomain.getPeriodUserConsumptionStatsObject(orgId, userId, ysId);
+        emrUser.setPeriodUserConsumptionStats(new PeriodUserConsumptionStats(periodUserConsumptionStatsObject));
 
         return emrUser;
     }

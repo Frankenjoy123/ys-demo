@@ -1,6 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.common.data.object.EMREventObject;
+import com.yunsoo.common.data.object.PeriodUserConsumptionStatsObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
@@ -32,5 +33,25 @@ public class EMREventDomain {
 
         return dataAPIClient.getPaged("emr/event" + query, new ParameterizedTypeReference<List<EMREventObject>>() {
         });
+    }
+
+    public EMREventObject getLatestEMREvent(String orgId, String userId, String ysId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("user_id", userId)
+                .append("ys_id", ysId)
+                .build();
+
+        return dataAPIClient.get("emr/event/latest_consumption" + query, EMREventObject.class);
+    }
+
+    public PeriodUserConsumptionStatsObject getPeriodUserConsumptionStatsObject(String orgId, String userId, String ysId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("user_id", userId)
+                .append("ys_id", ysId)
+                .build();
+
+        return dataAPIClient.get("emr/event/period_consumption_stats" + query, PeriodUserConsumptionStatsObject.class);
     }
 }
