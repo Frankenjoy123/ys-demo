@@ -1,3 +1,4 @@
+DELIMITER $$
 CREATE DEFINER=`root`@`%` PROCEDURE `sp_run_scan_analysis`(chooseDate date)
 BEGIN
 
@@ -9,7 +10,7 @@ create temporary table tmp_user_scan_record
 (
 	id varchar(32), 
 	user_id  char(19), 
-	product_key varchar(22), 
+	product_key varchar(22) binary, 
 	product_base_id char(19), 
 	app_id char(19), 
 	ysid varchar(32), 
@@ -62,4 +63,5 @@ commit;
 drop table tmp_user_scan_record;
 
 
-END
+END$$
+DELIMITER ;
