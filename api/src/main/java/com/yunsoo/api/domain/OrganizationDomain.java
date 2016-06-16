@@ -142,21 +142,6 @@ public class OrganizationDomain {
         }
     }
 
-    public void saveBrandAttachment(String orgId, byte[] attachment, String contentType) {
-        String attachmentName = "brandAttachment";
-        try {
-            //128x128
-            ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(attachment));
-            ByteArrayOutputStream logo128x128OutputStream = new ByteArrayOutputStream();
-            imageProcessor.resize(128, 128).write(logo128x128OutputStream, "png");
-            dataAPIClient.put("file/s3?path=organization/{orgId}/attachment/{name}",
-                    new ResourceInputStream(new ByteArrayInputStream(logo128x128OutputStream.toByteArray()), logo128x128OutputStream.size(), contentType),
-                    orgId, attachmentName);
-        } catch (IOException e) {
-            throw new InternalServerErrorException("attachment upload failed [orgId: " + orgId + "]");
-        }
-    }
-
     public ResourceInputStream getLogoImage(String orgId, String imageName) {
         try {
             return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/logo/{imageName}", orgId, imageName);
@@ -191,5 +176,23 @@ public class OrganizationDomain {
             throw new InternalServerErrorException("logo upload failed [orgId: " + orgId + "]");
         }
     }
+
+    public void saveOrgLogo(String orgId, String imageName, byte[]imageDataBytes){
+        try {
+            ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
+            ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
+            imageProcessor.write(imageOutputStream, "png");
+            dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
+                    new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/png"),
+                    orgId, imageName);
+            log.info(String.format("image saved [imageName: %s]", imageName));
+
+
+        } catch (IOException e) {
+            throw new InternalServerErrorException("logo upload failed [orgId: " + orgId + "], imageName: " + imageName);
+        }
+
+    }
+
 
 }

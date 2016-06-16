@@ -51,7 +51,7 @@ public class EMREventEntity implements Serializable {
     private String priceStatusCode;
 
     @Column(name = "is_priced")
-    private int isPriced;
+    private Integer isPriced;
 
     @Column(name = "scan_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -122,11 +122,11 @@ public class EMREventEntity implements Serializable {
         this.priceStatusCode = priceStatusCode;
     }
 
-    public int getIsPriced() {
+    public Integer getIsPriced() {
         return isPriced;
     }
 
-    public void setIsPriced(int isPriced) {
+    public void setIsPriced(Integer isPriced) {
         this.isPriced = isPriced;
     }
 
