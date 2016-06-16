@@ -67,13 +67,6 @@ public class EMREventEntity implements Serializable {
     @Column(name = "marketing_id")
     private String marketingId;
 
-    @OneToOne(targetEntity = EMRUserEntity.class, optional = true)
-    @JoinColumns({
-            @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false),
-            @JoinColumn(name = "org_id", referencedColumnName = "org_id", insertable = false, updatable = false)
-    })
-    private EMRUserEntity userEntity;
-
     public String getId() {
         return id;
     }
@@ -160,14 +153,6 @@ public class EMREventEntity implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public EMRUserEntity getUserEntity() {
-        return userEntity;
-    }
-
-    public void setUserEntity(EMRUserEntity userEntity) {
-        this.userEntity = userEntity;
     }
 
     public String getProductBaseId() {
