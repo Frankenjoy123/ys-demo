@@ -229,6 +229,24 @@ public class OrganizationController {
         }
     }
 
+    @RequestMapping(value = "{id}/logo/{imageName}", method = RequestMethod.PUT)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization_config:write')")
+    public void saveCarrierLogo(@PathVariable(value = "id") String orgId, @PathVariable(value = "imageName") String imageName,
+                              @RequestBody @Valid ImageRequest imageRequest) {
+
+        String imageData = imageRequest.getData(); //data:image/png;base64,
+        int splitIndex = imageData.indexOf(",");
+        String imageDataBase64 = imageData.substring(splitIndex + 1);
+        byte[] imageDataBytes = Base64.decodeBase64(imageDataBase64);
+
+        if (imageDataBytes != null && imageDataBytes.length > 0) {
+            orgId = AuthUtils.fixOrgId(orgId);
+            organizationDomain.saveOrgLogo(orgId, imageName, imageDataBytes);
+        }
+    }
+
+
+
     @RequestMapping(value = "{id}/brand_logo", method = RequestMethod.PUT)
    // @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:write')")
     public void saveBrandLogo(@PathVariable(value = "id") String orgId,
