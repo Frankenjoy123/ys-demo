@@ -1,5 +1,6 @@
 package com.yunsoo.data.service.repository;
 
+import com.yunsoo.data.service.entity.EMREventEntity;
 import com.yunsoo.data.service.entity.EMRUserEntity;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Pageable;
@@ -32,5 +33,7 @@ public interface CustomEMREventRepository {
                   String province, String city,
                   DateTime createdDateTimeStart,
                   DateTime createdDateTimeEnd);
+
+    EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId);
 
 }
