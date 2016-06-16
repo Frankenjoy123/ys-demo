@@ -23,3 +23,5 @@ jdbc:
     max_idle: 10
     test_on_borrow: true
     validation_query: select 1
+    init_sql: set names utf8mb4;
+

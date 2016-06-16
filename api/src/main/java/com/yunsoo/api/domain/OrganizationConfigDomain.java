@@ -90,7 +90,7 @@ public class OrganizationConfigDomain {
         return configItems;
     }
 
-    public void saveConfig(String orgId, Map<String, OrganizationConfigObject.Item> configItems) {
+    public void saveConfig(String orgId, Map<String, Object> configItems) {
         if (orgId == null || configItems == null || configItems.size() == 0) return;
 
         OrganizationConfigObject configObject = getConfigObject(orgId);
@@ -100,13 +100,19 @@ public class OrganizationConfigDomain {
 
         Map<String, OrganizationConfigObject.Item> items = configObject.getItems();
         configItems.keySet().forEach(k -> {
-            OrganizationConfigObject.Item v = configItems.get(k);
+            Object v = configItems.get(k);
             if (v == null) {
                 items.remove(k);
             } else {
-                items.put(k, v);
+                OrganizationConfigObject.Item item = items.get(k);
+                if (item == null) {
+                    item = new OrganizationConfigObject.Item();
+                    items.put(k, item);
+                }
+                item.setValue(v);
             }
         });
+
 
         configObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
         configObject.setModifiedDateTime(DateTime.now());
