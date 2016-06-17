@@ -1,5 +1,5 @@
-DELIMITER $$
-CREATE DEFINER=`root`@`%` PROCEDURE `sp_sync_user`()
+DROP PROCEDURE IF EXISTS `sp_sync_user`;
+CREATE PROCEDURE `sp_sync_user`()
 BEGIN
 
 declare min_value varchar(50);
@@ -16,7 +16,7 @@ create temporary table sp_sync_user_tmp_user
   `ys_id` varchar(32) DEFAULT NULL COMMENT 'ysid，当匿名访问时，ysid作为唯一区分用户的id',
   `org_id` char(19) DEFAULT NULL COMMENT '品牌商id',
   `org_name` varchar(255) DEFAULT NULL COMMENT '品牌商名字',
-  `name` varchar(45) DEFAULT NULL,
+  `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL COMMENT '手机',
   `email` varchar(45) DEFAULT NULL,
   `age` int(11) DEFAULT NULL COMMENT '年龄',
@@ -53,7 +53,9 @@ SELECT usr.user_id, pb.org_id, min(usr.created_datetime) as 'created_datetime',u
 FROM yunsoo2015DB.user_scan_record usr inner join product_base pb
 on usr.product_base_id = pb.id group by usr.user_id, pb.org_id order by usr.id desc) as usr2 on u.id = usr2.user_id 
 inner join organization org on usr2.org_id = org.id
-where u.created_datetime >= min_value_date AND u.created_datetime < max_value_date;
+where (u.created_datetime >= min_value_date AND u.created_datetime < max_value_date)
+or(u.modified_datetime >= min_value_date AND u.modified_datetime < max_value_date);
+
 -- where (u.modified_datetime is null and u.created_datetime >= @max_value_date) or u.modified_datetime >= @max_value_date;
 
 -- 插入ysId不为空，而user——id为空或者固定的。用来读取匿名用户
@@ -100,6 +102,4 @@ commit;
 drop table sp_sync_user_tmp_user;
 
 
-
-END$$
-DELIMITER ;
+END;
