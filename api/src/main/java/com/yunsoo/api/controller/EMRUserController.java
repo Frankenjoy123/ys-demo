@@ -1,13 +1,12 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.domain.EMREventDomain;
 import com.yunsoo.api.domain.EMRUserDomain;
+import com.yunsoo.api.domain.EMRUserProductEventStasticsDomain;
 import com.yunsoo.api.domain.UserBlockDomain;
-import com.yunsoo.api.dto.EMRUser;
-import com.yunsoo.api.dto.EMRUserReport;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
-import com.yunsoo.common.data.object.EMRUserObject;
-import com.yunsoo.common.data.object.EMRUserReportObject;
-import com.yunsoo.common.data.object.UserBlockObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -33,15 +32,56 @@ public class EMRUserController {
     @Autowired
     private UserBlockDomain userBlockDomain;
 
+    @Autowired
+    private EMREventDomain emrEventDomain;
+
+    @Autowired
+    private EMRUserProductEventStasticsDomain emrUserProductEventStasticsDomain;
+
     @RequestMapping(value = "id", method = RequestMethod.GET)
     public EMRUser getUser(@RequestParam(value = "org_id", required = false) String orgId,
                            @RequestParam(value = "user_id", required = false) String userId,
-                           @RequestParam(value = "ys_id", required = false) String ysId) {
+                           @RequestParam(value = "ys_id", required = false) String ysId,
+                           @RequestParam(value = "create_datetime_start", required = false)
+                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                           @RequestParam(value = "create_datetime_end", required = false)
+                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
 
         orgId = AuthUtils.fixOrgId(orgId);
         EMRUserObject emrUserObject = emrUserDomain.getEMRUser(orgId, userId, ysId);
 
-        return new EMRUser(emrUserObject);
+        EMRUser emrUser = new EMRUser(emrUserObject);
+
+        List<EMRUserProductEventStasticsObject> emrUserProductEventStasticsObjects = emrUserProductEventStasticsDomain.getEMRUserProductEventStasticsObjects(orgId, userId
+                , ysId, createdDateTimeStart, createdDateTimeEnd);
+
+        List<EMRUserProductEventStastics> emrUserProductEventStasticses = emrUserProductEventStasticsObjects.stream().map(this::toEMRUserProductEventStastics)
+                .collect(Collectors.toList());
+
+        emrUser.setEmrUserProductEventStasticses(emrUserProductEventStasticses);
+
+        EMREventObject emrEventObject = emrEventDomain.getLatestEMREvent(orgId, userId, ysId);
+        emrUser.setEmrEvent(new EMREvent(emrEventObject));
+
+        PeriodUserConsumptionStatsObject periodUserConsumptionStatsObject = emrEventDomain.getPeriodUserConsumptionStatsObject(orgId, userId, ysId);
+        emrUser.setPeriodUserConsumptionStats(new PeriodUserConsumptionStats(periodUserConsumptionStatsObject));
+
+        return emrUser;
+    }
+
+    private EMRUserProductEventStastics toEMRUserProductEventStastics(EMRUserProductEventStasticsObject object) {
+        if (object == null) return null;
+
+        EMRUserProductEventStastics stastics = new EMRUserProductEventStastics();
+        stastics.setDrawCount(object.getDrawCount());
+        stastics.setOrgId(object.getOrgId());
+        stastics.setProductBaseId(object.getProductBaseId());
+        stastics.setProductName(object.getProductName());
+        stastics.setRewardCount(object.getRewardCount());
+        stastics.setScanCount(object.getScanCount());
+        stastics.setWinCount(object.getWinCount());
+
+        return stastics;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)

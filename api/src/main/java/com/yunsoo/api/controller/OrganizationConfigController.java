@@ -49,7 +49,7 @@ public class OrganizationConfigController {
     @RequestMapping(value = "{id}/config", method = RequestMethod.PUT)
     @PreAuthorize("hasPermission(#orgId, 'org', 'organization_config:write')")
     public void putConfig(@PathVariable(value = "id") String orgId,
-                          @RequestBody Map<String, OrganizationConfigObject.Item> configItems) {
+                          @RequestBody Map<String, Object> configItems) {
         orgId = AuthUtils.fixOrgId(orgId);
         organizationConfigDomain.saveConfig(orgId, configItems);
     }

@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by yqy09_000 on 5/31/2016.
@@ -50,8 +51,46 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
 
     @Override
     public EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId) {
-        return null;
+
+        String sql = "select ev.* from emr_event ev inner join (select min(id) as first from emr_event where name ='scan' group by product_key) as ev2" +
+                " on ev.id = ev2.first  where ev.org_id =:orgId and ev.user_id=:userId and ev.ys_id=:ysId order by ev.id desc limit 1";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("orgId", orgId);
+        parameters.put("userId", userId == null ? "" : userId);
+        parameters.put("ysId", ysId == null ? "" : ysId);
+
+        Query query = entityManager.createNativeQuery(sql,EMREventEntity.class);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List list =  query.getResultList();
+        if(list.isEmpty()) return null;
+        return  (EMREventEntity)list.get(0);
     }
+
+    @Override
+    public int periodConsumptionCount(String orgId, String userId, String ysId,  DateTime eventDateTimeStart, DateTime eventDateTimeEnd) {
+        String sql = "select count(1) from emr_event ev inner join (select min(id) as first from emr_event where name ='scan' group by product_key) as ev2" +
+                " on ev.id = ev2.first  where ev.org_id =:orgId and ev.user_id=:userId and ev.ys_id=:ysId" +
+                " and ev.event_datetime <:eventDateTimeEnd and ev.event_datetime >=:eventDateTimeStart";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("orgId", orgId);
+        parameters.put("userId", userId == null ? "" : userId);
+        parameters.put("ysId", ysId == null ? "" : ysId);
+        parameters.put("eventDateTimeStart", eventDateTimeStart.toString("yyyy-MM-dd"));
+        parameters.put("eventDateTimeEnd", eventDateTimeEnd.toString("yyyy-MM-dd"));
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+       BigInteger value = (BigInteger) query.getSingleResult();
+
+        return value.intValue();
+    }
+
 
     private int[] query(String action, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, int level) {
         String sql = "select count(1), count(distinct u.id) from emr_event ev inner join emr_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.name= :eventName" +
