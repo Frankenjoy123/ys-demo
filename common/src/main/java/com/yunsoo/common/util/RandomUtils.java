@@ -10,7 +10,7 @@ import java.util.Random;
  * Created on  : 2015/4/22
  * Descriptions:
  */
-public class RandomUtils {
+public final class RandomUtils {
 
     public static final char[] CHARS = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',

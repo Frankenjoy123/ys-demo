@@ -59,7 +59,7 @@ public class Page<T> implements Iterable<T>, Serializable {
     }
 
     public String toContentRange() {
-        return PageableUtils.formatPages(page, total);
+        return PageableUtils.formatPages(page, total, count);
     }
 
     @Override

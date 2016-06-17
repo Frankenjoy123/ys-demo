@@ -12,6 +12,7 @@ import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -50,10 +51,13 @@ public class OrgAgencyController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
     public List<OrgAgency> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                       @RequestParam(value = "search_text", required = false) String searchText,
+                                       @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                       @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
                                        Pageable pageable,
                                        HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, pageable);
+        Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, searchText, startTime, endTime, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", orgAgencyPage.toContentRange());
         }
@@ -91,6 +95,9 @@ public class OrgAgencyController {
         orgAgencyObject.setAddress(orgAgency.getAddress());
         orgAgencyObject.setDescription(orgAgency.getDescription());
         orgAgencyObject.setParentId(orgAgency.getParentId());
+        orgAgencyObject.setAgencyResponsible(orgAgency.getAgencyResponsible());
+        orgAgencyObject.setAgencyCode(orgAgency.getAgencyCode());
+        orgAgencyObject.setAgencyPhone(orgAgency.getAgencyPhone());
         orgAgencyObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getOrgId());
         orgAgencyObject.setModifiedDateTime(DateTime.now());
         orgAgencyDomain.updateOrgAgency(orgAgencyObject);
@@ -103,17 +110,32 @@ public class OrgAgencyController {
     public void delete(@PathVariable(value = "id") String id) {
         OrgAgencyObject orgAgencyObject = orgAgencyDomain.getOrgAgencyById(id);
         if (orgAgencyObject != null) {
-            if (LookupCodes.OrgAgencyStatus.DEACTIVATED.equals(orgAgencyObject.getStatusCode())) {
+            if (LookupCodes.OrgAgencyStatus.DELETED.equals(orgAgencyObject.getStatusCode())) {
                 throw new UnprocessableEntityException("illegal operation");
             }
             orgAgencyDomain.deleteOrgAgency(id);
         }
     }
 
+    @RequestMapping(value = "{id}/enable", method = RequestMethod.PUT)
+    public void activeAgency(@PathVariable("id") String agencyId) {
+        OrgAgencyObject orgAgencyObject = orgAgencyDomain.getOrgAgencyById(agencyId);
+        if (LookupCodes.OrgAgencyStatus.DEACTIVATED.equals(orgAgencyObject.getStatusCode())) {
+            orgAgencyDomain.updateStatus(agencyId, LookupCodes.OrgAgencyStatus.ACTIVATED);
+        }
+    }
+
+    @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
+    public void deactiveAgency(@PathVariable("id") String agencyId) {
+        OrgAgencyObject orgAgencyObject = orgAgencyDomain.getOrgAgencyById(agencyId);
+        if (LookupCodes.OrgAgencyStatus.ACTIVATED.equals(orgAgencyObject.getStatusCode())) {
+            orgAgencyDomain.updateStatus(agencyId, LookupCodes.OrgAgencyStatus.DEACTIVATED);
+        }
+    }
 
     private OrgAgencyObject findOrgAgencyById(String id) {
         OrgAgencyObject orgAgencyObject = orgAgencyDomain.getOrgAgencyById(id);
-        if (orgAgencyObject == null || LookupCodes.OrgAgencyStatus.DEACTIVATED.equals(orgAgencyObject.getStatusCode())) {
+        if (orgAgencyObject == null || LookupCodes.OrgAgencyStatus.DELETED.equals(orgAgencyObject.getStatusCode())) {
             throw new NotFoundException("organization agency not found");
         }
         return orgAgencyObject;

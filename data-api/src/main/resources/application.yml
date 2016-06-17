@@ -25,7 +25,13 @@ yunsoo:
     region: cn-north-1
     s3:
       bucket_name: dev-yunsoo
-
+  juhe:
+    openId: JH813dabacf966aa41e752c88a141c8731
+    keys:
+      sms: f4647f3c1d0ffb85ad72182d2f6b7048
+      mobile_order: 6ec4712d7cf812e150b357f8379f861b
+      mobile_data: 999124199517378d6b551e465aa06847
+      mobile_location: c6627d598e4331ed70f2a868ec4b0ee7
 jdbc:
   master:
     driver_class_name: com.mysql.jdbc.Driver
@@ -36,13 +42,13 @@ jdbc:
     max_idle: 10
     test_on_borrow: true
     validation_query: select 1
-
+    initSQL: SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
 ---
 spring:
   profiles: local
 
 logging:
-  file: c:/logs/data-api.log
+  file: c:/logs/yunsoo/data-api.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'
@@ -52,7 +58,7 @@ spring:
   profiles: dev
 
 logging:
-  file: var/log/data-api.log
+  file: var/log/yunsoo/data-api.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'

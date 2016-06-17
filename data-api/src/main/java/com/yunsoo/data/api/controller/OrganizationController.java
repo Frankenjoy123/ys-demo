@@ -133,10 +133,11 @@ public class OrganizationController {
                                              @RequestParam(value = "search_text", required = false) String searchText,
                                              @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startDateTime,
                                              @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endDateTime,
+                                             @RequestParam(value = "category_id", required = false) String categoryId,
                                              Pageable pageable,
                                              HttpServletResponse response) {
 
-        Page<BrandEntity> entityPage = brandRepository.filter(id, status, name, searchText, startDateTime, endDateTime, pageable);
+        Page<BrandEntity> entityPage = brandRepository.filter(id, status, name, searchText, startDateTime, endDateTime, categoryId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
@@ -144,6 +145,20 @@ public class OrganizationController {
         return entityPage.map(this::toBrandObject).getContent();
 
     }
+
+    @RequestMapping(value = "{id}/brand/name", method = RequestMethod.GET)
+    public List<BrandObject> getOrgBrandListByName(@PathVariable(value = "id") String id,
+                                             @RequestParam(value = "name", required = false) String name,
+                                             Pageable pageable,
+                                             HttpServletResponse response) {
+
+        Page<BrandEntity> entityPage = brandRepository.filterByName(id, name, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+        return entityPage.map(this::toBrandObject).getContent();
+    }
+
 
     @RequestMapping(value = "{id}/brandIds", method = RequestMethod.GET)
     public List<String> getOrgBrandListIds(@PathVariable(value = "id") String id) {
@@ -201,6 +216,7 @@ public class OrganizationController {
             brandObj.setContactMobile(brand.getContactMobile());
             brandObj.setEmail(brand.getEmail());
             brandObj.setAttachment(brand.getAttachment());
+            brandObj.setCategoryId(brand.getCategoryId());
         }
         return brandObj;
     }
@@ -229,6 +245,7 @@ public class OrganizationController {
             brandObj.setContactMobile(brand.getContactMobile());
             brandObj.setEmail(brand.getEmail());
             brandObj.setAttachment(brand.getAttachment());
+            brandObj.setCategoryId(brand.getCategoryId());
         }
         return brandObj;
     }
@@ -247,6 +264,7 @@ public class OrganizationController {
             entity.setComments(brand.getComments());
             entity.setEmail(brand.getEmail());
             entity.setAttachment(brand.getAttachment());
+            entity.setCategoryId(brand.getCategoryId());
             return entity;
         }
         return null;

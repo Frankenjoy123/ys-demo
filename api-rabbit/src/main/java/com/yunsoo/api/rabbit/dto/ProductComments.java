@@ -38,6 +38,17 @@ public class ProductComments {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
+    @JsonProperty("address")
+    private String address;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public String getId() {
         return id;
     }
@@ -105,6 +116,7 @@ public class ProductComments {
             this.setScore(object.getScore());
             this.setUserId(object.getUserId());
             this.setCreatedDateTime(object.getCreatedDateTime());
+            this.setAddress(object.getAddress());
         }
     }
 
@@ -116,6 +128,7 @@ public class ProductComments {
         object.setScore(this.getScore());
         object.setUserId(this.getUserId());
         object.setCreatedDateTime(this.getCreatedDateTime());
+        object.setAddress(this.getAddress());
         return object;
     }
 }

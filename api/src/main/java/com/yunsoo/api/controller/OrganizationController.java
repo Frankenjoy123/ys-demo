@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
@@ -131,11 +132,11 @@ public class OrganizationController {
         accountObject.setEmail(returnObj.getEmail());
         accountObject.setIdentifier("admin");
         accountObject.setFirstName(returnObj.getContactName());
-        accountObject.setLastName(returnObj.getName());
+        accountObject.setLastName("");
         accountObject.setPassword("admin");
         accountObject.setPhone(returnObj.getContactMobile());
         accountObject.setOrgId(returnObj.getId());
-        accountObject.setCreatedAccountId(currentAccountId);
+        accountObject.setCreatedAccountId(Constants.Ids.SYSTEM_ACCOUNT_ID);
         AccountObject createdAccount = accountDomain.createAccount(accountObject, true);
         permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
 
@@ -169,19 +170,37 @@ public class OrganizationController {
                                        @RequestParam(value="status", required = false)String status,
                                        @RequestParam(value = "name", required = false) String name,
                                        @RequestParam(value = "search_text", required = false) String searchText,
+                                       @RequestParam(value = "category_id", required = false) String categoryId,
                                        @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
                                        @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
                                        Pageable pageable,
                                        HttpServletResponse response) {
         if(!StringUtils.hasText(searchText))
             searchText = null;
-        Page<BrandObject> brandPage = organizationDomain.getOrgBrandList(id, name, status, searchText, startTime, endTime, pageable);
+        Page<BrandObject> brandPage = organizationDomain.getOrgBrandList(id, name, status, searchText, startTime, endTime, categoryId, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", brandPage.toContentRange());
         }
 
         return brandPage.map(Brand::new).getContent();
     }
+
+    @RequestMapping(value = "/{id}/brand/name", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
+    public  List<Brand> filterOrgBrandByName(@PathVariable(value = "id") String id,
+                                       @RequestParam(value = "name", required = false) String name,
+                                       Pageable pageable,
+                                       HttpServletResponse response) {
+        if(!StringUtils.hasText(name))
+            name = null;
+        Page<BrandObject> brandPage = organizationDomain.getOrgBrandListByName(id, name, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", brandPage.toContentRange());
+        }
+
+        return brandPage.map(Brand::new).getContent();
+    }
+
 
     @RequestMapping(value = "{id}/logo/{imageName}", method = RequestMethod.GET)
     public ResponseEntity<?> getLogo(
@@ -209,6 +228,24 @@ public class OrganizationController {
             organizationDomain.saveOrgLogo(orgId, imageDataBytes);
         }
     }
+
+    @RequestMapping(value = "{id}/logo/{imageName}", method = RequestMethod.PUT)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization_config:write')")
+    public void saveCarrierLogo(@PathVariable(value = "id") String orgId, @PathVariable(value = "imageName") String imageName,
+                              @RequestBody @Valid ImageRequest imageRequest) {
+
+        String imageData = imageRequest.getData(); //data:image/png;base64,
+        int splitIndex = imageData.indexOf(",");
+        String imageDataBase64 = imageData.substring(splitIndex + 1);
+        byte[] imageDataBytes = Base64.decodeBase64(imageDataBase64);
+
+        if (imageDataBytes != null && imageDataBytes.length > 0) {
+            orgId = AuthUtils.fixOrgId(orgId);
+            organizationDomain.saveOrgLogo(orgId, imageName, imageDataBytes);
+        }
+    }
+
+
 
     @RequestMapping(value = "{id}/brand_logo", method = RequestMethod.PUT)
    // @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:write')")

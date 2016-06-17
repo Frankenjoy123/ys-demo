@@ -85,6 +85,17 @@ public class BrandApplicationHistoryEntity {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "category_id")
+    private String categoryId;
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
     public String getPassword() {
         return password;
     }

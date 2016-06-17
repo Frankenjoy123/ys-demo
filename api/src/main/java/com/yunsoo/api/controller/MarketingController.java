@@ -51,6 +51,9 @@ public class MarketingController {
     @Autowired
     private OrganizationDomain organizationDomain;
 
+    @Autowired
+    private UserDomain userDomain;
+
 
     @RequestMapping(value = "drawRule", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -190,7 +193,7 @@ public class MarketingController {
 
             List<MktDrawRule> mktDrawRuleList = marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
             List<Long> prizeCountList = new ArrayList<>();
-            List<MktDrawPrizeResult> mktDrawPrizeResultList = new ArrayList();
+            List<MktDrawPrizeResult> mktDrawPrizeResultList = new ArrayList<>();
 
             if (mktDrawRuleList.size() > 0) {
                 marketingResult.setRuleList(mktDrawRuleList);
@@ -521,6 +524,13 @@ public class MarketingController {
             UserScanRecordObject userScanRecordObject = userScanDomain.getScanRecordById(scanRecordId);
             if (userScanRecordObject != null) {
                 mktDrawPrize.setScanRecord(new ScanRecord(userScanRecordObject));
+                String userId = userScanRecordObject.getUserId();
+                if (userId != null) {
+                    UserObject userObject = userDomain.getUserById(userId);
+                    if ((userObject != null) && (userObject.getGravatarUrl() != null)) {
+                        mktDrawPrize.setGravatarUrl(userObject.getGravatarUrl());
+                    }
+                }
             }
             MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktDrawRuleById(object.getDrawRuleId());
             if (mktDrawRuleObject != null) {
@@ -622,6 +632,15 @@ public class MarketingController {
         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
 
+    }
+
+    @RequestMapping(value = "market_win_user_location/{id}", method = RequestMethod.GET)
+    public List<MarketWinUserLocationAnalysis> getMarketWinUserLocationReportByMarketingId(@PathVariable(value = "id") String marketingId) {
+        if (marketingId == null) {
+            throw new BadRequestException("marketing id can not be null");
+        }
+        List<MarketWinUserLocationAnalysisObject> mktWinUserLocationAnalysisObjectList = marketingDomain.getMarketWinUserLocationReportByMarketingId(marketingId);
+        return mktWinUserLocationAnalysisObjectList.stream().map(MarketWinUserLocationAnalysis::new).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "drawPrize/disable/{id}", method = RequestMethod.GET)

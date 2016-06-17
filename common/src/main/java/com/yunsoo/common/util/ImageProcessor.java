@@ -16,7 +16,7 @@ import java.io.OutputStream;
  * Created on  : 2015/7/24
  * Descriptions:
  */
-public class ImageProcessor {
+public final class ImageProcessor {
 
     private BufferedImage bufferedImage;
 

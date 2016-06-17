@@ -99,7 +99,7 @@ public class BrandApplicationController {
 
     @RequestMapping(value = "{id}/approve", method = RequestMethod.PUT)
     //  @PreAuthorize("hasPermission('*', 'org', 'brand:write')")
-    public boolean approveBrandApplication(@PathVariable("id") String id) {
+    public boolean approveBrandApplication(@PathVariable("id") String id, @RequestParam("category") String category) {
 
         try {
             String currentAccountId = AuthUtils.getCurrentAccount().getId();
@@ -108,6 +108,7 @@ public class BrandApplicationController {
             object.setCreatedAccountId(currentAccountId);
             object.setTypeCode(LookupCodes.OrgType.BRAND);
             object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
+            object.setCategoryId(category);
             BrandObject createdBrand = organizationDomain.createBrand(object);
 
             organizationDomain.saveOrgLogo(createdBrand.getId(), organizationDomain.getLogoImage(id, "image-128x128"));

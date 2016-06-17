@@ -3,10 +3,7 @@ package com.yunsoo.api.domain;
 import com.yunsoo.api.dto.MktDrawPrize;
 import com.yunsoo.api.payment.AlipayParameters;
 import com.yunsoo.api.payment.ParameterNames;
-import com.yunsoo.common.data.object.MarketingObject;
-import com.yunsoo.common.data.object.MktDrawPrizeObject;
-import com.yunsoo.common.data.object.MktDrawRuleObject;
-import com.yunsoo.common.data.object.UserScanRecordObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -188,6 +185,16 @@ public class MarketingDomain {
         return dataAPIClient.get("marketing/statistics" + query, new ParameterizedTypeReference<List<MarketingObject>>() {
         });
     }
+
+    public List<MarketWinUserLocationAnalysisObject> getMarketWinUserLocationReportByMarketingId(String marketingId) {
+
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("marketing_id", marketingId)
+                .build();
+        return dataAPIClient.get("analysis/market_win_user_location" + query, new ParameterizedTypeReference<List<MarketWinUserLocationAnalysisObject>>() {
+        });
+    }
+
 
     public void updateMarketing(MarketingObject marketingObject){
         dataAPIClient.put("marketing/{id}", marketingObject, marketingObject.getId());

@@ -5,10 +5,7 @@ import com.yunsoo.api.domain.FileDomain;
 import com.yunsoo.api.domain.MarketingDomain;
 import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
-import com.yunsoo.api.dto.ProductBase;
-import com.yunsoo.api.dto.ProductBatchCollection;
-import com.yunsoo.api.dto.ProductKeyBatch;
-import com.yunsoo.api.dto.ProductKeyBatchRequest;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -40,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,9 +85,9 @@ public class ProductKeyBatchController {
 
         byte[] data = productKeyDomain.getProductKeysByBatchId(id);
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/vnd+ys.pks"))
+                .contentType(MediaType.parseMediaType("application/vnd+ys.txt"))
                 .contentLength(data.length)
-                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + ".pks\"")
+                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + ".txt\"")
                 .body(new InputStreamResource(new ByteArrayInputStream(data)));
     }
 
@@ -276,6 +274,33 @@ public class ProductKeyBatchController {
         String path = String.format("organization/%s/product_key_batch/%s/details.json", orgId, id);
         byte[] bytes = details.getBytes(StandardCharsets.UTF_8);
         fileDomain.putFile(path, new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE));
+    }
+
+    @RequestMapping(value = "/marketing/{id}", method = RequestMethod.GET)
+    public List<ProductKeyBatchInfo> getKeybatchInfoByMarketingId(@PathVariable(value = "id") String marketingId) {
+
+        if (marketingId == null)
+            throw new BadRequestException("marketing id can not be null");
+
+        List<ProductKeyBatchInfo> productKeyBatchInfoList = new ArrayList<>();
+
+        List<ProductKeyBatch> productKeyBatches = productKeyDomain.getProductKeybatchByMarketingId(marketingId).stream().map(ProductKeyBatch::new).collect(Collectors.toList());
+        if ((productKeyBatches != null) && (productKeyBatches.size() > 0)) {
+            for (ProductKeyBatch productKeyBatch : productKeyBatches) {
+                ProductKeyBatchInfo object = new ProductKeyBatchInfo();
+                object.setId(productKeyBatch.getId());
+                object.setBatchNo(productKeyBatch.getBatchNo());
+                object.setProductBaseId(productKeyBatch.getProductBaseId());
+                object.setCreatedDateTime(productKeyBatch.getCreatedDateTime());
+                ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productKeyBatch.getProductBaseId());
+                if (productBaseObject != null) {
+                    object.setProductBaseName(productBaseObject.getName());
+                }
+                productKeyBatchInfoList.add(object);
+
+            }
+        }
+        return productKeyBatchInfoList;
     }
 
 }

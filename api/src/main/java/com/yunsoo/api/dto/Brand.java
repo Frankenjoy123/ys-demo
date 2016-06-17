@@ -71,6 +71,17 @@ public class Brand extends Organization {
     @JsonProperty("reject_reason")
     private String rejectReason;
 
+    @JsonProperty("category_id")
+    private String categoryId;
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
     public String getRejectReason() {
         return rejectReason;
     }
@@ -265,6 +276,7 @@ public class Brand extends Organization {
             setInvestigatorAttachment(object.getInvestigatorAttachment());
             setInvestigatorComments(object.getInvestigatorComments());
             setRejectReason(object.getRejectReason());
+            setCategoryId(object.getCategoryId());
         }
     }
 
@@ -295,6 +307,7 @@ public class Brand extends Organization {
             object.setInvestigatorAttachment(brand.getInvestigatorAttachment());
             object.setInvestigatorComments(brand.getInvestigatorComments());
             object.setRejectReason(brand.getRejectReason());
+            object.setCategoryId(brand.getCategoryId());
             return object;
         }
 

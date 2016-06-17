@@ -31,11 +31,20 @@ public class OrgAgencyObject {
     @JsonProperty("parent_id")
     private String parentId;
 
+    @JsonProperty("agency_responsible")
+    private String agencyResponsible;
+
+    @JsonProperty("agency_code")
+    private String agencyCode;
+
     @JsonProperty("address")
     private String address;
 
     @JsonProperty("description")
     private String description;
+
+    @JsonProperty("agency_phone")
+    private String agencyPhone;
 
     @JsonProperty("status_code")
     private String statusCode;
@@ -150,5 +159,29 @@ public class OrgAgencyObject {
 
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
+    }
+
+    public String getAgencyResponsible() {
+        return agencyResponsible;
+    }
+
+    public void setAgencyResponsible(String agencyResponsible) {
+        this.agencyResponsible = agencyResponsible;
+    }
+
+    public String getAgencyCode() {
+        return agencyCode;
+    }
+
+    public void setAgencyCode(String agencyCode) {
+        this.agencyCode = agencyCode;
+    }
+
+    public String getAgencyPhone() {
+        return agencyPhone;
+    }
+
+    public void setAgencyPhone(String agencyPhone) {
+        this.agencyPhone = agencyPhone;
     }
 }

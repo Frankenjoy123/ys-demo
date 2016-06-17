@@ -78,6 +78,18 @@ public class BrandApplicationHistory {
     @JsonProperty("payment_id")
     private String paymentId;
 
+    @JsonProperty("category_id")
+    private String categoryId;
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+
     private String password;
 
     public String getPassword() {

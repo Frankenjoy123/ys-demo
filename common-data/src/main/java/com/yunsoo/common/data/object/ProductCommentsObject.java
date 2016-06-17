@@ -34,6 +34,17 @@ public class ProductCommentsObject implements Serializable {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
+    @JsonProperty("address")
+    private String address;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public String getId() {
         return id;
     }

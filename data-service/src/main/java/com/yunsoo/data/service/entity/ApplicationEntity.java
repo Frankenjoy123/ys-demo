@@ -27,14 +27,17 @@ public class ApplicationEntity {
     @Column(name = "version")
     private String version;
 
-    @Column(name = "type_code")
-    private String typeCode;
-
     @Column(name = "status_code")
     private String statusCode;
 
+    @Column(name = "type_code")
+    private String typeCode;
+
     @Column(name = "description")
     private String description;
+
+    @Column(name = "system_version")
+    private String systemVersion;
 
     @Column(name = "created_account_id")
     private String createdAccountId;
@@ -50,16 +53,6 @@ public class ApplicationEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modifiedDateTime;
 
-    @Column(name = "system_version")
-    private String systemVersion;
-
-    public String getSystemVersion() {
-        return systemVersion;
-    }
-
-    public void setSystemVersion(String systemVersion) {
-        this.systemVersion = systemVersion;
-    }
 
     public String getId() {
         return id;
@@ -85,14 +78,6 @@ public class ApplicationEntity {
         this.version = version;
     }
 
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
-
     public String getStatusCode() {
         return statusCode;
     }
@@ -101,12 +86,28 @@ public class ApplicationEntity {
         this.statusCode = statusCode;
     }
 
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getSystemVersion() {
+        return systemVersion;
+    }
+
+    public void setSystemVersion(String systemVersion) {
+        this.systemVersion = systemVersion;
     }
 
     public String getCreatedAccountId() {

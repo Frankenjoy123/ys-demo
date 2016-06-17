@@ -46,7 +46,7 @@ yunsoo:
     direct_notify_url: https://test-api.yunsu.co:6443/payment/brand/alipay/notify
 
 logging:
-  file: /var/log/api.log
+  file: /var/log/yunsoo/api.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'

@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ApplicationObject;
 import com.yunsoo.common.web.client.Page;
@@ -46,6 +47,7 @@ public class ApplicationDomain {
     public ApplicationObject createApplication(ApplicationObject applicationObject) {
         applicationObject.setId(null);
         applicationObject.setStatusCode(LookupCodes.ApplicationStatus.CREATED);
+        applicationObject.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         applicationObject.setCreatedDateTime(DateTime.now());
         applicationObject.setModifiedAccountId(null);
         applicationObject.setModifiedDateTime(null);
@@ -55,6 +57,7 @@ public class ApplicationDomain {
     public void patchUpdateApplication(ApplicationObject applicationObject) {
         applicationObject.setCreatedAccountId(null);
         applicationObject.setCreatedDateTime(null);
+        applicationObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
         applicationObject.setModifiedDateTime(DateTime.now());
         try {
             dataAPIClient.patch("application/{id}", applicationObject, applicationObject.getId());
