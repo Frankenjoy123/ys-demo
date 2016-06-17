@@ -48,3 +48,4 @@ jdbc:
     max_idle: 20
     test_on_borrow: true
     validation_query: select 1
+    initSQL: SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci

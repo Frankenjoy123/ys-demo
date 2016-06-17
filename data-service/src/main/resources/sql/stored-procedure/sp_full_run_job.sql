@@ -1,20 +1,20 @@
-DELIMITER $$
-CREATE DEFINER=`root`@`%` PROCEDURE `sp_full_run_job`(jobName varchar(200), start_date date, end_date date)
-BEGIN
+DROP PROCEDURE IF EXISTS `sp_full_run_job`;
+CREATE PROCEDURE `sp_full_run_job`(jobName VARCHAR(200), start_date DATE, end_date DATE)
+  BEGIN
 
-set @sql_str = concat('call ', jobName, '(?);');
+    SET @sql_str = concat('call ', jobName, '(?);');
 
-prepare stmt from @sql_str;
-set @start_date = start_date;
-while @start_date < end_date do
+    PREPARE stmt FROM @sql_str;
+    SET @start_date = start_date;
+    WHILE @start_date < end_date DO
 
-EXECUTE stmt using @start_date;
+      EXECUTE stmt
+      USING @start_date;
 
-set @start_date = date_add(@start_date, interval 1 day);
+      SET @start_date = date_add(@start_date, INTERVAL 1 DAY);
 
-end while;
+    END WHILE;
 
-deallocate prepare stmt;
+    DEALLOCATE PREPARE stmt;
 
-END$$
-DELIMITER ;
+  END;
