@@ -102,6 +102,4 @@ commit;
 drop table sp_sync_user_tmp_user;
 
 
-
-END$$
-DELIMITER ;
+END;
