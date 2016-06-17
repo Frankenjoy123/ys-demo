@@ -79,8 +79,8 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         parameters.put("orgId", orgId);
         parameters.put("userId", userId == null ? "" : userId);
         parameters.put("ysId", ysId == null ? "" : ysId);
-        parameters.put("eventDateTimeStart", eventDateTimeStart.toString("yyyy-MM-dd"));
-        parameters.put("eventDateTimeEnd", eventDateTimeEnd.toString("yyyy-MM-dd"));
+        parameters.put("eventDateTimeStart", eventDateTimeStart.toString("yyyy-MM-dd HH:mm:ss"));
+        parameters.put("eventDateTimeEnd", eventDateTimeEnd.toString("yyyy-MM-dd HH:mm:ss"));
 
         Query query = entityManager.createNativeQuery(sql);
         for (String key : parameters.keySet()) {
