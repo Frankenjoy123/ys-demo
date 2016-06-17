@@ -1,4 +1,5 @@
-CREATE DEFINER =`root`@`%` PROCEDURE `sp_full_run_job`(jobName VARCHAR(200), start_date DATE, end_date DATE)
+DROP PROCEDURE IF EXISTS `sp_full_run_job`;
+CREATE PROCEDURE `sp_full_run_job`(jobName VARCHAR(200), start_date DATE, end_date DATE)
   BEGIN
 
     SET @sql_str = concat('call ', jobName, '(?);');
