@@ -1,5 +1,5 @@
-DELIMITER $$
-CREATE DEFINER=`root`@`%` PROCEDURE `sp_sync_user`()
+DROP PROCEDURE IF EXISTS `sp_sync_user`;
+CREATE PROCEDURE `sp_sync_user`()
 BEGIN
 
 declare min_value varchar(50);
@@ -102,6 +102,4 @@ commit;
 drop table sp_sync_user_tmp_user;
 
 
-
-END$$
-DELIMITER ;
+END;

@@ -20,6 +20,9 @@ public class ProductKeyBatchInfo {
     @JsonProperty("batch_no")
     private String batchNo;
 
+    @JsonProperty("quantity")
+    private Integer quantity;
+
     @JsonProperty("product_base_id")
     private String productBaseId;
 
@@ -45,6 +48,14 @@ public class ProductKeyBatchInfo {
 
     public void setBatchNo(String batchNo) {
         this.batchNo = batchNo;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     public String getProductBaseId() {

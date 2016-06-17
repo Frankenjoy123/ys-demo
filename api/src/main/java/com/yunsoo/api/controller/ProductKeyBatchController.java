@@ -290,6 +290,7 @@ public class ProductKeyBatchController {
                 ProductKeyBatchInfo object = new ProductKeyBatchInfo();
                 object.setId(productKeyBatch.getId());
                 object.setBatchNo(productKeyBatch.getBatchNo());
+                object.setQuantity(productKeyBatch.getQuantity());
                 object.setProductBaseId(productKeyBatch.getProductBaseId());
                 object.setCreatedDateTime(productKeyBatch.getCreatedDateTime());
                 ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productKeyBatch.getProductBaseId());
