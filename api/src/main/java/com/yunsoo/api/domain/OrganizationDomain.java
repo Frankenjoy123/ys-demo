@@ -162,13 +162,13 @@ public class OrganizationDomain {
             //128x128
             ImageProcessor imageProcessor = new ImageProcessor().read(logoStream);
             ByteArrayOutputStream logo128x128OutputStream = new ByteArrayOutputStream();
-            imageProcessor.resize(128, 128).write(logo128x128OutputStream, "png");
+            imageProcessor.resize(128, 128).write(logo128x128OutputStream, "image/png");
             dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
                     new ResourceInputStream(new ByteArrayInputStream(logo128x128OutputStream.toByteArray()), logo128x128OutputStream.size(), "image/png"),
                     orgId, logoImage128x128);
             //200x200
             ByteArrayOutputStream logo200x200OutputStream = new ByteArrayOutputStream();
-            imageProcessor.resize(200, 200).write(logo200x200OutputStream, "png");
+            imageProcessor.resize(200, 200).write(logo200x200OutputStream, "image/png");
             dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
                     new ResourceInputStream(new ByteArrayInputStream(logo200x200OutputStream.toByteArray()), logo200x200OutputStream.size(), "image/png"),
                     orgId, logoImage200x200);
@@ -181,7 +181,7 @@ public class OrganizationDomain {
         try {
             ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
             ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
-            imageProcessor.write(imageOutputStream, "png");
+            imageProcessor.write(imageOutputStream, "image/png");
             dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
                     new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/png"),
                     orgId, imageName);

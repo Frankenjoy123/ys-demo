@@ -38,29 +38,29 @@ public final class ImageProcessor {
     }
 
     /**
-     * @param inputStream     InputStream
-     * @param inputFormatName String [png|jpg|bmp|gif]
+     * @param inputStream InputStream
+     * @param contentType String [image/png|image/jpeg]
      * @return this
      * @throws IOException
      */
-    public ImageProcessor read(InputStream inputStream, String inputFormatName) throws IOException {
+    public ImageProcessor read(InputStream inputStream, String contentType) throws IOException {
         ImageInputStream imageInputStream = ImageIO.createImageInputStream(inputStream);
-        ImageReader imageReader = ImageIO.getImageReadersByFormatName(inputFormatName).next();
+        ImageReader imageReader = ImageIO.getImageReadersByMIMEType(contentType).next();
         imageReader.setInput(imageInputStream, true);
         this.bufferedImage = imageReader.read(0);
         return this;
     }
 
     /**
-     * @param outputStream     OutputStream
-     * @param outputFormatName String [png|jpg|bmp|gif]
+     * @param outputStream OutputStream
+     * @param contentType  String [image/png|image/jpeg]
      * @return this
      * @throws IOException
      */
-    public ImageProcessor write(OutputStream outputStream, String outputFormatName) throws IOException {
+    public ImageProcessor write(OutputStream outputStream, String contentType) throws IOException {
         if (this.bufferedImage != null) {
             ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream);
-            ImageWriter imageWriter = ImageIO.getImageWritersByFormatName(outputFormatName).next();
+            ImageWriter imageWriter = ImageIO.getImageWritersByMIMEType(contentType).next();
             imageWriter.setOutput(imageOutputStream);
             imageWriter.write(bufferedImage);
             imageWriter.dispose();
