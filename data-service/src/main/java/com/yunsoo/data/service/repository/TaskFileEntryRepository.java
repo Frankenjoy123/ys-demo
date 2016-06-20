@@ -24,8 +24,8 @@ public interface TaskFileEntryRepository extends FindOneAndSaveRepository<TaskFi
             "and (:typeCode is null or e.typeCode = :typeCode) " +
             "and (e.statusCode in (:statusCodeIn) or :statusCodeInIgnored = true) " +
             "and (:createdAccountId is null or e.createdAccountId = :createdAccountId) " +
-            "and (:createdDateTimeStart is null or e.createdDateTime >= :createdDateTimeStart) " +
-            "and (:createdDateTimeEnd is null or e.createdDateTime <= :createdDateTimeEnd)")
+            "and (:createdDateTimeGE is null or e.createdDateTime >= :createdDateTimeGE) " +
+            "and (:createdDateTimeLE is null or e.createdDateTime <= :createdDateTimeLE)")
     Page<TaskFileEntryEntity> query(@Param("orgId") String orgId,
                                     @Param("appId") String appId,
                                     @Param("deviceId") String deviceId,
@@ -33,8 +33,8 @@ public interface TaskFileEntryRepository extends FindOneAndSaveRepository<TaskFi
                                     @Param("statusCodeIn") List<String> statusCodeIn,
                                     @Param("statusCodeInIgnored") boolean statusCodeInIgnored,
                                     @Param("createdAccountId") String createdAccountId,
-                                    @Param("createdDateTimeStart") DateTime createdDateTimeStart,
-                                    @Param("createdDateTimeEnd") DateTime createdDateTimeEnd,
+                                    @Param("createdDateTimeGE") DateTime createdDateTimeGE,
+                                    @Param("createdDateTimeLE") DateTime createdDateTimeLE,
                                     Pageable pageable);
 
 }

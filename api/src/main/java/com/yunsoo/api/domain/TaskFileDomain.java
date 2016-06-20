@@ -56,8 +56,8 @@ public class TaskFileDomain {
             String typeCode,
             List<String> statusCodeIn,
             String createdAccountId,
-            DateTime createdDateTimeStart,
-            DateTime createdDateTimeEnd,
+            DateTime createdDateTimeGE,
+            DateTime createdDateTimeLE,
             Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
@@ -66,20 +66,12 @@ public class TaskFileDomain {
                 .append("type_code", typeCode)
                 .append("status_code_in", statusCodeIn)
                 .append("created_account_id", createdAccountId)
-                .append("created_datetime_start", createdDateTimeStart)
-                .append("created_datetime_end", createdDateTimeEnd)
+                .append("created_datetime_ge", createdDateTimeGE)
+                .append("created_datetime_le", createdDateTimeLE)
                 .append(pageable)
                 .build();
         return dataAPIClient.getPaged("taskFileEntry" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
         });
-    }
-
-    public TaskFileEntryObject createTaskFileEntry(TaskFileEntryObject obj) {
-        obj.setFileId(null);
-        obj.setStatusCode(LookupCodes.TaskFileStatus.CREATED);
-        obj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
-        obj.setCreatedDateTime(DateTime.now());
-        return dataAPIClient.post("taskFileEntry", obj, TaskFileEntryObject.class);
     }
 
     public void updateStatusToUploaded(String fileId) {
@@ -124,6 +116,14 @@ public class TaskFileDomain {
         this.updateStatusToUploaded(obj.getFileId());
 
         return this.getTaskFileEntryById(obj.getFileId());
+    }
+
+    private TaskFileEntryObject createTaskFileEntry(TaskFileEntryObject obj) {
+        obj.setFileId(null);
+        obj.setStatusCode(LookupCodes.TaskFileStatus.UPLOADING);
+        obj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
+        obj.setCreatedDateTime(DateTime.now());
+        return dataAPIClient.post("taskFileEntry", obj, TaskFileEntryObject.class);
     }
 
     private boolean validateFileType(String fileType) {
