@@ -47,8 +47,8 @@ public class TaskFileEntryController {
             @RequestParam(value = "type_code", required = false) String typeCode,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
             @RequestParam(value = "created_account_id", required = false) String createdAccountId,
-            @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeStart,
-            @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeEnd,
+            @RequestParam(value = "created_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeGE,
+            @RequestParam(value = "created_datetime_le", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeLE,
             Pageable pageable,
             HttpServletResponse response) {
         Page<TaskFileEntryEntity> entityPage = taskFileEntryRepository.query(
@@ -59,8 +59,8 @@ public class TaskFileEntryController {
                 statusCodeIn == null || statusCodeIn.size() == 0 ? null : statusCodeIn,
                 statusCodeIn == null || statusCodeIn.size() == 0,
                 createdAccountId,
-                createdDateTimeStart,
-                createdDateTimeEnd,
+                createdDateTimeGE,
+                createdDateTimeLE,
                 pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));

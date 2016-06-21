@@ -46,18 +46,17 @@ public class ImageController {
         if (file == null || file.isEmpty()) {
             throw new BadRequestException();
         }
-        //long size = file.getSize();
-        //String contentType = file.getContentType();
+        String contentType = file.getContentType();
         byte[] imageDataBytes = file.getBytes();
 
-        ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
+        ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes), contentType);
 
         log.info(String.format("image read [width: %s, height: %s]", imageProcessor.getWidth(), imageProcessor.getHeight()));
 
         imageProcessor = corpImage(imageProcessor, options);
 
         String imageName = generateImageName();
-        saveImage(imageProcessor, imageName);
+        saveImage(imageProcessor, imageName, contentType);
 
         ImageResponse imageResponse = new ImageResponse();
         imageResponse.setName(imageName);
@@ -70,19 +69,19 @@ public class ImageController {
 
         String imageData = imageRequest.getData(); //data:image/png;base64,
         int splitIndex = imageData.indexOf(",");
-        //String metaHeader = imageData.substring(0, splitIndex);
-        //String contentType = metaHeader.split(";")[0].split(":")[1];
+        String metaHeader = imageData.substring(0, splitIndex);
+        String contentType = metaHeader.split(";")[0].split(":")[1];
         String imageDataBase64 = imageData.substring(splitIndex + 1);
         byte[] imageDataBytes = Base64.decodeBase64(imageDataBase64);
 
-        ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
+        ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes), contentType);
 
         log.info(String.format("image read [width: %s, height: %s]", imageProcessor.getWidth(), imageProcessor.getHeight()));
 
         imageProcessor = corpImage(imageProcessor, imageRequest.getOptions());
 
         String imageName = generateImageName();
-        saveImage(imageProcessor, imageName);
+        saveImage(imageProcessor, imageName, contentType);
 
         ImageResponse imageResponse = new ImageResponse();
         imageResponse.setName(imageName);
@@ -142,11 +141,12 @@ public class ImageController {
         return imageProcessor;
     }
 
-    private void saveImage(ImageProcessor imageProcessor, String imageName) throws IOException {
+    private void saveImage(ImageProcessor imageProcessor, String imageName, String contentType) throws IOException {
         ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
-        imageProcessor.write(imageOutputStream, "png");
-        fileDomain.putFile(String.format("image/%s", imageName), new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/png"));
-        log.info(String.format("image saved [imageName: %s]", imageName));
+        imageProcessor.write(imageOutputStream, contentType);
+        byte[] buffer = imageOutputStream.toByteArray();
+        fileDomain.putFile(String.format("image/%s", imageName), new ResourceInputStream(new ByteArrayInputStream(buffer), buffer.length, contentType));
+        log.info(String.format("image saved [imageName: %s, contentType: %s, size: %d]", imageName, contentType, buffer.length));
     }
 
 }

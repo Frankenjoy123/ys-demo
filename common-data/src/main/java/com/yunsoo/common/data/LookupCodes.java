@@ -256,7 +256,7 @@ public class LookupCodes {
         private TaskFileStatus() {
         }
 
-        public static final String CREATED = "created";
+        public static final String UPLOADING = "uploading";
         public static final String UPLOADED = "uploaded";
         public static final String PROCESSING = "processing";
         public static final String FINISHED = "finished";
