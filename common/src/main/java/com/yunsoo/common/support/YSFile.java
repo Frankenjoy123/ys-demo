@@ -149,7 +149,7 @@ public class YSFile {
 
     private boolean validateHash(String hash) {
         String realHash = hash(headerLines());
-        return realHash.equals(hash);
+        return realHash.equalsIgnoreCase(hash);
     }
 
     public static YSFile read(InputStream inputStream) throws IOException {
