@@ -14,6 +14,8 @@ public interface OrganizationCategoryRepository extends CrudRepository<Organizat
 
     List<OrganizationCategoryEntity> findByOrgId(String id);
 
+    List<OrganizationCategoryEntity> findByOrgIdAndName(String orgId, String name);
+
     List<OrganizationCategoryEntity> findAll();
 
     Long deleteByOrgId(String orgId);

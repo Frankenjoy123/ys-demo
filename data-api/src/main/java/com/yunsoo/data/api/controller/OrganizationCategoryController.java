@@ -2,6 +2,7 @@ package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.OrganizationCategoryObject;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.OrganizationCategoryEntity;
 import com.yunsoo.data.service.repository.OrganizationCategoryRepository;
@@ -42,9 +43,45 @@ public class OrganizationCategoryController {
          return entities.stream().map(this::toOrganizationCategoryObject).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrganizationCategoryObject save(@RequestBody OrganizationCategoryObject categoryObject){
+        List<OrganizationCategoryEntity> existEntity = repository.findByOrgIdAndName(categoryObject.getOrgId(), categoryObject.getName().trim());
+        if(existEntity.size() > 0)
+            throw new ConflictException("same name exist for org category: " + categoryObject.getName());
+
+        categoryObject.setId(null);
+        categoryObject.setName(categoryObject.getName().trim());
+        OrganizationCategoryEntity entity = toOrganizationCategoryEntity(categoryObject);
+        repository.save(entity);
+        return toOrganizationCategoryObject(entity);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@PathVariable("id")String id,  @RequestBody OrganizationCategoryObject categoryObject){
+        OrganizationCategoryEntity entity = repository.findOne(id);
+        if(entity == null)
+            throw new NotFoundException("product category not found with id:" + id);
+        if(entity.getName().equals(categoryObject.getName().trim()))
+            throw new ConflictException("same name exist for org category: " + categoryObject.getName());
+
+        categoryObject.setName(categoryObject.getName().trim());
+        repository.save(toOrganizationCategoryEntity(categoryObject));
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id")String id){
+        OrganizationCategoryEntity entity = repository.findOne(id);
+        if(entity == null)
+            throw new NotFoundException("product category not found with id:" + id);
+        repository.delete(entity);
+    }
+
     @RequestMapping(value = "", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody List<OrganizationCategoryObject> objectList){
+    public void updateList(@RequestBody List<OrganizationCategoryObject> objectList){
         if(objectList == null)
             throw new BadRequestException("Parameter could not be null");
         List<OrganizationCategoryEntity> existsObjList = repository.findByOrgId(objectList.get(0).getOrgId());
