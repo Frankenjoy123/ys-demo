@@ -41,7 +41,7 @@ public class TaskFileEntryController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<TaskFileEntryObject> getByFilter(
-            @RequestParam(value = "org_id", required = true) String orgId,
+            @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "app_id", required = false) String appId,
             @RequestParam(value = "device_id", required = false) String deviceId,
             @RequestParam(value = "type_code", required = false) String typeCode,
