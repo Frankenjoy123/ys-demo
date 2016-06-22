@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 public class ProductKeyBatchCreateMessage implements Serializable {
 
-    public static final String PAYLOAD_NAME = "product_key_batch_create";
+    public static final String PAYLOAD_TYPE = "product_key_batch_create";
 
     @JsonProperty("product_key_batch_id")
     private String productKeyBatchId;

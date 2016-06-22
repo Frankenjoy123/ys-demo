@@ -21,7 +21,7 @@ public class SqsController {
     private MessageService messageService;
 
 
-    @RequestMapping(value = "message/" + ProductKeyBatchCreateMessage.PAYLOAD_NAME, method = RequestMethod.PUT)
+    @RequestMapping(value = "message/" + ProductKeyBatchCreateMessage.PAYLOAD_TYPE, method = RequestMethod.PUT)
     public void sendProductKeyBatchMassage(@RequestBody ProductKeyBatchCreateMessage message) {
         messageService.sendMessage(message);
     }

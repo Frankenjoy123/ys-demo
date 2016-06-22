@@ -82,7 +82,7 @@ public class MessageService {
                 "queueName", resourceIdResolver.resolveToPhysicalResourceId(QUEUE_NAME_PROCESSOR)));
 
         switch (payloadType) {
-            case ProductKeyBatchCreateMessage.PAYLOAD_NAME:
+            case ProductKeyBatchCreateMessage.PAYLOAD_TYPE:
                 ProductKeyBatchCreateMessage messageObj = null;
                 try {
                     messageObj = parseMessage(message, ProductKeyBatchCreateMessage.class);
@@ -99,7 +99,7 @@ public class MessageService {
 
     private String getPayloadTypeByMessageType(Class<?> messageType) {
         if (messageType.isAssignableFrom(ProductKeyBatchCreateMessage.class)) {
-            return ProductKeyBatchCreateMessage.PAYLOAD_NAME;
+            return ProductKeyBatchCreateMessage.PAYLOAD_TYPE;
         } else {
             throw new RuntimeException("message type not recognized");
         }
