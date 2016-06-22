@@ -69,7 +69,7 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<ProductKeyBa
         int quantity = productKeys.size();
         int continueOffset = message.getContinueOffset() != null ? message.getContinueOffset() : 0;
 
-        log.info("started processing productKeyBatch " + StringFormatter.formatMap("message", message));
+        log.info("started processing productKeyBatch " + StringFormatter.formatMap("message", message, "remainQuantity", quantity - continueOffset));
         DateTime startDateTime = DateTime.now();
         DateTime timeOutDateTime = startDateTime.plusSeconds(TIMEOUT_SECONDS);
         DateTime batchStartDateTime;
