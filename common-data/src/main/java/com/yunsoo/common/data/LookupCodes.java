@@ -219,6 +219,16 @@ public class LookupCodes {
         public static final List<String> ANALYZE_STATUS = Arrays.asList("available", "disabled", "paid");
     }
 
+    public static class MktConsumerRightStatus {
+        private MktConsumerRightStatus() {
+        }
+
+        public static final String CREATED = "created";
+        public static final String DELETED = "deleted";
+
+    }
+
+
     public static class PaymentStatus {
         private PaymentStatus() {
         }
