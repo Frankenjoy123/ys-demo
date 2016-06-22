@@ -20,14 +20,14 @@ public interface LogRepository extends Repository<LogEntity, String> {
             "and (:level is null or o.level = :level) " +
             "and (:identifier is null or o.identifier = :identifier) " +
             "and (:identifierName is null or o.identifierName = :identifierName) " +
-            "and (:createdDateTimeStart is null or o.createdDateTime <= :createdDateTimeStart) " +
-            "and (:createdDateTimeEnd is null or o.createdDateTime >= :createdDateTimeEnd)")
+            "and (:createdDateTimeGE is null or o.createdDateTime >= :createdDateTimeGE) " +
+            "and (:createdDateTimeLE is null or o.createdDateTime <= :createdDateTimeLE)")
     Page<LogEntity> findByFilter(@Param("eventName") String eventName,
                                  @Param("level") String level,
                                  @Param("identifier") String identifier,
                                  @Param("identifierName") String identifierName,
-                                 @Param("createdDateTimeStart") DateTime createdDateTimeStart,
-                                 @Param("createdDateTimeEnd") DateTime createdDateTimeEnd,
+                                 @Param("createdDateTimeGE") DateTime createdDateTimeGE,
+                                 @Param("createdDateTimeLE") DateTime createdDateTimeLE,
                                  Pageable pageable);
 
     LogEntity save(LogEntity entity);
