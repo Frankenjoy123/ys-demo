@@ -87,6 +87,7 @@ public class EMRUserController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<EMRUser> queryUser(@RequestParam(value = "org_id", required = false) String orgId,
                                    @RequestParam(value = "sex", required = false) Boolean sex,
+                                   @RequestParam(value = "wx_user", required = false) Boolean wxUser,
                                    @RequestParam(value = "phone", required = false) String phone,
                                    @RequestParam(value = "name", required = false) String name,
                                    @RequestParam(value = "province", required = false) String province,
@@ -103,7 +104,7 @@ public class EMRUserController {
                                    HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<EMRUserObject> entityPage = emrUserDomain.getEMRUserList(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStart, createdDateTimeEnd, userTags, pageable);
+        Page<EMRUserObject> entityPage = emrUserDomain.getEMRUserList(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStart, createdDateTimeEnd, userTags, wxUser, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", entityPage.toContentRange());

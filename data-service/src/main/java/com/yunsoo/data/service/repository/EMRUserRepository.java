@@ -27,7 +27,8 @@ public interface EMRUserRepository extends FindOneAndSaveRepository<EMRUserEntit
             "and ((:ageStart is null or (o.age >= :ageStart)) and (:ageEnd is null or (o.age <= :ageEnd))) " +
             "and (:createdDateTimeStart is null or o.joinDateTime >= :createdDateTimeStart) " +
             "and (:createdDateTimeEnd is null or o.joinDateTime <= :createdDateTimeEnd) " +
-            "and (ut.tagId in (:userTags) or :userTagsIgnored = true)")
+            "and (ut.tagId in (:userTags) or :userTagsIgnored = true) " +
+            "and ((:wxUser = true and o.wxOpenId is not null) or :wxUser is null or (:wxUser = false and (o.wxOpenId is null or o.wxOpenId = ''))) ")
     Page<EMRUserEntity> findByFilter(@Param("orgId") String orgId, @Param("sex") Boolean sex, @Param("phone") String phone, @Param("name") String name,
                                      @Param("province") String province, @Param("city") String city,
                                      @Param("ageStart") Integer ageStart, @Param("ageEnd") Integer ageEnd,
@@ -35,6 +36,7 @@ public interface EMRUserRepository extends FindOneAndSaveRepository<EMRUserEntit
                                      @Param("createdDateTimeEnd") DateTime createdDateTimeEnd,
                                      @Param("userTags") List<String> userTags,
                                      @Param("userTagsIgnored") boolean userTagsIgnored,
+                                     @Param("wxUser") Boolean wxUser,
                                      Pageable pageable);
 
     @Query("select distinct u from #{#entityName} u inner join  u.eventEntities ev where ev.name = 'scan' " +
