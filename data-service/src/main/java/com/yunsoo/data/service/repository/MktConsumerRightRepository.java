@@ -13,6 +13,6 @@ import org.springframework.data.domain.Pageable;
  */
 public interface MktConsumerRightRepository extends FindOneAndSaveRepository<MktConsumerRightEntity, String> {
 
-    Page<MktConsumerRightEntity> findByOrgId(String orgId, Pageable pageable);
+    Page<MktConsumerRightEntity> findByOrgIdAndStatusCode(String orgId, String statusCode, Pageable pageable);
 
 }

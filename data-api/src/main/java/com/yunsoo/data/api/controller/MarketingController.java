@@ -1,10 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.MarketingObject;
-import com.yunsoo.common.data.object.MktDrawPrizeObject;
-import com.yunsoo.common.data.object.MktDrawRecordObject;
-import com.yunsoo.common.data.object.MktDrawRuleObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
@@ -47,6 +44,9 @@ public class MarketingController {
 
     @Autowired
     private MktDrawRecordRepository mktDrawRecordRepository;
+
+    @Autowired
+    private MktConsumerRightRepository mktConsumerRightRepository;
 
     @Autowired
     private ProductKeyBatchRepository productKeyBatchRepository;
@@ -134,6 +134,78 @@ public class MarketingController {
                 .map(this::toMarketingObject)
                 .collect(Collectors.toList());
     }
+
+    //query marketing plan, provide API
+    @RequestMapping(value = "consumer", method = RequestMethod.GET)
+    public List<MktConsumerRightObject> getConsumerRightByFilter(@RequestParam(value = "org_id") String orgId,
+                                                                 Pageable pageable,
+                                                                 HttpServletResponse response) {
+
+        Page<MktConsumerRightEntity> entityPage = null;
+
+        if (orgId == null) {
+            throw new BadRequestException("org id is required");
+        }
+
+        entityPage = mktConsumerRightRepository.findByOrgIdAndStatusCode(orgId, LookupCodes.MktConsumerRightStatus.CREATED, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toMktConsumerRightObject)
+                .collect(Collectors.toList());
+    }
+
+    //get marketing consumer right by id
+    @RequestMapping(value = "consumer/{id}", method = RequestMethod.GET)
+    public MktConsumerRightObject getMktConsumerRightById(@PathVariable(value = "id") String id) {
+        MktConsumerRightEntity entity = mktConsumerRightRepository.findOne(id);
+        if (entity == null || LookupCodes.MktConsumerRightStatus.DELETED.equals(entity.getStatusCode())) {
+            throw new NotFoundException("marketing consumer right not found by [id:" + id + "]");
+        }
+        return toMktConsumerRightObject(entity);
+    }
+
+    //update marketing consumer right
+    @RequestMapping(value = "consumer/{id}", method = RequestMethod.PUT)
+    public void updateMktConsumerRight(@PathVariable(value = "id") String id,
+                                       @RequestBody MktConsumerRightObject mktConsumerRightObject) {
+        MktConsumerRightEntity oldentity = mktConsumerRightRepository.findOne(id);
+        if (oldentity != null && !LookupCodes.MktConsumerRightStatus.DELETED.equals(oldentity.getStatusCode())) {
+            MktConsumerRightEntity entity = toMktConsumerRightEntity(mktConsumerRightObject);
+            mktConsumerRightRepository.save(entity);
+        }
+    }
+
+    //delete
+    @RequestMapping(value = "consumer/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable(value = "id") String id) {
+        MktConsumerRightEntity entity = mktConsumerRightRepository.findOne(id);
+        if (entity != null && !LookupCodes.MktConsumerRightStatus.DELETED.equals(entity.getStatusCode())) {
+            entity.setStatusCode(LookupCodes.MktConsumerRightStatus.DELETED);
+            mktConsumerRightRepository.save(entity);
+        }
+    }
+
+    //create marketing consumer right
+    @RequestMapping(value = "consumer", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public MktConsumerRightObject createMktConsumerRight(@RequestBody MktConsumerRightObject mktConsumerRightObject) {
+        MktConsumerRightEntity entity = toMktConsumerRightEntity(mktConsumerRightObject);
+        entity.setId(null);
+        entity.setStatusCode(LookupCodes.MktConsumerRightStatus.CREATED);
+        if (entity.getCreatedDateTime() == null) {
+            entity.setCreatedDateTime(DateTime.now());
+        }
+        entity.setModifiedAccountId(null);
+        entity.setModifiedDateTime(null);
+        MktConsumerRightEntity newEntity = mktConsumerRightRepository.save(entity);
+        return toMktConsumerRightObject(newEntity);
+    }
+
 
     //query marketing prize, provide API
     @RequestMapping(value = "/drawRecord/sum", method = RequestMethod.GET)
@@ -628,6 +700,26 @@ public class MarketingController {
     }
 
 
+    private MktConsumerRightObject toMktConsumerRightObject(MktConsumerRightEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        MktConsumerRightObject object = new MktConsumerRightObject();
+        object.setId(entity.getId());
+        object.setName(entity.getName());
+        object.setTypeCode(entity.getTypeCode());
+        object.setAmount(entity.getAmount());
+        object.setComments(entity.getComments());
+        object.setOrgId(entity.getOrgId());
+        object.setStatusCode(entity.getStatusCode());
+        object.setCreatedAccountId(entity.getCreatedAccountId());
+        object.setCreatedDateTime(entity.getCreatedDateTime());
+        object.setModifiedAccountId(entity.getModifiedAccountId());
+        object.setModifiedDateTime(entity.getModifiedDateTime());
+        return object;
+    }
+
+
     private MarketingEntity toMarketingEntity(MarketingObject object) {
         if (object == null) {
             return null;
@@ -713,6 +805,25 @@ public class MarketingController {
         entity.setPrizeAccount(object.getPrizeAccount());
         entity.setPrizeAccountName(object.getPrizeAccountName());
         entity.setComments(object.getComments());
+        return entity;
+    }
+
+    private MktConsumerRightEntity toMktConsumerRightEntity(MktConsumerRightObject object) {
+        if (object == null) {
+            return null;
+        }
+        MktConsumerRightEntity entity = new MktConsumerRightEntity();
+        entity.setId(object.getId());
+        entity.setName(object.getName());
+        entity.setTypeCode(object.getTypeCode());
+        entity.setAmount(object.getAmount());
+        entity.setComments(object.getComments());
+        entity.setOrgId(object.getOrgId());
+        entity.setStatusCode(object.getStatusCode());
+        entity.setCreatedAccountId(object.getCreatedAccountId());
+        entity.setCreatedDateTime(object.getCreatedDateTime());
+        entity.setModifiedAccountId(object.getModifiedAccountId());
+        entity.setModifiedDateTime(object.getModifiedDateTime());
         return entity;
     }
 
