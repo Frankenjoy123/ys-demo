@@ -37,8 +37,8 @@ select last_value into min_value from emr_task where task_id = 7 order by create
 set min_value_date = ifnull(min_value, '2015-1-1 00:00:00');
 
 
--- 取当前时间的5分前。。
-set max_value_date = date_sub(current_timestamp(),INTERVAL 5 MINUTE);
+  -- 取当前时间的1分前。。
+  SET max_value_date = date_sub(current_timestamp(), INTERVAL 1 MINUTE);
 
 select min_value_date;
 

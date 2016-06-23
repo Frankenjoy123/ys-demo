@@ -219,6 +219,16 @@ public class LookupCodes {
         public static final List<String> ANALYZE_STATUS = Arrays.asList("available", "disabled", "paid");
     }
 
+    public static class MktConsumerRightStatus {
+        private MktConsumerRightStatus() {
+        }
+
+        public static final String CREATED = "created";
+        public static final String DELETED = "deleted";
+
+    }
+
+
     public static class PaymentStatus {
         private PaymentStatus() {
         }
@@ -259,15 +269,18 @@ public class LookupCodes {
         public static final String UPLOADING = "uploading";
         public static final String UPLOADED = "uploaded";
         public static final String PROCESSING = "processing";
+        public static final String FAILED = "failed";
         public static final String FINISHED = "finished";
     }
 
-    public static class MktPrizeCostType{
-        private MktPrizeCostType(){}
+    public static class MktPrizeCostType {
+        private MktPrizeCostType() {
+        }
 
         public static final String MOBILE_FEE = "mobile fee";
         public static final String MOBILE_FLOW = "mobile flow";
     }
+
     public static class UserEvent {
         private UserEvent() {
         }

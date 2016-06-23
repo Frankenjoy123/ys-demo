@@ -41,7 +41,7 @@ public class TaskEntity {
 
     @Column(name = "next_run_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime nextRunDatetime;
+    private DateTime nextRunDateTime;
 
     @Column(name = "parameters")
     private String parameters;
@@ -51,7 +51,7 @@ public class TaskEntity {
 
     @Column(name = "start_run_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime startRunDatetime;
+    private DateTime startRunDateTime;
 
     @Column(name = "timeout_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -131,12 +131,12 @@ public class TaskEntity {
         this.interval = interval;
     }
 
-    public DateTime getNextRunDatetime() {
-        return nextRunDatetime;
+    public DateTime getNextRunDateTime() {
+        return nextRunDateTime;
     }
 
-    public void setNextRunDatetime(DateTime nextRunDatetime) {
-        this.nextRunDatetime = nextRunDatetime;
+    public void setNextRunDateTime(DateTime nextRunDateTime) {
+        this.nextRunDateTime = nextRunDateTime;
     }
 
     public String getParameters() {
@@ -155,12 +155,12 @@ public class TaskEntity {
         this.lockedBy = lockedBy;
     }
 
-    public DateTime getStartRunDatetime() {
-        return startRunDatetime;
+    public DateTime getStartRunDateTime() {
+        return startRunDateTime;
     }
 
-    public void setStartRunDatetime(DateTime startRunDatetime) {
-        this.startRunDatetime = startRunDatetime;
+    public void setStartRunDateTime(DateTime startRunDateTime) {
+        this.startRunDateTime = startRunDateTime;
     }
 
     public DateTime getTimeoutDateTime() {

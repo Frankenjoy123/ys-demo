@@ -35,7 +35,7 @@ public class TaskObject {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("next_run_datetime")
-    private DateTime nextRunDatetime;
+    private DateTime nextRunDateTime;
 
     @JsonProperty("parameters")
     private String parameters;
@@ -46,7 +46,7 @@ public class TaskObject {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("start_run_datetime")
-    private DateTime startRunDatetime;
+    private DateTime startRunDateTime;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -121,12 +121,12 @@ public class TaskObject {
         this.interval = interval;
     }
 
-    public DateTime getNextRunDatetime() {
-        return nextRunDatetime;
+    public DateTime getNextRunDateTime() {
+        return nextRunDateTime;
     }
 
-    public void setNextRunDatetime(DateTime nextRunDatetime) {
-        this.nextRunDatetime = nextRunDatetime;
+    public void setNextRunDateTime(DateTime nextRunDateTime) {
+        this.nextRunDateTime = nextRunDateTime;
     }
 
     public String getParameters() {
@@ -145,12 +145,12 @@ public class TaskObject {
         this.lockedBy = lockedBy;
     }
 
-    public DateTime getStartRunDatetime() {
-        return startRunDatetime;
+    public DateTime getStartRunDateTime() {
+        return startRunDateTime;
     }
 
-    public void setStartRunDatetime(DateTime startRunDatetime) {
-        this.startRunDatetime = startRunDatetime;
+    public void setStartRunDateTime(DateTime startRunDateTime) {
+        this.startRunDateTime = startRunDateTime;
     }
 
     public DateTime getTimeoutDateTime() {
