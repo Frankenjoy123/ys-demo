@@ -66,6 +66,13 @@ public class EMRUserController {
         PeriodUserConsumptionStatsObject periodUserConsumptionStatsObject = emrEventDomain.getPeriodUserConsumptionStatsObject(orgId, userId, ysId);
         emrUser.setPeriodUserConsumptionStats(new PeriodUserConsumptionStats(periodUserConsumptionStatsObject));
 
+        List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(userId, ysId, orgId);
+        if (userBlockObjects == null || userBlockObjects.size() == 0) {
+            emrUser.setUserBlockId("");
+        } else {
+            emrUser.setUserBlockId(userBlockObjects.get(0).getId());
+        }
+
         return emrUser;
     }
 
@@ -145,9 +152,20 @@ public class EMRUserController {
             response.setHeader("Content-Range", entityPage.toContentRange());
         }
 
-        return entityPage.getContent().stream()
-                .map(EMRUser::new)
-                .collect(Collectors.toList());
+        List<EMRUser> emrUsers = entityPage.map(emr -> {
+            EMRUser user = new EMRUser(emr);
+
+            List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
+            if (userBlockObjects == null || userBlockObjects.size() == 0) {
+                user.setUserBlockId("");
+            } else {
+                user.setUserBlockId(userBlockObjects.get(0).getId());
+            }
+
+            return user;
+        }).getContent();
+
+        return emrUsers;
     }
 
     @RequestMapping(value = "draw", method = RequestMethod.GET)
@@ -169,9 +187,20 @@ public class EMRUserController {
             response.setHeader("Content-Range", entityPage.toContentRange());
         }
 
-        return entityPage.getContent().stream()
-                .map(EMRUser::new)
-                .collect(Collectors.toList());
+        List<EMRUser> emrUsers = entityPage.map(emr -> {
+            EMRUser user = new EMRUser(emr);
+
+            List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
+            if (userBlockObjects == null || userBlockObjects.size() == 0) {
+                user.setUserBlockId("");
+            } else {
+                user.setUserBlockId(userBlockObjects.get(0).getId());
+            }
+
+            return user;
+        }).getContent();
+
+        return emrUsers;
     }
 
     @RequestMapping(value = "wx", method = RequestMethod.GET)
@@ -193,9 +222,20 @@ public class EMRUserController {
             response.setHeader("Content-Range", entityPage.toContentRange());
         }
 
-        return entityPage.getContent().stream()
-                .map(EMRUser::new)
-                .collect(Collectors.toList());
+        List<EMRUser> emrUsers = entityPage.map(emr -> {
+            EMRUser user = new EMRUser(emr);
+
+            List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
+            if (userBlockObjects == null || userBlockObjects.size() == 0) {
+                user.setUserBlockId("");
+            } else {
+                user.setUserBlockId(userBlockObjects.get(0).getId());
+            }
+
+            return user;
+        }).getContent();
+
+        return emrUsers;
     }
 
     @RequestMapping(value = "win", method = RequestMethod.GET)
@@ -217,9 +257,20 @@ public class EMRUserController {
             response.setHeader("Content-Range", entityPage.toContentRange());
         }
 
-        return entityPage.getContent().stream()
-                .map(EMRUser::new)
-                .collect(Collectors.toList());
+        List<EMRUser> emrUsers = entityPage.map(emr -> {
+            EMRUser user = new EMRUser(emr);
+
+            List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
+            if (userBlockObjects == null || userBlockObjects.size() == 0) {
+                user.setUserBlockId("");
+            } else {
+                user.setUserBlockId(userBlockObjects.get(0).getId());
+            }
+
+            return user;
+        }).getContent();
+
+        return emrUsers;
     }
 
     @RequestMapping(value = "reward", method = RequestMethod.GET)
@@ -241,9 +292,20 @@ public class EMRUserController {
             response.setHeader("Content-Range", entityPage.toContentRange());
         }
 
-        return entityPage.getContent().stream()
-                .map(EMRUser::new)
-                .collect(Collectors.toList());
+        List<EMRUser> emrUsers = entityPage.map(emr -> {
+            EMRUser user = new EMRUser(emr);
+
+            List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
+            if (userBlockObjects == null || userBlockObjects.size() == 0) {
+                user.setUserBlockId("");
+            } else {
+                user.setUserBlockId(userBlockObjects.get(0).getId());
+            }
+
+            return user;
+        }).getContent();
+
+        return emrUsers;
     }
 
     @RequestMapping(value = "funnel", method = RequestMethod.GET)
