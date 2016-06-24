@@ -3,6 +3,7 @@ package com.yunsoo.data.service.repository.impl;
 import com.amazonaws.util.StringUtils;
 import com.yunsoo.data.service.entity.EMREventEntity;
 import com.yunsoo.data.service.entity.EMRUserEntity;
+import com.yunsoo.data.service.entity.MarketUserLocationAnalysisEntity;
 import com.yunsoo.data.service.repository.CustomEMREventRepository;
 import com.yunsoo.data.service.repository.EMREventRepository;
 import org.joda.time.DateTime;
@@ -12,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -92,6 +94,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
     }
 
 
+
     private int[] query(String action, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, int level) {
         String sql = "select count(1), count(distinct u.id) from emr_event ev inner join emr_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.name= :eventName" +
                 " and ev.org_id =:orgId ";
@@ -145,4 +148,30 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         array[1] = ((BigInteger)data[1]).intValue();
         return array;
     }
+
+    @Override
+    public List<MarketUserLocationAnalysisEntity> queryRewardLocationReport(String marketingId) {
+        String sql = "select lu.province, lu.city, count(1) from emr_event ev left join lu_province_city lu on ev.province = lu.province and ev.city = lu.city " +
+                " where ev.name='draw' and ev.is_priced = 1 and ev.marketing_id =:marketingId" +
+                " group by lu.province, lu.city ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("marketingId", marketingId);
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List<Object[]> data =  query.getResultList();
+        List<MarketUserLocationAnalysisEntity> list = new ArrayList<>();
+        for (Object[] item : data)
+        {
+            MarketUserLocationAnalysisEntity entity = new MarketUserLocationAnalysisEntity();
+            entity.setProvince(item[0] == null ? "未知地区" : (String)item[0]);
+            entity.setCity(item[1] == null ? "未知地区" : (String)item[1]);
+            entity.setCount(((BigInteger) item[2]).intValue());
+            list.add(entity);
+        }
+        return list;
+    }
+
 }

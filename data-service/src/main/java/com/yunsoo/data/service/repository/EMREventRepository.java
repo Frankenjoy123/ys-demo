@@ -14,8 +14,8 @@ import java.util.List;
 
 public interface EMREventRepository extends FindOneAndSaveRepository<EMREventEntity, String>, CustomEMREventRepository {
 
-    @Query("select ev.province, count(1) from #{#entityName} ev where ev.marketingId = :markertingId and isPriced =1  group by ev.province")
-    List<Object[]> queryRewardLocationReport(@Param("markertingId") String marketingId);
+   /* @Query("select ev.province,ev.city, count(1) from #{#entityName} ev where name='draw' and ev.marketingId = :markertingId and isPriced =1  group by ev.province, ev.city")
+    List<Object[]> queryRewardLocationReport(@Param("markertingId") String marketingId);*/
 
     @Query("select o from #{#entityName} o where " +
             "(:orgId is null or :orgId = '' or o.orgId = :orgId) " +
