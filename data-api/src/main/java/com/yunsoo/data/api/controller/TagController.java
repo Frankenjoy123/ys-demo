@@ -1,6 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.TagObject;
+import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.TagEntity;
 import com.yunsoo.data.service.repository.TagRepository;
@@ -45,9 +46,20 @@ public class TagController {
                 .collect(Collectors.toList());
     }
 
+    private void checkTagNameExists(String name, String orgId) {
+        if (tagRepository.findByDeletedFalseAndNameAndOrgId(name, orgId).size() > 0) {
+            throw new ConflictException("This tag name already exists!");
+        }
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public TagObject create(@RequestBody @Valid TagObject object) {
+
+        if (object != null) {
+            checkTagNameExists(object.getName(), object.getOrgId());
+        }
+
         TagEntity entity = toTagEntity(object);
         entity.setId(null);
         if (entity.getCreatedDateTime() == null) {
@@ -62,6 +74,11 @@ public class TagController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void patchUpdate(@PathVariable("id") String id, @RequestBody TagObject object) {
+
+        if (object != null) {
+            checkTagNameExists(object.getName(), object.getOrgId());
+        }
+
         TagEntity entity = tagRepository.findOne(id);
         if (object.getName() != null) {
             entity.setName(object.getName());
