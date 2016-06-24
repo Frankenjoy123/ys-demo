@@ -6,7 +6,7 @@ import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.processor.domain.LogDomain;
 import com.yunsoo.processor.domain.ProductKeyDomain;
-import com.yunsoo.processor.sqs.MessageService;
+import com.yunsoo.processor.sqs.MessageSender;
 import com.yunsoo.processor.sqs.handler.MessageHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,7 +35,7 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<ProductKeyBa
     private ProductKeyDomain productKeyDomain;
 
     @Autowired
-    private MessageService messageService;
+    private MessageSender messageSender;
 
     @Autowired
     private LogDomain logDomain;
@@ -94,7 +94,7 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<ProductKeyBa
                         "seconds", (batchEndDateTime.getMillis() - startDateTime.getMillis()) / 1000.0));
 
                 message.setContinueOffset(toIndex);
-                messageService.sendMessage(message, DELAY_SECONDS); //send another new message with delay seconds
+                messageSender.sendMessage(message, DELAY_SECONDS); //send another new message with delay seconds
                 log.info("continuous message sent " + StringFormatter.formatMap("message", message));
                 return;
             }

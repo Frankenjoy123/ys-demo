@@ -20,6 +20,6 @@ public interface ProductPackageService {
 
     void save(ProductPackage productPackage);
 
-    void batchPackage(List<ProductPackage> packages);
+    int batchPackage(List<ProductPackage> packages);
 
 }

@@ -33,9 +33,9 @@ public class ProductPackageController {
     }
 
     @RequestMapping(value = "batch", method = RequestMethod.POST)
-    public void batchPackage(@RequestBody List<ProductPackageObject> packages) {
+    public int batchPackage(@RequestBody List<ProductPackageObject> packages) {
         List<ProductPackage> productPackages = packages.stream().map(ProductPackage::new).collect(Collectors.toList());
-        productPackageService.batchPackage(productPackages);
+        return productPackageService.batchPackage(productPackages);
     }
 
 }

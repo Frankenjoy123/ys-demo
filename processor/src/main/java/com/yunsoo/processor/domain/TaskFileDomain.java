@@ -36,6 +36,9 @@ public class TaskFileDomain {
 
 
     public TaskFileEntryObject getTaskFileEntryById(String fileId) {
+        if (fileId == null || fileId.length() == 0) {
+            return null;
+        }
         try {
             return dataAPIClient.get("taskFileEntry/{id}", TaskFileEntryObject.class, fileId);
         } catch (NotFoundException ignored) {

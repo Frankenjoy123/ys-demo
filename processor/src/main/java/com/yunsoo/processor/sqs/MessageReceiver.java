@@ -3,9 +3,11 @@ package com.yunsoo.processor.sqs;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.common.data.message.ProductKeyBatchCreateMessage;
+import com.yunsoo.common.data.message.ProductPackageMessage;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.processor.domain.LogDomain;
 import com.yunsoo.processor.sqs.handler.impl.ProductKeyBatchCreateHandler;
+import com.yunsoo.processor.sqs.handler.impl.ProductPackageHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +17,14 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by:   Lijian
- * Created on:   2016-04-26
+ * Created on:   2016-06-23
  * Descriptions:
  */
 @Service
-public class MessageService {
+public class MessageReceiver {
 
     private static final String HEADER_PAYLOAD_TYPE = "PayloadType";
     private static final String QUEUE_NAME_PROCESSOR = "processor";
@@ -36,8 +36,6 @@ public class MessageService {
     @Autowired
     private LogDomain logDomain;
 
-    @Autowired
-    private CustomQueueMessagingTemplate queueMessagingTemplate;
 
     @Autowired
     ResourceIdResolver resourceIdResolver;
@@ -45,34 +43,12 @@ public class MessageService {
     @Autowired
     private ProductKeyBatchCreateHandler productKeyBatchCreateHandler;
 
+    @Autowired
+    private ProductPackageHandler productPackageHandler;
 
-    public <T> void sendMessage(T message) {
-        String payloadType = getPayloadTypeByMessageType(message.getClass());
-        Map<String, Object> headers = new HashMap<>();
-        headers.put(HEADER_PAYLOAD_TYPE, payloadType);
-        queueMessagingTemplate.convertAndSend(QUEUE_NAME_PROCESSOR, message, headers);
-
-        log.info("message pushed to queue " + StringFormatter.formatMap(
-                "payloadType", payloadType,
-                "message", message,
-                "queueName", resourceIdResolver.resolveToPhysicalResourceId(QUEUE_NAME_PROCESSOR)));
-    }
-
-    public <T> void sendMessage(T message, long delaySeconds) {
-        String payloadType = getPayloadTypeByMessageType(message.getClass());
-        Map<String, Object> headers = new HashMap<>();
-        headers.put(HEADER_PAYLOAD_TYPE, payloadType);
-        queueMessagingTemplate.convertAndSend(QUEUE_NAME_PROCESSOR, message, headers, delaySeconds);
-
-        log.info("message pushed to queue " + StringFormatter.formatMap(
-                "payloadType", payloadType,
-                "message", message,
-                "delaySeconds", delaySeconds,
-                "queueName", resourceIdResolver.resolveToPhysicalResourceId(QUEUE_NAME_PROCESSOR)));
-    }
 
     @MessageMapping(QUEUE_NAME_PROCESSOR)
-    private void receiveAndProcessMessage(
+    public void receiveAndProcessMessage(
             String message,
             @Header(value = HEADER_PAYLOAD_TYPE, required = false) String payloadType) throws IOException {
 
@@ -83,25 +59,29 @@ public class MessageService {
 
         switch (payloadType) {
             case ProductKeyBatchCreateMessage.PAYLOAD_TYPE:
-                ProductKeyBatchCreateMessage messageObj = null;
+                ProductKeyBatchCreateMessage pkbMsg = null;
                 try {
-                    messageObj = parseMessage(message, ProductKeyBatchCreateMessage.class);
-                    productKeyBatchCreateHandler.process(messageObj);
+                    pkbMsg = parseMessage(message, ProductKeyBatchCreateMessage.class);
+                    productKeyBatchCreateHandler.process(pkbMsg);
                 } catch (Exception e) {
-                    logDomain.logError("product_key_batch_create", e.getMessage(), messageObj != null ? messageObj.getProductKeyBatchId() : null, "product_key_batch_id");
+                    log.error("product_key_batch_create failed with exception", e);
+                    logDomain.logError("product_key_batch_create", e.getMessage(), pkbMsg != null ? pkbMsg.getProductKeyBatchId() : null, "product_key_batch_id");
+                    throw e;
+                }
+                break;
+            case ProductPackageMessage.PAYLOAD_TYPE:
+                ProductPackageMessage ppMsg = null;
+                try {
+                    ppMsg = parseMessage(message, ProductPackageMessage.class);
+                    productPackageHandler.process(ppMsg);
+                } catch (Exception e) {
+                    log.error("product_package failed with exception", e);
+                    logDomain.logError("product_package", e.getMessage(), ppMsg != null ? ppMsg.getTaskFileId() : null, "task_file_id");
                     throw e;
                 }
                 break;
             default:
                 throw new RuntimeException("PayloadType invalid");
-        }
-    }
-
-    private String getPayloadTypeByMessageType(Class<?> messageType) {
-        if (messageType.isAssignableFrom(ProductKeyBatchCreateMessage.class)) {
-            return ProductKeyBatchCreateMessage.PAYLOAD_TYPE;
-        } else {
-            throw new RuntimeException("message type not recognized");
         }
     }
 
@@ -113,5 +93,4 @@ public class MessageService {
             throw new RuntimeException("message format issue");
         }
     }
-
 }

@@ -62,9 +62,10 @@ public class ProductPackageServiceImpl implements ProductPackageService {
     }
 
     @Override
-    public void batchPackage(List<ProductPackage> packages) {
+    public int batchPackage(List<ProductPackage> packages) {
+        int count = 0;
         if (packages == null || packages.size() == 0) {
-            return;
+            return count;
         }
 
         packages.stream().sorted((p1, p2) -> Long.compare(
@@ -73,10 +74,14 @@ public class ProductPackageServiceImpl implements ProductPackageService {
 
         Map<String, ProductPackageModel> cacheMap = new HashMap<>();
         for (ProductPackage p : packages) {
-            toProductPackageModels(p, cacheMap).values();
+            toProductPackageModels(p, cacheMap);
+            if (p != null && cacheMap.containsKey(p.getProductKey())) {
+                count++;
+            }
         }
 
         productPackageDao.batchSave(cacheMap.values());
+        return count;
     }
 
     private ProductPackageModel findByKey(String key) {
