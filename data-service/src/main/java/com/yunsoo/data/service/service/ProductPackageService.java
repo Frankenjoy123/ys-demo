@@ -1,9 +1,9 @@
 package com.yunsoo.data.service.service;
 
-import com.yunsoo.data.service.service.contract.PackageBoundContract;
-import com.yunsoo.data.service.service.contract.PackageContract;
+import com.yunsoo.data.service.service.contract.ProductPackage;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by:   Lijian
@@ -11,9 +11,15 @@ import java.util.List;
  * Descriptions:
  */
 public interface ProductPackageService {
-    PackageContract query(String key);
-    boolean bind(PackageBoundContract data);
-    boolean batchBind(PackageBoundContract[] dataArray);
-    boolean revoke(String key);
-    List<String> loadAllKeys(String key);
+
+    ProductPackage getByKey(String key);
+
+    Set<String> getAllChildProductKeySetByKey(String key);
+
+    void disable(String key);
+
+    void save(ProductPackage productPackage);
+
+    void batchPackage(List<ProductPackage> packages);
+
 }

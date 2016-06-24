@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -42,7 +43,7 @@ public class LogisticsPathController {
     public void create(@RequestBody LogisticsPathObject logisticsPathObject) {
         List<String> allKeys = new ArrayList<>();
         try {
-            List<String> itemKeys = packageService.loadAllKeys(logisticsPathObject.getProductKey());
+            Set<String> itemKeys = packageService.getAllChildProductKeySetByKey(logisticsPathObject.getProductKey());
             allKeys.addAll(allKeys.size(), itemKeys);
         } catch (IllegalArgumentException ex) {
             allKeys.add(logisticsPathObject.getProductKey());
@@ -63,7 +64,7 @@ public class LogisticsPathController {
             List<String> allKeys = new ArrayList<>();
             for (String key : logisticsBatchPathObject.getProductKeys()) {
                 try {
-                    List<String> itemKeys = packageService.loadAllKeys(key);
+                    Set<String> itemKeys = packageService.getAllChildProductKeySetByKey(key);
                     allKeys.addAll(allKeys.size(), itemKeys);
                 } catch (IllegalArgumentException ex) {
                     allKeys.add(key);
