@@ -111,8 +111,7 @@ public class ProductKey {
         if (productModel != null) {
             this.setProductKey(productModel.getProductKey());
             this.setProductKeyTypeCode(productModel.getProductKeyTypeCode());
-            Boolean isDisabled = productModel.getProductKeyDisabled();
-            this.setProductKeyDisabled(isDisabled != null && isDisabled);
+            this.setProductKeyDisabled(productModel.isProductKeyDisabled());
             this.setPrimary(productModel.isPrimary());
             this.setProductKeyBatchId(productModel.getProductKeyBatchId());
             this.setPrimaryProductKey(productModel.getPrimaryProductKey());

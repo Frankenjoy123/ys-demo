@@ -36,8 +36,8 @@ public class MarketWinUserLocationAnalysis {
 
     public MarketWinUserLocationAnalysis(MarketWinUserLocationAnalysisObject object) {
         if (object != null) {
-            this.setCount(object.getCount());
-            this.setProvince(object.getProvince());
+            this.setCount(object.getValue());
+            this.setProvince(object.getName());
         }
     }
 

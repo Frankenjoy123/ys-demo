@@ -39,9 +39,9 @@ public class TaskController {
         taskObject.setExecutor(task.getExecutor());
         taskObject.setEnabled(task.isEnabled());
         taskObject.setInterval(task.getInterval());
-        taskObject.setNextRunDatetime(task.getNextRunDatetime());
+        taskObject.setNextRunDateTime(task.getNextRunDateTime());
         taskObject.setLockedBy(task.getLockedBy());
-        taskObject.setStartRunDatetime(task.getStartRunDatetime());
+        taskObject.setStartRunDateTime(task.getStartRunDateTime());
         taskObject.setTimeoutDateTime(task.getTimeoutDateTime());
         taskObject.setLastRunBy(task.getLastRunBy());
         taskObject.setLastFinishedDateTime(task.getLastFinishedDateTime());

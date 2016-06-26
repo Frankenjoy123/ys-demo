@@ -22,13 +22,13 @@ public class Task {
 
     private String interval;
 
-    private DateTime nextRunDatetime;
+    private DateTime nextRunDateTime;
 
     private String parameters;
 
     private String lockedBy;
 
-    private DateTime startRunDatetime;
+    private DateTime startRunDateTime;
 
     private DateTime timeoutDateTime;
 
@@ -91,12 +91,12 @@ public class Task {
         this.interval = interval;
     }
 
-    public DateTime getNextRunDatetime() {
-        return nextRunDatetime;
+    public DateTime getNextRunDateTime() {
+        return nextRunDateTime;
     }
 
-    public void setNextRunDatetime(DateTime nextRunDatetime) {
-        this.nextRunDatetime = nextRunDatetime;
+    public void setNextRunDateTime(DateTime nextRunDateTime) {
+        this.nextRunDateTime = nextRunDateTime;
     }
 
     public String getParameters() {
@@ -115,12 +115,12 @@ public class Task {
         this.lockedBy = lockedBy;
     }
 
-    public DateTime getStartRunDatetime() {
-        return startRunDatetime;
+    public DateTime getStartRunDateTime() {
+        return startRunDateTime;
     }
 
-    public void setStartRunDatetime(DateTime startRunDatetime) {
-        this.startRunDatetime = startRunDatetime;
+    public void setStartRunDateTime(DateTime startRunDateTime) {
+        this.startRunDateTime = startRunDateTime;
     }
 
     public DateTime getTimeoutDateTime() {
@@ -182,10 +182,10 @@ public class Task {
             this.setExecutor(entity.getExecutor());
             this.setEnabled(entity.isEnabled());
             this.setInterval(entity.getInterval());
-            this.setNextRunDatetime(entity.getNextRunDatetime());
+            this.setNextRunDateTime(entity.getNextRunDateTime());
             this.setParameters(entity.getParameters());
             this.setLockedBy(entity.getLockedBy());
-            this.setStartRunDatetime(entity.getStartRunDatetime());
+            this.setStartRunDateTime(entity.getStartRunDateTime());
             this.setTimeoutDateTime(entity.getTimeoutDateTime());
             this.setLastRunBy(entity.getLastRunBy());
             this.setLastFinishedDateTime(entity.getLastFinishedDateTime());
@@ -203,10 +203,10 @@ public class Task {
         entity.setExecutor(this.getExecutor());
         entity.setEnabled(this.isEnabled());
         entity.setInterval(this.getInterval());
-        entity.setNextRunDatetime(this.getNextRunDatetime());
+        entity.setNextRunDateTime(this.getNextRunDateTime());
         entity.setParameters(this.getParameters());
         entity.setLockedBy(this.getLockedBy());
-        entity.setStartRunDatetime(this.getStartRunDatetime());
+        entity.setStartRunDateTime(this.getStartRunDateTime());
         entity.setTimeoutDateTime(this.getTimeoutDateTime());
         entity.setLastRunBy(this.getLastRunBy());
         entity.setLastFinishedDateTime(this.getLastFinishedDateTime());

@@ -2,8 +2,8 @@ package com.yunsoo.data.service.dao;
 
 import com.yunsoo.data.service.dbmodel.dynamodb.ProductPackageModel;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -15,13 +15,10 @@ public interface ProductPackageDao {
 
     ProductPackageModel getByKey(String key);
 
-    DaoStatus save(ProductPackageModel productKeyModel);
+    List<ProductPackageModel> batchLoad(Collection<String> keys);
 
-    DaoStatus update(ProductPackageModel productKeyModel);
-    
-    List<ProductPackageModel> batchLoad(Set<String> keys);
-    
-    DaoStatus batchSave(List<ProductPackageModel> packages);
-    
-            
+    void save(ProductPackageModel productPackage);
+
+    void batchSave(Collection<ProductPackageModel> productPackages);
+
 }

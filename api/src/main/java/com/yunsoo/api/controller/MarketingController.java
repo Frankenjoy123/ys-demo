@@ -9,6 +9,7 @@ import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -414,6 +415,74 @@ public class MarketingController {
             marketingDomain.updateMarketing(marketingObject);
         }
     }
+
+    //query marketing consumer right by org id
+    @RequestMapping(value = "consumer", method = RequestMethod.GET)
+    public List<MktConsumerRight> getMktConsumerRightByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                                              Pageable pageable,
+                                                              HttpServletResponse response) {
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<MktConsumerRightObject> mktConsumerRightPage = marketingDomain.getMktConsumerRightByOrgId(orgId, pageable);
+        if (pageable != null) {
+            response.setHeader("Content-Range", mktConsumerRightPage.toContentRange());
+        }
+
+        return mktConsumerRightPage.map(MktConsumerRight::new).getContent();
+    }
+
+    //create marketing consumer right
+    @RequestMapping(value = "consumer", method = RequestMethod.POST)
+    public MktConsumerRight createMktConsumerRight(@RequestBody MktConsumerRight mktConsumerRight) {
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
+        MktConsumerRightObject mktConsumerRightObject = mktConsumerRight.toMktConsumerRightObject();
+        mktConsumerRightObject.setCreatedAccountId(currentAccountId);
+        mktConsumerRightObject.setCreatedDateTime(DateTime.now());
+        mktConsumerRightObject.setStatusCode(LookupCodes.MktConsumerRightStatus.CREATED);
+        mktConsumerRightObject.setOrgId(AuthUtils.fixOrgId(mktConsumerRight.getOrgId()));
+
+        return new MktConsumerRight(marketingDomain.createMktConsumerRight(mktConsumerRightObject));
+    }
+
+    //query marketing consumer right by id
+    @RequestMapping(value = "consumer/{id}", method = RequestMethod.GET)
+    public MktConsumerRight getMktConsumerRightById(@PathVariable(value = "id") String id) {
+        MktConsumerRightObject mktConsumerRightObject = marketingDomain.getMktConsumerRightById(id);
+        if (mktConsumerRightObject == null) {
+            throw new NotFoundException("organization agency not found");
+        }
+        MktConsumerRight mktConsumerRight = new MktConsumerRight(mktConsumerRightObject);
+        return mktConsumerRight;
+    }
+
+
+    //update marketing consumer right
+    @RequestMapping(value = "consumer/{id}", method = RequestMethod.PUT)
+    public void updateMktConsumerRight(@PathVariable("id") String id, @RequestBody MktConsumerRight mktConsumerRight) {
+        MktConsumerRightObject mktConsumerRightObject = marketingDomain.getMktConsumerRightById(id);
+        if (mktConsumerRightObject != null) {
+            mktConsumerRightObject.setName(mktConsumerRight.getName());
+            mktConsumerRightObject.setTypeCode(mktConsumerRight.getTypeCode());
+            mktConsumerRightObject.setAmount(mktConsumerRight.getAmount());
+            mktConsumerRightObject.setComments(mktConsumerRight.getComments());
+            mktConsumerRightObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getOrgId());
+            mktConsumerRightObject.setModifiedDateTime(DateTime.now());
+            marketingDomain.updateMktConsumerRight(mktConsumerRightObject);
+        }
+    }
+
+    //delete marketing consumer right
+    @RequestMapping(value = "consumer/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMktConsumerRight(@PathVariable(value = "id") String id) {
+        MktConsumerRightObject mktConsumerRightObject = marketingDomain.getMktConsumerRightById(id);
+        if (mktConsumerRightObject != null) {
+            if (LookupCodes.OrgAgencyStatus.DELETED.equals(mktConsumerRightObject.getStatusCode())) {
+                throw new UnprocessableEntityException("illegal operation");
+            }
+            marketingDomain.deleteMktConsumerRight(id);
+        }
+    }
+
 
     @RequestMapping(value = "/totalcount", method = RequestMethod.GET)
     public Long countByOrgId(@RequestParam(value = "org_id", required = false) String orgId) {

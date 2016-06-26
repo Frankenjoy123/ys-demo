@@ -53,11 +53,6 @@ public class ProductModel {
         this.productKey = productKey;
     }
 
-    @DynamoDBIgnore
-    public boolean isPrimary() {
-        return primaryProductKey == null || primaryProductKey.equals(productKey);
-    }
-
     @DynamoDBAttribute(attributeName = "key_type_code") //product_key_type_code
     public String getProductKeyTypeCode() {
         return productKeyTypeCode;
@@ -103,17 +98,6 @@ public class ProductModel {
         this.productKeySet = productKeySet;
     }
 
-    @DynamoDBIgnore
-    public DateTime getCreatedDateTime() {
-        return createdDateTimeValue != null ? new DateTime(createdDateTimeValue) : null;
-    }
-
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        if (createdDateTime != null) {
-            this.createdDateTimeValue = createdDateTime.getMillis();
-        }
-    }
-
     @DynamoDBAttribute(attributeName = "created_dt") //created_datetime
     public Long getCreatedDateTimeValue() {
         return createdDateTimeValue;
@@ -122,7 +106,6 @@ public class ProductModel {
     public void setCreatedDateTimeValue(Long createdDateTimeValue) {
         this.createdDateTimeValue = createdDateTimeValue;
     }
-
 
     @DynamoDBAttribute(attributeName = "base_id") //product_base_id
     public String getProductBaseId() {
@@ -133,7 +116,6 @@ public class ProductModel {
         this.productBaseId = productBaseId;
     }
 
-
     @DynamoDBAttribute(attributeName = "status_code") //product_status_code
     public String getProductStatusCode() {
         return productStatusCode;
@@ -141,18 +123,6 @@ public class ProductModel {
 
     public void setProductStatusCode(String productStatusCode) {
         this.productStatusCode = productStatusCode;
-    }
-
-
-    @DynamoDBIgnore
-    public DateTime getManufacturingDateTime() {
-        return manufacturingDateTimeValue != null ? new DateTime(manufacturingDateTimeValue) : null;
-    }
-
-    public void setManufacturingDateTime(DateTime manufacturingDateTime) {
-        if (manufacturingDateTime != null) {
-            this.manufacturingDateTimeValue = manufacturingDateTime.getMillis();
-        }
     }
 
     @DynamoDBAttribute(attributeName = "mfg_dt") //manufacturing_datetime
@@ -173,4 +143,36 @@ public class ProductModel {
         this.details = details;
     }
 
+
+    @DynamoDBIgnore
+    public boolean isPrimary() {
+        return primaryProductKey == null || primaryProductKey.equals(productKey);
+    }
+
+    @DynamoDBIgnore
+    public boolean isProductKeyDisabled() {
+        return this.productKeyDisabled != null && this.productKeyDisabled;
+    }
+
+    @DynamoDBIgnore
+    public DateTime getCreatedDateTime() {
+        return createdDateTimeValue != null ? new DateTime(createdDateTimeValue) : null;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        if (createdDateTime != null) {
+            this.createdDateTimeValue = createdDateTime.getMillis();
+        }
+    }
+
+    @DynamoDBIgnore
+    public DateTime getManufacturingDateTime() {
+        return manufacturingDateTimeValue != null ? new DateTime(manufacturingDateTimeValue) : null;
+    }
+
+    public void setManufacturingDateTime(DateTime manufacturingDateTime) {
+        if (manufacturingDateTime != null) {
+            this.manufacturingDateTimeValue = manufacturingDateTime.getMillis();
+        }
+    }
 }
