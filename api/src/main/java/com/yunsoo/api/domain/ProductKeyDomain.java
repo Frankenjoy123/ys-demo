@@ -291,6 +291,7 @@ public class ProductKeyDomain {
         batch.setCreatedAccountId(object.getCreatedAccountId());
         batch.setCreatedDateTime(object.getCreatedDateTime());
         batch.setMarketingId(object.getMarketingId());
+        batch.setDownloadNo(object.getDownloadNo());
         return batch;
     }
 

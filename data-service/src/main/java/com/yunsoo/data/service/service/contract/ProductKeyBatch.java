@@ -22,6 +22,7 @@ public class ProductKeyBatch {
     private DateTime createdDateTime;
     private List<String> productKeyTypeCodes;
     private String marketingId;
+    private Integer downloadNo;
 
 
     public String getId() {
@@ -110,5 +111,13 @@ public class ProductKeyBatch {
 
     public void setMarketingId(String marketingId) {
         this.marketingId = marketingId;
+    }
+
+    public Integer getDownloadNo() {
+        return downloadNo;
+    }
+
+    public void setDownloadNo(Integer downloadNo) {
+        this.downloadNo = downloadNo;
     }
 }

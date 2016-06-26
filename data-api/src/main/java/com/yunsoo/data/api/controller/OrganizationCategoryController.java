@@ -63,7 +63,9 @@ public class OrganizationCategoryController {
         OrganizationCategoryEntity entity = repository.findOne(id);
         if(entity == null)
             throw new NotFoundException("product category not found with id:" + id);
-        if(entity.getName().equals(categoryObject.getName().trim()))
+
+        List<OrganizationCategoryEntity> existEntity = repository.findByOrgIdAndName(categoryObject.getOrgId(), categoryObject.getName().trim());
+        if(existEntity.size() == 1 && !existEntity.get(0).getId().equals(entity.getId()))
             throw new ConflictException("same name exist for org category: " + categoryObject.getName());
 
         categoryObject.setName(categoryObject.getName().trim());

@@ -59,6 +59,9 @@ public class ProductKeyBatch implements OrgIdDetectable {
     @JsonProperty("marketing_id")
     private String marketingId;
 
+    @JsonProperty("download_no")
+    private Integer downloadNo;
+
     public String getId() {
         return id;
     }
@@ -163,6 +166,14 @@ public class ProductKeyBatch implements OrgIdDetectable {
         this.marketingId = marketingId;
     }
 
+    public Integer getDownloadNo() {
+        return downloadNo;
+    }
+
+    public void setDownloadNo(Integer downloadNo) {
+        this.downloadNo = downloadNo;
+    }
+
     public ProductKeyBatch() {
     }
 
@@ -179,6 +190,7 @@ public class ProductKeyBatch implements OrgIdDetectable {
             this.setCreatedAccountId(object.getCreatedAccountId());
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setMarketingId(object.getMarketingId());
+            this.setDownloadNo(object.getDownloadNo());
         }
     }
 }

@@ -259,6 +259,7 @@ public class ProductKeyBatchController {
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setMarketingId(entity.getMarketingId());
+        object.setDownloadNo(entity.getDownloadNo());
         return object;
     }
 
@@ -278,6 +279,7 @@ public class ProductKeyBatchController {
         batch.setCreatedDateTime(batchObj.getCreatedDateTime());
         batch.setProductKeyTypeCodes(batchObj.getProductKeyTypeCodes());
         batch.setMarketingId(batchObj.getMarketingId());
+        batch.setDownloadNo(batchObj.getDownloadNo());
         return batch;
     }
 

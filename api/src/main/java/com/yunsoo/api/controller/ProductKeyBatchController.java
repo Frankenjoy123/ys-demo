@@ -1,10 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
-import com.yunsoo.api.domain.FileDomain;
-import com.yunsoo.api.domain.MarketingDomain;
-import com.yunsoo.api.domain.ProductBaseDomain;
-import com.yunsoo.api.domain.ProductKeyDomain;
+import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.MarketingObject;
@@ -39,6 +36,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -64,6 +62,9 @@ public class ProductKeyBatchController {
     @Autowired
     private FileDomain fileDomain;
 
+    @Autowired
+    private OrganizationConfigDomain orgConfigDomain;
+
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'product_key_batch:read')")
@@ -81,9 +82,22 @@ public class ProductKeyBatchController {
         if (batch == null) {
             throw new NotFoundException("product key batch not found " + StringFormatter.formatMap("id", id));
         }
+
         AuthUtils.checkPermission(batch.getOrgId(), "product_key_batch", "read");
 
+        Map<String, Object> configMap = orgConfigDomain.getConfig(batch.getOrgId(), false, null);
+        int downloadNo = (int)configMap.get("enterprise.download_no");
+        if(downloadNo <= batch.getDownloadNo())
+            throw new BadRequestException("the download number exceed the max download");
+
+
         byte[] data = productKeyDomain.getProductKeysByBatchId(id);
+
+        ProductKeyBatchObject productKeyBatchObject = new ProductKeyBatchObject();
+        productKeyBatchObject.setDownloadNo(batch.getDownloadNo() + 1);
+        productKeyBatchObject.setId(batch.getId());
+        productKeyDomain.patchUpdateProductKeyBatch(productKeyBatchObject);
+
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/vnd+ys.txt"))
                 .contentLength(data.length)

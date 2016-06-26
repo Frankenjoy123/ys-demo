@@ -65,6 +65,18 @@ public class UserController {
         return new User(savedUser);
     }
 
+    @RequestMapping(method = RequestMethod.PUT)
+    public User updateUser(@RequestParam(value = "updated", required = false) boolean updated, @RequestBody User user) {
+        User existingUser = getUserByOAuthId(user.getOauthOpenid(), user.getOauthTypeCode());
+        if(existingUser == null)
+            existingUser = create(user);
+        else if (updated) {
+            patchUpdateUser(user.getId(), user);
+            existingUser = user;
+        }
+        return existingUser;
+    }
+
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void patchUpdateUser(@PathVariable(value = "id") String userId,
                                 @RequestBody User user) {

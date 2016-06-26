@@ -58,6 +58,7 @@ public class TokenAuthenticationSecurityConfig extends WebSecurityConfigurerAdap
                 .antMatchers(HttpMethod.GET, "/user/*/gravatar").permitAll()
                 .antMatchers(HttpMethod.GET, "/user/oauth/*").permitAll()
                 .antMatchers(HttpMethod.POST, "/user").permitAll()
+                .antMatchers(HttpMethod.PUT, "/user").permitAll()
                 .antMatchers(HttpMethod.PATCH, "/user/*").permitAll()
                 .antMatchers("/v2/api-docs").permitAll()
                 .antMatchers("/configuration/ui").permitAll()
