@@ -36,7 +36,7 @@ public class ProductPackageHandler implements MessageHandler<ProductPackageMessa
     private static final int TIMEOUT_SECONDS = 600;
     private static final long DELAY_SECONDS = 60;
 
-    private static final Pattern REGEXP_DATETIME_PREFIX = Pattern.compile("^\\d\\d\\d\\d\\-[01]\\d\\-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d\\.\\d\\d\\dZ");
+    private static final Pattern REGEXP_DATETIME_PREFIX = Pattern.compile("^\\d\\d\\d\\d\\-[01]\\d\\-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d\\.\\d\\d\\dZ.*");
 
     private Log log = LogFactory.getLog(this.getClass());
 
@@ -152,7 +152,7 @@ public class ProductPackageHandler implements MessageHandler<ProductPackageMessa
     private int parseLines(List<String> lines, int index, int keyLimit, List<ProductPackageObject> resultPackages) {
         int i = index, size = lines.size(), keyCount = 0;
         for (; i < size; i++) {
-            ProductPackageObject obj = parseLine(lines.get(i));
+            ProductPackageObject obj = parseLine(lines.get(i), i);
             if (obj != null) {
                 if (obj.getParentProductKey() != null) keyCount += 1;
                 if (obj.getChildProductKeySet() != null) keyCount += obj.getChildProductKeySet().size();
@@ -166,7 +166,7 @@ public class ProductPackageHandler implements MessageHandler<ProductPackageMessa
     }
 
     //2016-06-20T12:13:14.123Z key:ckey,ckey,ckey
-    private ProductPackageObject parseLine(String line) {
+    private ProductPackageObject parseLine(String line, int lineNum) {
         line = line != null ? line.trim() : null;
         if (line == null || line.length() == 0) {
             return null;
@@ -189,6 +189,6 @@ public class ProductPackageHandler implements MessageHandler<ProductPackageMessa
                 return obj;
             }
         }
-        return null;
+        throw new RuntimeException("parse line failed at line " + lineNum + ": " + line);
     }
 }

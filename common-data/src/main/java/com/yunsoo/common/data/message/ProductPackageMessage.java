@@ -1,6 +1,7 @@
 package com.yunsoo.common.data.message;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yunsoo.common.util.StringFormatter;
 
 import java.io.Serializable;
 
@@ -44,5 +45,13 @@ public class ProductPackageMessage implements Serializable {
 
     public void setTotalTime(Long totalTime) {
         this.totalTime = totalTime;
+    }
+
+    @Override
+    public String toString() {
+        return StringFormatter.formatMap(
+                "taskFileId", taskFileId,
+                "continueOffset", continueOffset,
+                "totalTime", totalTime);
     }
 }
