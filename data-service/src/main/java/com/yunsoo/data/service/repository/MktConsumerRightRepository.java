@@ -15,4 +15,7 @@ public interface MktConsumerRightRepository extends FindOneAndSaveRepository<Mkt
 
     Page<MktConsumerRightEntity> findByOrgIdAndStatusCode(String orgId, String statusCode, Pageable pageable);
 
+    Page<MktConsumerRightEntity> findByOrgIdAndStatusCodeAndTypeCode(String orgId, String statusCode, String typeCode, Pageable pageable);
+
+
 }
