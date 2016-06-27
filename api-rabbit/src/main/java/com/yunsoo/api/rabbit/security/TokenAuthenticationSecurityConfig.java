@@ -51,6 +51,7 @@ public class TokenAuthenticationSecurityConfig extends WebSecurityConfigurerAdap
                 .antMatchers("/organization/**").permitAll()
                 .antMatchers("/productbase/**").permitAll()
                 .antMatchers("/scan/**").permitAll()
+                .antMatchers("/user/event/**").permitAll()
                 .antMatchers("/productwarranty/**").permitAll()
                 .antMatchers("/productcommentsweb/**").permitAll()
                 .antMatchers("/webScan/**").permitAll()
