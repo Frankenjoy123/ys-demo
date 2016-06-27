@@ -5,8 +5,10 @@ import com.yunsoo.api.rabbit.dto.UserEvent;
 import com.yunsoo.common.data.object.UserEventObject;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Created by Admin on 6/27/2016.
@@ -19,7 +21,6 @@ public class UserEventController {
     private UserEventDomain userEventDomain;
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
     public UserEvent create(@RequestBody UserEvent userEvent) {
 
         UserEventObject userEventObject = new UserEventObject();
