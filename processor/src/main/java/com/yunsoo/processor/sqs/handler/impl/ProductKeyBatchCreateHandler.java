@@ -104,7 +104,7 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<ProductKeyBa
         productKeyDomain.updateProductKeyBatchStatus(productKeyBatchId, LookupCodes.ProductKeyBatchStatus.AVAILABLE);
 
         DateTime endDateTime = DateTime.now();
-        logDomain.logInfo("product_key_batch_create",
+        logDomain.logInfo(ProductKeyBatchCreateMessage.PAYLOAD_TYPE,
                 "finished " + StringFormatter.formatMap("totalSeconds", (endDateTime.getMillis() - productKeyBatchObject.getCreatedDateTime().getMillis()) / 1000.0),
                 productKeyBatchId,
                 "product_key_batch_id");

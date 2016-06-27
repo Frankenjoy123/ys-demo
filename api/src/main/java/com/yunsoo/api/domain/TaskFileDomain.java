@@ -30,7 +30,7 @@ import java.util.List;
 @Component
 public class TaskFileDomain {
 
-    private static final String[] FILE_TYPE_ARRAY = new String[]{"package", "logistics"};
+    private static final String[] FILE_TYPE_ARRAY = new String[]{LookupCodes.TaskFileType.PACKAGE, LookupCodes.TaskFileType.TRACE};
 
     @Autowired
     private DataAPIClient dataAPIClient;

@@ -65,7 +65,7 @@ public class MessageReceiver {
                     productKeyBatchCreateHandler.process(pkbMsg);
                 } catch (Exception e) {
                     log.error("product_key_batch_create failed with exception", e);
-                    logDomain.logError("product_key_batch_create", e.getMessage(), pkbMsg != null ? pkbMsg.getProductKeyBatchId() : null, "product_key_batch_id");
+                    logDomain.logError(ProductKeyBatchCreateMessage.PAYLOAD_TYPE, e.getMessage(), pkbMsg != null ? pkbMsg.getProductKeyBatchId() : null, "product_key_batch_id");
                     throw e;
                 }
                 break;
@@ -76,7 +76,7 @@ public class MessageReceiver {
                     productPackageHandler.process(ppMsg);
                 } catch (Exception e) {
                     log.error("product_package failed with exception", e);
-                    logDomain.logError("product_package", e.getMessage(), ppMsg != null ? ppMsg.getTaskFileId() : null, "task_file_id");
+                    logDomain.logError(ProductPackageMessage.PAYLOAD_TYPE, e.getMessage(), ppMsg != null ? ppMsg.getTaskFileId() : null, "task_file_id");
                     throw e;
                 }
                 break;
