@@ -114,7 +114,7 @@ public class ProductKeyBatch {
     }
 
     public Integer getDownloadNo() {
-        return downloadNo;
+        return downloadNo == null ? 0 : downloadNo;
     }
 
     public void setDownloadNo(Integer downloadNo) {
