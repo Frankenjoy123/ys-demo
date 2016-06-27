@@ -138,6 +138,7 @@ public class MarketingController {
     //query marketing plan, provide API
     @RequestMapping(value = "consumer", method = RequestMethod.GET)
     public List<MktConsumerRightObject> getConsumerRightByFilter(@RequestParam(value = "org_id") String orgId,
+                                                                 @RequestParam(value = "type_code", required = false) String typeCode,
                                                                  Pageable pageable,
                                                                  HttpServletResponse response) {
 
@@ -147,7 +148,12 @@ public class MarketingController {
             throw new BadRequestException("org id is required");
         }
 
-        entityPage = mktConsumerRightRepository.findByOrgIdAndStatusCode(orgId, LookupCodes.MktConsumerRightStatus.CREATED, pageable);
+        if (typeCode != null) {
+            entityPage = mktConsumerRightRepository.findByOrgIdAndStatusCodeAndTypeCode(orgId, LookupCodes.MktConsumerRightStatus.CREATED, typeCode, pageable);
+        } else {
+
+            entityPage = mktConsumerRightRepository.findByOrgIdAndStatusCode(orgId, LookupCodes.MktConsumerRightStatus.CREATED, pageable);
+        }
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));

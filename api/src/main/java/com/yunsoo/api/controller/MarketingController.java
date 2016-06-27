@@ -419,10 +419,11 @@ public class MarketingController {
     //query marketing consumer right by org id
     @RequestMapping(value = "consumer", method = RequestMethod.GET)
     public List<MktConsumerRight> getMktConsumerRightByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+                                                              @RequestParam(value = "type_code", required = false) String typeCode,
                                                               Pageable pageable,
                                                               HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<MktConsumerRightObject> mktConsumerRightPage = marketingDomain.getMktConsumerRightByOrgId(orgId, pageable);
+        Page<MktConsumerRightObject> mktConsumerRightPage = marketingDomain.getMktConsumerRightByOrgId(orgId, typeCode, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", mktConsumerRightPage.toContentRange());
         }

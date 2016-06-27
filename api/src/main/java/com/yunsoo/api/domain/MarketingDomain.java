@@ -124,9 +124,9 @@ public class MarketingDomain {
         return dataAPIClient.post("marketing", marketingObject, MarketingObject.class);
     }
 
-    public Page<MktConsumerRightObject> getMktConsumerRightByOrgId(String orgId, Pageable pageable) {
+    public Page<MktConsumerRightObject> getMktConsumerRightByOrgId(String orgId, String typeCode, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId).append(pageable)
+                .append("org_id", orgId).append("type_code", typeCode).append(pageable)
                 .build();
 
         return dataAPIClient.getPaged("marketing/consumer" + query, new ParameterizedTypeReference<List<MktConsumerRightObject>>() {
