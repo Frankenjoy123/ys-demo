@@ -1,6 +1,5 @@
 package com.yunsoo.processor.domain;
 
-import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.TaskFileEntryObject;
 import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.util.StringFormatter;
@@ -71,9 +70,9 @@ public class TaskFileDomain {
         });
     }
 
-    public void updateStatusToFinished(String fileId) {
+    public void updateTaskFileEntryStatus(String fileId, String statusCode) {
         try {
-            dataAPIClient.put("taskFileEntry/{id}/statusCode", LookupCodes.TaskFileStatus.FINISHED, fileId);
+            dataAPIClient.put("taskFileEntry/{id}/statusCode", statusCode, fileId);
         } catch (Exception e) {
             log.error("update statusCode failed for taskFileEntry " + StringFormatter.formatMap("fileId", fileId));
         }
