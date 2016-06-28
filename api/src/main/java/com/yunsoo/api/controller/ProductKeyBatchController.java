@@ -89,7 +89,7 @@ public class ProductKeyBatchController {
         int downloadNo = (int)configMap.get("enterprise.download_no");
         if(downloadNo <= batch.getDownloadNo())
             throw new BadRequestException("the download number exceed the max download");
-
+        String downloadFileFormat = configMap.get("enterprise.product_key.format").toString();
 
         byte[] data = productKeyDomain.getProductKeysByBatchId(id);
 
@@ -99,9 +99,9 @@ public class ProductKeyBatchController {
         productKeyDomain.patchUpdateProductKeyBatch(productKeyBatchObject);
 
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/vnd+ys.txt"))
+                .contentType(MediaType.parseMediaType("application/vnd+ys." + downloadFileFormat))
                 .contentLength(data.length)
-                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + ".txt\"")
+                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + "." + downloadFileFormat + "\"")
                 .body(new InputStreamResource(new ByteArrayInputStream(data)));
     }
 

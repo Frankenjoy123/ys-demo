@@ -22,6 +22,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -79,6 +80,11 @@ public class OrganizationDomain {
         OrganizationObject org = getOrganizationById(id);
         org.setStatusCode(status);
         dataAPIClient.put("organization/{id}", org, id);
+    }
+
+    @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
+    public void patchBrand(String id, BrandObject brand) {
+        dataAPIClient.patch("organization/brand/{id}", brand, id);
     }
 
     public OrganizationObject getOrganizationByName(String name) {
@@ -194,5 +200,16 @@ public class OrganizationDomain {
 
     }
 
+
+    public void saveWebChatKey(String orgId, MultipartFile file) {
+        String s3FileName = "organization/{orgId}/webchat/" + file.getOriginalFilename();
+        try {
+            ResourceInputStream stream = new ResourceInputStream(file.getInputStream(), file.getSize(), file.getContentType());
+            dataAPIClient.put("file/s3?path=" + s3FileName, stream, orgId);
+        }
+        catch (IOException e) {
+            throw new InternalServerErrorException("webchat key upload failed for organization: " + orgId);
+        }
+    }
 
 }
