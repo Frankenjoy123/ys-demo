@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.config;
 
 import com.yunsoo.api.rabbit.client.DataAPIClient;
+import com.yunsoo.api.rabbit.client.WXAPIClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,11 @@ public class ClientConfiguration {
     @Bean
     public DataAPIClient dataAPIClient() {
         return new DataAPIClient(formatBaseUrl(dataAPIBaseUrl));
+    }
+
+    @Bean
+    public WXAPIClient wxAPIClient() {
+        return new WXAPIClient(formatBaseUrl("https://api.weixin.qq.com/cgi-bin"));
     }
 
     private String formatBaseUrl(String baseUrl) {
