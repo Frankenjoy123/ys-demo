@@ -12,7 +12,6 @@ import com.yunsoo.processor.task.executor.TaskExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -61,8 +60,8 @@ public class TaskFileEntryManageTaskExecutor implements TaskExecutor {
 
     private List<TaskFileEntryObject> getTaskFileEntries() {
         String typeCode = LookupCodes.TaskFileType.PACKAGE;
-        List<String> statusCodes = Arrays.asList(LookupCodes.TaskFileStatus.UPLOADED, LookupCodes.TaskFileStatus.PROCESSING);
-        Page<TaskFileEntryObject> page = taskFileDomain.getTaskFileEntryByFilter(null, null, null, typeCode, statusCodes, null, null, null, new PageRequest(0, 2));
+        List<String> statusCodes = Arrays.asList(LookupCodes.TaskFileStatus.UPLOADED);
+        Page<TaskFileEntryObject> page = taskFileDomain.getTaskFileEntryByFilter(null, null, null, typeCode, statusCodes, null, null, null, null);
         return page.getContent();
     }
 }
