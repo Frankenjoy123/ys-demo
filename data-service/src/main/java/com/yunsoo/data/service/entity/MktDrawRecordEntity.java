@@ -45,6 +45,9 @@ public class MktDrawRecordEntity {
     @Column(name = "isPrized")
     private Boolean isPrized;
 
+    @Column(name = "oauth_openid")
+    private String oauthOpenid;
+
     public String getId() {
         return id;
     }
@@ -115,5 +118,13 @@ public class MktDrawRecordEntity {
 
     public void setIsPrized(Boolean isPrized) {
         this.isPrized = isPrized;
+    }
+
+    public String getOauthOpenid() {
+        return oauthOpenid;
+    }
+
+    public void setOauthOpenid(String oauthOpenid) {
+        this.oauthOpenid = oauthOpenid;
     }
 }

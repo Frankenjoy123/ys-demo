@@ -133,9 +133,8 @@ public class OrganizationConfigDomain {
         if (sourceItems != null) {
             sourceItems.keySet().forEach(k -> {
                 OrganizationConfigObject.Item item = sourceItems.get(k);
-                if (item != null && ("public".equals(item.getAccess()) || "protected".equals(item.getAccess()))) {
-                    targetItems.put(k, item);
-                }
+                if (item != null && (targetItems.get(k) == null ||!("public".equals(item.getAccess()) || "protected".equals(item.getAccess()))))
+                        targetItems.put(k, item);
             });
         }
     }

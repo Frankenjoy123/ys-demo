@@ -679,6 +679,7 @@ public class MarketingController {
         object.setUserId(entity.getUserId());
         object.setIsPrized(entity.getIsPrized());
         object.setYsid(entity.getYsid());
+        object.setOauthOpenid(entity.getOauthOpenid());
         return object;
     }
 
@@ -788,6 +789,7 @@ public class MarketingController {
         entity.setUserId(object.getUserId());
         entity.setIsPrized(object.getIsPrized());
         entity.setYsid(object.getYsid());
+        entity.setOauthOpenid(object.getOauthOpenid());
         return entity;
     }
 

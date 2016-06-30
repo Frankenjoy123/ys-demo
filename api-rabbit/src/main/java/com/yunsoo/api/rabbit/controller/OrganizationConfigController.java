@@ -35,12 +35,18 @@ public class OrganizationConfigController {
     @Autowired
     private OrganizationConfigDomain organizationConfigDomain;
 
-    @RequestMapping(value = "config/{key}", method = RequestMethod.GET)
-    public Map<String, Object> getPublicConfig(@PathVariable("key") String key) {
+    @RequestMapping(value = "config/key/{key}", method = RequestMethod.GET)
+    public Map<String, Object> getOrgConfigByKey(@PathVariable("key") String key) {
         ProductObject productObject = getProductByKey(key);
         ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
-        return organizationConfigDomain.getConfig(productBaseObject.getOrgId(), true);
+        return organizationConfigDomain.getConfig(productBaseObject.getOrgId(), false);
     }
+
+    @RequestMapping(value = "config/{id}", method = RequestMethod.GET)
+    public Map<String, Object> getOrgConfig(@PathVariable("id") String id) {
+        return organizationConfigDomain.getConfig(id, false);
+    }
+
 
     private ProductObject getProductByKey(String key) {
         if (!KeyGenerator.validate(key)) {

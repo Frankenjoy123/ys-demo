@@ -272,10 +272,21 @@ public class OrganizationController {
 
     @RequestMapping(value = "{id}/webchatKeys", method = RequestMethod.POST)
     @PreAuthorize("hasPermission(#orgId, 'org', 'organization_config:write')")
-    public void saveWebChatKeys(@PathVariable("id")String orgId, @RequestParam("file") MultipartFile keyFile) {
+    public void saveWebChatKeys(@PathVariable("id")String orgId, @RequestParam("file") MultipartFile keyFile, @RequestParam("type") String fileType) {
         if (keyFile == null)
             throw new NotFoundException("no file uploaded!");
-        organizationDomain.saveWebChatKey(orgId, keyFile);
+        String fileName = keyFile.getOriginalFilename();
+        switch (fileType){
+            case "key":
+                fileName="apiclient_key.pem";
+                break;
+            case "cert":
+                fileName="apiclient_cert.pem";
+                break;
+            default:
+                break;
+        }
+        organizationDomain.saveWebChatKey(orgId, keyFile, fileName);
     }
 
 }

@@ -42,6 +42,9 @@ public class MktDrawRecordObject {
     @JsonProperty("isPrized")
     private Boolean isPrized;
 
+    @JsonProperty("oauth_openid")
+    private String oauthOpenid;
+
     public String getId() {
         return id;
     }
@@ -112,5 +115,13 @@ public class MktDrawRecordObject {
 
     public void setIsPrized(Boolean isPrized) {
         this.isPrized = isPrized;
+    }
+
+    public String getOauthOpenid() {
+        return oauthOpenid;
+    }
+
+    public void setOauthOpenid(String oauthOpenid) {
+        this.oauthOpenid = oauthOpenid;
     }
 }

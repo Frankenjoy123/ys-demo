@@ -71,6 +71,7 @@ public class UserController {
         if(existingUser == null)
             existingUser = create(user);
         else if (updated) {
+            user.setId(existingUser.getId());
             patchUpdateUser(user.getId(), user);
             existingUser = user;
         }

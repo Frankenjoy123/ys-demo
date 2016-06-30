@@ -43,6 +43,17 @@ public class MktDrawRecord {
     @JsonProperty("isPrized")
     private Boolean isPrized;
 
+    @JsonProperty("oauth_openid")
+    private String oauthOpenid;
+
+    public String getOauthOpenid() {
+        return oauthOpenid;
+    }
+
+    public void setOauthOpenid(String oauthOpenid) {
+        this.oauthOpenid = oauthOpenid;
+    }
+
     public String getId() {
         return id;
     }
@@ -128,6 +139,7 @@ public class MktDrawRecord {
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setUserId(object.getUserId());
             this.setIsPrized(object.getIsPrized());
+            this.setOauthOpenid(object.getOauthOpenid());
         }
     }
 
@@ -142,6 +154,7 @@ public class MktDrawRecord {
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setUserId(this.getUserId());
         object.setIsPrized(this.getIsPrized());
+        object.setOauthOpenid(this.getOauthOpenid());
         return object;
     }
 

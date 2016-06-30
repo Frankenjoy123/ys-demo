@@ -201,8 +201,8 @@ public class OrganizationDomain {
     }
 
 
-    public void saveWebChatKey(String orgId, MultipartFile file) {
-        String s3FileName = "organization/{orgId}/webchat/" + file.getOriginalFilename();
+    public void saveWebChatKey(String orgId, MultipartFile file, String fileName) {
+        String s3FileName = "organization/{orgId}/webchat/" + fileName;
         try {
             ResourceInputStream stream = new ResourceInputStream(file.getInputStream(), file.getSize(), file.getContentType());
             dataAPIClient.put("file/s3?path=" + s3FileName, stream, orgId);
