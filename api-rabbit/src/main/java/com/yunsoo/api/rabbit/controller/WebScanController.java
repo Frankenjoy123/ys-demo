@@ -3,6 +3,7 @@ package com.yunsoo.api.rabbit.controller;
 import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.domain.*;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
+import com.yunsoo.api.rabbit.dto.UserAccessToken;
 import com.yunsoo.api.rabbit.dto.WebScanRequest;
 import com.yunsoo.api.rabbit.dto.WebScanResponse;
 import com.yunsoo.api.rabbit.util.IpUtils;
@@ -53,6 +54,9 @@ public class WebScanController {
     @Autowired
     private UserBlockDomain userBlockDomain;
 
+    @Autowired
+    private UserAccessTokenDomain userAccessTokenDomain;
+
     //region 一物一码
 
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
@@ -80,6 +84,9 @@ public class WebScanController {
 
         //security info
         webScanResponse.setSecurity(getSecurityInfo(productObject));
+
+        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject(productKeyBatchObject.getOrgId());
+        webScanResponse.setUserAccessToken(new UserAccessToken(userAccessTokenObject));
 
         return webScanResponse;
     }
