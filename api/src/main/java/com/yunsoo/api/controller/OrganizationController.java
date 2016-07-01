@@ -151,7 +151,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "/brand/{id}", method = RequestMethod.GET)
-    public Brand getBrandById(@PathVariable(value = "id") String id) {
+    public Brand getBrandById(@PathVariable(value = "id") String id, @RequestParam(value="carrier_info", required = false) boolean includeCarrier) {
         BrandObject object = organizationDomain.getBrandById(id);
         if (object == null) {
             throw new NotFoundException("Brand not found by [id: " + id + "]");
@@ -163,8 +163,15 @@ public class OrganizationController {
             List<AttachmentObject> attachmentObjectList = brandDomain.getAttachmentList(object.getAttachment());
             returnObject.setAttachmentList(attachmentObjectList.stream().map(Attachment::new).collect(Collectors.toList()));
         }
+
+        if(includeCarrier)
+            returnObject.setCarrier(getById(returnObject.getCarrierId()));
+
         return returnObject;
     }
+
+
+
     @RequestMapping(value = "/{id}/brand/count", method = RequestMethod.GET)
     public int countBrand(@PathVariable(value = "id") String id){
         return organizationDomain.countBrand(id, null);

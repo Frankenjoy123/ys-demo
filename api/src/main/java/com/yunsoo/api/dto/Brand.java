@@ -74,6 +74,17 @@ public class Brand extends Organization {
     @JsonProperty("category_id")
     private String categoryId;
 
+    @JsonProperty("carrier")
+    private Organization carrier;
+
+    public Organization getCarrier() {
+        return carrier;
+    }
+
+    public void setCarrier(Organization carrier) {
+        this.carrier = carrier;
+    }
+
     public String getCategoryId() {
         return categoryId;
     }
