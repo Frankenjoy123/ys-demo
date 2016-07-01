@@ -26,6 +26,9 @@ public class UserAccessToken {
     @JsonProperty("jsapi_ticket")
     private String jsapiTicket;
 
+    @JsonProperty("app_id")
+    private String appId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
@@ -35,6 +38,14 @@ public class UserAccessToken {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("expired_datetime")
     private DateTime expiredDatetime;
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
 
     public String getId() {
         return id;

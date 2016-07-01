@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by:   Lijian
@@ -57,6 +58,9 @@ public class WebScanController {
     @Autowired
     private UserAccessTokenDomain userAccessTokenDomain;
 
+    @Autowired
+    private OrganizationConfigDomain organizationConfigDomain;
+
     //region 一物一码
 
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
@@ -85,8 +89,15 @@ public class WebScanController {
         //security info
         webScanResponse.setSecurity(getSecurityInfo(productObject));
 
-        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject(productKeyBatchObject.getOrgId());
-        webScanResponse.setUserAccessToken(new UserAccessToken(userAccessTokenObject));
+        Map<String, Object> config = organizationConfigDomain.getConfig(productKeyBatchObject.getOrgId(), false);
+        String appId = config.get("webchat.app_id").toString();
+        String secret = config.get("webchat.app_secret").toString();
+
+        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject(productKeyBatchObject.getOrgId(), appId, secret);
+        UserAccessToken userAccessToken = new UserAccessToken(userAccessTokenObject);
+        userAccessToken.setAppId(appId);
+
+        webScanResponse.setUserAccessToken(userAccessToken);
 
         return webScanResponse;
     }
