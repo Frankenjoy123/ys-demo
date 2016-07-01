@@ -1,4 +1,4 @@
-package com.yunsoo.api.annotation;
+package com.yunsoo.api.aspect;
 
 import java.lang.annotation.*;
 

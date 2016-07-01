@@ -67,15 +67,15 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.PUT)
     public User updateUser(@RequestParam(value = "updated", required = false) boolean updated, @RequestBody User user) {
-        User existingUser = getUserByOAuthId(user.getOauthOpenid(), user.getOauthTypeCode());
+        UserObject existingUser = userDomain.getUserByOpenIdAndType(user.getOauthOpenid(), user.getOauthTypeCode());
         if(existingUser == null)
-            existingUser = create(user);
+            return create(user);
         else if (updated) {
             user.setId(existingUser.getId());
             patchUpdateUser(user.getId(), user);
-            existingUser = user;
+            return user;
         }
-        return existingUser;
+        return null;
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
