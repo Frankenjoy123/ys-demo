@@ -22,7 +22,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-logging'
     compile 'org.springframework.data:spring-data-redis:1.6.4.RELEASE'
     compile 'redis.clients:jedis:2.7.3'
-
+    compile 'org.aspectj:aspectjweaver:1.8.8'
     compile fileTree(dir: 'lib', include: '*.jar')
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'

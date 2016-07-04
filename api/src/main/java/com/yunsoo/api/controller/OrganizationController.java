@@ -1,6 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
+import com.yunsoo.api.aspect.OperationLog;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
@@ -66,6 +67,7 @@ public class OrganizationController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
+  //  @OperationLog(operation = "get organization by id: #orgId")
     public Organization getById(@PathVariable(value = "id") String orgId) {
         orgId = AuthUtils.fixOrgId(orgId);
         OrganizationObject object = organizationDomain.getOrganizationById(orgId);
