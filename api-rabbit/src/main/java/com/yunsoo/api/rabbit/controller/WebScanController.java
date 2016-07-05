@@ -161,6 +161,16 @@ public class WebScanController {
         //marketing info
         webScanResponse.setMarketing(null);
 
+        Map<String, Object> config = organizationConfigDomain.getConfig(webScanResponse.getOrganization().getId(), false);
+        String appId = config.get("webchat.app_id").toString();
+        String secret = config.get("webchat.app_secret").toString();
+
+        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject(webScanResponse.getOrganization().getId(), appId, secret);
+        UserAccessToken userAccessToken = new UserAccessToken(userAccessTokenObject);
+        userAccessToken.setAppId(appId);
+
+        webScanResponse.setUserAccessToken(userAccessToken);
+
         return webScanResponse;
     }
 
