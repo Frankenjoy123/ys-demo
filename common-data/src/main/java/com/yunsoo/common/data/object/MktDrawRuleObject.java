@@ -20,6 +20,9 @@ public class MktDrawRuleObject {
     @JsonProperty("marketing_id")
     private String marketingId;
 
+    @JsonProperty("consumer_right_id")
+    private String consumerRightId;
+
     @JsonProperty("prize_type_code")
     private String prizeTypeCode;
 
@@ -68,6 +71,14 @@ public class MktDrawRuleObject {
 
     public void setMarketingId(String marketingId) {
         this.marketingId = marketingId;
+    }
+
+    public String getConsumerRightId() {
+        return consumerRightId;
+    }
+
+    public void setConsumerRightId(String consumerRightId) {
+        this.consumerRightId = consumerRightId;
     }
 
     public String getPrizeTypeCode() {

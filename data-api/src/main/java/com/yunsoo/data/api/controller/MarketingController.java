@@ -651,6 +651,7 @@ public class MarketingController {
         MktDrawRuleObject object = new MktDrawRuleObject();
         object.setId(entity.getId());
         object.setMarketingId(entity.getMarketingId());
+        object.setConsumerRightId(entity.getConsumerRightId());
         object.setPrizeTypeCode(entity.getPrizeTypeCode());
         object.setAmount(entity.getAmount());
         object.setProbability(entity.getProbability());
@@ -761,6 +762,7 @@ public class MarketingController {
         MktDrawRuleEntity entity = new MktDrawRuleEntity();
         entity.setId(object.getId());
         entity.setMarketingId(object.getMarketingId());
+        entity.setConsumerRightId(object.getConsumerRightId());
         entity.setPrizeTypeCode(object.getPrizeTypeCode());
         entity.setAmount(object.getAmount());
         entity.setProbability(object.getProbability());
