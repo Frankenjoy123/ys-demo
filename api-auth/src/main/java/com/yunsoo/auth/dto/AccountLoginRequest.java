@@ -1,15 +1,16 @@
-package com.yunsoo.auth.api.dto;
+package com.yunsoo.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * Created by  : Lijian
  * Created on  : 2015/4/21
  * Descriptions:
  */
-public class AccountLoginRequest {
+public class AccountLoginRequest implements Serializable {
 
     @JsonProperty("account_id")
     private String accountId;
@@ -20,7 +21,7 @@ public class AccountLoginRequest {
     @JsonProperty("identifier")
     private String identifier;
 
-    @NotNull(message = "password must not be null")
+    @NotEmpty(message = "password must not be null or empty")
     @JsonProperty("password")
     private String password;
 

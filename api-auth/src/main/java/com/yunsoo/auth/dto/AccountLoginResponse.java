@@ -1,13 +1,15 @@
-package com.yunsoo.auth.api.dto;
+package com.yunsoo.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
 
 /**
  * Created by  : Lijian
  * Created on  : 2015/4/21
  * Descriptions:
  */
-public class AccountLoginResponse {
+public class AccountLoginResponse implements Serializable {
 
     @JsonProperty("permanent_token")
     private Token permanentToken;

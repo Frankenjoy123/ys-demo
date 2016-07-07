@@ -1,47 +1,37 @@
-package com.yunsoo.auth.dao.entity;
+package com.yunsoo.auth.dto;
 
-import com.yunsoo.auth.dao.util.IdGenerator;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import java.io.Serializable;
 
 /**
- * Created by  : Lijian
- * Created on  : 2015/4/20
+ * Created by:   Lijian
+ * Created on:   2016-07-07
  * Descriptions:
  */
-@Entity
-@Table(name = "account_token")
-public class AccountTokenEntity {
+public class AccountToken implements Serializable {
 
-    @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = IdGenerator.CLASS)
-    @Column(name = "id")
+    @JsonProperty("id")
     private String id;
 
-    @Column(name = "account_id")
+    @JsonProperty("account_id")
     private String accountId;
 
-    @Column(name = "app_id")
+    @JsonProperty("app_id")
     private String appId;
 
-    @Column(name = "device_id")
+    @JsonProperty("device_id")
     private String deviceId;
 
-    @Column(name = "permanent_token")
+    @JsonProperty("permanent_token")
     private String permanentToken;
 
-    @Column(name = "permanent_token_expires_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @JsonProperty("permanent_token_expires_datetime")
     private DateTime permanentTokenExpiresDateTime;
 
-    @Column(name = "created_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
-
 
     public String getId() {
         return id;

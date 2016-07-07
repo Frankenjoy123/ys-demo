@@ -19,6 +19,8 @@ public interface AccountRepository extends Repository<AccountEntity, String> {
 
     AccountEntity findOne(String id);
 
+    List<AccountEntity> findByOrgIdAndIdentifier(String orgId, String identifier);
+
     AccountEntity save(AccountEntity entity);
 
     @Query("select acc from AccountEntity acc where (:orgId is null or acc.orgId = :orgId) and (:status is null or acc.statusCode = :status) " +
@@ -27,8 +29,6 @@ public interface AccountRepository extends Repository<AccountEntity, String> {
             "and (:endTime is null or acc.createdDateTime <= :endTime) and  (:startTime is null or acc.createdDateTime >= :startTime) ")
     Page<AccountEntity> query(@Param("orgId") String orgId, @Param("status") String status, @Param("searchText") String searchText,
                               @Param("startTime") DateTime start, @Param("endTime") DateTime end, Pageable pageable);
-
-    List<AccountEntity> findByOrgIdAndIdentifier(String orgId, String identifier);
 
 
     Long count();

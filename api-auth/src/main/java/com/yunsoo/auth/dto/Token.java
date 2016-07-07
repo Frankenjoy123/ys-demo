@@ -1,14 +1,16 @@
-package com.yunsoo.auth.api.dto;
+package com.yunsoo.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
+
+import java.io.Serializable;
 
 /**
  * Created by  : Lijian
  * Created on  : 2015/4/22
  * Descriptions:
  */
-public class Token {
+public class Token implements Serializable {
 
     @JsonProperty("token")
     String token;
