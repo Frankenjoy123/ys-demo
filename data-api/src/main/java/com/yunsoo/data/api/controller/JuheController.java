@@ -1,10 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.juhe.MobileDataResultObject;
-import com.yunsoo.common.data.object.juhe.MobileLocationResultObject;
-import com.yunsoo.common.data.object.juhe.MobileOrderResultObject;
-import com.yunsoo.common.data.object.juhe.SMSResultObject;
+import com.yunsoo.common.data.object.juhe.*;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -48,6 +45,9 @@ public class JuheController {
 
     @Value("${yunsoo.juhe.keys.sms}")
     private String smsKey;
+
+    @Value("${yunsoo.juhe.keys.ip}")
+    private String ipKey;
 
     @Value("${yunsoo.juhe.keys.mobile_order}")
     private String mobileKey;
@@ -106,6 +106,17 @@ public class JuheController {
 
     public MobileLocationResultObject getMobileLocation(@RequestParam("mobile") String mobile){
         return getMobileLocationInJuhe(mobile);
+    }
+
+    @RequestMapping(value = "/ip", method = RequestMethod.GET)
+    public String getLocationByIp(@RequestParam("ip") String ip){
+        IPResultObject result = getIPInJuhe(ip);
+        if(result.getErrorCode() == 0)
+            return  result.getResult().getArea();
+        else{
+            log.error("get ip error. reason: " + result.getReason()  + ". ip: " + ip);
+            return null;
+        }
     }
 
 
@@ -236,5 +247,13 @@ public class JuheController {
 
     }
 
+    private IPResultObject getIPInJuhe(String ip){
+        String url = "http://apis.juhe.cn/ip/ip2addr?ip={ip}&key={key}";
+        IPResultObject result = template.getForEntity(url, IPResultObject.class, ip, ipKey).getBody();
+        if (result.getErrorCode() != 0)
+            log.error("get location of ip: " + ip + " error: " + result.getReason());
+
+        return result;
+    }
 
 }

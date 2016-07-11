@@ -66,7 +66,7 @@ public class OperationAspect {
     private Method getMethod(JoinPoint pjp) {
         //获取参数的类型
         Object[] args = pjp.getArgs();
-        Class[] argTypes = new Class[1];
+        Class[] argTypes = new Class[args.length];
         for (int i = 0; i < args.length; i++) {
             argTypes[i] = args[i].getClass();
         }
@@ -74,9 +74,9 @@ public class OperationAspect {
         try {
             method = pjp.getTarget().getClass().getMethod(pjp.getSignature().getName(), argTypes);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            log.error("Operation aspect, no such method found", e);
         } catch (SecurityException e) {
-            e.printStackTrace();
+            log.error("Operation aspect, security issue found", e);
         }
         return method;
 

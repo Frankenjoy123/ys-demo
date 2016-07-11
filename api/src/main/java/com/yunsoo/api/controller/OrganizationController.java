@@ -68,7 +68,6 @@ public class OrganizationController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
-   // @OperationLog(operation = "get organization by id", level = "P1", target = "#orgId")
     public Organization getById(@PathVariable(value = "id") String orgId) {
         orgId = AuthUtils.fixOrgId(orgId);
         OrganizationObject object = organizationDomain.getOrganizationById(orgId);

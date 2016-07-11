@@ -38,8 +38,8 @@ public class OperationThread implements Runnable {
                     });
                 }
                 else {
-                    log.info("begin to sleep 20 min");
-                    Thread.sleep(1000 * 60);
+                    log.info("begin to sleep 5 min");
+                    Thread.sleep(1000 * 60 * 5);
                 }
 
             } catch (Exception e) {
@@ -49,6 +49,9 @@ public class OperationThread implements Runnable {
     }
 
     private OperationLogObject createLog(OperationLogObject log) {
+        if(log.getIp() != null)
+            log.setLocation(client.get("juhe/ip?ip={ip}", String.class, log.getIp()));
+
         return client.post("operation", log, OperationLogObject.class);
     }
 }
