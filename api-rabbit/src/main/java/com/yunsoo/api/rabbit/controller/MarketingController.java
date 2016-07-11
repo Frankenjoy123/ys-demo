@@ -138,7 +138,7 @@ public class MarketingController {
             return mktDrawRule;
 
         } else {
-            return null;
+            return new MktDrawRule(mktDrawRuleObject);
         }
 //        return new MktDrawRule(marketingDomain.getMktRandomPrize(marketingId));
     }
