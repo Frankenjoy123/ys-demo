@@ -35,6 +35,15 @@ public class MktConsumerRightObject {
     @JsonProperty("status_code")
     private String statusCode;
 
+    @JsonProperty("cmcc_flow_id")
+    private Integer cmccFlowId;
+
+    @JsonProperty("cucc_flow_id")
+    private Integer cuccFlowId;
+
+    @JsonProperty("ctcc_flow_id")
+    private Integer ctccFlowId;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -105,6 +114,30 @@ public class MktConsumerRightObject {
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public Integer getCmccFlowId() {
+        return cmccFlowId;
+    }
+
+    public void setCmccFlowId(Integer cmccFlowId) {
+        this.cmccFlowId = cmccFlowId;
+    }
+
+    public Integer getCuccFlowId() {
+        return cuccFlowId;
+    }
+
+    public void setCuccFlowId(Integer cuccFlowId) {
+        this.cuccFlowId = cuccFlowId;
+    }
+
+    public Integer getCtccFlowId() {
+        return ctccFlowId;
+    }
+
+    public void setCtccFlowId(Integer ctccFlowId) {
+        this.ctccFlowId = ctccFlowId;
     }
 
     public String getCreatedAccountId() {

@@ -651,6 +651,7 @@ public class MarketingController {
         MktDrawRuleObject object = new MktDrawRuleObject();
         object.setId(entity.getId());
         object.setMarketingId(entity.getMarketingId());
+        object.setConsumerRightId(entity.getConsumerRightId());
         object.setPrizeTypeCode(entity.getPrizeTypeCode());
         object.setAmount(entity.getAmount());
         object.setProbability(entity.getProbability());
@@ -719,6 +720,9 @@ public class MarketingController {
         object.setComments(entity.getComments());
         object.setOrgId(entity.getOrgId());
         object.setStatusCode(entity.getStatusCode());
+        object.setCmccFlowId(entity.getCmccFlowId());
+        object.setCuccFlowId(entity.getCuccFlowId());
+        object.setCtccFlowId(entity.getCtccFlowId());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
@@ -761,6 +765,7 @@ public class MarketingController {
         MktDrawRuleEntity entity = new MktDrawRuleEntity();
         entity.setId(object.getId());
         entity.setMarketingId(object.getMarketingId());
+        entity.setConsumerRightId(object.getConsumerRightId());
         entity.setPrizeTypeCode(object.getPrizeTypeCode());
         entity.setAmount(object.getAmount());
         entity.setProbability(object.getProbability());
@@ -828,6 +833,9 @@ public class MarketingController {
         entity.setComments(object.getComments());
         entity.setOrgId(object.getOrgId());
         entity.setStatusCode(object.getStatusCode());
+        entity.setCmccFlowId(object.getCmccFlowId());
+        entity.setCuccFlowId(object.getCuccFlowId());
+        entity.setCtccFlowId(object.getCtccFlowId());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());

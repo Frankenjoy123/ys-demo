@@ -1,10 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.MarketingObject;
-import com.yunsoo.common.data.object.MktDrawPrizeObject;
-import com.yunsoo.common.data.object.MktDrawRecordObject;
-import com.yunsoo.common.data.object.MktDrawRuleObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
@@ -46,6 +43,11 @@ public class MarketingDomain {
         return dataAPIClient.get("marketing/drawprize/{key}", MktDrawPrizeObject.class, key);
     }
 
+    public MktConsumerRightObject getConsumerRightById(String id) {
+        return dataAPIClient.get("marketing/consumer/{id}", MktConsumerRightObject.class, id);
+    }
+
+
     public MktDrawRecordObject createMktDrawRecord(MktDrawRecordObject mktDrawRecordObject) {
         mktDrawRecordObject.setId(null);
         mktDrawRecordObject.setCreatedDateTime(DateTime.now());
@@ -75,12 +77,6 @@ public class MarketingDomain {
         if (obj.getBalance() <= 0)
             return null;
 
-
-//        if((obj.getStartDateTime() != null && obj.getStartDateTime().isAfterNow())
-//                || (obj.getEndDateTime() !=null && obj.getEndDateTime().isBeforeNow()))
-//        {
-//            return null;
-//        }
         if (!LookupCodes.MktType.ENVELOPE.equals(obj.getTypeCode())) {
             List<MktDrawRuleObject> ruleList = getRuleList(marketId);
             List<MktDrawRuleObject> newRuleList = new ArrayList<>();

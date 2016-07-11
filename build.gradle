@@ -7,14 +7,12 @@ subprojects {
 
     repositories {
         maven { url 'http://54.223.218.110:8081/nexus/content/groups/public/' }
-        maven { url 'http://maven.oschina.net/content/groups/public/' }
         mavenCentral()
     }
 
     buildscript {
         repositories {
             maven { url 'http://54.223.218.110:8081/nexus/content/groups/public/' }
-            maven { url 'http://maven.oschina.net/content/groups/public/' }
             mavenCentral()
             jcenter()
         }

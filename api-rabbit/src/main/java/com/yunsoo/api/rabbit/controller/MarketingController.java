@@ -2,16 +2,10 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.MarketingDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
-import com.yunsoo.api.rabbit.dto.Marketing;
-import com.yunsoo.api.rabbit.dto.MktDrawPrize;
-import com.yunsoo.api.rabbit.dto.MktDrawRecord;
-import com.yunsoo.api.rabbit.dto.MktDrawRule;
+import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.MarketingObject;
-import com.yunsoo.common.data.object.MktDrawPrizeObject;
-import com.yunsoo.common.data.object.MktDrawRecordObject;
-import com.yunsoo.common.data.object.ProductObject;
+import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
@@ -131,7 +125,22 @@ public class MarketingController {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        return new MktDrawRule(marketingDomain.getMktRandomPrize(marketingId));
+        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId);
+        if (mktDrawRuleObject != null) {
+            MktDrawRule mktDrawRule = new MktDrawRule(mktDrawRuleObject);
+            String consumerRightId = mktDrawRuleObject.getConsumerRightId();
+            if (consumerRightId != null) {
+                MktConsumerRightObject consumerRightObject = marketingDomain.getConsumerRightById(consumerRightId);
+                if (consumerRightObject != null) {
+                    mktDrawRule.setMktConsumerRight(new MktConsumerRight(consumerRightObject));
+                }
+            }
+            return mktDrawRule;
+
+        } else {
+            return null;
+        }
+//        return new MktDrawRule(marketingDomain.getMktRandomPrize(marketingId));
     }
 
     @RequestMapping(value = "drawRule/{id}", method = RequestMethod.GET)
