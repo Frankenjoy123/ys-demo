@@ -22,6 +22,7 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
+
     public Account getById(String id) {
         if (StringUtils.isEmpty(id)) {
             return null;

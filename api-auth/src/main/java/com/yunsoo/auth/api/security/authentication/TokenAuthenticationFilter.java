@@ -1,8 +1,6 @@
-package com.yunsoo.auth.api.security.filter;
+package com.yunsoo.auth.api.security.authentication;
 
 import com.yunsoo.auth.Constants;
-import com.yunsoo.auth.api.security.AccountAuthentication;
-import com.yunsoo.auth.api.security.TokenAuthenticationService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 

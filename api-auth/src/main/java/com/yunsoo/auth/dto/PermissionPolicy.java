@@ -57,16 +57,4 @@ public class PermissionPolicy implements Serializable {
         this.permissions = permissions;
     }
 
-
-    public PermissionPolicy() {
-    }
-
-//    public PermissionPolicy(PermissionPolicyObject policy) {
-//        if (policy != null) {
-//            this.code = policy.getCode();
-//            this.name = policy.getName();
-//            this.description = policy.getDescription();
-//            this.permissions = policy.getPermissions();
-//        }
-//    }
 }

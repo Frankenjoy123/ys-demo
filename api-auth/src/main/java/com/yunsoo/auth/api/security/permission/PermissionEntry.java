@@ -5,14 +5,12 @@ import com.yunsoo.auth.api.security.permission.expression.PrincipalExpression;
 import com.yunsoo.auth.api.security.permission.expression.ResourceExpression;
 import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression;
 
-import java.io.Serializable;
-
 /**
  * Created by:   Lijian
  * Created on:   2016-03-22
  * Descriptions: corresponding to the permission_allocation by one to one
  */
-public class PermissionEntry implements Comparable, Serializable {
+public class PermissionEntry implements Comparable {
 
     private String id; //the same as permission_allocation.id
 
@@ -69,15 +67,13 @@ public class PermissionEntry implements Comparable, Serializable {
     public PermissionEntry() {
     }
 
-//    public PermissionEntry(PermissionAllocationObject paObject) {
-//        if (paObject != null) {
-//            this.id = paObject.getId();
-//            this.principal = PrincipalExpression.parse(paObject.getPrincipal());
-//            this.restriction = RestrictionExpression.parse(paObject.getRestriction());
-//            this.permission = PermissionExpression.parse(paObject.getPermission());
-//            this.effect = Effect.valueOf(paObject.getEffect().name());
-//        }
-//    }
+    public PermissionEntry(String id, String principal, String restriction, String permission, String effect) {
+        this.id = id;
+        this.principal = PrincipalExpression.parse(principal);
+        this.restriction = RestrictionExpression.parse(restriction);
+        this.permission = PermissionExpression.parse(permission);
+        this.effect = Effect.valueOf(effect);
+    }
 
 
     public boolean isValid() {
@@ -101,8 +97,6 @@ public class PermissionEntry implements Comparable, Serializable {
         if (o == null || getClass() != o.getClass()) return false;
 
         PermissionEntry that = (PermissionEntry) o;
-
-        //if (id != null && id.equals(that.id)) return true;
 
         return ResourceExpression.equals(principal, that.principal)
                 && ResourceExpression.equals(restriction, that.restriction)

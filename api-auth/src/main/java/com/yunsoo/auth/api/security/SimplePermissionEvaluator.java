@@ -1,6 +1,6 @@
-package com.yunsoo.auth.api.security.permission;
+package com.yunsoo.auth.api.security;
 
-import com.yunsoo.auth.api.security.AccountAuthentication;
+import com.yunsoo.auth.api.security.authentication.AccountAuthentication;
 import com.yunsoo.auth.api.security.permission.expression.PermissionExpression;
 import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;

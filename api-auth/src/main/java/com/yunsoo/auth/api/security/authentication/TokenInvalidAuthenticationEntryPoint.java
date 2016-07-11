@@ -1,4 +1,4 @@
-package com.yunsoo.auth.api.security;
+package com.yunsoo.auth.api.security.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.common.error.ErrorResult;

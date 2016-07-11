@@ -1,6 +1,27 @@
 package com.yunsoo.auth.service;
 
+import com.yunsoo.auth.Constants;
+import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression;
+import com.yunsoo.auth.dao.entity.PermissionActionEntity;
+import com.yunsoo.auth.dao.entity.PermissionPolicyEntity;
+import com.yunsoo.auth.dao.entity.PermissionRegionEntity;
+import com.yunsoo.auth.dao.entity.PermissionResourceEntity;
+import com.yunsoo.auth.dao.repository.PermissionActionRepository;
+import com.yunsoo.auth.dao.repository.PermissionPolicyRepository;
+import com.yunsoo.auth.dao.repository.PermissionRegionRepository;
+import com.yunsoo.auth.dao.repository.PermissionResourceRepository;
+import com.yunsoo.auth.dto.PermissionAction;
+import com.yunsoo.auth.dto.PermissionPolicy;
+import com.yunsoo.auth.dto.PermissionRegion;
+import com.yunsoo.auth.dto.PermissionResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -10,151 +31,161 @@ import org.springframework.stereotype.Service;
 @Service
 public class PermissionService {
 
-//    @Autowired
-//    private PermissionDomain permissionDomain;
-//
-//    @Autowired
-//    private PermissionAllocationDomain permissionAllocationDomain;
+    @Autowired
+    private PermissionResourceRepository permissionResourceRepository;
 
-//
-//    public List<PermissionEntry> getExpendedPermissionEntriesByAccountId(String accountId) {
-//        List<PermissionEntry> permissionEntries = getPermissionEntriesByAccountId(accountId);
-//        Map<String, List<PermissionExpression>> policyPermissionMap = getPolicyPermissionMap();
-//        permissionEntries.forEach(p -> {
-//            expendPermissionEntry(p, policyPermissionMap);
-//        });
-//        return permissionEntries.stream().filter(PermissionEntry::isValid).sorted().collect(Collectors.toList());
-//    }
-//
-//    public List<PermissionEntry> getExpendedPermissionEntriesByGroupId(String groupId) {
-//        List<PermissionEntry> permissionEntries = getPermissionEntriesByGroupId(groupId);
-//        Map<String, List<PermissionExpression>> policyPermissionMap = getPolicyPermissionMap();
-//        permissionEntries.forEach(p -> {
-//            expendPermissionEntry(p, policyPermissionMap);
-//        });
-//        return permissionEntries.stream().filter(PermissionEntry::isValid).sorted().collect(Collectors.toList());
-//    }
-//
-//
-//    private List<PermissionEntry> getPermissionEntriesByAccountId(String accountId) {
-//        List<PermissionAllocationObject> paObjects = permissionAllocationDomain.getAllPermissionAllocationsByAccountId(accountId);
-//        return paObjects.stream()
-//                .map(PermissionEntry::new)
-//                .filter(PermissionEntry::isValid).sorted().collect(Collectors.toList());
-//    }
-//
-//    private List<PermissionEntry> getPermissionEntriesByGroupId(String groupId) {
-//        List<PermissionAllocationObject> paObjects = permissionAllocationDomain.getPermissionAllocationsByGroupId(groupId);
-//        return paObjects.stream()
-//                .map(PermissionEntry::new)
-//                .filter(PermissionEntry::isValid).sorted().collect(Collectors.toList());
-//    }
-//
-//    private void expendPermissionEntry(PermissionEntry permissionEntry, Map<String, List<PermissionExpression>> policyPermissionMap) {
-//        List<RestrictionExpression.OrgRestrictionExpression> restrictions = expendRestrictionExpression(permissionEntry.getRestriction());
-//        RestrictionExpression restriction = RestrictionExpression.collect(restrictions);
-//        permissionEntry.setRestriction(restriction);
-//
-//        List<PermissionExpression.SimplePermissionExpression> permissions = expendPermissionExpression(permissionEntry.getPermission(), policyPermissionMap);
-//        PermissionExpression permission = PermissionExpression.collect(permissions);
-//        permissionEntry.setPermission(permission);
-//    }
-//
-//    private List<RestrictionExpression> getRegionRestrictionsByRegionId(String id) {
-//        List<RestrictionExpression> restrictions = new ArrayList<>();
-//        PermissionRegionObject permissionRegionObject = permissionDomain.getPermissionRegionById(id);
-//        if (permissionRegionObject != null && permissionRegionObject.getRestrictions() != null) {
-//            permissionRegionObject.getRestrictions().forEach(rs -> {
-//                RestrictionExpression exp = RestrictionExpression.parse(rs);
-//                if (exp != null) {
-//                    restrictions.add(exp);
-//                }
-//            });
-//        }
-//        return restrictions;
-//    }
-//
-//    private Map<String, List<PermissionExpression>> getPolicyPermissionMap() {
-//        Map<String, List<PermissionExpression>> policyMap = new HashMap<>();
-//        List<PermissionPolicyObject> policyList = permissionDomain.getPermissionPolicies();
-//        policyList.forEach(p -> {
-//            if (p != null && p.getPermissions() != null && p.getPermissions().size() > 0) {
-//                List<PermissionExpression> permissions = new ArrayList<>();
-//                p.getPermissions().forEach(ps -> {
-//                    PermissionExpression exp = PermissionExpression.parse(ps);
-//                    if (exp != null) {
-//                        permissions.add(exp);
-//                    }
-//                });
-//                if (permissions.size() > 0) {
-//                    policyMap.put(p.getCode(), permissions);
-//                }
-//            }
-//        });
-//        return policyMap;
-//    }
+    @Autowired
+    private PermissionActionRepository permissionActionRepository;
+
+    @Autowired
+    private PermissionRegionRepository permissionRegionRepository;
+
+    @Autowired
+    private PermissionPolicyRepository permissionPolicyRepository;
 
 
-    //region expends
-//
-//    private List<RestrictionExpression.OrgRestrictionExpression> expendRestrictionExpression(RestrictionExpression restriction) {
-//        return expendRestrictionExpression(restriction, 5);
-//    }
-//
-//    private List<RestrictionExpression.OrgRestrictionExpression> expendRestrictionExpression(RestrictionExpression restriction, int ttl) {
-//        if (ttl <= 0) {
-//            return new ArrayList<>();
-//        }
-//        List<RestrictionExpression.OrgRestrictionExpression> orgRestrictions = new ArrayList<>();
-//        if (restriction instanceof RestrictionExpression.OrgRestrictionExpression) {
-//            orgRestrictions.add((RestrictionExpression.OrgRestrictionExpression) restriction);
-//        } else {
-//            List<RestrictionExpression> inlineRestrictions = null;
-//            if (restriction instanceof RestrictionExpression.RegionRestrictionExpression) {
-//                inlineRestrictions = getRegionRestrictionsByRegionId(restriction.getValue());
-//            } else if (restriction instanceof RestrictionExpression.CollectionRestrictionExpression) {
-//                inlineRestrictions = ((RestrictionExpression.CollectionRestrictionExpression) restriction).getExpressions();
-//            }
-//            if (inlineRestrictions != null) {
-//                inlineRestrictions.forEach(r -> {
-//                    if (r != null && !r.equals(restriction)) {
-//                        orgRestrictions.addAll(expendRestrictionExpression(r, ttl - 1));
-//                    }
-//                });
-//            }
-//        }
-//        return orgRestrictions.size() <= 1 ? orgRestrictions : orgRestrictions.stream().distinct().sorted().collect(Collectors.toList());
-//    }
-//
-//
-//    private List<PermissionExpression.SimplePermissionExpression> expendPermissionExpression(PermissionExpression permission, Map<String, List<PermissionExpression>> policyPermissionMap) {
-//        return expendPermissionExpression(permission, policyPermissionMap, 5);
-//    }
-//
-//    private List<PermissionExpression.SimplePermissionExpression> expendPermissionExpression(PermissionExpression permission, Map<String, List<PermissionExpression>> policyPermissionMap, int ttl) {
-//        if (ttl <= 0) {
-//            return new ArrayList<>();
-//        }
-//        List<PermissionExpression.SimplePermissionExpression> simplePermissions = new ArrayList<>();
-//        if (permission instanceof PermissionExpression.SimplePermissionExpression) {
-//            simplePermissions.add((PermissionExpression.SimplePermissionExpression) permission);
-//        } else {
-//            List<PermissionExpression> inlinePermissions = null;
-//            if (permission instanceof PermissionExpression.PolicyPermissionExpression) {
-//                inlinePermissions = policyPermissionMap.get(permission.getValue());
-//            } else if (permission instanceof PermissionExpression.CollectionPermissionExpression) {
-//                inlinePermissions = ((PermissionExpression.CollectionPermissionExpression) permission).getExpressions();
-//            }
-//            if (inlinePermissions != null) {
-//                inlinePermissions.forEach(p -> {
-//                    if (p != null && !p.equals(permission)) {
-//                        simplePermissions.addAll(expendPermissionExpression(p, policyPermissionMap, ttl - 1));
-//                    }
-//                });
-//            }
-//        }
-//        return simplePermissions.size() <= 1 ? simplePermissions : simplePermissions.stream().distinct().sorted().collect(Collectors.toList());
-//    }
+    //@Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'resourceList')")
+    public List<PermissionResource> getPermissionResources() {
+        return permissionResourceRepository.findAll().stream().map(this::toPermissionResource).collect(Collectors.toList());
+    }
+
+    //@Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'actionList')")
+    public List<PermissionAction> getPermissionActions() {
+        return permissionActionRepository.findAll().stream().map(this::toPermissionAction).collect(Collectors.toList());
+    }
+
+    //@Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'policyList')")
+    public List<PermissionPolicy> getPermissionPolicies() {
+        return permissionPolicyRepository.findAll().stream().map(this::toPermissionPolicy).collect(Collectors.toList());
+    }
+
+    //region region
+
+    //@Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'region/' + #id)")
+    public PermissionRegion getPermissionRegionById(String id) {
+        if (StringUtils.isEmpty(id)) {
+            return null;
+        }
+        return toPermissionRegion(permissionRegionRepository.findOne(id));
+    }
+
+    /**
+     * put the orgRestriction(orgId) to the restrictions of default permission region of the masterOrgId
+     *
+     * @param masterOrgId    current org id
+     * @param orgRestriction sub org id
+     */
+    @Transactional
+    public void putOrgRestrictionToDefaultPermissionRegion(String masterOrgId, String orgRestriction) {
+        orgRestriction = new RestrictionExpression.OrgRestrictionExpression(orgRestriction).toString();
+        PermissionRegion defaultPR = getOrCreateDefaultPermissionRegion(masterOrgId);
+        defaultPR.getRestrictions().add(orgRestriction);
+        permissionRegionRepository.save(toPermissionRegionEntity(defaultPR));
+    }
+
+    public PermissionRegion getOrCreateDefaultPermissionRegion(String orgId) {
+        PermissionRegionEntity defaultPR;
+        List<PermissionRegionEntity> defaultRegionEntities = permissionRegionRepository.findByOrgIdAndTypeCode(orgId, Constants.PermissionRegionType.DEFAULT);
+        if (defaultRegionEntities.size() == 0) {
+            //create new default region
+            PermissionRegionEntity entity = new PermissionRegionEntity();
+            entity.setOrgId(orgId);
+            entity.setName("Default Region");
+            entity.setRestrictions("");
+            entity.setTypeCode(Constants.PermissionRegionType.DEFAULT);
+            defaultPR = permissionRegionRepository.save(entity);
+        } else if (defaultRegionEntities.size() == 1) {
+            defaultPR = defaultRegionEntities.get(0);
+        } else {
+            defaultPR = defaultRegionEntities.get(0);
+            //merge other default regions if exist
+            List<String> restrictions = Arrays.asList(StringUtils.commaDelimitedListToStringArray(defaultPR.getRestrictions()));
+            for (int i = 1; i < defaultRegionEntities.size(); i++) {
+                restrictions.addAll(Arrays.asList(StringUtils.commaDelimitedListToStringArray(defaultRegionEntities.get(i).getRestrictions())));
+            }
+            defaultPR.setRestrictions(StringUtils.collectionToCommaDelimitedString(restrictions.stream().distinct().sorted().collect(Collectors.toList())));
+            permissionRegionRepository.save(defaultPR);
+            for (int i = 1; i < defaultRegionEntities.size(); i++) {
+                permissionRegionRepository.delete(defaultRegionEntities.get(i).getId());
+            }
+        }
+        return toPermissionRegion(defaultPR);
+    }
+
+
+    //endregion
+
+
+    //region private methods
+
+    private PermissionResource toPermissionResource(PermissionResourceEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        PermissionResource permissionResource = new PermissionResource();
+        permissionResource.setCode(entity.getCode());
+        permissionResource.setName(entity.getName());
+        permissionResource.setDescription(entity.getDescription());
+        permissionResource.setActions(Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getActions())));
+        return permissionResource;
+    }
+
+    private PermissionAction toPermissionAction(PermissionActionEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        PermissionAction permissionAction = new PermissionAction();
+        permissionAction.setCode(entity.getCode());
+        permissionAction.setName(entity.getName());
+        permissionAction.setDescription(entity.getDescription());
+        return permissionAction;
+    }
+
+    private PermissionRegion toPermissionRegion(PermissionRegionEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        PermissionRegion permissionRegion = new PermissionRegion();
+        permissionRegion.setId(entity.getId());
+        permissionRegion.setOrgId(entity.getOrgId());
+        permissionRegion.setName(entity.getName());
+        permissionRegion.setDescription(entity.getDescription());
+        permissionRegion.setRestrictions(Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getRestrictions())));
+        permissionRegion.setTypeCode(entity.getTypeCode());
+        return permissionRegion;
+    }
+
+    private PermissionRegionEntity toPermissionRegionEntity(PermissionRegion permissionRegion) {
+        if (permissionRegion == null) {
+            return null;
+        }
+        PermissionRegionEntity entity = new PermissionRegionEntity();
+        entity.setId(permissionRegion.getId());
+        entity.setOrgId(permissionRegion.getOrgId());
+        entity.setName(permissionRegion.getName());
+        entity.setDescription(permissionRegion.getDescription());
+        String restrictions;
+        if (permissionRegion.getRestrictions() != null) {
+            restrictions = StringUtils.collectionToCommaDelimitedString(permissionRegion.getRestrictions().stream().distinct().sorted().collect(Collectors.toList()));
+        } else {
+            restrictions = "";
+        }
+        entity.setRestrictions(restrictions);
+        entity.setTypeCode(permissionRegion.getTypeCode());
+        return entity;
+    }
+
+    private PermissionPolicy toPermissionPolicy(PermissionPolicyEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        PermissionPolicy permissionPolicy = new PermissionPolicy();
+        permissionPolicy.setCode(entity.getCode());
+        permissionPolicy.setName(entity.getName());
+        permissionPolicy.setDescription(entity.getDescription());
+        permissionPolicy.setPermissions(Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getPermissions())));
+        return permissionPolicy;
+    }
 
     //endregion
 

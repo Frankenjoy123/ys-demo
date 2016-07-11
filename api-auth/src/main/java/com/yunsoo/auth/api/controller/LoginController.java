@@ -2,7 +2,7 @@ package com.yunsoo.auth.api.controller;
 
 import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.api.security.AuthAccount;
-import com.yunsoo.auth.api.security.TokenAuthenticationService;
+import com.yunsoo.auth.api.security.authentication.TokenAuthenticationService;
 import com.yunsoo.auth.dto.Account;
 import com.yunsoo.auth.dto.AccountLoginRequest;
 import com.yunsoo.auth.dto.AccountLoginResponse;
@@ -43,7 +43,7 @@ public class LoginController {
      * login with password
      *
      * @param appId        String
-     * @param deviceId     String
+     * @param deviceId     String nullable
      * @param loginRequest AccountLoginRequest
      * @return AccountLoginResponse include permanentToken and accessToken
      */
@@ -82,6 +82,8 @@ public class LoginController {
     /**
      * login with loginToken
      *
+     * @param appId      String
+     * @param deviceId   String nullable
      * @param loginToken Token
      * @return AccountLoginResponse include permanentToken and accessToken
      */

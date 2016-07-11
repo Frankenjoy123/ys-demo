@@ -2,12 +2,15 @@ package com.yunsoo.auth.service;
 
 import com.yunsoo.auth.dao.entity.AccountTokenEntity;
 import com.yunsoo.auth.dao.repository.AccountTokenRepository;
+import com.yunsoo.auth.dto.AccountToken;
 import com.yunsoo.auth.dto.Token;
 import com.yunsoo.common.util.HashUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,6 +23,20 @@ public class AccountTokenService {
 
     @Autowired
     private AccountTokenRepository accountTokenRepository;
+
+
+    public AccountToken getNonExpiredByPermanentToken(String permanentToken) {
+        if (StringUtils.isEmpty(permanentToken)) {
+            return null;
+        }
+        List<AccountTokenEntity> accountTokens = accountTokenRepository.findByPermanentToken(permanentToken);
+        for (AccountTokenEntity at : accountTokens) {
+            if (at.getPermanentTokenExpiresDateTime() == null || at.getPermanentTokenExpiresDateTime().isAfterNow()) {
+                return toAccountToken(at);
+            }
+        }
+        return null;
+    }
 
     /**
      * @param accountId      not null
@@ -42,4 +59,20 @@ public class AccountTokenService {
         accountTokenEntity = accountTokenRepository.save(accountTokenEntity);
         return new Token(accountTokenEntity.getPermanentToken(), accountTokenEntity.getPermanentTokenExpiresDateTime());
     }
+
+    private AccountToken toAccountToken(AccountTokenEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        AccountToken accountToken = new AccountToken();
+        accountToken.setId(entity.getId());
+        accountToken.setAccountId(entity.getAccountId());
+        accountToken.setAppId(entity.getAppId());
+        accountToken.setDeviceId(entity.getDeviceId());
+        accountToken.setPermanentToken(entity.getPermanentToken());
+        accountToken.setPermanentTokenExpiresDateTime(entity.getPermanentTokenExpiresDateTime());
+        accountToken.setCreatedDateTime(entity.getCreatedDateTime());
+        return accountToken;
+    }
+
 }

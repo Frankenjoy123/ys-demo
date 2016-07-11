@@ -1,5 +1,6 @@
-package com.yunsoo.auth.api.security;
+package com.yunsoo.auth.api.security.authentication;
 
+import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.common.util.HashUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;

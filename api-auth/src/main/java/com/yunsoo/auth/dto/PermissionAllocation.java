@@ -29,7 +29,7 @@ public class PermissionAllocation implements Serializable {
     private String permission;
 
     @JsonProperty("effect")
-    private Effect effect;
+    private String effect;
 
     @JsonProperty("created_account_id")
     private String createdAccountId;
@@ -72,11 +72,11 @@ public class PermissionAllocation implements Serializable {
         this.permission = permission;
     }
 
-    public Effect getEffect() {
+    public String getEffect() {
         return effect;
     }
 
-    public void setEffect(Effect effect) {
+    public void setEffect(String effect) {
         this.effect = effect;
     }
 
@@ -96,23 +96,4 @@ public class PermissionAllocation implements Serializable {
         this.createdDateTime = createdDateTime;
     }
 
-    public PermissionAllocation() {
-    }
-
-//    public PermissionAllocation(PermissionAllocationObject object) {
-//        if (object != null) {
-//            this.setId(object.getId());
-//            this.setPrincipal(object.getPrincipal());
-//            this.setRestriction(object.getRestriction());
-//            this.setPermission(object.getPermission());
-//            this.setEffect(Effect.valueOf(object.getEffect().name()));
-//            this.setCreatedAccountId(object.getCreatedAccountId());
-//            this.setCreatedDateTime(object.getCreatedDateTime());
-//        }
-//    }
-
-    public enum Effect {
-        allow,
-        deny;
-    }
 }

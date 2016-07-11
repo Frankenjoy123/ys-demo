@@ -1,5 +1,6 @@
-package com.yunsoo.auth.api.security.permission;
+package com.yunsoo.auth.api.security.config;
 
+import com.yunsoo.auth.api.security.SimplePermissionEvaluator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;

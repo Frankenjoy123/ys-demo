@@ -22,7 +22,7 @@ public class PermissionResource implements Serializable {
     private String description;
 
     @JsonProperty("actions")
-    private List<PermissionAction> actions;
+    private List<String> actions;
 
 
     public String getCode() {
@@ -49,31 +49,12 @@ public class PermissionResource implements Serializable {
         this.description = description;
     }
 
-    public List<PermissionAction> getActions() {
+    public List<String> getActions() {
         return actions;
     }
 
-    public void setActions(List<PermissionAction> actions) {
+    public void setActions(List<String> actions) {
         this.actions = actions;
     }
 
-    public PermissionResource() {
-    }
-
-//    public PermissionResource(PermissionResourceObject resource, Map<String, PermissionAction> actionMap) {
-//        if (resource != null) {
-//            this.code = resource.getCode();
-//            this.name = resource.getName();
-//            this.description = resource.getDescription();
-//            if (resource.getActions() != null && actionMap != null) {
-//                this.actions = new ArrayList<>();
-//                resource.getActions().forEach(a -> {
-//                    PermissionAction action = actionMap.get(a);
-//                    if (action != null) {
-//                        this.actions.add(action);
-//                    }
-//                });
-//            }
-//        }
-//    }
 }

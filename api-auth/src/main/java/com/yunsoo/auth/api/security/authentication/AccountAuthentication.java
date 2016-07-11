@@ -1,5 +1,6 @@
-package com.yunsoo.auth.api.security;
+package com.yunsoo.auth.api.security.authentication;
 
+import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.auth.api.security.authorization.AuthorizationService;
 import com.yunsoo.auth.api.security.authorization.PermissionGrantedAuthority;
 import com.yunsoo.auth.api.security.permission.PermissionEntry;

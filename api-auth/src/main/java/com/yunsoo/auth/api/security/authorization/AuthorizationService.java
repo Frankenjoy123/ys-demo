@@ -1,11 +1,13 @@
 package com.yunsoo.auth.api.security.authorization;
 
-import com.yunsoo.auth.api.security.AccountAuthentication;
+import com.yunsoo.auth.api.security.authentication.AccountAuthentication;
 import com.yunsoo.auth.api.security.permission.PermissionEntry;
+import com.yunsoo.auth.api.security.permission.PermissionEntryService;
 import com.yunsoo.auth.api.security.permission.expression.PermissionExpression;
 import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression.CollectionRestrictionExpression;
 import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,27 +23,24 @@ import java.util.List;
  */
 @Service
 public class AuthorizationService {
-//
-//    @Autowired
-//    private PermissionAllocationDomain permissionAllocationDomain;
+
+    @Autowired
+    private PermissionEntryService permissionEntryService;
+
 
     /**
      * @param accountAuthentication AccountAuthentication
      * @return PermissionEntry list of the current account
      */
     public List<PermissionEntry> getPermissionEntries(AccountAuthentication accountAuthentication) {
-//        String accountId = accountAuthentication.getPrincipal().getId();
-//        String orgId = accountAuthentication.getPrincipal().getOrgId();
-//        List<PermissionEntry> permissionEntries = permissionAllocationDomain.getPermissionEntriesByAccountId(accountId)
-//                .stream()
-//                .map(PermissionEntry::parse)
-//                .collect(Collectors.toList());
-//        //fix orgRestriction
-//        permissionEntries.forEach(p -> {
-//            p.setRestriction(fixOrgRestriction(p.getRestriction(), orgId));
-//        });
-//        return permissionEntries;
-        return new ArrayList<>();
+        String accountId = accountAuthentication.getPrincipal().getId();
+        String orgId = accountAuthentication.getPrincipal().getOrgId();
+        List<PermissionEntry> permissionEntries = permissionEntryService.getExpendedPermissionEntriesByAccountId(accountId);
+        //fix orgRestriction
+        permissionEntries.forEach(p -> {
+            p.setRestriction(fixOrgRestriction(p.getRestriction(), orgId));
+        });
+        return permissionEntries;
     }
 
     /**

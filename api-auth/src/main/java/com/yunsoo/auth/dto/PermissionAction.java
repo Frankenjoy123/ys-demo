@@ -45,14 +45,4 @@ public class PermissionAction implements Serializable {
         this.description = description;
     }
 
-    public PermissionAction() {
-    }
-
-//    public PermissionAction(PermissionActionObject action) {
-//        if (action != null) {
-//            this.code = action.getCode();
-//            this.name = action.getName();
-//            this.description = action.getDescription();
-//        }
-//    }
 }

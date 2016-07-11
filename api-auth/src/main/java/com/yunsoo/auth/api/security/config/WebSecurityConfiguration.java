@@ -1,6 +1,8 @@
-package com.yunsoo.auth.api.security;
+package com.yunsoo.auth.api.security.config;
 
-import com.yunsoo.auth.api.security.filter.TokenAuthenticationFilter;
+import com.yunsoo.auth.api.security.authentication.TokenAuthenticationFilter;
+import com.yunsoo.auth.api.security.authentication.TokenAuthenticationService;
+import com.yunsoo.auth.api.security.authentication.TokenInvalidAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -40,8 +42,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 .antMatchers("/").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
-                .antMatchers("/auth/login/**").permitAll()
-                .antMatchers("/auth/accesstoken/**").permitAll()
+                .antMatchers("/login/**").permitAll()
+                .antMatchers("/accesstoken").permitAll()
                 .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
                 .anyRequest().authenticated().and()
 
