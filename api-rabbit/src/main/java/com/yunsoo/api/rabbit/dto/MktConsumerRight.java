@@ -1,18 +1,19 @@
-package com.yunsoo.common.data.object;
+package com.yunsoo.api.rabbit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.data.object.MktConsumerRightObject;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
- * Created by  : haitao
- * Created on  : 2016/6/21
+ * Created by:  haitao
+ * Created on:  2016/7/1
  * Descriptions:
  */
-public class MktConsumerRightObject {
+public class MktConsumerRight {
 
     @JsonProperty("id")
     private String id;
@@ -171,4 +172,46 @@ public class MktConsumerRightObject {
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
     }
+
+    public MktConsumerRight() {
+    }
+
+    public MktConsumerRight(MktConsumerRightObject object) {
+        if (object != null) {
+            this.setId(object.getId());
+            this.setName(object.getName());
+            this.setTypeCode(object.getTypeCode());
+            this.setAmount(object.getAmount());
+            this.setComments(object.getComments());
+            this.setOrgId(object.getOrgId());
+            this.setStatusCode(object.getStatusCode());
+            this.setCmccFlowId(object.getCmccFlowId());
+            this.setCuccFlowId(object.getCuccFlowId());
+            this.setCtccFlowId(object.getCtccFlowId());
+            this.setCreatedAccountId(object.getCreatedAccountId());
+            this.setCreatedDateTime(object.getCreatedDateTime());
+            this.setModifiedAccountId(object.getModifiedAccountId());
+            this.setModifiedDateTime(object.getModifiedDateTime());
+        }
+    }
+
+    public MktConsumerRightObject toMktConsumerRightObject() {
+        MktConsumerRightObject object = new MktConsumerRightObject();
+        object.setId(this.getId());
+        object.setName(this.getName());
+        object.setTypeCode(this.getTypeCode());
+        object.setAmount(this.getAmount());
+        object.setComments(this.getComments());
+        object.setOrgId(this.getOrgId());
+        object.setStatusCode(this.getStatusCode());
+        object.setCmccFlowId(this.getCmccFlowId());
+        object.setCuccFlowId(this.getCuccFlowId());
+        object.setCtccFlowId(this.getCtccFlowId());
+        object.setCreatedAccountId(this.getCreatedAccountId());
+        object.setCreatedDateTime(this.getCreatedDateTime());
+        object.setModifiedAccountId(this.getModifiedAccountId());
+        object.setModifiedDateTime(this.getModifiedDateTime());
+        return object;
+    }
+
 }
