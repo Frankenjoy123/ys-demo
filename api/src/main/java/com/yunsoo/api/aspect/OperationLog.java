@@ -1,5 +1,6 @@
 package com.yunsoo.api.aspect;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.*;
 
 /**
@@ -10,5 +11,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 public @interface OperationLog {
-    public String operation() default "";
+     String operation() default "";
+     String level() default "";
+     String target() default "";
 }

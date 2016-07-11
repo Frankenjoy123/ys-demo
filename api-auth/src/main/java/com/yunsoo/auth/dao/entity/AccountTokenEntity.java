@@ -38,9 +38,6 @@ public class AccountTokenEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime permanentTokenExpiresDateTime;
 
-    @Column(name = "created_account_id")
-    private String createdAccountId;
-
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
@@ -92,14 +89,6 @@ public class AccountTokenEntity {
 
     public void setPermanentTokenExpiresDateTime(DateTime permanentTokenExpiresDateTime) {
         this.permanentTokenExpiresDateTime = permanentTokenExpiresDateTime;
-    }
-
-    public String getCreatedAccountId() {
-        return createdAccountId;
-    }
-
-    public void setCreatedAccountId(String createdAccountId) {
-        this.createdAccountId = createdAccountId;
     }
 
     public DateTime getCreatedDateTime() {

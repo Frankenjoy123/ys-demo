@@ -720,6 +720,9 @@ public class MarketingController {
         object.setComments(entity.getComments());
         object.setOrgId(entity.getOrgId());
         object.setStatusCode(entity.getStatusCode());
+        object.setCmccFlowId(entity.getCmccFlowId());
+        object.setCuccFlowId(entity.getCuccFlowId());
+        object.setCtccFlowId(entity.getCtccFlowId());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
@@ -830,6 +833,9 @@ public class MarketingController {
         entity.setComments(object.getComments());
         entity.setOrgId(object.getOrgId());
         entity.setStatusCode(object.getStatusCode());
+        entity.setCmccFlowId(object.getCmccFlowId());
+        entity.setCuccFlowId(object.getCuccFlowId());
+        entity.setCtccFlowId(object.getCtccFlowId());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());

@@ -64,6 +64,8 @@ public class OrganizationConfigDomain {
             configObject = getDefaultConfigObject();
         } else {
             configObject = getConfigObject(orgId);
+
+
             if (configObject == null) configObject = new OrganizationConfigObject();
 
             //extend carrier config if it's brand

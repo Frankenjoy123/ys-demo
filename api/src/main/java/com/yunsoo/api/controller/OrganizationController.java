@@ -34,6 +34,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class OrganizationController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
-  //  @OperationLog(operation = "get organization by id: #orgId")
+   // @OperationLog(operation = "get organization by id", level = "P1", target = "#orgId")
     public Organization getById(@PathVariable(value = "id") String orgId) {
         orgId = AuthUtils.fixOrgId(orgId);
         OrganizationObject object = organizationDomain.getOrganizationById(orgId);
@@ -167,7 +168,7 @@ public class OrganizationController {
         }
 
         if(includeCarrier)
-            returnObject.setCarrier(getById(returnObject.getCarrierId()));
+            returnObject.setCarrier(new Organization(organizationDomain.getOrganizationById(returnObject.getCarrierId())));
 
         return returnObject;
     }

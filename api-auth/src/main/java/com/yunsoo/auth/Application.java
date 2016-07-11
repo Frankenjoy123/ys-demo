@@ -1,4 +1,4 @@
-package com.yunsoo.auth.api;
+package com.yunsoo.auth;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
-@ComponentScan(basePackages = "com.yunsoo.api.auth")
+@ComponentScan(basePackages = "com.yunsoo.auth")
 @SpringBootApplication
 public class Application {
 
