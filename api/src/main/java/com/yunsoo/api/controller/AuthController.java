@@ -1,10 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
-import com.yunsoo.api.domain.AccountDomain;
-import com.yunsoo.api.domain.AccountLoginLogDomain;
-import com.yunsoo.api.domain.AccountTokenDomain;
-import com.yunsoo.api.domain.OrganizationDomain;
+import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.AccountLoginRequest;
 import com.yunsoo.api.dto.AccountLoginResponse;
 import com.yunsoo.api.dto.Token;
@@ -14,6 +11,7 @@ import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.IpUtils;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AccountTokenObject;
+import com.yunsoo.common.data.object.ApplicationObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -50,6 +48,9 @@ public class AuthController {
 
     @Autowired
     private AccountLoginLogDomain accountLoginLogDomain;
+
+    @Autowired
+    private ApplicationDomain applicationDomain;
 
     private Log log = LogFactory.getLog(this.getClass());
 
@@ -123,8 +124,10 @@ public class AuthController {
         }
 
         //create account token
+        ApplicationObject applicationObject = applicationDomain.getApplicationById(appId);
+        Integer permanentTokenExpiresMinutes = applicationObject != null ? applicationObject.getPermanentTokenExpiresMinutes() : null;
         //permanent token
-        AccountTokenObject accountToken = accountTokenDomain.create(accountId, appId, deviceId);
+        AccountTokenObject accountToken = accountTokenDomain.create(accountId, appId, deviceId, permanentTokenExpiresMinutes);
         Token permanentToken = new Token(accountToken.getPermanentToken(), accountToken.getPermanentTokenExpiresDateTime());
         //access token
         Token accessToken = tokenAuthenticationService.generateAccessToken(accountId, orgId);
@@ -182,7 +185,7 @@ public class AuthController {
 
         //create account token
         //permanent token
-        AccountTokenObject accountToken = accountTokenDomain.create(accountId, appId, deviceId, null);
+        AccountTokenObject accountToken = accountTokenDomain.create(accountId, appId, deviceId, -1);
         Token permanentToken = new Token(accountToken.getPermanentToken(), accountToken.getPermanentTokenExpiresDateTime());
         //access token
         Token accessToken = tokenAuthenticationService.generateAccessToken(accountId, orgId);

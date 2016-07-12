@@ -6,16 +6,11 @@ import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
-import com.yunsoo.data.service.entity.MktDataFlowEntity;
-import com.yunsoo.data.service.entity.MktDrawPrizeEntity;
-import com.yunsoo.data.service.entity.MktPrizeCostEntity;
-import com.yunsoo.data.service.entity.SmsTemplateEntity;
-import com.yunsoo.data.service.repository.MktDataFlowRepository;
-import com.yunsoo.data.service.repository.MktDrawPrizeRepository;
-import com.yunsoo.data.service.repository.MktPrizeCostRepository;
-import com.yunsoo.data.service.repository.SMSTemplateRepository;
-import org.apache.commons.logging.LogFactory;
+import com.yunsoo.data.service.entity.*;
+import com.yunsoo.data.service.repository.*;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +34,8 @@ public class JuheController {
     private Log log = LogFactory.getLog(this.getClass());
 
     private RestTemplate template;
+
+    private final int expiredTime = 2;
 
     @Value("${yunsoo.juhe.openId}")
     private String openId;
@@ -70,6 +67,9 @@ public class JuheController {
     @Autowired
     private MktDataFlowRepository dataFlowRepository;
 
+    @Autowired
+    private MobileVerificationCodeRepository mobileVerificationCodeRepository;
+
     public JuheController() {
         template = new RestTemplate();
     }
@@ -77,6 +77,14 @@ public class JuheController {
 
     @RequestMapping(value = "/sms", method = RequestMethod.POST)
     public boolean sendSMS(@RequestParam("mobile") String mobile, @RequestParam("temp_name") String tempName, @RequestParam("variables") String... variables) {
+        int ver_code = (int) ((Math.random() * 9 + 1) * 100000);
+        MobileVerificationCodeEntity mobileVerificationCodeEntity = new MobileVerificationCodeEntity();
+        mobileVerificationCodeEntity.setMobile(mobile);
+        mobileVerificationCodeEntity.setVerificationCode(String.valueOf(ver_code));
+        mobileVerificationCodeEntity.setUsedFlag(false);
+        mobileVerificationCodeEntity.setCreatedDateTime(DateTime.now());
+        mobileVerificationCodeRepository.save(mobileVerificationCodeEntity);
+
         SmsTemplateEntity templateEntity = repository.findByName(tempName);
         if (templateEntity == null)
             throw new NotFoundException("the related template not found");
@@ -92,8 +100,11 @@ public class JuheController {
         }
         try {
             SMSResultObject result = sendSMSInJuhe(mobile, templateEntity.getId(), map);
-            if(result.getErrorCode() == 0)
-                return  true;
+            if (result.getErrorCode() == 0) {
+                mobileVerificationCodeEntity.setSentDateTime(DateTime.now());
+                mobileVerificationCodeRepository.save(mobileVerificationCodeEntity);
+                return true;
+            }
             else{
                 log.error("send sms message error. reason: " + result.getReason()  + "mobile: " + mobile + ", temp_name: " + tempName + ", variables: " + variables.toString());
                 return false;
@@ -177,6 +188,17 @@ public class JuheController {
                 log.error("could not get the location of mobile, reason: " + location.getReason() + ", mobile: " + prize.getMobile());
             return false;
         }
+    }
+
+    public boolean verifySMSCode(String mobileNumber, String verificationCode) {
+        MobileVerificationCodeEntity entity = mobileVerificationCodeRepository.findFirstByMobileAndSentDateTimeNotNullOrderBySentDateTimeDesc(mobileNumber);
+        if (entity == null || entity.getUsedFlag() || !entity.getVerificationCode().equals(verificationCode)
+                || DateTime.now().compareTo(entity.getSentDateTime().plusMinutes(expiredTime)) > 0)
+            return false;
+
+        entity.setUsedFlag(true);
+        mobileVerificationCodeRepository.save(entity);
+        return true;
     }
 
     private MobileOrderResultObject mobileOrderInJuhe(String mobile, int number, String orderId) {

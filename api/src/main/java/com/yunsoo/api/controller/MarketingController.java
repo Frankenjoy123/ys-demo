@@ -464,6 +464,9 @@ public class MarketingController {
             mktConsumerRightObject.setName(mktConsumerRight.getName());
             mktConsumerRightObject.setTypeCode(mktConsumerRight.getTypeCode());
             mktConsumerRightObject.setAmount(mktConsumerRight.getAmount());
+            mktConsumerRightObject.setCmccFlowId(mktConsumerRight.getCmccFlowId());
+            mktConsumerRightObject.setCuccFlowId(mktConsumerRight.getCuccFlowId());
+            mktConsumerRightObject.setCtccFlowId(mktConsumerRight.getCtccFlowId());
             mktConsumerRightObject.setComments(mktConsumerRight.getComments());
             mktConsumerRightObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getOrgId());
             mktConsumerRightObject.setModifiedDateTime(DateTime.now());
