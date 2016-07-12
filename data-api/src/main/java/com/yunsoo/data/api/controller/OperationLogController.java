@@ -10,6 +10,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,14 +42,17 @@ public class OperationLogController {
     @RequestMapping( method = RequestMethod.GET)
     public List<OperationLogObject> filter(@RequestParam("account_ids")List<String> accountIds,
                                            @RequestParam(value = "app_id", required = false)String appId,
-                                           @RequestParam(value = "start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start, Pageable pageable,
+                                           @RequestParam(value = "operation", required = false)String operation,
+                                           @RequestParam(value = "create_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+                                           @RequestParam(value = "create_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
+                                           @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)Pageable pageable,
                                            HttpServletResponse response){
-        Page<OperationLogEntity> entityPage = repository.query(accountIds, appId, start, pageable);
+        Page<OperationLogEntity> entityPage = repository.query(accountIds, appId, operation, start, end, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
         }
 
-        return entityPage.getContent().stream().map(this::toOperationLogObject).collect(Collectors.toList());
+        return entityPage.map(this::toOperationLogObject).getContent();
 
     }
 

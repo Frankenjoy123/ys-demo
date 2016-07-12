@@ -15,8 +15,12 @@ import java.util.List;
  */
 public interface OperationLogRepository extends CrudRepository<OperationLogEntity, String> {
 
-    @Query("select e from OperationLogEntity e where e.createdAccountId in :accountIds and (:appId is null or e.createdAppId = :appId) and " +
+    @Query("select e from OperationLogEntity e where e.createdAccountId in :accountIds and " +
+            "(:appId is null or e.createdAppId = :appId) and " +
+            "(:operation is null or e.operation like ('%' || :operation || '%') ) and " +
+            "(:end is null or e.createdDateTime<= :end) and " +
             "(:start is null or e.createdDateTime>= :start)")
     Page<OperationLogEntity> query(@Param("accountIds")List<String> accountIds,
-                                   @Param("appId")String appId, @Param("start")DateTime start, Pageable pageable);
+                                   @Param("appId")String appId, @Param("operation")String operation,
+                                   @Param("start")DateTime start, @Param("end")DateTime end, Pageable pageable);
 }

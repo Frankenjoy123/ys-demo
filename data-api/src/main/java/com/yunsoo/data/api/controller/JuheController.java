@@ -109,10 +109,10 @@ public class JuheController {
     }
 
     @RequestMapping(value = "/ip", method = RequestMethod.GET)
-    public String getLocationByIp(@RequestParam("ip") String ip){
+    public IPResultObject getLocationByIp(@RequestParam("ip") String ip){
         IPResultObject result = getIPInJuhe(ip);
         if(result.getErrorCode() == 0)
-            return  result.getResult().getArea();
+            return  result;
         else{
             log.error("get ip error. reason: " + result.getReason()  + ". ip: " + ip);
             return null;

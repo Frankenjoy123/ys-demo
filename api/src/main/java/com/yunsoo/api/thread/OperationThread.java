@@ -3,6 +3,7 @@ package com.yunsoo.api.thread;
 import com.yunsoo.api.cache.OperationCache;
 import com.yunsoo.api.client.DataAPIClient;
 import com.yunsoo.common.data.object.OperationLogObject;
+import com.yunsoo.common.data.object.juhe.IPResultObject;
 import com.yunsoo.common.web.client.RestClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,8 +50,12 @@ public class OperationThread implements Runnable {
     }
 
     private OperationLogObject createLog(OperationLogObject log) {
-        if(log.getIp() != null)
-            log.setLocation(client.get("juhe/ip?ip={ip}", String.class, log.getIp()));
+        if(log.getIp() != null){
+            IPResultObject ipResultObject = client.get("juhe/ip?ip={ip}", IPResultObject.class, log.getIp());
+            if(ipResultObject != null)
+                log.setLocation(ipResultObject.getResult().getArea());
+        }
+
 
         return client.post("operation", log, OperationLogObject.class);
     }
