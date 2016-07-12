@@ -43,6 +43,9 @@ public class ApplicationObject implements Serializable {
     @JsonProperty("system_version")
     private String systemVersion;
 
+    @JsonProperty("permanent_token_expires_minutes")
+    private Integer permanentTokenExpiresMinutes;
+
     @NotEmpty(message = "created_account_id must not be null or empty")
     @JsonProperty("created_account_id")
     private String createdAccountId;
@@ -114,6 +117,14 @@ public class ApplicationObject implements Serializable {
 
     public void setSystemVersion(String systemVersion) {
         this.systemVersion = systemVersion;
+    }
+
+    public Integer getPermanentTokenExpiresMinutes() {
+        return permanentTokenExpiresMinutes;
+    }
+
+    public void setPermanentTokenExpiresMinutes(Integer permanentTokenExpiresMinutes) {
+        this.permanentTokenExpiresMinutes = permanentTokenExpiresMinutes;
     }
 
     public String getCreatedAccountId() {
