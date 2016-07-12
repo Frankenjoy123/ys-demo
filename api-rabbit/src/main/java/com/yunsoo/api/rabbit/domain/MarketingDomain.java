@@ -177,4 +177,33 @@ public class MarketingDomain {
             return null;*/
 
     }
+
+    public String validateMobileType(String mobile) {
+        String returnString = "";
+        if (mobile == null || mobile.trim().length() != 11) {
+            return "-1";
+        }
+        if (mobile.trim().substring(0, 3).equals("134") || mobile.trim().substring(0, 3).equals("135") ||
+                mobile.trim().substring(0, 3).equals("136") || mobile.trim().substring(0, 3).equals("137")
+                || mobile.trim().substring(0, 3).equals("138") || mobile.trim().substring(0, 3).equals("139") || mobile.trim().substring(0, 3).equals("150") ||
+                mobile.trim().substring(0, 3).equals("151") || mobile.trim().substring(0, 3).equals("152")
+                || mobile.trim().substring(0, 3).equals("157") || mobile.trim().substring(0, 3).equals("158") || mobile.trim().substring(0, 3).equals("159")
+                || mobile.trim().substring(0, 3).equals("187") || mobile.trim().substring(0, 3).equals("188")) {
+            returnString = LookupCodes.MobileType.CMCC;     // china mobile
+        }
+        if (mobile.trim().substring(0, 3).equals("130") || mobile.trim().substring(0, 3).equals("131") ||
+                mobile.trim().substring(0, 3).equals("132") || mobile.trim().substring(0, 3).equals("156")
+                || mobile.trim().substring(0, 3).equals("185") || mobile.trim().substring(0, 3).equals("186")) {
+            returnString = LookupCodes.MobileType.CUCC;     //china unicom
+        }
+        if (mobile.trim().substring(0, 3).equals("133") || mobile.trim().substring(0, 3).equals("153") ||
+                mobile.trim().substring(0, 3).equals("180") || mobile.trim().substring(0, 3).equals("189")) {
+            returnString = LookupCodes.MobileType.CTCC;     //china telecom
+        }
+        if (returnString.trim().equals("")) {
+            returnString = LookupCodes.MobileType.UNKNOWN;    // unknown type
+        }
+        return returnString;
+    }
+
 }

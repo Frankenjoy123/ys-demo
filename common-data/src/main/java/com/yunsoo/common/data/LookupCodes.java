@@ -281,6 +281,18 @@ public class LookupCodes {
         public static final String MOBILE_FLOW = "mobile flow";
     }
 
+    public static class MobileType {
+        private MobileType() {
+        }
+
+        public static final String CMCC = "cmcc";
+        public static final String CUCC = "cucc";
+        public static final String CTCC = "ctcc";
+        public static final String UNKNOWN = "unknown";
+
+    }
+
+
     public static class UserEvent {
         private UserEvent() {
         }
