@@ -70,12 +70,18 @@ public class JuheController {
     @Autowired
     private MobileVerificationCodeRepository mobileVerificationCodeRepository;
 
+    @Autowired
+    private MktDrawRuleRepository ruleRepository;
+
+    @Autowired
+    private MktConsumerRightRepository consumerRightRepository;
+
     public JuheController() {
         template = new RestTemplate();
     }
 
 
-    @RequestMapping(value = "/sms", method = RequestMethod.POST)
+    @RequestMapping(value = "/sms", method = RequestMethod.GET)
     public boolean sendSMS(@RequestParam("mobile") String mobile, @RequestParam("temp_name") String tempName, @RequestParam("variables") String... variables) {
         int ver_code = (int) ((Math.random() * 9 + 1) * 100000);
         MobileVerificationCodeEntity mobileVerificationCodeEntity = new MobileVerificationCodeEntity();
@@ -115,6 +121,17 @@ public class JuheController {
         }
     }
 
+    @RequestMapping(value = "/verifycode", method = RequestMethod.POST)
+    public boolean sendVerifyCode(@RequestParam("mobile") String mobile, @RequestParam("verification_code") String verificationCode) {
+        if ((mobile == null) || (verificationCode == null)) {
+            throw new BadRequestException("mobile phone or verification code can not be null");
+        }
+        boolean isVerifiedPass = false;
+        isVerifiedPass = verifySMSCode(mobile, verificationCode);
+
+        return isVerifiedPass;
+    }
+
     public MobileLocationResultObject getMobileLocation(@RequestParam("mobile") String mobile){
         return getMobileLocationInJuhe(mobile);
     }
@@ -131,7 +148,7 @@ public class JuheController {
     }
 
 
-    @RequestMapping(value = "/mobile/order", method = RequestMethod.POST)
+    @RequestMapping(value = "/mobile/order", method = RequestMethod.GET)
     public boolean mobileOrder (@RequestParam("draw_prize_id") String id){
         MktDrawPrizeEntity prize = prizeRepository.findOne(id);
         if(prize == null)
@@ -154,15 +171,23 @@ public class JuheController {
         }
     }
 
-    @RequestMapping(value = "/mobile/data", method = RequestMethod.POST)
+    @RequestMapping(value = "/mobile/data", method = RequestMethod.GET)
     public boolean mobileDataFlow (@RequestParam("draw_prize_id") String id){
         MktDrawPrizeEntity prize = prizeRepository.findOne(id);
         if(prize == null)
             throw new NotFoundException("the related prize not found");
 
-        MobileLocationResultObject location = getMobileLocation(prize.getMobile());
-        if(location != null && location.getErrorCode()==0) {
-            MktDataFlowEntity flowEntity = dataFlowRepository.findByTypeAndDataFlow(location.getResult().getCompany(), prize.getAmount().intValue());
+        MktDrawRuleEntity ruleEntity = ruleRepository.findOne(prize.getDrawRuleId());
+        if (ruleEntity == null)
+            throw new NotFoundException("prize rule not found");
+
+        String consumerRightId = ruleEntity.getConsumerRightId();
+        if (consumerRightId == null)
+            throw new NotFoundException("consumer right not found");
+        MktConsumerRightEntity consumerRightEntity = consumerRightRepository.findOne(consumerRightId);
+        Integer pid = getPidByMobileAndConsumerRight(prize.getMobile(), consumerRightEntity);
+        if (pid != null) {
+            MktDataFlowEntity flowEntity = dataFlowRepository.findOne(pid.intValue());
             if(flowEntity == null)
                 throw new NotFoundException("could not found related mobile data flow for mobile: " + prize.getMobile() + ", data flow: " + prize.getAmount().toString());
 
@@ -182,10 +207,6 @@ public class JuheController {
             }
         }
         else{
-            if(location == null)
-                log.error("the prize don't have mobile info");
-            else if(location.getErrorCode()!=0)
-                log.error("could not get the location of mobile, reason: " + location.getReason() + ", mobile: " + prize.getMobile());
             return false;
         }
     }
@@ -200,6 +221,29 @@ public class JuheController {
         mobileVerificationCodeRepository.save(entity);
         return true;
     }
+
+    public Integer getPidByMobileAndConsumerRight(String mobile, MktConsumerRightEntity entity) {
+        if ((mobile == null) || (entity == null))
+            throw new BadRequestException("mobile or consumer right not found");
+
+        MobileLocationResultObject location = getMobileLocation(mobile);
+        if (location != null && location.getErrorCode() == 0) {
+            String mobileType = location.getResult().getCompany();
+            if ("中国移动".equals(mobileType))
+                return entity.getCmccFlowId();
+            if ("中国联通".equals(mobileType))
+                return entity.getCuccFlowId();
+            if ("中国电信".equals(mobileType))
+                return entity.getCtccFlowId();
+        } else {
+            if (location == null)
+                log.error("the prize don't have mobile info");
+            else if (location.getErrorCode() != 0)
+                log.error("could not get the location of mobile, reason: " + location.getReason() + ", mobile: " + mobile);
+        }
+        return null;
+    }
+
 
     private MobileOrderResultObject mobileOrderInJuhe(String mobile, int number, String orderId) {
         String url = "http://op.juhe.cn/ofpay/mobile/onlineorder?key={key}&phoneno={mobile}&cardnum={number}&orderid={orderId}&sign={sign}";

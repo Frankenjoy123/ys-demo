@@ -658,6 +658,15 @@ public class MarketingController {
         return marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "drawRule/consumer/{id}", method = RequestMethod.GET)
+    public List<MktDrawRule> getMarketingRuleListByConsumerRight(@PathVariable(value = "id") String consumerRightId) {
+        if (consumerRightId == null)
+            throw new BadRequestException("marketing id can not be null");
+
+        return marketingDomain.getRuleListByConsumerRight(consumerRightId).stream().map(MktDrawRule::new).collect(Collectors.toList());
+    }
+
+
     @RequestMapping(value = "Rule/{id}", method = RequestMethod.GET)
     public MktDrawRule getMarketingRuleById(@PathVariable(value = "id") String id) {
         if (id == null)

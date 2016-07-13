@@ -4,6 +4,7 @@ import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -70,7 +71,6 @@ public class MarketingDomain {
         }, marketingId);
 
     }
-
 
     public MktDrawRuleObject getMktRandomPrize(String marketId) {
         MarketingObject obj = dataAPIClient.get("marketing/{id}", MarketingObject.class, marketId);
@@ -141,42 +141,34 @@ public class MarketingDomain {
                 return null;
             }
         }
-
-
-        /*Map<Double, MktDrawRuleObject> prizeArray = new HashMap<>();
-        Double index = new Double(0);
-
-        for (MktDrawRuleObject rule : newRuleList) {
-
-            int ruleQuantity = rule.getTotalQuantity();
-            for(int i = 0; i < ruleQuantity; i++) {
-                if(prizeArray.size() >= totalQuantity)
-                    break;
-                prizeArray.put(index, rule);
-                index += 1;
-            }
-
-            int ruleQuantity = (int) (rule.getProbability() * totalQuantity);
-            for (int i = 0; i < ruleQuantity; i++) {
-                double index = Math.floor(Math.random() * totalQuantity);
-                while (prizeArray.containsKey(index)) {
-                    index += 1;
-                    if (prizeArray.size() >= totalQuantity)
-                        break;
-                    if (index > totalQuantity)
-                        index = index - totalQuantity;
-                }
-
-                prizeArray.put(index, rule);
-            }
-        }
-
-        if (prizeArray.containsKey(prizeIndex) && obj.getBalance() >= prizeArray.get(index).getAmount())
-            return prizeArray.get(index);
-        else
-            return null;*/
-
     }
+
+    public boolean createMobileOrder(String prizeId) {
+        return dataAPIClient.get("juhe/mobile/order?draw_prize_id=" + prizeId, Boolean.class);
+    }
+
+    public boolean createMobileDataFlow(String prizeId) {
+        return dataAPIClient.get("juhe/mobile/data?draw_prize_id=" + prizeId, Boolean.class);
+    }
+
+    public boolean sendVerificationCode(String mobile, String templateName) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("mobile", mobile)
+                .append("temp_name", templateName)
+                .build();
+
+        return dataAPIClient.get("juhe/sms" + query, Boolean.class);
+    }
+
+    public boolean validateVerificationCode(String mobile, String verificationCode) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("mobile", mobile)
+                .append("verification_code", verificationCode)
+                .build();
+
+        return dataAPIClient.get("juhe/verifycode" + query, Boolean.class);
+    }
+
 
     public String validateMobileType(String mobile) {
         String returnString = "";

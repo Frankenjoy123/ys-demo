@@ -189,8 +189,19 @@ public class LookupCodes {
         public static final String SUBMIT = "submit";
         public static final String PAID = "paid";
         public static final String INVALID = "invalid";
+        public static final String FAILED = "failed";
 
     }
+
+    public static class MktPrizeType {
+        private MktPrizeType() {
+        }
+
+        public static final String WEBCHAT = "webchat";
+        public static final String MOBILE_FEE = "mobile_fee";
+        public static final String MOBILE_DATA = "mobile_data";
+    }
+
 
     public static class MktType {
         private MktType() {
