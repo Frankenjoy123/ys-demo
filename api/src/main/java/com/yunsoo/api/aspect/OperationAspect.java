@@ -12,7 +12,6 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -24,7 +23,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by yan on 6/30/2016.
@@ -42,24 +43,31 @@ public class OperationAspect {
 
     @After("execution(* com.yunsoo.api.controller.*.*(..)) && @annotation(operationLog)")
     public void recordOperation(JoinPoint joinPoint, OperationLog operationLog) {
+        try {
+            log.info("in the operation aspect, action: " + joinPoint.getSignature().getName());
+            Object[] args = joinPoint.getArgs();
+            Method method = getMethod(joinPoint);
 
-        log.info("in the operation aspect, action: " + operationLog.operation());
-        Object[] args = joinPoint.getArgs();
-        Method method = getMethod(joinPoint);
+            OperationLogObject object = new OperationLogObject();
+            object.setCreatedDateTime(DateTime.now());
+            if (method != null)
+                object.setOperation(parseKey(operationLog.operation(), method, args));
+            else
+                object.setOperation(operationLog.operation());
+            object.setLevel(operationLog.level());
+            object.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
 
-        OperationLogObject object = new OperationLogObject();
-        object.setCreatedDateTime(DateTime.now());
-        object.setOperation(operationLog.operation() + " " + parseKey(operationLog.target(), method, args));
-        object.setLevel(operationLog.level());
-        object.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
-
-        HttpServletRequest request = getCurrentHttpServletRequest();
-        if (request != null) {
-            object.setUserAgent(request.getHeader(Constants.HttpHeaderName.USER_AGENT));
-            object.setCreatedAppId(request.getHeader(Constants.HttpHeaderName.APP_ID));
-            object.setIp(IpUtils.getIpFromRequest(request));
-            OperationCache.put(object);
+            HttpServletRequest request = getCurrentHttpServletRequest();
+            if (request != null) {
+                object.setUserAgent(request.getHeader(Constants.HttpHeaderName.USER_AGENT));
+                object.setCreatedAppId(request.getHeader(Constants.HttpHeaderName.APP_ID));
+                object.setIp(IpUtils.getIpFromRequest(request));
+                OperationCache.put(object);
+            }
+        } catch (Exception e) {
+            log.error("Operation aspect error:" + joinPoint.getSignature().getName(), e);
         }
+
 
     }
 
@@ -69,14 +77,16 @@ public class OperationAspect {
         Class[] argTypes = new Class[args.length];
         for (int i = 0; i < args.length; i++) {
             argTypes[i] = args[i].getClass();
+            if (args[i].getClass().equals(ArrayList.class))
+                argTypes[i] = List.class;
         }
         Method method = null;
         try {
             method = pjp.getTarget().getClass().getMethod(pjp.getSignature().getName(), argTypes);
         } catch (NoSuchMethodException e) {
             log.error("Operation aspect, no such method found", e);
-        } catch (SecurityException e) {
-            log.error("Operation aspect, security issue found", e);
+        } catch (SecurityException ex) {
+            log.error("Operation aspect, security issue found", ex);
         }
         return method;
 

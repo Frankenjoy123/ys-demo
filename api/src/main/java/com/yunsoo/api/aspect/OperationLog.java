@@ -13,5 +13,4 @@ import java.lang.annotation.*;
 public @interface OperationLog {
      String operation() default "";
      String level() default "";
-     String target() default "";
 }

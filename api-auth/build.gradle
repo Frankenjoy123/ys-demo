@@ -19,13 +19,10 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-actuator'
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.boot:spring-boot-starter-logging'
-
+    compile 'org.springframework.boot:spring-boot-starter-redis'
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
     compile 'org.jadira.usertype:usertype.jodatime:2.0.1'
     compile 'org.apache.commons:commons-dbcp2:2.1.1'
-
-    compile 'org.springframework.data:spring-data-redis:1.6.4.RELEASE'
-    compile 'redis.clients:jedis:2.7.3'
 
     runtime 'mysql:mysql-connector-java:5.1.38'
     runtime 'com.h2database:h2'

@@ -1,6 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
+import com.yunsoo.api.aspect.*;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.security.authorization.AuthorizationService;
@@ -102,6 +103,7 @@ public class AccountController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#request.orgId, 'org', 'account:create')")
+    @com.yunsoo.api.aspect.OperationLog(operation = "'创建新账号:'+#request.identifier", level = "P1")
     public Account create(@RequestBody @Valid AccountRequest request) {
         AccountObject accountObject = request.toAccountObject();
         return new Account(accountDomain.createAccount(accountObject, true));
@@ -110,6 +112,7 @@ public class AccountController {
     @RequestMapping(value = "/carrier", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#request.orgId, 'org', 'account:create')")
+    @com.yunsoo.api.aspect.OperationLog(operation = "'创建运行商账号:'+#request.identifier", level = "P1")
     public Account createCarrier(@RequestBody @Valid AccountRequest request) {
         AccountObject accountObject = request.toAccountObject();
         Account createdAccount = new Account(accountDomain.createAccount(accountObject, true));
@@ -119,6 +122,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'更新账号:' + #account.lastName + #account.firstName", level = "P1")
     public void patchUpdateAccount(@PathVariable("id") String accountId,
                                    @RequestBody Account account) {
         accountId = AuthUtils.fixAccountId(accountId);
@@ -136,6 +140,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "{id}/disable", method = RequestMethod.PATCH)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'禁用账号:' + #accountId", level = "P1")
     public void disableAccount(@PathVariable("id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         AccountObject accountObject = findAccountById(accountId);
@@ -146,6 +151,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "{id}/enable", method = RequestMethod.PATCH)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'解禁账号:' + #accountId", level = "P1")
     public void enableAccount(@PathVariable("id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         AccountObject accountObject = findAccountById(accountId);
@@ -156,6 +162,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "{id}/resetPassword", method = RequestMethod.PATCH)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'重置账户密码:' + #accountId", level = "P1")
     public void changePassword(@PathVariable("id") String accountId, @RequestBody String newPassword) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         AccountObject accountObject = findAccountById(accountId);
@@ -166,6 +173,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "current/password", method = RequestMethod.POST)
+    @com.yunsoo.api.aspect.OperationLog(operation = "修改账户密码", level = "P1")
     public void updatePassword(@RequestBody AccountUpdatePasswordRequest accountPassword) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
 
@@ -198,6 +206,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "{account_id}/group/{group_id}", method = RequestMethod.PUT)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'添加账户'+ #accountId + '到账号组' + #groupId", level = "P1")
     public void putAccountGroup(@PathVariable(value = "account_id") String accountId,
                                 @PathVariable(value = "group_id") String groupId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
@@ -212,6 +221,7 @@ public class AccountController {
 
     //update account group under the account
     @RequestMapping(value = "{account_id}/group", method = RequestMethod.PUT)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'修改账户'+ #accountId+'到账户组'+ #groupIds", level = "P1")
     public void updateAccountGroups(@PathVariable(value = "account_id") String accountId,
                                     @RequestBody List<String> groupIds) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
@@ -223,6 +233,7 @@ public class AccountController {
     //delete account group under the account
     @RequestMapping(value = "{account_id}/group/{group_id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'从账户组'+ #groupId +'中删除账户' + #accountId", level = "P1")
     public void deleteAccountGroup(@PathVariable(value = "account_id") String accountId,
                                    @PathVariable(value = "group_id") String groupId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current

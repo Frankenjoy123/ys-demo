@@ -39,6 +39,7 @@ public class PermissionAllocationController {
     @Autowired
     private GroupService groupService;
 
+
     //region account
 
     @RequestMapping(value = "account/{accountId}", method = RequestMethod.GET)
