@@ -137,4 +137,8 @@ public class AccountGroupService {
         accountGroupRepository.deleteByAccountIdAndGroupId(accountId, groupId);
     }
 
+    public void deleteAccountGroupsByGroupId(String groupId) {
+        accountGroupRepository.deleteByGroupId(groupId);
+    }
+
 }

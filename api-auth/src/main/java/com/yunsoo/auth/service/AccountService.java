@@ -75,6 +75,13 @@ public class AccountService {
 //        });
 //    }
 
+
+    public long count(String orgId, List<String> statusCodeIn) {
+        return statusCodeIn == null
+                ? accountRepository.countByOrgId(orgId)
+                : accountRepository.countByOrgIdAndStatusCodeIn(orgId, statusCodeIn);
+    }
+
     /**
      * assume the password is hashed if request.hashSalt is not empty.
      * otherwise new hashSalt is generated and the password is hashed before saved.

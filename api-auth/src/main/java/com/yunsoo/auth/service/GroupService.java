@@ -10,14 +10,13 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-;
 
 /**
  * Created by:   Lijian
@@ -29,6 +28,13 @@ public class GroupService {
 
     @Autowired
     private GroupRepository groupRepository;
+
+    @Autowired
+    private AccountGroupService accountGroupService;
+
+    @Autowired
+    private PermissionAllocationService permissionAllocationService;
+
 
     public Group getById(String id) {
         if (StringUtils.isEmpty(id)) {
@@ -58,16 +64,38 @@ public class GroupService {
         return groupRepository.findByOrgId(orgId, null).getContent().stream().map(this::toGroup).collect(Collectors.toList());
     }
 
-    public Group create(String orgId, String name, String description) {
-        Assert.notNull(orgId);
-        Assert.notNull(name);
+    public Group create(Group group) {
+        Assert.notNull(group.getOrgId());
+        Assert.notNull(group.getName());
         GroupEntity entity = new GroupEntity();
-        entity.setOrgId(orgId);
-        entity.setName(name);
-        entity.setDescription(description);
+        entity.setOrgId(group.getOrgId());
+        entity.setName(group.getName());
+        entity.setDescription(group.getDescription());
         entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         entity.setCreatedDateTime(DateTime.now());
         return toGroup(groupRepository.save(entity));
+    }
+
+    @Transactional
+    public void patchUpdate(Group group) {
+        if (StringUtils.isEmpty(group.getId())) {
+            return;
+        }
+        GroupEntity entity = groupRepository.findOne(group.getId());
+        if (entity != null) {
+            if (group.getName() != null) entity.setName(group.getName());
+            if (group.getDescription() != null) entity.setDescription(group.getDescription());
+            entity.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
+            entity.setModifiedDateTime(DateTime.now());
+            groupRepository.save(entity);
+        }
+    }
+
+    @Transactional
+    public void deleteGroupAndAllRelatedById(String groupId) {
+        accountGroupService.deleteAccountGroupsByGroupId(groupId);
+        permissionAllocationService.deletePermissionAllocationsByGroupId(groupId);
+        groupRepository.delete(groupId);
     }
 
 
@@ -83,7 +111,7 @@ public class GroupService {
         group.setCreatedAccountId(entity.getCreatedAccountId());
         group.setCreatedDateTime(entity.getCreatedDateTime());
         group.setModifiedAccountId(entity.getModifiedAccountId());
-        group.setModifiedDatetime(entity.getModifiedDatetime());
+        group.setModifiedDateTime(entity.getModifiedDateTime());
         return group;
     }
 

@@ -7,9 +7,11 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,12 +66,4 @@ public class PermissionController {
         return region;
     }
 
-    @RequestMapping(value = "/region", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'permission_region:read')")
-    public List<PermissionRegion> getPermissionRegions(@RequestParam("org_id") String orgId,
-                                                       @RequestParam("type_code") String typeCode) {
-
-        //todo
-        return new ArrayList<>();
-    }
 }

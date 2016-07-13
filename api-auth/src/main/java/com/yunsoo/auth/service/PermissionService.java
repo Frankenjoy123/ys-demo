@@ -83,6 +83,7 @@ public class PermissionService {
         permissionRegionRepository.save(toPermissionRegionEntity(defaultPR));
     }
 
+    @Transactional
     public PermissionRegion getOrCreateDefaultPermissionRegion(String orgId) {
         PermissionRegionEntity defaultPR;
         List<PermissionRegionEntity> defaultRegionEntities = permissionRegionRepository.findByOrgIdAndTypeCode(orgId, Constants.PermissionRegionType.DEFAULT);

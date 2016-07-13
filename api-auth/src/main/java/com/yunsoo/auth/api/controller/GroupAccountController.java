@@ -16,12 +16,12 @@ import java.util.List;
 
 /**
  * Created by:   Lijian
- * Created on:   2016-07-12
+ * Created on:   2016-07-13
  * Descriptions:
  */
 @RestController
-@RequestMapping(value = "/account/{account_id}/group")
-public class AccountGroupController {
+@RequestMapping(value = "/group/{group_id}/account")
+public class GroupAccountController {
 
     @Autowired
     private AccountService accountService;
@@ -34,22 +34,20 @@ public class AccountGroupController {
 
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<Group> getGroups(@PathVariable("account_id") String accountId) {
-        accountId = AuthUtils.fixAccountId(accountId); //auto fix current
-        Account account = findAccountById(accountId);
-        if (!AuthUtils.isMe(accountId)) {
-            AuthUtils.checkPermission(account.getOrgId(), "account_group", "read");
-        }
-        return accountGroupService.getGroupsByAccountId(accountId);
+    public List<Account> getAccounts(@PathVariable("group_id") String groupId) {
+        Group group = findGroupById(groupId);
+        AuthUtils.checkPermission(group.getOrgId(), "account_group", "read");
+
+        return accountGroupService.getAccountsByGroupId(groupId);
     }
 
-    @RequestMapping(value = "{group_id}", method = RequestMethod.PUT)
-    public void putAccountGroup(@PathVariable(value = "account_id") String accountId,
-                                @PathVariable(value = "group_id") String groupId) {
+    @RequestMapping(value = "{account_id}", method = RequestMethod.PUT)
+    public void putAccountGroup(@PathVariable(value = "group_id") String groupId,
+                                @PathVariable(value = "account_id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         Account account = findAccountById(accountId);
         AuthUtils.checkPermission(account.getOrgId(), "account_group", "write");
-        
+
         Group group = findGroupById(groupId);
         if (!account.getOrgId().equals(group.getOrgId())) {
             throw new BadRequestException("account and group are not in the same organization");
@@ -57,25 +55,23 @@ public class AccountGroupController {
         accountGroupService.putAccountGroup(accountId, groupId);
     }
 
-    //update account group under the account
+    //update account group under the group
     @RequestMapping(value = "", method = RequestMethod.PUT)
-    public void updateAccountGroups(@PathVariable(value = "account_id") String accountId,
-                                    @RequestBody List<String> groupIds) {
-        accountId = AuthUtils.fixAccountId(accountId); //auto fix current
-        Account account = findAccountById(accountId);
-        AuthUtils.checkPermission(account.getOrgId(), "account_group", "write");
+    public void updateAccountGroups(@PathVariable(value = "group_id") String groupId,
+                                    @RequestBody List<String> accountIds) {
+        Group group = findGroupById(groupId);
+        AuthUtils.checkPermission(group.getOrgId(), "account_group", "write");
 
-        accountGroupService.putAccountGroupsByAccount(account, groupIds);
+        accountGroupService.putAccountGroupsByGroup(group, accountIds);
     }
 
-    //delete account group under the account
-    @RequestMapping(value = "{group_id}", method = RequestMethod.DELETE)
+    //delete account group under the group
+    @RequestMapping(value = "{account_id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAccountGroup(@PathVariable(value = "account_id") String accountId,
-                                   @PathVariable(value = "group_id") String groupId) {
-        accountId = AuthUtils.fixAccountId(accountId); //auto fix current
-        Account account = findAccountById(accountId);
-        AuthUtils.checkPermission(account.getOrgId(), "account_group", "write");
+    public void deleteAccountGroup(@PathVariable(value = "group_id") String groupId,
+                                   @PathVariable(value = "account_id") String accountId) {
+        Group group = findGroupById(groupId);
+        AuthUtils.checkPermission(group.getOrgId(), "account_group", "write");
 
         accountGroupService.deleteAccountGroupByAccountIdAndGroupId(accountId, groupId);
     }
@@ -96,5 +92,4 @@ public class AccountGroupController {
         }
         return group;
     }
-
 }

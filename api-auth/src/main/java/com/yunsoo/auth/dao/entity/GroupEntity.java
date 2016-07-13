@@ -43,7 +43,7 @@ public class GroupEntity {
 
     @Column(name = "modified_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime modifiedDatetime;
+    private DateTime modifiedDateTime;
 
 
     public String getId() {
@@ -102,12 +102,12 @@ public class GroupEntity {
         this.modifiedAccountId = modifiedAccountId;
     }
 
-    public DateTime getModifiedDatetime() {
-        return modifiedDatetime;
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
     }
 
-    public void setModifiedDatetime(DateTime modifiedDatetime) {
-        this.modifiedDatetime = modifiedDatetime;
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 }
 

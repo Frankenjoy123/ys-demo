@@ -18,7 +18,7 @@ import com.yunsoo.auth.dto.PermissionRegion;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -76,14 +76,14 @@ public class PermissionAllocationService {
     }
 
     public void deletePermissionAllocationsByGroupId(String groupId) {
-        getPermissionAllocationsByPrincipal(new GroupPrincipalExpression(groupId).toString())
-                .forEach(pa -> {
-                    deletePermissionAllocationById(pa.getId());
-                });
+        permissionAllocationRepository.deleteByPrincipal(new GroupPrincipalExpression(groupId).toString());
     }
 
+    @Transactional
     public void allocateAdminPermissionOnCurrentOrgToAccount(String accountId) {
-        Assert.hasText(accountId, "accountId not valid");
+        if (StringUtils.isEmpty(accountId)) {
+            return;
+        }
         allocatePermission(
                 new AccountPrincipalExpression(accountId),
                 OrgRestrictionExpression.CURRENT,
@@ -91,9 +91,12 @@ public class PermissionAllocationService {
                 PermissionEntry.Effect.allow);
     }
 
+    @Transactional
     public void allocateAdminPermissionOnDefaultRegionToAccount(String accountId) {
         Account account = accountService.getById(accountId);
-        Assert.notNull(account, "account not valid");
+        if (account == null) {
+            return;
+        }
 
         PermissionRegion defaultPR = permissionService.getOrCreateDefaultPermissionRegion(account.getOrgId());
         allocatePermission(
@@ -103,6 +106,7 @@ public class PermissionAllocationService {
                 PermissionEntry.Effect.allow);
     }
 
+    @Transactional
     public void allocatePermission(PrincipalExpression principal,
                                    RestrictionExpression restriction,
                                    PermissionExpression permission,
@@ -116,6 +120,7 @@ public class PermissionAllocationService {
         createPermissionAllocation(principal.toString(), restriction.toString(), permission.toString(), effect.name());
     }
 
+    @Transactional
     public void deallocatePermission(PrincipalExpression principal,
                                      RestrictionExpression restriction,
                                      PermissionExpression permission,
@@ -123,8 +128,8 @@ public class PermissionAllocationService {
         List<PermissionAllocation> pAOs = getPermissionAllocationsByPrincipal(principal.toString());
         for (PermissionAllocation p : pAOs) {
             if (isEqualPermissionAllocation(p, principal, restriction, permission, effect)) {
-                //already has the same allocation item
-                deletePermissionAllocationById(p.getId());
+                //allocation item exists
+                permissionAllocationRepository.delete(p.getId());
             }
         }
     }
@@ -178,10 +183,6 @@ public class PermissionAllocationService {
         return toPermissionAllocation(permissionAllocationRepository.save(entity));
     }
 
-    private void deletePermissionAllocationById(String id) {
-        permissionAllocationRepository.delete(id);
-    }
-
     private PermissionAllocation toPermissionAllocation(PermissionAllocationEntity entity) {
         if (entity == null) {
             return null;
@@ -195,21 +196,6 @@ public class PermissionAllocationService {
         permissionAllocation.setCreatedAccountId(entity.getCreatedAccountId());
         permissionAllocation.setCreatedDateTime(entity.getCreatedDateTime());
         return permissionAllocation;
-    }
-
-    private PermissionAllocationEntity toPermissionAllocationEntity(PermissionAllocation permissionAllocation) {
-        if (permissionAllocation == null) {
-            return null;
-        }
-        PermissionAllocationEntity entity = new PermissionAllocationEntity();
-        entity.setId(permissionAllocation.getId());
-        entity.setPrincipal(permissionAllocation.getPrincipal());
-        entity.setRestriction(permissionAllocation.getRestriction());
-        entity.setPermission(permissionAllocation.getPermission());
-        entity.setEffect(permissionAllocation.getEffect());
-        entity.setCreatedAccountId(permissionAllocation.getCreatedAccountId());
-        entity.setCreatedDateTime(permissionAllocation.getCreatedDateTime());
-        return entity;
     }
 
     //endregion

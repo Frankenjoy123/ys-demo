@@ -27,9 +27,9 @@ public class TestBase {
     public static RestClient restClient;
 
     @Before
-    public void initDataAPIClient() {
+    public void initRestClient() {
         if (restClient == null) {
-            System.out.println("initializing data api client");
+            System.out.println("initializing restClient");
             restClient = new RestClient("http://localhost:" + port, new RestResponseErrorHandler());
         }
     }

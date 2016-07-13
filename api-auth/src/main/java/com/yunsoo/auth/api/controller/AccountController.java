@@ -4,10 +4,11 @@ import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.api.security.authorization.AuthorizationService;
 import com.yunsoo.auth.api.security.permission.PermissionEntryService;
 import com.yunsoo.auth.api.util.AuthUtils;
-import com.yunsoo.auth.dto.*;
+import com.yunsoo.auth.dto.Account;
+import com.yunsoo.auth.dto.AccountCreationRequest;
+import com.yunsoo.auth.dto.AccountUpdatePasswordRequest;
+import com.yunsoo.auth.dto.PermissionEntry;
 import com.yunsoo.auth.service.AccountService;
-import com.yunsoo.auth.service.GroupService;
-import com.yunsoo.auth.service.PermissionService;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +34,7 @@ public class AccountController {
     private AccountService accountService;
 
     @Autowired
-    private GroupService groupService;
-
-    @Autowired
     private AuthorizationService authorizationService;
-
-    @Autowired
-    private PermissionService permissionService;
 
     @Autowired
     private PermissionEntryService permissionEntryService;
@@ -78,15 +73,14 @@ public class AccountController {
 //        return accountPage.map(Account::new).getContent();
 //    }
 
-//    @RequestMapping(value = "count", method = RequestMethod.GET)
-//    @PreAuthorize("hasPermission(#orgId, 'org', 'account:read')")
-//    public Long count(@RequestParam(value = "org_id", required = false) String orgId,
-//                      @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
-//        orgId = AuthUtils.fixOrgId(orgId); //auto fix current
-//
-//        Long count = accountService.count(orgId, statusCodeIn);
-//        return count == null ? 0L : count;
-//    }
+    @RequestMapping(value = "count", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'account:read')")
+    public long count(@RequestParam(value = "org_id", required = false) String orgId,
+                      @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn) {
+        orgId = AuthUtils.fixOrgId(orgId); //auto fix current
+
+        return accountService.count(orgId, statusCodeIn);
+    }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -99,8 +93,8 @@ public class AccountController {
 //    @ResponseStatus(HttpStatus.CREATED)
 //    @PreAuthorize("hasPermission(#request.orgId, 'org', 'account:create')")
 //    public Account createCarrier(@RequestBody @Valid AccountRequest request) {
-//        Account Account = request.toAccount();
-//        Account createdAccount = new Account(accountService.createAccount(Account, true));
+//        Account account = request.toAccount();
+//        Account createdAccount = new Account(accountService.createAccount(account, true));
 //        permissionAllocationDomain.allocateAdminPermissionOnDefaultRegionToAccount(createdAccount.getId());
 //        permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
 //        return createdAccount;
@@ -118,7 +112,7 @@ public class AccountController {
         accountService.patchUpdate(account);
     }
 
-    @RequestMapping(value = "{id}/disable", method = RequestMethod.PATCH)
+    @RequestMapping(value = "{id}/disable", method = RequestMethod.POST)
     public void disableAccount(@PathVariable("id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         Account account = findAccountById(accountId);
@@ -128,7 +122,7 @@ public class AccountController {
         accountService.updateStatus(accountId, Constants.AccountStatus.DISABLED);
     }
 
-    @RequestMapping(value = "{id}/enable", method = RequestMethod.PATCH)
+    @RequestMapping(value = "{id}/enable", method = RequestMethod.POST)
     public void enableAccount(@PathVariable("id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         Account account = findAccountById(accountId);
@@ -182,6 +176,7 @@ public class AccountController {
 
             return permissionEntryService.getExpendedPermissionEntriesByAccountId(accountId).stream()
                     .map(p -> {
+                        //fix orgRestriction
                         p.setRestriction(authorizationService.fixOrgRestriction(p.getRestriction(), orgId));
                         return new PermissionEntry(p);
                     })
@@ -217,11 +212,4 @@ public class AccountController {
         return account;
     }
 
-    private Group findGroupById(String id) {
-        Group group = groupService.getById(id);
-        if (group == null) {
-            throw new NotFoundException("group not found");
-        }
-        return group;
-    }
 }

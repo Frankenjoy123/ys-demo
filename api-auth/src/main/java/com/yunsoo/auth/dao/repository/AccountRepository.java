@@ -35,11 +35,8 @@ public interface AccountRepository extends Repository<AccountEntity, String> {
     Page<AccountEntity> query(@Param("orgId") String orgId, @Param("status") String status, @Param("searchText") String searchText,
                               @Param("startTime") DateTime start, @Param("endTime") DateTime end, Pageable pageable);
 
-    Long count();
+    long countByOrgId(String orgId);
 
-    Long countByOrgId(String orgId);
+    long countByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodeIn);
 
-    Long countByStatusCodeIn(List<String> statusCodeIn);
-
-    Long countByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodeIn);
 }
