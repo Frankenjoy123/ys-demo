@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 public final class IpUtils {
 
+    private IpUtils() {
+    }
+
     public static String getIpFromRequest(HttpServletRequest request) {
         String ipAddress = request.getHeader("x-client-ip");
         if (validate(ipAddress)) {

@@ -19,9 +19,9 @@ public interface AccountGroupRepository extends Repository<AccountGroupEntity, S
 
     List<AccountGroupEntity> findByAccountIdAndGroupId(String accountId, String groupId);
 
-    List<AccountGroupEntity> findAll();
-
     AccountGroupEntity save(AccountGroupEntity entity);
+
+    List<AccountGroupEntity> save(Iterable<AccountGroupEntity> entities);
 
     @Transactional
     void deleteByAccountIdAndGroupId(String accountId, String groupId);
@@ -32,5 +32,6 @@ public interface AccountGroupRepository extends Repository<AccountGroupEntity, S
     @Transactional
     void deleteByGroupId(String groupId);
 
+    void delete(Iterable<AccountGroupEntity> entities);
 
 }
