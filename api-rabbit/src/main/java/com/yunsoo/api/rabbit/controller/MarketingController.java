@@ -105,8 +105,64 @@ public class MarketingController {
         MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
 
         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
+        if (LookupCodes.MktPrizeType.MOBILE_FEE.equals(mktDrawPrize.getPrizeTypeCode())) {
+            boolean isMobileFeeSuccess = marketingDomain.createMobileOrder(mktDrawPrize.getDrawRecordId());
+            if (!isMobileFeeSuccess)
+                mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
+            else {
+                mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+            }
+        }
+        if (LookupCodes.MktPrizeType.MOBILE_DATA.equals(mktDrawPrize.getPrizeTypeCode())) {
+            boolean isMobileDataSuccess = marketingDomain.createMobileDataFlow(mktDrawPrize.getDrawRecordId());
+            if (!isMobileDataSuccess)
+                mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
+            else {
+                mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+            }
+        }
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
     }
+
+    @RequestMapping(value = "drawPrize/{key}/sms", method = RequestMethod.PUT)
+    public boolean sendPrizeSMS(@PathVariable(value = "id") String productKey,
+                                @RequestParam(value = "mobile", required = false) String mobile,
+                                @RequestParam(value = "temp_name", required = false) String tempName) {
+        if ((mobile == null) || (tempName == null)) {
+            throw new BadRequestException("mobile or template name can not be null");
+        }
+
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKey(productKey);
+        boolean isSMSSent = marketingDomain.sendVerificationCode(mobile, tempName);
+        if (isSMSSent) {
+            mktDrawPrizeObject.setMobile(mobile);
+            marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+        }
+        return isSMSSent;
+    }
+
+    @RequestMapping(value = "drawPrize/{key}/smsverfiy", method = RequestMethod.PUT)
+    public boolean validatePrizeVerificationCode(@PathVariable(value = "id") String productKey,
+                                                 @RequestParam(value = "mobile", required = false) String mobile,
+                                                 @RequestParam(value = "verification_code", required = false) String verificationCode) {
+        if ((mobile == null) || (verificationCode == null)) {
+            throw new BadRequestException("mobile or verification code can not be null");
+        }
+
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKey(productKey);
+        boolean isVerified = marketingDomain.validateVerificationCode(mobile, verificationCode);
+        if (isVerified) {
+            mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
+            marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+        }
+        return isVerified;
+    }
+
+
+
+
 
     @RequestMapping(value = "drawPrize/paid", method = RequestMethod.PUT)
     public void updateMktDrawPrizeAfterPaid(@RequestBody MktDrawPrize mktDrawPrize) {
