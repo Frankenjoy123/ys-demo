@@ -15,6 +15,8 @@ public interface MktDrawRuleRepository extends FindOneAndSaveRepository<MktDrawR
 
     List<MktDrawRuleEntity> save(Iterable<MktDrawRuleEntity> entities);
 
+    List<MktDrawRuleEntity> findByConsumerRightId(String consumerRightId);
+
     void delete(String id);
 
 }

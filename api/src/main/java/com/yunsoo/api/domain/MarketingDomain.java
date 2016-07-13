@@ -103,6 +103,13 @@ public class MarketingDomain {
 
     }
 
+    public List<MktDrawRuleObject> getRuleListByConsumerRight(String consumerRightId) {
+        return dataAPIClient.get("marketing/drawRule/consumer/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>() {
+        }, consumerRightId);
+
+    }
+
+
 
 
     public Page<MarketingObject> getMarketingList(String orgId, List<String> orgIds, String status, String searchText, DateTime start, DateTime end, String productBaseId, Pageable pageable) {
