@@ -47,6 +47,8 @@ public class OperationLogController {
                                            @RequestParam(value = "create_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end,
                                            @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)Pageable pageable,
                                            HttpServletResponse response){
+        if(start == null)
+            start = DateTime.now().minusMonths(3);
         Page<OperationLogEntity> entityPage = repository.query(accountIds, appId, operation, start, end, pageable);
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
@@ -58,9 +60,8 @@ public class OperationLogController {
 
 
     @RequestMapping(method = RequestMethod.POST)
-    public OperationLogObject save(@RequestBody OperationLogObject log, @RequestHeader(value = "User-Agent", required = false) String userAgent){
+    public OperationLogObject save(@RequestBody OperationLogObject log){
         OperationLogEntity entity = toOperationLogEntity(log);
-        entity.setUserAgent(userAgent);
         entity.setId(null);
         if(entity.getCreatedDateTime() == null)
             entity.setCreatedDateTime(DateTime.now());

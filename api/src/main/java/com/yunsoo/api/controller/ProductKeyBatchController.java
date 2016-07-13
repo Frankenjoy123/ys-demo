@@ -78,7 +78,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
-    @OperationLog(operation = "下载产品码批次", level = "P1", target = "#id")
+    @OperationLog(operation = "'下载产品码批次' + #id", level = "P1")
     public ResponseEntity<?> getKeysById(@PathVariable(value = "id") String id) {
         ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
         if (batch == null) {
@@ -177,7 +177,7 @@ public class ProductKeyBatchController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('current', 'org', 'product_key_batch:create')")
-    @OperationLog(operation = "创建产品码批次", level = "P1", target = "#request.productBaseId")
+    @OperationLog(operation = "'创建产品码批次' + #request.productBaseId", level = "P1")
     public ProductKeyBatch create(
             @RequestHeader(value = Constants.HttpHeaderName.APP_ID, required = false) String appId,
             @Valid @RequestBody ProductKeyBatchRequest request) {
@@ -240,7 +240,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
-    @OperationLog(operation = "更新产品码批次", level = "P1", target = "#productKeyBatch.id")
+    @OperationLog(operation = "'更新产品码批次' + #productKeyBatch.id", level = "P1")
     public void patchUpdateProductKeyBatch(
             @Valid @RequestBody ProductKeyBatch productKeyBatch) {
         ProductKeyBatchObject productKeyBatchObject = new ProductKeyBatchObject();
@@ -251,7 +251,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "{id}/marketing_id", method = RequestMethod.PUT)
-    @OperationLog(operation = "产品码批次关联营销方案", level = "P1", target = "#id")
+    @OperationLog(operation = "'产品码批次关联营销方案' + #id", level = "P1")
     public void putMarketingId(@PathVariable(value = "id") String id, @RequestBody(required = false) String marketingId) {
         productKeyDomain.putMarketingId(id, marketingId);
         if (marketingId != null) {
@@ -281,7 +281,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "{id}/details", method = RequestMethod.PUT)
-    @OperationLog(operation = "更新产品码批次", level = "P1", target = "#id")
+    @OperationLog(operation = "'更新产品码批次' + #id", level = "P1")
     public void putProductKeyBatchDetails(@PathVariable(value = "id") String id,
                                           @RequestBody String details) {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();

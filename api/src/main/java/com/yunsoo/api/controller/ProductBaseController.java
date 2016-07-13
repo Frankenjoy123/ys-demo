@@ -122,7 +122,7 @@ public class ProductBaseController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#productBase.orgId, 'org', 'product_base:create')")
-    @OperationLog(operation = "保存产品方案", level = "P1", target = "#productBase.name")
+    @OperationLog(operation = "'保存产品方案:' + #productBase.name", level = "P1")
     public ProductBase create(@RequestBody ProductBase productBase) {
         ProductBaseObject productBaseObject = new ProductBaseObject();
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
@@ -166,7 +166,7 @@ public class ProductBaseController {
     //update product base versions: edit current product version detail
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#productBase.orgId, 'org', 'product_base:write')")
-    @OperationLog(operation = "修改产品方案", level = "P1", target = "#productBase.name")
+    @OperationLog(operation = "'修改产品方案'+#productBase.name", level = "P1")
     public void updateProductBase(@PathVariable(value = "product_base_id") String productBaseId,
                                   @RequestBody ProductBase productBase) {
         ProductBaseObject originalProductBaseObject = findProductBaseById(productBaseId);
@@ -211,7 +211,7 @@ public class ProductBaseController {
      */
     @RequestMapping(value = "{product_base_id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @OperationLog(operation = "删除产品方案", level = "P1", target = "#productBaseId")
+    @OperationLog(operation = "'删除产品方案:' + #productBaseId", level = "P1")
     public void delete(@PathVariable(value = "product_base_id") String productBaseId) {
         ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
         if (productBaseObject != null) {
@@ -275,7 +275,7 @@ public class ProductBaseController {
     }
 
     @RequestMapping(value = "{product_base_id}/details", method = RequestMethod.PUT)
-    @OperationLog(operation = "修改产品方案详情", level = "P1", target = "#productBaseId")
+    @OperationLog(operation = "'修改产品方案详情:'+#productBaseId", level = "P1")
     public void saveProductBaseTemplate(@PathVariable(value = "product_base_id") String productBaseId,
                                         @RequestBody String details) {
         ProductBaseObject productBaseObject = findProductBaseById(productBaseId);
