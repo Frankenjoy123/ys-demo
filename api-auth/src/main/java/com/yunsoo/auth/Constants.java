@@ -1,5 +1,8 @@
 package com.yunsoo.auth;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by  : Lijian
  * Created on  : 2015/4/27
@@ -27,6 +30,8 @@ public final class Constants {
         public static final String CREATED = "created";
         public static final String AVAILABLE = "available";
         public static final String DISABLED = "disabled";
+
+        public static final List<String> ALL = Arrays.asList(CREATED, AVAILABLE, DISABLED);
     }
 
     public static class OrgStatus {
@@ -36,6 +41,8 @@ public final class Constants {
         public static final String CREATED = "created";
         public static final String AVAILABLE = "available";
         public static final String DISABLED = "disabled";
+
+        public static final List<String> ALL = Arrays.asList(CREATED, AVAILABLE, DISABLED);
     }
 
 

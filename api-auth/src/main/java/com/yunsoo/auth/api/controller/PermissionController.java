@@ -1,13 +1,13 @@
 package com.yunsoo.auth.api.controller;
 
 import com.yunsoo.auth.api.util.AuthUtils;
-import com.yunsoo.auth.dto.PermissionAction;
-import com.yunsoo.auth.dto.PermissionEntry;
-import com.yunsoo.auth.dto.PermissionPolicy;
-import com.yunsoo.auth.dto.PermissionResource;
+import com.yunsoo.auth.dto.*;
 import com.yunsoo.auth.service.PermissionService;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,6 +54,16 @@ public class PermissionController {
     @PreAuthorize("hasPermission('*', 'org', 'permission_policy:read')")
     public List<PermissionPolicy> getAllPolicies() {
         return permissionService.getPermissionPolicies();
+    }
+
+    @RequestMapping(value = "/region/{regionId}", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission(returnObject, 'permission_region:read')")
+    public PermissionRegion getPermissionRegionById(@PathVariable("regionId") String regionId) {
+        PermissionRegion region = permissionService.getPermissionRegionById(regionId);
+        if (region == null) {
+            throw new NotFoundException("region not found");
+        }
+        return region;
     }
 
 }

@@ -3,6 +3,7 @@ package com.yunsoo.auth.dao.repository;
 
 import com.yunsoo.auth.dao.entity.PermissionAllocationEntity;
 import org.springframework.data.repository.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,5 +21,8 @@ public interface PermissionAllocationRepository extends Repository<PermissionAll
     PermissionAllocationEntity save(PermissionAllocationEntity entity);
 
     void delete(String id);
+
+    @Transactional
+    void deleteByPrincipal(String principal);
 
 }

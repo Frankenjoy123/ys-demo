@@ -46,7 +46,7 @@ public class Group implements OrgIdDetectable, Serializable {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
-    private DateTime modifiedDatetime;
+    private DateTime modifiedDateTime;
 
 
     public String getId() {
@@ -105,12 +105,12 @@ public class Group implements OrgIdDetectable, Serializable {
         this.modifiedAccountId = modifiedAccountId;
     }
 
-    public DateTime getModifiedDatetime() {
-        return modifiedDatetime;
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
     }
 
-    public void setModifiedDatetime(DateTime modifiedDatetime) {
-        this.modifiedDatetime = modifiedDatetime;
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 
 }

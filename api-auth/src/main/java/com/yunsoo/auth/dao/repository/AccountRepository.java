@@ -19,9 +19,14 @@ public interface AccountRepository extends Repository<AccountEntity, String> {
 
     AccountEntity findOne(String id);
 
+    List<AccountEntity> findAll(Iterable<String> ids);
+
+    List<AccountEntity> findByOrgId(String orgId);
+
     List<AccountEntity> findByOrgIdAndIdentifier(String orgId, String identifier);
 
     AccountEntity save(AccountEntity entity);
+
 
     @Query("select acc from AccountEntity acc where (:orgId is null or acc.orgId = :orgId) and (:status is null or acc.statusCode = :status) " +
             "and (:searchText is null or acc.identifier like ('%' || :searchText || '%') or concat(acc.lastName, acc.firstName) like ('%' || :searchText || '%')  " +
@@ -30,12 +35,8 @@ public interface AccountRepository extends Repository<AccountEntity, String> {
     Page<AccountEntity> query(@Param("orgId") String orgId, @Param("status") String status, @Param("searchText") String searchText,
                               @Param("startTime") DateTime start, @Param("endTime") DateTime end, Pageable pageable);
 
+    long countByOrgId(String orgId);
 
-    Long count();
+    long countByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodeIn);
 
-    Long countByOrgId(String orgId);
-
-    Long countByStatusCodeIn(List<String> statusCodeIn);
-
-    Long countByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodeIn);
 }

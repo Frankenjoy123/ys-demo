@@ -20,7 +20,7 @@ public interface OrganizationRepository extends Repository<OrganizationEntity, S
 
     Page<OrganizationEntity> findAll(Pageable pageable);
 
-    List<OrganizationEntity> findByIdIn(List<String> Ids);
+    Page<OrganizationEntity> findByIdIn(Iterable<String> Ids, Pageable pageable);
 
     OrganizationEntity save(OrganizationEntity entity);
 }
