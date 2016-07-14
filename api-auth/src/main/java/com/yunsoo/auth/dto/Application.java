@@ -1,62 +1,64 @@
-package com.yunsoo.auth.dao.entity;
+package com.yunsoo.auth.dto;
 
-import com.yunsoo.auth.dao.util.IdGenerator;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by:   Lijian
- * Created on:   2016-07-14
+ * Created on:   2015/9/7
  * Descriptions:
  */
-@Entity
-@Table(name = "application")
-public class ApplicationEntity {
+public class Application implements Serializable {
 
-    @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = IdGenerator.CLASS)
-    @Column(name = "id")
+    @JsonProperty("id")
     private String id;
 
-    @Column(name = "name")
+    @NotEmpty(message = "name must not be null or empty")
+    @JsonProperty("name")
     private String name;
 
-    @Column(name = "version")
+    @NotEmpty(message = "version must not be null or empty")
+    @JsonProperty("version")
     private String version;
 
-    @Column(name = "status_code")
+    @JsonProperty("status_code")
     private String statusCode;
 
-    @Column(name = "type_code")
+    @NotEmpty(message = "type_code must not be null or empty")
+    @JsonProperty("type_code")
     private String typeCode;
 
-    @Column(name = "description")
+    @JsonProperty("description")
     private String description;
 
-    @Column(name = "system_version")
+    @JsonProperty("system_version")
     private String systemVersion;
 
-    @Column(name = "permanent_token_expires_minutes")
+    @JsonProperty("permanent_token_expires_minutes")
     private Integer permanentTokenExpiresMinutes;
 
-    @Column(name = "created_account_id")
+    @JsonProperty("created_account_id")
     private String createdAccountId;
 
-    @Column(name = "created_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
-    @Column(name = "modified_account_id")
+    @JsonProperty("modified_account_id")
     private String modifiedAccountId;
 
-    @Column(name = "modified_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
-
 
     public String getId() {
         return id;
@@ -114,20 +116,20 @@ public class ApplicationEntity {
         this.systemVersion = systemVersion;
     }
 
-    public String getCreatedAccountId() {
-        return createdAccountId;
-    }
-
-    public void setCreatedAccountId(String createdAccountId) {
-        this.createdAccountId = createdAccountId;
-    }
-
     public Integer getPermanentTokenExpiresMinutes() {
         return permanentTokenExpiresMinutes;
     }
 
     public void setPermanentTokenExpiresMinutes(Integer permanentTokenExpiresMinutes) {
         this.permanentTokenExpiresMinutes = permanentTokenExpiresMinutes;
+    }
+
+    public String getCreatedAccountId() {
+        return createdAccountId;
+    }
+
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
     }
 
     public DateTime getCreatedDateTime() {
@@ -153,4 +155,5 @@ public class ApplicationEntity {
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
     }
+
 }

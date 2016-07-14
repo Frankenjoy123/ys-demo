@@ -89,9 +89,12 @@ public class WebScanController {
         //security info
         webScanResponse.setSecurity(getSecurityInfo(productObject));
 
-        Map<String, Object> config = organizationConfigDomain.getConfig(productKeyBatchObject.getOrgId(), false);
-        String appId = config.get("webchat.app_id").toString();
-        String secret = config.get("webchat.app_secret").toString();
+//        Map<String, Object> config = organizationConfigDomain.getConfig(productKeyBatchObject.getOrgId(), false);
+//        String appId = config.get("webchat.app_id").toString();
+//        String secret = config.get("webchat.app_secret").toString();
+
+        String appId = "wx89c1685a0c14e8bf"; //todo: put in to config
+        String secret = "c1e1d31f" + "ac7e0e31" + "a64417ec" + "ef3b3682"; //todo: put in to config
 
         UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject(productKeyBatchObject.getOrgId(), appId, secret);
         UserAccessToken userAccessToken = new UserAccessToken(userAccessTokenObject);
