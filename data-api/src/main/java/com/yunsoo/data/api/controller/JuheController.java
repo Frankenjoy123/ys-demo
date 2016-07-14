@@ -13,10 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.UnsupportedEncodingException;
@@ -82,14 +79,7 @@ public class JuheController {
 
 
     @RequestMapping(value = "/sms", method = RequestMethod.GET)
-    public boolean sendSMS(@RequestParam("mobile") String mobile, @RequestParam("temp_name") String tempName, @RequestParam("variables") String... variables) {
-        int ver_code = (int) ((Math.random() * 9 + 1) * 100000);
-        MobileVerificationCodeEntity mobileVerificationCodeEntity = new MobileVerificationCodeEntity();
-        mobileVerificationCodeEntity.setMobile(mobile);
-        mobileVerificationCodeEntity.setVerificationCode(String.valueOf(ver_code));
-        mobileVerificationCodeEntity.setUsedFlag(false);
-        mobileVerificationCodeEntity.setCreatedDateTime(DateTime.now());
-        mobileVerificationCodeRepository.save(mobileVerificationCodeEntity);
+    public boolean sendSMS(@RequestParam("mobile") String mobile, @RequestParam("temp_name") String tempName, @RequestParam(value = "variables", required = false) String... variables) {
 
         SmsTemplateEntity templateEntity = repository.findByName(tempName);
         if (templateEntity == null)
@@ -107,8 +97,6 @@ public class JuheController {
         try {
             SMSResultObject result = sendSMSInJuhe(mobile, templateEntity.getId(), map);
             if (result.getErrorCode() == 0) {
-                mobileVerificationCodeEntity.setSentDateTime(DateTime.now());
-                mobileVerificationCodeRepository.save(mobileVerificationCodeEntity);
                 return true;
             }
             else{
@@ -121,8 +109,28 @@ public class JuheController {
         }
     }
 
+    @RequestMapping(value = "/verificationCode/{mobile}", method = RequestMethod.GET)
+    public boolean sendVerificationCode(@PathVariable("mobile") String mobile, @RequestParam("temp_name") String tempName){
+        String ver_code = String.valueOf((int)((Math.random() * 9 + 1) * 100000));
+        MobileVerificationCodeEntity mobileVerificationCodeEntity = new MobileVerificationCodeEntity();
+        mobileVerificationCodeEntity.setMobile(mobile);
+        mobileVerificationCodeEntity.setVerificationCode(ver_code);
+        mobileVerificationCodeEntity.setUsedFlag(false);
+        mobileVerificationCodeEntity.setCreatedDateTime(DateTime.now());
+        mobileVerificationCodeRepository.save(mobileVerificationCodeEntity);
+
+        boolean result = sendSMS(mobile, tempName, ver_code );
+        if(result) {
+            mobileVerificationCodeEntity.setSentDateTime(DateTime.now());
+            mobileVerificationCodeRepository.save(mobileVerificationCodeEntity);
+        }
+
+        return result;
+    }
+
+
     @RequestMapping(value = "/verifycode", method = RequestMethod.POST)
-    public boolean sendVerifyCode(@RequestParam("mobile") String mobile, @RequestParam("verification_code") String verificationCode) {
+    public boolean VerifyCode(@RequestParam("mobile") String mobile, @RequestParam("verification_code") String verificationCode) {
         if ((mobile == null) || (verificationCode == null)) {
             throw new BadRequestException("mobile phone or verification code can not be null");
         }

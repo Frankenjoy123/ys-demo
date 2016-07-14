@@ -441,6 +441,7 @@ public class MarketingController {
         }
         entity.setStatusCode(mktDrawPrizeObject.getStatusCode());
         entity.setPaidDateTime(mktDrawPrizeObject.getPaidDateTime());
+        entity.setMobile(mktDrawPrizeObject.getMobile());
         MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
 
         return toMktDrawPrizeObject(newEntity);

@@ -1,5 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
+import com.yunsoo.api.rabbit.dto.MktDrawRule;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
@@ -46,6 +47,10 @@ public class MarketingDomain {
 
     public MktConsumerRightObject getConsumerRightById(String id) {
         return dataAPIClient.get("marketing/consumer/{id}", MktConsumerRightObject.class, id);
+    }
+
+    public MktDrawRuleObject getDrawRuleById(String id){
+        return  dataAPIClient.get("marketing/Rule/{id}", MktDrawRuleObject.class, id);
     }
 
 
@@ -152,12 +157,7 @@ public class MarketingDomain {
     }
 
     public boolean sendVerificationCode(String mobile, String templateName) {
-        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("mobile", mobile)
-                .append("temp_name", templateName)
-                .build();
-
-        return dataAPIClient.get("juhe/sms" + query, Boolean.class);
+        return dataAPIClient.get("juhe/verificationCode/{mobile}?temp_name={name}", Boolean.class, mobile, templateName);
     }
 
     public boolean validateVerificationCode(String mobile, String verificationCode) {
@@ -166,7 +166,7 @@ public class MarketingDomain {
                 .append("verification_code", verificationCode)
                 .build();
 
-        return dataAPIClient.get("juhe/verifycode" + query, Boolean.class);
+        return dataAPIClient.post("juhe/verifycode" + query, null, Boolean.class);
     }
 
 

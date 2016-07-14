@@ -314,6 +314,15 @@ public class LookupCodes {
         public static final String SHARE = "share";
     }
 
+    public static class SMSTemplate{
+        private SMSTemplate(){
+
+        }
+
+        public static final String RESETPASSWORD="reset_password";
+        public static final String SENDPRIZE = "send_prize";
+    }
+
     public enum LookupType {
 
         ProductStatus("product_status"),
