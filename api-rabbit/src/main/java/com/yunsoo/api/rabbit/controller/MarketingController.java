@@ -12,6 +12,7 @@ import com.yunsoo.common.web.exception.RestErrorResultException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,8 +59,10 @@ public class MarketingController {
         if (mktDrawPrizeObject != null) {
             MktDrawPrize prize = new MktDrawPrize(mktDrawPrizeObject);
             MktDrawRuleObject rule = marketingDomain.getDrawRuleById(prize.getDrawRuleId());
-            MktConsumerRightObject right = marketingDomain.getConsumerRightById(rule.getConsumerRightId());
-            prize.setMktConsumerRight(new MktConsumerRight(right));
+            if(StringUtils.hasText(rule.getConsumerRightId())){
+                MktConsumerRightObject right = marketingDomain.getConsumerRightById(rule.getConsumerRightId());
+                prize.setMktConsumerRight(new MktConsumerRight(right));
+            }
             return prize;
         } else {
             return null;
