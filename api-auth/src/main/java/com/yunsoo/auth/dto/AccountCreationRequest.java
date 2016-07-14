@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yunsoo.auth.dto.util.OrgIdDetectable;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.io.Serializable;
+
 /**
  * Created by  : Lijian
  * Created on  : 2015/5/19
  * Descriptions:
  */
-public class AccountCreationRequest implements OrgIdDetectable {
+public class AccountCreationRequest implements OrgIdDetectable, Serializable {
 
     @NotBlank(message = "org_id must not be null or empty")
     @JsonProperty("org_id")
