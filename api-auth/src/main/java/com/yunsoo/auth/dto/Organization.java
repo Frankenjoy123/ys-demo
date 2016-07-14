@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
@@ -19,9 +20,11 @@ public class Organization implements Serializable {
     @JsonProperty("id")
     private String id;
 
+    @NotEmpty(message = "name must not be null or empty")
     @JsonProperty("name")
     private String name;
 
+    @NotEmpty(message = "type_code must not be null or empty")
     @JsonProperty("type_code")
     private String typeCode;
 

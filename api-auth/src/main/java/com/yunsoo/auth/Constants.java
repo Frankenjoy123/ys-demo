@@ -41,6 +41,8 @@ public final class Constants {
         public static final String CREATED = "created";
         public static final String AVAILABLE = "available";
         public static final String DISABLED = "disabled";
+
+        public static final List<String> ALL = Arrays.asList(CREATED, AVAILABLE, DISABLED);
     }
 
 

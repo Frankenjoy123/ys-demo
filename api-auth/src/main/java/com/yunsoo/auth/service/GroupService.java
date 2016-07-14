@@ -52,7 +52,7 @@ public class GroupService {
 
     public Page<Group> getByOrgId(String orgId, Pageable pageable) {
         if (StringUtils.isEmpty(orgId)) {
-            return new Page<>(new ArrayList<>(), 0, 0, 0);
+            return Page.empty();
         }
         return PageUtils.convert(groupRepository.findByOrgId(orgId, pageable)).map(this::toGroup);
     }
