@@ -4,6 +4,7 @@ import com.yunsoo.common.web.util.PageableUtils;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -65,6 +66,11 @@ public class Page<T> implements Iterable<T>, Serializable {
     @Override
     public Iterator<T> iterator() {
         return content.iterator();
+    }
+
+
+    public static <T> Page<T> empty() {
+        return new Page<>(new ArrayList<>(0), 0, 0, 0);
     }
 
 }

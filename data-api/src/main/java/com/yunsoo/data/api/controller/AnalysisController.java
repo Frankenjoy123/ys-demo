@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -217,13 +218,13 @@ public class AnalysisController {
     // int[] 1222,222,22,2,0
     @RequestMapping(value = "/user/funnel", method = RequestMethod.GET)
     public EMRUserReportObject queryUserFunnel(@RequestParam(value = "org_id") String orgId,
-                                 @RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                 @RequestParam(value = "province", required = false) String province,
-                                 @RequestParam(value = "city", required = false) String city,
-                                 @RequestParam(value = "create_datetime_start", required = false)
-                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
-                                 @RequestParam(value = "create_datetime_end", required = false)
-                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+                                               @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                               @RequestParam(value = "province", required = false) String province,
+                                               @RequestParam(value = "city", required = false) String city,
+                                               @RequestParam(value = "create_datetime_start", required = false)
+                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                               @RequestParam(value = "create_datetime_end", required = false)
+                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
 
         DateTime startDateTime = null;
         DateTime endDateTime = null;
@@ -238,7 +239,7 @@ public class AnalysisController {
 
         List<Integer> eventCount = new ArrayList<>();
         List<Integer> userCount = new ArrayList<>();
-       int[] scanData = eventRepository.scanCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        int[] scanData = eventRepository.scanCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
         eventCount.add(scanData[0]);
         userCount.add(scanData[1]);
 
@@ -264,20 +265,32 @@ public class AnalysisController {
         return report;
     }
 
-    // TODO  新增营销报表，用户地域分析
+    // 核销管理，关于中奖的数据分析
     @RequestMapping(value = "/market_win_user_location", method = RequestMethod.GET)
-    public List<MarketWinUserLocationAnalysisObject> queryMarketUserLocaiton(@RequestParam(value = "marketing_id") String marketingId)
-     {
-        List<Object[]> list = eventRepository.queryRewardLocationReport(marketingId);
-        return list.stream().map(this::toMarketWinUserLocationAnalysisObject).collect(Collectors.toList());
+    public List<MarketWinUserLocationAnalysisObject> queryMarketUserLocaiton(@RequestParam(value = "marketing_id") String marketingId) {
+        List<MarketUserLocationAnalysisEntity> list = eventRepository.queryRewardLocationReport(marketingId);
+
+        Map<String, Integer> provinceData = list.stream().collect(
+                Collectors.groupingBy(MarketUserLocationAnalysisEntity::getProvince,
+                        Collectors.summingInt(MarketUserLocationAnalysisEntity::getCount)));
+
+       return provinceData.entrySet().stream().map(i->{
+            MarketWinUserLocationAnalysisObject provinceItem = new MarketWinUserLocationAnalysisObject();
+            provinceItem.setName(i.getKey());
+            provinceItem.setValue(i.getValue());
+
+            List<MarketWinUserLocationAnalysisObject> cityData = list.stream().filter(l->l.getProvince().equals(i.getKey())).map(ii->{
+                MarketWinUserLocationAnalysisObject city = new MarketWinUserLocationAnalysisObject();
+                city.setName(ii.getCity());
+                city.setValue(ii.getCount());
+                return city;
+            }).collect(Collectors.toList());
+            provinceItem.setCityData(cityData);
+            return provinceItem;
+        }).collect(Collectors.toList());
     }
 
-    private MarketWinUserLocationAnalysisObject toMarketWinUserLocationAnalysisObject(Object[] object) {
-        MarketWinUserLocationAnalysisObject data = new MarketWinUserLocationAnalysisObject();
-        data.setProvince(object[0] == null ? "未知地区" : (String)object[0]);
-        data.setCount(((Long) object[1]).intValue());
-        return data;
-    }
+
 
 
 }

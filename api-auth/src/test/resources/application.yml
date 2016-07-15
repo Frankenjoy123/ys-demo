@@ -1,0 +1,36 @@
+server:
+  port: 0
+  address: 127.0.0.1
+management:
+  port: 0
+  address: 127.0.0.1
+
+spring:
+  profiles.active: local
+  application.name: 'api-auth'
+  mvc.throw-exception-if-no-handler-found: true
+  jpa:
+    show_sql: true
+    database: H2
+    generate_ddl: true
+
+yunsoo:
+  debug: true
+  environment: local
+  permanent_token:
+    expires_minutes: 4320 #three days
+  access_token:
+    expires_minutes: 60
+    hash_salt: lvtHDkfIUxJ2bLWHc0MNztUqCJSVPSJO
+  login_token:
+    expires_minutes: 5
+    hash_salt: nC9UYPUupMaViIG3UBODY7B19IYW6Z0X
+  cache:
+    type: local
+
+jdbc:
+  auth:
+    driver_class_name: "org.h2.Driver"
+    url: "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+    username: "sa"
+    password:

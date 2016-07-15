@@ -1,5 +1,6 @@
 package com.yunsoo.processor.task;
 
+import com.yunsoo.processor.domain.LogDomain;
 import com.yunsoo.processor.task.executor.TaskExecutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -76,6 +77,9 @@ public class TaskProcessor {
         private Log log = LogFactory.getLog(getClass());
 
         @Autowired
+        private LogDomain logDomain;
+
+        @Autowired
         private TaskService taskService;
 
         @Async
@@ -89,13 +93,16 @@ public class TaskProcessor {
 
                 DateTime end = DateTime.now();
                 long duration = (end.getMillis() - start.getMillis()) / 1000;
-                log.info(String.format("task {code: %s} finished successfully in %d seconds", taskCode, duration));
 
                 taskService.saveFinished(taskCode);
 
+                log.info(String.format("task {code: %s} finished successfully in %d seconds", taskCode, duration));
+                logDomain.logInfo("task_processor", String.format("task finished successfully in %d seconds", duration), taskCode, "task_code");
             } catch (Exception ex) {
                 taskService.saveFailed(taskCode, ex.getMessage());
+
                 log.error(String.format("task {code: %s} failed with error: %s", taskCode, ex.getMessage()), ex);
+                logDomain.logError("task_processor", "task failed with error: " + ex.getMessage(), taskCode, "task_code");
             }
         }
     }

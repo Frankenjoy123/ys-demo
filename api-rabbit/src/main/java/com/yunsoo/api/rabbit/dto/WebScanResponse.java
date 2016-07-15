@@ -20,6 +20,9 @@ public class WebScanResponse {
     @JsonProperty("product")
     private Product product;
 
+    @JsonProperty("user_access_token")
+    private UserAccessToken userAccessToken;
+
     //生产企业信息
     @JsonProperty("organization")
     private Organization organization;
@@ -31,6 +34,13 @@ public class WebScanResponse {
     @JsonProperty("marketing")
     private Marketing marketing;
 
+    public UserAccessToken getUserAccessToken() {
+        return userAccessToken;
+    }
+
+    public void setUserAccessToken(UserAccessToken userAccessToken) {
+        this.userAccessToken = userAccessToken;
+    }
 
     public Product getProduct() {
         return product;

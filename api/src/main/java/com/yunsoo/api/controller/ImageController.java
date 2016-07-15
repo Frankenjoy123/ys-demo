@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.tinify.Tinify;
 import com.yunsoo.api.domain.FileDomain;
 import com.yunsoo.api.dto.ImageRequest;
 import com.yunsoo.api.dto.ImageResponse;
@@ -14,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,15 +41,17 @@ public class ImageController {
     @Autowired
     private FileDomain fileDomain;
 
+    @Value("${yunsoo.tinify.key}")
+    private String tinify_key;
 
     @RequestMapping(value = "form", method = RequestMethod.POST)
     public ImageResponse uploadImage(@RequestParam("file") MultipartFile file,
+                                     @RequestParam(value = "compress", required = false) Boolean compress,
                                      @ModelAttribute ImageRequest.Options options) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new BadRequestException();
         }
-        //long size = file.getSize();
-        //String contentType = file.getContentType();
+        String contentType = file.getContentType();
         byte[] imageDataBytes = file.getBytes();
 
         ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
@@ -57,7 +61,7 @@ public class ImageController {
         imageProcessor = corpImage(imageProcessor, options);
 
         String imageName = generateImageName();
-        saveImage(imageProcessor, imageName);
+        saveImage(imageProcessor, imageName, contentType, compress);
 
         ImageResponse imageResponse = new ImageResponse();
         imageResponse.setName(imageName);
@@ -66,12 +70,14 @@ public class ImageController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ImageResponse uploadImage(@RequestBody @Valid ImageRequest imageRequest) throws IOException {
+    public ImageResponse uploadImage(
+            @RequestParam(value = "compress", required = false) Boolean compress,
+            @RequestBody @Valid ImageRequest imageRequest) throws IOException {
 
         String imageData = imageRequest.getData(); //data:image/png;base64,
         int splitIndex = imageData.indexOf(",");
-        //String metaHeader = imageData.substring(0, splitIndex);
-        //String contentType = metaHeader.split(";")[0].split(":")[1];
+        String metaHeader = imageData.substring(0, splitIndex);
+        String contentType = metaHeader.split(";")[0].split(":")[1];
         String imageDataBase64 = imageData.substring(splitIndex + 1);
         byte[] imageDataBytes = Base64.decodeBase64(imageDataBase64);
 
@@ -82,7 +88,7 @@ public class ImageController {
         imageProcessor = corpImage(imageProcessor, imageRequest.getOptions());
 
         String imageName = generateImageName();
-        saveImage(imageProcessor, imageName);
+        saveImage(imageProcessor, imageName, contentType, compress);
 
         ImageResponse imageResponse = new ImageResponse();
         imageResponse.setName(imageName);
@@ -142,11 +148,24 @@ public class ImageController {
         return imageProcessor;
     }
 
-    private void saveImage(ImageProcessor imageProcessor, String imageName) throws IOException {
+    private void saveImage(ImageProcessor imageProcessor, String imageName, String contentType, Boolean compress) throws IOException {
         ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
-        imageProcessor.write(imageOutputStream, "png");
-        fileDomain.putFile(String.format("image/%s", imageName), new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/png"));
-        log.info(String.format("image saved [imageName: %s]", imageName));
+        imageProcessor.write(imageOutputStream, contentType);
+
+        byte[] buffer = imageOutputStream.toByteArray();
+        byte[] resultData = imageOutputStream.toByteArray();
+
+        if (compress != null && compress) {
+            try {
+                Tinify.setKey(tinify_key);
+                resultData = Tinify.fromBuffer(buffer).toBuffer();
+            } catch (Exception e) {
+                resultData = imageOutputStream.toByteArray();
+            }
+        }
+
+        fileDomain.putFile(String.format("image/%s", imageName), new ResourceInputStream(new ByteArrayInputStream(resultData), resultData.length, contentType));
+        log.info(String.format("image saved [imageName: %s, contentType: %s, size: %d]", imageName, contentType, resultData.length));
     }
 
 }

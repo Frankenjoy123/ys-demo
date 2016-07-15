@@ -50,7 +50,7 @@ public class UserReportDomain {
         try {
             ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
             ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
-            imageProcessor.write(imageOutputStream, "png");
+            imageProcessor.write(imageOutputStream, "image/png");
             dataAPIClient.put("file/s3?path=user/{userId}/report/{reportId}/{imageName}",
                     new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/png"),
                     userId, reportId, imageName);

@@ -34,20 +34,21 @@ public class LogDomain {
     @Autowired
     private ProcessorConfigProperties config;
 
+
     public Page<LogObject> getLogByFilter(String eventName,
                                           String level,
                                           String identifier,
                                           String identifierName,
-                                          DateTime createdDateTimeStart,
-                                          DateTime createdDateTimeEnd,
+                                          DateTime createdDateTimeGE,
+                                          DateTime createdDateTimeLE,
                                           Pageable pageable) {
         org.springframework.data.domain.Page<LogEntity> entities = logRepository.findByFilter(
                 eventName,
                 level,
                 identifier,
                 identifierName,
-                createdDateTimeStart,
-                createdDateTimeEnd,
+                createdDateTimeGE,
+                createdDateTimeLE,
                 pageable);
         return new Page<>(
                 entities.getContent().stream().map(this::toLogObject).collect(Collectors.toList()),

@@ -40,6 +40,8 @@ yunsoo:
     notify_url: http://dev.yunsu.co:6080/marketing/alipay/notify
     direct_return_url: http://dev.yunsu.co:9080/enterprise/brandapplication.html
     direct_notify_url: http://dev.yunsu.co:6080/payment/brand/alipay/notify
+  tinify:
+    key: VE7EeYz5AdEmDXXabOj3oHm7Kt_ioDQY
 
 ---
 spring:

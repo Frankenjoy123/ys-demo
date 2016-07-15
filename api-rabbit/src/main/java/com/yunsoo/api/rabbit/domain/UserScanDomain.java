@@ -28,7 +28,7 @@ public class UserScanDomain {
     public UserScanRecordObject createScanRecord(UserScanRecordObject userScanRecordObject) {
         userScanRecordObject.setId(null);
         userScanRecordObject.setCreatedDateTime(DateTime.now());
-        if (userScanRecordObject.getUserId() == null) {
+        if (userScanRecordObject.getUserId() == null || userScanRecordObject.getUserId().length() == 0) {
             userScanRecordObject.setUserId(Constants.Ids.ANONYMOUS_USER_ID);
         }
         return dataAPIClient.post("userScanRecord", userScanRecordObject, UserScanRecordObject.class);

@@ -63,6 +63,17 @@ public class MktDrawPrize {
     @JsonProperty("comments")
     private String comments;
 
+    @JsonProperty("mkt_consumer_right")
+    private MktConsumerRight mktConsumerRight;
+
+    public MktConsumerRight getMktConsumerRight() {
+        return mktConsumerRight;
+    }
+
+    public void setMktConsumerRight(MktConsumerRight mktConsumerRight) {
+        this.mktConsumerRight = mktConsumerRight;
+    }
+
     public String getDrawRecordId() {
         return drawRecordId;
     }

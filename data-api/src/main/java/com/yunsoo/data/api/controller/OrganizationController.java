@@ -120,6 +120,33 @@ public class OrganizationController {
         }
         return toBrandObject(brand);
     }
+
+    @RequestMapping(value = "/brand/{id}", method = RequestMethod.PATCH)
+    public void patchBrand(@PathVariable(value = "id") String id, @RequestBody BrandObject brandObj) {
+        BrandEntity brand = brandRepository.findOne(id);
+        if (brand == null) {
+            throw new NotFoundException("brand not found by [id: " + id + "]");
+        }
+        if(brandObj.getContactName() != null)
+            brand.setContactName(brandObj.getContactName());
+
+        if(brandObj.getContactMobile() != null)
+            brand.setContactMobile(brandObj.getContactMobile());
+
+        if(brandObj.getEmail() != null)
+            brand.setEmail(brandObj.getEmail());
+
+        brandRepository.save(brand);
+
+        OrganizationEntity org = organizationRepository.findOne(id);
+
+        if(brandObj.getName() != null)
+            org.setName(brandObj.getName());
+
+        organizationRepository.save(org);
+    }
+
+
     @RequestMapping(value = "{id}/brand/count", method = RequestMethod.GET)
     public int countBrand(@PathVariable(value = "id") String id,
                           @RequestParam(value="status", required = false)String status){

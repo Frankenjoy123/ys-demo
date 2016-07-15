@@ -1,10 +1,8 @@
 package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.EMREventEntity;
-import com.yunsoo.data.service.entity.EMRUserEntity;
+import com.yunsoo.data.service.entity.MarketUserLocationAnalysisEntity;
 import org.joda.time.DateTime;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -36,4 +34,5 @@ public interface CustomEMREventRepository {
 
     EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId);
     int periodConsumptionCount(String orgId, String userId, String ysId,DateTime eventDateTimeStart, DateTime eventDateTimeEnd);
+    List<MarketUserLocationAnalysisEntity> queryRewardLocationReport( String marketingId);
 }

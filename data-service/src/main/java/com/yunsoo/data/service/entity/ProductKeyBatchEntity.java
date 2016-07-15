@@ -30,6 +30,9 @@ public class ProductKeyBatchEntity {
     @Column(name = "quantity")
     private Integer quantity;
 
+    @Column(name = "download_no")
+    private Integer downloadNo;
+
     @Column(name = "status_code")
     private String statusCode;
 
@@ -144,6 +147,14 @@ public class ProductKeyBatchEntity {
         this.marketingId = marketingId;
     }
 
+    public Integer getDownloadNo() {
+        return downloadNo;
+    }
+
+    public void setDownloadNo(Integer downloadNo) {
+        this.downloadNo = downloadNo;
+    }
+
     public static ProductKeyBatchObject toDataObject(ProductKeyBatchEntity entity) {
         if (entity == null) {
             return null;
@@ -161,6 +172,7 @@ public class ProductKeyBatchEntity {
         if (codes != null) {
             batchObj.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));
         }
+
         return batchObj;
     }
 

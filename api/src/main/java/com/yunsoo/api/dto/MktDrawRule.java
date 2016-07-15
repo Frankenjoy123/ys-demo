@@ -21,6 +21,9 @@ public class MktDrawRule {
     @JsonProperty("marketing_id")
     private String marketingId;
 
+    @JsonProperty("consumer_right_id")
+    private String consumerRightId;
+
     @JsonProperty("prize_type_code")
     private String prizeTypeCode;
 
@@ -69,6 +72,14 @@ public class MktDrawRule {
 
     public void setMarketingId(String marketingId) {
         this.marketingId = marketingId;
+    }
+
+    public String getConsumerRightId() {
+        return consumerRightId;
+    }
+
+    public void setConsumerRightId(String consumerRightId) {
+        this.consumerRightId = consumerRightId;
     }
 
     public String getPrizeTypeCode() {
@@ -158,6 +169,7 @@ public class MktDrawRule {
         if (object != null) {
             this.setId(object.getId());
             this.setMarketingId(object.getMarketingId());
+            this.setConsumerRightId(object.getConsumerRightId());
             this.setPrizeTypeCode(object.getPrizeTypeCode());
             this.setAmount(object.getAmount());
             this.setTotalQuantity(object.getTotalQuantity());
@@ -175,6 +187,7 @@ public class MktDrawRule {
         MktDrawRuleObject object = new MktDrawRuleObject();
         object.setId(this.getId());
         object.setMarketingId(this.getMarketingId());
+        object.setConsumerRightId(this.getConsumerRightId());
         object.setPrizeTypeCode(this.getPrizeTypeCode());
         object.setAmount(this.getAmount());
         object.setTotalQuantity(this.getTotalQuantity());

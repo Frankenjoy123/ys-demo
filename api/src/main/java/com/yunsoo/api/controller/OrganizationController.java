@@ -1,6 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
+import com.yunsoo.api.aspect.OperationLog;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
@@ -31,7 +32,9 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -143,9 +146,14 @@ public class OrganizationController {
         return returnObj;
     }
 
+    @RequestMapping(value = "/brand/{id}", method = RequestMethod.PATCH)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
+    public void patchBrand(@PathVariable("id")String id, @RequestBody Brand brand){
+        organizationDomain.patchBrand(id, brand.toBrand(brand));
+    }
 
     @RequestMapping(value = "/brand/{id}", method = RequestMethod.GET)
-    public Brand getBrandById(@PathVariable(value = "id") String id) {
+    public Brand getBrandById(@PathVariable(value = "id") String id, @RequestParam(value="carrier_info", required = false) boolean includeCarrier) {
         BrandObject object = organizationDomain.getBrandById(id);
         if (object == null) {
             throw new NotFoundException("Brand not found by [id: " + id + "]");
@@ -157,8 +165,15 @@ public class OrganizationController {
             List<AttachmentObject> attachmentObjectList = brandDomain.getAttachmentList(object.getAttachment());
             returnObject.setAttachmentList(attachmentObjectList.stream().map(Attachment::new).collect(Collectors.toList()));
         }
+
+        if(includeCarrier)
+            returnObject.setCarrier(new Organization(organizationDomain.getOrganizationById(returnObject.getCarrierId())));
+
         return returnObject;
     }
+
+
+
     @RequestMapping(value = "/{id}/brand/count", method = RequestMethod.GET)
     public int countBrand(@PathVariable(value = "id") String id){
         return organizationDomain.countBrand(id, null);
@@ -220,7 +235,7 @@ public class OrganizationController {
 
 
     @RequestMapping(value = "{id}/logo", method = RequestMethod.PUT)
-    @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:write')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
     public void saveOrgLogo(@PathVariable(value = "id") String orgId,
                             @RequestBody byte[] imageDataBytes) {
         if (imageDataBytes != null && imageDataBytes.length > 0) {
@@ -261,6 +276,26 @@ public class OrganizationController {
             orgId = AuthUtils.fixOrgId(orgId);
             organizationDomain.saveOrgLogo(orgId, imageDataBytes);
         }
+    }
+
+
+    @RequestMapping(value = "{id}/webchatKeys", method = RequestMethod.POST)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization_config:write')")
+    public void saveWebChatKeys(@PathVariable("id")String orgId, @RequestParam("file") MultipartFile keyFile, @RequestParam("type") String fileType) {
+        if (keyFile == null)
+            throw new NotFoundException("no file uploaded!");
+        String fileName = keyFile.getOriginalFilename();
+        switch (fileType){
+            case "key":
+                fileName="apiclient_key.pem";
+                break;
+            case "cert":
+                fileName="apiclient_cert.pem";
+                break;
+            default:
+                break;
+        }
+        organizationDomain.saveWebChatKey(orgId, keyFile, fileName);
     }
 
 }

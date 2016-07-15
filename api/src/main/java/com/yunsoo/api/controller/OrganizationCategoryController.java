@@ -43,11 +43,39 @@ public class OrganizationCategoryController {
 
     @RequestMapping(value = "", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void saveOrganizationCategory(@RequestBody List<OrganizationCategory> categoryList){
+    public void saveOrganizationCategoryList(@RequestBody List<OrganizationCategory> categoryList){
         if(categoryList == null)
             throw new BadRequestException("could not update organization category list without content");
         String orgId = AuthUtils.fixOrgId(null);
         domain.saveList(orgId, categoryList);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrganizationCategory saveOrganizationCategory(@RequestBody OrganizationCategory category){
+        if(category == null)
+            throw new BadRequestException("could not update organization category list without content");
+        String orgId = AuthUtils.fixOrgId(null);
+        category.setOrgId(orgId);
+        OrganizationCategoryObject result = domain.save(category.toOrganizationCategoryObject());
+        return new OrganizationCategory(result);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@PathVariable("id")String id, @RequestBody OrganizationCategory category){
+        if(category == null)
+            throw new BadRequestException("could not update organization category list without content");
+        String orgId = AuthUtils.fixOrgId(null);
+        category.setOrgId(orgId);
+        category.setId(id);
+        domain.update(category.toOrganizationCategoryObject());
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id")String id){
+        domain.delete(id);
     }
 
 }

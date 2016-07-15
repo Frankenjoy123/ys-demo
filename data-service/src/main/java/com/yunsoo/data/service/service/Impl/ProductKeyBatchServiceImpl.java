@@ -155,6 +155,9 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         if (batch.getMarketingId() != null) {
             entity.setMarketingId(batch.getMarketingId());
         }
+        if(batch.getDownloadNo() !=0 ){
+            entity.setDownloadNo(batch.getDownloadNo());
+        }
 
         productKeyBatchRepository.save(entity);
     }

@@ -198,7 +198,7 @@ public class ProductKeyDomain {
         sqsMessage.setProductStatusCode(LookupCodes.ProductStatus.ACTIVATED);  //default activated
 
         try {
-            processorClient.put("sqs/message/{payloadName}", sqsMessage, ProductKeyBatchCreateMessage.PAYLOAD_NAME);
+            processorClient.put("sqs/message/{payloadType}", sqsMessage, ProductKeyBatchCreateMessage.PAYLOAD_TYPE);
             log.info(String.format("ProductKeyBatchCreateMessage put to sqs %s", sqsMessage));
         } catch (Exception ex) {
             log.error(String.format("ProductKeyBatchCreateMessage put to sqs failed [message: %s]", ex.getMessage()), ex);
@@ -291,6 +291,7 @@ public class ProductKeyDomain {
         batch.setCreatedAccountId(object.getCreatedAccountId());
         batch.setCreatedDateTime(object.getCreatedDateTime());
         batch.setMarketingId(object.getMarketingId());
+        batch.setDownloadNo(object.getDownloadNo());
         return batch;
     }
 

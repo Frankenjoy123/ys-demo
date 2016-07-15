@@ -6,6 +6,6 @@ include 'data-service'
 include 'data-api'
 include 'processor'
 include 'api'
+include 'api-auth'
 include 'api-rabbit'
 include 'web-scan-taobao'
-

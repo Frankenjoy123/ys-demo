@@ -189,8 +189,19 @@ public class LookupCodes {
         public static final String SUBMIT = "submit";
         public static final String PAID = "paid";
         public static final String INVALID = "invalid";
+        public static final String FAILED = "failed";
 
     }
+
+    public static class MktPrizeType {
+        private MktPrizeType() {
+        }
+
+        public static final String WEBCHAT = "webchat";
+        public static final String MOBILE_FEE = "mobile_fee";
+        public static final String MOBILE_DATA = "mobile_data";
+    }
+
 
     public static class MktType {
         private MktType() {
@@ -218,6 +229,16 @@ public class LookupCodes {
         public static final List<String> AVALAIBLE_STATUS = Arrays.asList("created", "available", "disabled", "paid");
         public static final List<String> ANALYZE_STATUS = Arrays.asList("available", "disabled", "paid");
     }
+
+    public static class MktConsumerRightStatus {
+        private MktConsumerRightStatus() {
+        }
+
+        public static final String CREATED = "created";
+        public static final String DELETED = "deleted";
+
+    }
+
 
     public static class PaymentStatus {
         private PaymentStatus() {
@@ -256,18 +277,33 @@ public class LookupCodes {
         private TaskFileStatus() {
         }
 
-        public static final String CREATED = "created";
+        public static final String UPLOADING = "uploading";
         public static final String UPLOADED = "uploaded";
         public static final String PROCESSING = "processing";
+        public static final String FAILED = "failed";
         public static final String FINISHED = "finished";
     }
 
-    public static class MktPrizeCostType{
-        private MktPrizeCostType(){}
+    public static class MktPrizeCostType {
+        private MktPrizeCostType() {
+        }
 
         public static final String MOBILE_FEE = "mobile fee";
         public static final String MOBILE_FLOW = "mobile flow";
     }
+
+    public static class MobileType {
+        private MobileType() {
+        }
+
+        public static final String CMCC = "cmcc";
+        public static final String CUCC = "cucc";
+        public static final String CTCC = "ctcc";
+        public static final String UNKNOWN = "unknown";
+
+    }
+
+
     public static class UserEvent {
         private UserEvent() {
         }
@@ -276,6 +312,15 @@ public class LookupCodes {
         public static final String STORE_URL = "store_url";
         public static final String CLICK = "click";
         public static final String SHARE = "share";
+    }
+
+    public static class SMSTemplate{
+        private SMSTemplate(){
+
+        }
+
+        public static final String RESETPASSWORD="reset_password";
+        public static final String SENDPRIZE = "send_prize";
     }
 
     public enum LookupType {

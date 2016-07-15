@@ -50,7 +50,7 @@ public class TaskService {
 
         DateTime now = DateTime.now();
         taskEntity.setLockedBy(config.getName());
-        taskEntity.setStartRunDatetime(now);
+        taskEntity.setStartRunDateTime(now);
         taskEntity.setTimeoutDateTime(timeout <= 0 ? null : now.plus(timeout));
         taskEntity = taskRepository.save(taskEntity);
         return new Task(taskEntity);
@@ -60,7 +60,9 @@ public class TaskService {
     public void saveFinished(String code) {
         TaskEntity taskEntity = taskRepository.findOne(code);
         DateTime now = DateTime.now();
-        taskEntity.setNextRunDatetime(calculateNextRunDatetime(taskEntity.getNextRunDatetime(), taskEntity.getInterval()));
+        DateTime nextRunDateTime = calculateNextRunDateTime(taskEntity.getNextRunDateTime(), taskEntity.getInterval());
+
+        taskEntity.setNextRunDateTime(nextRunDateTime);
         taskEntity.setLockedBy(null);
         taskEntity.setTimeoutDateTime(null);
         taskEntity.setLastRunBy(config.getName());
@@ -73,14 +75,26 @@ public class TaskService {
     public void saveFailed(String code, String failedReason) {
         TaskEntity taskEntity = taskRepository.findOne(code);
         DateTime now = DateTime.now();
-        taskEntity.setLockedBy(null);
-        taskEntity.setTimeoutDateTime(null);
-        taskEntity.setLastRunBy(config.getName());
-        taskEntity.setFailedCount(taskEntity.getFailedCount() == null ? 1 : taskEntity.getFailedCount() + 1);
-        taskEntity.setLastFailedDateTime(now);
+        Integer failedCount = taskEntity.getFailedCount();
+        if (failedCount == null || failedCount < 0) {
+            failedCount = 0;
+        }
+        failedCount++;
         if (failedReason != null && failedReason.length() > 4000) {
             failedReason = failedReason.substring(0, 4000);
         }
+        //retry on non-interval task limit to 3 times
+        DateTime nextRunDateTime = calculateNextRunDateTime(taskEntity.getNextRunDateTime(), taskEntity.getInterval());
+        if (nextRunDateTime == null && failedCount < 3) {
+            nextRunDateTime = DateTime.now().plusSeconds(300);
+        }
+
+        taskEntity.setNextRunDateTime(nextRunDateTime);
+        taskEntity.setLockedBy(null);
+        taskEntity.setTimeoutDateTime(null);
+        taskEntity.setLastRunBy(config.getName());
+        taskEntity.setFailedCount(failedCount);
+        taskEntity.setLastFailedDateTime(now);
         taskEntity.setLastFailedReason(failedReason);
         taskRepository.save(taskEntity);
     }
@@ -96,19 +110,19 @@ public class TaskService {
     private boolean isRunnable(TaskEntity task) {
         DateTime now = DateTime.now();
         return task.getExecutor().length() > 0
-                && task.getNextRunDatetime() != null
-                && task.getNextRunDatetime().isBefore(now)
+                && task.getNextRunDateTime() != null
+                && task.getNextRunDateTime().isBefore(now)
                 && (task.getLockedBy() == null || (task.getTimeoutDateTime() != null && task.getTimeoutDateTime().isBefore(now)));
     }
 
-    private DateTime calculateNextRunDatetime(DateTime currentNextRunDatetime, String interval) {
-        DateTime nextRunDatetime = IntervalUtils.plusInterval(currentNextRunDatetime, interval);
-        if (nextRunDatetime != null) {
+    private DateTime calculateNextRunDateTime(DateTime currentNextRunDateTime, String interval) {
+        DateTime nextRunDateTime = IntervalUtils.plusInterval(currentNextRunDateTime, interval);
+        if (nextRunDateTime != null) {
             DateTime now = DateTime.now();
-            while (nextRunDatetime.isBefore(now)) {
-                nextRunDatetime = IntervalUtils.plusInterval(nextRunDatetime, interval);
+            while (nextRunDateTime.isBefore(now)) {
+                nextRunDateTime = IntervalUtils.plusInterval(nextRunDateTime, interval);
             }
         }
-        return nextRunDatetime;
+        return nextRunDateTime;
     }
 }

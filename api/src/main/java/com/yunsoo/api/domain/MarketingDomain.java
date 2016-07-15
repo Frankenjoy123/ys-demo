@@ -103,6 +103,13 @@ public class MarketingDomain {
 
     }
 
+    public List<MktDrawRuleObject> getRuleListByConsumerRight(String consumerRightId) {
+        return dataAPIClient.get("marketing/drawRule/consumer/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>() {
+        }, consumerRightId);
+
+    }
+
+
 
 
     public Page<MarketingObject> getMarketingList(String orgId, List<String> orgIds, String status, String searchText, DateTime start, DateTime end, String productBaseId, Pageable pageable) {
@@ -123,6 +130,38 @@ public class MarketingDomain {
         marketingObject.setId(null);
         return dataAPIClient.post("marketing", marketingObject, MarketingObject.class);
     }
+
+    public Page<MktConsumerRightObject> getMktConsumerRightByOrgId(String orgId, String typeCode, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId).append("type_code", typeCode).append(pageable)
+                .build();
+
+        return dataAPIClient.getPaged("marketing/consumer" + query, new ParameterizedTypeReference<List<MktConsumerRightObject>>() {
+        });
+    }
+
+    public MktConsumerRightObject createMktConsumerRight(MktConsumerRightObject mktConsumerRightObject) {
+        mktConsumerRightObject.setId(null);
+        return dataAPIClient.post("marketing/consumer", mktConsumerRightObject, MktConsumerRightObject.class);
+    }
+
+    public MktConsumerRightObject getMktConsumerRightById(String id) {
+        try {
+            return dataAPIClient.get("marketing/consumer/{id}", MktConsumerRightObject.class, id);
+        } catch (NotFoundException ignored) {
+            return null;
+        }
+    }
+
+    public void updateMktConsumerRight(MktConsumerRightObject mktConsumerRightObject) {
+        dataAPIClient.put("marketing/consumer/{id}", mktConsumerRightObject, mktConsumerRightObject.getId());
+    }
+
+    public void deleteMktConsumerRight(String id) {
+        dataAPIClient.delete("marketing/consumer/{id}", id);
+    }
+
+
 
     public Long countMarketingsByOrgId(String orgId) {
         Long totalQuantity = dataAPIClient.get("marketing/totalcount?org_id=" + orgId, Long.class);

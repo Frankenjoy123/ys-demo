@@ -44,6 +44,8 @@ yunsoo:
     notify_url: https://test-api.yunsu.co:6443/marketing/alipay/notify
     direct_return_url: https://test-enterprise.yunsu.co:9443/enterprise/brandapplication.html
     direct_notify_url: https://test-api.yunsu.co:6443/payment/brand/alipay/notify
+  tinify:
+    key: VE7EeYz5AdEmDXXabOj3oHm7Kt_ioDQY
 
 logging:
   file: /var/log/yunsoo/api.log

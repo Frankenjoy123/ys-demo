@@ -22,6 +22,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -79,6 +80,11 @@ public class OrganizationDomain {
         OrganizationObject org = getOrganizationById(id);
         org.setStatusCode(status);
         dataAPIClient.put("organization/{id}", org, id);
+    }
+
+    @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
+    public void patchBrand(String id, BrandObject brand) {
+        dataAPIClient.patch("organization/brand/{id}", brand, id);
     }
 
     public OrganizationObject getOrganizationByName(String name) {
@@ -162,13 +168,13 @@ public class OrganizationDomain {
             //128x128
             ImageProcessor imageProcessor = new ImageProcessor().read(logoStream);
             ByteArrayOutputStream logo128x128OutputStream = new ByteArrayOutputStream();
-            imageProcessor.resize(128, 128).write(logo128x128OutputStream, "png");
+            imageProcessor.resize(128, 128).write(logo128x128OutputStream, "image/png");
             dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
                     new ResourceInputStream(new ByteArrayInputStream(logo128x128OutputStream.toByteArray()), logo128x128OutputStream.size(), "image/png"),
                     orgId, logoImage128x128);
             //200x200
             ByteArrayOutputStream logo200x200OutputStream = new ByteArrayOutputStream();
-            imageProcessor.resize(200, 200).write(logo200x200OutputStream, "png");
+            imageProcessor.resize(200, 200).write(logo200x200OutputStream, "image/png");
             dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
                     new ResourceInputStream(new ByteArrayInputStream(logo200x200OutputStream.toByteArray()), logo200x200OutputStream.size(), "image/png"),
                     orgId, logoImage200x200);
@@ -181,7 +187,7 @@ public class OrganizationDomain {
         try {
             ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
             ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
-            imageProcessor.write(imageOutputStream, "png");
+            imageProcessor.write(imageOutputStream, "image/png");
             dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
                     new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/png"),
                     orgId, imageName);
@@ -194,5 +200,16 @@ public class OrganizationDomain {
 
     }
 
+
+    public void saveWebChatKey(String orgId, MultipartFile file, String fileName) {
+        String s3FileName = "organization/{orgId}/webchat/" + fileName;
+        try {
+            ResourceInputStream stream = new ResourceInputStream(file.getInputStream(), file.getSize(), file.getContentType());
+            dataAPIClient.put("file/s3?path=" + s3FileName, stream, orgId);
+        }
+        catch (IOException e) {
+            throw new InternalServerErrorException("webchat key upload failed for organization: " + orgId);
+        }
+    }
 
 }

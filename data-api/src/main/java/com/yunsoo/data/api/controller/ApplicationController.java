@@ -124,6 +124,7 @@ public class ApplicationController {
         object.setTypeCode(entity.getTypeCode());
         object.setDescription(entity.getDescription());
         object.setSystemVersion(entity.getSystemVersion());
+        object.setPermanentTokenExpiresMinutes(entity.getPermanentTokenExpiresMinutes());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
@@ -143,6 +144,7 @@ public class ApplicationController {
         entity.setTypeCode(object.getTypeCode());
         entity.setDescription(object.getDescription());
         entity.setSystemVersion(object.getSystemVersion());
+        entity.setPermanentTokenExpiresMinutes(object.getPermanentTokenExpiresMinutes());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());

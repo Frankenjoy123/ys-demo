@@ -23,6 +23,9 @@ public class MktDrawRuleEntity {
     @Column(name = "marketing_id")
     private String marketingId;
 
+    @Column(name = "consumer_right_id")
+    private String consumerRightId;
+
     @Column(name = "prize_type_code")
     private String prizeTypeCode;
 
@@ -70,6 +73,14 @@ public class MktDrawRuleEntity {
 
     public void setMarketingId(String marketingId) {
         this.marketingId = marketingId;
+    }
+
+    public String getConsumerRightId() {
+        return consumerRightId;
+    }
+
+    public void setConsumerRightId(String consumerRightId) {
+        this.consumerRightId = consumerRightId;
     }
 
     public String getPrizeTypeCode() {

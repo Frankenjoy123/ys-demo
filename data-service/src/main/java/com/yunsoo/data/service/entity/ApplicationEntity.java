@@ -39,6 +39,9 @@ public class ApplicationEntity {
     @Column(name = "system_version")
     private String systemVersion;
 
+    @Column(name = "permanent_token_expires_minutes")
+    private Integer permanentTokenExpiresMinutes;
+
     @Column(name = "created_account_id")
     private String createdAccountId;
 
@@ -116,6 +119,14 @@ public class ApplicationEntity {
 
     public void setCreatedAccountId(String createdAccountId) {
         this.createdAccountId = createdAccountId;
+    }
+
+    public Integer getPermanentTokenExpiresMinutes() {
+        return permanentTokenExpiresMinutes;
+    }
+
+    public void setPermanentTokenExpiresMinutes(Integer permanentTokenExpiresMinutes) {
+        this.permanentTokenExpiresMinutes = permanentTokenExpiresMinutes;
     }
 
     public DateTime getCreatedDateTime() {

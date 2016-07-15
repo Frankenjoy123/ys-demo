@@ -35,6 +35,18 @@ public class OrganizationCategoryDomain {
         return dataAPIClient.get("orgcategory/" + id, OrganizationCategoryObject.class);
     }
 
+    public OrganizationCategoryObject save(OrganizationCategoryObject object){
+        return dataAPIClient.post("orgcategory", object, OrganizationCategoryObject.class);
+    }
+
+    public void update(OrganizationCategoryObject object){
+        dataAPIClient.put("orgcategory/{id}", object, object.getId());
+    }
+
+    public void delete(String id){
+        dataAPIClient.delete("orgcategory/{id}", id);
+    }
+
     public void saveList(String orgId, List<OrganizationCategory> orgCategoryList){
         List<OrganizationCategoryObject> objectList = new ArrayList<>();
         orgCategoryList.forEach(organizationCategory -> {

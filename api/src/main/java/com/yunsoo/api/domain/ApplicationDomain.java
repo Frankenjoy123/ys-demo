@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -27,6 +28,9 @@ public class ApplicationDomain {
     private RestClient dataAPIClient;
 
     public ApplicationObject getApplicationById(String id) {
+        if (StringUtils.isEmpty(id)) {
+            return null;
+        }
         try {
             return dataAPIClient.get("application/{id}", ApplicationObject.class, id);
         } catch (NotFoundException ignored) {

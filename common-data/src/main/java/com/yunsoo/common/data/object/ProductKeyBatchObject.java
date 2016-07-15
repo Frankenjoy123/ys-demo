@@ -53,6 +53,9 @@ public class ProductKeyBatchObject implements Serializable {
     private String marketingId;
 
 
+    @JsonProperty("download_no")
+    private Integer downloadNo;
+
     public String getId() {
         return id;
     }
@@ -141,4 +144,11 @@ public class ProductKeyBatchObject implements Serializable {
         this.marketingId = marketingId;
     }
 
+    public Integer getDownloadNo() {
+        return downloadNo;
+    }
+
+    public void setDownloadNo(Integer downloadNo) {
+        this.downloadNo = downloadNo;
+    }
 }

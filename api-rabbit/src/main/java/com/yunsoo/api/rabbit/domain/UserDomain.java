@@ -112,7 +112,7 @@ public class UserDomain {
         try {
             ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
             ByteArrayOutputStream image400x400OutputStream = new ByteArrayOutputStream();
-            imageProcessor.resize(400, 400).write(image400x400OutputStream, "png");
+            imageProcessor.resize(400, 400).write(image400x400OutputStream, "image/png");
             dataAPIClient.put("file/s3?path=user/{userId}/gravatar/{imageName}",
                     new ResourceInputStream(new ByteArrayInputStream(image400x400OutputStream.toByteArray()), image400x400OutputStream.size(), "image/png"),
                     userId, imageName);

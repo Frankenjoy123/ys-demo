@@ -76,7 +76,7 @@ public class AccountTokenDomain {
      * @return permanent token object
      */
     public AccountTokenObject create(String accountId, String appId, String deviceId) {
-        return create(accountId, appId, deviceId, permanent_token_expires_minutes);
+        return create(accountId, appId, deviceId, null);
     }
 
     /**
@@ -88,7 +88,8 @@ public class AccountTokenDomain {
      */
     public AccountTokenObject create(String accountId, String appId, String deviceId, Integer expiresMinutes) {
         DateTime now = DateTime.now();
-        DateTime expires = expiresMinutes != null && expiresMinutes > 0 ? now.plusMinutes(expiresMinutes) : null;
+        expiresMinutes = expiresMinutes == null ? permanent_token_expires_minutes : expiresMinutes;
+        DateTime expires = expiresMinutes > 0 ? now.plusMinutes(expiresMinutes) : null;
         String permanentToken = HashUtils.sha1HexString(UUID.randomUUID().toString()); //random sha1
         AccountTokenObject accountTokenObject = new AccountTokenObject();
         accountTokenObject.setAccountId(accountId);

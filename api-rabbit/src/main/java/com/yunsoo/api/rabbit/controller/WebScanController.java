@@ -3,6 +3,7 @@ package com.yunsoo.api.rabbit.controller;
 import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.domain.*;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
+import com.yunsoo.api.rabbit.dto.UserAccessToken;
 import com.yunsoo.api.rabbit.dto.WebScanRequest;
 import com.yunsoo.api.rabbit.dto.WebScanResponse;
 import com.yunsoo.api.rabbit.util.IpUtils;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by:   Lijian
@@ -53,6 +55,12 @@ public class WebScanController {
     @Autowired
     private UserBlockDomain userBlockDomain;
 
+    @Autowired
+    private UserAccessTokenDomain userAccessTokenDomain;
+
+    @Autowired
+    private OrganizationConfigDomain organizationConfigDomain;
+
     //region 一物一码
 
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
@@ -80,6 +88,19 @@ public class WebScanController {
 
         //security info
         webScanResponse.setSecurity(getSecurityInfo(productObject));
+
+//        Map<String, Object> config = organizationConfigDomain.getConfig(productKeyBatchObject.getOrgId(), false);
+//        String appId = config.get("webchat.app_id").toString();
+//        String secret = config.get("webchat.app_secret").toString();
+
+        String appId = "wx89c1685a0c14e8bf"; //todo: put in to config
+        String secret = "c1e1d31f" + "ac7e0e31" + "a64417ec" + "ef3b3682"; //todo: put in to config
+
+        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject(productKeyBatchObject.getOrgId(), appId, secret);
+        UserAccessToken userAccessToken = new UserAccessToken(userAccessTokenObject);
+        userAccessToken.setAppId(appId);
+
+        webScanResponse.setUserAccessToken(userAccessToken);
 
         return webScanResponse;
     }
@@ -142,6 +163,16 @@ public class WebScanController {
 
         //marketing info
         webScanResponse.setMarketing(null);
+
+        Map<String, Object> config = organizationConfigDomain.getConfig(webScanResponse.getOrganization().getId(), false);
+        String appId = config.get("webchat.app_id").toString();
+        String secret = config.get("webchat.app_secret").toString();
+
+        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject(webScanResponse.getOrganization().getId(), appId, secret);
+        UserAccessToken userAccessToken = new UserAccessToken(userAccessTokenObject);
+        userAccessToken.setAppId(appId);
+
+        webScanResponse.setUserAccessToken(userAccessToken);
 
         return webScanResponse;
     }
@@ -268,7 +299,7 @@ public class WebScanController {
         if (LookupCodes.ProductKeyType.QR_SECURE.equals(productObject.getProductKeyTypeCode())) {
             //防伪码
             security = new WebScanResponse.Security();
-            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 20));
+            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 1000));
             List<UserScanRecordObject> userScanRecordObjects = userScanRecordObjectPage.getContent();
             security.setScanCount(userScanRecordObjectPage.getCount() == null ? 0 : userScanRecordObjectPage.getCount());
             if (userScanRecordObjects.size() > 0) {

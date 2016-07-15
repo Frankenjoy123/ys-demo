@@ -24,7 +24,7 @@ public class ImageProcessorTest {
 //            new ImageProcessor().read(inputStream)
 //                    .crop(240, 130, 150, 150)
 //                    .resize(100, 100)
-//                    .write(outputStream, "png");
+//                    .write(outputStream, "image/png");
 //
 //            inputStream.close();
 //            outputStream.close();

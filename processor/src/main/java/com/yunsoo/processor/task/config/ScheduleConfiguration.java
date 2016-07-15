@@ -24,7 +24,7 @@ public class ScheduleConfiguration {
     @Autowired
     private TaskProcessor taskProcessor;
 
-    @Scheduled(initialDelay = 10 * 1000, fixedRate = 30 * 1000)
+    @Scheduled(initialDelay = 10 * 1000, fixedRate = 10 * 1000)
     public void daemon() {
         try {
             taskProcessor.process();

@@ -1,10 +1,8 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
-import com.yunsoo.api.domain.FileDomain;
-import com.yunsoo.api.domain.MarketingDomain;
-import com.yunsoo.api.domain.ProductBaseDomain;
-import com.yunsoo.api.domain.ProductKeyDomain;
+import com.yunsoo.api.aspect.OperationLog;
+import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.MarketingObject;
@@ -39,6 +37,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -64,6 +63,9 @@ public class ProductKeyBatchController {
     @Autowired
     private FileDomain fileDomain;
 
+    @Autowired
+    private OrganizationConfigDomain orgConfigDomain;
+
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'product_key_batch:read')")
@@ -76,18 +78,32 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
+    @OperationLog(operation = "'下载产品码批次' + #id", level = "P1")
     public ResponseEntity<?> getKeysById(@PathVariable(value = "id") String id) {
         ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
         if (batch == null) {
             throw new NotFoundException("product key batch not found " + StringFormatter.formatMap("id", id));
         }
+
         AuthUtils.checkPermission(batch.getOrgId(), "product_key_batch", "read");
 
+        Map<String, Object> configMap = orgConfigDomain.getConfig(batch.getOrgId(), false, null);
+        int downloadNo = (int)configMap.get("enterprise.download_no");
+        if(downloadNo <= batch.getDownloadNo())
+            throw new BadRequestException("the download number exceed the max download");
+        String downloadFileFormat = configMap.get("enterprise.product_key.format").toString();
+
         byte[] data = productKeyDomain.getProductKeysByBatchId(id);
+
+        ProductKeyBatchObject productKeyBatchObject = new ProductKeyBatchObject();
+        productKeyBatchObject.setDownloadNo(batch.getDownloadNo() + 1);
+        productKeyBatchObject.setId(batch.getId());
+        productKeyDomain.patchUpdateProductKeyBatch(productKeyBatchObject);
+
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/vnd+ys.txt"))
+                .contentType(MediaType.parseMediaType("application/vnd+ys." + downloadFileFormat))
                 .contentLength(data.length)
-                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + ".txt\"")
+                .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + "." + downloadFileFormat + "\"")
                 .body(new InputStreamResource(new ByteArrayInputStream(data)));
     }
 
@@ -161,6 +177,7 @@ public class ProductKeyBatchController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('current', 'org', 'product_key_batch:create')")
+    @OperationLog(operation = "'创建产品码批次' + #request.productBaseId", level = "P1")
     public ProductKeyBatch create(
             @RequestHeader(value = Constants.HttpHeaderName.APP_ID, required = false) String appId,
             @Valid @RequestBody ProductKeyBatchRequest request) {
@@ -223,6 +240,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.PATCH)
+    @OperationLog(operation = "'更新产品码批次' + #productKeyBatch.id", level = "P1")
     public void patchUpdateProductKeyBatch(
             @Valid @RequestBody ProductKeyBatch productKeyBatch) {
         ProductKeyBatchObject productKeyBatchObject = new ProductKeyBatchObject();
@@ -233,6 +251,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "{id}/marketing_id", method = RequestMethod.PUT)
+    @OperationLog(operation = "'产品码批次关联营销方案' + #id", level = "P1")
     public void putMarketingId(@PathVariable(value = "id") String id, @RequestBody(required = false) String marketingId) {
         productKeyDomain.putMarketingId(id, marketingId);
         if (marketingId != null) {
@@ -262,6 +281,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "{id}/details", method = RequestMethod.PUT)
+    @OperationLog(operation = "'更新产品码批次' + #id", level = "P1")
     public void putProductKeyBatchDetails(@PathVariable(value = "id") String id,
                                           @RequestBody String details) {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();

@@ -2,7 +2,7 @@ package com.yunsoo.data.service.dao;
 
 import com.yunsoo.data.service.dbmodel.dynamodb.ProductModel;
 
-import java.util.List;
+import java.util.Collection;
 
 
 public interface ProductDao {
@@ -11,6 +11,6 @@ public interface ProductDao {
 
    void save(ProductModel product);
 
-   void batchSave(List<ProductModel> products);
+   void batchSave(Collection<ProductModel> products);
 
 }

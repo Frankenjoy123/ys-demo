@@ -55,6 +55,7 @@ public class EMRUserController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<EMRUserObject> findByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                             @RequestParam(value = "sex", required = false) Boolean sex,
+                                            @RequestParam(value = "wx_user", required = false) Boolean wxUser,
                                             @RequestParam(value = "phone", required = false) String phone,
                                             @RequestParam(value = "name", required = false) String name,
                                             @RequestParam(value = "province", required = false) String province,
@@ -87,7 +88,7 @@ public class EMRUserController {
 
         Page<EMRUserEntity> entityPage = emrUserRepository.findByFilter(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStartTo, createdDateTimeEndTo,
                 tags == null || tags.size() == 0 ? null : tags,
-                tags == null || tags.size() == 0, pageable);
+                tags == null || tags.size() == 0, wxUser, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
