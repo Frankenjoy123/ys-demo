@@ -420,8 +420,10 @@ public class MarketingController {
 
 
     //update marketing draw prize by product key, provide: API-Rabbit
-    @RequestMapping(value = "/drawPrize", method = RequestMethod.PUT)
+    @RequestMapping(value = "/drawPrize", method = RequestMethod.PATCH)
     public MktDrawPrizeObject updateDrawPrize(@RequestBody MktDrawPrizeObject mktDrawPrizeObject) {
+        if(mktDrawPrizeObject ==null)
+            throw new BadRequestException("marketing prize object is null");
 
         String productKey = mktDrawPrizeObject.getProductKey();
         List<MktDrawPrizeEntity> entities = mktDrawPrizeRepository.findByProductKey(productKey);
@@ -432,14 +434,20 @@ public class MarketingController {
         MktDrawPrizeEntity entity = entities.get(0);
         if (!entity.getDrawRecordId().equals(mktDrawPrizeObject.getDrawRecordId()))
             throw new NotFoundException("This draw prize has not been found");
+        if(mktDrawPrizeObject.getAccountType() != null)
+            entity.setAccountType(mktDrawPrizeObject.getAccountType());
+        if(mktDrawPrizeObject.getPrizeAccount() != null)
+            entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
+        if(mktDrawPrizeObject.getPrizeAccountName() != null)
+            entity.setPrizeAccountName(mktDrawPrizeObject.getPrizeAccountName());
 
-        entity.setAccountType(mktDrawPrizeObject.getAccountType());
-        entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
-        entity.setPrizeAccountName(mktDrawPrizeObject.getPrizeAccountName());
+        if(mktDrawPrizeObject.getMobile() != null)
+            entity.setMobile(mktDrawPrizeObject.getMobile());
+        if(mktDrawPrizeObject.getStatusCode() != null)
+            entity.setStatusCode(mktDrawPrizeObject.getStatusCode());
+        if(mktDrawPrizeObject.getPaidDateTime() != null)
+            entity.setPaidDateTime(mktDrawPrizeObject.getPaidDateTime());
 
-        entity.setStatusCode(mktDrawPrizeObject.getStatusCode());
-        entity.setPaidDateTime(mktDrawPrizeObject.getPaidDateTime());
-        entity.setMobile(mktDrawPrizeObject.getMobile());
         MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
 
         return toMktDrawPrizeObject(newEntity);
