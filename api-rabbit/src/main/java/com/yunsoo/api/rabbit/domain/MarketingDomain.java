@@ -149,8 +149,8 @@ public class MarketingDomain {
     }
 
     public boolean createMobileOrder(String prizeId) {
-        return  true;
-        //return dataAPIClient.get("juhe/mobile/order?draw_prize_id=" + prizeId, Boolean.class);
+        //return  true;
+        return dataAPIClient.get("juhe/mobile/order?draw_prize_id=" + prizeId, Boolean.class);
     }
 
     public boolean createMobileDataFlow(String prizeId) {
