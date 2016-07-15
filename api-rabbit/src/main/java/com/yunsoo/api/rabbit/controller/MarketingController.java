@@ -141,6 +141,18 @@ public class MarketingController {
             throw new RestErrorResultException();
     }
 
+    @RequestMapping(value = "drawPrize/failed", method = RequestMethod.PUT)
+    public void updateFailedMktDrawPrize(@RequestBody MktDrawPrize mktDrawPrize) {
+        if (mktDrawPrize == null) {
+            throw new BadRequestException("marketing draw record can not be null");
+        }
+        MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
+        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
+        marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+
+    }
+
+
     @RequestMapping(value = "drawPrize/{key}/sms", method = RequestMethod.PUT)
     public boolean sendPrizeSMS(@PathVariable(value = "key") String productKey,
                                 @RequestParam(value = "mobile") String mobile) {
