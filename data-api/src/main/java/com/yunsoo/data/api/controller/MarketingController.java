@@ -98,7 +98,7 @@ public class MarketingController {
     //query marketing plan, provide API
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<MarketingObject> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
-                                             @RequestParam(value = "org_ids", required = false) List<String> orgIds ,
+                                             @RequestParam(value = "org_ids", required = false) List<String> orgIds,
                                              @RequestParam(value = "status", required = false) String status,
                                              @RequestParam(value = "search_text", required = false) String searchText,
                                              @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
@@ -383,7 +383,7 @@ public class MarketingController {
         marketingRepository.save(marketing);
 
 
-        if(marketing.getTypeCode().equals(LookupCodes.MktType.ENVELOPE)){
+        if (marketing.getTypeCode().equals(LookupCodes.MktType.ENVELOPE)) {
             List<MktDrawRuleEntity> drawRuleEntityList = mktDrawRuleRepository.findByMarketingIdOrderById(marketing.getId());
             drawRuleEntityList.forEach(mktDrawRuleEntity -> {
                 if (mktDrawRuleEntity.getAvailableQuantity() != null) {
@@ -391,8 +391,7 @@ public class MarketingController {
                     mktDrawRuleRepository.save(mktDrawRuleEntity);
                 }
             });
-        }
-        else{
+        } else {
             MktDrawRuleEntity mktDrawRuleEntity = mktDrawRuleRepository.findOne(mktDrawPrizeObject.getDrawRuleId());
             if (mktDrawRuleEntity.getAvailableQuantity() != null) {
                 mktDrawRuleEntity.setAvailableQuantity(mktDrawRuleEntity.getAvailableQuantity() - 1);
@@ -431,14 +430,13 @@ public class MarketingController {
         }
 
         MktDrawPrizeEntity entity = entities.get(0);
-        if(!entity.getDrawRecordId().equals(mktDrawPrizeObject.getDrawRecordId()))
+        if (!entity.getDrawRecordId().equals(mktDrawPrizeObject.getDrawRecordId()))
             throw new NotFoundException("This draw prize has not been found");
 
-        if(entity.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.CREATED)){
-            entity.setAccountType(mktDrawPrizeObject.getAccountType());
-            entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
-            entity.setPrizeAccountName(mktDrawPrizeObject.getPrizeAccountName());
-        }
+        entity.setAccountType(mktDrawPrizeObject.getAccountType());
+        entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
+        entity.setPrizeAccountName(mktDrawPrizeObject.getPrizeAccountName());
+
         entity.setStatusCode(mktDrawPrizeObject.getStatusCode());
         entity.setPaidDateTime(mktDrawPrizeObject.getPaidDateTime());
         entity.setMobile(mktDrawPrizeObject.getMobile());
@@ -560,7 +558,7 @@ public class MarketingController {
 
 
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.GET)
-    public List<MktDrawRuleObject> findMarketingRulesById(@PathVariable(value = "id")String marketingId){
+    public List<MktDrawRuleObject> findMarketingRulesById(@PathVariable(value = "id") String marketingId) {
         List<MktDrawRuleEntity> mktDrawRuleEntities = mktDrawRuleRepository.findByMarketingIdOrderById(marketingId);
         return mktDrawRuleEntities.stream().map(this::toMktDrawRuleObject).collect(Collectors.toList());
     }
@@ -589,23 +587,23 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public int countMarketingByStatus(@RequestParam("org_ids")List<String> orgIds, @RequestParam("status")String status){
+    public int countMarketingByStatus(@RequestParam("org_ids") List<String> orgIds, @RequestParam("status") String status) {
         return marketingRepository.countByOrgIdInAndStatusCode(orgIds, status);
     }
+
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
-    public List<MarketingObject> getMarketingCostList(@RequestParam("org_ids")List<String> orgIds,
-                                                       @RequestParam("status")List<String> status, Pageable pageable){
-        List<Object[]>  result = marketingRepository.sumMarketingByOrgIds(orgIds, status, pageable);
+    public List<MarketingObject> getMarketingCostList(@RequestParam("org_ids") List<String> orgIds,
+                                                      @RequestParam("status") List<String> status, Pageable pageable) {
+        List<Object[]> result = marketingRepository.sumMarketingByOrgIds(orgIds, status, pageable);
         List<MarketingObject> marketingObjectList = new ArrayList<>();
-        for(Object[] item : result){
+        for (Object[] item : result) {
             MarketingObject object = new MarketingObject();
-            object.setOrgId((String)item[0]);
-            object.setBudget((Double)item[1]);
+            object.setOrgId((String) item[0]);
+            object.setBudget((Double) item[1]);
             marketingObjectList.add(object);
         }
         return marketingObjectList;
     }
-
 
 
     private MarketingEntity findMarketingById(String id) {
