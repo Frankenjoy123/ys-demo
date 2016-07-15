@@ -67,7 +67,7 @@ public class MarketingDomain {
     }
 
     public void updateMktDrawPrize(MktDrawPrizeObject mktDrawPrizeObject) {
-        dataAPIClient.put("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
+        dataAPIClient.patch("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
     }
 
 
