@@ -62,6 +62,7 @@ public class OperationAspect {
                 object.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
             }catch (UnauthorizedException ex){  //not login
                 object.setCreatedAccountId(Constants.Ids.SYSTEM_ACCOUNT_ID);
+
             }
 
 
