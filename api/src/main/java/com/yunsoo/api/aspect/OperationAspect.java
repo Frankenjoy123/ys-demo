@@ -5,7 +5,9 @@ import com.yunsoo.api.Constants;
 import com.yunsoo.api.cache.OperationCache;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.IpUtils;
+import com.yunsoo.api.util.RequestUtils;
 import com.yunsoo.common.data.object.OperationLogObject;
+import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.JoinPoint;
@@ -55,9 +57,15 @@ public class OperationAspect {
             else
                 object.setOperation(operationLog.operation());
             object.setLevel(operationLog.level());
-            object.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
 
-            HttpServletRequest request = getCurrentHttpServletRequest();
+            try {
+                object.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
+            }catch (UnauthorizedException ex){  //not login
+                object.setCreatedAccountId(Constants.Ids.SYSTEM_ACCOUNT_ID);
+            }
+
+
+            HttpServletRequest request = RequestUtils.getCurrentHttpServletRequest();
             if (request != null) {
                 object.setUserAgent(request.getHeader(Constants.HttpHeaderName.USER_AGENT));
                 object.setCreatedAppId(request.getHeader(Constants.HttpHeaderName.APP_ID));
@@ -76,15 +84,21 @@ public class OperationAspect {
         Object[] args = pjp.getArgs();
         Class[] argTypes = new Class[args.length];
         for (int i = 0; i < args.length; i++) {
-            argTypes[i] = args[i].getClass();
-            if (args[i].getClass().equals(ArrayList.class))
+
+            if(args[i] == null)
+                argTypes[i] = String.class;
+            else if (args[i].getClass().equals(ArrayList.class))
                 argTypes[i] = List.class;
+            else
+                argTypes[i] = args[i].getClass();
+
         }
         Method method = null;
         try {
             method = pjp.getTarget().getClass().getMethod(pjp.getSignature().getName(), argTypes);
         } catch (NoSuchMethodException e) {
             log.error("Operation aspect, no such method found", e);
+
         } catch (SecurityException ex) {
             log.error("Operation aspect, security issue found", ex);
         }
@@ -109,9 +123,5 @@ public class OperationAspect {
         return parser.parseExpression(key).getValue(context, String.class);
     }
 
-    private HttpServletRequest getCurrentHttpServletRequest() {
-        RequestAttributes ra = RequestContextHolder.getRequestAttributes();
-        return ((ServletRequestAttributes) ra).getRequest();
-    }
 
 }

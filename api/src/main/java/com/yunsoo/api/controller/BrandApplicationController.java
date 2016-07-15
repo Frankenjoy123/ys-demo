@@ -1,6 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
+import com.yunsoo.api.aspect.*;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
@@ -99,6 +100,7 @@ public class BrandApplicationController {
 
     @RequestMapping(value = "{id}/approve", method = RequestMethod.PUT)
     //  @PreAuthorize("hasPermission('*', 'org', 'brand:write')")
+    //@com.yunsoo.api.aspect.OperationLog(operation = "通过审批品牌商入住申请：' + #id + ', 行业：' + #category", level = "P1")
     public boolean approveBrandApplication(@PathVariable("id") String id, @RequestParam("category") String category) {
 
         try {
@@ -141,6 +143,7 @@ public class BrandApplicationController {
     }
 
     @RequestMapping(value = "{id}/reject", method = RequestMethod.PUT)
+    //@com.yunsoo.api.aspect.OperationLog(operation = "拒绝通过品牌商入住申请：' + #id + ', 拒绝原因：' + #reject_reason", level = "P1")
     public boolean rejectBrandApplication(@PathVariable("id") String id, @RequestParam(name = "reject_reason", required = false) String reject_reason) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
         try {

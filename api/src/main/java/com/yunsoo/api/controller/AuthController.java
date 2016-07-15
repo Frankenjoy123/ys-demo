@@ -1,6 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
+import com.yunsoo.api.aspect.OperationLog;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.AccountLoginRequest;
 import com.yunsoo.api.dto.AccountLoginResponse;
@@ -9,6 +10,7 @@ import com.yunsoo.api.security.AuthAccount;
 import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.IpUtils;
+import com.yunsoo.api.util.RequestUtils;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AccountTokenObject;
 import com.yunsoo.common.data.object.ApplicationObject;
@@ -63,15 +65,15 @@ public class AuthController {
      * @return AccountLoginResponse include permanentToken and accessToken
      */
     @RequestMapping(value = "login/password", method = RequestMethod.POST)
+    @OperationLog(operation = "'账号登陆：' + #account.identifier", level = "P1")
     public AccountLoginResponse login(
             @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
             @RequestHeader(value = "User-Agent", required = false) String userAgent,
-            @RequestBody @Valid AccountLoginRequest account,
-            HttpServletRequest httpServletRequest) {
+            @RequestBody @Valid AccountLoginRequest account) {
 
         log.info(String.format("password login request from [appId: %s, deviceId: %s]", appId, deviceId));
-
+        HttpServletRequest httpServletRequest = RequestUtils.getCurrentHttpServletRequest();
         //validate parameters
         if (account.getAccountId() == null && (account.getOrganization() == null || account.getIdentifier() == null)) {
             log.warn(String.format("parameters are invalid [accountId: %s, organization: %s, identifier: %s]",
@@ -135,6 +137,8 @@ public class AuthController {
         //login successfully
         log.info(String.format("password login successfully, [id: %s, orgId: %s, identifier: %s, appId: %s, deviceId: %s]",
                 accountId, orgId, identifier, appId, deviceId));
+
+
         accountLoginLogDomain.savePasswordLogin(accountId, appId, deviceId, IpUtils.getIpFromRequest(httpServletRequest), userAgent);
 
         return new AccountLoginResponse(permanentToken, accessToken);
@@ -147,14 +151,15 @@ public class AuthController {
      * @return AccountLoginResponse include permanentToken and accessToken
      */
     @RequestMapping(value = "login/token", method = RequestMethod.POST)
+    @OperationLog(operation = "'Token登陆：' + #loginToken", level = "P1")
     public AccountLoginResponse login(
             @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
             @RequestHeader(value = "User-Agent", required = false) String userAgent,
-            @RequestBody Token loginToken,
-            HttpServletRequest httpServletRequest) {
+            @RequestBody Token loginToken) {
 
         log.info(String.format("token login request from [appId: %s, deviceId: %s]", appId, deviceId));
+        HttpServletRequest httpServletRequest = RequestUtils.getCurrentHttpServletRequest();
 
         String token = loginToken.getToken();
         if (StringUtils.isEmpty(token)) {

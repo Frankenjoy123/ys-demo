@@ -141,13 +141,13 @@ public class MarketingController {
             throw new RestErrorResultException();
     }
 
-    @RequestMapping(value = "drawPrize/failed", method = RequestMethod.PUT)
+    @RequestMapping(value = "drawPrize/invalid", method = RequestMethod.PUT)
     public void updateFailedMktDrawPrize(@RequestBody MktDrawPrize mktDrawPrize) {
         if (mktDrawPrize == null) {
             throw new BadRequestException("marketing draw record can not be null");
         }
         MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
-        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
+        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.INVALID);
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
 
     }

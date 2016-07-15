@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.aspect.*;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.payment.ParameterNames;
@@ -58,6 +59,7 @@ public class MarketingController {
 
     @RequestMapping(value = "drawRule", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'新建营销方案规则， 方案：' + #mktDrawRule.marketingId + ', 规则名：' + #mktDrawRule.comments", level = "P1")
     public MktDrawRule createMktDrawRule(@RequestBody MktDrawRule mktDrawRule) {
         if (mktDrawRule == null) {
             throw new BadRequestException("marketing draw record can not be null");
@@ -78,6 +80,7 @@ public class MarketingController {
 
     @RequestMapping(value = "drawRule/list", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'新建营销方案规则列表， 方案：' + #mktDrawRuleList[0].marketingId", level = "P1")
     public MktDrawRule createMktDrawRuleList(@RequestBody List<MktDrawRule> mktDrawRuleList) {
         if (mktDrawRuleList == null || mktDrawRuleList.size() == 0) {
             throw new BadRequestException("marketing draw rule list can not be null");
@@ -101,6 +104,7 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "/drawRule/list", method = RequestMethod.PUT)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'更新营销方案规则列表， 方案：' + #mktDrawRuleList[0].marketingId", level = "P1")
     public void updateMktDrawRuleList(@RequestBody List<MktDrawRule> mktDrawRuleList) {
         if (mktDrawRuleList == null || mktDrawRuleList.size() == 0) {
             throw new BadRequestException("marketing draw rule list can not be null");
@@ -366,6 +370,7 @@ public class MarketingController {
     //create marketing plan
     @RequestMapping(value = "", method = RequestMethod.POST)
     @PreAuthorize("hasPermission(#marketing.orgId, 'org', 'marketing:create')")
+    @com.yunsoo.api.aspect.OperationLog(operation = "'新建营销方案：' + #marketing.name", level = "P1")
     public Marketing createMarketing(@RequestParam(value = "batchId", required = false) String batchId,
                                      @RequestBody Marketing marketing) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
@@ -397,6 +402,7 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "update/{id}", method = RequestMethod.PUT)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'修改营销方案：' + #marketing.name", level = "P1")
     public void updateMarketing(@PathVariable(value = "id") String id, @RequestBody Marketing marketing) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
@@ -433,6 +439,7 @@ public class MarketingController {
 
     //create marketing consumer right
     @RequestMapping(value = "consumer", method = RequestMethod.POST)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'新建营销权益：' + #mktConsumerRight.name", level = "P1")
     public MktConsumerRight createMktConsumerRight(@RequestBody MktConsumerRight mktConsumerRight) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
         MktConsumerRightObject mktConsumerRightObject = mktConsumerRight.toMktConsumerRightObject();
@@ -458,6 +465,7 @@ public class MarketingController {
 
     //update marketing consumer right
     @RequestMapping(value = "consumer/{id}", method = RequestMethod.PUT)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'修改营销权益：' + #mktConsumerRight.name", level = "P1")
     public void updateMktConsumerRight(@PathVariable("id") String id, @RequestBody MktConsumerRight mktConsumerRight) {
         MktConsumerRightObject mktConsumerRightObject = marketingDomain.getMktConsumerRightById(id);
         if (mktConsumerRightObject != null) {
@@ -477,6 +485,7 @@ public class MarketingController {
     //delete marketing consumer right
     @RequestMapping(value = "consumer/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'删除营销权益：' + #id", level = "P1")
     public void deleteMktConsumerRight(@PathVariable(value = "id") String id) {
         MktConsumerRightObject mktConsumerRightObject = marketingDomain.getMktConsumerRightById(id);
         if (mktConsumerRightObject != null) {
@@ -541,6 +550,7 @@ public class MarketingController {
 
 
     @RequestMapping(value = "{id}/active", method = RequestMethod.PUT)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'激活营销方案：' + #id", level = "P1")
     public void enableMarketing(@PathVariable(value = "id") String id, @RequestParam(value = "comments", required = false) String comments) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
@@ -555,6 +565,7 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'禁用营销方案：' + #id", level = "P1")
     public void disableMarketing(@PathVariable(value = "id") String id, @RequestParam(value = "comments", required = false) String comments) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
@@ -643,6 +654,7 @@ public class MarketingController {
     //delete marketing plan by id
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'删除营销方案：' + #id", level = "P1")
     public void deleteMarketing(@PathVariable(value = "id") String id) {
         MarketingObject marketingObject = marketingDomain.getMarketingById(id);
         if (marketingObject != null) {
@@ -689,6 +701,7 @@ public class MarketingController {
 
 
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.PUT)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'修改营销方案规则：' + #id", level = "P1")
     public void updateMktDrawRule(@PathVariable(value = "id") String id, @RequestBody MktDrawRule mktDrawRule) {
         if (mktDrawRule == null) {
             throw new BadRequestException("marketing draw rule can not be null");
@@ -717,6 +730,7 @@ public class MarketingController {
 
 
     @RequestMapping(value = "drawPrize", method = RequestMethod.PUT)
+    @com.yunsoo.api.aspect.OperationLog(operation = "'更新产品key：'+ #mktDrawPrize.productKey +',奖项id：' + #mktDrawPrize.draw_record_id", level = "P1")
     public void updateMktDrawPrize(@RequestBody MktDrawPrize mktDrawPrize) {
         if (mktDrawPrize == null) {
             throw new BadRequestException("marketing draw record can not be null");
