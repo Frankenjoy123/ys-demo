@@ -25,9 +25,6 @@ public class Application {
         //app.getClassLoader();
         log.info(String.format("%s started...", app.getId()));
 
-        OperationThread operationThread = new OperationThread(PropertyUtils.getProperty("yunsoo.client.dataapi.baseurl"));
-        operationThread.run();
-
     }
 
 
