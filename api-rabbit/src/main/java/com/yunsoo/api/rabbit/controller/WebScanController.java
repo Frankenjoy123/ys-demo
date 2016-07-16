@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by:   Lijian
@@ -164,9 +163,12 @@ public class WebScanController {
         //marketing info
         webScanResponse.setMarketing(null);
 
-        Map<String, Object> config = organizationConfigDomain.getConfig(webScanResponse.getOrganization().getId(), false);
-        String appId = config.get("webchat.app_id").toString();
-        String secret = config.get("webchat.app_secret").toString();
+//        Map<String, Object> config = organizationConfigDomain.getConfig(webScanResponse.getOrganization().getId(), false);
+//        String appId = config.get("webchat.app_id").toString();
+//        String secret = config.get("webchat.app_secret").toString();
+
+        String appId = "wx89c1685a0c14e8bf"; //todo: put in to config
+        String secret = "c1e1d31f" + "ac7e0e31" + "a64417ec" + "ef3b3682"; //todo: put in to config
 
         UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject(webScanResponse.getOrganization().getId(), appId, secret);
         UserAccessToken userAccessToken = new UserAccessToken(userAccessTokenObject);
