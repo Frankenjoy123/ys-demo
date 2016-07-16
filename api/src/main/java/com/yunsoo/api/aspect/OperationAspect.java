@@ -19,6 +19,7 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -69,7 +70,10 @@ public class OperationAspect {
             HttpServletRequest request = RequestUtils.getCurrentHttpServletRequest();
             if (request != null) {
                 object.setUserAgent(request.getHeader(Constants.HttpHeaderName.USER_AGENT));
-                object.setCreatedAppId(request.getHeader(Constants.HttpHeaderName.APP_ID));
+                if(!StringUtils.hasText(request.getHeader(Constants.HttpHeaderName.APP_ID)))
+                    object.setCreatedAppId(Constants.Ids.ENTERPRISE_APP_ID);
+                else
+                    object.setCreatedAppId(request.getHeader(Constants.HttpHeaderName.APP_ID));
                 object.setIp(IpUtils.getIpFromRequest(request));
                 OperationCache.put(object);
             }

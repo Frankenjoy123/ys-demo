@@ -13,6 +13,7 @@ public final class Constants {
         public static final String SYSTEM_ACCOUNT_ID = "0010000000000000000";
         public static final String ANONYMOUS_USER_ID = "0020000000000000000";
         public static final String YUNSU_ORG_ID = "2k0r1l55i2rs5544wz5";
+        public static final String ENTERPRISE_APP_ID="2k2juhux4z5d6eceh4v";
     }
 
     public static class HttpHeaderName {
