@@ -32,6 +32,22 @@ public interface CustomEMREventRepository {
                   DateTime createdDateTimeStart,
                   DateTime createdDateTimeEnd);
 
+    int[] shareCount(String orgId, String productBaseId,
+                     String province, String city,
+                     DateTime createdDateTimeStart,
+                     DateTime createdDateTimeEnd);
+
+    int[] storeUrlCount(String orgId, String productBaseId,
+                        String province, String city,
+                        DateTime createdDateTimeStart,
+                        DateTime createdDateTimeEnd);
+
+    int[] commentCount(String orgId, String productBaseId,
+                       String province, String city,
+                       DateTime createdDateTimeStart,
+                       DateTime createdDateTimeEnd);
+
+
     EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId);
     int periodConsumptionCount(String orgId, String userId, String ysId,DateTime eventDateTimeStart, DateTime eventDateTimeEnd);
     List<MarketUserLocationAnalysisEntity> queryRewardLocationReport( String marketingId);
