@@ -28,6 +28,9 @@ public class WebTemplateEntity {
     @Column(name = "type_code")
     private String typeCode;
 
+    @Column(name = "restriction")
+    private String restriction;
+
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
@@ -54,6 +57,14 @@ public class WebTemplateEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getRestriction() {
+        return restriction;
+    }
+
+    public void setRestriction(String restriction) {
+        this.restriction = restriction;
     }
 
     public String getTypeCode() {
