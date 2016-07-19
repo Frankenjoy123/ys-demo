@@ -2,12 +2,9 @@ package com.yunsoo.data.service.repository.impl;
 
 import com.amazonaws.util.StringUtils;
 import com.yunsoo.data.service.entity.EMREventEntity;
-import com.yunsoo.data.service.entity.EMRUserEntity;
 import com.yunsoo.data.service.entity.MarketUserLocationAnalysisEntity;
 import com.yunsoo.data.service.repository.CustomEMREventRepository;
-import com.yunsoo.data.service.repository.EMREventRepository;
 import org.joda.time.DateTime;
-import org.springframework.data.repository.query.Param;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -50,6 +47,22 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
     public int[] rewardCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
         return query("draw",orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 4);
     }
+
+    @Override
+    public int[] shareCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        return query("share", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+    }
+
+    @Override
+    public int[] storeUrlCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        return query("store_url", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+    }
+
+    @Override
+    public int[] commentCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        return query("comment", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+    }
+
 
     @Override
     public EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId) {

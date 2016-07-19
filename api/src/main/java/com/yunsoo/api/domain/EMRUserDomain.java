@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.common.data.object.EMRActionReportObject;
 import com.yunsoo.common.data.object.EMRUserObject;
 import com.yunsoo.common.data.object.EMRUserReportObject;
 import com.yunsoo.common.web.client.Page;
@@ -137,4 +138,19 @@ public class EMRUserDomain {
         return dataAPIClient.get("analysis/user/funnel" + query, new ParameterizedTypeReference<EMRUserReportObject>() {
         });
     }
+
+    public EMRActionReportObject getEMRActionReport(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("province", province)
+                .append("city", city)
+                .append("create_datetime_start", createdDateTimeStart)
+                .append("create_datetime_end", createdDateTimeEnd)
+                .build();
+
+        return dataAPIClient.get("analysis/user/action" + query, new ParameterizedTypeReference<EMRActionReportObject>() {
+        });
+    }
+
 }
