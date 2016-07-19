@@ -157,6 +157,8 @@ public class ProductBaseController {
         object.setStatusCode(entity.getStatusCode());
         object.setCategoryId(entity.getCategoryId());
         object.setName(entity.getName());
+        object.setWebTemplateName(entity.getWebTemplateName());
+        object.setWebTemplateVersion(entity.getWebTemplateVersion());
         object.setDescription(entity.getDescription());
         object.setBarcode(entity.getBarcode());
         object.setProductKeyTypeCodes(Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getProductKeyTypeCodes())));
@@ -183,6 +185,8 @@ public class ProductBaseController {
         entity.setStatusCode(object.getStatusCode());
         entity.setCategoryId(object.getCategoryId());
         entity.setName(object.getName());
+        entity.setWebTemplateVersion(object.getWebTemplateVersion());
+        entity.setWebTemplateName(object.getWebTemplateName());
         entity.setDescription(object.getDescription());
         entity.setBarcode(object.getBarcode());
         entity.setProductKeyTypeCodes(StringUtils.collectionToCommaDelimitedString(object.getProductKeyTypeCodes()));

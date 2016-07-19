@@ -36,6 +36,12 @@ public class ProductBaseEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "web_template_name")
+    private String webTemplateName;
+
+    @Column(name = "web_template_version")
+    private String webTemplateVersion;
+
     @Column(name = "description")
     private String description;
 
@@ -228,5 +234,21 @@ public class ProductBaseEntity {
 
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
+    }
+
+    public String getWebTemplateName() {
+        return webTemplateName;
+    }
+
+    public void setWebTemplateName(String webTemplateName) {
+        this.webTemplateName = webTemplateName;
+    }
+
+    public String getWebTemplateVersion() {
+        return webTemplateVersion;
+    }
+
+    public void setWebTemplateVersion(String webTemplateVersion) {
+        this.webTemplateVersion = webTemplateVersion;
     }
 }
