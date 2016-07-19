@@ -9,50 +9,42 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * Created by yan on 7/8/2016.
  */
+@Component
 public class OperationThread implements Runnable {
 
     private Log log = LogFactory.getLog(this.getClass());
-    private RestClient client;
 
-
-    public OperationThread(@Value("${yunsoo.client.dataapi.baseurl}") String baseUrl) {
-        super();
-        client = new DataAPIClient(baseUrl);
-        log.info("operation thread rest client base url:" + baseUrl);
-    }
+    @Autowired
+    private DataAPIClient client;
 
     @Override
     public void run() {
-        while (true) {
-            try {
-                List<OperationLogObject> objectList = OperationCache.getAll();
-                log.info("create log in operation thread, size: " + objectList.size());
-                if(objectList.size() >0) {
-                    objectList.forEach(object -> {
-                        createLog(object);
-                    });
-                }
-                else {
-                    log.info("begin to sleep 5 min");
-                    Thread.sleep(1000 * 60 * 5);
-                }
-
-            } catch (Exception e) {
-                log.error("error in operation thread", e);
+        try {
+            List<OperationLogObject> objectList = OperationCache.getAll();
+            log.info("create log in operation thread, size: " + objectList.size());
+            if (objectList.size() > 0) {
+                objectList.forEach(object -> {
+                    createLog(object);
+                });
             }
+
+        } catch (Exception e) {
+            log.error("error in operation thread", e);
         }
+
     }
 
     private OperationLogObject createLog(OperationLogObject log) {
-        if(log.getIp() != null){
+        if (log.getIp() != null) {
             IPResultObject ipResultObject = client.get("juhe/ip?ip={ip}", IPResultObject.class, log.getIp());
-            if(ipResultObject != null)
+            if (ipResultObject != null)
                 log.setLocation(ipResultObject.getResult().getArea());
         }
 
