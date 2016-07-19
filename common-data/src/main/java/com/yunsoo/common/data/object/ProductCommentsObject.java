@@ -29,6 +29,12 @@ public class ProductCommentsObject implements Serializable {
     @JsonProperty("user_id")
     private String userId;
 
+    @JsonProperty("ys_id")
+    private String ysId;
+
+    @JsonProperty("scan_record_id")
+    private String scanRecordId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
@@ -91,5 +97,21 @@ public class ProductCommentsObject implements Serializable {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public String getYsId() {
+        return ysId;
+    }
+
+    public void setYsId(String ysId) {
+        this.ysId = ysId;
+    }
+
+    public String getScanRecordId() {
+        return scanRecordId;
+    }
+
+    public void setScanRecordId(String scanRecordId) {
+        this.scanRecordId = scanRecordId;
     }
 }

@@ -32,6 +32,12 @@ public class ProductCommentsEntity {
     @Column(name = "user_id")
     private String userId;
 
+    @Column(name = "ysid")
+    private String ysId;
+
+    @Column(name = "scan_record_id")
+    private String scanRecordId;
+
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
@@ -93,5 +99,21 @@ public class ProductCommentsEntity {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public String getYsId() {
+        return ysId;
+    }
+
+    public void setYsId(String ysId) {
+        this.ysId = ysId;
+    }
+
+    public String getScanRecordId() {
+        return scanRecordId;
+    }
+
+    public void setScanRecordId(String scanRecordId) {
+        this.scanRecordId = scanRecordId;
     }
 }

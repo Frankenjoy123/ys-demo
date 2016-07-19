@@ -30,6 +30,11 @@ public class ProductComments {
     @JsonProperty("user_id")
     private String userId;
 
+    @JsonProperty("ys_id")
+    private String ysId;
+
+    @JsonProperty("scan_record_id")
+    private String scanRecordId;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -96,6 +101,22 @@ public class ProductComments {
         this.createdDateTime = createdDateTime;
     }
 
+    public String getYsId() {
+        return ysId;
+    }
+
+    public void setYsId(String ysId) {
+        this.ysId = ysId;
+    }
+
+    public String getScanRecordId() {
+        return scanRecordId;
+    }
+
+    public void setScanRecordId(String scanRecordId) {
+        this.scanRecordId = scanRecordId;
+    }
+
     public ProductComments(ProductCommentsObject object) {
         if (object != null) {
             this.setId(object.getId());
@@ -103,6 +124,8 @@ public class ProductComments {
             this.setComments(object.getComments());
             this.setScore(object.getScore());
             this.setUserId(object.getUserId());
+            this.setYsId(object.getYsId());
+            this.setScanRecordId(object.getScanRecordId());
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setAddress(object.getAddress());
         }
@@ -115,6 +138,8 @@ public class ProductComments {
         object.setComments(this.getComments());
         object.setScore(this.getScore());
         object.setUserId(this.getUserId());
+        object.setYsId(this.getYsId());
+        object.setScanRecordId(this.getScanRecordId());
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setAddress(this.getAddress());
         return object;

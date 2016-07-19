@@ -130,6 +130,8 @@ public class ProductCommentsController {
         object.setComments(entity.getComments());
         object.setScore(entity.getScore());
         object.setUserId(entity.getUserId());
+        object.setYsId(entity.getYsId());
+        object.setScanRecordId(entity.getScanRecordId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setAddress(entity.getAddress());
         return object;
@@ -145,6 +147,8 @@ public class ProductCommentsController {
         entity.setComments(object.getComments());
         entity.setScore(object.getScore());
         entity.setUserId(object.getUserId());
+        entity.setYsId(object.getYsId());
+        entity.setScanRecordId(object.getScanRecordId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setAddress(object.getAddress());
         return entity;
