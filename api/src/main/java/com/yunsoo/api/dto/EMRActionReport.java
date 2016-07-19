@@ -13,11 +13,34 @@ import java.util.stream.Collectors;
  */
 public class EMRActionReport {
     // share, store_url, comment
+
+    @JsonProperty("scan_event_count")
+    private int scanEventCount;
+
+    @JsonProperty("scan_user_count")
+    private int scanUserCount;
+
     @JsonProperty("event_count")
     private List<EMRActionCount> eventCount;
 
     @JsonProperty("user_count")
     private List<EMRActionCount> userCount;
+
+    public int getScanEventCount() {
+        return scanEventCount;
+    }
+
+    public void setScanEventCount(int scanEventCount) {
+        this.scanEventCount = scanEventCount;
+    }
+
+    public int getScanUserCount() {
+        return scanUserCount;
+    }
+
+    public void setScanUserCount(int scanUserCount) {
+        this.scanUserCount = scanUserCount;
+    }
 
     public List<EMRActionCount> getEventCount() {
         return eventCount;
@@ -37,6 +60,8 @@ public class EMRActionReport {
 
     public EMRActionReport(EMRActionReportObject object) {
         if (object != null) {
+            this.setScanEventCount(object.getScanEventCount());
+            this.setScanUserCount(object.getScanUserCount());
             this.setEventCount(object.getEventCount().stream().map(EMRActionCount::new).collect(Collectors.toList()));
             this.setUserCount(object.getEventCount().stream().map(EMRActionCount::new).collect(Collectors.toList()));
         }

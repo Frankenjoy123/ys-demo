@@ -300,6 +300,11 @@ public class AnalysisController {
         EMRActionCountObject commentUserCountObject = new EMRActionCountObject();
 
         DateTime endDay = DateTime.now();
+
+        int[] scanData = eventRepository.scanCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        emrActionReportObject.setScanEventCount(scanData[0]);
+        emrActionReportObject.setScanUserCount(scanData[1]);
+
         // share total count
         int[] shareData = eventRepository.shareCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
         shareEventCountObject.setTotalCount(shareData[0]);
