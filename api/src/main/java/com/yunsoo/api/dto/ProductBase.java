@@ -39,6 +39,12 @@ public class ProductBase implements OrgIdDetectable {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("web_template_name")
+    private String webTemplateName;
+
+    @JsonProperty("web_template_version")
+    private String webTemplateVersion;
+
     @JsonProperty("description")
     private String description;
 
@@ -274,6 +280,22 @@ public class ProductBase implements OrgIdDetectable {
         this.followingUsers = followingUsers;
     }
 
+    public String getWebTemplateName() {
+        return webTemplateName;
+    }
+
+    public void setWebTemplateName(String webTemplateName) {
+        this.webTemplateName = webTemplateName;
+    }
+
+    public String getWebTemplateVersion() {
+        return webTemplateVersion;
+    }
+
+    public void setWebTemplateVersion(String webTemplateVersion) {
+        this.webTemplateVersion = webTemplateVersion;
+    }
+
     public ProductBase() {
     }
 
@@ -286,6 +308,8 @@ public class ProductBase implements OrgIdDetectable {
             this.setOrgId(object.getOrgId());
             this.setCategoryId(object.getCategoryId());
             this.setName(object.getName());
+            this.setWebTemplateName(object.getWebTemplateName());
+            this.setWebTemplateVersion(object.getWebTemplateVersion());
             this.setDescription(object.getDescription());
             this.setBarcode(object.getBarcode());
             this.setProductKeyTypeCodes(object.getProductKeyTypeCodes());
@@ -310,6 +334,8 @@ public class ProductBase implements OrgIdDetectable {
         object.setOrgId(this.getOrgId());
         object.setCategoryId(this.getCategoryId());
         object.setName(this.getName());
+        object.setWebTemplateVersion(this.getWebTemplateVersion());
+        object.setWebTemplateName(this.getWebTemplateName());
         object.setDescription(this.getDescription());
         object.setBarcode(this.getBarcode());
         object.setProductKeyTypeCodes(this.getProductKeyTypeCodes());

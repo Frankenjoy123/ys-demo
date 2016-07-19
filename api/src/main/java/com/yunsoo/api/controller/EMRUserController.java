@@ -323,4 +323,21 @@ public class EMRUserController {
 
         return new EMRUserReport(userReportObject);
     }
+
+    @RequestMapping(value = "action", method = RequestMethod.GET)
+    public EMRActionReport queryUserActionReport(@RequestParam(value = "org_id", required = false) String orgId,
+                                                 @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                 @RequestParam(value = "province", required = false) String province,
+                                                 @RequestParam(value = "city", required = false) String city,
+                                                 @RequestParam(value = "create_datetime_start", required = false)
+                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                 @RequestParam(value = "create_datetime_end", required = false)
+                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        EMRActionReportObject userActionReportObject = emrUserDomain.getEMRActionReport(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+
+        return new EMRActionReport(userActionReportObject);
+    }
+
 }

@@ -35,6 +35,12 @@ public class ProductBaseObject implements Serializable {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("web_template_name")
+    private String webTemplateName;
+
+    @JsonProperty("web_template_version")
+    private String webTemplateVersion;
+
     @JsonProperty("description")
     private String description;
 
@@ -231,4 +237,19 @@ public class ProductBaseObject implements Serializable {
         this.modifiedDateTime = modifiedDateTime;
     }
 
+    public String getWebTemplateName() {
+        return webTemplateName;
+    }
+
+    public void setWebTemplateName(String webTemplateName) {
+        this.webTemplateName = webTemplateName;
+    }
+
+    public String getWebTemplateVersion() {
+        return webTemplateVersion;
+    }
+
+    public void setWebTemplateVersion(String webTemplateVersion) {
+        this.webTemplateVersion = webTemplateVersion;
+    }
 }
