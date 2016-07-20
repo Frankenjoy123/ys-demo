@@ -3,7 +3,6 @@ package com.yunsoo.common.web.client;
 import com.yunsoo.common.web.util.PageableUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.StreamUtils;
@@ -18,31 +17,25 @@ import java.util.List;
 /**
  * Created by:   Lijian
  * Created on:   2015/3/2
- * Descriptions:
+ * Descriptions: Synchronous client-side HTTP access. Wrapper of {@link RestTemplate}
  */
 public class RestClient {
     private static final int CONNECT_TIMEOUT = 3 * 1000; //3 seconds
     private static final int READ_TIMEOUT = 10 * 60 * 1000; //10 minutes
 
+    private String baseUrl;
+
     private CustomRestTemplate restTemplate;
-    private String baseURL;
+
 
     public RestClient() {
-        this(null, null, null);
+        this(null);
     }
 
-    public RestClient(String baseURL) {
-        this(baseURL, null, null);
-    }
-
-    public RestClient(String baseURL, ResponseErrorHandler responseErrorHandler) {
-        this(baseURL, responseErrorHandler, null);
-    }
-
-    public RestClient(String baseURL, ResponseErrorHandler responseErrorHandler, RequestCallback preRequestCallback) {
-        this.baseURL = baseURL;
-        if (baseURL != null && !baseURL.endsWith("/")) {
-            this.baseURL += "/";
+    public RestClient(String baseUrl) {
+        this.baseUrl = baseUrl;
+        if (baseUrl != null && !baseUrl.endsWith("/")) {
+            this.baseUrl += "/";
         }
 
         //added this request factory for PATCH method support
@@ -50,19 +43,23 @@ public class RestClient {
         requestFactory.setConnectTimeout(CONNECT_TIMEOUT);
         requestFactory.setReadTimeout(READ_TIMEOUT);
 
-        this.restTemplate = new CustomRestTemplate(requestFactory);
-
-        if (responseErrorHandler != null) {
-            this.restTemplate.setErrorHandler(responseErrorHandler);
-        }
-
-        if (preRequestCallback != null) {
-            this.restTemplate.setPreRequestCallback(preRequestCallback);
-        }
+        this.restTemplate = new CustomRestTemplate();
+        this.restTemplate.setRequestFactory(requestFactory);
+        this.restTemplate.setErrorHandler(new RestResponseErrorHandler());
     }
 
-    public String getBaseURL() {
-        return baseURL;
+    public void setErrorHandler(ResponseErrorHandler responseErrorHandler) {
+        Assert.notNull(responseErrorHandler, "responseErrorHandler must not be null");
+        this.restTemplate.setErrorHandler(responseErrorHandler);
+    }
+
+    public void setPreRequestCallback(RequestCallback preRequestCallback) {
+        Assert.notNull(preRequestCallback, "preRequestCallback must not be null");
+        this.restTemplate.setPreRequestCallback(preRequestCallback);
+    }
+
+    public String getBaseUrl() {
+        return this.baseUrl;
     }
 
 
@@ -109,7 +106,7 @@ public class RestClient {
     }
 
     //PUT
-    public void put(String url, Object request, Object... uriVariables)  {
+    public void put(String url, Object request, Object... uriVariables) {
         restTemplate.put(createURL(url), request, uriVariables);
     }
 
@@ -136,12 +133,13 @@ public class RestClient {
         restTemplate.delete(createURL(url), uriVariables);
     }
 
+
     private String createURL(String url) {
-        Assert.notNull(url, "'url' must not be null");
-        if (baseURL != null && url.startsWith("/")) {
+        Assert.notNull(url, "url must not be null");
+        if (baseUrl != null && url.startsWith("/")) {
             url = url.substring(1);
         }
-        return baseURL + url;
+        return baseUrl + url;
     }
 
 
@@ -149,8 +147,8 @@ public class RestClient {
 
         private RequestCallback preRequestCallback;
 
-        public CustomRestTemplate(ClientHttpRequestFactory requestFactory) {
-            super(requestFactory);
+        public CustomRestTemplate() {
+            super();
         }
 
         public void setPreRequestCallback(RequestCallback preRequestCallback) {

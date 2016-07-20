@@ -1,7 +1,6 @@
 package com.yunsoo.api.rabbit.client;
 
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.client.RestResponseErrorHandler;
 
 /**
  * Created by:   Lijian
@@ -11,7 +10,7 @@ import com.yunsoo.common.web.client.RestResponseErrorHandler;
 public class DataAPIClient extends RestClient {
 
     public DataAPIClient(String baseURL) {
-        super(baseURL, new RestResponseErrorHandler());
+        super(baseURL);
     }
 
 }

@@ -1,14 +1,19 @@
 package com.yunsoo.auth;
 
+import com.yunsoo.auth.api.security.authentication.TokenAuthenticationService;
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.client.RestResponseErrorHandler;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Created by:   Lijian
@@ -21,16 +26,37 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @Ignore
 public class TestBase {
 
+    protected static RestClient restClient;
+
     @Value("${local.server.port}")
     public int port;
 
-    public static RestClient restClient;
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
 
     @Before
     public void initRestClient() {
         if (restClient == null) {
             System.out.println("initializing restClient");
-            restClient = new RestClient("http://localhost:" + port, new RestResponseErrorHandler());
+            String appId = "AuthUnitTest";
+            String deviceId = getHostName();
+            String accessToken = tokenAuthenticationService.generateAccessToken(Constants.SYSTEM_ACCOUNT_ID, "2k0r1l55i2rs5544wz5").getToken();
+            restClient = new RestClient("http://localhost:" + port);
+            restClient.setPreRequestCallback(request -> {
+                HttpHeaders httpHeaders = request.getHeaders();
+                httpHeaders.set(Constants.HttpHeaderName.APP_ID, appId);
+                httpHeaders.set(Constants.HttpHeaderName.DEVICE_ID, deviceId);
+                httpHeaders.set(Constants.HttpHeaderName.ACCESS_TOKEN, accessToken);
+            });
+        }
+    }
+
+    private String getHostName() {
+        try {
+            return InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            return "Unknown";
         }
     }
 
