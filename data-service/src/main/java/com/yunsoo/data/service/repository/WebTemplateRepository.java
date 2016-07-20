@@ -10,4 +10,6 @@ import java.util.List;
  */
 public interface WebTemplateRepository extends Repository<WebTemplateEntity, WebTemplateEntity.WebTemplatePK> {
     List<WebTemplateEntity> findByTypeCode(String typeCode);
+
+    List<WebTemplateEntity> findByTypeCodeAndRestriction(String typeCode, String restriction);
 }
