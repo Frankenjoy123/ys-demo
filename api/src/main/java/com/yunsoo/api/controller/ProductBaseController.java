@@ -127,6 +127,8 @@ public class ProductBaseController {
         ProductBaseObject productBaseObject = new ProductBaseObject();
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
         productBaseObject.setName(productBase.getName());
+        productBaseObject.setWebTemplateName(productBase.getWebTemplateName());
+        productBaseObject.setWebTemplateVersion(productBase.getWebTemplateVersion());
         productBaseObject.setVersion(1);
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
 
@@ -178,6 +180,8 @@ public class ProductBaseController {
         productBaseObject.setId(productBaseId);
         productBaseObject.setVersion(version);
         productBaseObject.setName(productBase.getName());
+        productBaseObject.setWebTemplateVersion(productBase.getWebTemplateVersion());
+        productBaseObject.setWebTemplateName(productBase.getWebTemplateName());
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
         productBaseObject.setOrgId(StringUtils.hasText(productBase.getOrgId())
                 ? productBase.getOrgId()
