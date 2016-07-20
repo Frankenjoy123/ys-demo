@@ -128,11 +128,11 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
             parameters.put("city", "%" + city + "%");
         }
         if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
-            sql = sql + " and ev.scan_datetime >=:createdDateTimeStart";
+            sql = sql + " and ev.event_datetime >=:createdDateTimeStart";
             parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
         }
         if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
-            sql = sql + " and ev.scan_datetime <=:createdDateTimeEnd";
+            sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
             parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
         }
 

@@ -35,6 +35,52 @@ public class EMREventDomain {
         });
     }
 
+    public Page<EMREventObject> getEMREventFilterByShare(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("province", province)
+                .append("city", city)
+                .append("create_datetime_start", createdDateTimeStart)
+                .append("create_datetime_end", createdDateTimeEnd)
+                .append(pageable)
+                .build();
+
+        return dataAPIClient.getPaged("emr/event/share" + query, new ParameterizedTypeReference<List<EMREventObject>>() {
+        });
+    }
+
+    public Page<EMREventObject> getEMREventFilterByStoreUrl(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("province", province)
+                .append("city", city)
+                .append("create_datetime_start", createdDateTimeStart)
+                .append("create_datetime_end", createdDateTimeEnd)
+                .append(pageable)
+                .build();
+
+        return dataAPIClient.getPaged("emr/event/store_url" + query, new ParameterizedTypeReference<List<EMREventObject>>() {
+        });
+    }
+
+    public Page<EMREventObject> getEMREventFilterByComment(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("province", province)
+                .append("city", city)
+                .append("create_datetime_start", createdDateTimeStart)
+                .append("create_datetime_end", createdDateTimeEnd)
+                .append(pageable)
+                .build();
+
+        return dataAPIClient.getPaged("emr/event/comment" + query, new ParameterizedTypeReference<List<EMREventObject>>() {
+        });
+    }
+
+
     public EMREventObject getLatestEMREvent(String orgId, String userId, String ysId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)

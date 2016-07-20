@@ -308,6 +308,111 @@ public class EMRUserController {
         return emrUsers;
     }
 
+    @RequestMapping(value = "share", method = RequestMethod.GET)
+    public List<EMRUser> queryShareUser(@RequestParam(value = "org_id", required = false) String orgId,
+                                        @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                        @RequestParam(value = "province", required = false) String province,
+                                        @RequestParam(value = "city", required = false) String city,
+                                        @RequestParam(value = "create_datetime_start", required = false)
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                        @RequestParam(value = "create_datetime_end", required = false)
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                        Pageable pageable,
+                                        HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMRUserObject> entityPage = emrUserDomain.getEMRShareUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", entityPage.toContentRange());
+        }
+
+        List<EMRUser> emrUsers = entityPage.map(emr -> {
+            EMRUser user = new EMRUser(emr);
+
+            List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
+            if (userBlockObjects == null || userBlockObjects.size() == 0) {
+                user.setUserBlockId("");
+            } else {
+                user.setUserBlockId(userBlockObjects.get(0).getId());
+            }
+
+            return user;
+        }).getContent();
+
+        return emrUsers;
+    }
+
+    @RequestMapping(value = "store_url", method = RequestMethod.GET)
+    public List<EMRUser> queryStoreUrlUser(@RequestParam(value = "org_id", required = false) String orgId,
+                                           @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                           @RequestParam(value = "province", required = false) String province,
+                                           @RequestParam(value = "city", required = false) String city,
+                                           @RequestParam(value = "create_datetime_start", required = false)
+                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                           @RequestParam(value = "create_datetime_end", required = false)
+                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                           Pageable pageable,
+                                           HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMRUserObject> entityPage = emrUserDomain.getEMRStoreUrlUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", entityPage.toContentRange());
+        }
+
+        List<EMRUser> emrUsers = entityPage.map(emr -> {
+            EMRUser user = new EMRUser(emr);
+
+            List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
+            if (userBlockObjects == null || userBlockObjects.size() == 0) {
+                user.setUserBlockId("");
+            } else {
+                user.setUserBlockId(userBlockObjects.get(0).getId());
+            }
+
+            return user;
+        }).getContent();
+
+        return emrUsers;
+    }
+
+    @RequestMapping(value = "comment", method = RequestMethod.GET)
+    public List<EMRUser> queryCommentUser(@RequestParam(value = "org_id", required = false) String orgId,
+                                          @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                          @RequestParam(value = "province", required = false) String province,
+                                          @RequestParam(value = "city", required = false) String city,
+                                          @RequestParam(value = "create_datetime_start", required = false)
+                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                          @RequestParam(value = "create_datetime_end", required = false)
+                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                          Pageable pageable,
+                                          HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMRUserObject> entityPage = emrUserDomain.getEMRCommentUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", entityPage.toContentRange());
+        }
+
+        List<EMRUser> emrUsers = entityPage.map(emr -> {
+            EMRUser user = new EMRUser(emr);
+
+            List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
+            if (userBlockObjects == null || userBlockObjects.size() == 0) {
+                user.setUserBlockId("");
+            } else {
+                user.setUserBlockId(userBlockObjects.get(0).getId());
+            }
+
+            return user;
+        }).getContent();
+
+        return emrUsers;
+    }
+
     @RequestMapping(value = "funnel", method = RequestMethod.GET)
     public EMRUserReport queryUserFunnel(@RequestParam(value = "org_id", required = false) String orgId,
                                          @RequestParam(value = "product_base_id", required = false) String productBaseId,
