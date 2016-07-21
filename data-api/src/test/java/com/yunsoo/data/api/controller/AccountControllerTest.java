@@ -19,7 +19,7 @@ public class AccountControllerTest extends ControllerTestBase {
 
     @Test
     public void test_SystemAccount() {
-        AccountObject accountObject = dataAPIClient.get("account/{id}", AccountObject.class, Constants.Ids.SYSTEM_ACCOUNT_ID);
+        AccountObject accountObject = dataApiClient.get("account/{id}", AccountObject.class, Constants.Ids.SYSTEM_ACCOUNT_ID);
         assert accountObject.getOrgId().equals(Constants.Ids.YUNSU_ORG_ID);
     }
 
@@ -38,26 +38,26 @@ public class AccountControllerTest extends ControllerTestBase {
         accountObject.setPassword("123456");
         accountObject.setHashSalt("TestHashSalt");
 
-        accountObject = dataAPIClient.post("account", accountObject, AccountObject.class);
+        accountObject = dataApiClient.post("account", accountObject, AccountObject.class);
         String accountId = accountObject.getId();
         System.out.println("Account created with id: " + accountId);
 
         //get by id
-        accountObject = dataAPIClient.get("account/{id}", AccountObject.class, accountId);
+        accountObject = dataApiClient.get("account/{id}", AccountObject.class, accountId);
         assert accountObject.getId().equals(accountId);
 
-        List<AccountObject> accountObjectList = dataAPIClient.get("account?org_id={0}&identifier={1}", new ParameterizedTypeReference<List<AccountObject>>() {
+        List<AccountObject> accountObjectList = dataApiClient.get("account?org_id={0}&identifier={1}", new ParameterizedTypeReference<List<AccountObject>>() {
         }, accountObject.getOrgId(), accountObject.getIdentifier());
         assert accountObjectList.size() > 0 && accountObjectList.get(0).getId().equals(accountId);
 
-        Long count = dataAPIClient.get("account/count?org_id={0}&status_code_in={1}", Long.class, accountObject.getOrgId(), accountObject.getStatusCode());
+        Long count = dataApiClient.get("account/count?org_id={0}&status_code_in={1}", Long.class, accountObject.getOrgId(), accountObject.getStatusCode());
         System.out.println("Account count: " + count);
         assert count > 0;
 
         accountObject.setPhone("987654321");
-        dataAPIClient.patch("account/{id}", accountObject, accountObject.getId());
+        dataApiClient.patch("account/{id}", accountObject, accountObject.getId());
 
-        accountObject = dataAPIClient.get("account/{id}", AccountObject.class, accountId);
+        accountObject = dataApiClient.get("account/{id}", AccountObject.class, accountId);
         assert accountObject.getPhone().equals("987654321");
 
     }

@@ -14,7 +14,7 @@ public class OrganizationControllerTest extends ControllerTestBase {
 
     @Test
     public void test_YunsuOrg() {
-        OrganizationObject organizationObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, Constants.Ids.YUNSU_ORG_ID);
+        OrganizationObject organizationObject = dataApiClient.get("organization/{id}", OrganizationObject.class, Constants.Ids.YUNSU_ORG_ID);
         assert organizationObject.getId().equals(Constants.Ids.YUNSU_ORG_ID);
 
     }
