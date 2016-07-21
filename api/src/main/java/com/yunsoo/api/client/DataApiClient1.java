@@ -7,9 +7,9 @@ import com.yunsoo.common.web.client.RestClient;
  * Created on:   2015/3/6
  * Descriptions:
  */
-public class DataAPIClient extends RestClient {
+public class DataApiClient1 extends RestClient {
 
-    public DataAPIClient(String baseURL) {
+    public DataApiClient1(String baseURL) {
         super(baseURL);
     }
 

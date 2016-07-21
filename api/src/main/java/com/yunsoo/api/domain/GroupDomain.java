@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.client.DataAPIClient;
+import com.yunsoo.api.client.DataApiClient1;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.GroupObject;
 import com.yunsoo.common.web.client.Page;
@@ -24,7 +24,7 @@ import java.util.List;
 public class GroupDomain {
 
     @Autowired
-    private DataAPIClient dataAPIClient;
+    private DataApiClient1 dataApiClient;
 
     @Autowired
     private PermissionAllocationDomain permissionAllocationDomain;
@@ -35,14 +35,14 @@ public class GroupDomain {
             return null;
         }
         try {
-            return dataAPIClient.get("group/{id}", GroupObject.class, groupId);
+            return dataApiClient.get("group/{id}", GroupObject.class, groupId);
         } catch (NotFoundException ex) {
             return null;
         }
     }
 
     public List<GroupObject> getByOrgId(String orgId) {
-        return dataAPIClient.get("group?org_id={orgId}", new ParameterizedTypeReference<List<GroupObject>>() {
+        return dataApiClient.get("group?org_id={orgId}", new ParameterizedTypeReference<List<GroupObject>>() {
         }, orgId);
     }
 
@@ -51,7 +51,7 @@ public class GroupDomain {
                 .append("org_id", orgId)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("group" + query, new ParameterizedTypeReference<List<GroupObject>>() {
+        return dataApiClient.getPaged("group" + query, new ParameterizedTypeReference<List<GroupObject>>() {
         });
     }
 
@@ -61,25 +61,25 @@ public class GroupDomain {
         groupObject.setCreatedDateTime(DateTime.now());
         groupObject.setModifiedAccountId(null);
         groupObject.setModifiedDatetime(null);
-        return dataAPIClient.post("group", groupObject, GroupObject.class);
+        return dataApiClient.post("group", groupObject, GroupObject.class);
     }
 
     public void patchUpdate(GroupObject groupObject) {
         try {
             groupObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getOrgId());
             groupObject.setModifiedDatetime(DateTime.now());
-            dataAPIClient.patch("group/{id}", groupObject, groupObject.getId());
+            dataApiClient.patch("group/{id}", groupObject, groupObject.getId());
         } catch (NotFoundException ex) {
             throw new NotFoundException("group not found");
         }
     }
 
     public void deleteGroupById(String id) {
-        dataAPIClient.delete("group/{id}", id);
+        dataApiClient.delete("group/{id}", id);
     }
 
     public void deleteGroupAndAllRelatedById(String groupId) {
-        dataAPIClient.delete("accountgroup?group_id={group_id}", groupId);
+        dataApiClient.delete("accountgroup?group_id={group_id}", groupId);
         permissionAllocationDomain.deletePermissionAllocationsByGroupId(groupId);
         deleteGroupById(groupId);
     }

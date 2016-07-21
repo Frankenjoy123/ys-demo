@@ -1,7 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
-import com.yunsoo.api.client.DataAPIClient;
+import com.yunsoo.api.client.DataApiClient1;
 import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
@@ -27,20 +27,21 @@ public class ProductCategoryDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private DataAPIClient dataAPIClient;
+    private DataApiClient1 dataApiClient;
 
 
     @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT_CATEGORY.toString(), 'list')")
     public List<ProductCategoryObject> getProductCategories() {
         log.debug("cache missed [name: productcategory, key: 'list']");
-        return dataAPIClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {
+        return dataApiClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {
         });
     }
 
     @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT_CATEGORY.toString(), 'map')")
     public Map<String, ProductCategoryObject> getProductCategoryMap() {
         log.debug("cache missed [name: productcategory, key: 'map']");
-        List<ProductCategoryObject> categoryObjects =  dataAPIClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {});
+        List<ProductCategoryObject> categoryObjects = dataApiClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {
+        });
         return categoryObjects.stream().collect(Collectors.toMap(ProductCategoryObject::getId, c -> c));
     }
 
@@ -49,7 +50,7 @@ public class ProductCategoryDomain {
             return null;
         }
         try {
-            return dataAPIClient.get("productcategory/{id}", ProductCategoryObject.class, id);
+            return dataApiClient.get("productcategory/{id}", ProductCategoryObject.class, id);
         } catch (NotFoundException ex) {
             return null;
         }

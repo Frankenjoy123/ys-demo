@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.client.DataAPIClient;
+import com.yunsoo.api.client.DataApiClient1;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.TaskFileEntryObject;
@@ -33,7 +33,7 @@ public class TaskFileDomain {
     private static final String[] FILE_TYPE_ARRAY = new String[]{LookupCodes.TaskFileType.PACKAGE, LookupCodes.TaskFileType.TRACE};
 
     @Autowired
-    private DataAPIClient dataAPIClient;
+    private DataApiClient1 dataApiClient;
 
     @Autowired
     private FileDomain fileDomain;
@@ -43,7 +43,7 @@ public class TaskFileDomain {
 
     public TaskFileEntryObject getTaskFileEntryById(String fileId) {
         try {
-            return dataAPIClient.get("taskFileEntry/{id}", TaskFileEntryObject.class, fileId);
+            return dataApiClient.get("taskFileEntry/{id}", TaskFileEntryObject.class, fileId);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -70,13 +70,13 @@ public class TaskFileDomain {
                 .append("created_datetime_le", createdDateTimeLE)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("taskFileEntry" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
+        return dataApiClient.getPaged("taskFileEntry" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
         });
     }
 
     public void updateStatusToUploaded(String fileId) {
         try {
-            dataAPIClient.put("taskFileEntry/{id}/statusCode", LookupCodes.TaskFileStatus.UPLOADED, fileId);
+            dataApiClient.put("taskFileEntry/{id}/statusCode", LookupCodes.TaskFileStatus.UPLOADED, fileId);
         } catch (Exception e) {
             log.error("update statusCode failed for taskFileEntry " + StringFormatter.formatMap("fileId", fileId));
         }
@@ -123,7 +123,7 @@ public class TaskFileDomain {
         obj.setStatusCode(LookupCodes.TaskFileStatus.UPLOADING);
         obj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         obj.setCreatedDateTime(DateTime.now());
-        return dataAPIClient.post("taskFileEntry", obj, TaskFileEntryObject.class);
+        return dataApiClient.post("taskFileEntry", obj, TaskFileEntryObject.class);
     }
 
     private boolean validateFileType(String fileType) {
