@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.config;
 
 import com.yunsoo.api.rabbit.client.DataApiClient;
-import com.yunsoo.api.rabbit.client.WeChatApiClient1;
+import com.yunsoo.api.rabbit.client.WeChatApiClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +23,8 @@ public class ClientConfiguration {
     }
 
     @Bean
-    public WeChatApiClient1 wxAPIClient() {
-        return new WeChatApiClient1("https://api.weixin.qq.com/cgi-bin/");
+    public WeChatApiClient weChatApiClient() {
+        return new WeChatApiClient("https://api.weixin.qq.com/cgi-bin/");
     }
 
 }

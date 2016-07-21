@@ -1,6 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.client.WeChatApiClient1;
+import com.yunsoo.api.rabbit.client.WeChatApiClient;
 import com.yunsoo.api.rabbit.dto.AccessToken;
 import com.yunsoo.api.rabbit.dto.JsApi_Ticket;
 import com.yunsoo.common.data.object.UserAccessTokenObject;
@@ -20,7 +20,7 @@ public class UserAccessTokenDomain {
     private RestClient dataApiClient;
 
     @Autowired
-    private WeChatApiClient1 weChatApiClient;
+    private WeChatApiClient weChatApiClient;
 
     public UserAccessTokenObject getUserAccessTokenObject(String orgId, String appId, String secret) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
