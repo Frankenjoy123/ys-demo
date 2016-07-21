@@ -63,7 +63,7 @@ public class EMRActionReport {
             this.setScanEventCount(object.getScanEventCount());
             this.setScanUserCount(object.getScanUserCount());
             this.setEventCount(object.getEventCount().stream().map(EMRActionCount::new).collect(Collectors.toList()));
-            this.setUserCount(object.getEventCount().stream().map(EMRActionCount::new).collect(Collectors.toList()));
+            this.setUserCount(object.getUserCount().stream().map(EMRActionCount::new).collect(Collectors.toList()));
         }
     }
 
