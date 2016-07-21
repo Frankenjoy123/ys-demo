@@ -24,7 +24,7 @@ public abstract class ControllerTestBase {
     public static RestClient dataApiClient;
 
     @Before
-    public void initDataAPIClient() {
+    public void initDataApiClient() {
         if (dataApiClient == null) {
             System.out.println("initializing data api client");
             dataApiClient = new RestClient("http://localhost:" + port);
