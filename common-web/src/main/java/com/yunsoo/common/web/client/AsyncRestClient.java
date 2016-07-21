@@ -12,8 +12,6 @@ import org.springframework.util.StreamUtils;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -64,7 +62,6 @@ public class AsyncRestClient extends RestClient {
 
 
     //GET
-
     public <T> ListenableFuture<T> getAsync(String url, Class<T> responseType, Object... uriVariables) {
         return asyncRestTemplate.execute(getAbsoluteUrl(url), HttpMethod.GET, null, responseType, uriVariables);
     }
@@ -74,34 +71,14 @@ public class AsyncRestClient extends RestClient {
     }
 
     public <T> ListenableFuture<Page<T>> getPagedAsync(String url, ParameterizedTypeReference<List<T>> responseType, Object... uriVariables) {
-//        ResponseEntity<List<T>> result = restTemplate.exchange(getAbsoluteUrl(url), HttpMethod.GET, null, responseType, uriVariables);
-//        List<T> resultContent = result.getBody();
-//        Integer page = 0, total = null, count = null;
-//        List<String> pagesValue = result.getHeaders().get("Content-Range");
-//        if (pagesValue != null && pagesValue.size() == 1) {
-//            Integer[] pagesArray = PageableUtils.parsePages(pagesValue.get(0));
-//            page = pagesArray[0];
-//            total = pagesArray[1];
-//            count = pagesArray[2];
-//        }
-//        return new Page<>(resultContent, page, total, count);
-
-        //ResponseExtractor<List<T>> responseExtractor = new HttpMessageConverterExtractor<>(responseType, getMessageConverters());
-
-        return null;
+        return asyncRestTemplate.execute(getAbsoluteUrl(url), HttpMethod.GET, null, getPageResponseExtractor(responseType), uriVariables);
     }
 
     public ListenableFuture<ResourceInputStream> getResourceInputStreamAsync(String url, Object... uriVariables) {
         AsyncRequestCallback requestCallback = request -> request.getHeaders().set(HttpHeaders.ACCEPT, MediaType.ALL_VALUE);
-        ResponseExtractor<ResourceInputStream> responseExtractor = response -> {
-            HttpHeaders httpHeaders = response.getHeaders();
-            InputStream inputStream = response.getBody();
-            long contentLength = httpHeaders.getContentLength();
-            String contentType = httpHeaders.getContentType().toString();
-            return new ResourceInputStream(new ByteArrayInputStream(StreamUtils.copyToByteArray(inputStream)), contentLength, contentType);
-        };
-        return asyncRestTemplate.execute(getAbsoluteUrl(url), HttpMethod.GET, requestCallback, responseExtractor, uriVariables);
+        return asyncRestTemplate.execute(getAbsoluteUrl(url), HttpMethod.GET, requestCallback, getResourceInputStreamResponseExtractor(), uriVariables);
     }
+
 
     //POST
     public <T> ListenableFuture<T> postAsync(String url, Object request, Class<T> responseType, Object... uriVariables) {
@@ -116,6 +93,7 @@ public class AsyncRestClient extends RestClient {
     public ListenableFuture<?> putAsync(String url, ResourceInputStream resourceInputStream, Object... uriVariables) {
         AsyncRequestCallback requestCallback = request -> {
             HttpHeaders httpHeaders = request.getHeaders();
+            httpHeaders.set(HttpHeaders.ACCEPT, MediaType.ALL_VALUE);
             httpHeaders.setContentLength(resourceInputStream.getContentLength());
             httpHeaders.setContentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
             OutputStream outputStream = request.getBody();
@@ -124,10 +102,12 @@ public class AsyncRestClient extends RestClient {
         return asyncRestTemplate.execute(getAbsoluteUrl(url), HttpMethod.PUT, requestCallback, (ResponseExtractor<?>) null, uriVariables);
     }
 
+
     //PATCH
     public ListenableFuture<?> patchAsync(String url, Object request, Object... uriVariables) {
         return asyncRestTemplate.execute(getAbsoluteUrl(url), HttpMethod.PATCH, request, null, uriVariables);
     }
+
 
     //DELETE
     public ListenableFuture<?> deleteAsync(String url, Object... uriVariables) {

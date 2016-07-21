@@ -2,7 +2,10 @@ package com.yunsoo.common.web.client;
 
 import com.yunsoo.common.web.util.PageableUtils;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.Assert;
@@ -86,34 +89,16 @@ public class RestClient {
     }
 
     public <T> T get(String url, ParameterizedTypeReference<T> responseType, Object... uriVariables) {
-        ResponseEntity<T> result = restTemplate.exchange(getAbsoluteUrl(url), HttpMethod.GET, null, responseType, uriVariables);
-        return result.getBody();
+        return restTemplate.exchange(getAbsoluteUrl(url), HttpMethod.GET, null, responseType, uriVariables).getBody();
     }
 
     public <T> Page<T> getPaged(String url, ParameterizedTypeReference<List<T>> responseType, Object... uriVariables) {
-        ResponseEntity<List<T>> result = restTemplate.exchange(getAbsoluteUrl(url), HttpMethod.GET, null, responseType, uriVariables);
-        List<T> resultContent = result.getBody();
-        Integer page = 0, total = null, count = null;
-        List<String> pagesValue = result.getHeaders().get("Content-Range");
-        if (pagesValue != null && pagesValue.size() == 1) {
-            Integer[] pagesArray = PageableUtils.parsePages(pagesValue.get(0));
-            page = pagesArray[0];
-            total = pagesArray[1];
-            count = pagesArray[2];
-        }
-        return new Page<>(resultContent, page, total, count);
+        return restTemplate.execute(getAbsoluteUrl(url), HttpMethod.GET, null, getPageResponseExtractor(responseType), uriVariables);
     }
 
     public ResourceInputStream getResourceInputStream(String url, Object... uriVariables) {
         RequestCallback requestCallback = request -> request.getHeaders().set(HttpHeaders.ACCEPT, MediaType.ALL_VALUE);
-        ResponseExtractor<ResourceInputStream> responseExtractor = response -> {
-            HttpHeaders httpHeaders = response.getHeaders();
-            InputStream inputStream = response.getBody();
-            long contentLength = httpHeaders.getContentLength();
-            String contentType = httpHeaders.getContentType().toString();
-            return new ResourceInputStream(new ByteArrayInputStream(StreamUtils.copyToByteArray(inputStream)), contentLength, contentType);
-        };
-        return restTemplate.execute(getAbsoluteUrl(url), HttpMethod.GET, requestCallback, responseExtractor, uriVariables);
+        return restTemplate.execute(getAbsoluteUrl(url), HttpMethod.GET, requestCallback, getResourceInputStreamResponseExtractor(), uriVariables);
     }
 
     //POST
@@ -129,6 +114,7 @@ public class RestClient {
     public void put(String url, ResourceInputStream resourceInputStream, Object... uriVariables) {
         RequestCallback requestCallback = request -> {
             HttpHeaders httpHeaders = request.getHeaders();
+            httpHeaders.set(HttpHeaders.ACCEPT, MediaType.ALL_VALUE);
             httpHeaders.setContentLength(resourceInputStream.getContentLength());
             httpHeaders.setContentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
             OutputStream outputStream = request.getBody();
@@ -155,6 +141,32 @@ public class RestClient {
             url = url.substring(1);
         }
         return baseUrl + url;
+    }
+
+    protected <T> ResponseExtractor<Page<T>> getPageResponseExtractor(ParameterizedTypeReference<List<T>> responseType) {
+        return response -> {
+            ResponseExtractor<List<T>> resExt = new HttpMessageConverterExtractor<>(responseType.getType(), restTemplate.getMessageConverters());
+            List<T> content = resExt.extractData(response);
+            Integer page = 0, total = null, count = null;
+            List<String> pagesValue = response.getHeaders().get("Content-Range");
+            if (pagesValue != null && pagesValue.size() == 1) {
+                Integer[] pagesArray = PageableUtils.parsePages(pagesValue.get(0));
+                page = pagesArray[0];
+                total = pagesArray[1];
+                count = pagesArray[2];
+            }
+            return new Page<>(content, page, total, count);
+        };
+    }
+
+    protected ResponseExtractor<ResourceInputStream> getResourceInputStreamResponseExtractor() {
+        return response -> {
+            HttpHeaders httpHeaders = response.getHeaders();
+            InputStream inputStream = response.getBody();
+            long contentLength = httpHeaders.getContentLength();
+            String contentType = httpHeaders.getContentType().toString();
+            return new ResourceInputStream(new ByteArrayInputStream(StreamUtils.copyToByteArray(inputStream)), contentLength, contentType);
+        };
     }
 
 
