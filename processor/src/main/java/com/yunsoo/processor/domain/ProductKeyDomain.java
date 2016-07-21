@@ -3,8 +3,8 @@ package com.yunsoo.processor.domain;
 import com.yunsoo.common.data.object.ProductKeyBatchCreateObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.support.YSFile;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.processor.client.DataApiClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class ProductKeyDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private RestClient dataAPIClient;
+    private DataApiClient dataApiClient;
 
     @Autowired
     private FileDomain fileDomain;
@@ -38,7 +38,7 @@ public class ProductKeyDomain {
             return null;
         }
         try {
-            return dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id);
+            return dataApiClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -71,7 +71,7 @@ public class ProductKeyDomain {
     public void updateProductKeyBatchStatus(String productKeyBatchId, String productKeyBatchStatusCode) {
         ProductKeyBatchObject productKeyBatchObject = new ProductKeyBatchObject();
         productKeyBatchObject.setStatusCode(productKeyBatchStatusCode);
-        dataAPIClient.patch("productkeybatch/{id}", productKeyBatchObject, productKeyBatchId);
+        dataApiClient.patch("productkeybatch/{id}", productKeyBatchObject, productKeyBatchId);
     }
 
     public void batchCreateProductKeys(ProductKeyBatchObject productKeyBatchObject, List<List<String>> productKeys, String productStatusCode) {
@@ -83,6 +83,6 @@ public class ProductKeyDomain {
         requestObject.setProductStatusCode(productStatusCode);
         requestObject.setCreatedDateTime(productKeyBatchObject.getCreatedDateTime());
 
-        dataAPIClient.put("productkey/batch", requestObject);
+        dataApiClient.put("productkey/batch", requestObject);
     }
 }

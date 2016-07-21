@@ -18,18 +18,8 @@ public class ClientConfiguration {
 
 
     @Bean
-    public DataApiClient dataAPIClient() {
-        return new DataApiClient(formatBaseUrl(dataApiBaseUrl));
-    }
-
-
-    private String formatBaseUrl(String baseUrl) {
-        if (baseUrl == null) {
-            baseUrl = "/";
-        } else if (!baseUrl.endsWith("/")) {
-            baseUrl += "/";
-        }
-        return baseUrl;
+    public DataApiClient dataApiClient() {
+        return new DataApiClient(dataApiBaseUrl);
     }
 
 }

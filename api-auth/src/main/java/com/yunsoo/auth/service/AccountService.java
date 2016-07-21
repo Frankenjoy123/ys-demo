@@ -71,7 +71,7 @@ public class AccountService {
 //                .append(pageable)
 //                .build();
 //
-//        return dataAPIClient.getPaged("account" + query, new ParameterizedTypeReference<List<AccountObject>>() {
+//        return dataApiClient.getPaged("account" + query, new ParameterizedTypeReference<List<AccountObject>>() {
 //        });
 //    }
 
