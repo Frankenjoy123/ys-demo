@@ -6,7 +6,7 @@ import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import com.yunsoo.processor.client.DataApiClient1;
+import com.yunsoo.processor.client.DataApiClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
@@ -28,7 +28,7 @@ public class TaskFileDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private DataApiClient1 dataApiClient;
+    private DataApiClient dataApiClient;
 
     @Autowired
     private FileDomain fileDomain;
