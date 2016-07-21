@@ -1,5 +1,6 @@
 package com.yunsoo.api.config;
 
+import com.yunsoo.api.client.AuthApiClient;
 import com.yunsoo.api.client.DataAPIClient;
 import com.yunsoo.api.client.ProcessorClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,30 +18,28 @@ import org.springframework.context.annotation.Import;
 @Import(PropertyPlaceholderAutoConfiguration.class)
 public class ClientConfiguration {
 
-    @Value("${yunsoo.client.dataapi.baseurl}")
+    @Value("${yunsoo.client.auth_api.base_url}")
+    private String authApiBaseUrl;
+
+    @Value("${yunsoo.client.data_api.base_url}")
     private String dataAPIBaseUrl;
 
-    @Value("${yunsoo.client.processor.baseurl}")
+    @Value("${yunsoo.client.processor.base_url}")
     private String processorBaseUrl;
 
+    @Bean
+    public AuthApiClient authApiClient() {
+        return new AuthApiClient(authApiBaseUrl);
+    }
 
     @Bean
     public DataAPIClient dataAPIClient() {
-        return new DataAPIClient(formatBaseUrl(dataAPIBaseUrl));
+        return new DataAPIClient(dataAPIBaseUrl);
     }
 
     @Bean
     public ProcessorClient processorClient() {
-        return new ProcessorClient(formatBaseUrl(processorBaseUrl));
-    }
-
-    private String formatBaseUrl(String baseUrl) {
-        if (baseUrl == null) {
-            baseUrl = "/";
-        } else if (!baseUrl.endsWith("/")) {
-            baseUrl += "/";
-        }
-        return baseUrl;
+        return new ProcessorClient(processorBaseUrl);
     }
 
 }

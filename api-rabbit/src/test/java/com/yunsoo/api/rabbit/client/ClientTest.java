@@ -29,8 +29,8 @@ public class ClientTest {
 
     @Test
     public void testGetBaseURL() {
-        System.out.println(dataAPIClient.getBaseURL());
-        System.out.println(processorClient.getBaseURL());
+        System.out.println(dataAPIClient.getBaseUrl());
+        System.out.println(processorClient.getBaseUrl());
     }
 
 
