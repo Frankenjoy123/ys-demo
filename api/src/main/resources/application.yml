@@ -18,10 +18,12 @@ yunsoo:
   debug: true
   environment: dev
   client:
-    dataapi:
-      baseurl: http://localhost:3080/
+    auth_api:
+      base_url: http://localhost:6180/
+    data_api:
+      base_url: http://localhost:3080/
     processor:
-      baseurl: http://localhost:4080/
+      base_url: http://localhost:4080/
   product_key_base_url: http://dev.yunsu.co:7080/
   permanent_token:
     expires_minutes: 4320 #three days
