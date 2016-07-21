@@ -36,7 +36,7 @@ import java.util.List;
 public class UserDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
     private UserFollowDomain userFollowDomain;
@@ -47,14 +47,14 @@ public class UserDomain {
     @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #userId)")
     public UserObject getUserById(String userId) {
         try {
-            return userId != null ? dataAPIClient.get("user/{id}", UserObject.class, userId) : null;
+            return userId != null ? dataApiClient.get("user/{id}", UserObject.class, userId) : null;
         } catch (NotFoundException ex) {
             return null;
         }
     }
 
     public UserObject getUserByOpenIdAndType(String openId, String type){
-        List<UserObject> userObjects = dataAPIClient.get("user?open_id={openId}&oauth_type={type}", new ParameterizedTypeReference<List<UserObject>>() {
+        List<UserObject> userObjects = dataApiClient.get("user?open_id={openId}&oauth_type={type}", new ParameterizedTypeReference<List<UserObject>>() {
         }, openId, type);
         if (userObjects.size() == 0) {
             return null;
@@ -67,7 +67,7 @@ public class UserDomain {
         if (StringUtils.isEmpty(phone)) {
             return null;
         }
-        List<UserObject> userObjects = dataAPIClient.get("user?phone={phone}", new ParameterizedTypeReference<List<UserObject>>() {
+        List<UserObject> userObjects = dataApiClient.get("user?phone={phone}", new ParameterizedTypeReference<List<UserObject>>() {
         }, phone);
         if (userObjects.size() == 0) {
             return null;
@@ -80,7 +80,7 @@ public class UserDomain {
         if (StringUtils.isEmpty(deviceId)) {
             return new ArrayList<>();
         }
-        return dataAPIClient.get("user?device_id={deviceId}", new ParameterizedTypeReference<List<UserObject>>() {
+        return dataApiClient.get("user?device_id={deviceId}", new ParameterizedTypeReference<List<UserObject>>() {
         }, deviceId);
     }
 
@@ -92,7 +92,7 @@ public class UserDomain {
             if (userObject.getPhone() != null) {
                 checkPhoneExists(userObject.getPhone(), userId);
             }
-            dataAPIClient.patch("user/{id}", userObject, userId);
+            dataApiClient.patch("user/{id}", userObject, userId);
         }
     }
 
@@ -101,7 +101,7 @@ public class UserDomain {
             imageName = DEFAULT_GRAVATAR_IMAGE_NAME;
         }
         try {
-            return dataAPIClient.getResourceInputStream("file/s3?path=user/{userId}/gravatar/{imageName}", userId, imageName);
+            return dataApiClient.getResourceInputStream("file/s3?path=user/{userId}/gravatar/{imageName}", userId, imageName);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -113,7 +113,7 @@ public class UserDomain {
             ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
             ByteArrayOutputStream image400x400OutputStream = new ByteArrayOutputStream();
             imageProcessor.resize(400, 400).write(image400x400OutputStream, "image/png");
-            dataAPIClient.put("file/s3?path=user/{userId}/gravatar/{imageName}",
+            dataApiClient.put("file/s3?path=user/{userId}/gravatar/{imageName}",
                     new ResourceInputStream(new ByteArrayInputStream(image400x400OutputStream.toByteArray()), image400x400OutputStream.size(), "image/png"),
                     userId, imageName);
         } catch (IOException e) {
@@ -140,7 +140,7 @@ public class UserDomain {
             userObject.setPoint(0);
         }
         userObject.setCreatedDateTime(DateTime.now());
-        UserObject newUserObject = dataAPIClient.post("user", userObject, UserObject.class);
+        UserObject newUserObject = dataApiClient.post("user", userObject, UserObject.class);
 
         //force following Yunsu
         userFollowDomain.ensureUserOrganizationFollowing(newUserObject.getId(), Constants.Ids.YUNSU_ORG_ID);
@@ -150,7 +150,7 @@ public class UserDomain {
 
     public UserConfigObject getUserConfigByUserId(String userId) {
         try {
-            return dataAPIClient.get("userConfig/{userId}", UserConfigObject.class, userId);
+            return dataApiClient.get("userConfig/{userId}", UserConfigObject.class, userId);
         } catch (NotFoundException ignored) {
             return defaultUserConfig(userId);
         }
@@ -159,7 +159,7 @@ public class UserDomain {
     public void saveUserConfig(UserConfigObject userConfigObject) {
         Assert.hasText(userConfigObject.getUserId());
         userConfigObject.setModifiedDateTime(DateTime.now());
-        dataAPIClient.put("userConfig/{userId}", userConfigObject, userConfigObject.getUserId());
+        dataApiClient.put("userConfig/{userId}", userConfigObject, userConfigObject.getUserId());
     }
 
     private void checkPhoneExists(String phone, String userId) {

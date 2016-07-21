@@ -26,23 +26,23 @@ import java.util.List;
 @Component
 public class UserReportDomain {
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public UserReportObject saveUserReport(UserReportObject object){
-        return dataAPIClient.post("userReport", object, UserReportObject.class);
+        return dataApiClient.post("userReport", object, UserReportObject.class);
     }
 
     public Page<UserReportObject> getUserReportsByUserId(String userId, Pageable pageable){
         QueryStringBuilder builder = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("user_id", userId).append(pageable);
 
-        Page<UserReportObject> objectPage = dataAPIClient.getPaged("userReport" + builder.toString(), new ParameterizedTypeReference<List<UserReportObject>>() {
+        Page<UserReportObject> objectPage = dataApiClient.getPaged("userReport" + builder.toString(), new ParameterizedTypeReference<List<UserReportObject>>() {
         });
 
         return objectPage;
     }
 
     public UserReportObject getReportById(String id){
-        return dataAPIClient.get("userReport/{id}", UserReportObject.class, id);
+        return dataApiClient.get("userReport/{id}", UserReportObject.class, id);
     }
 
     public void saveReportImage(String userId,String reportId, byte[] imageDataBytes) {
@@ -51,7 +51,7 @@ public class UserReportDomain {
             ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
             ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
             imageProcessor.write(imageOutputStream, "image/png");
-            dataAPIClient.put("file/s3?path=user/{userId}/report/{reportId}/{imageName}",
+            dataApiClient.put("file/s3?path=user/{userId}/report/{reportId}/{imageName}",
                     new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/png"),
                     userId, reportId, imageName);
         } catch (IOException e) {

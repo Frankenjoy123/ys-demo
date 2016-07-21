@@ -1,6 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.client.WXAPIClient;
+import com.yunsoo.api.rabbit.client.WeChatApiClient1;
 import com.yunsoo.api.rabbit.dto.AccessToken;
 import com.yunsoo.api.rabbit.dto.JsApi_Ticket;
 import com.yunsoo.common.data.object.UserAccessTokenObject;
@@ -17,21 +17,21 @@ import org.springframework.stereotype.Component;
 public class UserAccessTokenDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
-    private WXAPIClient wxapiClient;
+    private WeChatApiClient1 weChatApiClient;
 
     public UserAccessTokenObject getUserAccessTokenObject(String orgId, String appId, String secret) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .build();
 
-        UserAccessTokenObject userAccessTokenObject = dataAPIClient.get("userAccessToken" + query, UserAccessTokenObject.class);
+        UserAccessTokenObject userAccessTokenObject = dataApiClient.get("userAccessToken" + query, UserAccessTokenObject.class);
         if (userAccessTokenObject == null || userAccessTokenObject.getExpiredDatetime() == null || userAccessTokenObject.getExpiredDatetime().isBeforeNow()) {
-            AccessToken accessToken = wxapiClient.get("token?grant_type=client_credential&appid=" + appId + "&secret=" + secret, AccessToken.class);
+            AccessToken accessToken = weChatApiClient.get("token?grant_type=client_credential&appid=" + appId + "&secret=" + secret, AccessToken.class);
             if (accessToken != null && accessToken.getAccessToken() != null) {
-                JsApi_Ticket jsApi_ticket = wxapiClient.get("ticket/getticket?access_token=" + accessToken.getAccessToken() + "&type=jsapi", JsApi_Ticket.class);
+                JsApi_Ticket jsApi_ticket = weChatApiClient.get("ticket/getticket?access_token=" + accessToken.getAccessToken() + "&type=jsapi", JsApi_Ticket.class);
                 if (jsApi_ticket != null && jsApi_ticket.getTicket() != null) {
                     UserAccessTokenObject newUserATObj = new UserAccessTokenObject();
                     newUserATObj.setId(null);
@@ -41,7 +41,7 @@ public class UserAccessTokenDomain {
                     newUserATObj.setOrgId(orgId);
                     newUserATObj.setExpiredDatetime(DateTime.now().plusSeconds(jsApi_ticket.getExpiresIn().intValue() - 200));
 
-                    return dataAPIClient.post("userAccessToken", newUserATObj, UserAccessTokenObject.class);
+                    return dataApiClient.post("userAccessToken", newUserATObj, UserAccessTokenObject.class);
                 }
             }
         } else {

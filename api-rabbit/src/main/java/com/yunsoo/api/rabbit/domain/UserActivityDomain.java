@@ -1,6 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.client.DataApiClient1;
+import com.yunsoo.api.rabbit.client.DataApiClient;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserActivityObject;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -21,7 +21,7 @@ public class UserActivityDomain {
     private static final int[] SIGN_IN_POINTS_REWARDS = new int[]{10, 15, 20, 25, 30};
 
     @Autowired
-    private DataApiClient1 dataApiClient;
+    private DataApiClient dataApiClient;
 
     @Autowired
     private UserPointDomain userPointDomain;

@@ -34,7 +34,7 @@ public class OrganizationDomain {
     private static final String DEFAULT_LOGO_IMAGE_NAME = "image-128x128";
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(),#id )")
     public OrganizationObject getById(String id) {
@@ -42,7 +42,7 @@ public class OrganizationDomain {
             return null;
         }
         try {
-            return dataAPIClient.get("organization/{id}", OrganizationObject.class, id);
+            return dataApiClient.get("organization/{id}", OrganizationObject.class, id);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -50,9 +50,9 @@ public class OrganizationDomain {
 
 
     public List<Organization> getOrganizationList() {
-        List<OrganizationObject> orgObjList = dataAPIClient.get("organization", new ParameterizedTypeReference<List<OrganizationObject>>() {
+        List<OrganizationObject> orgObjList = dataApiClient.get("organization", new ParameterizedTypeReference<List<OrganizationObject>>() {
         });
-        List<ProductBaseObject> productBaseList = dataAPIClient.get("productbase", new ParameterizedTypeReference<List<ProductBaseObject>>() {
+        List<ProductBaseObject> productBaseList = dataApiClient.get("productbase", new ParameterizedTypeReference<List<ProductBaseObject>>() {
         });
         if (orgObjList != null && productBaseList != null) {
             List<Organization> orgList = new ArrayList<>();
@@ -74,7 +74,7 @@ public class OrganizationDomain {
             imageName = DEFAULT_LOGO_IMAGE_NAME;
         }
         try {
-            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/logo/{imageName}", orgId, imageName);
+            return dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/logo/{imageName}", orgId, imageName);
         } catch (NotFoundException ex) {
             return null;
         }

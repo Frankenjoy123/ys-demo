@@ -25,14 +25,14 @@ import java.util.List;
 public class LogisticsDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     private Log log = LogFactory.getLog(this.getClass());
 
     public List<LogisticsPath> getLogisticsPathsOrderByStartDate(String key) {
         List<LogisticsPath> logisticsPaths = new ArrayList<>();
 
-        LogisticsPathObject[] logisticsPathObjects = dataAPIClient.get("logisticspath/{key}", LogisticsPathObject[].class, key);
+        LogisticsPathObject[] logisticsPathObjects = dataApiClient.get("logisticspath/{key}", LogisticsPathObject[].class, key);
         if (logisticsPathObjects == null || logisticsPathObjects.length == 0)
             throw new NotFoundException("Logistics path not found key=" + key);
 
@@ -47,7 +47,7 @@ public class LogisticsDomain {
 
             if (path.getActionId() != null) {
                 try {
-                    LogisticsCheckActionObject actionObject = dataAPIClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, path.getActionId());
+                    LogisticsCheckActionObject actionObject = dataApiClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, path.getActionId());
                     logisticsPath.setActionObject(actionObject);
                 } catch (Exception ex) {
                     logisticsPath.setActionObject(null);
@@ -60,7 +60,7 @@ public class LogisticsDomain {
             if (path.getStartCheckPoint() != null) {
                 LogisticsCheckPointObject startPointObject = null;
                 try {
-                    startPointObject = dataAPIClient.get("logisticscheckpoint/{id}", LogisticsCheckPointObject.class, path.getStartCheckPoint());
+                    startPointObject = dataApiClient.get("logisticscheckpoint/{id}", LogisticsCheckPointObject.class, path.getStartCheckPoint());
                     logisticsPath.setStartCheckPointObject(startPointObject);
                 } catch (Exception ex) {
                     logisticsPath.setStartCheckPointObject(null);
@@ -69,7 +69,7 @@ public class LogisticsDomain {
 
                 if (startPointObject != null) {
                     try {
-                        OrganizationObject startPointOrgObject = dataAPIClient.get("organization/{id}", OrganizationObject.class, startPointObject.getOrgId());
+                        OrganizationObject startPointOrgObject = dataApiClient.get("organization/{id}", OrganizationObject.class, startPointObject.getOrgId());
                         logisticsPath.setStartCheckPointOrgObject(startPointOrgObject);
                     }
                     catch (Exception ex) {
@@ -85,7 +85,7 @@ public class LogisticsDomain {
 
             if (path.getEndCheckPoint() != null) {
                 try {
-                    LogisticsCheckPointObject endPointObject = dataAPIClient.get("logisticscheckpoint/{id}", LogisticsCheckPointObject.class, path.getEndCheckPoint());
+                    LogisticsCheckPointObject endPointObject = dataApiClient.get("logisticscheckpoint/{id}", LogisticsCheckPointObject.class, path.getEndCheckPoint());
                     logisticsPath.setEndCheckPointObject(endPointObject);
                 }
                 catch (Exception ex) {

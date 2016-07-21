@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 public class ProductDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
     ProductBaseDomain productBaseDomain;
@@ -35,7 +35,7 @@ public class ProductDomain {
     //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT.toString(),#key)")
     public ProductObject getProduct(String key) {
         try {
-            return dataAPIClient.get("product/{key}", ProductObject.class, key);
+            return dataApiClient.get("product/{key}", ProductObject.class, key);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -44,7 +44,7 @@ public class ProductDomain {
     //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT_BATCH.toString(),#productKeyBatchId)")
     public ProductKeyBatchObject getProductKeyBatch(String productKeyBatchId) {
         try {
-            return dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, productKeyBatchId);
+            return dataApiClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, productKeyBatchId);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -52,7 +52,7 @@ public class ProductDomain {
 
     public String getProductKeyBatchDetails(String orgId, String productKeyBatchId) {
         try {
-            ResourceInputStream resourceInputStream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_key_batch/{pkbId}/details.json",
+            ResourceInputStream resourceInputStream = dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_key_batch/{pkbId}/details.json",
                     orgId, productKeyBatchId);
             byte[] bytes = StreamUtils.copyToByteArray(resourceInputStream);
             return new String(bytes, StandardCharsets.UTF_8);
@@ -62,7 +62,7 @@ public class ProductDomain {
     }
 
     public Long getCommentsScore(String productBaseId) {
-        return dataAPIClient.get("productcomments/avgscore/{id}", Long.class, productBaseId);
+        return dataApiClient.get("productcomments/avgscore/{id}", Long.class, productBaseId);
     }
 
 

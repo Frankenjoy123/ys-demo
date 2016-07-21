@@ -22,7 +22,7 @@ import java.util.List;
 public class ProductCommentsDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
     private ProductBaseDomain productBaseDomain;
@@ -36,27 +36,27 @@ public class ProductCommentsDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("productcomments" + query, new ParameterizedTypeReference<List<ProductCommentsObject>>() {
+        return dataApiClient.getPaged("productcomments" + query, new ParameterizedTypeReference<List<ProductCommentsObject>>() {
         });
 
     }
 
     public ProductCommentsObject getById(String id) {
-        return dataAPIClient.get("productcomments/{id}", ProductCommentsObject.class, id);
+        return dataApiClient.get("productcomments/{id}", ProductCommentsObject.class, id);
     }
 
     public ProductCommentsObject createProductComments(ProductCommentsObject productCommentsObject) {
         productCommentsObject.setId(null);
         productCommentsObject.setCreatedDateTime(DateTime.now());
-        return dataAPIClient.post("productcomments", productCommentsObject, ProductCommentsObject.class);
+        return dataApiClient.post("productcomments", productCommentsObject, ProductCommentsObject.class);
     }
 
     public Long getProductCommentsCount(String productBaseId) {
-        return dataAPIClient.get("productcomments/count/{productBaseId}", Long.class, productBaseId);
+        return dataApiClient.get("productcomments/count/{productBaseId}", Long.class, productBaseId);
     }
 
     public void deleteProductComments(String id) {
-        dataAPIClient.delete("productcomments/{id}", id);
+        dataApiClient.delete("productcomments/{id}", id);
     }
 
 }
