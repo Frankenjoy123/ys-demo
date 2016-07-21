@@ -42,10 +42,10 @@ public class MessageDomain {
 
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public Message getById(Integer id) {
-        return dataAPIClient.get("message/{id}", Message.class, id);
+        return dataApiClient.get("message/{id}", Message.class, id);
     }
 
     public Page<MessageObject> getMessageByOrgId(String orgId, Pageable pageable) {
@@ -54,28 +54,28 @@ public class MessageDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("message" + query, new ParameterizedTypeReference<List<MessageObject>>() {
+        return dataApiClient.getPaged("message" + query, new ParameterizedTypeReference<List<MessageObject>>() {
         });
     }
 
     public MessageObject getMessageById(String id) {
         try {
-            return dataAPIClient.get("message/{id}", MessageObject.class, id);
+            return dataApiClient.get("message/{id}", MessageObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
     }
 
     public MessageObject createMessage(MessageObject messageObject) {
-        return dataAPIClient.post("message", messageObject, MessageObject.class);
+        return dataApiClient.post("message", messageObject, MessageObject.class);
     }
 
     public void updateMessage(MessageObject messageObject) {
-        dataAPIClient.put("message/{id}", messageObject, messageObject.getId());
+        dataApiClient.put("message/{id}", messageObject, messageObject.getId());
     }
 
     public void deleteMessage(String id) {
-        dataAPIClient.delete("message/{id}", id);
+        dataApiClient.delete("message/{id}", id);
     }
 
     public void saveMessageCoverImage(MessageImageRequest messageImageRequest, String orgId, String id) {
@@ -90,7 +90,7 @@ public class MessageDomain {
         String imageDataBase64 = imageData.substring(splitIndex + 1);
         byte[] imageDataBytes = Base64.decodeBase64(imageDataBase64);
         //save message cover image
-        dataAPIClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{imageName}",
+        dataApiClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{imageName}",
                 new ResourceInputStream(new ByteArrayInputStream(imageDataBytes), imageDataBytes.length, contentType), orgId, id, COVER_IMAGE_NAME);
     }
 
@@ -107,7 +107,7 @@ public class MessageDomain {
         byte[] imageDataBytes = Base64.decodeBase64(imageDataBase64);
         String imageName = getRandomString();
         //save message cover image
-        dataAPIClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{imageName}",
+        dataApiClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{imageName}",
                 new ResourceInputStream(new ByteArrayInputStream(imageDataBytes), imageDataBytes.length, contentType), orgId, id, imageName);
         return imageName;
     }
@@ -119,7 +119,7 @@ public class MessageDomain {
         }
         byte[] messageBodyDataBytes = Base64.decodeBase64(messageBodyData);
         //save message body text
-        dataAPIClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{bodyFileName}",
+        dataApiClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{bodyFileName}",
                 new ResourceInputStream(new ByteArrayInputStream(messageBodyDataBytes), messageBodyDataBytes.length, MediaType.TEXT_HTML_VALUE), orgId, id, BODY_FILE_NAME);
         return "organization/" + orgId + "/message/" + id + "/" + BODY_FILE_NAME;
     }
@@ -134,7 +134,7 @@ public class MessageDomain {
             }
             byte[] bytes = mapper.writeValueAsBytes(messageDetails);
             ResourceInputStream resourceInputStream = new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE);
-            dataAPIClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{fileName}",
+            dataApiClient.put("file/s3?path=organization/{orgId}/message/{messageId}/{fileName}",
                     resourceInputStream, orgId, id, DETAILS_FILE_NAME);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -144,7 +144,7 @@ public class MessageDomain {
     public MessageDetails getMessageDetails(String orgId, String id) {
         ResourceInputStream resourceInputStream;
         try {
-            resourceInputStream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/message/{messageId}/{fileName}",
+            resourceInputStream = dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/message/{messageId}/{fileName}",
                     orgId, id, DETAILS_FILE_NAME);
         } catch (NotFoundException ex) {
             return null;
@@ -158,7 +158,7 @@ public class MessageDomain {
 
     public ResourceInputStream getMessageImage(String orgId, String id, String imageName) {
         try {
-            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/message/{id}/{imageName}", orgId, id, imageName);
+            return dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/message/{id}/{imageName}", orgId, id, imageName);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -170,7 +170,7 @@ public class MessageDomain {
                 .append("type_code_in", typeCodeIn)
                 .append("status_code_in", statusCodeIn)
                 .build();
-        return dataAPIClient.get("message/count/on" + query, Long.class);
+        return dataApiClient.get("message/count/on" + query, Long.class);
     }
 
 //    public IPushResult pushMessageToApp(String orgId, String id, MessageToApp messageToApp) {

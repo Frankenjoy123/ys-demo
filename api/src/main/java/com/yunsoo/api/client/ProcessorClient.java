@@ -9,8 +9,8 @@ import com.yunsoo.common.web.client.RestClient;
  */
 public class ProcessorClient extends RestClient {
 
-    public ProcessorClient(String baseURL) {
-        super(baseURL);
+    public ProcessorClient(String baseUrl) {
+        super(baseUrl);
     }
 
 

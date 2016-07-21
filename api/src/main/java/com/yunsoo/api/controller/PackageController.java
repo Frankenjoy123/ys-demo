@@ -34,11 +34,11 @@ import java.util.List;
 @RequestMapping("/package")
 public class PackageController {
 
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
-    PackageController(RestClient dataAPIClient) {
-        this.dataAPIClient = dataAPIClient;
+    PackageController(RestClient dataApiClient) {
+        this.dataApiClient = dataApiClient;
     }
 
     @Autowired
@@ -49,7 +49,7 @@ public class PackageController {
     public Package getDetailByKey(@PathVariable(value = "key") String key) {
 
         Package productPackage;
-        productPackage = dataAPIClient.get("package/{key}", Package.class, key);
+        productPackage = dataApiClient.get("package/{key}", Package.class, key);
         if (productPackage == null) {
             throw new NotFoundException("没有包装信息");
         } else {
@@ -60,21 +60,21 @@ public class PackageController {
     @RequestMapping(value = "/bind", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public Boolean bind(@RequestBody PackageBoundObject data) throws Exception {
-        boolean result = dataAPIClient.post("package/bind", data, Boolean.class);
+        boolean result = dataApiClient.post("package/bind", data, Boolean.class);
         return result;
     }
 
     @RequestMapping(value = "/batch/bind", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public Boolean batchBind(@RequestBody PackageBoundObject[] data) throws Exception {
-        boolean result = dataAPIClient.post("package/batch/bind", data, Boolean.class);
+        boolean result = dataApiClient.post("package/batch/bind", data, Boolean.class);
         return result;
     }
 
     @RequestMapping(value = "/revoke/{key}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Boolean revokePackage(@PathVariable(value = "key") String key) {
-        dataAPIClient.delete("package/revoke/{key}", key);
+        dataApiClient.delete("package/revoke/{key}", key);
         return true;
     }
 
@@ -107,7 +107,7 @@ public class PackageController {
             }
             reader.close();
 
-            boolean batchResult = dataAPIClient.post("/package/batch/bind", objects, Boolean.class);
+            boolean batchResult = dataApiClient.post("/package/batch/bind", objects, Boolean.class);
             if (!batchResult) {
                 throw new NotAcceptableException("数据中有重复的码，请检查。");
             }

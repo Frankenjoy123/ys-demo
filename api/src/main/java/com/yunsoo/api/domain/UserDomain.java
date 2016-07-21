@@ -16,7 +16,7 @@ import java.util.List;
 public class UserDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public Page<UserObject> getUserList(Boolean sex, String phone, String name, String province, String city, Integer ageStart, Integer ageEnd, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -32,13 +32,13 @@ public class UserDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("user/query" + query, new ParameterizedTypeReference<List<UserObject>>() {
+        return dataApiClient.getPaged("user/query" + query, new ParameterizedTypeReference<List<UserObject>>() {
         });
     }
 
     public UserObject getUserById(String id) {
         try {
-            return dataAPIClient.get("user/{id}", UserObject.class, id);
+            return dataApiClient.get("user/{id}", UserObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }

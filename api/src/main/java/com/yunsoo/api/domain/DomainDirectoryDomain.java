@@ -1,7 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
-import com.yunsoo.api.client.DataApiClient1;
+import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.common.data.object.DomainDirectoryObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -24,7 +24,7 @@ import java.util.Map;
 public class DomainDirectoryDomain {
 
     @Autowired
-    private DataApiClient1 dataApiClient;
+    private DataApiClient dataApiClient;
 
     @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).DOMAIN_DIRECTORY.toString(), 'map')")
     public Map<String, DomainDirectoryObject> getDomainDirectoryObjectMap() {

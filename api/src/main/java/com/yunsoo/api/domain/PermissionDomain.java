@@ -26,18 +26,18 @@ import java.util.List;
 public class PermissionDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
 
     @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'resourceList')")
     public List<PermissionResourceObject> getPermissionResources() {
-        return dataAPIClient.get("permission/resource", new ParameterizedTypeReference<List<PermissionResourceObject>>() {
+        return dataApiClient.get("permission/resource", new ParameterizedTypeReference<List<PermissionResourceObject>>() {
         });
     }
 
     @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'actionList')")
     public List<PermissionActionObject> getPermissionActions() {
-        return dataAPIClient.get("permission/action", new ParameterizedTypeReference<List<PermissionActionObject>>() {
+        return dataApiClient.get("permission/action", new ParameterizedTypeReference<List<PermissionActionObject>>() {
         });
     }
 
@@ -47,7 +47,7 @@ public class PermissionDomain {
     public PermissionRegionObject getPermissionRegionById(String id) {
         if (id == null || id.length() == 0) return null;
         try {
-            return dataAPIClient.get("permission/region/{id}", PermissionRegionObject.class, id);
+            return dataApiClient.get("permission/region/{id}", PermissionRegionObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -64,12 +64,12 @@ public class PermissionDomain {
         PermissionRegionObject defaultPR = getOrCreateDefaultPermissionRegion(masterOrgId);
 
         defaultPR.getRestrictions().add(orgRestriction);
-        dataAPIClient.patch("permission/region/{id}", defaultPR, defaultPR.getId());
+        dataApiClient.patch("permission/region/{id}", defaultPR, defaultPR.getId());
     }
 
     public PermissionRegionObject getOrCreateDefaultPermissionRegion(String orgId) {
         PermissionRegionObject defaultPR;
-        List<PermissionRegionObject> defaultRegionObjects = dataAPIClient.get("permission/region?org_id={orgId}&type_code={typeCode}", new ParameterizedTypeReference<List<PermissionRegionObject>>() {
+        List<PermissionRegionObject> defaultRegionObjects = dataApiClient.get("permission/region?org_id={orgId}&type_code={typeCode}", new ParameterizedTypeReference<List<PermissionRegionObject>>() {
         }, orgId, LookupCodes.PermissionRegionType.DEFAULT);
 
         if (defaultRegionObjects.size() == 0) {
@@ -78,7 +78,7 @@ public class PermissionDomain {
             defaultPR.setOrgId(orgId);
             defaultPR.setTypeCode(LookupCodes.PermissionRegionType.DEFAULT);
             defaultPR.setName("Default Region");
-            defaultPR = dataAPIClient.post("permission/region", defaultPR, PermissionRegionObject.class);
+            defaultPR = dataApiClient.post("permission/region", defaultPR, PermissionRegionObject.class);
         } else if (defaultRegionObjects.size() == 1) {
             defaultPR = defaultRegionObjects.get(0);
         } else {
@@ -87,9 +87,9 @@ public class PermissionDomain {
             for (int i = 1; i < defaultRegionObjects.size(); i++) {
                 defaultPR.getRestrictions().addAll(defaultRegionObjects.get(i).getRestrictions());
             }
-            dataAPIClient.patch("permission/region/{id}", defaultPR, defaultPR.getId());
+            dataApiClient.patch("permission/region/{id}", defaultPR, defaultPR.getId());
             for (int i = 1; i < defaultRegionObjects.size(); i++) {
-                dataAPIClient.delete("permission/region/{id}", defaultRegionObjects.get(i).getId());
+                dataApiClient.delete("permission/region/{id}", defaultRegionObjects.get(i).getId());
             }
         }
         return defaultPR;
@@ -101,7 +101,7 @@ public class PermissionDomain {
 
     @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PERMISSION.toString(), 'policyList')")
     public List<PermissionPolicyObject> getPermissionPolicies() {
-        return dataAPIClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
+        return dataApiClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
         });
     }
 

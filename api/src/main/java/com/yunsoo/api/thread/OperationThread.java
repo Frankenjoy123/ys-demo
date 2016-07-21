@@ -1,7 +1,7 @@
 package com.yunsoo.api.thread;
 
 import com.yunsoo.api.cache.OperationCache;
-import com.yunsoo.api.client.DataApiClient1;
+import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.common.data.object.OperationLogObject;
 import com.yunsoo.common.data.object.juhe.IPResultObject;
 import org.apache.commons.logging.Log;
@@ -20,7 +20,7 @@ public class OperationThread implements Runnable {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private DataApiClient1 client;
+    private DataApiClient client;
 
     @Override
     public void run() {

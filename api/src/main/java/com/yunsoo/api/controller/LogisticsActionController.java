@@ -23,7 +23,7 @@ import java.util.List;
 public class LogisticsActionController {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -37,7 +37,7 @@ public class LogisticsActionController {
         }
 
         LogisticsCheckActionObject logisticsCheckActionObject = toLogisticsCheckActionObject(logisticsAction);
-        LogisticsCheckActionObject newObject = dataAPIClient.post("logisticscheckaction", logisticsCheckActionObject, LogisticsCheckActionObject.class);
+        LogisticsCheckActionObject newObject = dataApiClient.post("logisticscheckaction", logisticsCheckActionObject, LogisticsCheckActionObject.class);
 
         LogisticsAction newAction = fromLogisticsCheckActionObject(newObject);
         return newAction;
@@ -47,7 +47,7 @@ public class LogisticsActionController {
     @PostAuthorize("hasPermission(returnObject, 'logistics_action:read')")
     public LogisticsAction get(@PathVariable(value = "id") Integer id) {
 
-        LogisticsCheckActionObject logisticsCheckActionObject = dataAPIClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, id);
+        LogisticsCheckActionObject logisticsCheckActionObject = dataApiClient.get("logisticscheckaction/{id}", LogisticsCheckActionObject.class, id);
         if (logisticsCheckActionObject == null)
             throw new NotFoundException("Logistics action not found id=" + id);
 
@@ -63,7 +63,7 @@ public class LogisticsActionController {
         orgId = AuthUtils.fixOrgId(orgId);
 
         LogisticsCheckActionObject[] objects =
-                dataAPIClient.get("logisticscheckaction?orgId={orgId}&&pageIndex={pageIndex}&&pageSize={pageSize}",
+                dataApiClient.get("logisticscheckaction?orgId={orgId}&&pageIndex={pageIndex}&&pageSize={pageSize}",
                         LogisticsCheckActionObject[].class,
                         orgId,
                         pageIndex,
@@ -87,14 +87,14 @@ public class LogisticsActionController {
         }
 
         LogisticsCheckActionObject logisticsCheckActionObject = toLogisticsCheckActionObject(logisticsAction);
-        dataAPIClient.patch("logisticscheckaction", logisticsCheckActionObject);
+        dataApiClient.patch("logisticscheckaction", logisticsCheckActionObject);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "id") Integer id) {
 
-        dataAPIClient.delete("logisticscheckaction/{id}", id);
+        dataApiClient.delete("logisticscheckaction/{id}", id);
     }
 
     private LogisticsAction fromLogisticsCheckActionObject(LogisticsCheckActionObject logisticsCheckActionObject) {

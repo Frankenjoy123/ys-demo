@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.client.AuthApiClient;
-import com.yunsoo.api.client.DataApiClient1;
+import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.api.client.ProcessorClient;
 import com.yunsoo.common.web.health.Health;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class HealthController {
     private ProcessorClient processorClient;
 
     @Autowired
-    private DataApiClient1 dataApiClient;
+    private DataApiClient dataApiClient;
 
     @RequestMapping(value = "")
     public Health health() {

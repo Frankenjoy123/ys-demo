@@ -21,7 +21,7 @@ public class ClientTest {
     private AuthApiClient authApiClient;
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
     private RestClient processorClient;
@@ -29,7 +29,7 @@ public class ClientTest {
 
     @Test
     public void testGetBaseURL() {
-        System.out.println(dataAPIClient.getBaseUrl());
+        System.out.println(dataApiClient.getBaseUrl());
         System.out.println(processorClient.getBaseUrl());
     }
 

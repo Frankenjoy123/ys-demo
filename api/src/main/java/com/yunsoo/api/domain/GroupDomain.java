@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.client.DataApiClient1;
+import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.GroupObject;
 import com.yunsoo.common.web.client.Page;
@@ -24,7 +24,7 @@ import java.util.List;
 public class GroupDomain {
 
     @Autowired
-    private DataApiClient1 dataApiClient;
+    private DataApiClient dataApiClient;
 
     @Autowired
     private PermissionAllocationDomain permissionAllocationDomain;

@@ -40,7 +40,7 @@ public class ProductBaseDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseId )")
     public ProductBaseObject getProductBaseById(String productBaseId) {
@@ -48,19 +48,19 @@ public class ProductBaseDomain {
             return null;
         }
         try {
-            return dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
+            return dataApiClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         } catch (NotFoundException ignored) {
             return null;
         }
     }
 
     public List<ProductBaseVersionsObject> getProductBaseVersionsByProductBaseId(String productBaseId) {
-        return dataAPIClient.get("productbaseversions/{product_base_Id}", new ParameterizedTypeReference<List<ProductBaseVersionsObject>>() {
+        return dataApiClient.get("productbaseversions/{product_base_Id}", new ParameterizedTypeReference<List<ProductBaseVersionsObject>>() {
         }, productBaseId);
     }
 
     public ProductBaseVersionsObject getLatestProductBaseVersionsByProductBaseId(String productBaseId) {
-        List<ProductBaseVersionsObject> productBaseVersionsObjects = dataAPIClient.get("productbaseversions/{product_base_Id}", new ParameterizedTypeReference<List<ProductBaseVersionsObject>>() {
+        List<ProductBaseVersionsObject> productBaseVersionsObjects = dataApiClient.get("productbaseversions/{product_base_Id}", new ParameterizedTypeReference<List<ProductBaseVersionsObject>>() {
         }, productBaseId);
         if (productBaseVersionsObjects.size() == 0) {
             return null;
@@ -73,7 +73,7 @@ public class ProductBaseDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("product_base_ids", productBaseIds)
                 .build();
-        return dataAPIClient.get("productbaseversions" + query, new ParameterizedTypeReference<Map<String, List<ProductBaseVersionsObject>>>() {
+        return dataApiClient.get("productbaseversions" + query, new ParameterizedTypeReference<Map<String, List<ProductBaseVersionsObject>>>() {
         });
     }
 
@@ -87,7 +87,7 @@ public class ProductBaseDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("productbase" + query, new ParameterizedTypeReference<List<ProductBaseObject>>() {
+        return dataApiClient.getPaged("productbase" + query, new ParameterizedTypeReference<List<ProductBaseObject>>() {
         });
     }
 
@@ -96,55 +96,55 @@ public class ProductBaseDomain {
                 .append("org_id", orgId)
                 .build();
 
-        return dataAPIClient.get("productbase/count" + query, Long.class);
+        return dataApiClient.get("productbase/count" + query, Long.class);
     }
 
     public ProductBaseVersionsObject getProductBaseVersionsByProductBaseIdAndVersion(String productBaseId, Integer version) {
         try {
-            return dataAPIClient.get("productbaseversions/{product_base_Id}/{version}", ProductBaseVersionsObject.class, productBaseId, version);
+            return dataApiClient.get("productbaseversions/{product_base_Id}/{version}", ProductBaseVersionsObject.class, productBaseId, version);
         } catch (NotFoundException ignored) {
             return null;
         }
     }
 
     public ProductBaseObject createProductBase(ProductBaseObject productBaseObject) {
-        return dataAPIClient.post("productbase", productBaseObject, ProductBaseObject.class);
+        return dataApiClient.post("productbase", productBaseObject, ProductBaseObject.class);
     }
 
     public ProductBaseVersionsObject createProductBaseVersions(ProductBaseVersionsObject productBaseVersionsObject) {
-        return dataAPIClient.post("productbaseversions/{product_base_id}", productBaseVersionsObject, ProductBaseVersionsObject.class, productBaseVersionsObject.getProductBaseId());
+        return dataApiClient.post("productbaseversions/{product_base_id}", productBaseVersionsObject, ProductBaseVersionsObject.class, productBaseVersionsObject.getProductBaseId());
     }
 
     @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseObject.getId())")
     public void updateProductBase(ProductBaseObject productBaseObject) {
-        dataAPIClient.put("productbase/{id}", productBaseObject, productBaseObject.getId());
+        dataApiClient.put("productbase/{id}", productBaseObject, productBaseObject.getId());
     }
 
     public void updateProductBaseVersions(ProductBaseVersionsObject productBaseVersionsObject) {
-        dataAPIClient.put("productbaseversions/{product_base_id}/{version}", productBaseVersionsObject, productBaseVersionsObject.getProductBaseId(), productBaseVersionsObject.getVersion());
+        dataApiClient.put("productbaseversions/{product_base_id}/{version}", productBaseVersionsObject, productBaseVersionsObject.getProductBaseId(), productBaseVersionsObject.getVersion());
     }
 
     @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseObject.getId())")
     public void patchUpdateProductBase(ProductBaseObject productBaseObject) {
-        dataAPIClient.patch("productbase/{id}", productBaseObject, productBaseObject.getId());
+        dataApiClient.patch("productbase/{id}", productBaseObject, productBaseObject.getId());
     }
 
     public void patchUpdateProductBaseVersions(ProductBaseVersionsObject productBaseVersionsObject) {
-        dataAPIClient.patch("productbaseversions/{product_base_id}/{version}", productBaseVersionsObject, productBaseVersionsObject.getProductBaseId(), productBaseVersionsObject.getVersion());
+        dataApiClient.patch("productbaseversions/{product_base_id}/{version}", productBaseVersionsObject, productBaseVersionsObject.getProductBaseId(), productBaseVersionsObject.getVersion());
     }
 
     @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(), #productBaseId)")
     public void deleteProductBase(String productBaseId) {
-        dataAPIClient.delete("productbase/{product_base_id}", productBaseId);
+        dataApiClient.delete("productbase/{product_base_id}", productBaseId);
     }
 
     public void deleteProductBaseVersions(String productBaseId, Integer version) {
-        dataAPIClient.delete("productbaseversions/{product_base_id}/{version}", productBaseId, version);
+        dataApiClient.delete("productbaseversions/{product_base_id}/{version}", productBaseId, version);
     }
 
     public ResourceInputStream getProductBaseImage(String orgId, String productBaseId, Integer version, String imageName) {
         try {
-            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}", orgId, productBaseId, version, imageName);
+            return dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}", orgId, productBaseId, version, imageName);
         } catch (NotFoundException ex) {
             return null;
         }

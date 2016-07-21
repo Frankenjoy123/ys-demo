@@ -41,7 +41,7 @@ public class OrganizationDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     private static final String ORG_LOGO_IMAGE_128X128 = "image-128x128";
 
@@ -54,7 +54,7 @@ public class OrganizationDomain {
             return null;
         }
         try {
-            return dataAPIClient.get("organization/{id}", OrganizationObject.class, id);
+            return dataApiClient.get("organization/{id}", OrganizationObject.class, id);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -62,7 +62,7 @@ public class OrganizationDomain {
 
     public BrandObject getBrandById(String id) {
         try {
-            return dataAPIClient.get("organization/brand/{id}", BrandObject.class, id);
+            return dataApiClient.get("organization/brand/{id}", BrandObject.class, id);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -70,25 +70,25 @@ public class OrganizationDomain {
 
     public int countBrand(String id, String status) {
         if (StringUtils.hasText(status))
-            return dataAPIClient.get("organization/{id}/brand/count?status={status}", Integer.class, id, status);
+            return dataApiClient.get("organization/{id}/brand/count?status={status}", Integer.class, id, status);
         else
-            return dataAPIClient.get("organization/{id}/brand/count", Integer.class, id);
+            return dataApiClient.get("organization/{id}/brand/count", Integer.class, id);
     }
 
     @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
     public void updateOrganizationStatus(String id, String status) {
         OrganizationObject org = getOrganizationById(id);
         org.setStatusCode(status);
-        dataAPIClient.put("organization/{id}", org, id);
+        dataApiClient.put("organization/{id}", org, id);
     }
 
     @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
     public void patchBrand(String id, BrandObject brand) {
-        dataAPIClient.patch("organization/brand/{id}", brand, id);
+        dataApiClient.patch("organization/brand/{id}", brand, id);
     }
 
     public OrganizationObject getOrganizationByName(String name) {
-        List<OrganizationObject> objects = dataAPIClient.get("organization?name={name}", new ParameterizedTypeReference<List<OrganizationObject>>() {
+        List<OrganizationObject> objects = dataApiClient.get("organization?name={name}", new ParameterizedTypeReference<List<OrganizationObject>>() {
         }, name);
         return objects.size() == 0 ? null : objects.get(0);
     }
@@ -97,7 +97,7 @@ public class OrganizationDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("organization" + query, new ParameterizedTypeReference<List<OrganizationObject>>() {
+        return dataApiClient.getPaged("organization" + query, new ParameterizedTypeReference<List<OrganizationObject>>() {
         });
     }
 
@@ -108,7 +108,7 @@ public class OrganizationDomain {
                 .append("category_id", categoryId)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("organization/{id}/brand" + query, new ParameterizedTypeReference<List<BrandObject>>() {
+        return dataApiClient.getPaged("organization/{id}/brand" + query, new ParameterizedTypeReference<List<BrandObject>>() {
         }, orgId);
     }
 
@@ -117,20 +117,20 @@ public class OrganizationDomain {
                 .append("name", orgName)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("organization/{id}/brand/name" + query, new ParameterizedTypeReference<List<BrandObject>>() {
+        return dataApiClient.getPaged("organization/{id}/brand/name" + query, new ParameterizedTypeReference<List<BrandObject>>() {
         }, orgId);
     }
 
 
     public List<String> getBrandIdsForCarrier(String carrierId) {
-        return dataAPIClient.get("organization/{id}/brandIds", new ParameterizedTypeReference<List<String>>() {
+        return dataApiClient.get("organization/{id}/brandIds", new ParameterizedTypeReference<List<String>>() {
         }, carrierId);
     }
 
     public OrganizationObject createOrganization(OrganizationObject object) {
         object.setId(null);
         object.setCreatedDateTime(DateTime.now());
-        return dataAPIClient.post("organization", object, OrganizationObject.class);
+        return dataApiClient.post("organization", object, OrganizationObject.class);
     }
 
     public BrandObject createBrand(BrandObject object) {
@@ -144,13 +144,13 @@ public class OrganizationDomain {
             object.setStatusCode(LookupCodes.OrgStatus.AVAILABLE);
             if (StringUtils.hasText(object.getAttachment()) && object.getAttachment().endsWith(","))
                 object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() - 1));
-            return dataAPIClient.post("organization/brand", object, BrandObject.class);
+            return dataApiClient.post("organization/brand", object, BrandObject.class);
         }
     }
 
     public ResourceInputStream getLogoImage(String orgId, String imageName) {
         try {
-            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/logo/{imageName}", orgId, imageName);
+            return dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/logo/{imageName}", orgId, imageName);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -169,13 +169,13 @@ public class OrganizationDomain {
             ImageProcessor imageProcessor = new ImageProcessor().read(logoStream);
             ByteArrayOutputStream logo128x128OutputStream = new ByteArrayOutputStream();
             imageProcessor.resize(128, 128).write(logo128x128OutputStream, "image/png");
-            dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
+            dataApiClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
                     new ResourceInputStream(new ByteArrayInputStream(logo128x128OutputStream.toByteArray()), logo128x128OutputStream.size(), "image/png"),
                     orgId, logoImage128x128);
             //200x200
             ByteArrayOutputStream logo200x200OutputStream = new ByteArrayOutputStream();
             imageProcessor.resize(200, 200).write(logo200x200OutputStream, "image/png");
-            dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
+            dataApiClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
                     new ResourceInputStream(new ByteArrayInputStream(logo200x200OutputStream.toByteArray()), logo200x200OutputStream.size(), "image/png"),
                     orgId, logoImage200x200);
         } catch (IOException e) {
@@ -188,7 +188,7 @@ public class OrganizationDomain {
             ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
             ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
             imageProcessor.write(imageOutputStream, "image/png");
-            dataAPIClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
+            dataApiClient.put("file/s3?path=organization/{orgId}/logo/{imageName}",
                     new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/png"),
                     orgId, imageName);
             log.info(String.format("image saved [imageName: %s]", imageName));
@@ -205,7 +205,7 @@ public class OrganizationDomain {
         String s3FileName = "organization/{orgId}/webchat/" + fileName;
         try {
             ResourceInputStream stream = new ResourceInputStream(file.getInputStream(), file.getSize(), file.getContentType());
-            dataAPIClient.put("file/s3?path=" + s3FileName, stream, orgId);
+            dataApiClient.put("file/s3?path=" + s3FileName, stream, orgId);
         }
         catch (IOException e) {
             throw new InternalServerErrorException("webchat key upload failed for organization: " + orgId);

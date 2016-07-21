@@ -1,7 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
-import com.yunsoo.api.client.DataApiClient1;
+import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
@@ -27,7 +27,7 @@ public class ProductCategoryDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private DataApiClient1 dataApiClient;
+    private DataApiClient dataApiClient;
 
 
     @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT_CATEGORY.toString(), 'list')")

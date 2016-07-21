@@ -28,14 +28,14 @@ public class AccountTokenDomain {
     private int permanent_token_expires_minutes;
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
 
     public AccountTokenObject getNonExpiredByPermanentToken(String permanentToken) {
         if (!StringUtils.hasText(permanentToken)) {
             return null;
         }
-        List<AccountTokenObject> accountTokenObjects = dataAPIClient.get("accounttoken?permanent_token={0}", new ParameterizedTypeReference<List<AccountTokenObject>>() {
+        List<AccountTokenObject> accountTokenObjects = dataApiClient.get("accounttoken?permanent_token={0}", new ParameterizedTypeReference<List<AccountTokenObject>>() {
         }, permanentToken);
         for (AccountTokenObject at : accountTokenObjects) {
             if (at.getPermanentTokenExpiresDateTime() == null || at.getPermanentTokenExpiresDateTime().isAfterNow()) {
@@ -49,7 +49,7 @@ public class AccountTokenDomain {
         if (!StringUtils.hasText(deviceId)) {
             return new ArrayList<>();
         }
-        List<AccountTokenObject> accountTokenObjects = dataAPIClient.get("accounttoken?device_id={0}", new ParameterizedTypeReference<List<AccountTokenObject>>() {
+        List<AccountTokenObject> accountTokenObjects = dataApiClient.get("accounttoken?device_id={0}", new ParameterizedTypeReference<List<AccountTokenObject>>() {
         }, deviceId);
         return accountTokenObjects.stream()
                 .filter(at -> at.getPermanentTokenExpiresDateTime() == null || at.getPermanentTokenExpiresDateTime().isAfterNow())
@@ -66,7 +66,7 @@ public class AccountTokenDomain {
     public void expirePermanentTokenById(String accountTokenId) {
         AccountTokenObject accountTokenObject = new AccountTokenObject();
         accountTokenObject.setPermanentTokenExpiresDateTime(DateTime.now());
-        dataAPIClient.patch("accounttoken/{id}", accountTokenObject, accountTokenId);
+        dataApiClient.patch("accounttoken/{id}", accountTokenObject, accountTokenId);
     }
 
     /**
@@ -99,6 +99,6 @@ public class AccountTokenDomain {
         accountTokenObject.setPermanentTokenExpiresDateTime(expires);
         accountTokenObject.setCreatedAccountId(accountId);
         accountTokenObject.setCreatedDateTime(now);
-        return dataAPIClient.post("accounttoken", accountTokenObject, AccountTokenObject.class);
+        return dataApiClient.post("accounttoken", accountTokenObject, AccountTokenObject.class);
     }
 }

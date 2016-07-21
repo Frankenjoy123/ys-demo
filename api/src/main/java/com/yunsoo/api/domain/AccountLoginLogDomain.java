@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.client.DataApiClient1;
+import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.common.data.object.AccountLoginLogObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.util.QueryStringBuilder;
@@ -26,7 +26,7 @@ public class AccountLoginLogDomain {
     private static final String CHANNEL_TOKEN = "token";
 
     @Autowired
-    private DataApiClient1 dataApiClient;
+    private DataApiClient dataApiClient;
 
     private Log log = LogFactory.getLog(this.getClass());
 

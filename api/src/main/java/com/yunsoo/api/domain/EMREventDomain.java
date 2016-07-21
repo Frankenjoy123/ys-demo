@@ -19,7 +19,7 @@ import java.util.List;
 public class EMREventDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public Page<EMREventObject> getEMREventList(String orgId, String userId, String ysId, org.joda.time.LocalDate eventDateTimeStart, org.joda.time.LocalDate eventDateTimeEnd, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -31,7 +31,7 @@ public class EMREventDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("emr/event" + query, new ParameterizedTypeReference<List<EMREventObject>>() {
+        return dataApiClient.getPaged("emr/event" + query, new ParameterizedTypeReference<List<EMREventObject>>() {
         });
     }
 
@@ -46,7 +46,7 @@ public class EMREventDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("emr/event/share" + query, new ParameterizedTypeReference<List<EMREventObject>>() {
+        return dataApiClient.getPaged("emr/event/share" + query, new ParameterizedTypeReference<List<EMREventObject>>() {
         });
     }
 
@@ -61,7 +61,7 @@ public class EMREventDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("emr/event/store_url" + query, new ParameterizedTypeReference<List<EMREventObject>>() {
+        return dataApiClient.getPaged("emr/event/store_url" + query, new ParameterizedTypeReference<List<EMREventObject>>() {
         });
     }
 
@@ -76,7 +76,7 @@ public class EMREventDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("emr/event/comment" + query, new ParameterizedTypeReference<List<EMREventObject>>() {
+        return dataApiClient.getPaged("emr/event/comment" + query, new ParameterizedTypeReference<List<EMREventObject>>() {
         });
     }
 
@@ -88,7 +88,7 @@ public class EMREventDomain {
                 .append("ys_id", ysId)
                 .build();
 
-        return dataAPIClient.get("emr/event/latest_consumption" + query, EMREventObject.class);
+        return dataApiClient.get("emr/event/latest_consumption" + query, EMREventObject.class);
     }
 
     public PeriodUserConsumptionStatsObject getPeriodUserConsumptionStatsObject(String orgId, String userId, String ysId) {
@@ -98,6 +98,6 @@ public class EMREventDomain {
                 .append("ys_id", ysId)
                 .build();
 
-        return dataAPIClient.get("emr/event/period_consumption_stats" + query, PeriodUserConsumptionStatsObject.class);
+        return dataApiClient.get("emr/event/period_consumption_stats" + query, PeriodUserConsumptionStatsObject.class);
     }
 }

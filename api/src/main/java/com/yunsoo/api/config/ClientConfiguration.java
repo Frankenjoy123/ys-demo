@@ -1,7 +1,7 @@
 package com.yunsoo.api.config;
 
 import com.yunsoo.api.client.AuthApiClient;
-import com.yunsoo.api.client.DataApiClient1;
+import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.api.client.ProcessorClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
@@ -33,8 +33,8 @@ public class ClientConfiguration {
     }
 
     @Bean
-    public DataApiClient1 dataAPIClient() {
-        return new DataApiClient1(dataAPIBaseUrl);
+    public DataApiClient dataApiClient() {
+        return new DataApiClient(dataAPIBaseUrl);
     }
 
     @Bean

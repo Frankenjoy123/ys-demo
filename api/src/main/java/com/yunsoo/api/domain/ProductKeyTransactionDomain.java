@@ -23,20 +23,20 @@ import java.util.List;
 public class ProductKeyTransactionDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
     private ProductKeyOrderDomain productKeyOrderDomain;
 
     public List<ProductKeyTransactionObject> getCreatedTransactionByOrderId(String orderId) {
         String statusCode = LookupCodes.ProductKeyTransactionStatus.CREATED;
-        return dataAPIClient.get("productkeytransaction?order_id={0}&status_code={1}", new ParameterizedTypeReference<List<ProductKeyTransactionObject>>() {
+        return dataApiClient.get("productkeytransaction?order_id={0}&status_code={1}", new ParameterizedTypeReference<List<ProductKeyTransactionObject>>() {
         }, orderId, statusCode);
     }
 
     public List<ProductKeyTransactionObject> getCommittedTransactionByOrderId(String orderId) {
         String statusCode = LookupCodes.ProductKeyTransactionStatus.COMMITTED;
-        return dataAPIClient.get("productkeytransaction?order_id={0}&status_code={1}", new ParameterizedTypeReference<List<ProductKeyTransactionObject>>() {
+        return dataApiClient.get("productkeytransaction?order_id={0}&status_code={1}", new ParameterizedTypeReference<List<ProductKeyTransactionObject>>() {
         }, orderId, statusCode);
     }
 
@@ -135,17 +135,17 @@ public class ProductKeyTransactionDomain {
         request.setDetails(details);
 
         //create transaction
-        ProductKeyTransactionObject transactionObject = dataAPIClient.post("productkeytransaction", request, ProductKeyTransactionObject.class);
+        ProductKeyTransactionObject transactionObject = dataApiClient.post("productkeytransaction", request, ProductKeyTransactionObject.class);
 
         return transactionObject.getId();
     }
 
     public void commit(String transactionId) {
-        dataAPIClient.post("productkeytransaction/{transactionId}/commit", null, ProductKeyTransactionObject.class, transactionId);
+        dataApiClient.post("productkeytransaction/{transactionId}/commit", null, ProductKeyTransactionObject.class, transactionId);
     }
 
     public void rollback(String transactionId) {
-        dataAPIClient.post("productkeytransaction/{transactionId}/rollback", null, ProductKeyTransactionObject.class, transactionId);
+        dataApiClient.post("productkeytransaction/{transactionId}/rollback", null, ProductKeyTransactionObject.class, transactionId);
     }
 
 }

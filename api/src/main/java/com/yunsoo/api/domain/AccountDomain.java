@@ -34,7 +34,7 @@ import java.util.List;
 public class AccountDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
     private OrganizationDomain organizationDomain;
@@ -46,14 +46,14 @@ public class AccountDomain {
             return null;
         }
         try {
-            return dataAPIClient.get("account/{id}", AccountObject.class, accountId);
+            return dataApiClient.get("account/{id}", AccountObject.class, accountId);
         } catch (NotFoundException ex) {
             return null;
         }
     }
 
     public AccountObject getByOrgIdAndIdentifier(String orgId, String identifier) {
-        AccountObject[] accountObjects = dataAPIClient.get("account?org_id={0}&identifier={1}", AccountObject[].class, orgId, identifier);
+        AccountObject[] accountObjects = dataApiClient.get("account?org_id={0}&identifier={1}", AccountObject[].class, orgId, identifier);
         if (accountObjects == null || accountObjects.length <= 0) {
             return null;
         } else if (accountObjects.length > 1) {
@@ -63,7 +63,7 @@ public class AccountDomain {
     }
 
     public List<AccountObject> getByOrgId(String orgId) {
-        return dataAPIClient.get("account?org_id={orgId}", new ParameterizedTypeReference<List<AccountObject>>() {
+        return dataApiClient.get("account?org_id={orgId}", new ParameterizedTypeReference<List<AccountObject>>() {
         }, orgId);
     }
 
@@ -74,7 +74,7 @@ public class AccountDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("account" + query, new ParameterizedTypeReference<List<AccountObject>>() {
+        return dataApiClient.getPaged("account" + query, new ParameterizedTypeReference<List<AccountObject>>() {
         });
     }
 
@@ -83,7 +83,7 @@ public class AccountDomain {
                 .append("org_id", orgId)
                 .append("status_code_in", statusCodeIn)
                 .build();
-        return dataAPIClient.get("account/count" + query, Long.class);
+        return dataApiClient.get("account/count" + query, Long.class);
     }
 
     public AccountObject createAccount(AccountObject accountObject, boolean generateHash) {
@@ -100,7 +100,7 @@ public class AccountDomain {
     public void patchUpdate(AccountObject accountObject) {
         accountObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
         accountObject.setModifiedDateTime(DateTime.now());
-        dataAPIClient.patch("account/{id}", accountObject, accountObject.getId());
+        dataApiClient.patch("account/{id}", accountObject, accountObject.getId());
     }
 
     @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ACCOUNT.toString(), #accountId)")
@@ -113,7 +113,7 @@ public class AccountDomain {
             accountObject.setHashSalt(hashSalt);
             accountObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
             accountObject.setModifiedDateTime(DateTime.now());
-            dataAPIClient.patch("account/{id}", accountObject, accountId);
+            dataApiClient.patch("account/{id}", accountObject, accountId);
         }
     }
 
@@ -124,7 +124,7 @@ public class AccountDomain {
             accountObject.setStatusCode(statusCode);
             accountObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
             accountObject.setModifiedDateTime(DateTime.now());
-            dataAPIClient.patch("account/{id}", accountObject, accountId);
+            dataApiClient.patch("account/{id}", accountObject, accountId);
         }
     }
 
@@ -154,7 +154,7 @@ public class AccountDomain {
         accountObject.setCreatedDateTime(DateTime.now());
         accountObject.setModifiedAccountId(null);
         accountObject.setModifiedDateTime(null);
-        return dataAPIClient.post("account", accountObject, AccountObject.class);
+        return dataApiClient.post("account", accountObject, AccountObject.class);
     }
 
 }

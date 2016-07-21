@@ -18,10 +18,10 @@ import java.util.List;
 public class TagDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public TagObject getTag(String tagId) {
-        return dataAPIClient.get("tag/" + tagId, new ParameterizedTypeReference<TagObject>() {
+        return dataApiClient.get("tag/" + tagId, new ParameterizedTypeReference<TagObject>() {
         });
     }
 
@@ -31,19 +31,19 @@ public class TagDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("tag" + query, new ParameterizedTypeReference<List<TagObject>>() {
+        return dataApiClient.getPaged("tag" + query, new ParameterizedTypeReference<List<TagObject>>() {
         });
     }
 
     public void delete(String tagId) {
-        dataAPIClient.delete("tag/" + tagId);
+        dataApiClient.delete("tag/" + tagId);
     }
 
     public TagObject create(TagObject tagObject) {
-        return dataAPIClient.post("tag", tagObject, TagObject.class);
+        return dataApiClient.post("tag", tagObject, TagObject.class);
     }
 
     public void update(String tagId, TagObject tagObject) {
-        dataAPIClient.patch("tag/" + tagId, tagObject, tagObject.getId());
+        dataApiClient.patch("tag/" + tagId, tagObject, tagObject.getId());
     }
 }

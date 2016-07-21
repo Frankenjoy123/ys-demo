@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 public class ProductFileDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public void createProductFile(ProductFileObject productFileObject) {
-        dataAPIClient.post("productfile", productFileObject, Long.class);
+        dataApiClient.post("productfile", productFileObject, Long.class);
     }
 }
