@@ -1,6 +1,6 @@
 package com.yunsoo.api.rabbit.config;
 
-import com.yunsoo.api.rabbit.client.DataAPIClient;
+import com.yunsoo.api.rabbit.client.DataApiClient1;
 import com.yunsoo.api.rabbit.client.WXAPIClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,8 +18,8 @@ public class ClientConfiguration {
     private String dataAPIBaseUrl;
 
     @Bean
-    public DataAPIClient dataAPIClient() {
-        return new DataAPIClient(formatBaseUrl(dataAPIBaseUrl));
+    public DataApiClient1 dataAPIClient() {
+        return new DataApiClient1(formatBaseUrl(dataAPIBaseUrl));
     }
 
     @Bean
