@@ -1,5 +1,6 @@
 package com.yunsoo.common.web.client;
 
+import com.yunsoo.common.web.health.Health;
 import com.yunsoo.common.web.util.PageableUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -80,6 +81,14 @@ public class RestClient {
 
     public RestTemplate getRestTemplate() {
         return this.restTemplate;
+    }
+
+    public Health checkHealth() {
+        try {
+            return get("health", Health.class);
+        } catch (Exception e) {
+            return new Health(Health.Status.DOWN).withDetail("exception", e.getMessage());
+        }
     }
 
 

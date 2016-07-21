@@ -1,6 +1,6 @@
 package com.yunsoo.processor.config;
 
-import com.yunsoo.processor.client.DataAPIClient;
+import com.yunsoo.processor.client.DataApiClient1;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +18,8 @@ public class ClientConfiguration {
 
 
     @Bean
-    public DataAPIClient dataAPIClient() {
-        return new DataAPIClient(formatBaseUrl(dataAPIBaseUrl));
+    public DataApiClient1 dataAPIClient() {
+        return new DataApiClient1(formatBaseUrl(dataAPIBaseUrl));
     }
 
 

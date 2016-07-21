@@ -57,6 +57,9 @@ logging:
 
 yunsoo:
   environment: local
+  client:
+    auth_api:
+      base_url: http://dev.yunsu.co:6180/
   cache:
     type: local
   alipay:

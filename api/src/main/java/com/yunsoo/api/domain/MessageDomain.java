@@ -2,17 +2,9 @@ package com.yunsoo.api.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gexin.rp.sdk.base.IIGtPush;
-import com.gexin.rp.sdk.base.IPushResult;
-import com.gexin.rp.sdk.base.impl.AppMessage;
-import com.gexin.rp.sdk.base.payload.APNPayload;
-import com.gexin.rp.sdk.http.IGtPush;
-import com.gexin.rp.sdk.template.TransmissionTemplate;
-import com.yunsoo.api.Constants;
 import com.yunsoo.api.dto.Message;
 import com.yunsoo.api.dto.MessageDetails;
 import com.yunsoo.api.dto.MessageImageRequest;
-import com.yunsoo.api.dto.MessageToApp;
 import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -29,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -44,7 +35,7 @@ public class MessageDomain {
     private static final String DETAILS_FILE_NAME = "message-details.json";
     private static final String BODY_FILE_NAME = "message-body.html";
     private static final String COVER_IMAGE_NAME = "image-cover";
-    private static final IIGtPush iiGtPush = new IGtPush(Constants.PushBase.API, Constants.PushBase.APPKEY, Constants.PushBase.MASTERSECRET);
+    //private static final IIGtPush iiGtPush = new IGtPush(Constants.PushBase.API, Constants.PushBase.APPKEY, Constants.PushBase.MASTERSECRET);
 
 
     private static ObjectMapper mapper = new ObjectMapper();
@@ -182,73 +173,73 @@ public class MessageDomain {
         return dataAPIClient.get("message/count/on" + query, Long.class);
     }
 
-    public IPushResult pushMessageToApp(String orgId, String id, MessageToApp messageToApp) {
-        // define messge template
-        try {
-            String content = mapper.writeValueAsString(messageToApp);
-            TransmissionTemplate transmissionTemplate = new TransmissionTemplate();
-            transmissionTemplate.setAppId(Constants.PushBase.APPID);
-            transmissionTemplate.setAppkey(Constants.PushBase.APPKEY);
-            transmissionTemplate.setTransmissionType(2);
-            transmissionTemplate.setTransmissionContent(content);
-            // define app and message tag
-            List<String> appIdList = new ArrayList<>();
-            List<String> tagList = new ArrayList<>();
-            List<String> phoneTypeList = new ArrayList<>();
-            appIdList.add(Constants.PushBase.APPID);
-            tagList.add("yunsu");
-            tagList.add(orgId);
-            phoneTypeList.add("ANDROID");
-
-            // message content
-            AppMessage appMessage = new AppMessage();
-            appMessage.setData(transmissionTemplate);
-            appMessage.setOffline(true);
-            appMessage.setAppIdList(appIdList);
-            appMessage.setTagList(tagList);
-            appMessage.setPhoneTypeList(phoneTypeList);
-
-            //push message to users
-            iiGtPush.connect();
-            IPushResult iPushResult = iiGtPush.pushMessageToApp(appMessage);
-//            iiGtPush.close();
-
-            //push message to ios users
-            TransmissionTemplate iostransmissionTemplate = new TransmissionTemplate();
-            iostransmissionTemplate.setAppId(Constants.PushBase.APPID);
-            iostransmissionTemplate.setAppkey(Constants.PushBase.APPKEY);
-            iostransmissionTemplate.setTransmissionType(2);
-            iostransmissionTemplate.setTransmissionContent(content);
-            APNPayload payload = new APNPayload();
-            payload.setBadge(1);
-            payload.setContentAvailable(1);
-            payload.setSound("default");
-            payload.setCategory("default");
-            payload.addCustomMsg("message_id", messageToApp.getMessageId());
-            payload.addCustomMsg("org_id", messageToApp.getOrgId());
-            payload.addCustomMsg("org_name", messageToApp.getOrgName());
-            payload.addCustomMsg("title", messageToApp.getTitle());
-            payload.addCustomMsg("body", messageToApp.getBody());
-            APNPayload.DictionaryAlertMsg alertMsg = new APNPayload.DictionaryAlertMsg();
-            //    alertMsg.setTitle(messageToApp.getTitle());
-            //  alertMsg.setBody(messageToApp.getBody());
-            alertMsg.setBody(messageToApp.getTitle());
-            payload.setAlertMsg(alertMsg);
-            iostransmissionTemplate.setAPNInfo(payload);
-            AppMessage iosappMessage = new AppMessage();
-            iosappMessage.setData(iostransmissionTemplate);
-            iosappMessage.setOffline(true);
-            iosappMessage.setAppIdList(appIdList);
-            iosappMessage.setTagList(tagList);
+//    public IPushResult pushMessageToApp(String orgId, String id, MessageToApp messageToApp) {
+//        // define messge template
+//        try {
+//            String content = mapper.writeValueAsString(messageToApp);
+//            TransmissionTemplate transmissionTemplate = new TransmissionTemplate();
+//            transmissionTemplate.setAppId(Constants.PushBase.APPID);
+//            transmissionTemplate.setAppkey(Constants.PushBase.APPKEY);
+//            transmissionTemplate.setTransmissionType(2);
+//            transmissionTemplate.setTransmissionContent(content);
+//            // define app and message tag
+//            List<String> appIdList = new ArrayList<>();
+//            List<String> tagList = new ArrayList<>();
+//            List<String> phoneTypeList = new ArrayList<>();
+//            appIdList.add(Constants.PushBase.APPID);
+//            tagList.add("yunsu");
+//            tagList.add(orgId);
+//            phoneTypeList.add("ANDROID");
+//
+//            // message content
+//            AppMessage appMessage = new AppMessage();
+//            appMessage.setData(transmissionTemplate);
+//            appMessage.setOffline(true);
+//            appMessage.setAppIdList(appIdList);
+//            appMessage.setTagList(tagList);
+//            appMessage.setPhoneTypeList(phoneTypeList);
+//
+//            //push message to users
 //            iiGtPush.connect();
-            IPushResult iosPushResult = iiGtPush.pushMessageToApp(iosappMessage);
-            iiGtPush.close();
-
-            return iPushResult;
-        } catch (IOException ex) {
-            return null;
-        }
-    }
+//            IPushResult iPushResult = iiGtPush.pushMessageToApp(appMessage);
+////            iiGtPush.close();
+//
+//            //push message to ios users
+//            TransmissionTemplate iostransmissionTemplate = new TransmissionTemplate();
+//            iostransmissionTemplate.setAppId(Constants.PushBase.APPID);
+//            iostransmissionTemplate.setAppkey(Constants.PushBase.APPKEY);
+//            iostransmissionTemplate.setTransmissionType(2);
+//            iostransmissionTemplate.setTransmissionContent(content);
+//            APNPayload payload = new APNPayload();
+//            payload.setBadge(1);
+//            payload.setContentAvailable(1);
+//            payload.setSound("default");
+//            payload.setCategory("default");
+//            payload.addCustomMsg("message_id", messageToApp.getMessageId());
+//            payload.addCustomMsg("org_id", messageToApp.getOrgId());
+//            payload.addCustomMsg("org_name", messageToApp.getOrgName());
+//            payload.addCustomMsg("title", messageToApp.getTitle());
+//            payload.addCustomMsg("body", messageToApp.getBody());
+//            APNPayload.DictionaryAlertMsg alertMsg = new APNPayload.DictionaryAlertMsg();
+//            //    alertMsg.setTitle(messageToApp.getTitle());
+//            //  alertMsg.setBody(messageToApp.getBody());
+//            alertMsg.setBody(messageToApp.getTitle());
+//            payload.setAlertMsg(alertMsg);
+//            iostransmissionTemplate.setAPNInfo(payload);
+//            AppMessage iosappMessage = new AppMessage();
+//            iosappMessage.setData(iostransmissionTemplate);
+//            iosappMessage.setOffline(true);
+//            iosappMessage.setAppIdList(appIdList);
+//            iosappMessage.setTagList(tagList);
+////            iiGtPush.connect();
+//            IPushResult iosPushResult = iiGtPush.pushMessageToApp(iosappMessage);
+//            iiGtPush.close();
+//
+//            return iPushResult;
+//        } catch (IOException ex) {
+//            return null;
+//        }
+//    }
 
     //generate random 10 bit ID
     public static String getRandomString() {
