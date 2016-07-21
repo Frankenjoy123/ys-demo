@@ -1,7 +1,7 @@
 package com.yunsoo.auth;
 
 import com.yunsoo.auth.api.security.authentication.TokenAuthenticationService;
-import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.client.AsyncRestClient;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
@@ -26,7 +26,7 @@ import java.net.UnknownHostException;
 @Ignore
 public class TestBase {
 
-    protected static RestClient restClient;
+    protected static AsyncRestClient restClient;
 
     @Value("${local.server.port}")
     public int port;
@@ -42,7 +42,7 @@ public class TestBase {
             String appId = "AuthUnitTest";
             String deviceId = getHostName();
             String accessToken = tokenAuthenticationService.generateAccessToken(Constants.SYSTEM_ACCOUNT_ID, "2k0r1l55i2rs5544wz5").getToken();
-            restClient = new RestClient("http://localhost:" + port);
+            restClient = new AsyncRestClient("http://localhost:" + port);
             restClient.setPreRequestCallback(request -> {
                 HttpHeaders httpHeaders = request.getHeaders();
                 httpHeaders.set(Constants.HttpHeaderName.APP_ID, appId);

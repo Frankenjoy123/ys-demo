@@ -29,7 +29,6 @@ public class AccountCreationRequest implements OrgIdDetectable, Serializable {
     @JsonProperty("last_name")
     private String lastName;
 
-    @NotBlank(message = "email must not be null or empty")
     @JsonProperty("email")
     private String email;
 

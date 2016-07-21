@@ -29,3 +29,8 @@ VALUES
   ('default', 'Default', NULL, 'account:read,organization:read'),
   ('admin', 'Admin', NULL, '*:*'),
   ('read', 'Read', NULL, '*:read');
+
+INSERT INTO permission_allocation (id, principal, restriction, permission, effect, created_account_id, created_datetime)
+VALUES
+  ('2ml1ogye3znqihtdnnd', 'account/0010000000000000000', 'org/*', '*:*', 'allow', '0010000000000000000',
+   CURRENT_TIMESTAMP)

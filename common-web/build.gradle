@@ -17,6 +17,7 @@ dependencies {
     compile project(':common')
 
     compile 'org.apache.httpcomponents:httpclient'
+    compile 'org.apache.httpcomponents:httpasyncclient'
     compile 'org.springframework:spring-web'
     compile 'org.springframework.data:spring-data-commons'
 
