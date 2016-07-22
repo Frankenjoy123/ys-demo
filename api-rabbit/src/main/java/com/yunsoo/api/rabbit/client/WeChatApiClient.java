@@ -5,9 +5,9 @@ import com.yunsoo.common.web.client.RestClient;
 /**
  * Created by Admin on 6/29/2016.
  */
-public class WXAPIClient extends RestClient {
+public class WeChatApiClient extends RestClient {
 
-    public WXAPIClient(String baseURL) {
+    public WeChatApiClient(String baseURL) {
         super(baseURL);
     }
 

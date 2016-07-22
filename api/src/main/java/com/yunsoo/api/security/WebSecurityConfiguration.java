@@ -43,6 +43,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/auth/login/**").permitAll()
                 .antMatchers("/auth/accesstoken/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/health/**").permitAll()
                 .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
                 .antMatchers(HttpMethod.GET, "/application/*/config").permitAll()
                 .antMatchers(HttpMethod.GET, "/organization/public/config").permitAll()

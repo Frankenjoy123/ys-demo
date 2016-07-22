@@ -17,33 +17,33 @@ import java.util.List;
 public class ProductSalesTerritoryDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
 
     public List<ProductSalesTerritoryObject> getProductSalesTerritoryByProductKey(String productKey) {
-        return dataAPIClient.get("productsalesterritory?product_key={productKey}", new ParameterizedTypeReference<List<ProductSalesTerritoryObject>>() {
+        return dataApiClient.get("productsalesterritory?product_key={productKey}", new ParameterizedTypeReference<List<ProductSalesTerritoryObject>>() {
         }, productKey);
     }
 
     public List<ProductSalesTerritoryObject> getProductSalesTerritoryByOrgAgencyId(String orgAgencyId) {
-        return dataAPIClient.get("productsalesterritory?org_agency_id={orgAgencyId}", new ParameterizedTypeReference<List<ProductSalesTerritoryObject>>() {
+        return dataApiClient.get("productsalesterritory?org_agency_id={orgAgencyId}", new ParameterizedTypeReference<List<ProductSalesTerritoryObject>>() {
         }, orgAgencyId);
     }
 
     public ProductSalesTerritoryObject getProductSalesTerritoryById(String id) {
-        return dataAPIClient.get("productsalesterritory/{id}", ProductSalesTerritoryObject.class, id);
+        return dataApiClient.get("productsalesterritory/{id}", ProductSalesTerritoryObject.class, id);
     }
 
     public ProductSalesTerritoryObject createProductSalesTerritory(ProductSalesTerritoryObject productSalesTerritoryObject) {
-        return dataAPIClient.post("productsalesterritory", productSalesTerritoryObject, ProductSalesTerritoryObject.class);
+        return dataApiClient.post("productsalesterritory", productSalesTerritoryObject, ProductSalesTerritoryObject.class);
     }
 
     public void patchUpdate(ProductSalesTerritoryObject productSalesTerritoryObject) {
-        dataAPIClient.put("productsalesterritory/{id}", productSalesTerritoryObject, productSalesTerritoryObject.getId());
+        dataApiClient.put("productsalesterritory/{id}", productSalesTerritoryObject, productSalesTerritoryObject.getId());
     }
 
     public void deleteProductSalesTerritory(String id) {
-        dataAPIClient.delete("productsalesterritory/{id}", id);
+        dataApiClient.delete("productsalesterritory/{id}", id);
     }
 
 }

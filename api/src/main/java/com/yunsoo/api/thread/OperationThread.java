@@ -1,14 +1,12 @@
 package com.yunsoo.api.thread;
 
 import com.yunsoo.api.cache.OperationCache;
-import com.yunsoo.api.client.DataAPIClient;
+import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.common.data.object.OperationLogObject;
 import com.yunsoo.common.data.object.juhe.IPResultObject;
-import com.yunsoo.common.web.client.RestClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,7 +20,7 @@ public class OperationThread implements Runnable {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private DataAPIClient client;
+    private DataApiClient client;
 
     @Override
     public void run() {

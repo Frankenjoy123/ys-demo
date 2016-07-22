@@ -16,7 +16,7 @@ import java.util.List;
 public class WebTemplateDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public List<WebTemplateObject> getWebTemplateList(String typeCode, String restriction) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -24,7 +24,7 @@ public class WebTemplateDomain {
                 .append("restriction", restriction)
                 .build();
 
-        return dataAPIClient.get("/webTemplate" + query, new ParameterizedTypeReference<List<WebTemplateObject>>() {
+        return dataApiClient.get("/webTemplate" + query, new ParameterizedTypeReference<List<WebTemplateObject>>() {
         });
     }
 }

@@ -14,7 +14,7 @@ public class UserControllerTest extends ControllerTestBase {
 
     @Test
     public void test_AnonymousUser() {
-        UserObject userObject = dataAPIClient.get("user/{id}", UserObject.class, Constants.Ids.ANONYMOUS_USER_ID);
+        UserObject userObject = dataApiClient.get("user/{id}", UserObject.class, Constants.Ids.ANONYMOUS_USER_ID);
         assert userObject.getId().equals(Constants.Ids.ANONYMOUS_USER_ID);
 
     }

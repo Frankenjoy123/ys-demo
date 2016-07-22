@@ -23,7 +23,7 @@ import java.util.List;
 public class LogisticsPointController {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -37,7 +37,7 @@ public class LogisticsPointController {
         }
 
         LogisticsCheckPointObject logisticsCheckPointObject = toLogisticsCheckPointObject(logisticsPoint);
-        LogisticsCheckPointObject newObject = dataAPIClient.post("logisticscheckpoint", logisticsCheckPointObject, LogisticsCheckPointObject.class);
+        LogisticsCheckPointObject newObject = dataApiClient.post("logisticscheckpoint", logisticsCheckPointObject, LogisticsCheckPointObject.class);
 
         LogisticsPoint newPoint = fromLogisticsCheckPointObject(newObject);
 
@@ -48,7 +48,7 @@ public class LogisticsPointController {
     @PostAuthorize("hasPermission(returnObject, 'logistics_point:read')")
     public LogisticsPoint get(@PathVariable(value = "id") String id) {
 
-        LogisticsCheckPointObject logisticsCheckPointObject = dataAPIClient.get("logisticscheckpoint/{id}", LogisticsCheckPointObject.class, id);
+        LogisticsCheckPointObject logisticsCheckPointObject = dataApiClient.get("logisticscheckpoint/{id}", LogisticsCheckPointObject.class, id);
         if(logisticsCheckPointObject == null)
             throw new NotFoundException("Logistics point not found id=" + id);
 
@@ -68,7 +68,7 @@ public class LogisticsPointController {
         }
 
         LogisticsCheckPointObject[] objects =
-                dataAPIClient.get("logisticscheckpoint?orgId={orgId}&&pageIndex={pageIndex}&&pageSize={pageSize}",
+                dataApiClient.get("logisticscheckpoint?orgId={orgId}&&pageIndex={pageIndex}&&pageSize={pageSize}",
                         LogisticsCheckPointObject[].class,
                         orgId,
                         pageIndex,
@@ -92,14 +92,14 @@ public class LogisticsPointController {
         }
 
         LogisticsCheckPointObject logisticsCheckPointObject = toLogisticsCheckPointObject(logisticsPoint);
-        dataAPIClient.patch("logisticscheckpoint", logisticsCheckPointObject);
+        dataApiClient.patch("logisticscheckpoint", logisticsCheckPointObject);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "id") String id) {
 
-        dataAPIClient.delete("logisticscheckpoint/{id}", id);
+        dataApiClient.delete("logisticscheckpoint/{id}", id);
     }
 
     private LogisticsPoint fromLogisticsCheckPointObject(LogisticsCheckPointObject logisticsCheckPointObject)

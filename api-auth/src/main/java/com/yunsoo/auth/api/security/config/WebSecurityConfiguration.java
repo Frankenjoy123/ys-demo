@@ -6,6 +6,7 @@ import com.yunsoo.auth.api.security.authentication.TokenInvalidAuthenticationEnt
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -41,10 +42,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 .antMatchers("/").permitAll()
+                .antMatchers(HttpMethod.GET, "/health/**").permitAll()
+                .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/login/**").permitAll()
                 .antMatchers("/accesstoken").permitAll()
-                .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
                 .anyRequest().authenticated().and()
 
                 // custom Token based authentication based on the header previously given to the client

@@ -15,7 +15,7 @@ public class DebugControllerTest extends ControllerTestBase {
 
     @Test
     public void test_info() {
-        Map<String, Object> info = dataAPIClient.get("debug", new ParameterizedTypeReference<Map<String, Object>>() {
+        Map<String, Object> info = dataApiClient.get("debug", new ParameterizedTypeReference<Map<String, Object>>() {
         });
         System.out.println(info);
 

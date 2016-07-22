@@ -6,7 +6,7 @@ import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import com.yunsoo.processor.client.DataAPIClient;
+import com.yunsoo.processor.client.DataApiClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
@@ -28,7 +28,7 @@ public class TaskFileDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private DataAPIClient dataAPIClient;
+    private DataApiClient dataApiClient;
 
     @Autowired
     private FileDomain fileDomain;
@@ -39,7 +39,7 @@ public class TaskFileDomain {
             return null;
         }
         try {
-            return dataAPIClient.get("taskFileEntry/{id}", TaskFileEntryObject.class, fileId);
+            return dataApiClient.get("taskFileEntry/{id}", TaskFileEntryObject.class, fileId);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -66,13 +66,13 @@ public class TaskFileDomain {
                 .append("created_datetime_end", createdDateTimeEnd)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("taskFileEntry" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
+        return dataApiClient.getPaged("taskFileEntry" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
         });
     }
 
     public void updateTaskFileEntryStatus(String fileId, String statusCode) {
         try {
-            dataAPIClient.put("taskFileEntry/{id}/statusCode", statusCode, fileId);
+            dataApiClient.put("taskFileEntry/{id}/statusCode", statusCode, fileId);
         } catch (Exception e) {
             log.error("update statusCode failed for taskFileEntry " + StringFormatter.formatMap("fileId", fileId));
         }

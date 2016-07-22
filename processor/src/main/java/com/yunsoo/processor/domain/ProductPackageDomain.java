@@ -1,7 +1,7 @@
 package com.yunsoo.processor.domain;
 
 import com.yunsoo.common.data.object.ProductPackageObject;
-import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.processor.client.DataApiClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +20,11 @@ public class ProductPackageDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private RestClient dataAPIClient;
+    private DataApiClient dataApiClient;
 
 
     public int batchPackage(List<ProductPackageObject> productPackageObjects) {
-        return dataAPIClient.post("productpackage/batch", productPackageObjects, int.class);
+        return dataApiClient.post("productpackage/batch", productPackageObjects, int.class);
     }
 
 }

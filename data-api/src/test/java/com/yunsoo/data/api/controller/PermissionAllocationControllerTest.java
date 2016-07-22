@@ -27,17 +27,17 @@ public class PermissionAllocationControllerTest extends ControllerTestBase {
         obj.setEffect(PermissionAllocationObject.Effect.allow);
         obj.setCreatedAccountId(accountId);
 
-        obj = dataAPIClient.post("permissionAllocation", obj, PermissionAllocationObject.class);
+        obj = dataApiClient.post("permissionAllocation", obj, PermissionAllocationObject.class);
         assert obj != null && obj.getId() != null;
 
-        obj = dataAPIClient.get("permissionAllocation/{id}", PermissionAllocationObject.class, obj.getId());
+        obj = dataApiClient.get("permissionAllocation/{id}", PermissionAllocationObject.class, obj.getId());
         assert obj != null && obj.getId() != null;
 
-        List<PermissionAllocationObject> permissionAllocationObjects = dataAPIClient.get("permissionAllocation?principal={p}", new ParameterizedTypeReference<List<PermissionAllocationObject>>() {
+        List<PermissionAllocationObject> permissionAllocationObjects = dataApiClient.get("permissionAllocation?principal={p}", new ParameterizedTypeReference<List<PermissionAllocationObject>>() {
         }, "account/" + accountId);
         assert permissionAllocationObjects.size() > 0;
 
-        dataAPIClient.delete("permissionAllocation/{id}", obj.getId());
+        dataApiClient.delete("permissionAllocation/{id}", obj.getId());
 
     }
 

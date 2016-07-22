@@ -28,7 +28,7 @@ import java.util.List;
 public class UserFollowDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
     private OrganizationDomain organizationDomain;
@@ -47,14 +47,14 @@ public class UserFollowDomain {
         Assert.hasText(orgId);
 
         if (organizationDomain.getById(orgId) != null) {
-            List<UserOrganizationFollowingObject> objects = dataAPIClient.get("UserOrganizationFollowing?user_id={userId}&org_id={orgId}",
+            List<UserOrganizationFollowingObject> objects = dataApiClient.get("UserOrganizationFollowing?user_id={userId}&org_id={orgId}",
                     new ParameterizedTypeReference<List<UserOrganizationFollowingObject>>() {
                     }, userId, orgId);
             if (objects.size() == 0) {
                 UserOrganizationFollowingObject object = new UserOrganizationFollowingObject();
                 object.setUserId(userId);
                 object.setOrgId(orgId);
-                return dataAPIClient.post("UserOrganizationFollowing", object, UserOrganizationFollowingObject.class);
+                return dataApiClient.post("UserOrganizationFollowing", object, UserOrganizationFollowingObject.class);
             } else {
                 return objects.get(0);
             }
@@ -68,14 +68,14 @@ public class UserFollowDomain {
         Assert.hasText(productBaseId);
 
         if (productBaseDomain.getProductBaseById(productBaseId) != null) {
-            List<UserProductFollowingObject> objects = dataAPIClient.get("UserProductFollowing?user_id={userId}&product_base_id={productBaseId}",
+            List<UserProductFollowingObject> objects = dataApiClient.get("UserProductFollowing?user_id={userId}&product_base_id={productBaseId}",
                     new ParameterizedTypeReference<List<UserProductFollowingObject>>() {
                     }, userId, productBaseId);
             if (objects.size() == 0) {
                 UserProductFollowingObject object = new UserProductFollowingObject();
                 object.setUserId(userId);
                 object.setProductBaseId(productBaseId);
-                return dataAPIClient.post("UserProductFollowing", object, UserProductFollowingObject.class);
+                return dataApiClient.post("UserProductFollowing", object, UserProductFollowingObject.class);
             } else {
                 return objects.get(0);
             }
@@ -90,7 +90,7 @@ public class UserFollowDomain {
                 .append(pageable)
                 .build();
 
-        Page<UserOrganizationFollowingObject> userFollowingList = dataAPIClient.getPaged("UserOrganizationFollowing" + query,
+        Page<UserOrganizationFollowingObject> userFollowingList = dataApiClient.getPaged("UserOrganizationFollowing" + query,
                 new ParameterizedTypeReference<List<UserOrganizationFollowingObject>>() {
                 }, userId);
 
@@ -115,7 +115,7 @@ public class UserFollowDomain {
                 .append(pageable)
                 .build();
 
-        Page<UserProductFollowingObject> userFollowingList = dataAPIClient.getPaged("UserProductFollowing" + query,
+        Page<UserProductFollowingObject> userFollowingList = dataApiClient.getPaged("UserProductFollowing" + query,
                 new ParameterizedTypeReference<List<UserProductFollowingObject>>() {
                 }, userId);
 
@@ -138,23 +138,23 @@ public class UserFollowDomain {
     }
 
     public UserOrganizationFollowingObject getUserOrganizationFollowingByUserIdAndOrgId(String userId, String orgId) {
-        List<UserOrganizationFollowingObject> objects = dataAPIClient.get("UserOrganizationFollowing?user_id={userId}&org_id={orgId}", new ParameterizedTypeReference<List<UserOrganizationFollowingObject>>() {
+        List<UserOrganizationFollowingObject> objects = dataApiClient.get("UserOrganizationFollowing?user_id={userId}&org_id={orgId}", new ParameterizedTypeReference<List<UserOrganizationFollowingObject>>() {
         }, userId, orgId);
         return objects.size() > 0 ? objects.get(0) : null;
     }
 
     public UserProductFollowingObject getUserProductFollowingByUserIdAndProductBaseId(String userId, String productBaseId) {
-        List<UserProductFollowingObject> objects = dataAPIClient.get("UserProductFollowing?user_id={userId}&product_base_id={productBaseId}", new ParameterizedTypeReference<List<UserProductFollowingObject>>() {
+        List<UserProductFollowingObject> objects = dataApiClient.get("UserProductFollowing?user_id={userId}&product_base_id={productBaseId}", new ParameterizedTypeReference<List<UserProductFollowingObject>>() {
         }, userId, productBaseId);
         return objects.size() > 0 ? objects.get(0) : null;
     }
 
     public void deleteUserOrganizationFollowing(String userId, String orgId) {
-        dataAPIClient.delete("UserOrganizationFollowing?user_id={userId}&org_id={orgId}", userId, orgId);
+        dataApiClient.delete("UserOrganizationFollowing?user_id={userId}&org_id={orgId}", userId, orgId);
     }
 
     public void deleteUserProductFollowing(String userId, String productBaseId) {
-        dataAPIClient.delete("UserProductFollowing?user_id={userId}&product_base_id={productBaseId}", userId, productBaseId);
+        dataApiClient.delete("UserProductFollowing?user_id={userId}&product_base_id={productBaseId}", userId, productBaseId);
     }
 
 }

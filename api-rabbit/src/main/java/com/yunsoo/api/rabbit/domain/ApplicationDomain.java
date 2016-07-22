@@ -16,11 +16,11 @@ import org.springframework.stereotype.Component;
 public class ApplicationDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public ApplicationObject getApplicationById(String id) {
         try {
-            return dataAPIClient.get("application/{id}", ApplicationObject.class, id);
+            return dataApiClient.get("application/{id}", ApplicationObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -31,7 +31,7 @@ public class ApplicationDomain {
         QueryStringBuilder builder = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("type_code", typeCode).append("system_version", systemVersion );
         try {
-            return dataAPIClient.get("application/latest" + builder.toString(), ApplicationObject.class, typeCode);
+            return dataApiClient.get("application/latest" + builder.toString(), ApplicationObject.class, typeCode);
         } catch (NotFoundException ignored) {
             return null;
         }

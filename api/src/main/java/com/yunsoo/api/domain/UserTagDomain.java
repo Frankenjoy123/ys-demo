@@ -16,7 +16,7 @@ import java.util.List;
 public class UserTagDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public List<UserTagObject> getUserTags(String userId, String ysId, String orgId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -25,7 +25,7 @@ public class UserTagDomain {
                 .append("org_id", orgId)
                 .build();
 
-        return dataAPIClient.get("/user/tag" + query, new ParameterizedTypeReference<List<UserTagObject>>() {
+        return dataApiClient.get("/user/tag" + query, new ParameterizedTypeReference<List<UserTagObject>>() {
         });
     }
 
@@ -36,6 +36,6 @@ public class UserTagDomain {
                 .append("org_id", orgId)
                 .build();
 
-        dataAPIClient.put("/user/tag" + query, userTagObjects);
+        dataApiClient.put("/user/tag" + query, userTagObjects);
     }
 }

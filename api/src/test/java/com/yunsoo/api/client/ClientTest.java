@@ -18,7 +18,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class ClientTest {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private AuthApiClient authApiClient;
+
+    @Autowired
+    private RestClient dataApiClient;
 
     @Autowired
     private RestClient processorClient;
@@ -26,8 +29,13 @@ public class ClientTest {
 
     @Test
     public void testGetBaseURL() {
-        System.out.println(dataAPIClient.getBaseUrl());
+        System.out.println(dataApiClient.getBaseUrl());
         System.out.println(processorClient.getBaseUrl());
+    }
+
+    @Test
+    public void testAuthApiClient() {
+        System.out.println("authApiClient: " + authApiClient.checkHealth().getStatus());
     }
 
 

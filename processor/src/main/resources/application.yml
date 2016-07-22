@@ -26,8 +26,8 @@ yunsoo:
   debug: true
   environment: dev
   client:
-    dataapi:
-      baseurl: http://localhost:3080/
+    data_api:
+      base_url: http://localhost:3080/
 
 jdbc:
   processor:

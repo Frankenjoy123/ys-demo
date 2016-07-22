@@ -21,14 +21,14 @@ public class PermissionControllerTest extends ControllerTestBase {
 
     @Test
     public void test_PermissionResource() {
-        List<PermissionResourceObject> resourceObjects = dataAPIClient.get("permission/resource", new ParameterizedTypeReference<List<PermissionResourceObject>>() {
+        List<PermissionResourceObject> resourceObjects = dataApiClient.get("permission/resource", new ParameterizedTypeReference<List<PermissionResourceObject>>() {
         });
         assert resourceObjects.size() > 0;
     }
 
     @Test
     public void test_PermissionAction() {
-        List<PermissionActionObject> actionObjects = dataAPIClient.get("permission/action", new ParameterizedTypeReference<List<PermissionActionObject>>() {
+        List<PermissionActionObject> actionObjects = dataApiClient.get("permission/action", new ParameterizedTypeReference<List<PermissionActionObject>>() {
         });
         assert actionObjects.size() > 0;
     }
@@ -43,27 +43,27 @@ public class PermissionControllerTest extends ControllerTestBase {
         obj.setRestrictions(Arrays.asList("org/" + orgId, "org/" + orgId));
         obj.setTypeCode("default");
 
-        obj = dataAPIClient.post("permission/region", obj, PermissionRegionObject.class);
+        obj = dataApiClient.post("permission/region", obj, PermissionRegionObject.class);
         assert obj != null && obj.getId() != null;
 
-        obj = dataAPIClient.get("permission/region/{id}", PermissionRegionObject.class, obj.getId());
+        obj = dataApiClient.get("permission/region/{id}", PermissionRegionObject.class, obj.getId());
         assert obj != null;
 
-        List<PermissionRegionObject> permissionRegionObjects = dataAPIClient.get("permission/region?org_id={p}", new ParameterizedTypeReference<List<PermissionRegionObject>>() {
+        List<PermissionRegionObject> permissionRegionObjects = dataApiClient.get("permission/region?org_id={p}", new ParameterizedTypeReference<List<PermissionRegionObject>>() {
         }, orgId);
         assert permissionRegionObjects.size() > 0;
 
-        dataAPIClient.delete("permission/region/{id}", obj.getId());
+        dataApiClient.delete("permission/region/{id}", obj.getId());
 
     }
 
     @Test
     public void test_PermissionPolicy() {
-        List<PermissionPolicyObject> objects = dataAPIClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
+        List<PermissionPolicyObject> objects = dataApiClient.get("permission/policy", new ParameterizedTypeReference<List<PermissionPolicyObject>>() {
         });
         assert objects.size() > 0;
 
-        PermissionPolicyObject obj = dataAPIClient.get("permission/policy/{code}", PermissionPolicyObject.class, "admin");
+        PermissionPolicyObject obj = dataApiClient.get("permission/policy/{code}", PermissionPolicyObject.class, "admin");
         assert obj != null;
     }
 

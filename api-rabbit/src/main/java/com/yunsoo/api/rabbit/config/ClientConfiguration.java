@@ -1,7 +1,7 @@
 package com.yunsoo.api.rabbit.config;
 
-import com.yunsoo.api.rabbit.client.DataAPIClient;
-import com.yunsoo.api.rabbit.client.WXAPIClient;
+import com.yunsoo.api.rabbit.client.DataApiClient;
+import com.yunsoo.api.rabbit.client.WeChatApiClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,26 +14,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ClientConfiguration {
 
-    @Value("${yunsoo.client.dataapi.baseurl}")
-    private String dataAPIBaseUrl;
+    @Value("${yunsoo.client.data_api.base_url}")
+    private String dataApiBaseUrl;
 
     @Bean
-    public DataAPIClient dataAPIClient() {
-        return new DataAPIClient(formatBaseUrl(dataAPIBaseUrl));
+    public DataApiClient dataApiClient() {
+        return new DataApiClient(dataApiBaseUrl);
     }
 
     @Bean
-    public WXAPIClient wxAPIClient() {
-        return new WXAPIClient(formatBaseUrl("https://api.weixin.qq.com/cgi-bin"));
-    }
-
-    private String formatBaseUrl(String baseUrl) {
-        if (baseUrl == null) {
-            baseUrl = "/";
-        } else if (!baseUrl.endsWith("/")) {
-            baseUrl += "/";
-        }
-        return baseUrl;
+    public WeChatApiClient weChatApiClient() {
+        return new WeChatApiClient("https://api.weixin.qq.com/cgi-bin/");
     }
 
 }
