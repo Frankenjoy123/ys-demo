@@ -68,10 +68,12 @@ public class AsyncRestClient extends RestClient {
 
     //GET
     public <T> ListenableFuture<T> getAsync(String url, Class<T> responseType, Object... uriVariables) {
+        Assert.notNull(responseType, "responseType must not be null");
         return asyncRestTemplate.execute(getAbsoluteUrl(url), HttpMethod.GET, null, responseType, uriVariables);
     }
 
     public <T> ListenableFuture<T> getAsync(String url, ParameterizedTypeReference<T> responseType, Object... uriVariables) {
+        Assert.notNull(responseType, "responseType must not be null");
         return asyncRestTemplate.execute(getAbsoluteUrl(url), HttpMethod.GET, null, responseType.getType(), uriVariables);
     }
 
