@@ -63,6 +63,26 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         return query("comment", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
     }
 
+    @Override
+    public List<String[]> scanDailyCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        return queryDailyEventCount("scan", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+    }
+
+    @Override
+    public List<String[]> shareDailyCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        return queryDailyEventCount("share", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+    }
+
+    @Override
+    public List<String[]> storeUrlDailyCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        return queryDailyEventCount("store_url", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+    }
+
+    @Override
+    public List<String[]> commentDailyCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        return queryDailyEventCount("comment", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+    }
+
 
     @Override
     public EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId) {
@@ -160,6 +180,65 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         array[0] = ((BigInteger)data[0]).intValue();
         array[1] = ((BigInteger)data[1]).intValue();
         return array;
+    }
+
+    private List<String[]> queryDailyEventCount(String action, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, int level) {
+        String sql = "select DATE_FORMAT(event_datetime,'%Y-%m-%d'),count(1), count(distinct u.id) from emr_event ev inner join emr_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.name= :eventName" +
+                " and ev.org_id =:orgId " + "group by DATE_FORMAT(event_datetime,'%Y-%m-%d')";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("eventName", action);
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isNullOrEmpty(province)) {
+            sql = sql + " and ev.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and ev.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and ev.event_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+
+        if (level > 0) {
+            sql = sql + " and u.wx_openid is not null";
+        }
+
+        if (level > 1) {
+            sql = sql + " and ev.is_priced is not null";
+        }
+        if (level > 2) {
+            sql = sql + " and ev.is_priced = 1";
+        }
+
+        if (level > 3) {
+            sql = sql + " and ev.price_status_code in ('submit','paid')";
+        }
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List<Object[]> data = query.getResultList();
+        List<String[]> list = new ArrayList<>();
+        for (Object[] item : data) {
+            String[] temp = new String[3];
+            temp[0] = (String) item[0];
+            temp[1] = (String) item[1].toString();
+            temp[2] = (String) item[2].toString();
+            list.add(temp);
+        }
+        return list;
     }
 
     @Override
