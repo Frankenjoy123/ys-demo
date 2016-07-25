@@ -717,6 +717,7 @@ public class MarketingController {
         object.setAccountType(entity.getAccountType());
         object.setPrizeAccount(entity.getPrizeAccount());
         object.setPrizeAccountName(entity.getPrizeAccountName());
+        object.setPrizeContactId(entity.getPrizeContactId());
         object.setComments(entity.getComments());
         return object;
     }
@@ -831,6 +832,7 @@ public class MarketingController {
         entity.setAccountType(object.getAccountType());
         entity.setPrizeAccount(object.getPrizeAccount());
         entity.setPrizeAccountName(object.getPrizeAccountName());
+        entity.setPrizeContactId(object.getPrizeContactId());
         entity.setComments(object.getComments());
         return entity;
     }
