@@ -432,4 +432,97 @@ public class AnalysisController {
 
         return report;
     }
+
+    @RequestMapping(value = "/event_report", method = RequestMethod.GET)
+    public EMREventAnalysisReport getScanAnalysisReport(@RequestParam(value = "org_id", required = false) String orgId,
+                                                        @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                        @RequestParam(value = "province", required = false) String province,
+                                                        @RequestParam(value = "city", required = false) String city,
+                                                        @RequestParam(value = "create_datetime_start", required = false)
+                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                        @RequestParam(value = "create_datetime_end", required = false)
+                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+        orgId = AuthUtils.fixOrgId(orgId);
+
+        LocalDate now = LocalDate.now();
+        if (createdDateTimeStart == null) {
+            createdDateTimeStart = now.plusDays(-90);
+        }
+        if (createdDateTimeEnd == null) {
+            createdDateTimeEnd = now.plusDays(-1);
+        }
+
+
+        EMREventReportObject emrEventReportObject = analysisDomain.getEMREventReport(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+
+        List<Integer> scanEventCount = new ArrayList<>();
+        List<Integer> scanUserCount = new ArrayList<>();
+        List<Integer> shareEventCount = new ArrayList<>();
+        List<Integer> shareUserCount = new ArrayList<>();
+        List<Integer> storeUrlEventCount = new ArrayList<>();
+        List<Integer> storeUrlUserCount = new ArrayList<>();
+        List<Integer> commentEventCount = new ArrayList<>();
+        List<Integer> commentUserCount = new ArrayList<>();
+
+        List<String> dateList = new ArrayList<String>();
+
+        DateTime startDateTime = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(0));
+        DateTime endDateTime = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(0));
+
+        do {
+            int scanEventData = 0;
+            int scanUserData = 0;
+            int shareEventData = 0;
+            int shareUserData = 0;
+            int storeEventData = 0;
+            int storeUserData = 0;
+            int commentEventData = 0;
+            int commentUserData = 0;
+
+            if (emrEventReportObject.getEvent_count().containsKey(startDateTime.toString("yyyy-MM-dd"))) {
+                EMREventCountObject tempObject = emrEventReportObject.getEvent_count().get(startDateTime.toString("yyyy-MM-dd"));
+                scanEventData = tempObject.getScanEventCount();
+                scanUserData = tempObject.getScanUserCount();
+                shareEventData = tempObject.getShareEventCount();
+                shareUserData = tempObject.getShareUserCount();
+                storeEventData = tempObject.getStoreUrlEventCount();
+                storeUserData = tempObject.getStoreUrlUserCount();
+                commentEventData = tempObject.getCommentEventCount();
+                commentUserData = tempObject.getCommentUserCount();
+            }
+            scanEventCount.add(scanEventData);
+            scanUserCount.add(scanUserData);
+            shareEventCount.add(shareEventData);
+            shareUserCount.add(shareUserData);
+            storeUrlEventCount.add(storeEventData);
+            storeUrlUserCount.add(storeUserData);
+            commentEventCount.add(commentEventData);
+            commentUserCount.add(commentUserData);
+
+            dateList.add(startDateTime.toString("yyyy-MM-dd"));
+            startDateTime = startDateTime.plusDays(1);
+        } while (startDateTime.isBefore(endDateTime));
+
+        EMREventAnalysisReport emrEventAnalysisReport = new EMREventAnalysisReport();
+
+        EMREventAnalysisReport.EventCount eventCount = new EMREventAnalysisReport.EventCount();
+        EMREventAnalysisReport.UserCount userCount = new EMREventAnalysisReport.UserCount();
+
+        eventCount.setScanEventCount(scanEventCount.stream().mapToInt(Integer::intValue).toArray());
+        eventCount.setShareEventCount(shareEventCount.stream().mapToInt(Integer::intValue).toArray());
+        eventCount.setStoreUrlEventCount(storeUrlEventCount.stream().mapToInt(Integer::intValue).toArray());
+        eventCount.setCommentEventCount(commentEventCount.stream().mapToInt(Integer::intValue).toArray());
+
+        userCount.setScanUserCount(scanUserCount.stream().mapToInt(Integer::intValue).toArray());
+        userCount.setShareUserCount(shareUserCount.stream().mapToInt(Integer::intValue).toArray());
+        userCount.setStoreUrlUserCount(storeUrlUserCount.stream().mapToInt(Integer::intValue).toArray());
+        userCount.setCommentUserCount(commentUserCount.stream().mapToInt(Integer::intValue).toArray());
+
+        emrEventAnalysisReport.setEventCount(eventCount);
+        emrEventAnalysisReport.setUserCount(userCount);
+        emrEventAnalysisReport.setDate(dateList.toArray(new String[0]));
+
+        return emrEventAnalysisReport;
+
+    }
 }

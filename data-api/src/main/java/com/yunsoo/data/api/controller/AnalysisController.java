@@ -381,7 +381,7 @@ public class AnalysisController {
         return emrActionReportObject;
     }
 
-    // query user action count: share, store_url, comment
+    // query user daily event count: share, store_url, comment
     @RequestMapping(value = "/user/event", method = RequestMethod.GET)
     public EMREventReportObject queryUserEventCount(@RequestParam(value = "org_id") String orgId,
                                                     @RequestParam(value = "product_base_id", required = false) String productBaseId,
