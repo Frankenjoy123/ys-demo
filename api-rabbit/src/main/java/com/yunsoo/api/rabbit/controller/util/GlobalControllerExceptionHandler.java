@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,8 +37,9 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
 
-    private Log log = LogFactory.getLog(this.getClass());
     private static final String FROM = "api-rabbit";
+
+    private Log log = LogFactory.getLog(this.getClass());
 
     @Value("${yunsoo.debug}")
     private Boolean debug;
@@ -53,9 +56,11 @@ public class GlobalControllerExceptionHandler {
 
     //400
     @ExceptionHandler({
+            HttpMediaTypeNotSupportedException.class,
+            HttpMessageNotReadableException.class,
             MethodArgumentNotValidException.class,
-            MissingServletRequestParameterException.class,
-            HttpMediaTypeNotSupportedException.class})
+            MethodArgumentTypeMismatchException.class,
+            MissingServletRequestParameterException.class})
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResult handleMissingRequestParameterException(HttpServletRequest req, Exception ex) {

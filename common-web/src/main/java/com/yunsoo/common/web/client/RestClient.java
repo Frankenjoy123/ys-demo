@@ -94,10 +94,12 @@ public class RestClient {
 
     //GET
     public <T> T get(String url, Class<T> responseType, Object... uriVariables) {
+        Assert.notNull(responseType, "responseType must not be null");
         return restTemplate.getForObject(getAbsoluteUrl(url), responseType, uriVariables);
     }
 
     public <T> T get(String url, ParameterizedTypeReference<T> responseType, Object... uriVariables) {
+        Assert.notNull(responseType, "responseType must not be null");
         return restTemplate.exchange(getAbsoluteUrl(url), HttpMethod.GET, null, responseType, uriVariables).getBody();
     }
 
@@ -112,7 +114,7 @@ public class RestClient {
 
     //POST
     public <T> T post(String url, Object request, Class<T> responseType, Object... uriVariables) {
-        return restTemplate.postForObject(getAbsoluteUrl(url), request, responseType, uriVariables);
+        return restTemplate.postForEntity(getAbsoluteUrl(url), request, responseType, uriVariables).getBody();
     }
 
     //PUT
@@ -153,6 +155,7 @@ public class RestClient {
     }
 
     protected <T> ResponseExtractor<Page<T>> getPageResponseExtractor(ParameterizedTypeReference<List<T>> responseType) {
+        Assert.notNull(responseType, "responseType must not be null");
         return response -> {
             ResponseExtractor<List<T>> resExt = new HttpMessageConverterExtractor<>(responseType.getType(), restTemplate.getMessageConverters());
             List<T> content = resExt.extractData(response);

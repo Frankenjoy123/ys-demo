@@ -22,7 +22,7 @@ import java.net.UnknownHostException;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {Application.class})
-@WebIntegrationTest()
+@WebIntegrationTest("server.port=0")
 @Ignore
 public class TestBase {
 

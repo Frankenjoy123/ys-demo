@@ -47,6 +47,27 @@ public interface CustomEMREventRepository {
                        DateTime createdDateTimeStart,
                        DateTime createdDateTimeEnd);
 
+    List<String[]> scanDailyCount(String orgId, String productBaseId,
+                                  String province, String city,
+                                  DateTime createdDateTimeStart,
+                                  DateTime createdDateTimeEnd);
+
+    List<String[]> shareDailyCount(String orgId, String productBaseId,
+                                   String province, String city,
+                                   DateTime createdDateTimeStart,
+                                   DateTime createdDateTimeEnd);
+
+    List<String[]> storeUrlDailyCount(String orgId, String productBaseId,
+                                      String province, String city,
+                                      DateTime createdDateTimeStart,
+                                      DateTime createdDateTimeEnd);
+
+    List<String[]> commentDailyCount(String orgId, String productBaseId,
+                                     String province, String city,
+                                     DateTime createdDateTimeStart,
+                                     DateTime createdDateTimeEnd);
+
+
 
     EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId);
     int periodConsumptionCount(String orgId, String userId, String ysId,DateTime eventDateTimeStart, DateTime eventDateTimeEnd);

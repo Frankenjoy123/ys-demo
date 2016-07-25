@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -55,10 +56,11 @@ public class GlobalControllerExceptionHandler {
 
     //400
     @ExceptionHandler({
-            MethodArgumentNotValidException.class,
-            MissingServletRequestParameterException.class,
             HttpMediaTypeNotSupportedException.class,
-            MethodArgumentTypeMismatchException.class})
+            HttpMessageNotReadableException.class,
+            MethodArgumentNotValidException.class,
+            MethodArgumentTypeMismatchException.class,
+            MissingServletRequestParameterException.class})
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResult handleMissingRequestParameterException(HttpServletRequest req, Exception ex) {
@@ -124,7 +126,7 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResult handleServerError(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.INTERNAL_SERVER_ERROR, "server error");
-        log.error(String.format("[from: " + FROM + ", status: 500, message: " + ex.getMessage() + "]", ex));
+        log.error(String.format("[from: %s, status: 500, message: %s]", FROM, ex.getMessage()), ex);
         return appendTraceInfo(result, ex);
     }
 
