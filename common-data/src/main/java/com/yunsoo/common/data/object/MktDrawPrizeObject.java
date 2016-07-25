@@ -59,6 +59,9 @@ public class MktDrawPrizeObject {
     @JsonProperty("prize_account_name")
     private String prizeAccountName;
 
+    @JsonProperty("prize_contact_id")
+    private String prizeContactId;
+
     @JsonProperty("comments")
     private String comments;
 
@@ -172,6 +175,14 @@ public class MktDrawPrizeObject {
 
     public void setPrizeAccountName(String prizeAccountName) {
         this.prizeAccountName = prizeAccountName;
+    }
+
+    public String getPrizeContactId() {
+        return prizeContactId;
+    }
+
+    public void setPrizeContactId(String prizeContactId) {
+        this.prizeContactId = prizeContactId;
     }
 
     public String getComments() {

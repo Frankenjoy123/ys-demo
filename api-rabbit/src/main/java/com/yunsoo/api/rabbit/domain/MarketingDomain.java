@@ -44,6 +44,16 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/drawprize/{key}", MktDrawPrizeObject.class, key);
     }
 
+    public MktDrawPrizeObject getMktDrawPrizeByPrizeId(String prizeId) {
+        return dataApiClient.get("marketing/drawPrize/record/{id}", MktDrawPrizeObject.class, prizeId);
+    }
+
+    public MktPrizeContactObject getMktPrizeContactById(String id) {
+        return dataApiClient.get("marketing/drawPrize/contact/{id}", MktPrizeContactObject.class, id);
+    }
+
+
+
     public MktConsumerRightObject getConsumerRightById(String id) {
         return dataApiClient.get("marketing/consumer/{id}", MktConsumerRightObject.class, id);
     }
@@ -65,8 +75,19 @@ public class MarketingDomain {
         return dataApiClient.post("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
     }
 
+    public MktPrizeContactObject createMktPrizeContact(MktPrizeContactObject mktPrizeContactObject) {
+        mktPrizeContactObject.setCreatedDateTime(DateTime.now());
+        mktPrizeContactObject.setModifiedDateTime(null);
+        return dataApiClient.post("marketing/drawPrize/{id}/contact", mktPrizeContactObject, MktPrizeContactObject.class, mktPrizeContactObject.getMktPrizeId());
+    }
+
+
     public void updateMktDrawPrize(MktDrawPrizeObject mktDrawPrizeObject) {
         dataApiClient.patch("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
+    }
+
+    public void updateMktPrizeContact(MktPrizeContactObject mktPrizeContactObject) {
+        dataApiClient.patch("marketing/drawPrize/{id}/contact", mktPrizeContactObject, mktPrizeContactObject.getMktPrizeId());
     }
 
 

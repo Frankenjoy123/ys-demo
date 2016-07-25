@@ -45,6 +45,12 @@ public final class Constants {
         public static final List<String> ALL = Arrays.asList(CREATED, AVAILABLE, DISABLED);
     }
 
+    public static class DeviceStatus {
+        private DeviceStatus() {
+        }
+
+        public static final String AVAILABLE = "available";
+    }
 
     public static class PermissionRegionType {
         private PermissionRegionType() {

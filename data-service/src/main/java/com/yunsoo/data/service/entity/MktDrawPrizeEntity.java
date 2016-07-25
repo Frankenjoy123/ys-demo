@@ -61,6 +61,9 @@ public class MktDrawPrizeEntity {
     @Column(name = "prize_account_name")
     private String prizeAccountName;
 
+    @Column(name = "prize_contact_id")
+    private String prizeContactId;
+
     @Column(name = "comments")
     private String comments;
 
@@ -174,6 +177,14 @@ public class MktDrawPrizeEntity {
 
     public void setPrizeAccountName(String prizeAccountName) {
         this.prizeAccountName = prizeAccountName;
+    }
+
+    public String getPrizeContactId() {
+        return prizeContactId;
+    }
+
+    public void setPrizeContactId(String prizeContactId) {
+        this.prizeContactId = prizeContactId;
     }
 
     public String getComments() {
