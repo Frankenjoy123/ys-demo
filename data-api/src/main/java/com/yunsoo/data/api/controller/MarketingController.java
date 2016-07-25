@@ -407,6 +407,17 @@ public class MarketingController {
         return toMktDrawPrizeObject(newEntity);
     }
 
+    //get marketing prize contact by id
+    @RequestMapping(value = "/drawPrize/contact/{id}", method = RequestMethod.GET)
+    public MktPrizeContactObject getMktPrizeContactById(@PathVariable(value = "id") String id) {
+        MktPrizeContactEntity entity = mktPrizeContactRepository.findOne(id);
+        if (entity == null) {
+            throw new NotFoundException("marketing prize contact not found by [id:" + id + "]");
+        }
+        return toMktPrizeContactObject(entity);
+    }
+
+
     //create marketing prize contact, provide: API-Rabbit
     @RequestMapping(value = "/drawPrize/{id}/contact", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -431,7 +442,7 @@ public class MarketingController {
         return toMktPrizeContactObject(newEntity);
     }
 
-    //create marketing prize contact, provide: API-Rabbit
+    //update marketing prize contact, provide: API-Rabbit
     @RequestMapping(value = "/drawPrize/{id}/contact", method = RequestMethod.PATCH)
     public void updatePrizeContact(@PathVariable String id, @RequestBody MktPrizeContactObject mktPrizeContactObject) {
         MktDrawPrizeEntity mktDrawPrizeEntity = mktDrawPrizeRepository.findOne(id);

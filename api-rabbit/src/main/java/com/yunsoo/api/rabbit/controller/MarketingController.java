@@ -106,6 +106,18 @@ public class MarketingController {
         return new MktDrawPrize(newMktDrawPrizeObject);
     }
 
+    @RequestMapping(value = "drawPrize/contact/{id}", method = RequestMethod.GET)
+    public MktPrizeContact getMktPrizeContactById(@PathVariable String id) {
+        MktPrizeContactObject mktPrizeContactObject = marketingDomain.getMktPrizeContactById(id);
+
+        if (mktPrizeContactObject != null) {
+            return new MktPrizeContact(mktPrizeContactObject);
+        } else {
+            return null;
+        }
+    }
+
+
     @RequestMapping(value = "drawPrize/{id}/contact", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public MktPrizeContact createMktPrizeContact(@PathVariable(value = "id") String prizeId, @RequestBody MktPrizeContact mktPrizeContact) {
