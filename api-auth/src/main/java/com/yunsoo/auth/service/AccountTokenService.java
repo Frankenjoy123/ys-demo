@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -58,6 +59,23 @@ public class AccountTokenService {
         accountTokenEntity.setCreatedDateTime(now);
         accountTokenEntity = accountTokenRepository.save(accountTokenEntity);
         return new Token(accountTokenEntity.getPermanentToken(), accountTokenEntity.getPermanentTokenExpiresDateTime());
+    }
+
+    public void expirePermanentTokenByDeviceId(String deviceId) {
+        if (StringUtils.isEmpty(deviceId)) {
+            return;
+        }
+        List<AccountTokenEntity> entities = accountTokenRepository.findByDeviceId(deviceId)
+                .stream()
+                .filter(at -> at.getPermanentTokenExpiresDateTime() == null || at.getPermanentTokenExpiresDateTime().isAfterNow())
+                .map(e -> {
+                    e.setPermanentTokenExpiresDateTime(DateTime.now());
+                    return e;
+                })
+                .collect(Collectors.toList());
+        if (entities.size() > 0) {
+            accountTokenRepository.save(entities);
+        }
     }
 
     private AccountToken toAccountToken(AccountTokenEntity entity) {
