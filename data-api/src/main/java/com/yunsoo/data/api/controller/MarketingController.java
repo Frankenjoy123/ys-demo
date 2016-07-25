@@ -49,6 +49,9 @@ public class MarketingController {
     private MktConsumerRightRepository mktConsumerRightRepository;
 
     @Autowired
+    private MktPrizeContactRepository mktPrizeContactRepository;
+
+    @Autowired
     private ProductKeyBatchRepository productKeyBatchRepository;
 
 
@@ -404,6 +407,59 @@ public class MarketingController {
         return toMktDrawPrizeObject(newEntity);
     }
 
+    //create marketing prize contact, provide: API-Rabbit
+    @RequestMapping(value = "/drawPrize/{id}/contact", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public MktPrizeContactObject createPrizeContact(@PathVariable String id, @RequestBody MktPrizeContactObject mktPrizeContactObject) {
+        MktDrawPrizeEntity mktDrawPrizeEntity = mktDrawPrizeRepository.findOne(id);
+        if ((mktDrawPrizeEntity == null) || ((mktDrawPrizeEntity.getPrizeContactId() != null) && (!mktDrawPrizeEntity.getPrizeContactId().equals("")))) {
+            throw new NotFoundException("Invalid operation: not allowed to input prize contact info.");
+        }
+
+        MktPrizeContactEntity entity = toMktPrizeContactEntity(mktPrizeContactObject);
+        if (entity.getCreatedDateTime() == null) {
+            entity.setCreatedDateTime(DateTime.now());
+        }
+        if (entity.getMktPrizeId() == null) {
+            entity.setMktPrizeId(id);
+        }
+        entity.setModifiedDateTime(null);
+        MktPrizeContactEntity newEntity = mktPrizeContactRepository.save(entity);
+        String prizeContactId = newEntity.getId();
+        mktDrawPrizeEntity.setPrizeContactId(prizeContactId);
+        mktDrawPrizeRepository.save(mktDrawPrizeEntity);
+        return toMktPrizeContactObject(newEntity);
+    }
+
+    //create marketing prize contact, provide: API-Rabbit
+    @RequestMapping(value = "/drawPrize/{id}/contact", method = RequestMethod.PATCH)
+    public void updatePrizeContact(@PathVariable String id, @RequestBody MktPrizeContactObject mktPrizeContactObject) {
+        MktDrawPrizeEntity mktDrawPrizeEntity = mktDrawPrizeRepository.findOne(id);
+        if ((mktDrawPrizeEntity == null) || (mktDrawPrizeEntity.getPrizeContactId() == null) || (mktDrawPrizeEntity.getPrizeContactId().equals(""))) {
+            throw new NotFoundException("Invalid operation: not allowed to update prize contact info.");
+        }
+        MktPrizeContactEntity mktPrizeContactEntity = mktPrizeContactRepository.findOne(mktDrawPrizeEntity.getPrizeContactId());
+        if (mktPrizeContactEntity == null) {
+            throw new NotFoundException("This draw prize contact has not been found");
+        }
+
+        if (mktPrizeContactObject.getName() != null)
+            mktPrizeContactEntity.setName(mktPrizeContactObject.getName());
+        if (mktPrizeContactObject.getPhone() != null)
+            mktPrizeContactEntity.setPhone(mktPrizeContactObject.getPhone());
+        if (mktPrizeContactObject.getProvince() != null)
+            mktPrizeContactEntity.setProvince(mktPrizeContactObject.getProvince());
+        if (mktPrizeContactObject.getCity() != null)
+            mktPrizeContactEntity.setCity(mktPrizeContactObject.getCity());
+        if (mktPrizeContactObject.getDistrict() != null)
+            mktPrizeContactEntity.setDistrict(mktPrizeContactObject.getDistrict());
+        if (mktPrizeContactObject.getAddress() != null)
+            mktPrizeContactEntity.setAddress(mktPrizeContactObject.getAddress());
+        mktPrizeContactEntity.setModifiedDateTime(DateTime.now());
+        mktPrizeContactRepository.save(mktPrizeContactEntity);
+    }
+
+
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.PUT)
     public void updateMktDrawRule(@PathVariable String id, @RequestBody MktDrawRuleObject mktDrawRuleObject) {
         MktDrawRuleEntity oldEntity = findMktDrawRuleById(id);
@@ -745,6 +801,24 @@ public class MarketingController {
         return object;
     }
 
+    private MktPrizeContactObject toMktPrizeContactObject(MktPrizeContactEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        MktPrizeContactObject object = new MktPrizeContactObject();
+        object.setId(entity.getId());
+        object.setMktPrizeId(entity.getMktPrizeId());
+        object.setName(entity.getName());
+        object.setPhone(entity.getPhone());
+        object.setProvince(entity.getProvince());
+        object.setCity(entity.getCity());
+        object.setDistrict(entity.getDistrict());
+        object.setAddress(entity.getAddress());
+        object.setCreatedDateTime(entity.getCreatedDateTime());
+        object.setModifiedDateTime(entity.getModifiedDateTime());
+        return object;
+    }
+
 
     private MarketingEntity toMarketingEntity(MarketingObject object) {
         if (object == null) {
@@ -858,6 +932,25 @@ public class MarketingController {
         entity.setModifiedDateTime(object.getModifiedDateTime());
         return entity;
     }
+
+    private MktPrizeContactEntity toMktPrizeContactEntity(MktPrizeContactObject object) {
+        if (object == null) {
+            return null;
+        }
+        MktPrizeContactEntity entity = new MktPrizeContactEntity();
+        entity.setId(object.getId());
+        entity.setMktPrizeId(object.getMktPrizeId());
+        entity.setName(object.getName());
+        entity.setPhone(object.getPhone());
+        entity.setProvince(object.getProvince());
+        entity.setCity(object.getCity());
+        entity.setDistrict(object.getDistrict());
+        entity.setAddress(object.getAddress());
+        entity.setCreatedDateTime(object.getCreatedDateTime());
+        entity.setModifiedDateTime(object.getModifiedDateTime());
+        return entity;
+    }
+
 
 
 }

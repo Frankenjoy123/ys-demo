@@ -7,7 +7,6 @@ import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.error.ErrorResult;
-import com.yunsoo.common.exception.ErrorResultException;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
@@ -106,6 +105,45 @@ public class MarketingController {
         MktDrawPrizeObject newMktDrawPrizeObject = marketingDomain.createMktDrawPrize(mktDrawPrizeObject);
         return new MktDrawPrize(newMktDrawPrizeObject);
     }
+
+    @RequestMapping(value = "drawPrize/{id}/contact", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public MktPrizeContact createMktPrizeContact(@PathVariable(value = "id") String prizeId, @RequestBody MktPrizeContact mktPrizeContact) {
+        if (mktPrizeContact == null) {
+            throw new BadRequestException("marketing prize contact can not be null");
+        }
+        mktPrizeContact.setMktPrizeId(prizeId);
+
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByPrizeId(prizeId);
+        if (mktDrawPrizeObject == null) {
+            throw new NotFoundException("marketing draw prize can not be found");
+        }
+
+        MktPrizeContactObject mktPrizeContactObject = mktPrizeContact.toMktPrizeContactObject();
+        MktPrizeContactObject newObject = marketingDomain.createMktPrizeContact(mktPrizeContactObject);
+
+        mktDrawPrizeObject.setPrizeContactId(newObject.getId());
+        marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+
+        return new MktPrizeContact(newObject);
+    }
+
+    @RequestMapping(value = "drawPrize/{id}/contact", method = RequestMethod.PUT)
+    public void updateMktPrizeContact(@PathVariable(value = "id") String prizeId, @RequestBody MktPrizeContact mktPrizeContact) {
+        if (mktPrizeContact == null) {
+            throw new BadRequestException("marketing prize contact can not be null");
+        }
+        mktPrizeContact.setMktPrizeId(prizeId);
+
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByPrizeId(prizeId);
+        if ((mktDrawPrizeObject == null) || (mktDrawPrizeObject.getPrizeContactId() == null) || (mktDrawPrizeObject.getPrizeContactId().equals(""))) {
+            throw new BadRequestException("Invalid operation: update marketing prize contact error");
+        }
+
+        MktPrizeContactObject mktPrizeContactObject = mktPrizeContact.toMktPrizeContactObject();
+        marketingDomain.updateMktPrizeContact(mktPrizeContactObject);
+    }
+
 
     @RequestMapping(value = "drawPrize", method = RequestMethod.PUT)
     public void updateMktDrawPrize(@RequestBody MktDrawPrize mktDrawPrize) {
