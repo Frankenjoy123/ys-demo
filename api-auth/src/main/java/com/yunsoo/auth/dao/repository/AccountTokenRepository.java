@@ -18,4 +18,6 @@ public interface AccountTokenRepository extends Repository<AccountTokenEntity, S
 
     AccountTokenEntity save(AccountTokenEntity entity);
 
+    List<AccountTokenEntity> save(Iterable<AccountTokenEntity> entities);
+
 }
