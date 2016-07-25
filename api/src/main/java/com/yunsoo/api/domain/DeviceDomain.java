@@ -74,7 +74,7 @@ public class DeviceDomain {
     public void uploadLog(String appId, String deviceId, String fileName, long contentLength, InputStream inputStream) {
         String s3FileName = "application/{appId}/device/{deviceId}/log/{name}";
         ResourceInputStream stream = new ResourceInputStream(inputStream, contentLength, "text/plain");
-        dataAPIClient.put("file/s3?path=" + s3FileName, stream, appId, deviceId, fileName);
+        dataApiClient.put("file/s3?path=" + s3FileName, stream, appId, deviceId, fileName);
 
     }
 }

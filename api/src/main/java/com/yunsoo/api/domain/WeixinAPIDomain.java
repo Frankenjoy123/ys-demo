@@ -14,10 +14,10 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Created by Admin on 6/29/2016.
  */
-@Component
+//@Component
 public class WeixinAPIDomain {
 
-    @Autowired
+    //@Autowired
     private RestClient dataAPIClient;
 
     private RestClient wxapiClient;
