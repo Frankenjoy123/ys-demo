@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/operation/record")
 public class OperationRecordController {
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @RequestMapping(value = "/type/{typeid}/account/{accountid}", method = RequestMethod.GET)
     public List<OperationRecord> filterOperationRecord(@PathVariable(value = "typeid") Integer typeid,
@@ -29,7 +29,7 @@ public class OperationRecordController {
         if (typeid == null || typeid <= 0) throw new BadRequestException("TypeID不能小于0！");
         if (accountid == null || accountid <= 0) throw new BadRequestException("AccountID不能小于0！");
         try {
-            List<OperationRecord> operationRecordList = dataAPIClient.get("/operation/record/type/{typeid}/account/{accountid}",
+            List<OperationRecord> operationRecordList = dataApiClient.get("/operation/record/type/{typeid}/account/{accountid}",
                     new ParameterizedTypeReference<List<OperationRecord>>() {
                     }, typeid, accountid);
             if (operationRecordList == null || operationRecordList.size() == 0) {
@@ -45,7 +45,7 @@ public class OperationRecordController {
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> createRecord(@RequestBody OperationRecord operationRecord) throws Exception {
-        long id = dataAPIClient.post("/operation/record/insert", operationRecord, long.class);
+        long id = dataApiClient.post("/operation/record/insert", operationRecord, long.class);
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 }

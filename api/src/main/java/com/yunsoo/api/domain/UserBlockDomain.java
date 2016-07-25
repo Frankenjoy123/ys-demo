@@ -13,7 +13,7 @@ import java.util.List;
 public class UserBlockDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public List<UserBlockObject> getUserBlockList(String userId, String ysId, String orgId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -22,7 +22,7 @@ public class UserBlockDomain {
                 .append("org_id", orgId)
                 .build();
 
-        return dataAPIClient.get("user/block" + query, new ParameterizedTypeReference<List<UserBlockObject>>() {
+        return dataApiClient.get("user/block" + query, new ParameterizedTypeReference<List<UserBlockObject>>() {
         });
     }
 
@@ -31,11 +31,11 @@ public class UserBlockDomain {
                 .append("user_block_id", userBlockId)
                 .build();
 
-        dataAPIClient.delete("user/block" + query);
+        dataApiClient.delete("user/block" + query);
     }
 
     public UserBlockObject create(UserBlockObject userBlockObject) {
-        return dataAPIClient.post("user/block", userBlockObject, UserBlockObject.class);
+        return dataApiClient.post("user/block", userBlockObject, UserBlockObject.class);
     }
 
 }

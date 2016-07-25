@@ -22,15 +22,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 public class ClientTest {
 
     @Autowired
-    private RestClient dataAPIClient;
-
-    @Autowired
-    private RestClient processorClient;
+    private RestClient dataApiClient;
 
     @Test
     public void testGetBaseURL() {
-        System.out.println(dataAPIClient.getBaseURL());
-        System.out.println(processorClient.getBaseURL());
+        System.out.println(dataApiClient.getBaseUrl());
     }
 
 

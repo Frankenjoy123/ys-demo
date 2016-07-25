@@ -3,7 +3,10 @@ package com.yunsoo.data.service.entity;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 @Entity
@@ -66,6 +69,9 @@ public class EMREventEntity implements Serializable {
 
     @Column(name = "marketing_id")
     private String marketingId;
+
+    @Column(name = "value")
+    private String value;
 
     public String getId() {
         return id;
@@ -209,5 +215,13 @@ public class EMREventEntity implements Serializable {
 
     public void setKeyBatchId(String keyBatchId) {
         this.keyBatchId = keyBatchId;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

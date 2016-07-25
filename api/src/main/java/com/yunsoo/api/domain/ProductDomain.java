@@ -16,12 +16,12 @@ import org.springframework.stereotype.Component;
 public class ProductDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
 
     public ProductObject getProduct(String key) {
         try {
-            return dataAPIClient.get("product/{key}", ProductObject.class, key);
+            return dataApiClient.get("product/{key}", ProductObject.class, key);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -44,7 +44,7 @@ public class ProductDomain {
     public void patchUpdateProduct(ProductObject productObject) {
         if (productObject != null && productObject.getProductKey() != null) {
             try {
-                dataAPIClient.patch("product/{key}", productObject, productObject.getProductKey());
+                dataApiClient.patch("product/{key}", productObject, productObject.getProductKey());
             } catch (NotFoundException ex) {
                 throw new NotFoundException("product not found by key " + productObject.getProductKey());
             }

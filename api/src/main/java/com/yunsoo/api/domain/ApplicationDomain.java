@@ -25,14 +25,14 @@ import java.util.List;
 public class ApplicationDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public ApplicationObject getApplicationById(String id) {
         if (StringUtils.isEmpty(id)) {
             return null;
         }
         try {
-            return dataAPIClient.get("application/{id}", ApplicationObject.class, id);
+            return dataApiClient.get("application/{id}", ApplicationObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -44,7 +44,7 @@ public class ApplicationDomain {
                 .append("status_code_in", statusCodeIn)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("application" + query, new ParameterizedTypeReference<List<ApplicationObject>>() {
+        return dataApiClient.getPaged("application" + query, new ParameterizedTypeReference<List<ApplicationObject>>() {
         });
     }
 
@@ -55,7 +55,7 @@ public class ApplicationDomain {
         applicationObject.setCreatedDateTime(DateTime.now());
         applicationObject.setModifiedAccountId(null);
         applicationObject.setModifiedDateTime(null);
-        return dataAPIClient.post("application", applicationObject, ApplicationObject.class);
+        return dataApiClient.post("application", applicationObject, ApplicationObject.class);
     }
 
     public void patchUpdateApplication(ApplicationObject applicationObject) {
@@ -64,7 +64,7 @@ public class ApplicationDomain {
         applicationObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
         applicationObject.setModifiedDateTime(DateTime.now());
         try {
-            dataAPIClient.patch("application/{id}", applicationObject, applicationObject.getId());
+            dataApiClient.patch("application/{id}", applicationObject, applicationObject.getId());
         } catch (NotFoundException ignored) {
             throw new NotFoundException("application not found");
         }

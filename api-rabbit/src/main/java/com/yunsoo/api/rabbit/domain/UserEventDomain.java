@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 public class UserEventDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public UserEventObject create(UserEventObject userEventObject) {
-        return dataAPIClient.post("user/event", userEventObject, UserEventObject.class);
+        return dataApiClient.post("user/event", userEventObject, UserEventObject.class);
     }
 
 }

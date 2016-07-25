@@ -28,12 +28,12 @@ public class UserScanRecordControllerTest extends ControllerTestBase {
         newRecord.setAppId(ObjectIdGenerator.getNew());
         newRecord.setYsid(UUID.randomUUID().toString().replace("-", ""));
 
-        UserScanRecordObject savedRecord = dataAPIClient.post("userScanRecord", newRecord, UserScanRecordObject.class);
+        UserScanRecordObject savedRecord = dataApiClient.post("userScanRecord", newRecord, UserScanRecordObject.class);
         System.out.println("userScanRecord saved with id: " + savedRecord.getId());
 
-        UserScanRecordObject getRecord = dataAPIClient.get("userScanRecord/{id}", UserScanRecordObject.class, savedRecord.getId());
+        UserScanRecordObject getRecord = dataApiClient.get("userScanRecord/{id}", UserScanRecordObject.class, savedRecord.getId());
 
-        List<UserScanRecordObject> records = dataAPIClient.get("userScanRecord?product_key={key}", new ParameterizedTypeReference<List<UserScanRecordObject>>() {
+        List<UserScanRecordObject> records = dataApiClient.get("userScanRecord?product_key={key}", new ParameterizedTypeReference<List<UserScanRecordObject>>() {
         }, newRecord.getProductKey());
 
         assert records.size() > 0;

@@ -26,18 +26,18 @@ public class LookupCacheDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).LOOKUP.toString(), 'all')")
     public List<LookupObject> getAllLookupList(){
         log.debug("cache not hit for getAllLookupList");
-        return dataAPIClient.get("lookup", new ParameterizedTypeReference<List<LookupObject>>() {
+        return dataApiClient.get("lookup", new ParameterizedTypeReference<List<LookupObject>>() {
         });
     }
 
     @CacheEvict(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).LOOKUP.toString(), 'all')")
     public void saveLookup(LookupObject lookup){
-       dataAPIClient.put("lookup",lookup, LookupObject.class);
+        dataApiClient.put("lookup", lookup, LookupObject.class);
     }
 
     private String formatActive(Boolean active) {

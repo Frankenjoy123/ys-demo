@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.common.data.object.EMRActionReportObject;
 import com.yunsoo.common.data.object.EMRUserObject;
 import com.yunsoo.common.data.object.EMRUserReportObject;
 import com.yunsoo.common.web.client.Page;
@@ -16,7 +17,7 @@ import java.util.List;
 public class EMRUserDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public EMRUserObject getEMRUser(String orgId, String userId, String ysId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -25,7 +26,7 @@ public class EMRUserDomain {
                 .append("ys_id", ysId)
                 .build();
 
-        return dataAPIClient.get("emr/user/id" + query, EMRUserObject.class);
+        return dataApiClient.get("emr/user/id" + query, EMRUserObject.class);
     }
 
     public Page<EMRUserObject> getEMRUserList(String orgId, Boolean sex, String phone, String name, String province, String city, Integer ageStart, Integer ageEnd, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, String userTags, Boolean wxUser, Pageable pageable) {
@@ -45,7 +46,7 @@ public class EMRUserDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("emr/user" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
+        return dataApiClient.getPaged("emr/user" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
         });
     }
 
@@ -60,7 +61,7 @@ public class EMRUserDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("emr/user/scan" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
+        return dataApiClient.getPaged("emr/user/scan" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
         });
     }
 
@@ -75,7 +76,7 @@ public class EMRUserDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("emr/user/draw" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
+        return dataApiClient.getPaged("emr/user/draw" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
         });
     }
 
@@ -90,7 +91,7 @@ public class EMRUserDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("emr/user/wx" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
+        return dataApiClient.getPaged("emr/user/wx" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
         });
     }
 
@@ -105,7 +106,7 @@ public class EMRUserDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("emr/user/win" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
+        return dataApiClient.getPaged("emr/user/win" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
         });
     }
 
@@ -120,9 +121,55 @@ public class EMRUserDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("emr/user/reward" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
+        return dataApiClient.getPaged("emr/user/reward" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
         });
     }
+
+    public Page<EMRUserObject> getEMRShareUserList(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("province", province)
+                .append("city", city)
+                .append("create_datetime_start", createdDateTimeStart)
+                .append("create_datetime_end", createdDateTimeEnd)
+                .append(pageable)
+                .build();
+
+        return dataApiClient.getPaged("emr/user/share" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
+        });
+    }
+
+    public Page<EMRUserObject> getEMRStoreUrlUserList(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("province", province)
+                .append("city", city)
+                .append("create_datetime_start", createdDateTimeStart)
+                .append("create_datetime_end", createdDateTimeEnd)
+                .append(pageable)
+                .build();
+
+        return dataApiClient.getPaged("emr/user/store_url" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
+        });
+    }
+
+    public Page<EMRUserObject> getEMRCommentUserList(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("province", province)
+                .append("city", city)
+                .append("create_datetime_start", createdDateTimeStart)
+                .append("create_datetime_end", createdDateTimeEnd)
+                .append(pageable)
+                .build();
+
+        return dataApiClient.getPaged("emr/user/comment" + query, new ParameterizedTypeReference<List<EMRUserObject>>() {
+        });
+    }
+
 
     public EMRUserReportObject getEMRUserFunnelCount(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -134,7 +181,22 @@ public class EMRUserDomain {
                 .append("create_datetime_end", createdDateTimeEnd)
                 .build();
 
-        return dataAPIClient.get("analysis/user/funnel" + query, new ParameterizedTypeReference<EMRUserReportObject>() {
+        return dataApiClient.get("analysis/user/funnel" + query, new ParameterizedTypeReference<EMRUserReportObject>() {
         });
     }
+
+    public EMRActionReportObject getEMRActionReport(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("province", province)
+                .append("city", city)
+                .append("create_datetime_start", createdDateTimeStart)
+                .append("create_datetime_end", createdDateTimeEnd)
+                .build();
+
+        return dataApiClient.get("analysis/user/action" + query, new ParameterizedTypeReference<EMRActionReportObject>() {
+        });
+    }
+
 }

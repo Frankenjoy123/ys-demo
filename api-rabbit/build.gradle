@@ -1,8 +1,11 @@
 version = '1.0'
 
 buildscript {
+    ext {
+        springBootVersion = '1.3.2.RELEASE'
+    }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.3.2.RELEASE'
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.2'
     }
 }

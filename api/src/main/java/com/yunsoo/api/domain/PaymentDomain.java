@@ -23,7 +23,7 @@ import java.util.Map;
 public class PaymentDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Value("${yunsoo.alipay.pid}")
     private String pid;
@@ -50,17 +50,17 @@ public class PaymentDomain {
     public PaymentObject createAlipayPayment(PaymentObject paymentObject) {
         paymentObject.setId(null);
         paymentObject.setCreatedDateTime(DateTime.now());
-        return dataAPIClient.post("payment/brand/alipay", paymentObject, PaymentObject.class);
+        return dataApiClient.post("payment/brand/alipay", paymentObject, PaymentObject.class);
     }
 
     public void updateAlipayPayment(PaymentObject paymentObject) {
-        dataAPIClient.put("payment/brand/alipay/{id}", paymentObject, paymentObject.getId());
+        dataApiClient.put("payment/brand/alipay/{id}", paymentObject, paymentObject.getId());
     }
 
 
     public PaymentObject getPaymentById(String paymentId) {
         try {
-            return dataAPIClient.get("payment/brand/{id}", PaymentObject.class, paymentId);
+            return dataApiClient.get("payment/brand/{id}", PaymentObject.class, paymentId);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -75,10 +75,10 @@ public class PaymentDomain {
         String detail_data = "";
         Integer batchNum = 0;
         BigDecimal batchFee = new BigDecimal("0");
-        PaymentObject paymentObject = dataAPIClient.get("payment/brand/{id}", PaymentObject.class, paymentId);
+        PaymentObject paymentObject = dataApiClient.get("payment/brand/{id}", PaymentObject.class, paymentId);
         String brandApplicationId = paymentObject.getBrandApplicationId();
 
-        BrandObject brandObject = dataAPIClient.get("brand/{id}", BrandObject.class, brandApplicationId);
+        BrandObject brandObject = dataApiClient.get("brand/{id}", BrandObject.class, brandApplicationId);
 
         //order info
         parameters.put(ParameterNames.OUT_TRADE_NO, paymentId);

@@ -1,6 +1,5 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.aspect.*;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.payment.ParameterNames;
@@ -679,7 +678,7 @@ public class MarketingController {
         if ((ruleList != null) && (ruleList.size() > 0)) {
             for (MktDrawRule rule : ruleList) {
                 MarketingObject object = marketingDomain.getMarketingById(rule.getMarketingId());
-                if (object != null) {
+                if ((object != null) && (!object.getStatusCode().equals(LookupCodes.MktStatus.DELETED))) {
                     marketingList.add(object.getName());
                 }
             }

@@ -23,7 +23,7 @@ import java.util.List;
 public class UserScanDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public UserScanRecordObject createScanRecord(UserScanRecordObject userScanRecordObject) {
         userScanRecordObject.setId(null);
@@ -31,7 +31,7 @@ public class UserScanDomain {
         if (userScanRecordObject.getUserId() == null || userScanRecordObject.getUserId().length() == 0) {
             userScanRecordObject.setUserId(Constants.Ids.ANONYMOUS_USER_ID);
         }
-        return dataAPIClient.post("userScanRecord", userScanRecordObject, UserScanRecordObject.class);
+        return dataApiClient.post("userScanRecord", userScanRecordObject, UserScanRecordObject.class);
     }
 
     /**
@@ -46,7 +46,7 @@ public class UserScanDomain {
                 .append("product_key", productKey)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("userScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
+        return dataApiClient.getPaged("userScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
         });
     }
 
@@ -62,7 +62,7 @@ public class UserScanDomain {
                 .append("user_id", userId)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("userScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
+        return dataApiClient.getPaged("userScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
         });
     }
 
@@ -78,7 +78,7 @@ public class UserScanDomain {
                 .append("ysid", ysid)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("userScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
+        return dataApiClient.getPaged("userScanRecord" + query, new ParameterizedTypeReference<List<UserScanRecordObject>>() {
         });
     }
 

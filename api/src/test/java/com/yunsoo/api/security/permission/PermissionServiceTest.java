@@ -17,7 +17,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {Application.class})
-@WebIntegrationTest()
+@WebIntegrationTest("server.port=0")
 public class PermissionServiceTest {
 
     @Autowired

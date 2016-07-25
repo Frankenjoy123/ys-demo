@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class UserFollowingDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public Page<User> getFollowingUsersByOrgId(String orgId, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -34,7 +34,7 @@ public class UserFollowingDomain {
                 .append(pageable)
                 .build();
 
-        Page<UserOrganizationFollowingObject> userFollowingList = dataAPIClient.getPaged("UserOrganizationFollowing" + query,
+        Page<UserOrganizationFollowingObject> userFollowingList = dataApiClient.getPaged("UserOrganizationFollowing" + query,
                 new ParameterizedTypeReference<List<UserOrganizationFollowingObject>>() {
                 });
 
@@ -49,7 +49,7 @@ public class UserFollowingDomain {
                 .append(pageable).append("product_base_id", productBaseId)
                 .build();
 
-        Page<UserProductFollowingObject> userFollowingList = dataAPIClient.getPaged("UserProductFollowing" + query,
+        Page<UserProductFollowingObject> userFollowingList = dataApiClient.getPaged("UserProductFollowing" + query,
                 new ParameterizedTypeReference<List<UserProductFollowingObject>>() {
                 });
 
@@ -60,11 +60,11 @@ public class UserFollowingDomain {
     }
 
     public Long getFollowingUsersCountByProductBaseId(String productBaseId) {
-        return dataAPIClient.get("UserProductFollowing/count?product_base_id={id}", Long.class, productBaseId);
+        return dataApiClient.get("UserProductFollowing/count?product_base_id={id}", Long.class, productBaseId);
     }
 
     public Map<String, Long> getProductFollowingTotalNumber(List<String> productBaseIds) {
-        return dataAPIClient.get("userproduct/following/count/{productBaseIds}", new ParameterizedTypeReference<Map<String, Long>>() {
+        return dataApiClient.get("userproduct/following/count/{productBaseIds}", new ParameterizedTypeReference<Map<String, Long>>() {
         }, StringUtils.arrayToCommaDelimitedString(productBaseIds.toArray()));
     }
 
@@ -73,7 +73,7 @@ public class UserFollowingDomain {
         if (userIds == null || userIds.size() == 0) {
             return new ArrayList<>();
         } else {
-            return dataAPIClient.get("/user?id_in={ids}", new ParameterizedTypeReference<List<User>>() {
+            return dataApiClient.get("/user?id_in={ids}", new ParameterizedTypeReference<List<User>>() {
             }, StringUtils.collectionToCommaDelimitedString(userIds));
         }
     }

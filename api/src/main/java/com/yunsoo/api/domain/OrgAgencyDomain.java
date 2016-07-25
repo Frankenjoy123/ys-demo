@@ -25,12 +25,12 @@ import java.util.List;
 public class OrgAgencyDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
 
     public OrgAgencyObject getOrgAgencyById(String id) {
         try {
-            return dataAPIClient.get("organizationagency/{id}", OrgAgencyObject.class, id);
+            return dataApiClient.get("organizationagency/{id}", OrgAgencyObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -43,7 +43,7 @@ public class OrgAgencyDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("organizationagency" + query, new ParameterizedTypeReference<List<OrgAgencyObject>>() {
+        return dataApiClient.getPaged("organizationagency" + query, new ParameterizedTypeReference<List<OrgAgencyObject>>() {
         });
     }
 
@@ -51,18 +51,18 @@ public class OrgAgencyDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("parent_id", parentId)
                 .build();
-        return dataAPIClient.get("organizationagency/location" + query, new ParameterizedTypeReference<List<LocationObject>>() {
+        return dataApiClient.get("organizationagency/location" + query, new ParameterizedTypeReference<List<LocationObject>>() {
         });
     }
 
 
     public OrgAgencyObject createOrgAgency(OrgAgencyObject orgAgencyObject) {
         orgAgencyObject.setId(null);
-        return dataAPIClient.post("organizationagency", orgAgencyObject, OrgAgencyObject.class);
+        return dataApiClient.post("organizationagency", orgAgencyObject, OrgAgencyObject.class);
     }
 
     public void updateOrgAgency(OrgAgencyObject orgAgencyObject) {
-        dataAPIClient.put("organizationagency/{id}", orgAgencyObject, orgAgencyObject.getId());
+        dataApiClient.put("organizationagency/{id}", orgAgencyObject, orgAgencyObject.getId());
     }
 
     public void updateStatus(String agencyId, String statusCode) {
@@ -72,13 +72,13 @@ public class OrgAgencyDomain {
                 orgAgencyObject.setStatusCode(statusCode);
                 orgAgencyObject.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
                 orgAgencyObject.setModifiedDateTime(DateTime.now());
-                dataAPIClient.put("organizationagency/{id}", orgAgencyObject, agencyId);
+                dataApiClient.put("organizationagency/{id}", orgAgencyObject, agencyId);
             }
         }
     }
 
     public void deleteOrgAgency(String id) {
-        dataAPIClient.delete("organizationagency/{id}", id);
+        dataApiClient.delete("organizationagency/{id}", id);
     }
 
 

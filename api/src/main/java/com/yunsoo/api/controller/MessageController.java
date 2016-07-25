@@ -146,7 +146,7 @@ public class MessageController {
         messageToApp.setOrgName(orgName);
         messageToApp.setTitle(message.getTitle());
         messageToApp.setBody(message.getDetails().getBody());
-        messageDomain.pushMessageToApp(orgId, id, messageToApp);
+        //messageDomain.pushMessageToApp(orgId, id, messageToApp);
         return new Message(messageObject);
     }
 

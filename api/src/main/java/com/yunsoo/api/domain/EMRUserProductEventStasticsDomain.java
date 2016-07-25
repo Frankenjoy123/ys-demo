@@ -16,7 +16,7 @@ import java.util.List;
 public class EMRUserProductEventStasticsDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public List<EMRUserProductEventStasticsObject> getEMRUserProductEventStasticsObjects(String orgId, String userId, String ysId, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -27,7 +27,7 @@ public class EMRUserProductEventStasticsDomain {
                 .append("create_datetime_end", createdDateTimeEnd)
                 .build();
 
-        return dataAPIClient.get("emr/user/event_stats" + query, new ParameterizedTypeReference<List<EMRUserProductEventStasticsObject>>() {
+        return dataApiClient.get("emr/user/event_stats" + query, new ParameterizedTypeReference<List<EMRUserProductEventStasticsObject>>() {
         });
     }
 }

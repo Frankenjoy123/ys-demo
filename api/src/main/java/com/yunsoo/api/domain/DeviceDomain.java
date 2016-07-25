@@ -30,14 +30,14 @@ import java.util.List;
 public class DeviceDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public DeviceObject getById(String deviceId) {
         if (StringUtils.isEmpty(deviceId)) {
             return null;
         }
         try {
-            return dataAPIClient.get("device/{id}", DeviceObject.class, deviceId);
+            return dataApiClient.get("device/{id}", DeviceObject.class, deviceId);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -49,25 +49,25 @@ public class DeviceDomain {
                 .append("login_account_id", loginAccountId)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("device" + query, new ParameterizedTypeReference<List<DeviceObject>>() {
+        return dataApiClient.getPaged("device" + query, new ParameterizedTypeReference<List<DeviceObject>>() {
         });
     }
 
     public void patchUpdate(DeviceObject deviceObject) {
         try {
-            dataAPIClient.patch("device/{id}", deviceObject, deviceObject.getId());
+            dataApiClient.patch("device/{id}", deviceObject, deviceObject.getId());
         } catch (NotFoundException ex) {
             throw new NotFoundException("device not found by id: " + deviceObject.getId());
         }
     }
 
     public void put(DeviceObject deviceObject) {
-        dataAPIClient.put("device/{id}", deviceObject, deviceObject.getId());
+        dataApiClient.put("device/{id}", deviceObject, deviceObject.getId());
     }
 
     public void delete(String id) {
         if (StringUtils.hasText(id)) {
-            dataAPIClient.delete("device/{id}", id);
+            dataApiClient.delete("device/{id}", id);
         }
     }
 

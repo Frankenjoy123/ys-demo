@@ -33,7 +33,7 @@ public class BrandDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public BrandObject createBrand(BrandObject object) {
         object.setId(null);
@@ -44,16 +44,16 @@ public class BrandDomain {
         object.setPassword(password);
         if(StringUtils.hasText(object.getAttachment()) && object.getAttachment().endsWith(","))
             object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() -1 ));
-        return dataAPIClient.post("brand", object, BrandObject.class);
+        return dataApiClient.post("brand", object, BrandObject.class);
     }
 
     public void updateBrand(BrandObject object) {
-        dataAPIClient.put("brand", object, BrandObject.class);
+        dataApiClient.put("brand", object, BrandObject.class);
     }
 
     public BrandObject getBrandById(String id) {
         try {
-            return dataAPIClient.get("organization/brand/{id}", BrandObject.class, id);
+            return dataApiClient.get("organization/brand/{id}", BrandObject.class, id);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -63,11 +63,11 @@ public class BrandDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("carrier_id", id)
                 .append("status", status).append("paid", paid)
                 .build();
-        return dataAPIClient.get("brand/count/" + query , Integer.class);
+        return dataApiClient.get("brand/count/" + query, Integer.class);
     }
 
     public List<BrandApplicationHistoryObject> getBrandApplicationHistory(String id){
-        return dataAPIClient.get("brand/{id}/history", new ParameterizedTypeReference<List<BrandApplicationHistoryObject>>() {
+        return dataApiClient.get("brand/{id}/history", new ParameterizedTypeReference<List<BrandApplicationHistoryObject>>() {
         }, id);
     }
 
@@ -81,7 +81,7 @@ public class BrandDomain {
                 .append("start_datetime", start).append("end_datetime", end)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("brand" + query, new ParameterizedTypeReference<List<BrandObject>>() {
+        return dataApiClient.getPaged("brand" + query, new ParameterizedTypeReference<List<BrandObject>>() {
         }, name);
     }
 
@@ -89,13 +89,15 @@ public class BrandDomain {
     public List<AttachmentObject> getAttachmentList(String attachmentIds){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("ids", StringUtils.commaDelimitedListToStringArray(attachmentIds)).build();
-        return dataAPIClient.get("brand/attachment" + query, new ParameterizedTypeReference<List<AttachmentObject>>(){});
+        return dataApiClient.get("brand/attachment" + query, new ParameterizedTypeReference<List<AttachmentObject>>() {
+        });
     }
 
     public List<AttachmentObject> getAttachmentList(List<String> attachmentIds){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("ids", attachmentIds).build();
-        return dataAPIClient.get("brand/attachment" + query, new ParameterizedTypeReference<List<AttachmentObject>>(){});
+        return dataApiClient.get("brand/attachment" + query, new ParameterizedTypeReference<List<AttachmentObject>>() {
+        });
     }
 
     public AttachmentObject createAttachment(MultipartFile file) {
@@ -103,13 +105,13 @@ public class BrandDomain {
         String s3FileName = "attachment/" + RandomUtils.generateStringWithDate();
         try {
             ResourceInputStream stream = new ResourceInputStream(file.getInputStream(), file.getSize(), file.getContentType());
-            dataAPIClient.put("file/s3?path=" + s3FileName, stream);
+            dataApiClient.put("file/s3?path=" + s3FileName, stream);
 
             AttachmentObject object = new AttachmentObject();
             object.setS3FileName(s3FileName);
             object.setOriginalFileName(fileName);
             object.setCreatedDateTime(DateTime.now());
-            AttachmentObject savedObj = dataAPIClient.post("brand/attachment", object, AttachmentObject.class);
+            AttachmentObject savedObj = dataApiClient.post("brand/attachment", object, AttachmentObject.class);
             return savedObj;
 
         }
@@ -121,7 +123,7 @@ public class BrandDomain {
 
     public ResourceInputStream getAttachment(String fileName) {
         try {
-            return dataAPIClient.getResourceInputStream("file/s3?path={fileName}", fileName);
+            return dataApiClient.getResourceInputStream("file/s3?path={fileName}", fileName);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -133,14 +135,14 @@ public class BrandDomain {
         String s3FileName = "attachment/" + RandomUtils.generateStringWithDate();
         try {
             ResourceInputStream stream = new ResourceInputStream(file.getInputStream(), file.getSize(), file.getContentType());
-            dataAPIClient.put("file/s3?path=" + s3FileName, stream);
+            dataApiClient.put("file/s3?path=" + s3FileName, stream);
 
             AttachmentObject object = new AttachmentObject();
             object.setS3FileName(s3FileName);
             object.setOriginalFileName(fileName);
             object.setId(attachmentId);
             object.setModifiedDateTime(DateTime.now());
-            dataAPIClient.put("brand/attachment", object);
+            dataApiClient.put("brand/attachment", object);
         }
         catch (IOException e) {
             throw new InternalServerErrorException("logo upload failed for brand application");

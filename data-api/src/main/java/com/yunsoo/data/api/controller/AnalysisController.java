@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -263,6 +263,219 @@ public class AnalysisController {
         report.setEventCount(eventCount);
         report.setUserCount(userCount);
         return report;
+    }
+
+    // query user action count: share, store_url, comment
+    @RequestMapping(value = "/user/action", method = RequestMethod.GET)
+    public EMRActionReportObject queryUserAction(@RequestParam(value = "org_id") String orgId,
+                                                 @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                 @RequestParam(value = "province", required = false) String province,
+                                                 @RequestParam(value = "city", required = false) String city,
+                                                 @RequestParam(value = "create_datetime_start", required = false)
+                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                 @RequestParam(value = "create_datetime_end", required = false)
+                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+
+        DateTime startDateTime = null;
+        DateTime endDateTime = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            startDateTime = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            endDateTime = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
+
+        EMRActionReportObject emrActionReportObject = new EMRActionReportObject();
+        List<EMRActionCountObject> eventCount = new ArrayList<>();
+        List<EMRActionCountObject> userCount = new ArrayList<>();
+
+        EMRActionCountObject shareEventCountObject = new EMRActionCountObject();
+        EMRActionCountObject shareUserCountObject = new EMRActionCountObject();
+
+        EMRActionCountObject storeUrlEventCountObject = new EMRActionCountObject();
+        EMRActionCountObject storeUrlUserCountObject = new EMRActionCountObject();
+
+        EMRActionCountObject commentEventCountObject = new EMRActionCountObject();
+        EMRActionCountObject commentUserCountObject = new EMRActionCountObject();
+
+        DateTime endDay = DateTime.now();
+
+        int[] scanData = eventRepository.scanCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        emrActionReportObject.setScanEventCount(scanData[0]);
+        emrActionReportObject.setScanUserCount(scanData[1]);
+
+        // share total count
+        int[] shareData = eventRepository.shareCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        shareEventCountObject.setTotalCount(shareData[0]);
+        shareUserCountObject.setTotalCount(shareData[1]);
+
+        // share last day count
+        int[] shareLastDayData = eventRepository.shareCount(orgId, productBaseId, province, city, endDay.minusHours(24), endDay);
+        shareEventCountObject.setLastDayCount(shareLastDayData[0]);
+        shareUserCountObject.setLastDayCount(shareLastDayData[1]);
+
+        // share last week count
+        int[] shareLastWeekData = eventRepository.shareCount(orgId, productBaseId, province, city, endDay.minusDays(7), endDay);
+        shareEventCountObject.setLastWeekCount(shareLastWeekData[0]);
+        shareUserCountObject.setLastWeekCount(shareLastWeekData[1]);
+
+        // share last month count
+        int[] shareLastMonthData = eventRepository.shareCount(orgId, productBaseId, province, city, endDay.minusMonths(1), endDay);
+        shareEventCountObject.setLastMonthCount(shareLastMonthData[0]);
+        shareUserCountObject.setLastMonthCount(shareLastMonthData[1]);
+
+        eventCount.add(shareEventCountObject);
+        userCount.add(shareUserCountObject);
+
+
+        // store_url total count
+        int[] storeUrlData = eventRepository.storeUrlCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        storeUrlEventCountObject.setTotalCount(storeUrlData[0]);
+        storeUrlUserCountObject.setTotalCount(storeUrlData[1]);
+
+        // store_url last day count
+        int[] storeUrlLastDayData = eventRepository.storeUrlCount(orgId, productBaseId, province, city, endDay.minusHours(24), endDay);
+        storeUrlEventCountObject.setLastDayCount(storeUrlLastDayData[0]);
+        storeUrlUserCountObject.setLastDayCount(storeUrlLastDayData[1]);
+
+        // store_url last week count
+        int[] storeUrlLastWeekData = eventRepository.storeUrlCount(orgId, productBaseId, province, city, endDay.minusDays(7), endDay);
+        storeUrlEventCountObject.setLastWeekCount(storeUrlLastWeekData[0]);
+        storeUrlUserCountObject.setLastWeekCount(storeUrlLastWeekData[1]);
+
+        // store_url last month count
+        int[] storeUrlLastMonthData = eventRepository.storeUrlCount(orgId, productBaseId, province, city, endDay.minusMonths(1), endDay);
+        storeUrlEventCountObject.setLastMonthCount(storeUrlLastMonthData[0]);
+        storeUrlUserCountObject.setLastMonthCount(storeUrlLastMonthData[1]);
+
+        eventCount.add(storeUrlEventCountObject);
+        userCount.add(storeUrlUserCountObject);
+
+        // comment total count
+        int[] commentData = eventRepository.commentCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        commentEventCountObject.setTotalCount(commentData[0]);
+        commentUserCountObject.setTotalCount(commentData[1]);
+
+        // comment last day count
+        int[] commentLastDayData = eventRepository.commentCount(orgId, productBaseId, province, city, endDay.minusHours(24), endDay);
+        commentEventCountObject.setLastDayCount(commentLastDayData[0]);
+        commentUserCountObject.setLastDayCount(commentLastDayData[1]);
+
+        // comment last week count
+        int[] commentLastWeekData = eventRepository.commentCount(orgId, productBaseId, province, city, endDay.minusDays(7), endDay);
+        commentEventCountObject.setLastWeekCount(commentLastWeekData[0]);
+        commentUserCountObject.setLastWeekCount(commentLastWeekData[1]);
+
+        // comment last month count
+        int[] commentLastMonthData = eventRepository.commentCount(orgId, productBaseId, province, city, endDay.minusMonths(1), endDay);
+        commentEventCountObject.setLastMonthCount(commentLastMonthData[0]);
+        commentUserCountObject.setLastMonthCount(commentLastMonthData[1]);
+
+        eventCount.add(commentEventCountObject);
+        userCount.add(commentUserCountObject);
+
+        emrActionReportObject.setEventCount(eventCount);
+        emrActionReportObject.setUserCount(userCount);
+        return emrActionReportObject;
+    }
+
+    // query user action count: share, store_url, comment
+    @RequestMapping(value = "/user/event", method = RequestMethod.GET)
+    public EMREventReportObject queryUserEventCount(@RequestParam(value = "org_id") String orgId,
+                                                    @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                    @RequestParam(value = "province", required = false) String province,
+                                                    @RequestParam(value = "city", required = false) String city,
+                                                    @RequestParam(value = "create_datetime_start", required = false)
+                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                    @RequestParam(value = "create_datetime_end", required = false)
+                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+
+        DateTime startDateTime = null;
+        DateTime endDateTime = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            startDateTime = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            endDateTime = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
+
+        EMREventReportObject emrEventReportObjectMap = new EMREventReportObject();
+        Map<String, EMREventCountObject> objectMap = new HashMap<>();
+
+        List<String[]> scanList = eventRepository.scanDailyCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        if ((scanList != null) && (scanList.size() > 0)) {
+            for (String[] temp : scanList) {
+                if (temp[0] != null && !temp[0].equals("")) {
+                    EMREventCountObject countObject = new EMREventCountObject();
+                    countObject.setScanEventCount(Integer.valueOf(temp[1]));
+                    countObject.setScanUserCount(Integer.valueOf(temp[2]));
+                    objectMap.put(temp[0].toString(), countObject);
+                }
+            }
+        }
+
+        List<String[]> shareList = eventRepository.shareDailyCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        if ((shareList != null) && (shareList.size() > 0)) {
+            for (String[] tempShare : shareList) {
+                if (tempShare[0] != null && !tempShare[0].equals("")) {
+                    EMREventCountObject countShareObject = new EMREventCountObject();
+                    EMREventCountObject shareObject = objectMap.get(tempShare[0]);
+                    if (shareObject != null) {
+                        shareObject.setShareEventCount(Integer.valueOf(tempShare[1]));
+                        shareObject.setShareUserCount(Integer.valueOf(tempShare[2]));
+                        objectMap.put(tempShare[0].toString(), shareObject);
+                    } else {
+                        countShareObject.setShareEventCount(Integer.valueOf(tempShare[1]));
+                        countShareObject.setShareUserCount(Integer.valueOf(tempShare[2]));
+                        objectMap.put(tempShare[0].toString(), countShareObject);
+                    }
+                }
+            }
+        }
+
+        List<String[]> storeUrlList = eventRepository.storeUrlDailyCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        if ((storeUrlList != null) && (storeUrlList.size() > 0)) {
+            for (String[] tempStoreUrl : storeUrlList) {
+                if (tempStoreUrl[0] != null && !tempStoreUrl[0].equals("")) {
+                    EMREventCountObject countStoreUrlObject = new EMREventCountObject();
+                    EMREventCountObject storeUrlObject = objectMap.get(tempStoreUrl[0]);
+                    if (storeUrlObject != null) {
+                        storeUrlObject.setStoreUrlEventCount(Integer.valueOf(tempStoreUrl[1]));
+                        storeUrlObject.setStoreUrlUserCount(Integer.valueOf(tempStoreUrl[2]));
+                        objectMap.put(tempStoreUrl[0].toString(), storeUrlObject);
+                    } else {
+                        countStoreUrlObject.setStoreUrlEventCount(Integer.valueOf(tempStoreUrl[1]));
+                        countStoreUrlObject.setStoreUrlUserCount(Integer.valueOf(tempStoreUrl[2]));
+                        objectMap.put(tempStoreUrl[0].toString(), countStoreUrlObject);
+                    }
+                }
+            }
+        }
+
+        List<String[]> commentList = eventRepository.commentDailyCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        if ((commentList != null) && (commentList.size() > 0)) {
+            for (String[] tempCommentUrl : commentList) {
+                if (tempCommentUrl[0] != null && !tempCommentUrl[0].equals("")) {
+                    EMREventCountObject countCommentObject = new EMREventCountObject();
+                    EMREventCountObject commentObject = objectMap.get(tempCommentUrl[0]);
+                    if (commentObject != null) {
+                        commentObject.setCommentEventCount(Integer.valueOf(tempCommentUrl[1]));
+                        commentObject.setCommentUserCount(Integer.valueOf(tempCommentUrl[2]));
+                        objectMap.put(tempCommentUrl[0].toString(), commentObject);
+                    } else {
+                        countCommentObject.setCommentEventCount(Integer.valueOf(tempCommentUrl[1]));
+                        countCommentObject.setCommentUserCount(Integer.valueOf(tempCommentUrl[2]));
+                        objectMap.put(tempCommentUrl[0].toString(), countCommentObject);
+                    }
+                }
+            }
+        }
+        emrEventReportObjectMap.setEvent_count(objectMap);
+        return emrEventReportObjectMap;
     }
 
     // 核销管理，关于中奖的数据分析

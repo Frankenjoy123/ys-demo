@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.client.DataAPIClient;
+import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.common.data.object.AccountLoginLogObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.util.QueryStringBuilder;
@@ -26,7 +26,7 @@ public class AccountLoginLogDomain {
     private static final String CHANNEL_TOKEN = "token";
 
     @Autowired
-    private DataAPIClient dataAPIClient;
+    private DataApiClient dataApiClient;
 
     private Log log = LogFactory.getLog(this.getClass());
 
@@ -36,7 +36,7 @@ public class AccountLoginLogDomain {
                 .append("account_id", accountId)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("accountLoginLog" + query, new ParameterizedTypeReference<List<AccountLoginLogObject>>() {
+        return dataApiClient.getPaged("accountLoginLog" + query, new ParameterizedTypeReference<List<AccountLoginLogObject>>() {
         });
     }
 
@@ -78,7 +78,7 @@ public class AccountLoginLogDomain {
         try {
             accountLoginLogObject.setId(null);
             accountLoginLogObject.setCreatedDateTime(DateTime.now());
-            dataAPIClient.post("accountLoginLog", accountLoginLogObject, AccountLoginLogObject.class);
+            dataApiClient.post("accountLoginLog", accountLoginLogObject, AccountLoginLogObject.class);
         } catch (Exception e) {
             log.error("accountLoginLog exception", e);
         }

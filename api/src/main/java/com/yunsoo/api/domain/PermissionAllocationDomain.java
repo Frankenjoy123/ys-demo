@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 public class PermissionAllocationDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
     private PermissionService permissionService;
@@ -174,7 +174,7 @@ public class PermissionAllocationDomain {
             return null;
         }
         try {
-            return dataAPIClient.get("permissionAllocation/{id}", PermissionAllocationObject.class, id);
+            return dataApiClient.get("permissionAllocation/{id}", PermissionAllocationObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -184,7 +184,7 @@ public class PermissionAllocationDomain {
         if (StringUtils.isEmpty(principal)) {
             return new ArrayList<>();
         }
-        return dataAPIClient.get("permissionAllocation?principal={p}", new ParameterizedTypeReference<List<PermissionAllocationObject>>() {
+        return dataApiClient.get("permissionAllocation?principal={p}", new ParameterizedTypeReference<List<PermissionAllocationObject>>() {
         }, principal);
     }
 
@@ -195,19 +195,19 @@ public class PermissionAllocationDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("principal_in", principals)
                 .build();
-        return dataAPIClient.get("permissionAllocation" + query, new ParameterizedTypeReference<List<PermissionAllocationObject>>() {
+        return dataApiClient.get("permissionAllocation" + query, new ParameterizedTypeReference<List<PermissionAllocationObject>>() {
         }, principals);
     }
 
     private PermissionAllocationObject createPermissionAllocation(PermissionAllocationObject permissionAllocationObject) {
         permissionAllocationObject.setId(null);
         permissionAllocationObject.setCreatedDateTime(DateTime.now());
-        return dataAPIClient.post("permissionAllocation", permissionAllocationObject, PermissionAllocationObject.class);
+        return dataApiClient.post("permissionAllocation", permissionAllocationObject, PermissionAllocationObject.class);
     }
 
     private void deletePermissionAllocationById(String id) {
         if (!StringUtils.isEmpty(id)) {
-            dataAPIClient.delete("permissionAllocation/{id}", id);
+            dataApiClient.delete("permissionAllocation/{id}", id);
         }
     }
 

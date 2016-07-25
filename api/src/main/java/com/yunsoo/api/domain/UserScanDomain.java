@@ -14,12 +14,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserScanDomain {
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public UserScanRecordObject getScanRecordById(String id) {
         if (id == null) {
             throw new BadRequestException("scan record id is not valid");
         }
-        return dataAPIClient.get("userScanRecord/{id}", UserScanRecordObject.class, id);
+        return dataApiClient.get("userScanRecord/{id}", UserScanRecordObject.class, id);
     }
 }

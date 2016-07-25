@@ -21,7 +21,7 @@ import java.util.List;
 public class ProductCommentsDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public Page<ProductCommentsObject> getProductCommentsByFilter(String productBaseId, Integer scoreGE, Integer scoreLE, DateTime lastCommentDatetimeGE, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -32,23 +32,23 @@ public class ProductCommentsDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("productcomments" + query, new ParameterizedTypeReference<List<ProductCommentsObject>>() {
+        return dataApiClient.getPaged("productcomments" + query, new ParameterizedTypeReference<List<ProductCommentsObject>>() {
         });
 
     }
 
     public ProductCommentsObject getById(String id) {
-        return dataAPIClient.get("productcomments/{id}", ProductCommentsObject.class, id);
+        return dataApiClient.get("productcomments/{id}", ProductCommentsObject.class, id);
     }
 
     public Long countProductCommentsByOrgId(String orgId) {
-        Long totalQuantity = dataAPIClient.get("productcomments/totalcount?org_id=" + orgId, Long.class);
+        Long totalQuantity = dataApiClient.get("productcomments/totalcount?org_id=" + orgId, Long.class);
         return totalQuantity;
     }
 
 
     public Long getProductCommentsNumber(String productBaseId) {
-        return dataAPIClient.get("productcomments/count/{productBaseId}", Long.class, productBaseId);
+        return dataApiClient.get("productcomments/count/{productBaseId}", Long.class, productBaseId);
     }
 
 

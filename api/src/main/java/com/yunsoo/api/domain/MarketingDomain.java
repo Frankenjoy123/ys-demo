@@ -29,7 +29,7 @@ import java.util.Random;
 public class MarketingDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Value("${yunsoo.alipay.pid}")
     private String pid;
@@ -50,21 +50,21 @@ public class MarketingDomain {
     public MktDrawRuleObject createMktDrawRule(MktDrawRuleObject mktDrawRuleObject) {
         mktDrawRuleObject.setId(null);
         mktDrawRuleObject.setCreatedDateTime(DateTime.now());
-        return dataAPIClient.post("marketing/drawRule", mktDrawRuleObject, MktDrawRuleObject.class);
+        return dataApiClient.post("marketing/drawRule", mktDrawRuleObject, MktDrawRuleObject.class);
     }
 
     public MktDrawRuleObject createMktDrawRuleList(List<MktDrawRuleObject> mktDrawRuleObjectList) {
-        return dataAPIClient.post("marketing/drawRule/list", mktDrawRuleObjectList, MktDrawRuleObject.class);
+        return dataApiClient.post("marketing/drawRule/list", mktDrawRuleObjectList, MktDrawRuleObject.class);
     }
 
     public void updateMktDrawRuleList(List<MktDrawRuleObject> mktDrawRuleObjectList) {
-        dataAPIClient.put("marketing/drawRule/list", mktDrawRuleObjectList);
+        dataApiClient.put("marketing/drawRule/list", mktDrawRuleObjectList);
     }
 
 
     public MarketingObject getMarketingById(String id) {
         try {
-            return dataAPIClient.get("marketing/{id}", MarketingObject.class, id);
+            return dataApiClient.get("marketing/{id}", MarketingObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -72,7 +72,7 @@ public class MarketingDomain {
 
     public String getProductBaseIdByScanRecordId(String id) {
         try {
-            UserScanRecordObject userScanRecordObject = dataAPIClient.get("userScanRecord/{id}", UserScanRecordObject.class, id);
+            UserScanRecordObject userScanRecordObject = dataApiClient.get("userScanRecord/{id}", UserScanRecordObject.class, id);
             return userScanRecordObject.getProductBaseId();
         } catch (NotFoundException ignored) {
             return null;
@@ -82,7 +82,7 @@ public class MarketingDomain {
 
     public MktDrawRuleObject getMktDrawRuleById(String id) {
         try {
-            return dataAPIClient.get("marketing/Rule/{id}", MktDrawRuleObject.class, id);
+            return dataApiClient.get("marketing/Rule/{id}", MktDrawRuleObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -91,20 +91,20 @@ public class MarketingDomain {
 
     public MktDrawPrizeObject getMktDrawPrizeById(String id) {
         try {
-            return dataAPIClient.get("marketing/drawPrize/record/{id}", MktDrawPrizeObject.class, id);
+            return dataApiClient.get("marketing/drawPrize/record/{id}", MktDrawPrizeObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
     }
 
     public List<MktDrawRuleObject> getRuleList(String marketingId) {
-        return dataAPIClient.get("marketing/drawRule/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>() {
+        return dataApiClient.get("marketing/drawRule/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>() {
         }, marketingId);
 
     }
 
     public List<MktDrawRuleObject> getRuleListByConsumerRight(String consumerRightId) {
-        return dataAPIClient.get("marketing/drawRule/consumer/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>() {
+        return dataApiClient.get("marketing/drawRule/consumer/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>() {
         }, consumerRightId);
 
     }
@@ -120,7 +120,7 @@ public class MarketingDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("marketing" + query, new ParameterizedTypeReference<List<MarketingObject>>() {
+        return dataApiClient.getPaged("marketing" + query, new ParameterizedTypeReference<List<MarketingObject>>() {
         });
     }
 
@@ -128,7 +128,7 @@ public class MarketingDomain {
 
     public MarketingObject createMarketing(MarketingObject marketingObject) {
         marketingObject.setId(null);
-        return dataAPIClient.post("marketing", marketingObject, MarketingObject.class);
+        return dataApiClient.post("marketing", marketingObject, MarketingObject.class);
     }
 
     public Page<MktConsumerRightObject> getMktConsumerRightByOrgId(String orgId, String typeCode, Pageable pageable) {
@@ -136,35 +136,35 @@ public class MarketingDomain {
                 .append("org_id", orgId).append("type_code", typeCode).append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("marketing/consumer" + query, new ParameterizedTypeReference<List<MktConsumerRightObject>>() {
+        return dataApiClient.getPaged("marketing/consumer" + query, new ParameterizedTypeReference<List<MktConsumerRightObject>>() {
         });
     }
 
     public MktConsumerRightObject createMktConsumerRight(MktConsumerRightObject mktConsumerRightObject) {
         mktConsumerRightObject.setId(null);
-        return dataAPIClient.post("marketing/consumer", mktConsumerRightObject, MktConsumerRightObject.class);
+        return dataApiClient.post("marketing/consumer", mktConsumerRightObject, MktConsumerRightObject.class);
     }
 
     public MktConsumerRightObject getMktConsumerRightById(String id) {
         try {
-            return dataAPIClient.get("marketing/consumer/{id}", MktConsumerRightObject.class, id);
+            return dataApiClient.get("marketing/consumer/{id}", MktConsumerRightObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
     }
 
     public void updateMktConsumerRight(MktConsumerRightObject mktConsumerRightObject) {
-        dataAPIClient.put("marketing/consumer/{id}", mktConsumerRightObject, mktConsumerRightObject.getId());
+        dataApiClient.put("marketing/consumer/{id}", mktConsumerRightObject, mktConsumerRightObject.getId());
     }
 
     public void deleteMktConsumerRight(String id) {
-        dataAPIClient.delete("marketing/consumer/{id}", id);
+        dataApiClient.delete("marketing/consumer/{id}", id);
     }
 
 
 
     public Long countMarketingsByOrgId(String orgId) {
-        Long totalQuantity = dataAPIClient.get("marketing/totalcount?org_id=" + orgId, Long.class);
+        Long totalQuantity = dataApiClient.get("marketing/totalcount?org_id=" + orgId, Long.class);
         return totalQuantity;
     }
 
@@ -175,7 +175,7 @@ public class MarketingDomain {
                 .append("end_time", endTime)
                 .build();
 
-        Long totalQuantity = dataAPIClient.get("productkeybatch/sum/quantity" + query, Long.class);
+        Long totalQuantity = dataApiClient.get("productkeybatch/sum/quantity" + query, Long.class);
         return totalQuantity;
     }
 
@@ -187,12 +187,12 @@ public class MarketingDomain {
                 .append("end_time", endTime)
                 .build();
 
-        Long totalQuantity = dataAPIClient.get("marketing/drawRecord/sum" + query, Long.class);
+        Long totalQuantity = dataApiClient.get("marketing/drawRecord/sum" + query, Long.class);
         return totalQuantity;
     }
 
     public Long countMktDrawPrizesByOrgId(String orgId) {
-        Long totalQuantity = dataAPIClient.get("marketing/drawPrize/totalcount?org_id=" + orgId, Long.class);
+        Long totalQuantity = dataApiClient.get("marketing/drawPrize/totalcount?org_id=" + orgId, Long.class);
         return totalQuantity;
     }
 
@@ -205,7 +205,7 @@ public class MarketingDomain {
                 .append("end_time", endTime)
                 .build();
 
-        Long totalQuantity = dataAPIClient.get("marketing/drawPrize/sum" + query, Long.class);
+        Long totalQuantity = dataApiClient.get("marketing/drawPrize/sum" + query, Long.class);
 
         return totalQuantity;
     }
@@ -214,14 +214,14 @@ public class MarketingDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                  .append("org_ids", orgIds).append("status", status)
                 .build();
-        return dataAPIClient.get("marketing/count" + query, Integer.class);
+        return dataApiClient.get("marketing/count" + query, Integer.class);
     }
 
     public List<MarketingObject> statisticsMarketing(List<String> orgIds, List<String> status, Pageable pageable){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_ids", orgIds).append("status", status).append(pageable)
                 .build();
-        return dataAPIClient.get("marketing/statistics" + query, new ParameterizedTypeReference<List<MarketingObject>>() {
+        return dataApiClient.get("marketing/statistics" + query, new ParameterizedTypeReference<List<MarketingObject>>() {
         });
     }
 
@@ -230,26 +230,26 @@ public class MarketingDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("marketing_id", marketingId)
                 .build();
-        return dataAPIClient.get("analysis/market_win_user_location" + query, new ParameterizedTypeReference<List<MarketWinUserLocationAnalysisObject>>() {
+        return dataApiClient.get("analysis/market_win_user_location" + query, new ParameterizedTypeReference<List<MarketWinUserLocationAnalysisObject>>() {
         });
     }
 
 
     public void updateMarketing(MarketingObject marketingObject){
-        dataAPIClient.put("marketing/{id}", marketingObject, marketingObject.getId());
+        dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
     }
 
     public List<String> getBatchNosById(String id) {
-        return dataAPIClient.get("marketing/delete/{id}", new ParameterizedTypeReference<List<String>>() {
+        return dataApiClient.get("marketing/delete/{id}", new ParameterizedTypeReference<List<String>>() {
         }, id);
     }
 
     public void deleteMarketingById(String id) {
-        dataAPIClient.delete("marketing/{id}", id);
+        dataApiClient.delete("marketing/{id}", id);
     }
 
     public void deleteMktDrawRuleById(String id) {
-        dataAPIClient.delete("marketing/drawRule/rule/{id}", id);
+        dataApiClient.delete("marketing/drawRule/rule/{id}", id);
     }
 
 
@@ -263,17 +263,17 @@ public class MarketingDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("marketing/drawPrize/marketing" + query, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
+        return dataApiClient.getPaged("marketing/drawPrize/marketing" + query, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
         });
 
     }
 
     public void updateMktDrawRule(MktDrawRuleObject mktDrawRuleObject) {
-        dataAPIClient.put("marketing/drawRule/{id}", mktDrawRuleObject, mktDrawRuleObject.getId());
+        dataApiClient.put("marketing/drawRule/{id}", mktDrawRuleObject, mktDrawRuleObject.getId());
     }
 
     public void updateMktDrawPrize(MktDrawPrizeObject mktDrawPrizeObject) {
-        dataAPIClient.patch("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
+        dataApiClient.patch("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
     }
 
 
@@ -285,7 +285,7 @@ public class MarketingDomain {
         String detail_data = "";
         Integer batchNum = 0;
         BigDecimal batchFee = new BigDecimal("0");
-//        List<MktDrawPrizeObject> mktDrawPrizeObjectList = dataAPIClient.get("marketing/alipay_batchtransfer", new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
+//        List<MktDrawPrizeObject> mktDrawPrizeObjectList = dataApiClient.get("marketing/alipay_batchtransfer", new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
 //        });
         if (mktDrawPrizeList.size() > 0) {
             for (MktDrawPrize object : mktDrawPrizeList) {

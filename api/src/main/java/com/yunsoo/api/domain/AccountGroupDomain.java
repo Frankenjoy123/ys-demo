@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.client.DataAPIClient;
+import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.AccountGroupObject;
 import com.yunsoo.common.data.object.AccountObject;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class AccountGroupDomain {
 
     @Autowired
-    private DataAPIClient dataAPIClient;
+    private DataApiClient dataApiClient;
 
     @Autowired
     private AccountDomain accountDomain;
@@ -33,17 +33,17 @@ public class AccountGroupDomain {
 
 
     public List<AccountGroupObject> getAccountGroupByGroupId(String groupId) {
-        return dataAPIClient.get("accountgroup?group_id={groupId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
+        return dataApiClient.get("accountgroup?group_id={groupId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
         }, groupId);
     }
 
     public List<AccountGroupObject> getAccountGroupByAccountId(String accountId) {
-        return dataAPIClient.get("accountgroup?account_id={accountId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
+        return dataApiClient.get("accountgroup?account_id={accountId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
         }, accountId);
     }
 
     public AccountGroupObject getAccountGroupByAccountIdAndGroupId(String accountId, String groupId) {
-        List<AccountGroupObject> accountGroupObjects = dataAPIClient.get("accountgroup?account_id={accountId}&group_id={groupId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
+        List<AccountGroupObject> accountGroupObjects = dataApiClient.get("accountgroup?account_id={accountId}&group_id={groupId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
         }, accountId, groupId);
         if (accountGroupObjects.size() == 0) {
             return null;
@@ -57,7 +57,7 @@ public class AccountGroupDomain {
         obj.setGroupId(groupId);
         obj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         obj.setCreatedDateTime(DateTime.now());
-        dataAPIClient.put("accountgroup", obj);
+        dataApiClient.put("accountgroup", obj);
     }
 
     public void putAccountGroupsByAccount(AccountObject account, List<String> groupIds) {
@@ -100,12 +100,12 @@ public class AccountGroupDomain {
     }
 
     public void deleteAccountGroupByAccountIdAndGroupId(String accountId, String groupId) {
-        dataAPIClient.delete("accountgroup?account_id={account_id}&group_id={group_id}", accountId, groupId);
+        dataApiClient.delete("accountgroup?account_id={account_id}&group_id={group_id}", accountId, groupId);
     }
 
 
     public List<GroupObject> getGroups(AccountObject accountObject) {
-        List<AccountGroupObject> accountGroupObjects = dataAPIClient.get("accountgroup?account_id={accountId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
+        List<AccountGroupObject> accountGroupObjects = dataApiClient.get("accountgroup?account_id={accountId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
         }, accountObject.getId());
         if (accountGroupObjects.size() == 0) {
             return new ArrayList<>();
@@ -116,7 +116,7 @@ public class AccountGroupDomain {
     }
 
     public List<AccountObject> getAccounts(GroupObject groupObject) {
-        List<AccountGroupObject> accountGroupObjects = dataAPIClient.get("accountgroup?group_id={groupId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
+        List<AccountGroupObject> accountGroupObjects = dataApiClient.get("accountgroup?group_id={groupId}", new ParameterizedTypeReference<List<AccountGroupObject>>() {
         }, groupObject.getId());
         if (accountGroupObjects.size() == 0) {
             return new ArrayList<>();

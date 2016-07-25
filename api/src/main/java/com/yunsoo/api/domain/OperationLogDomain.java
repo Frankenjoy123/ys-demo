@@ -10,7 +10,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.sql.DataTruncation;
 import java.util.List;
 
 /**
@@ -19,10 +18,10 @@ import java.util.List;
 @Component
 public class OperationLogDomain {
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public OperationLogObject createLog(OperationLogObject log) {
-        return dataAPIClient.post("operation", log, OperationLogObject.class);
+        return dataApiClient.post("operation", log, OperationLogObject.class);
     }
 
     public Page<OperationLogObject> query(List<String> accountIds, String operation, String appId, DateTime start, DateTime end, Pageable pageable){
@@ -32,7 +31,7 @@ public class OperationLogDomain {
                 .append("create_datetime_end", end)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("operation" + query, new ParameterizedTypeReference<List<OperationLogObject>>() {
+        return dataApiClient.getPaged("operation" + query, new ParameterizedTypeReference<List<OperationLogObject>>() {
         });
     }
 }
