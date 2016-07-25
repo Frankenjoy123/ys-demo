@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountTokenDomain;
 import com.yunsoo.api.domain.DeviceDomain;
 import com.yunsoo.api.dto.Device;
@@ -7,6 +8,8 @@ import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountTokenObject;
 import com.yunsoo.common.data.object.DeviceObject;
+import com.yunsoo.common.util.FileNameUtils;
+import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -18,9 +21,12 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -113,6 +119,20 @@ public class DeviceController {
             accountTokenDomain.expirePermanentTokenByDeviceId(id);
             deviceDomain.delete(id);
         }
+    }
+
+
+    @RequestMapping(value = "log", method = RequestMethod.POST)
+    public void uploadInBody(@RequestParam(value = "file_name", required = false) String fileName,
+                             @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
+                             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID) String deviceId,
+                             HttpServletRequest request) throws IOException {
+
+        if (!StringUtils.hasText(fileName))
+            fileName = DateTime.now().toString("yyyymmdd");
+
+        deviceDomain.uploadLog(appId, deviceId, fileName, request.getContentLength(), request.getInputStream());
+
     }
 
 }

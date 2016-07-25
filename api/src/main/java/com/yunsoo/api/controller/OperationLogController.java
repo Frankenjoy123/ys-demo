@@ -60,8 +60,10 @@ public class OperationLogController {
                 operationLog.setCreatedAppName(appList.get(applicationId).getName());
             else{
                 ApplicationObject applicationObject = applicationDomain.getApplicationById(applicationId);
-                appList.put(applicationId, applicationObject);
-                operationLog.setCreatedAppName(applicationObject.getName());
+                if(applicationObject != null) {
+                    appList.put(applicationId, applicationObject);
+                    operationLog.setCreatedAppName(applicationObject.getName());
+                }
             }
         });
         return operationLogList;

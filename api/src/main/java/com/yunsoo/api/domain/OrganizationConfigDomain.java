@@ -89,6 +89,16 @@ public class OrganizationConfigDomain {
         if (orgObject != null) {
             configItems.put("organization", new Organization(orgObject));
         }
+
+        configItems.keySet().forEach(key -> {
+            if (key.equals("webchat.app_secret"))
+                configItems.put(key,encode((String)configItems.get(key)));
+            else if(key.equals(("webchat.private_key")))
+                configItems.put(key,encode((String)configItems.get(key)));
+
+
+        });
+
         return configItems;
     }
 
@@ -135,8 +145,8 @@ public class OrganizationConfigDomain {
         if (sourceItems != null) {
             sourceItems.keySet().forEach(k -> {
                 OrganizationConfigObject.Item item = sourceItems.get(k);
-                if (item != null && (targetItems.get(k) == null ||!("public".equals(item.getAccess()) || "protected".equals(item.getAccess()))))
-                        targetItems.put(k, item);
+                if (item != null && (targetItems.get(k) == null || !("public".equals(item.getAccess()) || "protected".equals(item.getAccess()))))
+                    targetItems.put(k, item);
             });
         }
     }
@@ -175,6 +185,16 @@ public class OrganizationConfigDomain {
 
     private String getConfigFilePath(String orgId) {
         return ObjectIdGenerator.validate(orgId) ? String.format("organization/%s/config.json", orgId) : null;
+    }
+
+    private String encode(String value) {
+
+        if (value != null) {
+            int length = value.length();
+            return value.substring(0, 3) + "******" + value.substring(length - 3, length);
+        } else
+            return null;
+
     }
 
 }

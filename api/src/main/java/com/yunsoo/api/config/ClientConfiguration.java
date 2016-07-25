@@ -34,6 +34,7 @@ public class ClientConfiguration {
         return new ProcessorClient(formatBaseUrl(processorBaseUrl));
     }
 
+
     private String formatBaseUrl(String baseUrl) {
         if (baseUrl == null) {
             baseUrl = "/";
