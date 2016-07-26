@@ -8,8 +8,6 @@ import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountTokenObject;
 import com.yunsoo.common.data.object.DeviceObject;
-import com.yunsoo.common.util.FileNameUtils;
-import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -129,7 +127,7 @@ public class DeviceController {
                              HttpServletRequest request) throws IOException {
 
         if (!StringUtils.hasText(fileName))
-            fileName = DateTime.now().toString("yyyymmdd");
+            fileName = DateTime.now().toString("yyyyMMdd");
 
         deviceDomain.uploadLog(appId, deviceId, fileName, request.getContentLength(), request.getInputStream());
 
