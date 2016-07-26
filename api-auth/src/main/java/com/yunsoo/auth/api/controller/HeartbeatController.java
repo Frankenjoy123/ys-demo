@@ -4,6 +4,7 @@ import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.dto.HeartBeatPackage;
 import com.yunsoo.auth.service.HeartBeatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -15,12 +16,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/heartbeat")
 public class HeartbeatController {
 
-
     @Autowired
     private HeartBeatService heartBeatService;
 
 
     @RequestMapping(value = "", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission('current', 'org', 'device:read')")
     public HeartBeatPackage getByDeviceId(@RequestParam("device_id") String deviceId) {
         return heartBeatService.getBeat(deviceId);
     }
