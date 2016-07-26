@@ -50,6 +50,9 @@ public final class Constants {
         }
 
         public static final String AVAILABLE = "available";
+        public static final String DISABLED = "disabled";
+        public static final String ONLINE = "online";
+        public static final String OFFLINE = "offline";
     }
 
     public static class PermissionRegionType {

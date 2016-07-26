@@ -7,6 +7,7 @@ import com.yunsoo.auth.api.util.PageUtils;
 import com.yunsoo.auth.dao.entity.DeviceEntity;
 import com.yunsoo.auth.dao.repository.DeviceRepository;
 import com.yunsoo.auth.dto.Device;
+import com.yunsoo.auth.dto.HeartBeatPackage;
 import com.yunsoo.common.web.client.Page;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,19 +30,22 @@ public class DeviceService {
     @Autowired
     private AccountTokenService accountTokenService;
 
+    @Autowired
+    private HeartBeatService heartBeatService;
+
 
     public Device getById(String deviceId) {
         if (StringUtils.isEmpty(deviceId)) {
             return null;
         }
-        return toDevice(deviceRepository.findOne(deviceId));
+        return fillStatus(toDevice(deviceRepository.findOne(deviceId)));
     }
 
     public Page<Device> getByFilter(String orgId, String authAccountId, Pageable pageable) {
         return PageUtils.convert(
                 !StringUtils.isEmpty(authAccountId) ? deviceRepository.findByAuthAccountId(authAccountId, pageable)
                         : !StringUtils.isEmpty(orgId) ? deviceRepository.findByOrgId(orgId, pageable)
-                        : deviceRepository.findAll(pageable)).map(this::toDevice);
+                        : deviceRepository.findAll(pageable)).map(this::toDevice).map(this::fillStatus);
     }
 
     public Device register(Device device) {
@@ -79,6 +83,16 @@ public class DeviceService {
         }
         deviceRepository.delete(deviceId);
         accountTokenService.expirePermanentTokenByDeviceId(deviceId);
+    }
+
+    private Device fillStatus(Device device) {
+        if (device != null && StringUtils.hasText(device.getId()) && Constants.DeviceStatus.AVAILABLE.equals(device.getStatusCode())) {
+            HeartBeatPackage pkg = heartBeatService.getBeat(device.getId());
+            if (pkg != null) {
+                device.setStatusCode(pkg.getStatus());
+            }
+        }
+        return device;
     }
 
     private Device toDevice(DeviceEntity entity) {
