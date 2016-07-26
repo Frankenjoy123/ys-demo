@@ -18,6 +18,7 @@ public class ProductKeyBatch {
     private String orgId;
     private String productBaseId;
     private String createdAppId;
+    private String createdDeviceId;
     private String createdAccountId;
     private DateTime createdDateTime;
     private List<String> productKeyTypeCodes;
@@ -79,6 +80,14 @@ public class ProductKeyBatch {
 
     public void setCreatedAppId(String createdAppId) {
         this.createdAppId = createdAppId;
+    }
+
+    public String getCreatedDeviceId() {
+        return createdDeviceId;
+    }
+
+    public void setCreatedDeviceId(String createdDeviceId) {
+        this.createdDeviceId = createdDeviceId;
     }
 
     public String getCreatedAccountId() {

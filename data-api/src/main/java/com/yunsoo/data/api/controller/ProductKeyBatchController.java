@@ -234,6 +234,7 @@ public class ProductKeyBatchController {
         batchObj.setOrgId(batch.getOrgId());
         batchObj.setProductBaseId(batch.getProductBaseId());
         batchObj.setCreatedAppId(batch.getCreatedAppId());
+        batchObj.setCreatedDeviceId(batch.getCreatedDeviceId());
         batchObj.setCreatedAccountId(batch.getCreatedAccountId());
         batchObj.setCreatedDateTime(batch.getCreatedDateTime());
         batchObj.setProductKeyTypeCodes(batch.getProductKeyTypeCodes());
@@ -256,6 +257,7 @@ public class ProductKeyBatchController {
         object.setProductBaseId(entity.getProductBaseId());
         object.setOrgId(entity.getOrgId());
         object.setCreatedAppId(entity.getCreatedAppId());
+        object.setCreatedDeviceId(entity.getCreatedDeviceId());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setMarketingId(entity.getMarketingId());
@@ -275,6 +277,7 @@ public class ProductKeyBatchController {
         batch.setOrgId(batchObj.getOrgId());
         batch.setProductBaseId(batchObj.getProductBaseId());
         batch.setCreatedAppId(batchObj.getCreatedAppId());
+        batch.setCreatedDeviceId(batchObj.getCreatedDeviceId());
         batch.setCreatedAccountId(batchObj.getCreatedAccountId());
         batch.setCreatedDateTime(batchObj.getCreatedDateTime());
         batch.setProductKeyTypeCodes(batchObj.getProductKeyTypeCodes());
