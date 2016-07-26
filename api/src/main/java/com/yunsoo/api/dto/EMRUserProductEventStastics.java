@@ -30,6 +30,15 @@ public class EMRUserProductEventStastics implements Serializable {
     @JsonProperty("reward_count")
     private int rewardCount;
 
+    @JsonProperty("comment_count")
+    private int commentCount;
+
+    @JsonProperty("share_count")
+    private int shareCount;
+
+    @JsonProperty("store_count")
+    private int storeCount;
+
     public int getRewardCount() {
         return rewardCount;
     }
@@ -86,6 +95,30 @@ public class EMRUserProductEventStastics implements Serializable {
         this.productBaseId = productBaseId;
     }
 
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
+    }
+
+    public int getShareCount() {
+        return shareCount;
+    }
+
+    public void setShareCount(int shareCount) {
+        this.shareCount = shareCount;
+    }
+
+    public int getStoreCount() {
+        return storeCount;
+    }
+
+    public void setStoreCount(int storeCount) {
+        this.storeCount = storeCount;
+    }
+
     public EMRUserProductEventStastics() {
     }
 
@@ -98,6 +131,9 @@ public class EMRUserProductEventStastics implements Serializable {
             this.setRewardCount(object.getRewardCount());
             this.setScanCount(object.getScanCount());
             this.setWinCount(object.getWinCount());
+            this.setStoreCount(object.getStoreCount());
+            this.setShareCount(object.getShareCount());
+            this.setCommentCount(object.getCommentCount());
         }
     }
 }

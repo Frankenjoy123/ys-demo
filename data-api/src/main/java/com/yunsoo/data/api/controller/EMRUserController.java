@@ -415,6 +415,9 @@ public class EMRUserController {
         object.setRewardCount(entity.getRewardCount());
         object.setScanCount(entity.getScanCount());
         object.setWinCount(entity.getWinCount());
+        object.setCommentCount(entity.getCommentCount());
+        object.setShareCount(entity.getShareCount());
+        object.setStoreCount(entity.getStoreCount());
         //object.setWxScanCount(entity.getWxScanCount());
 
         return object;
