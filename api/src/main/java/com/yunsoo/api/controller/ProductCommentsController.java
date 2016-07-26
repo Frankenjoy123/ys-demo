@@ -33,7 +33,7 @@ public class ProductCommentsController {
 
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductComments> getProductCommentsByFilter(@RequestParam(value = "product_base_id", required = true) String productBaseId,
+    public List<ProductComments> getProductCommentsByFilter(@RequestParam(value = "product_base_id", required = false) String productBaseId,
                                                             @RequestParam(value = "score_ge", required = false) Integer scoreGE,
                                                             @RequestParam(value = "score_le", required = false) Integer scoreLE,
                                                             @RequestParam(value = "last_comment_datetime_ge", required = false)
@@ -41,9 +41,9 @@ public class ProductCommentsController {
                                                             @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                                             Pageable pageable,
                                                             HttpServletResponse response) {
-        if (productBaseId == null || productBaseId.isEmpty()) {
-            throw new BadRequestException("product base id is not valid");
-        }
+//        if (productBaseId == null || productBaseId.isEmpty()) {
+//            throw new BadRequestException("product base id is not valid");
+//        }
 
         Page<ProductCommentsObject> productCommentsPage = productCommentsDomain.getProductCommentsByFilter(productBaseId, scoreGE, scoreLE, lastCommentDatetimeGE, pageable);
         if (pageable != null) {
