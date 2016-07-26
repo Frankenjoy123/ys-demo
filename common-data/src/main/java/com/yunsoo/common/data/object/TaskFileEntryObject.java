@@ -45,6 +45,18 @@ public class TaskFileEntryObject implements Serializable {
     @JsonProperty("status_code")
     private String statusCode;
 
+    @JsonProperty("product_base_id")
+    private String productBaseId;
+
+    @JsonProperty("package_count")
+    private Integer packageCount;
+
+    @JsonProperty("package_size")
+    private Integer packageSize;
+
+    @JsonProperty("product_count")
+    private Integer productCount;
+
     @NotEmpty(message = "created_account_id must not be null or empty")
     @JsonProperty("created_account_id")
     private String createdAccountId;
@@ -109,6 +121,38 @@ public class TaskFileEntryObject implements Serializable {
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public String getProductBaseId() {
+        return productBaseId;
+    }
+
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
+    }
+
+    public Integer getPackageCount() {
+        return packageCount;
+    }
+
+    public void setPackageCount(Integer packageCount) {
+        this.packageCount = packageCount;
+    }
+
+    public Integer getPackageSize() {
+        return packageSize;
+    }
+
+    public void setPackageSize(Integer packageSize) {
+        this.packageSize = packageSize;
+    }
+
+    public Integer getProductCount() {
+        return productCount;
+    }
+
+    public void setProductCount(Integer productCount) {
+        this.productCount = productCount;
     }
 
     public String getCreatedAccountId() {
