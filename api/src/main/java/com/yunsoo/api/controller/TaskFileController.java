@@ -1,8 +1,8 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.TaskFileDomain;
 import com.yunsoo.api.dto.TaskFileEntry;
+import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.TaskFileEntryObject;
 import com.yunsoo.common.support.YSFile;
@@ -16,7 +16,10 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,12 +68,14 @@ public class TaskFileController {
 
 
     @RequestMapping(value = "form", method = RequestMethod.POST)
-    public TaskFileEntry uploadInForm(@RequestParam("file") MultipartFile file,
-                                      @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
-                                      @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId) throws IOException {
+    public TaskFileEntry uploadInForm(@RequestParam("file") MultipartFile file) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new BadRequestException();
         }
+        AuthDetails authDetails = AuthUtils.getAuthDetails();
+        String appId = authDetails.getAppId();
+        String deviceId = authDetails.getDeviceId();
+
         log.info("received file in form " + StringFormatter.formatMap("size", file.getSize(), "appId", appId, "deviceId", deviceId));
         YSFile ysFile = readYSFile(file.getInputStream());
 
@@ -80,9 +85,11 @@ public class TaskFileController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public TaskFileEntry uploadInBody(@RequestParam(value = "file_name", required = false) String fileName,
-                                      @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
-                                      @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID, required = false) String deviceId,
                                       HttpServletRequest request) throws IOException {
+        AuthDetails authDetails = AuthUtils.getAuthDetails();
+        String appId = authDetails.getAppId();
+        String deviceId = authDetails.getDeviceId();
+
         log.info("received file in request body "
                 + StringFormatter.formatMap("size", request.getContentLengthLong(), "appId", appId, "deviceId", deviceId));
         YSFile ysFile = readYSFile(request.getInputStream());
@@ -94,16 +101,13 @@ public class TaskFileController {
 
     @RequestMapping(value = "count", method = RequestMethod.GET)
     public long[] getTotalTaskFiles(@RequestParam(value = "device_id", required = false) String deviceId,
-                                  @RequestParam(value = "type_code", required = false) String typeCode,
-                                  @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
-                                  @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end){
+                                    @RequestParam(value = "type_code", required = false) String typeCode,
+                                    @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+                                    @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
 
         String orgId = AuthUtils.fixOrgId(null);
         return new long[]{1, 1};
     }
-
-
-
 
 
     private YSFile readYSFile(InputStream inputStream) {

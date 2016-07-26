@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class AccountAuthentication implements Authentication {
 
     private String credentials;
+    private AuthDetails authDetails;
     private final AuthAccount authAccount;
     private AuthorizationService authorizationService;
     private List<PermissionEntry> permissionEntries;
@@ -44,6 +45,11 @@ public class AccountAuthentication implements Authentication {
         return this;
     }
 
+    public AccountAuthentication fillDetails(AuthDetails authDetails) {
+        this.authDetails = authDetails;
+        return this;
+    }
+
     @Override
     public String getName() {
         return authAccount.getId();
@@ -60,8 +66,8 @@ public class AccountAuthentication implements Authentication {
     }
 
     @Override
-    public AuthAccount getDetails() {
-        return authAccount;
+    public AuthDetails getDetails() {
+        return authDetails;
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.AccountTokenDomain;
 import com.yunsoo.api.domain.DeviceDomain;
 import com.yunsoo.api.dto.Device;
+import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountTokenObject;
@@ -122,13 +122,19 @@ public class DeviceController {
 
     @RequestMapping(value = "log", method = RequestMethod.POST)
     public void uploadInBody(@RequestParam(value = "file_name", required = false) String fileName,
-                             @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
-                             @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID) String deviceId,
                              HttpServletRequest request) throws IOException {
+        AuthDetails authDetails = AuthUtils.getAuthDetails();
+        String appId = authDetails.getAppId();
+        String deviceId = authDetails.getDeviceId();
+        if (StringUtils.isEmpty(deviceId)) {
+            throw new BadRequestException("device_id invalid");
+        }
 
-        if (!StringUtils.hasText(fileName))
+        if (!StringUtils.hasText(fileName)) {
             fileName = DateTime.now().toString("yyyyMMdd");
-
+        } else {
+            fileName = fileName.replace("/", "");
+        }
         deviceDomain.uploadLog(appId, deviceId, fileName, request.getContentLength(), request.getInputStream());
 
     }
