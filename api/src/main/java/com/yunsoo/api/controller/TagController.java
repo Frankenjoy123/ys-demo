@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.TagDomain;
 import com.yunsoo.api.dto.Tag;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.TagObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/tag")
@@ -40,15 +40,9 @@ public class TagController {
                                  HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<TagObject> tagList = tagDomain.getTagList(orgId, pageable);
+        Page<TagObject> tagPage = tagDomain.getTagList(orgId, pageable);
 
-        if (pageable != null) {
-            response.setHeader("Content-Range", tagList.toContentRange());
-        }
-
-        return tagList.getContent().stream()
-                .map(Tag::new)
-                .collect(Collectors.toList());
+        return PageUtils.response(response, tagPage.map(Tag::new), pageable != null);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

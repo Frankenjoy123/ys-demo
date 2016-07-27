@@ -9,6 +9,7 @@ import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyOrder;
 import com.yunsoo.api.dto.ProductKeyTransaction;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
@@ -106,7 +107,7 @@ public class ProductKeyOrderController {
                                              @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
                                              @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
                                              @RequestParam(value = "is_carrier_site", required = false) Boolean isCarrierSite,
-                                             @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)Pageable pageable,
+                                             @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC) Pageable pageable,
                                              HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
 
@@ -115,11 +116,7 @@ public class ProductKeyOrderController {
                 : productKeyOrderDomain.
                 getOrdersByFilter(orgId, active, remainGE, expireDateTimeGE, productBaseId, startTime, endTime, isCarrierSite, pageable);
 
-        if (pageable != null) {
-            response.setHeader("Content-Range", orderPage.toContentRange());
-        }
-
-        List<ProductKeyOrder> list = orderPage.getContent();
+        List<ProductKeyOrder> list = PageUtils.response(response, orderPage, pageable != null);
         if (productBaseId == null) {
             Map<String, ProductBase> productBaseMap = new HashMap<>();
             list.forEach(item -> {
@@ -170,21 +167,21 @@ public class ProductKeyOrderController {
 
     @RequestMapping(value = "/count/total", method = RequestMethod.GET)
     public long countTotal(@RequestParam("org_ids") List<String> orgIds) {
-        if(orgIds.size()==0)
+        if (orgIds.size() == 0)
             return 0;
         return productKeyOrderDomain.count(orgIds, true);
     }
 
     @RequestMapping(value = "/count/remain", method = RequestMethod.GET)
     public long countRemain(@RequestParam("org_ids") List<String> orgIds) {
-        if(orgIds.size()==0)
+        if (orgIds.size() == 0)
             return 0;
         return productKeyOrderDomain.count(orgIds, false);
     }
 
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     public List<ProductKeyOrder> statistics(@RequestParam("org_ids") List<String> orgIds, Pageable pageable) {
-        if(orgIds.size()==0)
+        if (orgIds.size() == 0)
             return new ArrayList<ProductKeyOrder>();
         return productKeyOrderDomain.statistics(orgIds, pageable);
     }

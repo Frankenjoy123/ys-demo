@@ -6,6 +6,7 @@ import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductBaseVersions;
 import com.yunsoo.api.dto.ProductCategory;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductBaseVersionsObject;
@@ -98,17 +99,16 @@ public class ProductBaseVersionController {
                                          HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable, null, null, null, null);
-        if (pageable != null) {
-            response.setHeader("Content-Range", productBasePage.toContentRange());
-        }
+
         Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
         List<Lookup> lookupList = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
-        List<ProductBase> productBases = productBasePage.map(p -> {
+
+        List<ProductBase> productBases = PageUtils.response(response, productBasePage.map(p -> {
             ProductBase pb = new ProductBase(p);
             pb.setCategory(new ProductCategory(productCategoryDomain.getById(p.getCategoryId(), productCategoryObjectMap)));
             pb.setProductKeyTypes(Lookup.fromCodeList(lookupList, p.getProductKeyTypeCodes()));
             return pb;
-        }).getContent();
+        }), pageable != null);
 
         List<String> productBaseIds = productBases.stream().map(ProductBase::getId).collect(Collectors.toList());
         Map<String, List<ProductBaseVersionsObject>> productbaseVersionsMap = productBaseDomain.getProductBaseVersionsByProductBaseIds(productBaseIds);
@@ -118,8 +118,6 @@ public class ProductBaseVersionController {
                 pb.setProductBaseVersions(productBaseVersionsObjects.stream().map(ProductBaseVersions::new).collect(Collectors.toList()));
             }
         }
-
-        //productBases.forEach(productBase -> productBase.setFollowingUsersTotalNumber(followingDomain.getFollowingUsersCountByProductBaseId(productBase.getId())));
 
         return productBases;
     }

@@ -5,6 +5,7 @@ import com.yunsoo.api.domain.ApplicationDomain;
 import com.yunsoo.api.domain.FileDomain;
 import com.yunsoo.api.dto.Application;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.ApplicationObject;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.client.Page;
@@ -59,10 +60,7 @@ public class ApplicationController {
                                          Pageable pageable,
                                          HttpServletResponse response) {
         Page<ApplicationObject> applications = applicationDomain.getApplications(typeCode, statusCodeIn, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", applications.toContentRange());
-        }
-        return applications.map(Application::new).getContent();
+        return PageUtils.response(response, applications.map(Application::new), pageable != null);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

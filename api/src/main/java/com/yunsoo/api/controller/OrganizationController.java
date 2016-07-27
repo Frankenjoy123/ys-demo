@@ -1,13 +1,13 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
-import com.yunsoo.api.aspect.OperationLog;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
 import com.yunsoo.api.dto.ImageRequest;
 import com.yunsoo.api.dto.Organization;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AttachmentObject;
@@ -17,8 +17,6 @@ import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -34,7 +32,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -49,7 +46,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/organization")
 public class OrganizationController {
-    private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private OrganizationDomain organizationDomain;
@@ -104,10 +100,7 @@ public class OrganizationController {
             }
         } else {
             Page<OrganizationObject> organizationPage = organizationDomain.getOrganizationList(pageable);
-            if (pageable != null) {
-                response.setHeader("Content-Range", organizationPage.toContentRange());
-            }
-            organizations = organizationPage.map(Organization::new).getContent();
+            organizations = PageUtils.response(response, organizationPage.map(Organization::new), pageable != null);
         }
         return organizations;
     }
@@ -148,12 +141,12 @@ public class OrganizationController {
 
     @RequestMapping(value = "/brand/{id}", method = RequestMethod.PATCH)
     @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
-    public void patchBrand(@PathVariable("id")String id, @RequestBody Brand brand){
+    public void patchBrand(@PathVariable("id") String id, @RequestBody Brand brand) {
         organizationDomain.patchBrand(id, brand.toBrand(brand));
     }
 
     @RequestMapping(value = "/brand/{id}", method = RequestMethod.GET)
-    public Brand getBrandById(@PathVariable(value = "id") String id, @RequestParam(value="carrier_info", required = false) boolean includeCarrier) {
+    public Brand getBrandById(@PathVariable(value = "id") String id, @RequestParam(value = "carrier_info", required = false) boolean includeCarrier) {
         BrandObject object = organizationDomain.getBrandById(id);
         if (object == null) {
             throw new NotFoundException("Brand not found by [id: " + id + "]");
@@ -161,59 +154,50 @@ public class OrganizationController {
 
         Brand returnObject = new Brand(object);
 
-        if(StringUtils.hasText(object.getAttachment())) {
+        if (StringUtils.hasText(object.getAttachment())) {
             List<AttachmentObject> attachmentObjectList = brandDomain.getAttachmentList(object.getAttachment());
             returnObject.setAttachmentList(attachmentObjectList.stream().map(Attachment::new).collect(Collectors.toList()));
         }
 
-        if(includeCarrier)
+        if (includeCarrier)
             returnObject.setCarrier(new Organization(organizationDomain.getOrganizationById(returnObject.getCarrierId())));
 
         return returnObject;
     }
 
 
-
     @RequestMapping(value = "/{id}/brand/count", method = RequestMethod.GET)
-    public int countBrand(@PathVariable(value = "id") String id){
+    public int countBrand(@PathVariable(value = "id") String id) {
         return organizationDomain.countBrand(id, null);
     }
 
     @RequestMapping(value = "/{id}/brand", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
-    public  List<Brand> filterOrgBrand(@PathVariable(value = "id") String id,
-                                       @RequestParam(value="status", required = false)String status,
-                                       @RequestParam(value = "name", required = false) String name,
-                                       @RequestParam(value = "search_text", required = false) String searchText,
-                                       @RequestParam(value = "category_id", required = false) String categoryId,
-                                       @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
-                                       @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
-                                       Pageable pageable,
-                                       HttpServletResponse response) {
-        if(!StringUtils.hasText(searchText))
+    public List<Brand> filterOrgBrand(@PathVariable(value = "id") String id,
+                                      @RequestParam(value = "status", required = false) String status,
+                                      @RequestParam(value = "name", required = false) String name,
+                                      @RequestParam(value = "search_text", required = false) String searchText,
+                                      @RequestParam(value = "category_id", required = false) String categoryId,
+                                      @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
+                                      @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
+                                      Pageable pageable,
+                                      HttpServletResponse response) {
+        if (!StringUtils.hasText(searchText))
             searchText = null;
         Page<BrandObject> brandPage = organizationDomain.getOrgBrandList(id, name, status, searchText, startTime, endTime, categoryId, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", brandPage.toContentRange());
-        }
-
-        return brandPage.map(Brand::new).getContent();
+        return PageUtils.response(response, brandPage.map(Brand::new), pageable != null);
     }
 
     @RequestMapping(value = "/{id}/brand/name", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
-    public  List<Brand> filterOrgBrandByName(@PathVariable(value = "id") String id,
-                                       @RequestParam(value = "name", required = false) String name,
-                                       Pageable pageable,
-                                       HttpServletResponse response) {
-        if(!StringUtils.hasText(name))
+    public List<Brand> filterOrgBrandByName(@PathVariable(value = "id") String id,
+                                            @RequestParam(value = "name", required = false) String name,
+                                            Pageable pageable,
+                                            HttpServletResponse response) {
+        if (!StringUtils.hasText(name))
             name = null;
         Page<BrandObject> brandPage = organizationDomain.getOrgBrandListByName(id, name, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", brandPage.toContentRange());
-        }
-
-        return brandPage.map(Brand::new).getContent();
+        return PageUtils.response(response, brandPage.map(Brand::new), pageable != null);
     }
 
 
@@ -247,7 +231,7 @@ public class OrganizationController {
     @RequestMapping(value = "{id}/logo/{imageName}", method = RequestMethod.PUT)
     @PreAuthorize("hasPermission(#orgId, 'org', 'organization_config:write')")
     public void saveCarrierLogo(@PathVariable(value = "id") String orgId, @PathVariable(value = "imageName") String imageName,
-                              @RequestBody @Valid ImageRequest imageRequest) {
+                                @RequestBody @Valid ImageRequest imageRequest) {
 
         String imageData = imageRequest.getData(); //data:image/png;base64,
         int splitIndex = imageData.indexOf(",");
@@ -261,9 +245,8 @@ public class OrganizationController {
     }
 
 
-
     @RequestMapping(value = "{id}/brand_logo", method = RequestMethod.PUT)
-   // @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:write')")
+    // @PreAuthorize("hasPermission(#orgId, 'orgId', 'organization:write')")
     public void saveBrandLogo(@PathVariable(value = "id") String orgId,
                               @RequestBody @Valid ImageRequest imageRequest) {
 
@@ -281,16 +264,16 @@ public class OrganizationController {
 
     @RequestMapping(value = "{id}/webchatKeys", method = RequestMethod.POST)
     @PreAuthorize("hasPermission(#orgId, 'org', 'organization_config:write')")
-    public void saveWebChatKeys(@PathVariable("id")String orgId, @RequestParam("file") MultipartFile keyFile, @RequestParam("type") String fileType) {
+    public void saveWebChatKeys(@PathVariable("id") String orgId, @RequestParam("file") MultipartFile keyFile, @RequestParam("type") String fileType) {
         if (keyFile == null)
             throw new NotFoundException("no file uploaded!");
         String fileName = keyFile.getOriginalFilename();
-        switch (fileType){
+        switch (fileType) {
             case "key":
-                fileName="apiclient_key.pem";
+                fileName = "apiclient_key.pem";
                 break;
             case "cert":
-                fileName="apiclient_cert.pem";
+                fileName = "apiclient_cert.pem";
                 break;
             default:
                 break;

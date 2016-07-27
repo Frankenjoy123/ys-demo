@@ -1,10 +1,10 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.Constants;
 import com.yunsoo.api.domain.TaskFileDomain;
 import com.yunsoo.api.dto.TaskFileEntry;
 import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.TaskFileEntryObject;
 import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.util.FileNameUtils;
@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -61,10 +60,7 @@ public class TaskFileController {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<TaskFileEntryObject> page = taskFileDomain.getTaskFileEntryByFilter(orgId, appId, deviceId, typeCode, statusCodeIn, createdAccountId, createdDateTimeGE, createdDateTimeLE, pageable);
 
-        if (pageable != null) {
-            response.setHeader("Content-Range", page.toContentRange());
-        }
-        return page.getContent().stream().map(TaskFileEntry::new).collect(Collectors.toList());
+        return PageUtils.response(response, page.map(TaskFileEntry::new), pageable != null);
     }
 
 
