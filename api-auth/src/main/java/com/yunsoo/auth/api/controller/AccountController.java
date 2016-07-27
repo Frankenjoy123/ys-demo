@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
  * Created on:   2016-07-07
  * Descriptions:
  */
-
 @RestController
 @RequestMapping("/account")
 public class AccountController {
@@ -51,7 +50,6 @@ public class AccountController {
     //region account
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-
     public Account getById(@PathVariable("id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         Account account = findAccountById(accountId);
@@ -64,16 +62,16 @@ public class AccountController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'account:read')")
     public List<Account> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
-                                     @RequestParam(value = "status", required = false) String statusCode,
+                                     @RequestParam(value = "status_code", required = false) String statusCode,
                                      @RequestParam(value = "search_text", required = false) String searchText,
-                                     @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime startTime,
-                                     @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime endTime,
+                                     @RequestParam(value = "created_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeGE,
+                                     @RequestParam(value = "created_datetime_le", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeLE,
                                      @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                      Pageable pageable,
                                      HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId); //auto fix current
 
-        Page<Account> accountPage = accountService.search(orgId, statusCode, searchText, pageable);
+        Page<Account> accountPage = accountService.search(orgId, statusCode, searchText, createdDateTimeGE, createdDateTimeLE, pageable);
 
         return PageUtils.response(response, accountPage, pageable != null);
     }
