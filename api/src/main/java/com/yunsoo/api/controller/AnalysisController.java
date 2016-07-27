@@ -501,7 +501,7 @@ public class AnalysisController {
 
             dateList.add(startDateTime.toString("yyyy-MM-dd"));
             startDateTime = startDateTime.plusDays(1);
-        } while (startDateTime.isBefore(endDateTime));
+        } while (!startDateTime.isAfter(endDateTime));
 
         EMREventAnalysisReport emrEventAnalysisReport = new EMREventAnalysisReport();
 
