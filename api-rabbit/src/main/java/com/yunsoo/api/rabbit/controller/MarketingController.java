@@ -135,6 +135,8 @@ public class MarketingController {
         MktPrizeContactObject newObject = marketingDomain.createMktPrizeContact(mktPrizeContactObject);
 
         mktDrawPrizeObject.setPrizeContactId(newObject.getId());
+        mktDrawPrizeObject.setPrizeAccountName(mktPrizeContact.getName());
+        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
 
         return new MktPrizeContact(newObject);

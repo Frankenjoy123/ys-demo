@@ -39,6 +39,18 @@ public class TaskFileEntryEntity {
     @Column(name = "status_code")
     private String statusCode;
 
+    @Column(name = "product_base_id")
+    private String productBaseId;
+
+    @Column(name = "package_count")
+    private Integer packageCount;
+
+    @Column(name = "package_size")
+    private Integer packageSize;
+
+    @Column(name = "product_count")
+    private Integer productCount;
+
     @Column(name = "created_account_id")
     private String createdAccountId;
 
@@ -101,6 +113,38 @@ public class TaskFileEntryEntity {
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public String getProductBaseId() {
+        return productBaseId;
+    }
+
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
+    }
+
+    public Integer getPackageCount() {
+        return packageCount;
+    }
+
+    public void setPackageCount(Integer packageCount) {
+        this.packageCount = packageCount;
+    }
+
+    public Integer getPackageSize() {
+        return packageSize;
+    }
+
+    public void setPackageSize(Integer packageSize) {
+        this.packageSize = packageSize;
+    }
+
+    public Integer getProductCount() {
+        return productCount;
+    }
+
+    public void setProductCount(Integer productCount) {
+        this.productCount = productCount;
     }
 
     public String getCreatedAccountId() {

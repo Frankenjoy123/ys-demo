@@ -48,6 +48,9 @@ public class ProductKeyBatch implements OrgIdDetectable {
     @JsonProperty("created_app_id")
     private String createdAppId;
 
+    @JsonProperty("created_device_id")
+    private String createdDeviceId;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -142,6 +145,14 @@ public class ProductKeyBatch implements OrgIdDetectable {
         this.createdAppId = createdAppId;
     }
 
+    public String getCreatedDeviceId() {
+        return createdDeviceId;
+    }
+
+    public void setCreatedDeviceId(String createdDeviceId) {
+        this.createdDeviceId = createdDeviceId;
+    }
+
     public String getCreatedAccountId() {
         return createdAccountId;
     }
@@ -167,7 +178,7 @@ public class ProductKeyBatch implements OrgIdDetectable {
     }
 
     public Integer getDownloadNo() {
-        return downloadNo == null ? 0: downloadNo;
+        return downloadNo == null ? 0 : downloadNo;
     }
 
     public void setDownloadNo(Integer downloadNo) {

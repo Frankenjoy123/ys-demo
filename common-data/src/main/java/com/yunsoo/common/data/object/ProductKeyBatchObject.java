@@ -41,6 +41,9 @@ public class ProductKeyBatchObject implements Serializable {
     @JsonProperty("created_app_id")
     private String createdAppId;
 
+    @JsonProperty("created_device_id")
+    private String createdDeviceId;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -118,6 +121,14 @@ public class ProductKeyBatchObject implements Serializable {
 
     public void setCreatedAppId(String createdAppId) {
         this.createdAppId = createdAppId;
+    }
+
+    public String getCreatedDeviceId() {
+        return createdDeviceId;
+    }
+
+    public void setCreatedDeviceId(String createdDeviceId) {
+        this.createdDeviceId = createdDeviceId;
     }
 
     public String getCreatedAccountId() {

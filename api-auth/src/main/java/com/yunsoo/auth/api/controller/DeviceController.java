@@ -1,6 +1,6 @@
 package com.yunsoo.auth.api.controller;
 
-import com.yunsoo.auth.Constants;
+import com.yunsoo.auth.api.security.AuthDetails;
 import com.yunsoo.auth.api.util.AuthUtils;
 import com.yunsoo.auth.api.util.PageUtils;
 import com.yunsoo.auth.dto.Device;
@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -51,17 +52,18 @@ public class DeviceController {
         orgId = AuthUtils.fixOrgId(orgId);
 
         Page<Device> page = deviceService.getByFilter(orgId, authAccountId, pageable);
-        return PageUtils.response(response, page);
+        return PageUtils.response(response, page, pageable != null);
     }
 
     @RequestMapping(value = "register", method = RequestMethod.POST)
     @PreAuthorize("hasPermission('current', 'org', 'device:write')")
     public Device register(
-            @RequestHeader(value = Constants.HttpHeaderName.APP_ID) String appId,
-            @RequestHeader(value = Constants.HttpHeaderName.DEVICE_ID) String deviceId,
             @RequestBody DeviceRegisterRequest request) {
-        if (deviceId.length() > 40) {
-            throw new BadRequestException("DeviceId invalid");
+        AuthDetails authDetails = AuthUtils.getAuthDetails();
+        String appId = authDetails.getAppId();
+        String deviceId = authDetails.getDeviceId();
+        if (StringUtils.isEmpty(deviceId)) {
+            throw new BadRequestException("device_id invalid");
         }
         Device device = new Device();
         device.setId(deviceId);

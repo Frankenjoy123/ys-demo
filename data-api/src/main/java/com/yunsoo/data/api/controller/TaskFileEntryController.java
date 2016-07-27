@@ -46,6 +46,7 @@ public class TaskFileEntryController {
             @RequestParam(value = "device_id", required = false) String deviceId,
             @RequestParam(value = "type_code", required = false) String typeCode,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+            @RequestParam(value = "product_base_id", required = false) String productBaseId,
             @RequestParam(value = "created_account_id", required = false) String createdAccountId,
             @RequestParam(value = "created_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeGE,
             @RequestParam(value = "created_datetime_le", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeLE,
@@ -58,6 +59,7 @@ public class TaskFileEntryController {
                 typeCode,
                 statusCodeIn == null || statusCodeIn.size() == 0 ? null : statusCodeIn,
                 statusCodeIn == null || statusCodeIn.size() == 0,
+                productBaseId,
                 createdAccountId,
                 createdDateTimeGE,
                 createdDateTimeLE,
@@ -102,6 +104,10 @@ public class TaskFileEntryController {
         obj.setName(entity.getName());
         obj.setTypeCode(entity.getTypeCode());
         obj.setStatusCode(entity.getStatusCode());
+        obj.setProductBaseId(entity.getProductBaseId());
+        obj.setPackageCount(entity.getPackageCount());
+        obj.setPackageSize(entity.getPackageSize());
+        obj.setProductCount(entity.getProductCount());
         obj.setCreatedAccountId(entity.getCreatedAccountId());
         obj.setCreatedDateTime(entity.getCreatedDateTime());
         return obj;
@@ -119,6 +125,10 @@ public class TaskFileEntryController {
         entity.setName(obj.getName());
         entity.setTypeCode(obj.getTypeCode());
         entity.setStatusCode(obj.getStatusCode());
+        entity.setProductBaseId(obj.getProductBaseId());
+        entity.setPackageCount(obj.getPackageCount());
+        entity.setPackageSize(obj.getPackageSize());
+        entity.setProductCount(obj.getProductCount());
         entity.setCreatedAccountId(obj.getCreatedAccountId());
         entity.setCreatedDateTime(obj.getCreatedDateTime());
         return entity;

@@ -1,6 +1,7 @@
 package com.yunsoo.auth.api.util;
 
 import com.yunsoo.auth.api.security.AuthAccount;
+import com.yunsoo.auth.api.security.AuthDetails;
 import com.yunsoo.auth.api.security.authentication.AccountAuthentication;
 import com.yunsoo.auth.api.security.permission.expression.PermissionExpression;
 import com.yunsoo.auth.api.security.permission.expression.PermissionExpression.SimplePermissionExpression;
@@ -34,6 +35,10 @@ public final class AuthUtils {
 
     public static AuthAccount getCurrentAccount() {
         return getAuthentication().getPrincipal();
+    }
+
+    public static AuthDetails getAuthDetails() {
+        return getAuthentication().getDetails();
     }
 
     public static String fixAccountId(String accountId) {

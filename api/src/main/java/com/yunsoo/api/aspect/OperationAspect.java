@@ -20,14 +20,10 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -61,7 +57,7 @@ public class OperationAspect {
 
             try {
                 object.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
-            }catch (UnauthorizedException ex){  //not login
+            } catch (UnauthorizedException ex) {  //not login
                 object.setCreatedAccountId(Constants.Ids.SYSTEM_ACCOUNT_ID);
 
             }
@@ -70,17 +66,14 @@ public class OperationAspect {
             HttpServletRequest request = RequestUtils.getCurrentHttpServletRequest();
             if (request != null) {
                 object.setUserAgent(request.getHeader(Constants.HttpHeaderName.USER_AGENT));
-                if(!StringUtils.hasText(request.getHeader(Constants.HttpHeaderName.APP_ID)))
-                    object.setCreatedAppId(Constants.Ids.ENTERPRISE_APP_ID);
-                else
-                    object.setCreatedAppId(request.getHeader(Constants.HttpHeaderName.APP_ID));
+                String appId = request.getHeader(Constants.HttpHeaderName.APP_ID);
+                object.setCreatedAppId(StringUtils.hasText(appId) ? appId : Constants.Ids.ENTERPRISE_APP_ID);
                 object.setIp(IpUtils.getIpFromRequest(request));
                 OperationCache.put(object);
             }
         } catch (Exception e) {
             log.error("Operation aspect error:" + joinPoint.getSignature().getName(), e);
         }
-
 
     }
 
@@ -90,7 +83,7 @@ public class OperationAspect {
         Class[] argTypes = new Class[args.length];
         for (int i = 0; i < args.length; i++) {
 
-            if(args[i] == null)
+            if (args[i] == null)
                 argTypes[i] = String.class;
             else if (args[i].getClass().equals(ArrayList.class))
                 argTypes[i] = List.class;

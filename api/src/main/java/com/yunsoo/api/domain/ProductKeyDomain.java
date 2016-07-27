@@ -221,7 +221,6 @@ public class ProductKeyDomain {
     }
 
 
-
     public byte[] getProductKeysByBatchId(String id) {
         ProductKeysObject object = dataApiClient.get("productkeybatch/{batchId}/keys", ProductKeysObject.class, id);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -288,6 +287,7 @@ public class ProductKeyDomain {
         batch.setProductBaseId(object.getProductBaseId());
         batch.setOrgId(object.getOrgId());
         batch.setCreatedAppId(object.getCreatedAppId());
+        batch.setCreatedDeviceId(object.getCreatedDeviceId());
         batch.setCreatedAccountId(object.getCreatedAccountId());
         batch.setCreatedDateTime(object.getCreatedDateTime());
         batch.setMarketingId(object.getMarketingId());

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -104,6 +105,10 @@ public class TaskFileDomain {
         obj.setDeviceId(deviceId);
         obj.setName(fileName);
         obj.setTypeCode(fileType);
+        obj.setProductBaseId(ysFile.getHeader("product_base_id"));
+        obj.setPackageCount(tryParseInt(ysFile.getHeader("package_count")));
+        obj.setPackageSize(tryParseInt(ysFile.getHeader("package_size")));
+        obj.setProductCount(tryParseInt(ysFile.getHeader("product_count")));
         //create file entry
         obj = this.createTaskFileEntry(obj);
 
@@ -134,6 +139,17 @@ public class TaskFileDomain {
             }
         }
         return false;
+    }
+
+    private Integer tryParseInt(String intValue) {
+        if (StringUtils.isEmpty(intValue)) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(intValue);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
 }

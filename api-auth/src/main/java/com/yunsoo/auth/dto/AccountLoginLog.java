@@ -1,49 +1,46 @@
-package com.yunsoo.auth.dao.entity;
+package com.yunsoo.auth.dto;
 
-import com.yunsoo.auth.dao.util.IdGenerator;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by:   Lijian
- * Created on:   2016-05-03
+ * Created on:   2016-07-26
  * Descriptions:
  */
-@Entity
-@Table(name = "account_login_log")
-public class AccountLoginLogEntity {
+public class AccountLoginLog implements Serializable {
 
-    @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = IdGenerator.CLASS)
-    @Column(name = "id")
+    @JsonProperty("id")
     private String id;
 
-    @Column(name = "account_id")
+    @JsonProperty("account_id")
     private String accountId;
 
-    @Column(name = "channel")
+    @JsonProperty("channel")
     private String channel;
 
-    @Column(name = "app_id")
+    @JsonProperty("app_id")
     private String appId;
 
-    @Column(name = "device_id")
+    @JsonProperty("device_id")
     private String deviceId;
 
-    @Column(name = "ip")
+    @JsonProperty("ip")
     private String ip;
 
-    @Column(name = "user_agent")
+    @JsonProperty("user_agent")
     private String userAgent;
 
-    @Column(name = "created_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
     private DateTime createdDateTime;
-
 
     public String getId() {
         return id;
