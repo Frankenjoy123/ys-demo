@@ -243,7 +243,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         if (level > 3) {
             sql = sql + " and ev.price_status_code in ('submit','paid')";
         }
-        sql = sql + "group by DATE_FORMAT(event_datetime,'%Y-%m-%d')";
+        sql = sql + " group by DATE_FORMAT(event_datetime,'%Y-%m-%d')";
 
         Query query = entityManager.createNativeQuery(sql);
         for (String key : parameters.keySet()) {
@@ -303,7 +303,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         if (level > 3) {
             sql = sql + " and ev.price_status_code in ('submit','paid')";
         }
-        sql = sql + "group by province, city, product";
+        sql = sql + " group by province, city, product";
 
         Query query = entityManager.createNativeQuery(sql);
         for (String key : parameters.keySet()) {

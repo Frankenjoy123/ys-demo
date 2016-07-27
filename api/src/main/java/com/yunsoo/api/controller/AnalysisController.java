@@ -651,38 +651,38 @@ public class AnalysisController {
                 EMREventLocationReport.NameValue cityData = new EMREventLocationReport.NameValue();
                 cityData.setName(c.getKey());
                 cityData.setScanEventCount(c.getValue());
-                if (cityScanUserData.get(e.getKey()) != null) {
-                    cityData.setScanUserCount(cityScanUserData.get(e.getKey()));
+                if (cityScanUserData.get(c.getKey()) != null) {
+                    cityData.setScanUserCount(cityScanUserData.get(c.getKey()));
                 } else {
                     cityData.setScanUserCount(0);
                 }
-                if (cityShareEventData.get(e.getKey()) != null) {
-                    cityData.setShareEventCount(cityShareEventData.get(e.getKey()));
+                if (cityShareEventData.get(c.getKey()) != null) {
+                    cityData.setShareEventCount(cityShareEventData.get(c.getKey()));
                 } else {
                     cityData.setShareEventCount(0);
                 }
-                if (cityShareUserData.get(e.getKey()) != null) {
-                    cityData.setShareUserCount(cityShareUserData.get(e.getKey()));
+                if (cityShareUserData.get(c.getKey()) != null) {
+                    cityData.setShareUserCount(cityShareUserData.get(c.getKey()));
                 } else {
                     cityData.setShareUserCount(0);
                 }
-                if (cityStoreUrlEventData.get(e.getKey()) != null) {
-                    cityData.setStoreUrlEventCount(cityStoreUrlEventData.get(e.getKey()));
+                if (cityStoreUrlEventData.get(c.getKey()) != null) {
+                    cityData.setStoreUrlEventCount(cityStoreUrlEventData.get(c.getKey()));
                 } else {
                     cityData.setStoreUrlEventCount(0);
                 }
-                if (cityStoreUrlUserData.get(e.getKey()) != null) {
-                    cityData.setStoreUrlUserCount(cityStoreUrlUserData.get(e.getKey()));
+                if (cityStoreUrlUserData.get(c.getKey()) != null) {
+                    cityData.setStoreUrlUserCount(cityStoreUrlUserData.get(c.getKey()));
                 } else {
                     cityData.setStoreUrlUserCount(0);
                 }
-                if (cityCommentEventData.get(e.getKey()) != null) {
-                    cityData.setCommentEventCount(cityCommentEventData.get(e.getKey()));
+                if (cityCommentEventData.get(c.getKey()) != null) {
+                    cityData.setCommentEventCount(cityCommentEventData.get(c.getKey()));
                 } else {
                     cityData.setCommentEventCount(0);
                 }
-                if (cityCommentUserData.get(e.getKey()) != null) {
-                    cityData.setCommentUserCount(cityCommentUserData.get(e.getKey()));
+                if (cityCommentUserData.get(c.getKey()) != null) {
+                    cityData.setCommentUserCount(cityCommentUserData.get(c.getKey()));
                 } else {
                     cityData.setCommentUserCount(0);
                 }
