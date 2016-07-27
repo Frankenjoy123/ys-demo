@@ -102,9 +102,9 @@ public class TaskFileController {
 
     @RequestMapping(value = "count", method = RequestMethod.GET)
     public long[] getTotalTaskFiles(@RequestParam(value = "device_id", required = false) String deviceId,
-                                   @RequestParam(value = "type_code") String typeCode,
-                                  @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
-                                  @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end){
+                                    @RequestParam(value = "type_code") String typeCode,
+                                    @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+                                    @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
 
         String orgId = AuthUtils.fixOrgId(null);
         return new long[]{1, 1};
