@@ -1,7 +1,6 @@
 package com.yunsoo.data.service.entity;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 
 /**
  * Created by yqy09_000 on 6/14/2016.
@@ -30,6 +29,14 @@ public class EMRUserProductEventStatistics {
     @Column(name = "reward_count")
     private int rewardCount;
 
+    @Column(name = "comment_count")
+    private int commentCount;
+
+    @Column(name = "store_count")
+    private int storeCount;
+
+    @Column(name = "share_count")
+    private int shareCount;
 
     public String getProductBaseId() {
         return productBaseId;
@@ -85,5 +92,29 @@ public class EMRUserProductEventStatistics {
 
     public void setRewardCount(int rewardCount) {
         this.rewardCount = rewardCount;
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
+    }
+
+    public int getStoreCount() {
+        return storeCount;
+    }
+
+    public void setStoreCount(int storeCount) {
+        this.storeCount = storeCount;
+    }
+
+    public int getShareCount() {
+        return shareCount;
+    }
+
+    public void setShareCount(int shareCount) {
+        this.shareCount = shareCount;
     }
 }

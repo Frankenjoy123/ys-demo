@@ -87,6 +87,9 @@ public class EMRUserController {
         stastics.setRewardCount(object.getRewardCount());
         stastics.setScanCount(object.getScanCount());
         stastics.setWinCount(object.getWinCount());
+        stastics.setCommentCount(object.getCommentCount());
+        stastics.setShareCount(object.getShareCount());
+        stastics.setStoreCount(object.getStoreCount());
 
         return stastics;
     }

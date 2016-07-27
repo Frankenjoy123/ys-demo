@@ -23,6 +23,7 @@ public interface TaskFileEntryRepository extends FindOneAndSaveRepository<TaskFi
             "and (:deviceId is null or e.deviceId = :deviceId) " +
             "and (:typeCode is null or e.typeCode = :typeCode) " +
             "and (e.statusCode in (:statusCodeIn) or :statusCodeInIgnored = true) " +
+            "and (:productBaseId is null or e.productBaseId = :productBaseId) " +
             "and (:createdAccountId is null or e.createdAccountId = :createdAccountId) " +
             "and (:createdDateTimeGE is null or e.createdDateTime >= :createdDateTimeGE) " +
             "and (:createdDateTimeLE is null or e.createdDateTime <= :createdDateTimeLE)")
@@ -32,6 +33,7 @@ public interface TaskFileEntryRepository extends FindOneAndSaveRepository<TaskFi
                                     @Param("typeCode") String typeCode,
                                     @Param("statusCodeIn") List<String> statusCodeIn,
                                     @Param("statusCodeInIgnored") boolean statusCodeInIgnored,
+                                    @Param("productBaseId") String productBaseId,
                                     @Param("createdAccountId") String createdAccountId,
                                     @Param("createdDateTimeGE") DateTime createdDateTimeGE,
                                     @Param("createdDateTimeLE") DateTime createdDateTimeLE,

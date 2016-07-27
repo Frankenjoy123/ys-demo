@@ -48,6 +48,9 @@ public class ProductKeyBatchEntity {
     @Column(name = "created_app_id")
     private String createdAppId;
 
+    @Column(name = "created_device_id")
+    private String createdDeviceId;
+
     @Column(name = "created_account_id")
     private String createdAccountId;
 
@@ -123,6 +126,14 @@ public class ProductKeyBatchEntity {
         this.createdAppId = createdAppId;
     }
 
+    public String getCreatedDeviceId() {
+        return createdDeviceId;
+    }
+
+    public void setCreatedDeviceId(String createdDeviceId) {
+        this.createdDeviceId = createdDeviceId;
+    }
+
     public String getCreatedAccountId() {
         return createdAccountId;
     }
@@ -166,6 +177,7 @@ public class ProductKeyBatchEntity {
         batchObj.setOrgId(entity.getOrgId());
         batchObj.setProductBaseId(entity.getProductBaseId());
         batchObj.setCreatedAppId(entity.getCreatedAppId());
+        batchObj.setCreatedDeviceId(entity.getCreatedDeviceId());
         batchObj.setCreatedAccountId(entity.getCreatedAccountId());
         batchObj.setCreatedDateTime(entity.getCreatedDateTime());
         String codes = entity.getProductKeyTypeCodes();

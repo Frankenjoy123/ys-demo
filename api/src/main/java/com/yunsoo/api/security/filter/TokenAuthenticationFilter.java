@@ -2,7 +2,9 @@ package com.yunsoo.api.security.filter;
 
 import com.yunsoo.api.Constants;
 import com.yunsoo.api.security.AccountAuthentication;
+import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.security.TokenAuthenticationService;
+import com.yunsoo.common.web.exception.BadRequestException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -29,7 +31,8 @@ public class TokenAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         // try get token from HttpHeader
-        String token = ((HttpServletRequest) req).getHeader(Constants.HttpHeaderName.ACCESS_TOKEN);
+        HttpServletRequest request = ((HttpServletRequest) req);
+        String token = request.getHeader(Constants.HttpHeaderName.ACCESS_TOKEN);
         if (token == null) {
             token = req.getParameter("access_token"); // try get token from query string
         }
@@ -38,11 +41,28 @@ public class TokenAuthenticationFilter extends GenericFilterBean {
             if (!(SecurityContextHolder.getContext().getAuthentication() instanceof AccountAuthentication)) {
                 final AccountAuthentication accountAuthentication = tokenAuthenticationService.getAuthentication(token);
                 if (accountAuthentication != null) {
+                    //fill details
+                    accountAuthentication.fillDetails(getAuthDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(accountAuthentication);
                 }
             }
         }
 
         chain.doFilter(req, res); // always continue
+    }
+
+    private AuthDetails getAuthDetails(HttpServletRequest request) {
+        String appId = request.getHeader(Constants.HttpHeaderName.APP_ID);
+        String deviceId = request.getHeader(Constants.HttpHeaderName.DEVICE_ID);
+        if (appId != null && appId.length() > 19) {
+            throw new BadRequestException("app_id invalid");
+        }
+        if (deviceId != null && deviceId.length() > 40) {
+            throw new BadRequestException("device_id invalid");
+        }
+        AuthDetails authDetails = new AuthDetails();
+        authDetails.setAppId(appId);
+        authDetails.setDeviceId(deviceId);
+        return authDetails;
     }
 }

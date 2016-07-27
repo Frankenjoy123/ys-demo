@@ -612,6 +612,8 @@ public class MarketingController {
                     UserObject userObject = userDomain.getUserById(userId);
                     if ((userObject != null) && (userObject.getGravatarUrl() != null)) {
                         mktDrawPrize.setGravatarUrl(userObject.getGravatarUrl());
+                        mktDrawPrize.setWxName(userObject.getName());
+                        mktDrawPrize.setOauthOpenid(userObject.getOauthOpenid());
                     }
                 }
             }

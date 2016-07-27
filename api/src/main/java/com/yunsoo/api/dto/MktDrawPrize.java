@@ -78,6 +78,12 @@ public class MktDrawPrize {
     @JsonProperty("gravatar_url")
     private String gravatarUrl;
 
+    @JsonProperty("wx_name")
+    private String wxName;
+
+    @JsonProperty("oauth_openid")
+    private String oauthOpenid;
+
     public String getDrawRecordId() {
         return drawRecordId;
     }
@@ -236,6 +242,22 @@ public class MktDrawPrize {
 
     public void setGravatarUrl(String gravatarUrl) {
         this.gravatarUrl = gravatarUrl;
+    }
+
+    public String getWxName() {
+        return wxName;
+    }
+
+    public void setWxName(String wxName) {
+        this.wxName = wxName;
+    }
+
+    public String getOauthOpenid() {
+        return oauthOpenid;
+    }
+
+    public void setOauthOpenid(String oauthOpenid) {
+        this.oauthOpenid = oauthOpenid;
     }
 
     public MktDrawPrize() {

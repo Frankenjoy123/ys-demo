@@ -52,7 +52,7 @@ public class TokenAuthenticationService {
         if (authAccount == null) {
             return null;
         }
-        return new AccountAuthentication(authAccount, authorizationService);
+        return new AccountAuthentication(authAccount, authorizationService).fillCredentials(token);
     }
 
     public AuthAccount parseLoginToken(String token) {

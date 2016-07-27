@@ -9,10 +9,8 @@ import com.yunsoo.common.web.util.QueryStringBuilder;
 import com.yunsoo.processor.client.DataApiClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -45,26 +43,10 @@ public class TaskFileDomain {
         }
     }
 
-    public Page<TaskFileEntryObject> getTaskFileEntryByFilter(
-            String orgId,
-            String appId,
-            String deviceId,
-            String typeCode,
-            List<String> statusCodeIn,
-            String createdAccountId,
-            DateTime createdDateTimeStart,
-            DateTime createdDateTimeEnd,
-            Pageable pageable) {
+    public Page<TaskFileEntryObject> getTaskFileEntryByFilter(String typeCode, List<String> statusCodeIn) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId)
-                .append("app_id", appId)
-                .append("device_id", deviceId)
                 .append("type_code", typeCode)
                 .append("status_code_in", statusCodeIn)
-                .append("created_account_id", createdAccountId)
-                .append("created_datetime_start", createdDateTimeStart)
-                .append("created_datetime_end", createdDateTimeEnd)
-                .append(pageable)
                 .build();
         return dataApiClient.getPaged("taskFileEntry" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
         });

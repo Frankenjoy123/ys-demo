@@ -1,6 +1,7 @@
 package com.yunsoo.auth.api.security.authentication;
 
 import com.yunsoo.auth.api.security.AuthAccount;
+import com.yunsoo.auth.api.security.AuthDetails;
 import com.yunsoo.auth.api.security.authorization.AuthorizationService;
 import com.yunsoo.auth.api.security.authorization.PermissionGrantedAuthority;
 import com.yunsoo.auth.api.security.permission.PermissionEntry;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
  */
 public class AccountAuthentication implements Authentication {
 
+    private String credentials;
+    private AuthDetails authDetails;
     private final AuthAccount authAccount;
     private AuthorizationService authorizationService;
     private List<PermissionEntry> permissionEntries;
@@ -39,6 +42,16 @@ public class AccountAuthentication implements Authentication {
         return authorizationService.checkPermission(this, restriction, permission);
     }
 
+    public AccountAuthentication fillCredentials(String credentials) {
+        this.credentials = credentials;
+        return this;
+    }
+
+    public AccountAuthentication fillDetails(AuthDetails authDetails) {
+        this.authDetails = authDetails;
+        return this;
+    }
+
     @Override
     public String getName() {
         return authAccount.getId();
@@ -50,13 +63,13 @@ public class AccountAuthentication implements Authentication {
     }
 
     @Override
-    public Object getCredentials() {
-        return null;
+    public String getCredentials() {
+        return credentials;
     }
 
     @Override
-    public AuthAccount getDetails() {
-        return authAccount;
+    public AuthDetails getDetails() {
+        return authDetails;
     }
 
     @Override
