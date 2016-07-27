@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.ProductCommentsDomain;
 import com.yunsoo.api.dto.ProductComments;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.ProductCommentsObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -46,10 +47,7 @@ public class ProductCommentsController {
 //        }
 
         Page<ProductCommentsObject> productCommentsPage = productCommentsDomain.getProductCommentsByFilter(productBaseId, scoreGE, scoreLE, lastCommentDatetimeGE, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", productCommentsPage.toContentRange());
-        }
-        return productCommentsPage.map(ProductComments::new).getContent();
+        return PageUtils.response(response, productCommentsPage.map(ProductComments::new), pageable != null);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)

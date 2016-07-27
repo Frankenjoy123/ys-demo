@@ -5,6 +5,7 @@ import com.yunsoo.api.domain.DeviceDomain;
 import com.yunsoo.api.dto.Device;
 import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountTokenObject;
 import com.yunsoo.common.data.object.DeviceObject;
@@ -63,10 +64,7 @@ public class DeviceController {
         orgId = AuthUtils.fixOrgId(orgId);
 
         Page<DeviceObject> devicePage = deviceDomain.getByFilterPaged(orgId, accountId, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", devicePage.toContentRange());
-        }
-        return devicePage.map(Device::new).getContent();
+        return PageUtils.response(response, devicePage.map(Device::new), pageable != null);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)

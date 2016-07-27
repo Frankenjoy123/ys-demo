@@ -1,5 +1,6 @@
 package com.yunsoo.common.web.client;
 
+import com.yunsoo.common.web.Constants;
 import com.yunsoo.common.web.health.Health;
 import com.yunsoo.common.web.util.PageableUtils;
 import org.springframework.core.ParameterizedTypeReference;
@@ -160,8 +161,11 @@ public class RestClient {
             ResponseExtractor<List<T>> resExt = new HttpMessageConverterExtractor<>(responseType.getType(), restTemplate.getMessageConverters());
             List<T> content = resExt.extractData(response);
             Integer page = 0, total = null, count = null;
-            List<String> pagesValue = response.getHeaders().get("Content-Range");
-            if (pagesValue != null && pagesValue.size() == 1) {
+            List<String> pagesValue = response.getHeaders().get(Constants.HttpHeaderName.CONTENT_RANGE);
+            if (pagesValue == null || pagesValue.size() == 0) {
+                pagesValue = response.getHeaders().get("Content-Range");
+            }
+            if (pagesValue != null && pagesValue.size() > 0) {
                 Integer[] pagesArray = PageableUtils.parsePages(pagesValue.get(0));
                 page = pagesArray[0];
                 total = pagesArray[1];
