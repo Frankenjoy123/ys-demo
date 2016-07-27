@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
  * Created on:   2016-07-07
  * Descriptions:
  */
-
 @RestController
 @RequestMapping("/account")
 public class AccountController {
@@ -51,7 +50,6 @@ public class AccountController {
     //region account
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-
     public Account getById(@PathVariable("id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         Account account = findAccountById(accountId);
