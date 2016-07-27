@@ -1,6 +1,7 @@
 package com.yunsoo.auth.dao.repository;
 
 import com.yunsoo.auth.dao.entity.AccountEntity;
+import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -30,13 +31,17 @@ public interface AccountRepository extends Repository<AccountEntity, String> {
             "where (:orgId is null or acc.orgId = :orgId) " +
             "and (:statusCode is null or acc.statusCode = :statusCode) " +
             "and (:searchText is null " +
-            "or acc.identifier like ('%' || :searchText || '%') " +
-            "or concat(acc.lastName, acc.firstName) like ('%' || :searchText || '%') " +
-            "or acc.phone like ('%' || :searchText || '%') " +
-            "or acc.email like ('%' || :searchText || '%')) ")
+            "" + "or acc.identifier like ('%' || :searchText || '%') " +
+            "" + "or concat(acc.lastName, acc.firstName) like ('%' || :searchText || '%') " +
+            "" + "or acc.phone like ('%' || :searchText || '%') " +
+            "" + "or acc.email like ('%' || :searchText || '%')) " +
+            "and (:createdDateTimeGE is null or acc.createdDateTime >= :createdDateTimeGE) " +
+            "and (:createdDateTimeLE is null or acc.createdDateTime <= :createdDateTimeLE) ")
     Page<AccountEntity> search(@Param("orgId") String orgId,
                                @Param("statusCode") String statusCode,
                                @Param("searchText") String searchText,
+                               @Param("createdDateTimeGE") DateTime createdDateTimeGE,
+                               @Param("createdDateTimeLE") DateTime createdDateTimeLE,
                                Pageable pageable);
 
     long countByOrgId(String orgId);

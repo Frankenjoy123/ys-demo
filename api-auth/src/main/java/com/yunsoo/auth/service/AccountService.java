@@ -67,12 +67,12 @@ public class AccountService {
     }
 
 
-    public Page<Account> search(String orgId, String statusCode, String searchText, Pageable pageable) {
+    public Page<Account> search(String orgId, String statusCode, String searchText, DateTime createdDateTimeGE, DateTime createdDateTimeLE, Pageable pageable) {
         if (StringUtils.isEmpty(orgId)) {
             return Page.empty();
         }
 
-        return PageUtils.convert(accountRepository.search(orgId, statusCode, searchText, pageable)).map(this::toAccount);
+        return PageUtils.convert(accountRepository.search(orgId, statusCode, searchText, createdDateTimeGE, createdDateTimeLE, pageable)).map(this::toAccount);
     }
 
 
