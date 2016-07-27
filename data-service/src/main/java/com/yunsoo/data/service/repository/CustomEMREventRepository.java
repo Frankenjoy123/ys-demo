@@ -67,6 +67,27 @@ public interface CustomEMREventRepository {
                                      DateTime createdDateTimeStart,
                                      DateTime createdDateTimeEnd);
 
+    List<String[]> scanLocationCount(String orgId, String productBaseId,
+                                     String province, String city,
+                                     DateTime createdDateTimeStart,
+                                     DateTime createdDateTimeEnd);
+
+    List<String[]> shareLocationCount(String orgId, String productBaseId,
+                                      String province, String city,
+                                      DateTime createdDateTimeStart,
+                                      DateTime createdDateTimeEnd);
+
+    List<String[]> storeUrlLocationCount(String orgId, String productBaseId,
+                                         String province, String city,
+                                         DateTime createdDateTimeStart,
+                                         DateTime createdDateTimeEnd);
+
+    List<String[]> commentLocationCount(String orgId, String productBaseId,
+                                        String province, String city,
+                                        DateTime createdDateTimeStart,
+                                        DateTime createdDateTimeEnd);
+
+
 
 
     EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId);

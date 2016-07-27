@@ -96,4 +96,15 @@ public class EMREventCountObject {
     public void setCommentUserCount(int commentUserCount) {
         this.commentUserCount = commentUserCount;
     }
+
+    public EMREventCountObject() {
+        this.setScanEventCount(0);
+        this.setScanUserCount(0);
+        this.setShareEventCount(0);
+        this.setShareUserCount(0);
+        this.setStoreUrlEventCount(0);
+        this.setStoreUrlUserCount(0);
+        this.setCommentEventCount(0);
+        this.setCommentUserCount(0);
+    }
 }

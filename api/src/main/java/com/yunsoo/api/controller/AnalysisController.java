@@ -525,4 +525,175 @@ public class AnalysisController {
         return emrEventAnalysisReport;
 
     }
+
+    @RequestMapping(value = "/event_location_report", method = RequestMethod.GET)
+    public EMREventLocationReport getEventLocationReport(@RequestParam(value = "org_id", required = false) String orgId,
+                                                         @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                         @RequestParam(value = "province", required = false) String province,
+                                                         @RequestParam(value = "city", required = false) String city,
+                                                         @RequestParam(value = "create_datetime_start", required = false)
+                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                         @RequestParam(value = "create_datetime_end", required = false)
+                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+        orgId = AuthUtils.fixOrgId(orgId);
+
+        LocalDate now = LocalDate.now();
+        if (createdDateTimeStart == null) {
+            createdDateTimeStart = now.plusDays(-90);
+        }
+        if (createdDateTimeEnd == null) {
+            createdDateTimeEnd = now.plusDays(-1);
+        }
+
+        List<EMREventLocationReportObject> locationList = analysisDomain.getEMRLocationReport(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+
+        EMREventLocationReport emrEventLocationReport = new EMREventLocationReport();
+
+        // province Scan event data
+        Map<String, Integer> provinceScanEventData = locationList.stream().collect(Collectors.groupingBy(EMREventLocationReportObject::getProvince, Collectors.summingInt(o -> {
+            return o.getEvent_count().getScanEventCount();
+        })));
+        // province scan user data
+        Map<String, Integer> provinceScanUserData = locationList.stream().collect(Collectors.groupingBy(EMREventLocationReportObject::getProvince, Collectors.summingInt(o -> {
+            return o.getEvent_count().getScanUserCount();
+        })));
+        // province share event data
+        Map<String, Integer> provinceShareEventData = locationList.stream().collect(Collectors.groupingBy(EMREventLocationReportObject::getProvince, Collectors.summingInt(o -> {
+            return o.getEvent_count().getShareEventCount();
+        })));
+        // province share user data
+        Map<String, Integer> provinceShareUserData = locationList.stream().collect(Collectors.groupingBy(EMREventLocationReportObject::getProvince, Collectors.summingInt(o -> {
+            return o.getEvent_count().getShareUserCount();
+        })));
+        // province store_url event data
+        Map<String, Integer> provinceStoreUrlEventData = locationList.stream().collect(Collectors.groupingBy(EMREventLocationReportObject::getProvince, Collectors.summingInt(o -> {
+            return o.getEvent_count().getStoreUrlEventCount();
+        })));
+        // province store_url user data
+        Map<String, Integer> provinceStoreUrlUserData = locationList.stream().collect(Collectors.groupingBy(EMREventLocationReportObject::getProvince, Collectors.summingInt(o -> {
+            return o.getEvent_count().getStoreUrlUserCount();
+        })));
+        // province comment event data
+        Map<String, Integer> provinceCommentEventData = locationList.stream().collect(Collectors.groupingBy(EMREventLocationReportObject::getProvince, Collectors.summingInt(o -> {
+            return o.getEvent_count().getCommentEventCount();
+        })));
+        // province comment user data
+        Map<String, Integer> provinceCommentUserData = locationList.stream().collect(Collectors.groupingBy(EMREventLocationReportObject::getProvince, Collectors.summingInt(o -> {
+            return o.getEvent_count().getCommentUserCount();
+        })));
+
+        EMREventLocationReport.NameValue[] nvProvinceData = provinceScanEventData.entrySet().stream().map(e -> {
+            EMREventLocationReport.NameValue nv = new EMREventLocationReport.NameValue();
+            nv.setName(e.getKey());
+            nv.setScanEventCount(e.getValue());
+            if (provinceScanUserData.get(e.getKey()) != null) {
+                nv.setScanUserCount(provinceScanUserData.get(e.getKey()));
+            } else {
+                nv.setScanUserCount(0);
+            }
+            if (provinceShareEventData.get(e.getKey()) != null) {
+                nv.setShareEventCount(provinceShareEventData.get(e.getKey()));
+            } else {
+                nv.setShareEventCount(0);
+            }
+            if (provinceShareUserData.get(e.getKey()) != null) {
+                nv.setShareUserCount(provinceShareUserData.get(e.getKey()));
+            } else {
+                nv.setShareUserCount(0);
+            }
+            if (provinceStoreUrlEventData.get(e.getKey()) != null) {
+                nv.setStoreUrlEventCount(provinceStoreUrlEventData.get(e.getKey()));
+            } else {
+                nv.setStoreUrlEventCount(0);
+            }
+            if (provinceStoreUrlUserData.get(e.getKey()) != null) {
+                nv.setStoreUrlUserCount(provinceStoreUrlUserData.get(e.getKey()));
+            } else {
+                nv.setStoreUrlUserCount(0);
+            }
+            if (provinceCommentEventData.get(e.getKey()) != null) {
+                nv.setCommentEventCount(provinceCommentEventData.get(e.getKey()));
+            } else {
+                nv.setCommentEventCount(0);
+            }
+            if (provinceCommentUserData.get(e.getKey()) != null) {
+                nv.setCommentUserCount(provinceCommentUserData.get(e.getKey()));
+            } else {
+                nv.setCommentUserCount(0);
+            }
+
+            Map<String, Integer> cityScanEventData = locationList.stream().filter(p -> p.getProvince().equals(e.getKey())).collect(Collectors.groupingBy(EMREventLocationReportObject::getCity, Collectors.summingInt(o -> {
+                return o.getEvent_count().getScanEventCount();
+            })));
+            Map<String, Integer> cityScanUserData = locationList.stream().filter(p -> p.getProvince().equals(e.getKey())).collect(Collectors.groupingBy(EMREventLocationReportObject::getCity, Collectors.summingInt(o -> {
+                return o.getEvent_count().getScanUserCount();
+            })));
+            Map<String, Integer> cityShareEventData = locationList.stream().filter(p -> p.getProvince().equals(e.getKey())).collect(Collectors.groupingBy(EMREventLocationReportObject::getCity, Collectors.summingInt(o -> {
+                return o.getEvent_count().getShareEventCount();
+            })));
+            Map<String, Integer> cityShareUserData = locationList.stream().filter(p -> p.getProvince().equals(e.getKey())).collect(Collectors.groupingBy(EMREventLocationReportObject::getCity, Collectors.summingInt(o -> {
+                return o.getEvent_count().getShareUserCount();
+            })));
+            Map<String, Integer> cityStoreUrlEventData = locationList.stream().filter(p -> p.getProvince().equals(e.getKey())).collect(Collectors.groupingBy(EMREventLocationReportObject::getCity, Collectors.summingInt(o -> {
+                return o.getEvent_count().getStoreUrlEventCount();
+            })));
+            Map<String, Integer> cityStoreUrlUserData = locationList.stream().filter(p -> p.getProvince().equals(e.getKey())).collect(Collectors.groupingBy(EMREventLocationReportObject::getCity, Collectors.summingInt(o -> {
+                return o.getEvent_count().getStoreUrlUserCount();
+            })));
+            Map<String, Integer> cityCommentEventData = locationList.stream().filter(p -> p.getProvince().equals(e.getKey())).collect(Collectors.groupingBy(EMREventLocationReportObject::getCity, Collectors.summingInt(o -> {
+                return o.getEvent_count().getCommentEventCount();
+            })));
+            Map<String, Integer> cityCommentUserData = locationList.stream().filter(p -> p.getProvince().equals(e.getKey())).collect(Collectors.groupingBy(EMREventLocationReportObject::getCity, Collectors.summingInt(o -> {
+                return o.getEvent_count().getCommentUserCount();
+            })));
+
+            EMREventLocationReport.NameValue[] nvCityData = cityScanEventData.entrySet().stream().map(c -> {
+                EMREventLocationReport.NameValue cityData = new EMREventLocationReport.NameValue();
+                cityData.setName(c.getKey());
+                cityData.setScanEventCount(c.getValue());
+                if (cityScanUserData.get(e.getKey()) != null) {
+                    cityData.setScanUserCount(cityScanUserData.get(e.getKey()));
+                } else {
+                    cityData.setScanUserCount(0);
+                }
+                if (cityShareEventData.get(e.getKey()) != null) {
+                    cityData.setShareEventCount(cityShareEventData.get(e.getKey()));
+                } else {
+                    cityData.setShareEventCount(0);
+                }
+                if (cityShareUserData.get(e.getKey()) != null) {
+                    cityData.setShareUserCount(cityShareUserData.get(e.getKey()));
+                } else {
+                    cityData.setShareUserCount(0);
+                }
+                if (cityStoreUrlEventData.get(e.getKey()) != null) {
+                    cityData.setStoreUrlEventCount(cityStoreUrlEventData.get(e.getKey()));
+                } else {
+                    cityData.setStoreUrlEventCount(0);
+                }
+                if (cityStoreUrlUserData.get(e.getKey()) != null) {
+                    cityData.setStoreUrlUserCount(cityStoreUrlUserData.get(e.getKey()));
+                } else {
+                    cityData.setStoreUrlUserCount(0);
+                }
+                if (cityCommentEventData.get(e.getKey()) != null) {
+                    cityData.setCommentEventCount(cityCommentEventData.get(e.getKey()));
+                } else {
+                    cityData.setCommentEventCount(0);
+                }
+                if (cityCommentUserData.get(e.getKey()) != null) {
+                    cityData.setCommentUserCount(cityCommentUserData.get(e.getKey()));
+                } else {
+                    cityData.setCommentUserCount(0);
+                }
+                return cityData;
+            }).collect(Collectors.toList()).toArray(new EMREventLocationReport.NameValue[0]);
+
+            nv.setCityData(nvCityData);
+            return nv;
+        }).collect(Collectors.toList()).toArray(new EMREventLocationReport.NameValue[0]);
+
+        emrEventLocationReport.setProvinceData(nvProvinceData);
+        return emrEventLocationReport;
+    }
 }

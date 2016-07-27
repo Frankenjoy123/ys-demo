@@ -83,6 +83,25 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         return queryDailyEventCount("comment", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
     }
 
+    @Override
+    public List<String[]> scanLocationCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        return queryEventLocationCount("scan", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+    }
+
+    @Override
+    public List<String[]> shareLocationCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        return queryEventLocationCount("share", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+    }
+
+    @Override
+    public List<String[]> storeUrlLocationCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        return queryEventLocationCount("store_url", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+    }
+
+    @Override
+    public List<String[]> commentLocationCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        return queryEventLocationCount("comment", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+    }
 
     @Override
     public EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId) {
@@ -184,7 +203,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
 
     private List<String[]> queryDailyEventCount(String action, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, int level) {
         String sql = "select DATE_FORMAT(event_datetime,'%Y-%m-%d'),count(1), count(distinct u.id) from emr_event ev inner join emr_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.name= :eventName" +
-                " and ev.org_id =:orgId " + "group by DATE_FORMAT(event_datetime,'%Y-%m-%d')";
+                " and ev.org_id =:orgId ";
 
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("eventName", action);
@@ -224,6 +243,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         if (level > 3) {
             sql = sql + " and ev.price_status_code in ('submit','paid')";
         }
+        sql = sql + "group by DATE_FORMAT(event_datetime,'%Y-%m-%d')";
 
         Query query = entityManager.createNativeQuery(sql);
         for (String key : parameters.keySet()) {
@@ -236,6 +256,68 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
             temp[0] = (String) item[0];
             temp[1] = (String) item[1].toString();
             temp[2] = (String) item[2].toString();
+            list.add(temp);
+        }
+        return list;
+    }
+
+    private List<String[]> queryEventLocationCount(String action, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, int level) {
+        String sql = "select case when ev.province is null or ev.province ='' then '未公开省份'  else  ev.province END as province, case when ev.city is null or ev.city = '' then '未公开城市' else ev.city END as city,ev.product_base_id as product, count(1), count(distinct u.id) from emr_event ev inner join emr_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.name= :eventName" +
+                " and ev.org_id =:orgId";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("eventName", action);
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isNullOrEmpty(province)) {
+            sql = sql + " and ev.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and ev.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and ev.event_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+
+        if (level > 0) {
+            sql = sql + " and u.wx_openid is not null";
+        }
+
+        if (level > 1) {
+            sql = sql + " and ev.is_priced is not null";
+        }
+        if (level > 2) {
+            sql = sql + " and ev.is_priced = 1";
+        }
+
+        if (level > 3) {
+            sql = sql + " and ev.price_status_code in ('submit','paid')";
+        }
+        sql = sql + "group by province, city, product";
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List<Object[]> data = query.getResultList();
+        List<String[]> list = new ArrayList<>();
+        for (Object[] item : data) {
+            String[] temp = new String[5];
+            temp[0] = (String) item[0];
+            temp[1] = (String) item[1];
+            temp[2] = (String) item[2];
+            temp[3] = (String) item[3].toString();
+            temp[4] = (String) item[4].toString();
             list.add(temp);
         }
         return list;
