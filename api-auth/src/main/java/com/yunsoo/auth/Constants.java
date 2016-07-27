@@ -21,6 +21,7 @@ public final class Constants {
         public static final String ACCESS_TOKEN = "X-YS-AccessToken";
         public static final String APP_ID = "X-YS-AppId";
         public static final String DEVICE_ID = "X-YS-DeviceId";
+        public static final String CONTENT_RANGE = "X-YS-ContentRange";
     }
 
     public static class AccountStatus {

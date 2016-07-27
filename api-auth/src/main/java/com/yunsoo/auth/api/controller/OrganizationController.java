@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,13 +54,16 @@ public class OrganizationController {
         List<Organization> organizations;
         if (name != null) {
             Organization org = organizationService.getByName(name);
-            organizations = org != null ? Collections.singletonList(org) : Collections.EMPTY_LIST;
+            organizations = new ArrayList<>();
+            if (org != null) {
+                organizations.add(org);
+            }
         } else if (idsIn != null) {
             Page<Organization> page = organizationService.getByIds(idsIn, pageable);
-            organizations = PageUtils.response(response, page);
+            organizations = PageUtils.response(response, page, pageable != null);
         } else {
             Page<Organization> page = organizationService.getAll(pageable);
-            organizations = PageUtils.response(response, page);
+            organizations = PageUtils.response(response, page, pageable != null);
         }
         return organizations;
     }

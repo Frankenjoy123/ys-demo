@@ -83,7 +83,7 @@ public class LoginControllerTest extends TestBase {
     }
 
     @Test
-    public void test_loginWithPassword_401_accountId() {
+    public void test_loginWithPassword_200_accountId() {
         AccountLoginRequest request = new AccountLoginRequest();
         request.setAccountId(testAccount.getId());
         request.setPassword("test");

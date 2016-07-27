@@ -52,7 +52,7 @@ public class DeviceController {
         orgId = AuthUtils.fixOrgId(orgId);
 
         Page<Device> page = deviceService.getByFilter(orgId, authAccountId, pageable);
-        return PageUtils.response(response, page);
+        return PageUtils.response(response, page, pageable != null);
     }
 
     @RequestMapping(value = "register", method = RequestMethod.POST)
