@@ -75,9 +75,13 @@ public class AccountLoginLogService {
         }
         AccountLoginLog accountLoginLog = new AccountLoginLog();
         accountLoginLog.setId(entity.getId());
-        accountLoginLog.setAccountId(entity.getId());
+        accountLoginLog.setAccountId(entity.getAccountId());
         accountLoginLog.setChannel(entity.getChannel());
         accountLoginLog.setAppId(entity.getAppId());
+        accountLoginLog.setDeviceId(entity.getDeviceId());
+        accountLoginLog.setIp(entity.getIp());
+        accountLoginLog.setUserAgent(entity.getUserAgent());
+        accountLoginLog.setCreatedDateTime(entity.getCreatedDateTime());
         return accountLoginLog;
     }
 

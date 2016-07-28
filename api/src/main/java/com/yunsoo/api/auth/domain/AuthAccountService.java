@@ -36,11 +36,12 @@ public class AuthAccountService {
         }
     }
 
+    /**
+     * @param request if hash_salt is null, then the password will be hashed with an new random hash_salt
+     * @return new account
+     */
     public Account create(AccountCreationRequest request) {
-        //todo
-
-        return null;
+        return authApiClient.post("account", request, Account.class);
     }
-
 
 }
