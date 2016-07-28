@@ -1,5 +1,6 @@
 package com.yunsoo.auth.api.controller;
 
+import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.auth.api.security.authentication.TokenAuthenticationService;
 import com.yunsoo.auth.dto.Account;
 import com.yunsoo.auth.dto.AccountToken;
@@ -10,10 +11,7 @@ import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by:   Lijian
@@ -59,4 +57,17 @@ public class AccessTokenController {
         log.info(String.format("access token generated for account [id: %s]", account.getId()));
         return accessToken;
     }
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public Account parseAccessToken(@RequestBody Token accessToken) {
+        AuthAccount authAccount = tokenAuthenticationService.parseAccessToken(accessToken.getToken());
+        if (authAccount == null) {
+            throw new UnauthorizedException("token invalid");
+        }
+        Account account = new Account();
+        account.setId(authAccount.getId());
+        account.setOrgId(authAccount.getOrgId());
+        return account;
+    }
+
 }
