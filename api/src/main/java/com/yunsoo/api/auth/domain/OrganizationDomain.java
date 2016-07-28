@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
  * Created on:   2016-07-27
  * Descriptions:
  */
-@Component
+@Component("authOrganizationDomain")
 public class OrganizationDomain {
 }
