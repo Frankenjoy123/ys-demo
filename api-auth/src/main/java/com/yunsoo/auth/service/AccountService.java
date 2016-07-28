@@ -106,7 +106,9 @@ public class AccountService {
             entity.setPassword(request.getPassword());
         }
         entity.setHashSalt(hashSalt);
-        if (!Constants.SYSTEM_ACCOUNT_ID.equals(request.getCreatedAccountId())) {
+        if (Constants.SYSTEM_ACCOUNT_ID.equals(request.getCreatedAccountId())) {
+            entity.setCreatedAccountId(request.getCreatedAccountId());
+        } else {
             entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         }
         entity.setCreatedDateTime(DateTime.now());
