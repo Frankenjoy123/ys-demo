@@ -132,7 +132,7 @@ public class LoginController {
     }
 
     private AccountLoginResponse createResponse(String accountId, String orgId, String appId, String deviceId) {
-        Token permanentToken = accountTokenService.createPermanentToken(accountId, appId, deviceId, 60);
+        Token permanentToken = accountTokenService.createPermanentToken(accountId, appId, deviceId);
         Token accessToken = tokenAuthenticationService.generateAccessToken(accountId, orgId);
         return new AccountLoginResponse(permanentToken, accessToken);
     }

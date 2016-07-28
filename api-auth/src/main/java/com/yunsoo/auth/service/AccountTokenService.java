@@ -3,6 +3,7 @@ package com.yunsoo.auth.service;
 import com.yunsoo.auth.dao.entity.AccountTokenEntity;
 import com.yunsoo.auth.dao.repository.AccountTokenRepository;
 import com.yunsoo.auth.dto.AccountToken;
+import com.yunsoo.auth.dto.Application;
 import com.yunsoo.auth.dto.Token;
 import com.yunsoo.common.util.HashUtils;
 import org.joda.time.DateTime;
@@ -22,8 +23,13 @@ import java.util.stream.Collectors;
 @Service
 public class AccountTokenService {
 
+    private static final int PERMANENT_TOKEN_EXPIRES_MINUTES = 4000;
+
     @Autowired
     private AccountTokenRepository accountTokenRepository;
+
+    @Autowired
+    private ApplicationService applicationService;
 
 
     public AccountToken getNonExpiredByPermanentToken(String permanentToken) {
@@ -40,15 +46,24 @@ public class AccountTokenService {
     }
 
     /**
-     * @param accountId      not null
-     * @param appId          not null
-     * @param deviceId       nullable
-     * @param expiresMinutes nullable
+     * @param accountId not null
+     * @param appId     not null
+     * @param deviceId  nullable
      * @return permanent token object
      */
-    public Token createPermanentToken(String accountId, String appId, String deviceId, Integer expiresMinutes) {
+    public Token createPermanentToken(String accountId, String appId, String deviceId) {
         DateTime now = DateTime.now();
-        DateTime expires = expiresMinutes != null && expiresMinutes > 0 ? now.plusMinutes(expiresMinutes) : null;
+        Integer expiresMinutes = null;
+
+        Application application = applicationService.getById(appId);
+        if (application != null) {
+            expiresMinutes = application.getPermanentTokenExpiresMinutes();
+        }
+        if (expiresMinutes == null || expiresMinutes == 0) {
+            expiresMinutes = PERMANENT_TOKEN_EXPIRES_MINUTES; //default expires minutes
+        }
+
+        DateTime expires = expiresMinutes > 0 ? now.plusMinutes(expiresMinutes) : null;
         String permanentToken = HashUtils.sha1HexString(UUID.randomUUID().toString()); //random sha1
         AccountTokenEntity accountTokenEntity = new AccountTokenEntity();
         accountTokenEntity.setAccountId(accountId);
