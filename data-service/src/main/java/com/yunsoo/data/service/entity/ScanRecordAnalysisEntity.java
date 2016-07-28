@@ -43,6 +43,9 @@ public class ScanRecordAnalysisEntity {
     @Column(name = "uv")
     private int uv;
 
+    @Column(name = "first_scan")
+    private int firstScan;
+
     public DateTime getScanDate() {
         return scanDate;
     }
@@ -99,6 +102,13 @@ public class ScanRecordAnalysisEntity {
         this.orgId = orgId;
     }
 
+    public int getFirstScan() {
+        return firstScan;
+    }
+
+    public void setFirstScan(int firstScan) {
+        this.firstScan = firstScan;
+    }
 
     public static ScanRecordAnalysisObject toDataObject(ScanRecordAnalysisEntity scanRecordAnalysisEntity) {
         ScanRecordAnalysisObject object = new ScanRecordAnalysisObject();
@@ -107,6 +117,7 @@ public class ScanRecordAnalysisEntity {
         object.setProductBaseId(scanRecordAnalysisEntity.getProductBaseId());
         object.setPv(scanRecordAnalysisEntity.getPv());
         object.setUv(scanRecordAnalysisEntity.getUv());
+        object.setFirstScan((scanRecordAnalysisEntity.getFirstScan()));
         return object;
     }
 

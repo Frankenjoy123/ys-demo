@@ -67,8 +67,10 @@ public class AnalysisController {
                                                 @RequestParam(value = "product_base_id", required = false) String productBaseId,
                                                 @RequestParam(value = "batch_id", required = false) String batchId) {
 
-        if (StringUtils.isEmpty(productBaseId))
-            productBaseId = null;
+        if (StringUtils.isEmpty(productBaseId)) {
+            // 所有产品维度
+            productBaseId = "All";
+        }
         if (StringUtils.isEmpty(batchId))
             batchId = null;
 
@@ -94,7 +96,7 @@ public class AnalysisController {
         DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
         DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
-        List<ScanRecordLocationAnalysisEntity> list = scanRecordLocationAnalysisRepository.query(orgId, startDateTime, endDateTime, productBaseId, batchId);
+        List<ScanRecordLocationAnalysisEntity> list = eventRepository.consumerLocationCount(orgId, productBaseId,batchId, startDateTime, endDateTime);
         return list.stream().map(ScanRecordLocationAnalysisEntity::toDataObject).collect(Collectors.toList());
     }
 
@@ -579,12 +581,12 @@ public class AnalysisController {
                 Collectors.groupingBy(MarketUserLocationAnalysisEntity::getProvince,
                         Collectors.summingInt(MarketUserLocationAnalysisEntity::getCount)));
 
-       return provinceData.entrySet().stream().map(i->{
+        return provinceData.entrySet().stream().map(i -> {
             MarketWinUserLocationAnalysisObject provinceItem = new MarketWinUserLocationAnalysisObject();
             provinceItem.setName(i.getKey());
             provinceItem.setValue(i.getValue());
 
-            List<MarketWinUserLocationAnalysisObject> cityData = list.stream().filter(l->l.getProvince().equals(i.getKey())).map(ii->{
+            List<MarketWinUserLocationAnalysisObject> cityData = list.stream().filter(l -> l.getProvince().equals(i.getKey())).map(ii -> {
                 MarketWinUserLocationAnalysisObject city = new MarketWinUserLocationAnalysisObject();
                 city.setName(ii.getCity());
                 city.setValue(ii.getCount());
@@ -594,8 +596,6 @@ public class AnalysisController {
             return provinceItem;
         }).collect(Collectors.toList());
     }
-
-
 
 
 }

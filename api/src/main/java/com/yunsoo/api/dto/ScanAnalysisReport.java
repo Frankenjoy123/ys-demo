@@ -50,6 +50,10 @@ public class ScanAnalysisReport {
         @JsonProperty("uv")
         private int[] uv;
 
+        @JsonProperty("first_scan")
+        private int[] firstScan;
+
+
         public int[] getPv() {
             return pv;
         }
@@ -64,6 +68,14 @@ public class ScanAnalysisReport {
 
         public void setUv(int[] uv) {
             this.uv = uv;
+        }
+
+        public int[] getFirstScan() {
+            return firstScan;
+        }
+
+        public void setFirstScan(int[] firstScan) {
+            this.firstScan = firstScan;
         }
     }
 
