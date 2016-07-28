@@ -1,10 +1,5 @@
 package com.yunsoo.auth.api.controller;
 
-import com.yunsoo.auth.api.security.permission.PermissionEntry;
-import com.yunsoo.auth.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.auth.api.security.permission.expression.PrincipalExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
 import com.yunsoo.auth.api.util.AuthUtils;
 import com.yunsoo.auth.dto.Account;
 import com.yunsoo.auth.dto.Group;
@@ -14,6 +9,11 @@ import com.yunsoo.auth.service.GroupService;
 import com.yunsoo.auth.service.PermissionAllocationService;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.security.permission.PermissionEntry;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.PrincipalExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;

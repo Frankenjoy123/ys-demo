@@ -1,7 +1,6 @@
 package com.yunsoo.auth.service;
 
 import com.yunsoo.auth.Constants;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.auth.dao.entity.PermissionActionEntity;
 import com.yunsoo.auth.dao.entity.PermissionPolicyEntity;
 import com.yunsoo.auth.dao.entity.PermissionRegionEntity;
@@ -14,6 +13,7 @@ import com.yunsoo.auth.dto.PermissionAction;
 import com.yunsoo.auth.dto.PermissionPolicy;
 import com.yunsoo.auth.dto.PermissionRegion;
 import com.yunsoo.auth.dto.PermissionResource;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

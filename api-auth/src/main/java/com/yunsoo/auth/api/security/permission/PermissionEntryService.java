@@ -1,18 +1,19 @@
 package com.yunsoo.auth.api.security.permission;
 
-import com.yunsoo.auth.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.auth.api.security.permission.expression.PermissionExpression.CollectionPermissionExpression;
-import com.yunsoo.auth.api.security.permission.expression.PermissionExpression.PolicyPermissionExpression;
-import com.yunsoo.auth.api.security.permission.expression.PermissionExpression.SimplePermissionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression.CollectionRestrictionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression.RegionRestrictionExpression;
 import com.yunsoo.auth.dto.PermissionAllocation;
 import com.yunsoo.auth.dto.PermissionPolicy;
 import com.yunsoo.auth.dto.PermissionRegion;
 import com.yunsoo.auth.service.PermissionAllocationService;
 import com.yunsoo.auth.service.PermissionService;
+import com.yunsoo.common.web.security.permission.PermissionEntry;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression.CollectionPermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression.PolicyPermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression.SimplePermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.CollectionRestrictionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.RegionRestrictionExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

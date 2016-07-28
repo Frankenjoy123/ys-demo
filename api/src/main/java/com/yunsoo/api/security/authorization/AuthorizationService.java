@@ -4,7 +4,6 @@ import com.yunsoo.api.auth.service.AuthPermissionService;
 import com.yunsoo.api.security.authentication.AccountAuthentication;
 import com.yunsoo.common.web.security.permission.PermissionEntry;
 import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
-import com.yunsoo.common.web.security.permission.expression.PrincipalExpression;
 import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
 import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.CollectionRestrictionExpression;
 import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
@@ -33,17 +32,13 @@ public class AuthorizationService {
     public List<PermissionEntry> getPermissionEntries(AccountAuthentication accountAuthentication) {
         return authPermissionService.getPermissionList()
                 .stream()
-                .map(e -> {
-                    PermissionEntry pe = new PermissionEntry();
-                    if (e != null) {
-                        pe.setId(e.getId());
-                        pe.setPrincipal(PrincipalExpression.parse(e.getPrincipal()));
-                        pe.setRestriction(RestrictionExpression.parse(e.getRestriction()));
-                        pe.setPermission(PermissionExpression.parse(e.getPermission()));
-                        pe.setEffect(PermissionEntry.Effect.valueOf(e.getEffect()));
-                    }
-                    return pe;
-                })
+                .filter(e -> e != null)
+                .map(e -> new PermissionEntry(
+                        e.getId(),
+                        e.getPrincipal(),
+                        e.getRestriction(),
+                        e.getPermission(),
+                        e.getEffect()))
                 .filter(PermissionEntry::isValid)
                 .collect(Collectors.toList());
     }

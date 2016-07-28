@@ -1,11 +1,11 @@
 package com.yunsoo.auth.api.controller;
 
-import com.yunsoo.auth.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.auth.api.util.AuthUtils;
 import com.yunsoo.auth.dto.*;
 import com.yunsoo.auth.service.PermissionService;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
