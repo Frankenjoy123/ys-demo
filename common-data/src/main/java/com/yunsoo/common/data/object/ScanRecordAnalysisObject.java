@@ -34,6 +34,9 @@ public class ScanRecordAnalysisObject implements Serializable {
     @JsonProperty("uv")
     private int uv;
 
+    @JsonProperty("first_scan")
+    private int firstScan;
+
     public DateTime getScanDate() {
         return scanDate;
     }
@@ -72,5 +75,13 @@ public class ScanRecordAnalysisObject implements Serializable {
 
     public void setUv(int uv) {
         this.uv = uv;
+    }
+
+    public int getFirstScan() {
+        return firstScan;
+    }
+
+    public void setFirstScan(int firstScan) {
+        this.firstScan = firstScan;
     }
 }
