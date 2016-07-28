@@ -1,10 +1,13 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
-import com.yunsoo.api.domain.*;
-import com.yunsoo.api.dto.*;
-import com.yunsoo.api.security.authorization.AuthorizationService;
-import com.yunsoo.api.security.permission.PermissionService;
+import com.yunsoo.api.domain.AccountDomain;
+import com.yunsoo.api.domain.AccountGroupDomain;
+import com.yunsoo.api.domain.GroupDomain;
+import com.yunsoo.api.dto.Account;
+import com.yunsoo.api.dto.AccountRequest;
+import com.yunsoo.api.dto.AccountUpdatePasswordRequest;
+import com.yunsoo.api.dto.Group;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
@@ -45,18 +48,6 @@ public class AccountController {
 
     @Autowired
     private AccountGroupDomain accountGroupDomain;
-
-    @Autowired
-    private AuthorizationService authorizationService;
-
-    @Autowired
-    private PermissionService permissionService;
-
-    @Autowired
-    private PermissionAllocationDomain permissionAllocationDomain;
-
-    @Autowired
-    private AccountLoginLogDomain accountLoginLogDomain;
 
     //region account
 
@@ -112,8 +103,8 @@ public class AccountController {
     public Account createCarrier(@RequestBody @Valid AccountRequest request) {
         AccountObject accountObject = request.toAccountObject();
         Account createdAccount = new Account(accountDomain.createAccount(accountObject, true));
-        permissionAllocationDomain.allocateAdminPermissionOnDefaultRegionToAccount(createdAccount.getId());
-        permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
+//        permissionAllocationDomain.allocateAdminPermissionOnDefaultRegionToAccount(createdAccount.getId());
+//        permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
         return createdAccount;
     }
 
@@ -236,31 +227,6 @@ public class AccountController {
         AccountObject accountObject = findAccountById(accountId);
         AuthUtils.checkPermission(accountObject.getOrgId(), "account_group", "write");
         accountGroupDomain.deleteAccountGroupByAccountIdAndGroupId(accountId, groupId);
-    }
-
-    //endregion
-
-    //region permission
-
-    /**
-     * get all permissions of the account.
-     */
-    @RequestMapping(value = "{account_id}/permission", method = RequestMethod.GET)
-    public List<PermissionEntry> getAllPermissionByAccountId(@PathVariable("account_id") String accountId) {
-        accountId = AuthUtils.fixAccountId(accountId); //auto fix current
-        if (AuthUtils.isMe(accountId)) {
-            return AuthUtils.getAuthentication().getPermissionEntries().stream().map(PermissionEntry::new).collect(Collectors.toList());
-        } else {
-            AccountObject accountObject = findAccountById(accountId);
-            String orgId = accountObject.getOrgId();
-            AuthUtils.checkPermission(orgId, "permission_allocation", "read");
-            List<com.yunsoo.api.security.permission.PermissionEntry> permissionEntries = permissionService.getExpendedPermissionEntriesByAccountId(accountId);
-            //fix orgRestriction
-            permissionEntries.forEach(p -> {
-                p.setRestriction(authorizationService.fixOrgRestriction(p.getRestriction(), orgId));
-            });
-            return permissionEntries.stream().map(PermissionEntry::new).collect(Collectors.toList());
-        }
     }
 
     //endregion

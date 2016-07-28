@@ -1,14 +1,14 @@
 package com.yunsoo.api.util;
 
-import com.yunsoo.api.security.AccountAuthentication;
 import com.yunsoo.api.security.AuthAccount;
 import com.yunsoo.api.security.AuthDetails;
-import com.yunsoo.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.api.security.permission.expression.PermissionExpression.SimplePermissionExpression;
-import com.yunsoo.api.security.permission.expression.RestrictionExpression;
-import com.yunsoo.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
+import com.yunsoo.api.security.authentication.AccountAuthentication;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression.SimplePermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 

@@ -1,12 +1,13 @@
 package com.yunsoo.api.security.authorization;
 
-import com.yunsoo.api.domain.PermissionAllocationDomain;
-import com.yunsoo.api.security.AccountAuthentication;
-import com.yunsoo.api.security.permission.PermissionEntry;
-import com.yunsoo.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.api.security.permission.expression.RestrictionExpression;
-import com.yunsoo.api.security.permission.expression.RestrictionExpression.CollectionRestrictionExpression;
-import com.yunsoo.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
+import com.yunsoo.api.auth.service.AuthPermissionService;
+import com.yunsoo.api.security.authentication.AccountAuthentication;
+import com.yunsoo.common.web.security.permission.PermissionEntry;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.PrincipalExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.CollectionRestrictionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,24 +24,28 @@ import java.util.stream.Collectors;
 public class AuthorizationService {
 
     @Autowired
-    private PermissionAllocationDomain permissionAllocationDomain;
+    private AuthPermissionService authPermissionService;
 
     /**
      * @param accountAuthentication AccountAuthentication
      * @return PermissionEntry list of the current account
      */
     public List<PermissionEntry> getPermissionEntries(AccountAuthentication accountAuthentication) {
-        String accountId = accountAuthentication.getPrincipal().getId();
-        String orgId = accountAuthentication.getPrincipal().getOrgId();
-        List<PermissionEntry> permissionEntries = permissionAllocationDomain.getPermissionEntriesByAccountId(accountId)
+        return authPermissionService.getPermissionList()
                 .stream()
-                .map(PermissionEntry::parse)
+                .map(e -> {
+                    PermissionEntry pe = new PermissionEntry();
+                    if (e != null) {
+                        pe.setId(e.getId());
+                        pe.setPrincipal(PrincipalExpression.parse(e.getPrincipal()));
+                        pe.setRestriction(RestrictionExpression.parse(e.getRestriction()));
+                        pe.setPermission(PermissionExpression.parse(e.getPermission()));
+                        pe.setEffect(PermissionEntry.Effect.valueOf(e.getEffect()));
+                    }
+                    return pe;
+                })
+                .filter(PermissionEntry::isValid)
                 .collect(Collectors.toList());
-        //fix orgRestriction
-        permissionEntries.forEach(p -> {
-            p.setRestriction(fixOrgRestriction(p.getRestriction(), orgId));
-        });
-        return permissionEntries;
     }
 
     /**
@@ -79,6 +84,10 @@ public class AuthorizationService {
             }
         }
         return false;
+    }
+
+    public boolean checkPermission(RestrictionExpression restriction, PermissionExpression permission) {
+        return restriction != null && permission != null && authPermissionService.checkPermission(restriction, permission);
     }
 
     public RestrictionExpression fixOrgRestriction(RestrictionExpression restriction, String orgId) {

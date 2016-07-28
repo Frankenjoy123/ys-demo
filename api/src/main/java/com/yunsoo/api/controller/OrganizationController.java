@@ -1,7 +1,10 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
-import com.yunsoo.api.domain.*;
+import com.yunsoo.api.domain.AccountDomain;
+import com.yunsoo.api.domain.BrandDomain;
+import com.yunsoo.api.domain.OrganizationDomain;
+import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
 import com.yunsoo.api.dto.ImageRequest;
@@ -59,8 +62,6 @@ public class OrganizationController {
     @Autowired
     private PermissionDomain permissionDomain;
 
-    @Autowired
-    private PermissionAllocationDomain permissionAllocationDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'organization:read')")
@@ -134,7 +135,7 @@ public class OrganizationController {
         accountObject.setOrgId(returnObj.getId());
         accountObject.setCreatedAccountId(Constants.Ids.SYSTEM_ACCOUNT_ID);
         AccountObject createdAccount = accountDomain.createAccount(accountObject, true);
-        permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
+        //permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
 
         return returnObj;
     }

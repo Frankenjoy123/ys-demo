@@ -1,12 +1,12 @@
-package com.yunsoo.api.security.permission;
+package com.yunsoo.api.security;
 
 import com.yunsoo.api.dto.Organization;
 import com.yunsoo.api.dto.detectable.OrgIdDetectable;
-import com.yunsoo.api.security.AccountAuthentication;
-import com.yunsoo.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.api.security.permission.expression.RestrictionExpression;
-import com.yunsoo.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
+import com.yunsoo.api.security.authentication.AccountAuthentication;
 import com.yunsoo.common.util.StringFormatter;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.access.PermissionEvaluator;

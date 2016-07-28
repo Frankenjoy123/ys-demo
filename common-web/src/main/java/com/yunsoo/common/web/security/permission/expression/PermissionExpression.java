@@ -1,4 +1,4 @@
-package com.yunsoo.api.security.permission.expression;
+package com.yunsoo.common.web.security.permission.expression;
 
 import java.util.ArrayList;
 import java.util.List;

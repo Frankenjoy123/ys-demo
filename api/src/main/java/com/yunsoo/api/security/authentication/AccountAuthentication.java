@@ -1,18 +1,20 @@
-package com.yunsoo.api.security;
+package com.yunsoo.api.security.authentication;
 
+import com.yunsoo.api.security.AuthAccount;
+import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.security.authorization.AuthorizationService;
 import com.yunsoo.api.security.authorization.PermissionGrantedAuthority;
-import com.yunsoo.api.security.permission.PermissionEntry;
-import com.yunsoo.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.api.security.permission.expression.RestrictionExpression;
+import com.yunsoo.common.web.security.permission.PermissionEntry;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by  : Zhe
- * Created on  : 2015/3/5
+ * Created by:   Lijian
+ * Created on:   2016-07-28
  * Descriptions:
  */
 public class AccountAuthentication implements Authentication {
@@ -37,7 +39,7 @@ public class AccountAuthentication implements Authentication {
     }
 
     public boolean checkPermission(RestrictionExpression restriction, PermissionExpression permission) {
-        return authorizationService.checkPermission(this, restriction, permission);
+        return authorizationService.checkPermission(restriction, permission);
     }
 
     public AccountAuthentication fillCredentials(String credentials) {

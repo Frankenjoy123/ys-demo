@@ -1,10 +1,10 @@
-package com.yunsoo.api.dto;
+package com.yunsoo.api.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by:   Lijian
- * Created on:   2016-03-31
+ * Created on:   2016-07-28
  * Descriptions:
  */
 public class PermissionEntry {
@@ -65,14 +65,4 @@ public class PermissionEntry {
         this.effect = effect;
     }
 
-    public PermissionEntry() {
-    }
-
-    public PermissionEntry(com.yunsoo.api.security.permission.PermissionEntry p) {
-        this.setId(p.getId());
-        this.setPrincipal(p.getPrincipal().toString());
-        this.setRestriction(p.getRestriction().toString());
-        this.setPermission(p.getPermission().toString());
-        this.setEffect(p.getEffect().name());
-    }
 }

@@ -26,9 +26,6 @@ public class GroupDomain {
     @Autowired
     private DataApiClient dataApiClient;
 
-    @Autowired
-    private PermissionAllocationDomain permissionAllocationDomain;
-
 
     public GroupObject getById(String groupId) {
         if (StringUtils.isEmpty(groupId)) {
@@ -80,7 +77,7 @@ public class GroupDomain {
 
     public void deleteGroupAndAllRelatedById(String groupId) {
         dataApiClient.delete("accountgroup?group_id={group_id}", groupId);
-        permissionAllocationDomain.deletePermissionAllocationsByGroupId(groupId);
+        //permissionAllocationDomain.deletePermissionAllocationsByGroupId(groupId);
         deleteGroupById(groupId);
     }
 

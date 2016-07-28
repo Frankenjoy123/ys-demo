@@ -62,9 +62,6 @@ public class BrandApplicationController {
     private PermissionDomain permissionDomain;
 
     @Autowired
-    private PermissionAllocationDomain permissionAllocationDomain;
-
-    @Autowired
     private PaymentDomain paymentDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -128,7 +125,7 @@ public class BrandApplicationController {
             accountObject.setOrgId(createdBrand.getId());
             accountObject.setCreatedAccountId(Constants.Ids.SYSTEM_ACCOUNT_ID);
             AccountObject createdAccount = accountDomain.createAccount(accountObject, false);
-            permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
+            //permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
 
             object.setId(id);
             object.setCreatedDateTime(applicationDatetime);

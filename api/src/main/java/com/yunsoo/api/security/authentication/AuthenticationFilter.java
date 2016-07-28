@@ -1,9 +1,7 @@
-package com.yunsoo.api.security.filter;
+package com.yunsoo.api.security.authentication;
 
 import com.yunsoo.api.Constants;
-import com.yunsoo.api.security.AccountAuthentication;
 import com.yunsoo.api.security.AuthDetails;
-import com.yunsoo.api.security.TokenAuthenticationService;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -16,15 +14,15 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * Created by  : Zhe
- * Created on  : 2015/3/5
+ * Created by:   Lijian
+ * Created on:   2016-07-28
  * Descriptions:
  */
-public class TokenAuthenticationFilter extends GenericFilterBean {
+public class AuthenticationFilter extends GenericFilterBean {
 
     private final TokenAuthenticationService tokenAuthenticationService;
 
-    public TokenAuthenticationFilter(TokenAuthenticationService tokenAuthenticationService) {
+    public AuthenticationFilter(TokenAuthenticationService tokenAuthenticationService) {
         this.tokenAuthenticationService = tokenAuthenticationService;
     }
 

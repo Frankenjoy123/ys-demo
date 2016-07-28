@@ -1,13 +1,17 @@
 package com.yunsoo.api.auth.service;
 
 import com.yunsoo.api.auth.dto.PermissionCheckRequest;
+import com.yunsoo.api.auth.dto.PermissionEntry;
 import com.yunsoo.api.client.AuthApiClient;
-import com.yunsoo.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.api.security.permission.expression.RestrictionExpression;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -33,4 +37,10 @@ public class AuthPermissionService {
             return false;
         }
     }
+
+    public List<PermissionEntry> getPermissionList() {
+        return authApiClient.get("permission", new ParameterizedTypeReference<List<PermissionEntry>>() {
+        });
+    }
+
 }

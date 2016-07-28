@@ -1,10 +1,9 @@
-package com.yunsoo.api.security.permission;
+package com.yunsoo.common.web.security.permission;
 
-import com.yunsoo.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.api.security.permission.expression.PrincipalExpression;
-import com.yunsoo.api.security.permission.expression.ResourceExpression;
-import com.yunsoo.api.security.permission.expression.RestrictionExpression;
-import com.yunsoo.common.data.object.PermissionAllocationObject;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.PrincipalExpression;
+import com.yunsoo.common.web.security.permission.expression.ResourceExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
 
 import java.io.Serializable;
 
@@ -66,21 +65,6 @@ public class PermissionEntry implements Comparable, Serializable {
         this.effect = effect;
     }
 
-
-    public PermissionEntry() {
-    }
-
-    public PermissionEntry(PermissionAllocationObject paObject) {
-        if (paObject != null) {
-            this.id = paObject.getId();
-            this.principal = PrincipalExpression.parse(paObject.getPrincipal());
-            this.restriction = RestrictionExpression.parse(paObject.getRestriction());
-            this.permission = PermissionExpression.parse(paObject.getPermission());
-            this.effect = Effect.valueOf(paObject.getEffect().name());
-        }
-    }
-
-
     public boolean isValid() {
         return id != null && principal != null && restriction != null && permission != null && effect != null;
     }
@@ -102,8 +86,6 @@ public class PermissionEntry implements Comparable, Serializable {
         if (o == null || getClass() != o.getClass()) return false;
 
         PermissionEntry that = (PermissionEntry) o;
-
-        //if (id != null && id.equals(that.id)) return true;
 
         return ResourceExpression.equals(principal, that.principal)
                 && ResourceExpression.equals(restriction, that.restriction)

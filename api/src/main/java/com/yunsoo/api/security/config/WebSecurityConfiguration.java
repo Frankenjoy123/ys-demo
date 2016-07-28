@@ -1,6 +1,8 @@
-package com.yunsoo.api.security;
+package com.yunsoo.api.security.config;
 
-import com.yunsoo.api.security.filter.TokenAuthenticationFilter;
+import com.yunsoo.api.security.authentication.AuthenticationFilter;
+import com.yunsoo.api.security.authentication.TokenAuthenticationService;
+import com.yunsoo.api.security.authentication.TokenInvalidAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -41,8 +43,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 .antMatchers("/").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
-                .antMatchers("/auth/login/**").permitAll()
-                .antMatchers("/auth/accesstoken/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/health/**").permitAll()
                 .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
                 .antMatchers(HttpMethod.GET, "/application/*/config").permitAll()
@@ -60,7 +60,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated().and()
 
                 // custom Token based authentication based on the header previously given to the client
-                .addFilterBefore(new TokenAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new AuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
     }
 
 }

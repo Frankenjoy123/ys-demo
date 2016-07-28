@@ -1,5 +1,9 @@
-package com.yunsoo.api.security.permission.expression;
+package com.yunsoo.common.web.security.permission;
 
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.PrincipalExpression;
+import com.yunsoo.common.web.security.permission.expression.ResourceExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
 import org.junit.Test;
 
 /**

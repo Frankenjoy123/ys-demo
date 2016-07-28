@@ -1,7 +1,6 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
-import com.yunsoo.api.security.permission.expression.RestrictionExpression;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.PermissionActionObject;
 import com.yunsoo.common.data.object.PermissionPolicyObject;
@@ -9,6 +8,7 @@ import com.yunsoo.common.data.object.PermissionRegionObject;
 import com.yunsoo.common.data.object.PermissionResourceObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;

@@ -5,9 +5,7 @@ import com.yunsoo.api.domain.AccountGroupDomain;
 import com.yunsoo.api.domain.GroupDomain;
 import com.yunsoo.api.dto.Account;
 import com.yunsoo.api.dto.Group;
-import com.yunsoo.api.dto.PermissionEntry;
 import com.yunsoo.api.security.authorization.AuthorizationService;
-import com.yunsoo.api.security.permission.PermissionService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.AccountObject;
@@ -44,9 +42,6 @@ public class GroupController {
 
     @Autowired
     private AccountGroupDomain accountGroupDomain;
-
-    @Autowired
-    private PermissionService permissionService;
 
     @Autowired
     private AuthorizationService authorizationService;
@@ -142,23 +137,6 @@ public class GroupController {
         GroupObject groupObject = findGroupById(groupId);
         AuthUtils.checkPermission(groupObject.getOrgId(), "account_group", "write");
         accountGroupDomain.deleteAccountGroupByAccountIdAndGroupId(accountId, groupId);
-    }
-
-    //endregion
-
-    //region permission
-
-    @RequestMapping(value = "{group_id}/permission", method = RequestMethod.GET)
-    public List<PermissionEntry> getAllPermissionByGroupId(@PathVariable("group_id") String groupId) {
-        GroupObject group = findGroupById(groupId);
-        String orgId = group.getOrgId();
-        AuthUtils.checkPermission(orgId, "permission_allocation", "read");
-        List<com.yunsoo.api.security.permission.PermissionEntry> permissionEntries = permissionService.getExpendedPermissionEntriesByGroupId(groupId);
-        //fix orgRestriction
-        permissionEntries.forEach(p -> {
-            p.setRestriction(authorizationService.fixOrgRestriction(p.getRestriction(), orgId));
-        });
-        return permissionEntries.stream().map(PermissionEntry::new).collect(Collectors.toList());
     }
 
     //endregion
