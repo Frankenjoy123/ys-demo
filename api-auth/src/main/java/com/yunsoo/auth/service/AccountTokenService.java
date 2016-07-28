@@ -9,6 +9,7 @@ import com.yunsoo.common.util.HashUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -91,6 +92,17 @@ public class AccountTokenService {
         if (entities.size() > 0) {
             accountTokenRepository.save(entities);
         }
+    }
+
+    @Transactional
+    public int deleteExpiredPermanentToken() {
+        DateTime now = DateTime.now();
+        List<AccountTokenEntity> entities = accountTokenRepository.findByPermanentTokenExpiresDateTimeNotNull()
+                .stream()
+                .filter(e -> e.getPermanentTokenExpiresDateTime() != null && e.getPermanentTokenExpiresDateTime().plusDays(1).isBefore(now))
+                .collect(Collectors.toList());
+        accountTokenRepository.delete(entities);
+        return entities.size();
     }
 
     private AccountToken toAccountToken(AccountTokenEntity entity) {
