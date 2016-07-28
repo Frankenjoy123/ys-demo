@@ -59,8 +59,8 @@ public class AccessTokenController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public Account parseAccessToken(@RequestBody Token accessToken) {
-        AuthAccount authAccount = tokenAuthenticationService.parseAccessToken(accessToken.getToken());
+    public Account parseAccessToken(@RequestBody String accessToken) {
+        AuthAccount authAccount = tokenAuthenticationService.parseAccessToken(accessToken);
         if (authAccount == null) {
             throw new UnauthorizedException("token invalid");
         }

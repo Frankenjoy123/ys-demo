@@ -1,6 +1,6 @@
 package com.yunsoo.auth.api.security.config;
 
-import com.yunsoo.auth.api.security.authentication.TokenAuthenticationFilter;
+import com.yunsoo.auth.api.security.authentication.AuthenticationFilter;
 import com.yunsoo.auth.api.security.authentication.TokenAuthenticationService;
 import com.yunsoo.auth.api.security.authentication.TokenInvalidAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated().and()
 
                 // custom Token based authentication based on the header previously given to the client
-                .addFilterBefore(new TokenAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new AuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
     }
 
 }
