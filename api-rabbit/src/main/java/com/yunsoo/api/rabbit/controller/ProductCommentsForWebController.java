@@ -6,6 +6,7 @@ import com.yunsoo.api.rabbit.domain.ProductCommentsDomain;
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.dto.ProductComments;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.api.rabbit.util.PageUtils;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductCommentsObject;
 import com.yunsoo.common.data.object.UserObject;
@@ -84,16 +85,12 @@ public class ProductCommentsForWebController {
         }
 
         Page<ProductCommentsObject> productCommentsPage = productCommentsDomain.getProductCommentsByFilter(productBaseId, scoreGE, scoreLE, lastCommentDatetimeGE, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", productCommentsPage.toContentRange());
-        }
-        List<ProductComments> productCommentsList = productCommentsPage.map(ProductComments::new).getContent();
-        productCommentsList.forEach(productComments -> {
+
+        return PageUtils.response(response, productCommentsPage.map(ProductComments::new).map(productComments -> {
             UserObject uo = userDomain.getUserById(productComments.getUserId());
             productComments.setUserName(uo == null ? null : uo.getName());
-        });
-
-        return productCommentsList;
+            return productComments;
+        }), pageable != null);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

@@ -5,6 +5,7 @@ import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
@@ -141,13 +142,9 @@ public class ProductKeyBatchController {
                                                   Pageable pageable,
                                                   HttpServletResponse response) {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
-        Page<ProductKeyBatch> productKeyBatchPage;
-        productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, isPackage, createAccount, createdDateTimeStart, createdDateTimeEnd, pageable);
+        Page<ProductKeyBatch> productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, isPackage, createAccount, createdDateTimeStart, createdDateTimeEnd, pageable);
 
-        if (pageable != null) {
-            response.setHeader("Content-Range", productKeyBatchPage.toContentRange());
-        }
-        return productKeyBatchPage.getContent();
+        return PageUtils.response(response, productKeyBatchPage, pageable != null);
     }
 
     @RequestMapping(value = "sum/quantity", method = RequestMethod.GET)

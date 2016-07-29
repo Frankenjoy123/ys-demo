@@ -1,6 +1,7 @@
 package com.yunsoo.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -16,6 +17,7 @@ import java.io.Serializable;
  * Created on  : 2015/3/3
  * Descriptions:
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Account implements OrgIdDetectable, Serializable {
 
     @JsonProperty("id")

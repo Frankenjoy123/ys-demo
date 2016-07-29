@@ -4,7 +4,6 @@ import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.api.security.AuthDetails;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -15,15 +14,15 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * Created by  : Zhe
- * Created on  : 2015/3/5
+ * Created by:   Lijian
+ * Created on:   2016-07-28
  * Descriptions:
  */
-public class TokenAuthenticationFilter extends GenericFilterBean {
+public class AuthenticationFilter extends GenericFilterBean {
 
     private final TokenAuthenticationService tokenAuthenticationService;
 
-    public TokenAuthenticationFilter(TokenAuthenticationService tokenAuthenticationService) {
+    public AuthenticationFilter(TokenAuthenticationService tokenAuthenticationService) {
         this.tokenAuthenticationService = tokenAuthenticationService;
     }
 
@@ -53,7 +52,13 @@ public class TokenAuthenticationFilter extends GenericFilterBean {
     private AuthDetails getAuthDetails(HttpServletRequest request) {
         String appId = request.getHeader(Constants.HttpHeaderName.APP_ID);
         String deviceId = request.getHeader(Constants.HttpHeaderName.DEVICE_ID);
-        if (StringUtils.isEmpty(appId) || appId.length() > 19) {
+        if (appId == null) {
+            appId = request.getParameter("app_id"); // try get app_id from query string
+        }
+        if (deviceId == null) {
+            deviceId = request.getParameter("device_id"); // try get device_id from query string
+        }
+        if (appId != null && appId.length() > 19) {
             throw new BadRequestException("app_id invalid");
         }
         if (deviceId != null && deviceId.length() > 40) {

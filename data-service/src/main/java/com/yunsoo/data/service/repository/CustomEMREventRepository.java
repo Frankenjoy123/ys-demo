@@ -2,6 +2,7 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.EMREventEntity;
 import com.yunsoo.data.service.entity.MarketUserLocationAnalysisEntity;
+import com.yunsoo.data.service.entity.ScanRecordLocationAnalysisEntity;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -66,6 +67,29 @@ public interface CustomEMREventRepository {
                                      String province, String city,
                                      DateTime createdDateTimeStart,
                                      DateTime createdDateTimeEnd);
+
+    List<String[]> scanLocationCount(String orgId, String productBaseId,
+                                     String province, String city,
+                                     DateTime createdDateTimeStart,
+                                     DateTime createdDateTimeEnd);
+
+    List<String[]> shareLocationCount(String orgId, String productBaseId,
+                                      String province, String city,
+                                      DateTime createdDateTimeStart,
+                                      DateTime createdDateTimeEnd);
+
+    List<String[]> storeUrlLocationCount(String orgId, String productBaseId,
+                                         String province, String city,
+                                         DateTime createdDateTimeStart,
+                                         DateTime createdDateTimeEnd);
+
+    List<String[]> commentLocationCount(String orgId, String productBaseId,
+                                        String province, String city,
+                                        DateTime createdDateTimeStart,
+                                        DateTime createdDateTimeEnd);
+
+    List<ScanRecordLocationAnalysisEntity> consumerLocationCount(String orgId, String productBaseId, String batchId, DateTime startDateTime, DateTime endDateTime);
+
 
 
 

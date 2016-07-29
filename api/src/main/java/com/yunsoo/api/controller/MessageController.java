@@ -7,6 +7,7 @@ import com.yunsoo.api.dto.MessageBodyImage;
 import com.yunsoo.api.dto.MessageImageRequest;
 import com.yunsoo.api.dto.MessageToApp;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.data.object.OrganizationObject;
@@ -71,11 +72,8 @@ public class MessageController {
                                      HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<MessageObject> messagePage = messageDomain.getMessageByOrgId(orgId, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", messagePage.toContentRange());
-        }
 
-        return messagePage.map(Message::new).getContent();
+        return PageUtils.response(response, messagePage.map(Message::new), pageable != null);
     }
 
     @RequestMapping(value = "/count/on", method = RequestMethod.GET)
@@ -188,7 +186,7 @@ public class MessageController {
 
     @RequestMapping(value = "{id}/bodyimage", method = RequestMethod.PUT)
     public MessageBodyImage putMessageBodyImage(@PathVariable(value = "id") String id,
-                                      @RequestBody @Valid MessageImageRequest messageImageRequest) {
+                                                @RequestBody @Valid MessageImageRequest messageImageRequest) {
         MessageObject messageObject = findMessageById(id);
         MessageBodyImage messageBodyImage = new MessageBodyImage();
         String orgId = messageObject.getOrgId();

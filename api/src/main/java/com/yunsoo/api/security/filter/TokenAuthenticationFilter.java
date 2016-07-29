@@ -54,6 +54,12 @@ public class TokenAuthenticationFilter extends GenericFilterBean {
     private AuthDetails getAuthDetails(HttpServletRequest request) {
         String appId = request.getHeader(Constants.HttpHeaderName.APP_ID);
         String deviceId = request.getHeader(Constants.HttpHeaderName.DEVICE_ID);
+        if (appId == null) {
+            appId = request.getParameter("app_id"); // try get app_id from query string
+        }
+        if (deviceId == null) {
+            deviceId = request.getParameter("device_id"); // try get device_id from query string
+        }
         if (appId != null && appId.length() > 19) {
             throw new BadRequestException("app_id invalid");
         }

@@ -67,8 +67,10 @@ public class AnalysisController {
                                                 @RequestParam(value = "product_base_id", required = false) String productBaseId,
                                                 @RequestParam(value = "batch_id", required = false) String batchId) {
 
-        if (StringUtils.isEmpty(productBaseId))
-            productBaseId = null;
+        if (StringUtils.isEmpty(productBaseId)) {
+            // 所有产品维度
+            productBaseId = "All";
+        }
         if (StringUtils.isEmpty(batchId))
             batchId = null;
 
@@ -94,7 +96,7 @@ public class AnalysisController {
         DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
         DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
-        List<ScanRecordLocationAnalysisEntity> list = scanRecordLocationAnalysisRepository.query(orgId, startDateTime, endDateTime, productBaseId, batchId);
+        List<ScanRecordLocationAnalysisEntity> list = eventRepository.consumerLocationCount(orgId, productBaseId,batchId, startDateTime, endDateTime);
         return list.stream().map(ScanRecordLocationAnalysisEntity::toDataObject).collect(Collectors.toList());
     }
 
@@ -458,18 +460,18 @@ public class AnalysisController {
 
         List<String[]> commentList = eventRepository.commentDailyCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
         if ((commentList != null) && (commentList.size() > 0)) {
-            for (String[] tempCommentUrl : commentList) {
-                if (tempCommentUrl[0] != null && !tempCommentUrl[0].equals("")) {
+            for (String[] tempComment : commentList) {
+                if (tempComment[0] != null && !tempComment[0].equals("")) {
                     EMREventCountObject countCommentObject = new EMREventCountObject();
-                    EMREventCountObject commentObject = objectMap.get(tempCommentUrl[0]);
+                    EMREventCountObject commentObject = objectMap.get(tempComment[0]);
                     if (commentObject != null) {
-                        commentObject.setCommentEventCount(Integer.valueOf(tempCommentUrl[1]));
-                        commentObject.setCommentUserCount(Integer.valueOf(tempCommentUrl[2]));
-                        objectMap.put(tempCommentUrl[0].toString(), commentObject);
+                        commentObject.setCommentEventCount(Integer.valueOf(tempComment[1]));
+                        commentObject.setCommentUserCount(Integer.valueOf(tempComment[2]));
+                        objectMap.put(tempComment[0].toString(), commentObject);
                     } else {
-                        countCommentObject.setCommentEventCount(Integer.valueOf(tempCommentUrl[1]));
-                        countCommentObject.setCommentUserCount(Integer.valueOf(tempCommentUrl[2]));
-                        objectMap.put(tempCommentUrl[0].toString(), countCommentObject);
+                        countCommentObject.setCommentEventCount(Integer.valueOf(tempComment[1]));
+                        countCommentObject.setCommentUserCount(Integer.valueOf(tempComment[2]));
+                        objectMap.put(tempComment[0].toString(), countCommentObject);
                     }
                 }
             }
@@ -477,6 +479,98 @@ public class AnalysisController {
         emrEventReportObjectMap.setEvent_count(objectMap);
         return emrEventReportObjectMap;
     }
+
+    // query user  event location count: scan, share, store_url, comment
+    @RequestMapping(value = "/user/event/location", method = RequestMethod.GET)
+    public List<EMREventLocationReportObject> queryUserEventLocationCount(@RequestParam(value = "org_id") String orgId,
+                                                                          @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                                          @RequestParam(value = "province", required = false) String province,
+                                                                          @RequestParam(value = "city", required = false) String city,
+                                                                          @RequestParam(value = "create_datetime_start", required = false)
+                                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                                          @RequestParam(value = "create_datetime_end", required = false)
+                                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+
+        DateTime startDateTime = null;
+        DateTime endDateTime = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            startDateTime = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            endDateTime = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
+
+        List<EMREventLocationReportObject> emrEventLocationReportObjectList = new ArrayList<>();
+
+        List<String[]> scanList = eventRepository.scanLocationCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        if ((scanList != null) && (scanList.size() > 0)) {
+            for (String[] temp : scanList) {
+                EMREventLocationReportObject emrEventLocationReportObject = new EMREventLocationReportObject();
+                EMREventCountObject emrEventCountObject = new EMREventCountObject();
+                emrEventLocationReportObject.setProvince(temp[0]);
+                emrEventLocationReportObject.setCity(temp[1]);
+                emrEventLocationReportObject.setProductBaseId(temp[2]);
+
+                emrEventCountObject.setScanEventCount(Integer.valueOf(temp[3]));
+                emrEventCountObject.setScanUserCount(Integer.valueOf(temp[4]));
+                emrEventLocationReportObject.setEvent_count(emrEventCountObject);
+                emrEventLocationReportObjectList.add(emrEventLocationReportObject);
+            }
+        }
+
+        List<String[]> shareList = eventRepository.shareLocationCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        if ((shareList != null) && (shareList.size() > 0)) {
+            for (String[] tempShare : shareList) {
+                EMREventLocationReportObject emrEventLocationReportObject = new EMREventLocationReportObject();
+                EMREventCountObject emrEventCountObject = new EMREventCountObject();
+                emrEventLocationReportObject.setProvince(tempShare[0]);
+                emrEventLocationReportObject.setCity(tempShare[1]);
+                emrEventLocationReportObject.setProductBaseId(tempShare[2]);
+
+                emrEventCountObject.setShareEventCount(Integer.valueOf(tempShare[3]));
+                emrEventCountObject.setShareUserCount(Integer.valueOf(tempShare[4]));
+                emrEventLocationReportObject.setEvent_count(emrEventCountObject);
+                emrEventLocationReportObjectList.add(emrEventLocationReportObject);
+            }
+        }
+
+        List<String[]> storeUrlList = eventRepository.storeUrlLocationCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        if ((storeUrlList != null) && (storeUrlList.size() > 0)) {
+            for (String[] tempStoreUrl : storeUrlList) {
+                EMREventLocationReportObject emrEventLocationReportObject = new EMREventLocationReportObject();
+                EMREventCountObject emrEventCountObject = new EMREventCountObject();
+                emrEventLocationReportObject.setProvince(tempStoreUrl[0]);
+                emrEventLocationReportObject.setCity(tempStoreUrl[1]);
+                emrEventLocationReportObject.setProductBaseId(tempStoreUrl[2]);
+
+                emrEventCountObject.setStoreUrlEventCount(Integer.valueOf(tempStoreUrl[3]));
+                emrEventCountObject.setStoreUrlUserCount(Integer.valueOf(tempStoreUrl[4]));
+                emrEventLocationReportObject.setEvent_count(emrEventCountObject);
+                emrEventLocationReportObjectList.add(emrEventLocationReportObject);
+            }
+        }
+
+        List<String[]> commentList = eventRepository.commentLocationCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        if ((commentList != null) && (commentList.size() > 0)) {
+            for (String[] tempComment : commentList) {
+                EMREventLocationReportObject emrEventLocationReportObject = new EMREventLocationReportObject();
+                EMREventCountObject emrEventCountObject = new EMREventCountObject();
+                emrEventLocationReportObject.setProvince(tempComment[0]);
+                emrEventLocationReportObject.setCity(tempComment[1]);
+                emrEventLocationReportObject.setProductBaseId(tempComment[2]);
+
+                emrEventCountObject.setCommentEventCount(Integer.valueOf(tempComment[3]));
+                emrEventCountObject.setCommentUserCount(Integer.valueOf(tempComment[4]));
+                emrEventLocationReportObject.setEvent_count(emrEventCountObject);
+                emrEventLocationReportObjectList.add(emrEventLocationReportObject);
+            }
+        }
+
+        return emrEventLocationReportObjectList;
+    }
+
 
     // 核销管理，关于中奖的数据分析
     @RequestMapping(value = "/market_win_user_location", method = RequestMethod.GET)
@@ -487,12 +581,12 @@ public class AnalysisController {
                 Collectors.groupingBy(MarketUserLocationAnalysisEntity::getProvince,
                         Collectors.summingInt(MarketUserLocationAnalysisEntity::getCount)));
 
-       return provinceData.entrySet().stream().map(i->{
+        return provinceData.entrySet().stream().map(i -> {
             MarketWinUserLocationAnalysisObject provinceItem = new MarketWinUserLocationAnalysisObject();
             provinceItem.setName(i.getKey());
             provinceItem.setValue(i.getValue());
 
-            List<MarketWinUserLocationAnalysisObject> cityData = list.stream().filter(l->l.getProvince().equals(i.getKey())).map(ii->{
+            List<MarketWinUserLocationAnalysisObject> cityData = list.stream().filter(l -> l.getProvince().equals(i.getKey())).map(ii -> {
                 MarketWinUserLocationAnalysisObject city = new MarketWinUserLocationAnalysisObject();
                 city.setName(ii.getCity());
                 city.setValue(ii.getCount());
@@ -502,8 +596,6 @@ public class AnalysisController {
             return provinceItem;
         }).collect(Collectors.toList());
     }
-
-
 
 
 }

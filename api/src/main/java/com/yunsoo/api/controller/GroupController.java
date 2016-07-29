@@ -9,6 +9,7 @@ import com.yunsoo.api.dto.PermissionEntry;
 import com.yunsoo.api.security.authorization.AuthorizationService;
 import com.yunsoo.api.security.permission.PermissionService;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.GroupObject;
 import com.yunsoo.common.web.client.Page;
@@ -67,10 +68,8 @@ public class GroupController {
         orgId = AuthUtils.fixOrgId(orgId);
 
         Page<GroupObject> groupPage = groupDomain.getByOrgId(orgId, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", groupPage.toContentRange());
-        }
-        return groupPage.map(Group::new).getContent();
+
+        return PageUtils.response(response, groupPage.map(Group::new), pageable != null);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

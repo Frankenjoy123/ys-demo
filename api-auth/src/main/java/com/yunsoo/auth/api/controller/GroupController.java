@@ -57,7 +57,7 @@ public class GroupController {
         orgId = AuthUtils.fixOrgId(orgId);
 
         Page<Group> page = groupService.getByOrgId(orgId, pageable);
-        return PageUtils.response(response, page);
+        return PageUtils.response(response, page, pageable != null);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

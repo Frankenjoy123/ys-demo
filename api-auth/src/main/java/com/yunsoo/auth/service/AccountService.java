@@ -2,14 +2,17 @@ package com.yunsoo.auth.service;
 
 import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.api.util.AuthUtils;
+import com.yunsoo.auth.api.util.PageUtils;
 import com.yunsoo.auth.dao.entity.AccountEntity;
 import com.yunsoo.auth.dao.repository.AccountRepository;
 import com.yunsoo.auth.dto.Account;
 import com.yunsoo.auth.dto.AccountCreationRequest;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.RandomUtils;
+import com.yunsoo.common.web.client.Page;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -64,16 +67,13 @@ public class AccountService {
     }
 
 
-    //    public Page<Account> getByOrgId(String orgId, String statusCode, String searchText, DateTime start, DateTime end, Pageable pageable) {
-//        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-//                .append("org_id", orgId).append("status", status).append("search_text", searchText)
-//                .append("start_datetime", start).append("end_datetime", end)
-//                .append(pageable)
-//                .build();
-//
-//        return dataApiClient.getPaged("account" + query, new ParameterizedTypeReference<List<AccountObject>>() {
-//        });
-//    }
+    public Page<Account> search(String orgId, String statusCode, String searchText, DateTime createdDateTimeGE, DateTime createdDateTimeLE, Pageable pageable) {
+        if (StringUtils.isEmpty(orgId)) {
+            return Page.empty();
+        }
+
+        return PageUtils.convert(accountRepository.search(orgId, statusCode, searchText, createdDateTimeGE, createdDateTimeLE, pageable)).map(this::toAccount);
+    }
 
 
     public long count(String orgId, List<String> statusCodeIn) {
@@ -106,7 +106,9 @@ public class AccountService {
             entity.setPassword(request.getPassword());
         }
         entity.setHashSalt(hashSalt);
-        if (!Constants.SYSTEM_ACCOUNT_ID.equals(request.getCreatedAccountId())) {
+        if (Constants.SYSTEM_ACCOUNT_ID.equals(request.getCreatedAccountId())) {
+            entity.setCreatedAccountId(request.getCreatedAccountId());
+        } else {
             entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         }
         entity.setCreatedDateTime(DateTime.now());

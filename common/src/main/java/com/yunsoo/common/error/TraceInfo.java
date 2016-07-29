@@ -25,14 +25,14 @@ public class TraceInfo {
         this.message = message;
     }
 
-    public TraceInfo(Exception exception) {
+    public TraceInfo(Throwable exception) {
         if (exception != null) {
             this.message = exception.toString();
             this.stackTrace = exception.getStackTrace();
         }
     }
 
-    public TraceInfo(String message, Exception exception) {
+    public TraceInfo(String message, Throwable exception) {
         this.message = message;
         if (exception != null) {
             this.stackTrace = exception.getStackTrace();

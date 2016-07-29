@@ -1,12 +1,15 @@
 package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.EMREventEntity;
+import com.yunsoo.data.service.entity.ScanRecordLocationAnalysisEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface EMREventRepository extends FindOneAndSaveRepository<EMREventEntity, String>, CustomEMREventRepository {
 
@@ -64,5 +67,6 @@ public interface EMREventRepository extends FindOneAndSaveRepository<EMREventEnt
                                                   @Param("createdDateTimeStart") DateTime createdDateTimeStart,
                                                   @Param("createdDateTimeEnd") DateTime createdDateTimeEnd,
                                                   Pageable pageable);
+
 
 }

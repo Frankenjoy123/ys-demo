@@ -55,6 +55,13 @@ public class TokenAuthenticationService {
         return new AccountAuthentication(authAccount, authorizationService).fillCredentials(token);
     }
 
+    public AuthAccount parseAccessToken(String token) {
+        if (token == null) {
+            return null;
+        }
+        return accessTokenHandler.parseToken(token);
+    }
+
     public AuthAccount parseLoginToken(String token) {
         if (token == null) {
             return null;

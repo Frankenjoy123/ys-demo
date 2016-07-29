@@ -3,10 +3,12 @@ package com.yunsoo.auth.api.controller;
 import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.auth.api.security.authentication.TokenAuthenticationService;
+import com.yunsoo.auth.api.util.IpUtils;
 import com.yunsoo.auth.dto.Account;
 import com.yunsoo.auth.dto.AccountLoginRequest;
 import com.yunsoo.auth.dto.AccountLoginResponse;
 import com.yunsoo.auth.dto.Token;
+import com.yunsoo.auth.service.AccountLoginLogService;
 import com.yunsoo.auth.service.AccountTokenService;
 import com.yunsoo.auth.service.LoginService;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -39,6 +41,9 @@ public class LoginController {
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
+
+    @Autowired
+    private AccountLoginLogService accountLoginLogService;
 
     /**
      * login with password
@@ -76,7 +81,7 @@ public class LoginController {
         log.info(String.format("password login successfully, [id: %s, orgId: %s, identifier: %s, appId: %s, deviceId: %s]",
                 account.getId(), account.getOrgId(), account.getIdentifier(), appId, deviceId));
 
-        //accountLoginLogDomain.savePasswordLogin(accountId, appId, deviceId, IpUtils.getIpFromRequest(httpServletRequest), userAgent);
+        accountLoginLogService.savePasswordLogin(account.getId(), appId, deviceId, IpUtils.getIpFromRequest(httpServletRequest), userAgent);
 
         return createResponse(account.getId(), account.getOrgId(), appId, deviceId);
     }
@@ -121,14 +126,13 @@ public class LoginController {
         log.info(String.format("token login successfully, [id: %s, orgId: %s, identifier: %s, appId: %s, deviceId: %s]",
                 account.getId(), account.getOrgId(), account.getIdentifier(), appId, deviceId));
 
-//        accountLoginLogDomain.saveTokenLogin(accountId, appId, deviceId, IpUtils.getIpFromRequest(httpServletRequest), userAgent);
-//
+        accountLoginLogService.saveTokenLogin(account.getId(), appId, deviceId, IpUtils.getIpFromRequest(httpServletRequest), userAgent);
 
         return createResponse(account.getId(), account.getOrgId(), appId, deviceId);
     }
 
     private AccountLoginResponse createResponse(String accountId, String orgId, String appId, String deviceId) {
-        Token permanentToken = accountTokenService.createPermanentToken(accountId, appId, deviceId, 60);
+        Token permanentToken = accountTokenService.createPermanentToken(accountId, appId, deviceId);
         Token accessToken = tokenAuthenticationService.generateAccessToken(accountId, orgId);
         return new AccountLoginResponse(permanentToken, accessToken);
     }

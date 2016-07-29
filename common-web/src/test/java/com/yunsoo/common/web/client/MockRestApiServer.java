@@ -1,6 +1,7 @@
 package com.yunsoo.common.web.client;
 
 import com.yunsoo.common.error.ErrorResult;
+import com.yunsoo.common.web.Constants;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +48,7 @@ public class MockRestApiServer {
             }
             int total = page + 2, count = size * total;
             if (pageable != null) {
-                response.setHeader("Content-Range", new Page<>(new ArrayList<>(), page, total, count).toContentRange());
+                response.setHeader(Constants.HttpHeaderName.CONTENT_RANGE, new Page<>(new ArrayList<>(), page, total, count).toContentRange());
             }
 
             return IntStream.range(page * size, (page + 1) * size).mapToObj(i -> new MockObject(name, "test")).collect(Collectors.toList());

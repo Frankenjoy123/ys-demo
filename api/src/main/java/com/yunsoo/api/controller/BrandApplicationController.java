@@ -1,10 +1,10 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
-import com.yunsoo.api.aspect.*;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AttachmentObject;
@@ -164,7 +164,7 @@ public class BrandApplicationController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Brand createBrand(@RequestBody Brand brand) {
         OrganizationObject existingOrg = organizationDomain.getOrganizationByName(brand.getName().trim());
-        if(existingOrg == null) {
+        if (existingOrg == null) {
 
             Page<BrandObject> existingBrandList = brandDomain.getBrandList(brand.getName().trim(), null, null, null, null, null, null, null);
             if (existingBrandList.getContent().size() == 0) {
@@ -181,8 +181,7 @@ public class BrandApplicationController {
                 return returnObj;
             } else
                 throw new ConflictException("same brand name application existed");
-        }
-        else
+        } else
             throw new ConflictException("same brand name application existed");
     }
 
@@ -242,11 +241,7 @@ public class BrandApplicationController {
         if (!StringUtils.hasText(searchText))
             searchText = null;
         Page<BrandObject> brandPage = brandDomain.getBrandList(name, carrierId, status, hasPayment, searchText, startTime, endTime, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", brandPage.toContentRange());
-        }
-        return brandPage.map(Brand::new).getContent();
-
+        return PageUtils.response(response, brandPage.map(Brand::new), pageable != null);
     }
 
     @RequestMapping(value = "attachment", method = RequestMethod.POST)
@@ -292,11 +287,10 @@ public class BrandApplicationController {
     }
 
     @RequestMapping(value = "attachment", method = RequestMethod.GET)
-    public List<Attachment> getAttachmentList(@RequestParam(value = "ids") List<String> attachmentIds){
-         return
-        brandDomain.getAttachmentList(attachmentIds).stream().map(Attachment::new).collect(Collectors.toList());
+    public List<Attachment> getAttachmentList(@RequestParam(value = "ids") List<String> attachmentIds) {
+        return
+                brandDomain.getAttachmentList(attachmentIds).stream().map(Attachment::new).collect(Collectors.toList());
     }
-
 
 
     @RequestMapping(value = "login", method = RequestMethod.POST)

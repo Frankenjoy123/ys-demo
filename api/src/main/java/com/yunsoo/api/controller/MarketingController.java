@@ -4,6 +4,7 @@ import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.payment.ParameterNames;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
@@ -162,7 +163,6 @@ public class MarketingController {
     }
 
 
-
     //query marketing plan by org id
     @RequestMapping(value = "analysis", method = RequestMethod.GET)
     public List<MarketingResult> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
@@ -174,13 +174,10 @@ public class MarketingController {
 
 
         Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.AVALAIBLESTATUS, null, null, null, null, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", marketingPage.toContentRange());
-        }
 
         List<MarketingResult> marketingResultList = new ArrayList<>();
 
-        marketingPage.getContent().forEach(object -> {
+        PageUtils.response(response, marketingPage, pageable != null).forEach(object -> {
             MarketingResult marketingResult = new MarketingResult();
 
             String marketingId = object.getId();
@@ -312,16 +309,14 @@ public class MarketingController {
 
         List<String> orgIds = null;
 
-        if(carrierId != null) {
-            if(orgId != null) {
+        if (carrierId != null) {
+            if (orgId != null) {
                 orgIds = new ArrayList<>();
                 orgIds.add(orgId);
                 orgId = null;
-            }
-            else
+            } else
                 orgIds = organizationDomain.getBrandIdsForCarrier(carrierId);
-        }
-        else
+        } else
             orgId = AuthUtils.fixOrgId(orgId);
 
         List<Marketing> marketingList = new ArrayList<>();
@@ -330,20 +325,16 @@ public class MarketingController {
         }
 
         Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status, searchText, startTime, endTime, productBaseId, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", marketingPage.toContentRange());
-        }
-
 
         Map<String, String> orgList = new HashMap<>();
-        marketingPage.getContent().forEach(object -> {
+        PageUtils.response(response, marketingPage, pageable != null).forEach(object -> {
             Marketing marketing = new Marketing(object);
             ProductBaseObject pbo = productBaseDomain.getProductBaseById(object.getProductBaseId());
             if (pbo != null) {
                 marketing.setProductBaseName(pbo.getName());
             }
-            if(carrierId != null){
-                if(orgList.containsKey(marketing.getOrgId()))
+            if (carrierId != null) {
+                if (orgList.containsKey(marketing.getOrgId()))
                     marketing.setOrgName(orgList.get(marketing.getOrgId()));
                 else {
                     OrganizationObject org = organizationDomain.getOrganizationById(marketing.getOrgId());
@@ -353,7 +344,7 @@ public class MarketingController {
                     }
                 }
             }
-            if(needRules == null || needRules){
+            if (needRules == null || needRules) {
                 List<MktDrawRuleObject> mktDrawRuleObjectList = marketingDomain.getRuleList(object.getId());
                 if (mktDrawRuleObjectList != null) {
                     List<MktDrawRule> mktDrawRuleList = mktDrawRuleObjectList.stream().map(MktDrawRule::new).collect(Collectors.toList());
@@ -429,11 +420,8 @@ public class MarketingController {
                                                               HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<MktConsumerRightObject> mktConsumerRightPage = marketingDomain.getMktConsumerRightByOrgId(orgId, typeCode, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", mktConsumerRightPage.toContentRange());
-        }
 
-        return mktConsumerRightPage.map(MktConsumerRight::new).getContent();
+        return PageUtils.response(response, mktConsumerRightPage.map(MktConsumerRight::new), pageable != null);
     }
 
     //create marketing consumer right
@@ -589,12 +577,9 @@ public class MarketingController {
                                                       HttpServletResponse response) {
 
         Page<MktDrawPrizeObject> mktDrawPrizePage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, statusCode, startTime, endTime, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", mktDrawPrizePage.toContentRange());
-        }
 
         List<MktDrawPrize> mktDrawPrizeList = new ArrayList<>();
-        mktDrawPrizePage.getContent().forEach(object -> {
+        PageUtils.response(response, mktDrawPrizePage, pageable != null).forEach(object -> {
             MktDrawPrize mktDrawPrize = new MktDrawPrize(object);
             String productBaseId = marketingDomain.getProductBaseIdByScanRecordId(object.getScanRecordId());
             if (productBaseId != null) {
@@ -771,7 +756,7 @@ public class MarketingController {
 
     @RequestMapping(value = "statistics")
     public List<Marketing> marketingStatistics(@RequestParam("org_ids") List<String> orgIds, Pageable pageable) {
-        if(orgIds.size() == 0)
+        if (orgIds.size() == 0)
             return new ArrayList<Marketing>();
         List<MarketingObject> statisticsObjectList = marketingDomain.statisticsMarketing(orgIds, Arrays.asList(LookupCodes.MktStatus.PAID, LookupCodes.MktStatus.AVAILABLE), pageable);
         return statisticsObjectList.stream().map(Marketing::new).collect(Collectors.toList());
@@ -787,17 +772,10 @@ public class MarketingController {
                                              @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                              Pageable pageable,
                                              HttpServletResponse response) {
-
         Page<MktDrawPrizeObject> mktDrawPrizeObjectPage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, statusCode, startTime, endTime, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", mktDrawPrizeObjectPage.toContentRange());
-        }
-        List<MktDrawPrize> mktDrawPrizeList = mktDrawPrizeObjectPage.map(MktDrawPrize::new).getContent();
-        Map<String, String> parametersMap = marketingDomain.getAlipayBatchTansferParameters(mktDrawPrizeList);
-        List<String> keys = new ArrayList<>(parametersMap.keySet());
-        keys.sort(null);
-        return parametersMap;
 
+        List<MktDrawPrize> mktDrawPrizeList = PageUtils.response(response, mktDrawPrizeObjectPage.map(MktDrawPrize::new), pageable != null);
+        return marketingDomain.getAlipayBatchTansferParameters(mktDrawPrizeList);
     }
 
     @RequestMapping(value = "alipay/notify", method = RequestMethod.POST)

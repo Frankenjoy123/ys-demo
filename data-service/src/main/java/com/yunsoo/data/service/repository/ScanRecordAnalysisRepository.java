@@ -15,7 +15,7 @@ public interface ScanRecordAnalysisRepository extends CrudRepository<ScanRecordA
 
     @Query("from ScanRecordAnalysisEntity where orgId = :orgId " +
             "AND scanDate >= :startTime AND scanDate <= :endTime " +
-            "AND (:productBaseId is null or productBaseId = :productBaseId) " +
+            "AND (productBaseId = :productBaseId) " +
             "AND (:batchId is null or batchId = :batchId) ")
     List<ScanRecordAnalysisEntity> query(@Param("orgId") String orgId, @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime, @Param("productBaseId") String productBaseId, @Param("batchId") String batchId);
 

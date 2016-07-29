@@ -6,6 +6,7 @@ import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.api.rabbit.dto.ProductBase;
+import com.yunsoo.api.rabbit.util.PageUtils;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -62,10 +63,8 @@ public class OrganizationController {
     @RequestMapping(value = "{id}/productbase", method = RequestMethod.GET)
     public List<ProductBase> getProductsByOrgId(@PathVariable(value = "id") String orgId, Pageable pageable, HttpServletResponse response) {
         Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", productBasePage.toContentRange());
-        }
-        return productBasePage.map(ProductBase::new).getContent();
+
+        return PageUtils.response(response, productBasePage.map(ProductBase::new), pageable != null);
     }
 
     private ProductObject getProductByKey(String key) {
