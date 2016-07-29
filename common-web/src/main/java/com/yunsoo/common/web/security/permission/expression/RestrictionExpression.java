@@ -70,6 +70,8 @@ public abstract class RestrictionExpression extends ResourceExpression {
         private static final String TYPE = "region";
         private static final String PREFIX = TYPE + DELIMITER;
 
+        public static final RegionRestrictionExpression DEFAULT = new RegionRestrictionExpression("default");
+
         public RegionRestrictionExpression(String expressionOrRegionId) {
             super(expressionOrRegionId);
             setType(TYPE);

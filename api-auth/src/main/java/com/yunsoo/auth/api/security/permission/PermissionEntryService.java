@@ -4,6 +4,7 @@ import com.yunsoo.auth.dto.PermissionAllocation;
 import com.yunsoo.auth.dto.PermissionPolicy;
 import com.yunsoo.auth.dto.PermissionRegion;
 import com.yunsoo.auth.service.PermissionAllocationService;
+import com.yunsoo.auth.service.PermissionRegionService;
 import com.yunsoo.auth.service.PermissionService;
 import com.yunsoo.common.web.security.permission.PermissionEntry;
 import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
@@ -33,6 +34,9 @@ public class PermissionEntryService {
 
     @Autowired
     private PermissionService permissionService;
+
+    @Autowired
+    private PermissionRegionService permissionRegionService;
 
     @Autowired
     private PermissionAllocationService permissionAllocationService;
@@ -81,7 +85,7 @@ public class PermissionEntryService {
 
     private List<RestrictionExpression> getRegionRestrictionsByRegionId(String id) {
         List<RestrictionExpression> restrictions = new ArrayList<>();
-        PermissionRegion permissionRegionObject = permissionService.getPermissionRegionById(id);
+        PermissionRegion permissionRegionObject = permissionRegionService.getById(id);
         if (permissionRegionObject != null && permissionRegionObject.getRestrictions() != null) {
             permissionRegionObject.getRestrictions().forEach(rs -> {
                 RestrictionExpression exp = RestrictionExpression.parse(rs);

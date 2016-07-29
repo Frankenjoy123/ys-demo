@@ -61,5 +61,6 @@ public final class Constants {
         }
 
         public static final String DEFAULT = "default";
+        public static final String CUSTOM = "custom";
     }
 }
