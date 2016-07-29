@@ -45,6 +45,49 @@ public class TaskFileEntry implements OrgIdDetectable {
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
+    @JsonProperty("product_base_id")
+    private String productBaseId;
+
+    @JsonProperty("package_count")
+    private Integer packageCount;
+
+    @JsonProperty("package_size")
+    private Integer packageSize;
+
+    @JsonProperty("product_count")
+    private Integer productCount;
+
+    public String getProductBaseId() {
+        return productBaseId;
+    }
+
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
+    }
+
+    public Integer getPackageCount() {
+        return packageCount;
+    }
+
+    public void setPackageCount(Integer packageCount) {
+        this.packageCount = packageCount;
+    }
+
+    public Integer getPackageSize() {
+        return packageSize;
+    }
+
+    public void setPackageSize(Integer packageSize) {
+        this.packageSize = packageSize;
+    }
+
+    public Integer getProductCount() {
+        return productCount;
+    }
+
+    public void setProductCount(Integer productCount) {
+        this.productCount = productCount;
+    }
 
     public String getFileId() {
         return fileId;
@@ -134,5 +177,10 @@ public class TaskFileEntry implements OrgIdDetectable {
         this.setStatusCode(obj.getStatusCode());
         this.setCreatedAccountId(obj.getCreatedAccountId());
         this.setCreatedDateTime(obj.getCreatedDateTime());
+        this.setProductBaseId(obj.getProductBaseId());
+        this.setPackageSize(obj.getPackageSize());
+        this.setPackageCount(obj.getPackageCount());
+        this.setProductCount(obj.getProductCount());
+
     }
 }
