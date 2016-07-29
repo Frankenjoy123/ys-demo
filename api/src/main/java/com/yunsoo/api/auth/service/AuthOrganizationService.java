@@ -1,4 +1,4 @@
-package com.yunsoo.api.auth.domain;
+package com.yunsoo.api.auth.service;
 
 import com.yunsoo.api.auth.dto.Organization;
 import com.yunsoo.api.client.AuthApiClient;

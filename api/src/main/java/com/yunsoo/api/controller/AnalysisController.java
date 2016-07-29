@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -42,16 +43,18 @@ public class AnalysisController {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
 
         List<ScanRecordAnalysisObject> data = analysisDomain.getScanAnalysisReport(orgId, startTime, endTime, productBaseId, batchId);
-        Map<DateTime, Integer> pvData = data.stream().collect(Collectors.groupingBy(ScanRecordAnalysisObject::getScanDate, Collectors.summingInt(ScanRecordAnalysisObject::getPv)))
+   /*     Map<DateTime, Integer> pvData = data.stream().collect(Collectors.groupingBy(ScanRecordAnalysisObject::getScanDate, Collectors.summingInt(ScanRecordAnalysisObject::getPv)))
                 .entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
                     throw new IllegalStateException();
                 }, LinkedHashMap::new));
         Map<DateTime, Integer> uvData = data.stream().collect(Collectors.groupingBy(ScanRecordAnalysisObject::getScanDate, Collectors.summingInt(ScanRecordAnalysisObject::getUv)))
                 .entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
                     throw new IllegalStateException();
-                }, LinkedHashMap::new));
-        ;
+                }, LinkedHashMap::new));*/
 
+        Map<DateTime, ScanRecordAnalysisObject> mapData =  data.stream().collect(Collectors.toMap(ScanRecordAnalysisObject::getScanDate, p->p, (k, v) -> {
+            throw new IllegalStateException();
+        }, LinkedHashMap::new));
 
         DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(0));
         DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(0)).plusMinutes(10);
@@ -59,17 +62,22 @@ public class AnalysisController {
 
         List<Integer> pvList = new ArrayList<>();
         List<Integer> uvList = new ArrayList<>();
+        List<Integer> firstScanList = new ArrayList<>();
         List<String> dateList = new ArrayList<String>();
 
         do {
             int pv = 0;
             int uv = 0;
-            if (pvData.containsKey(startDateTime)) {
-                pv = pvData.get(startDateTime);
-                uv = uvData.get(startDateTime);
+            int firstScan= 0;
+            if (mapData.containsKey(startDateTime)) {
+                ScanRecordAnalysisObject object =  mapData.get(startDateTime);
+                pv = object.getPv();
+                uv = object.getUv();
+                firstScan = object.getFirstScan();
             }
             pvList.add(pv);
             uvList.add(uv);
+            firstScanList.add(firstScan);
             dateList.add(startDateTime.toString("yyyy-MM-dd"));
             startDateTime = startDateTime.plusDays(1);
 
@@ -81,10 +89,9 @@ public class AnalysisController {
 
         pvuv.setPv(pvList.stream().mapToInt(Integer::intValue).toArray());
         pvuv.setUv(uvList.stream().mapToInt(Integer::intValue).toArray());
-
+        pvuv.setFirstScan(firstScanList.stream().mapToInt(Integer::intValue).toArray());
         report.setData(pvuv);
         report.setDate(dateList.toArray(new String[0]));
-
         return report;
 
     }
