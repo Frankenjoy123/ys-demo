@@ -5,6 +5,7 @@ import com.yunsoo.api.domain.TaskFileDomain;
 import com.yunsoo.api.dto.TaskFileEntry;
 import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.TaskFileEntryObject;
 import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.util.FileNameUtils;
@@ -27,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,14 +103,44 @@ public class TaskFileController {
     }
 
 
-    @RequestMapping(value = "count", method = RequestMethod.GET)
-    public long[] getTotalTaskFiles(@RequestParam(value = "device_id", required = false) String deviceId,
-                                    @RequestParam(value = "type_code") String typeCode,
-                                    @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
-                                    @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
+    @RequestMapping(value = "sum", method = RequestMethod.GET)
+    public TaskFileEntry getTotalTaskFiles(@RequestParam(value = "device_id", required = false) String deviceId,
+                                                @RequestParam(value = "app_id", required = false) String appId,
+                                                @RequestParam(value = "type_code") String typeCode,
+                                                @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+                                                @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
 
         String orgId = AuthUtils.fixOrgId(null);
-        return new long[]{1, 1};
+        List<String> statusCodeIn = Arrays.asList(LookupCodes.TaskFileStatus.FINISHED);
+        TaskFileEntry result = new TaskFileEntry(taskFileDomain.getTotal(orgId,appId, deviceId,typeCode, start, end,statusCodeIn));
+        result.setDeviceId(deviceId);
+        result.setAppId(appId);
+        result.setOrgId(orgId);
+        return result;
+    }
+
+    @RequestMapping(value = "sum/date", method = RequestMethod.GET)
+    public List<TaskFileEntry> getTotalTaskFilesByDate(@RequestParam(value = "device_id") String deviceId,
+                                                             @RequestParam(value = "type_code") String typeCode,
+                                                             @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+                                                             @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
+
+        List<String> statusCodeIn = Arrays.asList(LookupCodes.TaskFileStatus.FINISHED);
+        List<TaskFileEntryObject> returnObj  = taskFileDomain.getTotalByDate(deviceId, typeCode, start, end, statusCodeIn);
+        return returnObj.stream().map(TaskFileEntry::new).collect(Collectors.toList());
+
+    }
+
+    @RequestMapping(value = "sum/device", method = RequestMethod.GET)
+    public List<TaskFileEntry> getTotalTaskFilesByDevice(@RequestParam(value = "device_id") List<String> deviceId,
+                                                       @RequestParam(value = "type_code") String typeCode,
+                                                       @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+                                                       @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
+
+        List<String> statusCodeIn = Arrays.asList(LookupCodes.TaskFileStatus.FINISHED);
+        List<TaskFileEntryObject> returnObj  = taskFileDomain.getTotalByDevice(deviceId, typeCode, start, end, statusCodeIn);
+        return returnObj.stream().map(TaskFileEntry::new).collect(Collectors.toList());
+
     }
 
 
