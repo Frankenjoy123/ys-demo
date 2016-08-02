@@ -1,5 +1,6 @@
 package com.yunsoo.auth.service;
 
+import com.yunsoo.auth.config.AuthCacheConfig;
 import com.yunsoo.auth.dao.entity.PermissionActionEntity;
 import com.yunsoo.auth.dao.entity.PermissionPolicyEntity;
 import com.yunsoo.auth.dao.entity.PermissionResourceEntity;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
  * Created on:   2016-07-06
  * Descriptions:
  */
+@AuthCacheConfig
 @Service
 public class PermissionService {
 

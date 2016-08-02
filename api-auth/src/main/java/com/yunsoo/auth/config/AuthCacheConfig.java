@@ -1,4 +1,4 @@
-package com.yunsoo.auth.api.config;
+package com.yunsoo.auth.config;
 
 import org.springframework.cache.annotation.CacheConfig;
 

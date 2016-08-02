@@ -1,4 +1,4 @@
-package com.yunsoo.auth.api.config;
+package com.yunsoo.auth.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

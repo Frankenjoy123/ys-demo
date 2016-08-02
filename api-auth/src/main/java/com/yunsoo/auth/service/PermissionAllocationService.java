@@ -69,6 +69,13 @@ public class PermissionAllocationService {
         permissionAllocationRepository.deleteByPrincipal(new GroupPrincipalExpression(groupId).toString());
     }
 
+    public List<PermissionAllocation> getPermissionAllocationsByPrincipal(PrincipalExpression principal) {
+        if (principal == null) {
+            return new ArrayList<>();
+        }
+        return this.getPermissionAllocationsByPrincipal(principal.toString());
+    }
+
     @Transactional
     public void allocatePermission(PrincipalExpression principal,
                                    RestrictionExpression restriction,
@@ -143,7 +150,8 @@ public class PermissionAllocationService {
         entity.setEffect(effect);
         entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         entity.setCreatedDateTime(DateTime.now());
-        return toPermissionAllocation(permissionAllocationRepository.save(entity));
+        entity = permissionAllocationRepository.save(entity);
+        return toPermissionAllocation(entity);
     }
 
     private PermissionAllocation toPermissionAllocation(PermissionAllocationEntity entity) {

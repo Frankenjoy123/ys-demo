@@ -93,9 +93,15 @@ public class GroupService {
 
     @Transactional
     public void deleteGroupAndAllRelatedById(String groupId) {
-        accountGroupService.deleteAccountGroupsByGroupId(groupId);
-        permissionAllocationService.deletePermissionAllocationsByGroupId(groupId);
-        groupRepository.delete(groupId);
+        if (StringUtils.isEmpty(groupId)) {
+            return;
+        }
+        GroupEntity entity = groupRepository.findOne(groupId);
+        if (entity != null) {
+            accountGroupService.deleteAccountGroupsByGroupId(groupId);
+            permissionAllocationService.deletePermissionAllocationsByGroupId(groupId);
+            groupRepository.delete(entity);
+        }
     }
 
 
