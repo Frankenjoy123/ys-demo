@@ -23,8 +23,9 @@ public class LoginControllerTest extends TestBase {
     private String disabledAccountLoginToken;
 
     @Before
-    public void createAccount() {
+    public synchronized void createAccount() {
         if (testAccount == null) {
+            System.out.println("init test account");
             AccountCreationRequest rrequest = new AccountCreationRequest();
             rrequest.setOrgId("2k0r1l55i2rs5544wz5");
             rrequest.setIdentifier("testlogin");

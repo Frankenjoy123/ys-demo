@@ -17,8 +17,6 @@ spring:
 yunsoo:
   debug: true
   environment: local
-  permanent_token:
-    expires_minutes: 4320 #three days
   access_token:
     expires_minutes: 60
     hash_salt: lvtHDkfIUxJ2bLWHc0MNztUqCJSVPSJO

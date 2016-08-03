@@ -1,4 +1,4 @@
-package com.yunsoo.api.auth.domain;
+package com.yunsoo.api.auth.service;
 
 import com.yunsoo.api.auth.dto.PermissionCheckRequest;
 import com.yunsoo.api.client.AuthApiClient;
@@ -7,15 +7,15 @@ import com.yunsoo.api.security.permission.expression.RestrictionExpression;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by:   Lijian
  * Created on:   2016-07-27
  * Descriptions:
  */
-@Component("authPermissionDomain")
-public class PermissionDomain {
+@Service
+public class AuthPermissionService {
 
     private final Log log = LogFactory.getLog(getClass());
 

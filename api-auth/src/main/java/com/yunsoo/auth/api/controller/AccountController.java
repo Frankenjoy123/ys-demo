@@ -135,7 +135,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "current/password", method = RequestMethod.POST)
-    public void updatePassword(@RequestBody @Valid AccountUpdatePasswordRequest request) {
+    public void changePassword(@RequestBody @Valid AccountUpdatePasswordRequest request) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
 
         Account account = findAccountById(currentAccountId);

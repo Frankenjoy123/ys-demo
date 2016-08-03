@@ -1,54 +1,48 @@
-package com.yunsoo.auth.dto;
+package com.yunsoo.api.auth.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.auth.dto.util.OrgIdDetectable;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
 
 /**
- * Created by  : Zhe
- * Created on  : 2015/3/3
+ * Created by:   Lijian
+ * Created on:   2015/9/7
  * Descriptions:
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class Account implements OrgIdDetectable, Serializable {
+public class Application implements Serializable {
 
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("org_id")
-    private String orgId;
+    @NotEmpty(message = "name must not be null or empty")
+    @JsonProperty("name")
+    private String name;
 
-    @JsonProperty("identifier")
-    private String identifier;
+    @NotEmpty(message = "version must not be null or empty")
+    @JsonProperty("version")
+    private String version;
 
     @JsonProperty("status_code")
     private String statusCode;
 
-    @JsonProperty("first_name")
-    private String firstName;
+    @NotEmpty(message = "type_code must not be null or empty")
+    @JsonProperty("type_code")
+    private String typeCode;
 
-    @JsonProperty("last_name")
-    private String lastName;
+    @JsonProperty("description")
+    private String description;
 
-    @JsonProperty("email")
-    private String email;
+    @JsonProperty("system_version")
+    private String systemVersion;
 
-    @JsonProperty("phone")
-    private String phone;
-
-    @JsonIgnore
-    private String password;
-
-    @JsonIgnore
-    private String hashSalt;
+    @JsonProperty("permanent_token_expires_minutes")
+    private Integer permanentTokenExpiresMinutes;
 
     @JsonProperty("created_account_id")
     private String createdAccountId;
@@ -66,7 +60,6 @@ public class Account implements OrgIdDetectable, Serializable {
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
 
-
     public String getId() {
         return id;
     }
@@ -75,20 +68,20 @@ public class Account implements OrgIdDetectable, Serializable {
         this.id = id;
     }
 
-    public String getOrgId() {
-        return orgId;
+    public String getName() {
+        return name;
     }
 
-    public void setOrgId(String orgId) {
-        this.orgId = orgId;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getVersion() {
+        return version;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getStatusCode() {
@@ -99,52 +92,36 @@ public class Account implements OrgIdDetectable, Serializable {
         this.statusCode = statusCode;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getTypeCode() {
+        return typeCode;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getDescription() {
+        return description;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getEmail() {
-        return email;
+    public String getSystemVersion() {
+        return systemVersion;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setSystemVersion(String systemVersion) {
+        this.systemVersion = systemVersion;
     }
 
-    public String getPhone() {
-        return phone;
+    public Integer getPermanentTokenExpiresMinutes() {
+        return permanentTokenExpiresMinutes;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getHashSalt() {
-        return hashSalt;
-    }
-
-    public void setHashSalt(String hashSalt) {
-        this.hashSalt = hashSalt;
+    public void setPermanentTokenExpiresMinutes(Integer permanentTokenExpiresMinutes) {
+        this.permanentTokenExpiresMinutes = permanentTokenExpiresMinutes;
     }
 
     public String getCreatedAccountId() {

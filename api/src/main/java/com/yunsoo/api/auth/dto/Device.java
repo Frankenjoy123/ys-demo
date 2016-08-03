@@ -1,11 +1,8 @@
-package com.yunsoo.auth.dto;
+package com.yunsoo.api.auth.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.auth.dto.util.OrgIdDetectable;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
@@ -13,42 +10,35 @@ import org.joda.time.DateTime;
 import java.io.Serializable;
 
 /**
- * Created by  : Zhe
- * Created on  : 2015/3/3
+ * Created by:   Lijian
+ * Created on:   2016-07-25
  * Descriptions:
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class Account implements OrgIdDetectable, Serializable {
+public class Device implements Serializable {
 
     @JsonProperty("id")
     private String id;
 
+    @JsonProperty("app_id")
+    private String appId;
+
     @JsonProperty("org_id")
     private String orgId;
 
-    @JsonProperty("identifier")
-    private String identifier;
+    @JsonProperty("auth_account_id")
+    private String authAccountId;
 
     @JsonProperty("status_code")
     private String statusCode;
 
-    @JsonProperty("first_name")
-    private String firstName;
+    @JsonProperty("name")
+    private String name;
 
-    @JsonProperty("last_name")
-    private String lastName;
+    @JsonProperty("os")
+    private String os;
 
-    @JsonProperty("email")
-    private String email;
-
-    @JsonProperty("phone")
-    private String phone;
-
-    @JsonIgnore
-    private String password;
-
-    @JsonIgnore
-    private String hashSalt;
+    @JsonProperty("comments")
+    private String comments;
 
     @JsonProperty("created_account_id")
     private String createdAccountId;
@@ -64,7 +54,7 @@ public class Account implements OrgIdDetectable, Serializable {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
-    private DateTime modifiedDateTime;
+    private DateTime modifiedDatetime;
 
 
     public String getId() {
@@ -75,6 +65,14 @@ public class Account implements OrgIdDetectable, Serializable {
         this.id = id;
     }
 
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
     public String getOrgId() {
         return orgId;
     }
@@ -83,12 +81,12 @@ public class Account implements OrgIdDetectable, Serializable {
         this.orgId = orgId;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getAuthAccountId() {
+        return authAccountId;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public void setAuthAccountId(String authAccountId) {
+        this.authAccountId = authAccountId;
     }
 
     public String getStatusCode() {
@@ -99,52 +97,28 @@ public class Account implements OrgIdDetectable, Serializable {
         this.statusCode = statusCode;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getOs() {
+        return os;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setOs(String os) {
+        this.os = os;
     }
 
-    public String getEmail() {
-        return email;
+    public String getComments() {
+        return comments;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getHashSalt() {
-        return hashSalt;
-    }
-
-    public void setHashSalt(String hashSalt) {
-        this.hashSalt = hashSalt;
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public String getCreatedAccountId() {
@@ -171,12 +145,11 @@ public class Account implements OrgIdDetectable, Serializable {
         this.modifiedAccountId = modifiedAccountId;
     }
 
-    public DateTime getModifiedDateTime() {
-        return modifiedDateTime;
+    public DateTime getModifiedDatetime() {
+        return modifiedDatetime;
     }
 
-    public void setModifiedDateTime(DateTime modifiedDateTime) {
-        this.modifiedDateTime = modifiedDateTime;
+    public void setModifiedDatetime(DateTime modifiedDatetime) {
+        this.modifiedDatetime = modifiedDatetime;
     }
-
 }

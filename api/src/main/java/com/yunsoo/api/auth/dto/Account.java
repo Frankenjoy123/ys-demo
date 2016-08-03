@@ -1,11 +1,8 @@
-package com.yunsoo.auth.dto;
+package com.yunsoo.api.auth.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.auth.dto.util.OrgIdDetectable;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
@@ -13,12 +10,11 @@ import org.joda.time.DateTime;
 import java.io.Serializable;
 
 /**
- * Created by  : Zhe
- * Created on  : 2015/3/3
+ * Created by:   Lijian
+ * Created on:   2016-07-28
  * Descriptions:
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class Account implements OrgIdDetectable, Serializable {
+public class Account implements Serializable {
 
     @JsonProperty("id")
     private String id;
@@ -43,12 +39,6 @@ public class Account implements OrgIdDetectable, Serializable {
 
     @JsonProperty("phone")
     private String phone;
-
-    @JsonIgnore
-    private String password;
-
-    @JsonIgnore
-    private String hashSalt;
 
     @JsonProperty("created_account_id")
     private String createdAccountId;
@@ -129,22 +119,6 @@ public class Account implements OrgIdDetectable, Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getHashSalt() {
-        return hashSalt;
-    }
-
-    public void setHashSalt(String hashSalt) {
-        this.hashSalt = hashSalt;
     }
 
     public String getCreatedAccountId() {

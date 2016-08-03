@@ -16,8 +16,12 @@ public interface AccountTokenRepository extends Repository<AccountTokenEntity, S
 
     List<AccountTokenEntity> findByDeviceId(String deviceId);
 
+    List<AccountTokenEntity> findByPermanentTokenExpiresDateTimeNotNull();
+
     AccountTokenEntity save(AccountTokenEntity entity);
 
     List<AccountTokenEntity> save(Iterable<AccountTokenEntity> entities);
+
+    void delete(Iterable<AccountTokenEntity> entities);
 
 }
