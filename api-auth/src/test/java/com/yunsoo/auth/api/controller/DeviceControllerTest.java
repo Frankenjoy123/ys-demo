@@ -33,7 +33,7 @@ public class DeviceControllerTest extends TestBase {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", YUNSU_ORG_ID)
                 .build();
-        List<Device> list = restClient.get("device"+ query, new ParameterizedTypeReference<List<Device>>() {
+        List<Device> list = restClient.get("device" + query, new ParameterizedTypeReference<List<Device>>() {
         });
         return list.size();
     }

@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
  * Created by min on 7/28/16.
  */
 public class GroupAccountControllerTest extends TestBase {
-    
+
     private List<String> accountIds;
     private String groupId;
 
@@ -67,15 +67,15 @@ public class GroupAccountControllerTest extends TestBase {
             }
         }).collect(Collectors.toList());
     }
-    
+
     private void putAccountGroup(String group_id, String account_id) {
-        restClient.put("group/{group_id}/account/{account_id}", (Object)null, group_id, account_id);
+        restClient.put("group/{group_id}/account/{account_id}", (Object) null, group_id, account_id);
     }
 
     private void deleteAccountGroup(String group_id, String account_id) {
         restClient.delete("group/{group_id}/account/{account_id}", group_id, account_id);
-    } 
-    
+    }
+
     private List<Account> getAccounts(String group_id) {
         return restClient.get("group/{group_id}/account/", new ParameterizedTypeReference<List<Account>>() {
         }, group_id);
@@ -90,7 +90,7 @@ public class GroupAccountControllerTest extends TestBase {
     public void testPutAccountGroup() throws Exception {
         assert getAccounts(groupId).size() == 0;
         putAccountGroup(groupId, accountIds.get(0));
-        assert getAccounts(groupId).size() ==  1;
+        assert getAccounts(groupId).size() == 1;
     }
 
     @Test

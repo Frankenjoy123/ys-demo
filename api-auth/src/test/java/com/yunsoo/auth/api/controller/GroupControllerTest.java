@@ -83,7 +83,7 @@ public class GroupControllerTest extends TestBase {
     @Test(expected = NotFoundException.class)
     public void testDelete() throws Exception {
         Group group = restClient.get("group/{id}", Group.class, testGroup.getId());
-        restClient.delete("group/{id}",group.getId());
+        restClient.delete("group/{id}", group.getId());
         restClient.get("group/{id}", Group.class, testGroup.getId());
     }
 
@@ -96,6 +96,6 @@ public class GroupControllerTest extends TestBase {
     public void testGetAllPermissionByGroupId() throws Exception {
         List<PermissionEntry> list = restClient.get("group/{group_id}/permission", new ParameterizedTypeReference<List<PermissionEntry>>() {
         }, testGroup.getId());
-        System.out.println("Group permission is "+list);
+        System.out.println("Group permission is " + list);
     }
 }
