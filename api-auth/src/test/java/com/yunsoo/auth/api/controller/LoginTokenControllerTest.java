@@ -32,7 +32,6 @@ public class LoginTokenControllerTest extends TestBase {
         }
     }
 
-
     private void test_loginWithToken_200() {
         Token request = new Token();
         request.setToken(testAccountLoginToken);

@@ -250,5 +250,4 @@ public class AccountControllerTest extends TestBase {
         }, Constants.SYSTEM_ACCOUNT_ID);
         System.out.println("Account Login Log are "+list);
     }
-
 }

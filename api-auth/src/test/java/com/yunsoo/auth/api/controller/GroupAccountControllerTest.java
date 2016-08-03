@@ -19,53 +19,56 @@ import java.util.stream.IntStream;
  */
 public class GroupAccountControllerTest extends TestBase {
     
-    private List<String> accountIds;
-    private String groupId;
-    
+    private static List<String> accountIds;
+    private static String groupId;
+
     @Before
     public void createGroup() {
-        //async create 4 groupIds
-        List<String> groupIds = IntStream.range(0, 4).parallel().mapToObj(i -> {
-            Group group = new Group();
-            group.setOrgId(YUNSU_ORG_ID);
-            group.setName("Group" + i);
-            group.setDescription("good group");
-            group.setCreatedAccountId(Constants.SYSTEM_ACCOUNT_ID);
-            group.setCreatedDateTime(DateTime.now());
-            return restClient.postAsync("group", group, Group.class);
-        }).map(f -> {
-            try {
-                Group a = f.get();
-                System.out.println(a + " " + a.getName());
-                return a.getId();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }).collect(Collectors.toList());
+        if (groupId == null) {
+            System.out.println("before createGroup time is "+ DateTime.now().toLocalTime());
+            //async create 4 groupIds
+            List<String> groupIds = IntStream.range(0, 4).parallel().mapToObj(i -> {
+                Group group = new Group();
+                group.setOrgId(YUNSU_ORG_ID);
+                group.setName("Group" + i);
+                group.setDescription("good group");
+                group.setCreatedAccountId(Constants.SYSTEM_ACCOUNT_ID);
+                group.setCreatedDateTime(DateTime.now());
+                return restClient.postAsync("group", group, Group.class);
+            }).map(f -> {
+                try {
+                    Group a = f.get();
+                    System.out.println(a + " " + a.getName());
+                    return a.getId();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }).collect(Collectors.toList());
 
-        groupId = groupIds.get(2);
-        
-        //async create 8 accountIds
-        accountIds = IntStream.range(0, 8).parallel().mapToObj(i -> {
-            AccountCreationRequest r = new AccountCreationRequest();
-            r.setOrgId(YUNSU_ORG_ID);
-            r.setIdentifier("test" + i);
-            r.setFirstName("Account" + i);
-            r.setLastName("UT");
-            r.setPhone("123456789");
-            r.setPassword("test");
-            return restClient.postAsync("account", r, Account.class);
-        }).map(f -> {
-            try {
-                Account a = f.get();
-                System.out.println(a + " " + a.getFirstName());
-                return a.getId();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }).collect(Collectors.toList());
+            groupId = groupIds.get(2);
+
+            //async create 8 accountIds
+            accountIds = IntStream.range(0, 8).parallel().mapToObj(i -> {
+                AccountCreationRequest r = new AccountCreationRequest();
+                r.setOrgId(YUNSU_ORG_ID);
+                r.setIdentifier("test" + i);
+                r.setFirstName("Account" + i);
+                r.setLastName("UT");
+                r.setPhone("123456789");
+                r.setPassword("test");
+                return restClient.postAsync("account", r, Account.class);
+            }).map(f -> {
+                try {
+                    Account a = f.get();
+                    System.out.println(a + " " + a.getFirstName());
+                    return a.getId();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }).collect(Collectors.toList());
+        }
     }
     
     private void putAccountGroup(String group_id, String account_id) {
@@ -77,17 +80,19 @@ public class GroupAccountControllerTest extends TestBase {
     } 
     
     private List<Account> getAccounts(String group_id) {
-        return  restClient.get("group/{group_id}/account/", new ParameterizedTypeReference<List<Account>>() {
+        return restClient.get("group/{group_id}/account/", new ParameterizedTypeReference<List<Account>>() {
         }, group_id);
     }
 
     @Test
     public void testGetAccounts() throws Exception {
+        System.out.println("testGetAccounts time is "+ DateTime.now().toLocalTime());
         assert getAccounts(groupId).size() == 0;
     }
 
     @Test
     public void testPutAccountGroup() throws Exception {
+        System.out.println("testPutAccountGroup time is "+ DateTime.now().toLocalTime());
         assert getAccounts(groupId).size() == 0;
         putAccountGroup(groupId, accountIds.get(0));
         assert getAccounts(groupId).size() ==  1;
@@ -95,6 +100,7 @@ public class GroupAccountControllerTest extends TestBase {
 
     @Test
     public void testUpdateAccountGroup() throws Exception {
+        System.out.println("testUpdateAccountGroup time is "+ DateTime.now().toLocalTime());
         assert getAccounts(groupId).size() == 0;
         restClient.put("group/{group_id}/account/", accountIds, groupId);
         assert getAccounts(groupId).size() == 8;
@@ -102,6 +108,7 @@ public class GroupAccountControllerTest extends TestBase {
 
     @Test
     public void testDeleteAccountGroup() throws Exception {
+        System.out.println("testDeleteAccountGroup time is "+ DateTime.now().toLocalTime());
         testUpdateAccountGroup();
         deleteAccountGroup(groupId, accountIds.get(0));
         assert getAccounts(groupId).size() == 7;
