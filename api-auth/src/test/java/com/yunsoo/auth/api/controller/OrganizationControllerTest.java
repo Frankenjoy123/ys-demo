@@ -50,9 +50,9 @@ public class OrganizationControllerTest extends TestBase {
     }
 
     private List<String> batchCreateOrg() {
-        return IntStream.range(0,4).parallel().mapToObj(i -> {
+        return IntStream.range(0, 4).parallel().mapToObj(i -> {
             return restClient.postAsync("organization", createOrg("TestOrg" + i), Organization.class);
-        }).map(f->{
+        }).map(f -> {
                     try {
                         Organization a = f.get();
                         System.out.println(a + " " + a.getName());
@@ -85,17 +85,17 @@ public class OrganizationControllerTest extends TestBase {
 
     @Test(expected = NotFoundException.class)
     public void testGetById_404_notExistedId() {
-        getById(orgId+"xx");
+        getById(orgId + "xx");
     }
 
     @Test(expected = HttpMessageNotReadableException.class)
-    public void testGetById_404_emptyId(){
+    public void testGetById_404_emptyId() {
         getById("");
     }
 
     @Test(expected = NotFoundException.class)
-    public void testGetById_404_idSubString(){
-        getById(orgId.substring(0, orgId.length()-2));
+    public void testGetById_404_idSubString() {
+        getById(orgId.substring(0, orgId.length() - 2));
     }
 
     @Test
@@ -104,7 +104,7 @@ public class OrganizationControllerTest extends TestBase {
                 .append("name", "TestOrg2")
                 .append("ids_in", orgIds)
                 .build();
-        List<Organization> list = restClient.get("organization"+ query, new ParameterizedTypeReference<List<Organization>>() {
+        List<Organization> list = restClient.get("organization" + query, new ParameterizedTypeReference<List<Organization>>() {
         });
         assert list.size() == 1;
     }
@@ -115,7 +115,7 @@ public class OrganizationControllerTest extends TestBase {
                 .append("name", "TestOrg100")
                 .append("ids_in", orgIds)
                 .build();
-        List<Organization> list = restClient.get("organization"+ query, new ParameterizedTypeReference<List<Organization>>() {
+        List<Organization> list = restClient.get("organization" + query, new ParameterizedTypeReference<List<Organization>>() {
         });
         assert list.size() == 0;
     }
@@ -125,7 +125,7 @@ public class OrganizationControllerTest extends TestBase {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("name", "TestOrg")
                 .build();
-        List<Organization> list = restClient.get("organization"+ query, new ParameterizedTypeReference<List<Organization>>() {
+        List<Organization> list = restClient.get("organization" + query, new ParameterizedTypeReference<List<Organization>>() {
         });
         assert list.size() == 1;
     }
@@ -135,7 +135,7 @@ public class OrganizationControllerTest extends TestBase {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("name", "TestOrg100")
                 .build();
-        List<Organization> list = restClient.get("organization"+ query, new ParameterizedTypeReference<List<Organization>>() {
+        List<Organization> list = restClient.get("organization" + query, new ParameterizedTypeReference<List<Organization>>() {
         });
         assert list.size() == 0;
     }
@@ -145,7 +145,7 @@ public class OrganizationControllerTest extends TestBase {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("ids_in", orgIds)
                 .build();
-        List<Organization> list = restClient.get("organization"+ query, new ParameterizedTypeReference<List<Organization>>() {
+        List<Organization> list = restClient.get("organization" + query, new ParameterizedTypeReference<List<Organization>>() {
         });
         assert list.size() == 4;
     }

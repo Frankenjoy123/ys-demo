@@ -1,20 +1,16 @@
 package com.yunsoo.auth.service;
 
-import com.yunsoo.auth.api.security.permission.PermissionEntry;
-import com.yunsoo.auth.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.auth.api.security.permission.expression.PermissionExpression.SimplePermissionExpression;
-import com.yunsoo.auth.api.security.permission.expression.PrincipalExpression;
-import com.yunsoo.auth.api.security.permission.expression.PrincipalExpression.AccountPrincipalExpression;
-import com.yunsoo.auth.api.security.permission.expression.PrincipalExpression.GroupPrincipalExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression.RegionRestrictionExpression;
 import com.yunsoo.auth.api.util.AuthUtils;
 import com.yunsoo.auth.dao.entity.PermissionAllocationEntity;
 import com.yunsoo.auth.dao.repository.PermissionAllocationRepository;
-import com.yunsoo.auth.dto.Account;
 import com.yunsoo.auth.dto.PermissionAllocation;
-import com.yunsoo.auth.dto.PermissionRegion;
+import com.yunsoo.common.web.security.permission.PermissionEntry;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.PrincipalExpression;
+import com.yunsoo.common.web.security.permission.expression.PrincipalExpression.AccountPrincipalExpression;
+import com.yunsoo.common.web.security.permission.expression.PrincipalExpression.GroupPrincipalExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,13 +33,7 @@ public class PermissionAllocationService {
     private PermissionAllocationRepository permissionAllocationRepository;
 
     @Autowired
-    private PermissionService permissionService;
-
-    @Autowired
     private AccountGroupService accountGroupService;
-
-    @Autowired
-    private AccountService accountService;
 
 
     /**
@@ -79,31 +69,11 @@ public class PermissionAllocationService {
         permissionAllocationRepository.deleteByPrincipal(new GroupPrincipalExpression(groupId).toString());
     }
 
-    @Transactional
-    public void allocateAdminPermissionOnCurrentOrgToAccount(String accountId) {
-        if (StringUtils.isEmpty(accountId)) {
-            return;
+    public List<PermissionAllocation> getPermissionAllocationsByPrincipal(PrincipalExpression principal) {
+        if (principal == null) {
+            return new ArrayList<>();
         }
-        allocatePermission(
-                new AccountPrincipalExpression(accountId),
-                OrgRestrictionExpression.CURRENT,
-                SimplePermissionExpression.ADMIN,
-                PermissionEntry.Effect.allow);
-    }
-
-    @Transactional
-    public void allocateAdminPermissionOnDefaultRegionToAccount(String accountId) {
-        Account account = accountService.getById(accountId);
-        if (account == null) {
-            return;
-        }
-
-        PermissionRegion defaultPR = permissionService.getOrCreateDefaultPermissionRegion(account.getOrgId());
-        allocatePermission(
-                new AccountPrincipalExpression(accountId),
-                new RegionRestrictionExpression(defaultPR.getId()),
-                SimplePermissionExpression.ADMIN,
-                PermissionEntry.Effect.allow);
+        return this.getPermissionAllocationsByPrincipal(principal.toString());
     }
 
     @Transactional
@@ -180,7 +150,8 @@ public class PermissionAllocationService {
         entity.setEffect(effect);
         entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         entity.setCreatedDateTime(DateTime.now());
-        return toPermissionAllocation(permissionAllocationRepository.save(entity));
+        entity = permissionAllocationRepository.save(entity);
+        return toPermissionAllocation(entity);
     }
 
     private PermissionAllocation toPermissionAllocation(PermissionAllocationEntity entity) {

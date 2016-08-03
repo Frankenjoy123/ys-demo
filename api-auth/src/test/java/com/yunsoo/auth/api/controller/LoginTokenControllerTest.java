@@ -48,7 +48,7 @@ public class LoginTokenControllerTest extends TestBase {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("account_id", testAccount.getId())
                 .append("expires_in", 3000).build();
-        testAccountLoginToken = restClient.get("loginToken"+query, Token.class).getToken();
+        testAccountLoginToken = restClient.get("loginToken" + query, Token.class).getToken();
         test_loginWithToken_200();
     }
 
@@ -57,7 +57,7 @@ public class LoginTokenControllerTest extends TestBase {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("account_id", testAccount.getId())
                 .append("expires_in", 0).build();
-        testAccountLoginToken = restClient.get("loginToken"+query, Token.class).getToken();
+        testAccountLoginToken = restClient.get("loginToken" + query, Token.class).getToken();
         test_loginWithToken_200();
     }
 }

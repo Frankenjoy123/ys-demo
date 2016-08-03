@@ -1,5 +1,7 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.auth.dto.Organization;
+import com.yunsoo.api.auth.service.AuthOrganizationService;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.payment.ParameterNames;
@@ -52,6 +54,9 @@ public class MarketingController {
 
     @Autowired
     private OrganizationDomain organizationDomain;
+
+    @Autowired
+    private AuthOrganizationService authOrganizationService;
 
     @Autowired
     private UserDomain userDomain;
@@ -337,7 +342,7 @@ public class MarketingController {
                 if (orgList.containsKey(marketing.getOrgId()))
                     marketing.setOrgName(orgList.get(marketing.getOrgId()));
                 else {
-                    OrganizationObject org = organizationDomain.getOrganizationById(marketing.getOrgId());
+                    Organization org = authOrganizationService.getById(marketing.getOrgId());
                     if (org != null) {
                         orgList.put(org.getId(), org.getName());
                         marketing.setOrgName(org.getName());

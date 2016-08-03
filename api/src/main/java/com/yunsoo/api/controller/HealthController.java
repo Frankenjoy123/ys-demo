@@ -37,7 +37,7 @@ public class HealthController {
                 .mergeStatus(dataApi.getStatus())
                 .withDetail("authApi", authApi)
                 .withDetail("processor", processor)
-                .withDetail("dataAPI", dataApi);
+                .withDetail("dataApi", dataApi);
     }
 
 }

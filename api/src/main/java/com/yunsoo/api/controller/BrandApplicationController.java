@@ -1,15 +1,20 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
-import com.yunsoo.api.domain.*;
+import com.yunsoo.api.auth.dto.Account;
+import com.yunsoo.api.auth.dto.AccountCreationRequest;
+import com.yunsoo.api.auth.service.AuthAccountService;
+import com.yunsoo.api.auth.service.AuthOrganizationService;
+import com.yunsoo.api.auth.service.AuthPermissionService;
+import com.yunsoo.api.domain.BrandDomain;
+import com.yunsoo.api.domain.OrganizationDomain;
+import com.yunsoo.api.domain.PaymentDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AttachmentObject;
 import com.yunsoo.common.data.object.BrandObject;
-import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.Page;
@@ -49,23 +54,25 @@ import java.util.stream.Collectors;
 public class BrandApplicationController {
 
     private Log log = LogFactory.getLog(this.getClass());
+
     @Autowired
     private BrandDomain brandDomain;
 
     @Autowired
-    private AccountDomain accountDomain;
+    private AuthAccountService authAccountService;
+
+    @Autowired
+    private AuthOrganizationService authOrganizationService;
+
+    @Autowired
+    private AuthPermissionService authPermissionService;
 
     @Autowired
     private OrganizationDomain organizationDomain;
 
     @Autowired
-    private PermissionDomain permissionDomain;
-
-    @Autowired
-    private PermissionAllocationDomain permissionAllocationDomain;
-
-    @Autowired
     private PaymentDomain paymentDomain;
+
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Brand getById(@PathVariable(value = "id") String id) {
@@ -115,20 +122,20 @@ public class BrandApplicationController {
 
             organizationDomain.saveOrgLogo(createdBrand.getId(), organizationDomain.getLogoImage(id, "image-128x128"));
 
-            permissionDomain.putOrgRestrictionToDefaultPermissionRegion(object.getCarrierId(), createdBrand.getId());
+            authPermissionService.addOrgIdToDefaultRegion(createdBrand.getId());
 
-            AccountObject accountObject = new AccountObject();
-            accountObject.setEmail(object.getEmail());
-            accountObject.setIdentifier(object.getIdentifier());
-            accountObject.setFirstName(object.getContactName());
-            accountObject.setLastName("");
-            accountObject.setPassword(object.getPassword());
-            accountObject.setHashSalt(object.getHashSalt());
-            accountObject.setPhone(object.getContactMobile());
-            accountObject.setOrgId(createdBrand.getId());
-            accountObject.setCreatedAccountId(Constants.Ids.SYSTEM_ACCOUNT_ID);
-            AccountObject createdAccount = accountDomain.createAccount(accountObject, false);
-            permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
+            AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
+            accountCreationRequest.setEmail(object.getEmail());
+            accountCreationRequest.setIdentifier(object.getIdentifier());
+            accountCreationRequest.setFirstName(object.getContactName());
+            accountCreationRequest.setLastName("");
+            accountCreationRequest.setPassword(object.getPassword());
+            accountCreationRequest.setHashSalt(object.getHashSalt());
+            accountCreationRequest.setPhone(object.getContactMobile());
+            accountCreationRequest.setOrgId(createdBrand.getId());
+            accountCreationRequest.setCreatedAccountId(Constants.Ids.SYSTEM_ACCOUNT_ID);
+            Account account = authAccountService.create(accountCreationRequest);
+            authPermissionService.allocateAdminPermissionOnCurrentOrgToAccount(account.getId());
 
             object.setId(id);
             object.setCreatedDateTime(applicationDatetime);
@@ -163,8 +170,7 @@ public class BrandApplicationController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Brand createBrand(@RequestBody Brand brand) {
-        OrganizationObject existingOrg = organizationDomain.getOrganizationByName(brand.getName().trim());
-        if (existingOrg == null) {
+        if (authOrganizationService.getByName(brand.getName().trim()) == null) {
 
             Page<BrandObject> existingBrandList = brandDomain.getBrandList(brand.getName().trim(), null, null, null, null, null, null, null);
             if (existingBrandList.getContent().size() == 0) {
@@ -177,8 +183,7 @@ public class BrandApplicationController {
 
                 BrandObject object = brand.toBrand(brand);
                 object.setCreatedAccountId(currentAccountId);
-                Brand returnObj = new Brand(brandDomain.createBrand(object));
-                return returnObj;
+                return new Brand(brandDomain.createBrand(object));
             } else
                 throw new ConflictException("same brand name application existed");
         } else
@@ -288,31 +293,30 @@ public class BrandApplicationController {
 
     @RequestMapping(value = "attachment", method = RequestMethod.GET)
     public List<Attachment> getAttachmentList(@RequestParam(value = "ids") List<String> attachmentIds) {
-        return
-                brandDomain.getAttachmentList(attachmentIds).stream().map(Attachment::new).collect(Collectors.toList());
+        return brandDomain.getAttachmentList(attachmentIds).stream().map(Attachment::new).collect(Collectors.toList());
     }
 
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public Brand login(@RequestBody AccountLoginRequest account, @RequestParam(name = "summarize", required = false) boolean summarize) {
+    public Brand login(@RequestBody BrandApplicationLoginRequest request, @RequestParam(name = "summarize", required = false) boolean summarize) {
         //validate parameters
-        if (account.getAccountId() == null && (account.getOrganization() == null || account.getIdentifier() == null)) {
-            log.warn(String.format("parameters are invalid [accountId: %s, organization: %s, identifier: %s]",
-                    account.getAccountId(), account.getOrganization(), account.getIdentifier()));
+        if (request.getOrganization() == null || request.getIdentifier() == null) {
+            log.warn(String.format("parameters are invalid [organization: %s, identifier: %s]",
+                    request.getOrganization(), request.getIdentifier()));
             throw new UnauthorizedException("account is not valid");
         }
 
         //find account
-        List<BrandObject> existingBrandList = brandDomain.getBrandList(account.getOrganization().trim(), null, null, null, null, null, null, null).getContent();
+        List<BrandObject> existingBrandList = brandDomain.getBrandList(request.getOrganization().trim(), null, null, null, null, null, null, null).getContent();
         if (existingBrandList.size() == 0)
             throw new UnauthorizedException("account is not valid");
         else {
             BrandObject brand = existingBrandList.get(0);
-            if (!brand.getIdentifier().equals(account.getIdentifier()))
+            if (!brand.getIdentifier().equals(request.getIdentifier()))
                 throw new UnauthorizedException("account is not valid");
 
             //validate password
-            if (!accountDomain.validatePassword(account.getPassword(), brand.getHashSalt(), brand.getPassword())) {
+            if (!brandDomain.validatePassword(request.getPassword(), brand.getHashSalt(), brand.getPassword())) {
                 throw new UnauthorizedException("account is not valid");
             }
 
@@ -331,8 +335,6 @@ public class BrandApplicationController {
             return returnObject;
 
         }
-
-
     }
 
     @RequestMapping(value = "{id}/history", method = RequestMethod.GET)
@@ -344,7 +346,7 @@ public class BrandApplicationController {
                         if (accountMap.containsKey(history.getCreatedAccountId()))
                             history.setAccount(accountMap.get(history.getCreatedAccountId()));
                         else {
-                            Account account = new Account(accountDomain.getById(history.getCreatedAccountId()));
+                            Account account = authAccountService.getById(history.getCreatedAccountId());
                             history.setAccount(account);
                             accountMap.put(history.getCreatedAccountId(), account);
                         }

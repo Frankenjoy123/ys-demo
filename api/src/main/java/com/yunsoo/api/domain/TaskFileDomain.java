@@ -1,7 +1,6 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.DataApiClient;
-import com.yunsoo.api.dto.TaskFileEntry;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.TaskFileEntryObject;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -125,7 +123,7 @@ public class TaskFileDomain {
         return this.getTaskFileEntryById(obj.getFileId());
     }
 
-    public TaskFileEntryObject getTotal(String orgId, String appId, String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn){
+    public TaskFileEntryObject getTotal(String orgId, String appId, String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .append("app_id", appId)
@@ -136,10 +134,10 @@ public class TaskFileDomain {
                 .append("created_datetime_end", end)
                 .build();
 
-        return dataApiClient.get("/taskFileEntry/sum"+query, TaskFileEntryObject.class);
+        return dataApiClient.get("/taskFileEntry/sum" + query, TaskFileEntryObject.class);
     }
 
-    public List<TaskFileEntryObject> getTotalByDate(String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn){
+    public List<TaskFileEntryObject> getTotalByDate(String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("device_id", deviceId)
                 .append("type_code", typeCode)
@@ -152,7 +150,7 @@ public class TaskFileDomain {
         });
     }
 
-    public List<TaskFileEntryObject> getTotalByDevice(List<String> deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn){
+    public List<TaskFileEntryObject> getTotalByDevice(List<String> deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("device_id", deviceId)
                 .append("type_code", typeCode)

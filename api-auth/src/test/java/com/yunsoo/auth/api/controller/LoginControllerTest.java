@@ -14,30 +14,30 @@ import org.junit.Test;
  */
 public class LoginControllerTest extends TestBase {
 
-    private Account testAccount;
+    private static Account testAccount;
 
-    private Account disabledAccount;
+    private static Account disabledAccount;
 
-    private String testAccountLoginToken;
+    private static String testAccountLoginToken;
 
-    private String disabledAccountLoginToken;
+    private static String disabledAccountLoginToken;
 
     @Before
-    public synchronized void createAccount() {
+    public void createAccount() {
         if (testAccount == null) {
             System.out.println("init test account");
-            AccountCreationRequest rrequest = new AccountCreationRequest();
-            rrequest.setOrgId("2k0r1l55i2rs5544wz5");
-            rrequest.setIdentifier("testlogin");
-            rrequest.setFirstName("Account for test");
-            rrequest.setLastName("UT");
-            rrequest.setPhone("123456789");
-            rrequest.setPassword("test");
-            testAccount = restClient.post("account", rrequest, Account.class);
+            AccountCreationRequest request = new AccountCreationRequest();
+            request.setOrgId("2k0r1l55i2rs5544wz5");
+            request.setIdentifier("testlogin");
+            request.setFirstName("Account for test");
+            request.setLastName("UT");
+            request.setPhone("123456789");
+            request.setPassword("test");
+            testAccount = restClient.post("account", request, Account.class);
             testAccountLoginToken = restClient.get("loginToken?account_id={0}", Token.class, testAccount.getId()).getToken();
 
-            rrequest.setIdentifier("testlogin_disabled");
-            disabledAccount = restClient.post("account", rrequest, Account.class);
+            request.setIdentifier("testlogin_disabled");
+            disabledAccount = restClient.post("account", request, Account.class);
             disabledAccountLoginToken = restClient.get("loginToken?account_id={0}", Token.class, disabledAccount.getId()).getToken();
             restClient.post("account/{id}/disable", null, null, disabledAccount.getId());
         }

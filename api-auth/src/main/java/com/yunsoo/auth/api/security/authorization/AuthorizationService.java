@@ -1,12 +1,12 @@
 package com.yunsoo.auth.api.security.authorization;
 
 import com.yunsoo.auth.api.security.authentication.AccountAuthentication;
-import com.yunsoo.auth.api.security.permission.PermissionEntry;
 import com.yunsoo.auth.api.security.permission.PermissionEntryService;
-import com.yunsoo.auth.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression.CollectionRestrictionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
+import com.yunsoo.common.web.security.permission.PermissionEntry;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.CollectionRestrictionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

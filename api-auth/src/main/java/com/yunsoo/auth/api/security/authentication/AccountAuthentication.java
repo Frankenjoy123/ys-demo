@@ -4,9 +4,9 @@ import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.auth.api.security.AuthDetails;
 import com.yunsoo.auth.api.security.authorization.AuthorizationService;
 import com.yunsoo.auth.api.security.authorization.PermissionGrantedAuthority;
-import com.yunsoo.auth.api.security.permission.PermissionEntry;
-import com.yunsoo.auth.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression;
+import com.yunsoo.common.web.security.permission.PermissionEntry;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;

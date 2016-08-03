@@ -63,12 +63,12 @@ public class AccountGroupControllerTest extends TestBase {
     }
 
     private void putAccountGroup(String groupId) {
-        restClient.put("account/{account_id}/group/{group_id}", (Object)null, accountId, groupId);
+        restClient.put("account/{account_id}/group/{group_id}", (Object) null, accountId, groupId);
     }
 
     @Test
     public void testGetGroups() throws Exception {
-        assert  getGroupsSize() == 0;
+        assert getGroupsSize() == 0;
     }
 
     @Test
@@ -78,7 +78,7 @@ public class AccountGroupControllerTest extends TestBase {
         System.out.println("account id is " + accountId);
         putAccountGroup(groupIds.get(0));
 
-        assert  getGroupsSize() == 1;
+        assert getGroupsSize() == 1;
         System.out.println("finished testPutAccountGroup size is " + getGroupsSize());
 
     }

@@ -10,6 +10,7 @@ import com.yunsoo.auth.service.AccountLoginLogService;
 import com.yunsoo.auth.service.AccountService;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.exception.UnauthorizedException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +97,7 @@ public class AccountController {
     public void patchUpdateAccount(@PathVariable("id") String accountId,
                                    @RequestBody Account account) {
         accountId = AuthUtils.fixAccountId(accountId);
+        rejectUpdateOnSystemAccount(accountId);
         Account accountOld = findAccountById(accountId);
         if (!AuthUtils.isMe(accountId)) {
             AuthUtils.checkPermission(accountOld.getOrgId(), "account", "write");
@@ -107,6 +109,7 @@ public class AccountController {
     @RequestMapping(value = "{id}/disable", method = RequestMethod.POST)
     public void disableAccount(@PathVariable("id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
+        rejectUpdateOnSystemAccount(accountId);
         Account account = findAccountById(accountId);
 
         AuthUtils.checkPermission(account.getOrgId(), "account", "write");
@@ -117,6 +120,7 @@ public class AccountController {
     @RequestMapping(value = "{id}/enable", method = RequestMethod.POST)
     public void enableAccount(@PathVariable("id") String accountId) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
+        rejectUpdateOnSystemAccount(accountId);
         Account account = findAccountById(accountId);
 
         AuthUtils.checkPermission(account.getOrgId(), "account", "write");
@@ -127,6 +131,7 @@ public class AccountController {
     @RequestMapping(value = "{id}/password", method = RequestMethod.PUT)
     public void changePassword(@PathVariable("id") String accountId, @RequestBody String newPassword) {
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
+        rejectUpdateOnSystemAccount(accountId);
         Account account = findAccountById(accountId);
 
         AuthUtils.checkPermission(account.getOrgId(), "account", "write");
@@ -137,7 +142,7 @@ public class AccountController {
     @RequestMapping(value = "current/password", method = RequestMethod.POST)
     public void changePassword(@RequestBody @Valid AccountUpdatePasswordRequest request) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
-
+        rejectUpdateOnSystemAccount(currentAccountId);
         Account account = findAccountById(currentAccountId);
 
         if (!accountService.validatePassword(request.getOldPassword(), account.getHashSalt(), account.getPassword())) {
@@ -200,6 +205,12 @@ public class AccountController {
             throw new NotFoundException("account not found");
         }
         return account;
+    }
+
+    private void rejectUpdateOnSystemAccount(String accountId) {
+        if (Constants.SYSTEM_ACCOUNT_ID.equals(accountId)) {
+            throw new UnauthorizedException("system account can not be modified");
+        }
     }
 
 }

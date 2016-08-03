@@ -1,6 +1,8 @@
 package com.yunsoo.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yunsoo.auth.dto.util.OrgIdDetectable;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.List;
  * Created on:   2016-07-07
  * Descriptions:
  */
-public class PermissionRegion implements Serializable {
+public class PermissionRegion implements OrgIdDetectable, Serializable {
 
     @JsonProperty("id")
     private String id;
@@ -18,6 +20,7 @@ public class PermissionRegion implements Serializable {
     @JsonProperty("org_id")
     private String orgId;
 
+    @NotEmpty(message = "name must not be null or empty")
     @JsonProperty("name")
     private String name;
 
@@ -27,6 +30,7 @@ public class PermissionRegion implements Serializable {
     @JsonProperty("restrictions")
     private List<String> restrictions;
 
+    @NotEmpty(message = "type_code must not be null or empty")
     @JsonProperty("type_code")
     private String typeCode;
 

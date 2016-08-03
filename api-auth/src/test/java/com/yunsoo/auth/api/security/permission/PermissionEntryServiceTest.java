@@ -1,6 +1,7 @@
 package com.yunsoo.auth.api.security.permission;
 
 import com.yunsoo.auth.TestBase;
+import com.yunsoo.common.web.security.permission.PermissionEntry;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

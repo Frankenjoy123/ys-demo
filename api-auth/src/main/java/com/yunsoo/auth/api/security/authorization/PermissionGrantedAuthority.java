@@ -1,6 +1,6 @@
 package com.yunsoo.auth.api.security.authorization;
 
-import com.yunsoo.auth.api.security.permission.PermissionEntry;
+import com.yunsoo.common.web.security.permission.PermissionEntry;
 import org.springframework.security.core.GrantedAuthority;
 
 /**
