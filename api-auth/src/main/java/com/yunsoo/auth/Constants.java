@@ -57,6 +57,15 @@ public final class Constants {
         public static final List<String> ALL = Arrays.asList(CREATED, AVAILABLE, DISABLED);
     }
 
+    public static class OrgType {
+        private OrgType() {
+        }
+
+        public static final String TECH = "tech";
+        public static final String CARRIER = "carrier";
+        public static final String BRAND = "brand";
+    }
+
     public static class DeviceStatus {
         private DeviceStatus() {
         }

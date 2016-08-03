@@ -75,6 +75,9 @@ public class MktDrawPrize {
     @JsonProperty("mkt_draw_rule")
     private MktDrawRule mktDrawRule;
 
+    @JsonProperty("prize_contact")
+    private MktPrizeContact prizeContact;
+
     @JsonProperty("gravatar_url")
     private String gravatarUrl;
 
@@ -234,6 +237,14 @@ public class MktDrawPrize {
 
     public void setMktDrawRule(MktDrawRule mktDrawRule) {
         this.mktDrawRule = mktDrawRule;
+    }
+
+    public MktPrizeContact getPrizeContact() {
+        return prizeContact;
+    }
+
+    public void setPrizeContact(MktPrizeContact prizeContact) {
+        this.prizeContact = prizeContact;
     }
 
     public String getGravatarUrl() {
