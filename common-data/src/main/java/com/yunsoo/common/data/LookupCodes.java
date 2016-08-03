@@ -201,6 +201,7 @@ public class LookupCodes {
         public static final String MOBILE_FEE = "mobile_fee";
         public static final String MOBILE_DATA = "mobile_data";
         public static final String MATERIAL = "material";
+        public static final String COUPON = "Coupon";
     }
 
 
