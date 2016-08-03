@@ -21,14 +21,12 @@ public class DeviceControllerTest extends TestBase {
 
     @Before
     public void registerDevice() {
-        if (deviceId == null) {
-            DeviceRegisterRequest request = new DeviceRegisterRequest();
-            request.setName("TestDevice");
-            request.setOs("Android");
-            request.setComments("Good device");
-            Device device = restClient.post("device/register", request, Device.class);
-            deviceId = device.getId();
-        }
+        DeviceRegisterRequest request = new DeviceRegisterRequest();
+        request.setName("TestDevice");
+        request.setOs("Android");
+        request.setComments("Good device");
+        Device device = restClient.post("device/register", request, Device.class);
+        deviceId = device.getId();
     }
 
     private long getDeviceListSize() {

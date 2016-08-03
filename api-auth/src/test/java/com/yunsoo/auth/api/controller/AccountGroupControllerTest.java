@@ -20,23 +20,22 @@ import java.util.stream.IntStream;
 public class AccountGroupControllerTest extends TestBase {
 
     private List<String> groupIds;
-    private static String accountId;
+    private String accountId;
 
     @Before
     public void createGroup() {
-
         //create 1 account
-        if (accountId == null) {
-            AccountCreationRequest r = new AccountCreationRequest();
-            r.setOrgId(YUNSU_ORG_ID);
-            r.setIdentifier("test");
-            r.setFirstName("Account");
-            r.setLastName("UT");
-            r.setPhone("123456789");
-            r.setPassword("test");
-            Account account = restClient.post("account", r, Account.class);
-            accountId = account.getId();
-        }
+        System.out.println("this is the account id ");
+        AccountCreationRequest r = new AccountCreationRequest();
+        r.setOrgId(YUNSU_ORG_ID);
+        r.setIdentifier("test");
+        r.setFirstName("Account");
+        r.setLastName("UT");
+        r.setPhone("123456789");
+        r.setPassword("test");
+        Account account = restClient.post("account", r, Account.class);
+        accountId = account.getId();
+
         groupIds = IntStream.range(0, 4).parallel().mapToObj(i -> {
             Group group = new Group();
             group.setOrgId(YUNSU_ORG_ID);
@@ -74,20 +73,29 @@ public class AccountGroupControllerTest extends TestBase {
 
     @Test
     public void testPutAccountGroup() throws Exception {
+        System.out.println("testPutAccountGroup size is " + getGroupsSize());
+
+        System.out.println("account id is " + accountId);
         putAccountGroup(groupIds.get(0));
+
         assert  getGroupsSize() == 1;
+        System.out.println("finished testPutAccountGroup size is " + getGroupsSize());
+
     }
 
     @Test
     public void testUpdateAccountGroups() throws Exception {
+        System.out.println("testUpdateAccountGroups size is " + getGroupsSize());
         IntStream.range(0, 3).parallel().forEach(i -> putAccountGroup(groupIds.get(i)));
         assert getGroupsSize() == 3;
         putAccountGroup(groupIds.get(3));
         assert getGroupsSize() == 4;
+        System.out.println("finished testUpdateAccountGroups size is " + getGroupsSize());
     }
 
     @Test
     public void testDeleteAccountGroup() throws Exception {
+        System.out.println("testDeleteAccountGroup size is " + getGroupsSize());
         IntStream.range(0, 4).parallel().forEach(i -> putAccountGroup(groupIds.get(i)));
         assert getGroupsSize() == 4;
         restClient.delete("account/{account_id}/group/{group_id}", accountId, groupIds.get(2));
@@ -96,5 +104,6 @@ public class AccountGroupControllerTest extends TestBase {
         List<String> ids = list.stream().map(Group::getId).collect(Collectors.toList());
         if (ids.contains(groupIds.get(2))) throw new AssertionError();
         assert ids.contains(groupIds.get(0));
+        System.out.println("finished testDeleteAccountGroup size is " + getGroupsSize());
     }
 }

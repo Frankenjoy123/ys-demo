@@ -25,15 +25,13 @@ public class GroupControllerTest extends TestBase {
 
     @Before
     public void createGroup() {
-        if (testGroup == null) {
-            Group group = new Group();
-            group.setOrgId(YUNSU_ORG_ID);
-            group.setName("云溯科技");
-            group.setDescription("领先国内外");
-            group.setCreatedAccountId(Constants.SYSTEM_ACCOUNT_ID);
-            group.setCreatedDateTime(DateTime.now());
-            testGroup = restClient.post("group", group, Group.class);
-        }
+        Group group = new Group();
+        group.setOrgId(YUNSU_ORG_ID);
+        group.setName("云溯科技");
+        group.setDescription("领先国内外");
+        group.setCreatedAccountId(Constants.SYSTEM_ACCOUNT_ID);
+        group.setCreatedDateTime(DateTime.now());
+        testGroup = restClient.post("group", group, Group.class);
     }
 
     @Test

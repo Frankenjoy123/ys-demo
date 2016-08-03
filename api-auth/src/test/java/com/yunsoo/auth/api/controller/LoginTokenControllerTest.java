@@ -20,16 +20,14 @@ public class LoginTokenControllerTest extends TestBase {
 
     @Before
     public void createAccount() {
-        if (testAccount == null) {
-            AccountCreationRequest rrequest = new AccountCreationRequest();
-            rrequest.setOrgId("2k0r1l55i2rs5544wz5");
-            rrequest.setIdentifier("testlogin");
-            rrequest.setFirstName("Account for test");
-            rrequest.setLastName("UT");
-            rrequest.setPhone("123456789");
-            rrequest.setPassword("test");
-            testAccount = restClient.post("account", rrequest, Account.class);
-        }
+        AccountCreationRequest rrequest = new AccountCreationRequest();
+        rrequest.setOrgId("2k0r1l55i2rs5544wz5");
+        rrequest.setIdentifier("testlogin");
+        rrequest.setFirstName("Account for test");
+        rrequest.setLastName("UT");
+        rrequest.setPhone("123456789");
+        rrequest.setPassword("test");
+        testAccount = restClient.post("account", rrequest, Account.class);
     }
 
     private void test_loginWithToken_200() {

@@ -32,17 +32,15 @@ public class AccountControllerTest extends TestBase {
 
     @Before
     public void createAccount() {
-        if (testAccount == null) {
-            AccountCreationRequest r = new AccountCreationRequest();
-            r.setOrgId(YUNSU_ORG_ID);
-            r.setIdentifier("testAccount");
-            r.setFirstName("Account");
-            r.setLastName("UT");
-            r.setPhone("123456789");
-            r.setPassword("test");
-            testAccount = restClient.post("account", r, Account.class);
-            testAccountLoginToken = restClient.get("loginToken?account_id={0}", Token.class, testAccount.getId()).getToken();
-        }
+        AccountCreationRequest r = new AccountCreationRequest();
+        r.setOrgId(YUNSU_ORG_ID);
+        r.setIdentifier("testAccount");
+        r.setFirstName("Account");
+        r.setLastName("UT");
+        r.setPhone("123456789");
+        r.setPassword("test");
+        testAccount = restClient.post("account", r, Account.class);
+        testAccountLoginToken = restClient.get("loginToken?account_id={0}", Token.class, testAccount.getId()).getToken();
     }
 
     private void test_loginWithToken() {
