@@ -13,6 +13,7 @@ import com.yunsoo.auth.service.PermissionRegionService;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.exception.UnauthorizedException;
 import com.yunsoo.common.web.security.permission.PermissionEntry;
 import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
 import com.yunsoo.common.web.security.permission.expression.PrincipalExpression;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -229,6 +231,9 @@ public class PermissionAllocationController {
     private <T extends PrincipalExpression> void checkPermission(T principal, String action) {
         String orgId = null;
         if (principal instanceof AccountPrincipalExpression) {
+            if (Constants.SYSTEM_ACCOUNT_ID.equals(principal.getValue())) {
+                throw new UnauthorizedException("system account can not be modified");
+            }
             orgId = findAccountById(principal.getValue()).getOrgId();
         } else if (principal instanceof GroupPrincipalExpression) {
             orgId = findGroupById(principal.getValue()).getOrgId();
@@ -304,9 +309,17 @@ public class PermissionAllocationController {
     }
 
     private RestrictionExpression expendRestrictionExpression(RestrictionExpression restrictionExp, String orgId) {
-        if (restrictionExp != null && restrictionExp instanceof RegionRestrictionExpression && Constants.PermissionRegionType.DEFAULT.equals(restrictionExp.getValue())) {
-            PermissionRegion region = permissionRegionService.getOrCreateDefaultPermissionRegion(AuthUtils.fixOrgId(orgId));
-            return new RegionRestrictionExpression(region.getId());
+        if (restrictionExp != null) {
+            if (restrictionExp instanceof CollectionRestrictionExpression) {
+                return RestrictionExpression.collect(((CollectionRestrictionExpression) restrictionExp)
+                        .getExpressions()
+                        .stream()
+                        .map(r -> expendRestrictionExpression(r, orgId))
+                        .collect(Collectors.toList()));
+            } else if (restrictionExp instanceof RegionRestrictionExpression && Constants.PermissionRegionType.DEFAULT.equals(restrictionExp.getValue())) {
+                PermissionRegion region = permissionRegionService.getOrCreateDefaultPermissionRegion(AuthUtils.fixOrgId(orgId));
+                return new RegionRestrictionExpression(region.getId());
+            }
         }
         return restrictionExp;
     }

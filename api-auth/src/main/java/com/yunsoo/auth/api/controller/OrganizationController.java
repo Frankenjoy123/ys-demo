@@ -6,11 +6,13 @@ import com.yunsoo.auth.api.util.PageUtils;
 import com.yunsoo.auth.dto.Organization;
 import com.yunsoo.auth.service.OrganizationService;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -39,9 +41,19 @@ public class OrganizationController {
         orgId = AuthUtils.fixOrgId(orgId);
         Organization organization = organizationService.getById(orgId);
         if (organization == null) {
-            throw new NotFoundException("organization not found by [id: " + orgId + "]");
+            throw new NotFoundException("organization not found by id: " + orgId);
         }
         return organization;
+    }
+
+    @RequestMapping(value = "{id}/name", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public String getNameById(@PathVariable(value = "id") String orgId) {
+        orgId = AuthUtils.fixOrgId(orgId);
+        Organization organization = organizationService.getById(orgId);
+        if (organization == null) {
+            throw new NotFoundException("organization not found by id: " + orgId);
+        }
+        return organization.getName();
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -69,8 +81,15 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    @PreAuthorize("hasPermission('*', 'org', 'organization:create')")
     public Organization create(@RequestBody @Valid Organization org) {
+        if (!Constants.OrgType.ALL.contains(org.getTypeCode())) {
+            throw new BadRequestException("type_code invalid");
+        }
+        if (Constants.OrgType.BRAND.equals(org.getTypeCode())) {
+            AuthUtils.checkPermission("current", "organization", "create");
+        } else {
+            AuthUtils.checkPermission("*", "organization", "create");
+        }
         return organizationService.create(org);
     }
 

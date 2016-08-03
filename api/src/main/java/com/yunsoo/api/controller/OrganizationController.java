@@ -1,21 +1,20 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
-import com.yunsoo.api.domain.AccountDomain;
+import com.yunsoo.api.auth.dto.Account;
+import com.yunsoo.api.auth.dto.AccountCreationRequest;
+import com.yunsoo.api.auth.service.AuthAccountService;
+import com.yunsoo.api.auth.service.AuthOrganizationService;
+import com.yunsoo.api.auth.service.AuthPermissionService;
 import com.yunsoo.api.domain.BrandDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
-import com.yunsoo.api.domain.PermissionDomain;
 import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.Brand;
 import com.yunsoo.api.dto.ImageRequest;
-import com.yunsoo.api.dto.Organization;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
-import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.AccountObject;
 import com.yunsoo.common.data.object.AttachmentObject;
 import com.yunsoo.common.data.object.BrandObject;
-import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -24,8 +23,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +34,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,66 +50,16 @@ public class OrganizationController {
     private OrganizationDomain organizationDomain;
 
     @Autowired
-    private AccountDomain accountDomain;
-
-    @Autowired
     private BrandDomain brandDomain;
 
     @Autowired
-    private PermissionDomain permissionDomain;
+    private AuthAccountService authAccountService;
 
+    @Autowired
+    private AuthOrganizationService authOrganizationService;
 
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
-    public Organization getById(@PathVariable(value = "id") String orgId) {
-        orgId = AuthUtils.fixOrgId(orgId);
-        OrganizationObject object = organizationDomain.getOrganizationById(orgId);
-        if (object == null) {
-            throw new NotFoundException("organization not found by [id: " + orgId + "]");
-        }
-        return new Organization(object);
-    }
-
-    @RequestMapping(value = "{id}/disable", method = RequestMethod.PUT)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
-    public void Disable(@PathVariable(value = "id") String orgId) {
-        organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.DISABLED);
-    }
-
-    @RequestMapping(value = "{id}/enable", method = RequestMethod.PUT)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
-    public void Enable(@PathVariable(value = "id") String orgId) {
-        organizationDomain.updateOrganizationStatus(orgId, LookupCodes.OrgStatus.AVAILABLE);
-    }
-
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
-    public List<Organization> getByFilter(@RequestParam(value = "name", required = false) String name,
-                                          @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
-                                          Pageable pageable,
-                                          HttpServletResponse response) {
-        List<Organization> organizations;
-        if (name != null) {
-            OrganizationObject object = organizationDomain.getOrganizationByName(name);
-            organizations = new ArrayList<>();
-            if (object != null) {
-                organizations.add(new Organization(object));
-            }
-        } else {
-            Page<OrganizationObject> organizationPage = organizationDomain.getOrganizationList(pageable);
-            organizations = PageUtils.response(response, organizationPage.map(Organization::new), pageable != null);
-        }
-        return organizations;
-    }
-
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    @PreAuthorize("hasPermission('*', 'org', 'organization:create')")
-    public Organization create(@RequestBody Organization organization) {
-        String currentAccountId = AuthUtils.getCurrentAccount().getId();
-        OrganizationObject object = organization.toOrganizationObject();
-        object.setCreatedAccountId(currentAccountId);
-        return new Organization(organizationDomain.createOrganization(object));
-    }
+    @Autowired
+    private AuthPermissionService authPermissionService;
 
     @RequestMapping(value = "/brand", method = RequestMethod.POST)
     @PreAuthorize("hasPermission('current', 'org', 'organization:create')")
@@ -123,19 +69,19 @@ public class OrganizationController {
         object.setCreatedAccountId(currentAccountId);
         Brand returnObj = new Brand(organizationDomain.createBrand(object));
 
-        permissionDomain.putOrgRestrictionToDefaultPermissionRegion(brand.getCarrierId(), returnObj.getId());
+        authPermissionService.addOrgIdToDefaultRegion(returnObj.getId());
 
-        AccountObject accountObject = new AccountObject();
-        accountObject.setEmail(returnObj.getEmail());
-        accountObject.setIdentifier("admin");
-        accountObject.setFirstName(returnObj.getContactName());
-        accountObject.setLastName("");
-        accountObject.setPassword("admin");
-        accountObject.setPhone(returnObj.getContactMobile());
-        accountObject.setOrgId(returnObj.getId());
-        accountObject.setCreatedAccountId(Constants.Ids.SYSTEM_ACCOUNT_ID);
-        AccountObject createdAccount = accountDomain.createAccount(accountObject, true);
-        //permissionAllocationDomain.allocateAdminPermissionOnCurrentOrgToAccount(createdAccount.getId());
+        AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
+        accountCreationRequest.setEmail(returnObj.getEmail());
+        accountCreationRequest.setIdentifier("admin");
+        accountCreationRequest.setFirstName(returnObj.getContactName());
+        accountCreationRequest.setLastName("");
+        accountCreationRequest.setPassword("admin");
+        accountCreationRequest.setPhone(returnObj.getContactMobile());
+        accountCreationRequest.setOrgId(returnObj.getId());
+        accountCreationRequest.setCreatedAccountId(Constants.Ids.SYSTEM_ACCOUNT_ID);
+        Account account = authAccountService.create(accountCreationRequest);
+        authPermissionService.allocateAdminPermissionOnCurrentOrgToAccount(account.getId());
 
         return returnObj;
     }
@@ -161,7 +107,7 @@ public class OrganizationController {
         }
 
         if (includeCarrier)
-            returnObject.setCarrier(new Organization(organizationDomain.getOrganizationById(returnObject.getCarrierId())));
+            returnObject.setCarrier(authOrganizationService.getById(returnObject.getCarrierId()));
 
         return returnObject;
     }

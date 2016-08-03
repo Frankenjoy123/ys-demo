@@ -3,6 +3,7 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.api.auth.dto.Organization;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
@@ -12,7 +13,9 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 /**
- * Created by yan on 3/9/2016.
+ * Created by:   yan
+ * Created on:   3/9/2016
+ * Descriptions:
  */
 public class Brand extends Organization {
 

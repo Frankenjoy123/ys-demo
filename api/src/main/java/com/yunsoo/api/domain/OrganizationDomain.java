@@ -1,9 +1,10 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.auth.dto.Organization;
+import com.yunsoo.api.auth.service.AuthOrganizationService;
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.BrandObject;
-import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -16,8 +17,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -43,22 +42,13 @@ public class OrganizationDomain {
     @Autowired
     private RestClient dataApiClient;
 
+    @Autowired
+    private AuthOrganizationService authOrganizationService;
+
+
     private static final String ORG_LOGO_IMAGE_128X128 = "image-128x128";
 
     private static final String ORG_LOGO_IMAGE_200X200 = "image-200x200";
-
-
-    @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
-    public OrganizationObject getOrganizationById(String id) {
-        if (StringUtils.isEmpty(id)) {
-            return null;
-        }
-        try {
-            return dataApiClient.get("organization/{id}", OrganizationObject.class, id);
-        } catch (NotFoundException ex) {
-            return null;
-        }
-    }
 
     public BrandObject getBrandById(String id) {
         try {
@@ -75,30 +65,8 @@ public class OrganizationDomain {
             return dataApiClient.get("organization/{id}/brand/count", Integer.class, id);
     }
 
-    @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
-    public void updateOrganizationStatus(String id, String status) {
-        OrganizationObject org = getOrganizationById(id);
-        org.setStatusCode(status);
-        dataApiClient.put("organization/{id}", org, id);
-    }
-
-    @CacheEvict(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).ORGANIZATION.toString(), #id)")
     public void patchBrand(String id, BrandObject brand) {
         dataApiClient.patch("organization/brand/{id}", brand, id);
-    }
-
-    public OrganizationObject getOrganizationByName(String name) {
-        List<OrganizationObject> objects = dataApiClient.get("organization?name={name}", new ParameterizedTypeReference<List<OrganizationObject>>() {
-        }, name);
-        return objects.size() == 0 ? null : objects.get(0);
-    }
-
-    public Page<OrganizationObject> getOrganizationList(Pageable pageable) {
-        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append(pageable)
-                .build();
-        return dataApiClient.getPaged("organization" + query, new ParameterizedTypeReference<List<OrganizationObject>>() {
-        });
     }
 
     public Page<BrandObject> getOrgBrandList(String orgId, String orgName, String orgStatus, String searchText, DateTime startTime, DateTime endTime, String categoryId, Pageable pageable) {
@@ -127,15 +95,9 @@ public class OrganizationDomain {
         }, carrierId);
     }
 
-    public OrganizationObject createOrganization(OrganizationObject object) {
-        object.setId(null);
-        object.setCreatedDateTime(DateTime.now());
-        return dataApiClient.post("organization", object, OrganizationObject.class);
-    }
-
     public BrandObject createBrand(BrandObject object) {
-        OrganizationObject existingOrg = getOrganizationByName(object.getName().trim());
-        if(existingOrg!=null)
+        Organization existingOrg = authOrganizationService.getByName(object.getName().trim());
+        if (existingOrg != null)
             throw new ConflictException("same brand name application existed");
         else {
             object.setId(null);
@@ -183,7 +145,7 @@ public class OrganizationDomain {
         }
     }
 
-    public void saveOrgLogo(String orgId, String imageName, byte[]imageDataBytes){
+    public void saveOrgLogo(String orgId, String imageName, byte[] imageDataBytes) {
         try {
             ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
             ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
@@ -206,8 +168,7 @@ public class OrganizationDomain {
         try {
             ResourceInputStream stream = new ResourceInputStream(file.getInputStream(), file.getSize(), file.getContentType());
             dataApiClient.put("file/s3?path=" + s3FileName, stream, orgId);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new InternalServerErrorException("webchat key upload failed for organization: " + orgId);
         }
     }

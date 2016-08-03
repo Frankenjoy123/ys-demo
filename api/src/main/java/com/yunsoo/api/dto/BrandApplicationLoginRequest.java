@@ -9,10 +9,7 @@ import javax.validation.constraints.NotNull;
  * Created on  : 2015/4/21
  * Descriptions:
  */
-public class AccountLoginRequest {
-
-    @JsonProperty("account_id")
-    private String accountId;
+public class BrandApplicationLoginRequest {
 
     @JsonProperty("organization")
     private String organization;
@@ -24,14 +21,6 @@ public class AccountLoginRequest {
     @JsonProperty("password")
     private String password;
 
-
-    public String getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
 
     public String getOrganization() {
         return organization;

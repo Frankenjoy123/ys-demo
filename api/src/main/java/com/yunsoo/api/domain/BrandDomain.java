@@ -39,11 +39,11 @@ public class BrandDomain {
         object.setId(null);
         object.setCreatedDateTime(DateTime.now());
         String hashSalt = RandomUtils.generateString(8);
-        String password =  HashUtils.sha1HexString(object.getPassword() + hashSalt);
+        String password = hashPassword(object.getPassword(), hashSalt);
         object.setHashSalt(hashSalt);
         object.setPassword(password);
-        if(StringUtils.hasText(object.getAttachment()) && object.getAttachment().endsWith(","))
-            object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() -1 ));
+        if (StringUtils.hasText(object.getAttachment()) && object.getAttachment().endsWith(","))
+            object.setAttachment(object.getAttachment().substring(0, object.getAttachment().length() - 1));
         return dataApiClient.post("brand", object, BrandObject.class);
     }
 
@@ -60,14 +60,14 @@ public class BrandDomain {
     }
 
 
-    public int count(String id, String status, boolean paid){
+    public int count(String id, String status, boolean paid) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("carrier_id", id)
                 .append("status", status).append("paid", paid)
                 .build();
         return dataApiClient.get("brand/count/" + query, Integer.class);
     }
 
-    public List<BrandApplicationHistoryObject> getBrandApplicationHistory(String id){
+    public List<BrandApplicationHistoryObject> getBrandApplicationHistory(String id) {
         return dataApiClient.get("brand/{id}/history", new ParameterizedTypeReference<List<BrandApplicationHistoryObject>>() {
         }, id);
     }
@@ -87,14 +87,14 @@ public class BrandDomain {
     }
 
 
-    public List<AttachmentObject> getAttachmentList(String attachmentIds){
+    public List<AttachmentObject> getAttachmentList(String attachmentIds) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("ids", StringUtils.commaDelimitedListToStringArray(attachmentIds)).build();
         return dataApiClient.get("brand/attachment" + query, new ParameterizedTypeReference<List<AttachmentObject>>() {
         });
     }
 
-    public List<AttachmentObject> getAttachmentList(List<String> attachmentIds){
+    public List<AttachmentObject> getAttachmentList(List<String> attachmentIds) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("ids", attachmentIds).build();
         return dataApiClient.get("brand/attachment" + query, new ParameterizedTypeReference<List<AttachmentObject>>() {
@@ -115,8 +115,7 @@ public class BrandDomain {
             AttachmentObject savedObj = dataApiClient.post("brand/attachment", object, AttachmentObject.class);
             return savedObj;
 
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new InternalServerErrorException("logo upload failed for brand application");
         }
     }
@@ -144,10 +143,18 @@ public class BrandDomain {
             object.setId(attachmentId);
             object.setModifiedDateTime(DateTime.now());
             dataApiClient.put("brand/attachment", object);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new InternalServerErrorException("logo upload failed for brand application");
         }
+    }
+
+    public boolean validatePassword(String rawPassword, String hashSalt, String password) {
+        return rawPassword != null && rawPassword.length() > 0
+                && hashSalt != null && hashPassword(rawPassword, hashSalt).equals(password);
+    }
+
+    private String hashPassword(String rawPassword, String hashSalt) {
+        return HashUtils.sha1HexString(rawPassword + hashSalt);
     }
 
 }

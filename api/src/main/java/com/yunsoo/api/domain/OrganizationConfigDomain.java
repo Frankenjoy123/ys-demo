@@ -3,13 +3,12 @@ package com.yunsoo.api.domain;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yunsoo.api.auth.dto.Organization;
+import com.yunsoo.api.auth.service.AuthOrganizationService;
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
-import com.yunsoo.api.dto.Organization;
 import com.yunsoo.api.util.AuthUtils;
-import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.OrganizationConfigObject;
-import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -41,6 +40,9 @@ public class OrganizationConfigDomain {
     @Autowired
     private OrganizationDomain organizationDomain;
 
+    @Autowired
+    private AuthOrganizationService authOrganizationService;
+
 
     private static ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -57,23 +59,20 @@ public class OrganizationConfigDomain {
      */
     public Map<String, Object> getConfig(String orgId, boolean publicOnly, String prefix) {
         Map<String, Object> configItems = new HashMap<>();
-        OrganizationObject orgObject = organizationDomain.getOrganizationById(orgId);
+        String orgName = authOrganizationService.getNameById(orgId);
 
         OrganizationConfigObject configObject;
-        if (orgObject == null) {
+        if (orgName == null) {
             configObject = getDefaultConfigObject();
         } else {
             configObject = getConfigObject(orgId);
 
-
             if (configObject == null) configObject = new OrganizationConfigObject();
 
             //extend carrier config if it's brand
-            if (LookupCodes.OrgType.BRAND.equals(orgObject.getTypeCode())) {
-                BrandObject brandObject = organizationDomain.getBrandById(orgId);
-                if (brandObject != null) {
-                    extend(configObject, getConfigObject(brandObject.getCarrierId()));
-                }
+            BrandObject brandObject = organizationDomain.getBrandById(orgId);
+            if (brandObject != null) {
+                extend(configObject, getConfigObject(brandObject.getCarrierId()));
             }
         }
         Map<String, OrganizationConfigObject.Item> items = configObject.getItems();
@@ -86,15 +85,18 @@ public class OrganizationConfigDomain {
 
             configItems.put(k, items.get(k).getValue());
         });
-        if (orgObject != null) {
-            configItems.put("organization", new Organization(orgObject));
+        if (orgName != null) {
+            Organization org = new Organization();
+            org.setId(orgId);
+            org.setName(orgName);
+            configItems.put("organization", org);
         }
 
         configItems.keySet().forEach(key -> {
             if (key.equals("webchat.app_secret"))
-                configItems.put(key,encode((String)configItems.get(key)));
-            else if(key.equals(("webchat.private_key")))
-                configItems.put(key,encode((String)configItems.get(key)));
+                configItems.put(key, encode((String) configItems.get(key)));
+            else if (key.equals(("webchat.private_key")))
+                configItems.put(key, encode((String) configItems.get(key)));
 
 
         });

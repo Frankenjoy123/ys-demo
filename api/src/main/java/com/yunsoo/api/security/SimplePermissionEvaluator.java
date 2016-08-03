@@ -1,6 +1,6 @@
 package com.yunsoo.api.security;
 
-import com.yunsoo.api.dto.Organization;
+import com.yunsoo.api.auth.dto.Organization;
 import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import com.yunsoo.api.security.authentication.AccountAuthentication;
 import com.yunsoo.common.util.StringFormatter;
