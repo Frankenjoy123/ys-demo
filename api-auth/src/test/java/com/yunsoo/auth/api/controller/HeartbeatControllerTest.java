@@ -23,7 +23,7 @@ public class HeartbeatControllerTest extends TestBase {
     private HeartBeatPackage getByDeviceId(String id) {
         return restClient.get("heartbeat?device_id={device_id}", HeartBeatPackage.class, id);
     }
-    
+
     @Test
     public void testGetByDeviceId_404_notExistedId() {
         HeartBeatPackage hbPackage = getByDeviceId(deviceId + "xx");
