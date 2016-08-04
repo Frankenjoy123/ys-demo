@@ -53,7 +53,7 @@ public class TestBase {
         }
     }
 
-    private String getHostName() {
+    protected String getHostName() {
         try {
             return InetAddress.getLocalHost().getHostName().split("\\..")[0];
         } catch (UnknownHostException e) {
