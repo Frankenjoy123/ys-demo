@@ -1,7 +1,7 @@
 package com.yunsoo.auth.service;
 
 import com.yunsoo.auth.Constants;
-import com.yunsoo.auth.api.config.AuthCacheConfig;
+import com.yunsoo.auth.config.AuthCacheConfig;
 import com.yunsoo.auth.dto.HeartBeatPackage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

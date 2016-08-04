@@ -20,6 +20,6 @@ public interface PermissionRegionRepository extends Repository<PermissionRegionE
 
     PermissionRegionEntity save(PermissionRegionEntity entity);
 
-    void delete(String id);
+    void delete(PermissionRegionEntity entity);
 
 }

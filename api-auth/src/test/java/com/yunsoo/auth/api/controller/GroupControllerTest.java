@@ -25,15 +25,13 @@ public class GroupControllerTest extends TestBase {
 
     @Before
     public void createGroup() {
-        if (testGroup == null) {
-            Group group = new Group();
-            group.setOrgId(YUNSU_ORG_ID);
-            group.setName("云溯科技");
-            group.setDescription("领先国内外");
-            group.setCreatedAccountId(Constants.SYSTEM_ACCOUNT_ID);
-            group.setCreatedDateTime(DateTime.now());
-            testGroup = restClient.post("group", group, Group.class);
-        }
+        Group group = new Group();
+        group.setOrgId(YUNSU_ORG_ID);
+        group.setName("云溯科技");
+        group.setDescription("领先国内外");
+        group.setCreatedAccountId(Constants.SYSTEM_ACCOUNT_ID);
+        group.setCreatedDateTime(DateTime.now());
+        testGroup = restClient.post("group", group, Group.class);
     }
 
     @Test
@@ -85,7 +83,7 @@ public class GroupControllerTest extends TestBase {
     @Test(expected = NotFoundException.class)
     public void testDelete() throws Exception {
         Group group = restClient.get("group/{id}", Group.class, testGroup.getId());
-        restClient.delete("group/{id}",group.getId());
+        restClient.delete("group/{id}", group.getId());
         restClient.get("group/{id}", Group.class, testGroup.getId());
     }
 
@@ -98,6 +96,6 @@ public class GroupControllerTest extends TestBase {
     public void testGetAllPermissionByGroupId() throws Exception {
         List<PermissionEntry> list = restClient.get("group/{group_id}/permission", new ParameterizedTypeReference<List<PermissionEntry>>() {
         }, testGroup.getId());
-        System.out.println("Group permission is "+list);
+        System.out.println("Group permission is " + list);
     }
 }

@@ -70,7 +70,7 @@ public class PermissionEntry implements Serializable {
     public PermissionEntry() {
     }
 
-    public PermissionEntry(com.yunsoo.auth.api.security.permission.PermissionEntry p) {
+    public PermissionEntry(com.yunsoo.common.web.security.permission.PermissionEntry p) {
         this.setId(p.getId());
         this.setPrincipal(p.getPrincipal().toString());
         this.setRestriction(p.getRestriction().toString());
