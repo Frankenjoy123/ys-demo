@@ -97,6 +97,15 @@ public class MarketingDomain {
         }
     }
 
+    public MktPrizeContactObject getMktPrizeContactById(String id) {
+        try {
+            return dataApiClient.get("marketing/drawPrize/contact/{id}", MktPrizeContactObject.class, id);
+        } catch (NotFoundException ignored) {
+            return null;
+        }
+    }
+
+
     public List<MktDrawRuleObject> getRuleList(String marketingId) {
         return dataApiClient.get("marketing/drawRule/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>() {
         }, marketingId);
