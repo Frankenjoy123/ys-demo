@@ -14,6 +14,6 @@ public class HealthControllerTest extends TestBase {
     @Test
     public void testHealth() throws Exception {
         Health health = restClient.get("health", Health.class);
-        assertEquals(health.getStatus(), "UP");
+        assertEquals(health.getStatus(), Health.Status.UP);
     }
 }
