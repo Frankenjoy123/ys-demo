@@ -130,7 +130,7 @@ public class TaskFileController {
     }
 
     @RequestMapping(value = "sum/device", method = RequestMethod.GET)
-    public List<TaskFileEntry> getTotalTaskFilesByDevice(@RequestParam(value = "device_id") List<String> deviceId,
+    public List<TaskFileEntry> getTotalTaskFilesByDevice(@RequestParam(value = "device_ids") List<String> deviceId,
                                                        @RequestParam(value = "type_code") String typeCode,
                                                        @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
                                                        @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
