@@ -3,6 +3,7 @@ package com.yunsoo.data.api.controller;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.*;
@@ -348,7 +349,7 @@ public class MarketingController {
         }
         List<MktDrawRecordEntity> mktDrawRecordEntityList = mktDrawRecordRepository.findByProductKey(productKey);
         if (mktDrawRecordEntityList.size() > 0) {
-            throw new BadRequestException("This product has been already drawed.");
+            throw new ConflictException("This product has been already drawed.");
         }
 
         MktDrawRecordEntity entity = toMktDrawRecordEntity(mktDrawRecordObject);
@@ -356,9 +357,15 @@ public class MarketingController {
         if (entity.getCreatedDateTime() == null) {
             entity.setCreatedDateTime(DateTime.now());
         }
-        MktDrawRecordEntity newEntity = mktDrawRecordRepository.save(entity);
 
-        return toMktDrawRecordObject(newEntity);
+        try {
+            MktDrawRecordEntity newEntity = mktDrawRecordRepository.save(entity);
+
+            return toMktDrawRecordObject(newEntity);
+        }
+        catch (org.hibernate.exception.ConstraintViolationException ex){
+            throw new ConflictException("This product has been already drawed.");
+        }
     }
 
     //create marketing draw prize by draw record id, provide: API-Rabbit
