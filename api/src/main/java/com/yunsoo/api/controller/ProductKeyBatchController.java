@@ -132,6 +132,7 @@ public class ProductKeyBatchController {
     @PostAuthorize("hasPermission('current', 'org', 'product_key_batch:read')")
     public List<ProductKeyBatch> getByFilterPaged(@RequestParam(value = "product_base_id", required = false) String productBaseId,
                                                   @RequestParam(value = "create_account", required = false) String createAccount,
+                                                  @RequestParam(value = "device_id", required = false) String deviceId,
                                                   @RequestParam(value = "create_datetime_start", required = false)
                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
                                                   @RequestParam(value = "create_datetime_end", required = false)
@@ -142,7 +143,7 @@ public class ProductKeyBatchController {
                                                   Pageable pageable,
                                                   HttpServletResponse response) {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
-        Page<ProductKeyBatch> productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, isPackage, createAccount, createdDateTimeStart, createdDateTimeEnd, pageable);
+        Page<ProductKeyBatch> productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, isPackage, createAccount, deviceId, createdDateTimeStart, createdDateTimeEnd, pageable);
 
         return PageUtils.response(response, productKeyBatchPage, pageable != null);
     }
@@ -219,7 +220,7 @@ public class ProductKeyBatchController {
     public List<ProductBatchCollection> getProductBatchCollection() {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
         Page<ProductBaseObject> pageProductBase = productBaseDomain.getProductBaseByOrgId(orgId, null, null, null, null, null);
-        Page<ProductKeyBatch> pageBatch = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, null, false, null, null, null, null);
+        Page<ProductKeyBatch> pageBatch = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, null, false, null, null, null, null, null);
 
 
         return pageProductBase.getContent().stream().map(p -> {

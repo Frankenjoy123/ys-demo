@@ -60,7 +60,7 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
                          @Param("startTime") DateTime startTime,
                          @Param("endTime") DateTime endTime);
 
-    Page<ProductKeyBatchEntity> findByOrgIdAndProductKeyTypeCodesAndStatusCodeIn(String orgId, String typeCode, List<String> statusCodeIn, Pageable pageable);
+    Page<ProductKeyBatchEntity> findByOrgIdAndProductKeyTypeCodesAndStatusCodeInAndCreatedDeviceId(String orgId, String typeCode, List<String> statusCodeIn, String deviceId, Pageable pageable);
 
     Page<ProductKeyBatchEntity> findByOrgIdAndProductKeyTypeCodesNotAndStatusCodeIn(String orgId, String typeCode, List<String> statusCodeIn, Pageable pageable);
 
