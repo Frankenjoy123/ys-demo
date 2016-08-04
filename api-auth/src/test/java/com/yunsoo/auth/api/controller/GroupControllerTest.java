@@ -2,8 +2,8 @@ package com.yunsoo.auth.api.controller;
 
 import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.TestBase;
-import com.yunsoo.auth.api.security.permission.PermissionEntry;
 import com.yunsoo.auth.dto.Group;
+import com.yunsoo.auth.dto.PermissionEntry;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;

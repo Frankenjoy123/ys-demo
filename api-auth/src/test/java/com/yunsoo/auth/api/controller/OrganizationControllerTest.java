@@ -11,8 +11,8 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class OrganizationControllerTest extends TestBase {
     private String orgId;
 
     @Before
-    public void createOrganization() {
+    public void createOrganizations() {
 
         Organization org = restClient.post("organization", createOrg("TestOrg"), Organization.class);
         orgId = org.getId();
@@ -159,47 +159,7 @@ public class OrganizationControllerTest extends TestBase {
 
     @Test
     public void testGetByFilter_pageable() throws Exception {
-        Pageable pageable = new Pageable() {
-            @Override
-            public int getPageNumber() {
-                return 0;
-            }
-
-            @Override
-            public int getPageSize() {
-                return 2;
-            }
-
-            @Override
-            public int getOffset() {
-                return 0;
-            }
-
-            @Override
-            public Sort getSort() {
-                return null;
-            }
-
-            @Override
-            public Pageable next() {
-                return null;
-            }
-
-            @Override
-            public Pageable previousOrFirst() {
-                return null;
-            }
-
-            @Override
-            public Pageable first() {
-                return null;
-            }
-
-            @Override
-            public boolean hasPrevious() {
-                return false;
-            }
-        };
+        Pageable pageable = new PageRequest(0, 2);
 
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append(pageable)
@@ -232,7 +192,7 @@ public class OrganizationControllerTest extends TestBase {
     }
 
     @Test(expected = BadRequestException.class)
-    public void testCreate_nullTypeCode() throws Exception {
+    public void testCreate_404_nullTypeCode() throws Exception {
         Organization org = createOrg("TestOrg");
         org.setTypeCode(null);
         restClient.post("organization", org, Organization.class);
@@ -246,19 +206,27 @@ public class OrganizationControllerTest extends TestBase {
     }
 
     @Test(expected = BadRequestException.class)
-    public void testCreate_nullName() throws Exception {
+    public void testCreate_404_nullName() throws Exception {
         Organization org = createOrg("TestOrg");
         org.setName(null);
         restClient.post("organization", org, Organization.class);
     }
 
     @Test
-    public void testPatchUpdate() throws Exception {
+    public void testPatchUpdate_name() throws Exception {
         Organization org = getById(orgId);
         assertEquals(org.getName(), "TestOrg");
         org.setName("TestOrg2222");
         restClient.patch("organization/{id}", org, orgId);
         assertEquals(getById(orgId).getName(), "TestOrg2222");
+    }
+
+    @Test
+    public void testPatchUpdate_nullName() throws Exception {
+        Organization org = createOrg(null);
+        restClient.patch("organization/{id}", org, orgId);
+        org = getById(orgId);
+        assertEquals(org.getName(), "TestOrg");
     }
 
     @Test
@@ -275,23 +243,6 @@ public class OrganizationControllerTest extends TestBase {
         Organization org = getById(orgId);
         restClient.patch("organization/{id}", org, orgId);
         assertEquals(getById(orgId).getTypeCode(), Constants.OrgType.CARRIER);
-    }
-
-    @Test
-    public void testPatchUpdate_name() throws Exception {
-        Organization org = createOrg("forPatchUpdate");
-        assertEquals(getById(orgId).getName(), "TestOrg");
-        restClient.patch("organization/{id}", org, orgId);
-        org = getById(orgId);
-        assertEquals(org.getName(), "forPatchUpdate");
-    }
-
-    @Test
-    public void testPatchUpdate_nullName() throws Exception {
-        Organization org = createOrg(null);
-        restClient.patch("organization/{id}", org, orgId);
-        org = getById(orgId);
-        assertEquals(org.getName(), "TestOrg");
     }
 
     @Test
