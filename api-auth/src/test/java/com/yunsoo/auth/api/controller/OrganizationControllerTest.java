@@ -176,8 +176,8 @@ public class OrganizationControllerTest extends TestBase {
         assertEquals(org.getName(), "TestOrg");
     }
 
-    @Test
-    public void testCreate_wrongTypeCode() throws Exception {
+    @Test(expected = BadRequestException.class)
+    public void testCreate_400_wrongTypeCode() throws Exception {
         Organization org = createOrg("TestOrg");
         org.setTypeCode("random type");
         org = restClient.post("organization", org, Organization.class);

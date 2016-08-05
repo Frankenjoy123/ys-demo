@@ -5,7 +5,6 @@ import com.yunsoo.auth.TestBase;
 import com.yunsoo.auth.dto.Group;
 import com.yunsoo.auth.dto.PermissionEntry;
 import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.InternalServerErrorException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -87,7 +86,7 @@ public class GroupControllerTest extends TestBase {
         restClient.get("group/{id}", Group.class, testGroup.getId());
     }
 
-    @Test(expected = InternalServerErrorException.class)
+    @Test
     public void testDelete_404_unknownId() throws Exception {
         restClient.delete("group/{id}", "NotExistedId");
     }
