@@ -83,14 +83,14 @@ public class AccountControllerTest extends TestBase {
                 .build();
         List<Account> list = restClient.get("account"+ query, new ParameterizedTypeReference<List<Account>>() {
         });
-        assert list.size() == 1;
+        assert list.size() >= 1;
     }
 
     @Test
     public void test_getByFilter_noQuery() {
         List<Account> list = restClient.get("account", new ParameterizedTypeReference<List<Account>>() {
         });
-        assert list.size() == 2;
+        assert list.size() >= 2;
     }
 
     @Test(expected = NotFoundException.class)
@@ -162,11 +162,20 @@ public class AccountControllerTest extends TestBase {
 
     @Test
     public void test_patchUpdateAccount_200() {
-        Account account = restClient.get("account/{id}", Account.class, Constants.SYSTEM_ACCOUNT_ID);
+        String id = testAccount.getId();
+        Account account = restClient.get("account/{id}", Account.class, id);
         account.setFirstName("great");
-        restClient.patch("account/{id}", account, Constants.SYSTEM_ACCOUNT_ID);
-        account = restClient.get("account/{id}", Account.class, Constants.SYSTEM_ACCOUNT_ID);
+        restClient.patch("account/{id}", account, id);
+        account = restClient.get("account/{id}", Account.class, id);
         assert account.getFirstName().equals("great");
+    }
+
+    @Test(expected = UnauthorizedException.class)
+    public void test_patchUpdateSystemAccount_401() {
+        String id = Constants.SYSTEM_ACCOUNT_ID;
+        Account account = restClient.get("account/{id}", Account.class, id);
+        account.setFirstName("great");
+        restClient.patch("account/{id}", account, id);
     }
 
     @Test(expected = BadRequestException.class)
