@@ -117,6 +117,17 @@ public class TaskFileController {
         return result;
     }
 
+    @RequestMapping(value = "count", method = RequestMethod.GET)
+    public int countTotalTaskFiles(@RequestParam(value = "device_ids", required = false) List<String> deviceId,
+                                           @RequestParam(value = "type_code") String typeCode){
+
+        String orgId = AuthUtils.fixOrgId(null);
+        List<String> statusCodeIn = Arrays.asList(LookupCodes.TaskFileStatus.FINISHED);
+
+        return taskFileDomain.countByDevice(orgId, deviceId, typeCode, statusCodeIn);
+
+    }
+
     @RequestMapping(value = "sum/date", method = RequestMethod.GET)
     public List<TaskFileEntry> getTotalTaskFilesByDate(@RequestParam(value = "device_id") String deviceId,
                                                              @RequestParam(value = "type_code") String typeCode,

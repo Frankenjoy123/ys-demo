@@ -78,7 +78,21 @@ public interface TaskFileEntryRepository extends FindOneAndSaveRepository<TaskFi
             "group by day", nativeQuery = true)
     List<Object> getTotalByDate(@Param("deviceId") String deviceId,
                                 @Param("typeCode") String typeCode,
-                                @Param("createdDateTimeGE") DateTime start,
-                                @Param("createdDateTimeLE") DateTime end, @Param("statusCodeIn") List<String> statusCodeIn,
+                                @Param("createdDateTimeGE") String start,
+                                @Param("createdDateTimeLE") String end, @Param("statusCodeIn") List<String> statusCodeIn,
                                 @Param("statusCodeInIgnored") boolean statusCodeInIgnored);
+
+
+    @Query("select count(e.fileId) from TaskFileEntryEntity e " +
+            "where e.deviceId in :deviceId " +
+            "and (:typeCode is null or e.typeCode = :typeCode) " +
+            "and (e.statusCode in (:statusCodeIn) or :statusCodeInIgnored = true) " +
+            "and (:createdDateTimeGE is null or e.createdDateTime >= :createdDateTimeGE) " +
+            "and (:createdDateTimeLE is null or e.createdDateTime <= :createdDateTimeLE)")
+    int count(@Param("deviceId") List<String> deviceId,
+                                  @Param("typeCode") String typeCode,
+                                  @Param("createdDateTimeGE") DateTime start,
+                                  @Param("createdDateTimeLE") DateTime end, @Param("statusCodeIn") List<String> statusCodeIn,
+                                  @Param("statusCodeInIgnored") boolean statusCodeInIgnored);
+
 }

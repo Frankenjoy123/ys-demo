@@ -1,6 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.TaskFileEntryObject;
+import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.TaskFileEntryEntity;
@@ -111,6 +112,19 @@ public class TaskFileEntryController {
         return object;
     }
 
+
+    @RequestMapping(value = "count", method = RequestMethod.GET)
+    public int countTaskFiles(@RequestParam(value = "org_id") String orgId,
+                              @RequestParam(value = "device_ids") List<String> deviceId,
+                              @RequestParam(value = "type_code") String typeCode,
+                              @RequestParam(value = "status_code_in") List<String> statusCodeIn,  @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+                              @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
+
+        return taskFileEntryRepository.count(deviceId, typeCode, start, end,
+                statusCodeIn == null || statusCodeIn.size() == 0 ? null : statusCodeIn,
+                statusCodeIn == null || statusCodeIn.size() == 0);
+    }
+
     @RequestMapping(value = "sum/date", method = RequestMethod.GET)
     public List<TaskFileEntryObject> getTotalTaskFilesByDate(@RequestParam(value = "device_id") String deviceId,
                                                              @RequestParam(value = "type_code") String typeCode,
@@ -118,7 +132,7 @@ public class TaskFileEntryController {
                                                              @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
                                                              @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
 
-        List<Object> result = taskFileEntryRepository.getTotalByDate(deviceId, typeCode, start, end,
+        List<Object> result = taskFileEntryRepository.getTotalByDate(deviceId, typeCode, DateTimeUtils.toDBString(start), DateTimeUtils.toDBString(end),
                 statusCodeIn == null || statusCodeIn.size() == 0 ? null : statusCodeIn,
                 statusCodeIn == null || statusCodeIn.size() == 0);
         List<TaskFileEntryObject> returnObj = new ArrayList<>();

@@ -137,6 +137,17 @@ public class TaskFileDomain {
         return dataApiClient.get("/taskFileEntry/sum" + query, TaskFileEntryObject.class);
     }
 
+    public int countByDevice(String orgId, List<String> deviceId, String typeCode, List<String> statusCodeIn) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("device_ids", deviceId)
+                .append("type_code", typeCode)
+                .append("status_code_in", statusCodeIn)
+                .build();
+
+        return dataApiClient.get("/taskFileEntry/count" + query, Integer.class);
+    }
+
     public List<TaskFileEntryObject> getTotalByDate(String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("device_id", deviceId)
