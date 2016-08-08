@@ -825,6 +825,8 @@ public class MarketingController {
         object.setCmccFlowId(entity.getCmccFlowId());
         object.setCuccFlowId(entity.getCuccFlowId());
         object.setCtccFlowId(entity.getCtccFlowId());
+        object.setStoreUrl(entity.getStoreUrl());
+        object.setImageName(entity.getImageName());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
@@ -957,6 +959,8 @@ public class MarketingController {
         entity.setCmccFlowId(object.getCmccFlowId());
         entity.setCuccFlowId(object.getCuccFlowId());
         entity.setCtccFlowId(object.getCtccFlowId());
+        entity.setStoreUrl(object.getStoreUrl());
+        entity.setImageName(object.getImageName());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
