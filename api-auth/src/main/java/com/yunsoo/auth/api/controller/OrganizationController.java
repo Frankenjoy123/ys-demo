@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -81,6 +82,7 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public Organization create(@RequestBody @Valid Organization org) {
         if (!Constants.OrgType.ALL.contains(org.getTypeCode())) {
             throw new BadRequestException("type_code invalid");
@@ -99,6 +101,13 @@ public class OrganizationController {
                             @RequestBody Organization org) {
         org.setId(orgId);
         organizationService.patchUpdate(org);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
+    public void delete(@PathVariable(value = "id") String orgId) {
+        organizationService.delete(orgId);
     }
 
     @RequestMapping(value = "{id}/disable", method = RequestMethod.POST)
