@@ -45,6 +45,9 @@ public class MktConsumerRight {
     @JsonProperty("ctcc_flow_id")
     private Integer ctccFlowId;
 
+    @JsonProperty("store_url")
+    private String storeUrl;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -141,6 +144,14 @@ public class MktConsumerRight {
         this.ctccFlowId = ctccFlowId;
     }
 
+    public String getStoreUrl() {
+        return storeUrl;
+    }
+
+    public void setStoreUrl(String storeUrl) {
+        this.storeUrl = storeUrl;
+    }
+
     public String getCreatedAccountId() {
         return createdAccountId;
     }
@@ -188,6 +199,7 @@ public class MktConsumerRight {
             this.setCmccFlowId(object.getCmccFlowId());
             this.setCuccFlowId(object.getCuccFlowId());
             this.setCtccFlowId(object.getCtccFlowId());
+            this.setStoreUrl(object.getStoreUrl());
             this.setCreatedAccountId(object.getCreatedAccountId());
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
@@ -207,6 +219,7 @@ public class MktConsumerRight {
         object.setCmccFlowId(this.getCmccFlowId());
         object.setCuccFlowId(this.getCuccFlowId());
         object.setCtccFlowId(this.getCtccFlowId());
+        object.setStoreUrl(this.getStoreUrl());
         object.setCreatedAccountId(this.getCreatedAccountId());
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());

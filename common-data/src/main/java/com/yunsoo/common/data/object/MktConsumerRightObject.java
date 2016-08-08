@@ -44,6 +44,9 @@ public class MktConsumerRightObject {
     @JsonProperty("ctcc_flow_id")
     private Integer ctccFlowId;
 
+    @JsonProperty("store_url")
+    private String storeUrl;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -138,6 +141,14 @@ public class MktConsumerRightObject {
 
     public void setCtccFlowId(Integer ctccFlowId) {
         this.ctccFlowId = ctccFlowId;
+    }
+
+    public String getStoreUrl() {
+        return storeUrl;
+    }
+
+    public void setStoreUrl(String storeUrl) {
+        this.storeUrl = storeUrl;
     }
 
     public String getCreatedAccountId() {
