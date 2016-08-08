@@ -40,9 +40,9 @@ public class OrganizationControllerTest extends TestBase {
         }
     }
 
-    private Organization createOrg(String orgName) {
+    private Organization createOrg(String name) {
         Organization org = new Organization();
-        org.setName(orgName);
+        org.setName(name);
         org.setDescription("Test organization is a great company!");
         org.setCreatedDateTime(DateTime.now());
         org.setTypeCode(Constants.OrgType.CARRIER);
@@ -171,8 +171,7 @@ public class OrganizationControllerTest extends TestBase {
 
     @Test
     public void testCreate() throws Exception {
-        Organization org = restClient.post("organization", createOrg("TestOrg"), Organization.class);
-        org = getById(org.getId());
+        Organization org = getById(orgId);
         assertEquals(org.getName(), "TestOrg");
     }
 
