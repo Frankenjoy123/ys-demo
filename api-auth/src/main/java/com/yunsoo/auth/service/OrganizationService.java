@@ -8,12 +8,16 @@ import com.yunsoo.auth.dao.repository.OrganizationRepository;
 import com.yunsoo.auth.dto.Organization;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.exception.ConflictException;
+import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -61,11 +65,15 @@ public class OrganizationService {
         return PageUtils.convert(organizationRepository.findByIdIn(idsIn, pageable)).map(this::toOrganization);
     }
 
+    @Transactional
     public Organization create(Organization org) {
+        if (organizationRepository.findByName(org.getName()).size() > 0) {
+            throw new ConflictException("organization already exists with the same name: " + org.getName());
+        }
         OrganizationEntity entity = new OrganizationEntity();
         entity.setName(org.getName());
         entity.setTypeCode(org.getTypeCode());
-        entity.setStatusCode(Constants.OrgStatus.AVAILABLE);
+        entity.setStatusCode(Constants.OrgStatus.CREATED);
         entity.setDescription(org.getDescription());
         entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         entity.setCreatedDateTime(DateTime.now());
@@ -74,26 +82,51 @@ public class OrganizationService {
         return toOrganization(entity);
     }
 
+    @Transactional
     public void patchUpdate(Organization org) {
         if (StringUtils.isEmpty(org.getId())) {
             return;
         }
         OrganizationEntity entity = organizationRepository.findOne(org.getId());
-        if (entity != null) {
-            if (StringUtils.hasText(org.getName())) entity.setName(org.getName());
-            if (org.getDescription() != null) entity.setDescription(org.getDescription());
-            organizationRepository.save(entity);
+        if (entity == null) {
+            throw new NotFoundException("organization not found by id: " + org.getId());
         }
+        if (StringUtils.hasText(org.getName()) && !org.getName().equals(entity.getName())) {
+            if (organizationRepository.findByName(org.getName()).size() > 0) {
+                throw new ConflictException("organization already exists with the same name: " + org.getName());
+            }
+            entity.setName(org.getName());
+        }
+        if (org.getDescription() != null) {
+            entity.setDescription(org.getDescription());
+        }
+        organizationRepository.save(entity);
     }
 
+    @Transactional
     public void updateStatus(String orgId, String statusCode) {
         if (StringUtils.isEmpty(orgId) || !Constants.OrgStatus.ALL.contains(statusCode)) {
             return;
         }
         OrganizationEntity entity = organizationRepository.findOne(orgId);
-        if (entity != null) {
-            entity.setStatusCode(statusCode);
-            organizationRepository.save(entity);
+        if (entity == null) {
+            throw new NotFoundException("organization not found by id: " + orgId);
+        }
+        entity.setStatusCode(statusCode);
+        organizationRepository.save(entity);
+    }
+
+    @Transactional
+    public void delete(String orgId) {
+        if (!StringUtils.isEmpty(orgId)) {
+            OrganizationEntity entity = organizationRepository.findOne(orgId);
+            if (entity != null) {
+                if (Constants.OrgStatus.CREATED.equals(entity.getStatusCode())) {
+                    organizationRepository.delete(entity);
+                } else {
+                    throw new UnprocessableEntityException("organization can not be deleted on status: " + entity.getStatusCode());
+                }
+            }
         }
     }
 
