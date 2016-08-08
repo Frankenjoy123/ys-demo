@@ -321,6 +321,19 @@ public class MarketingController {
                 .collect(Collectors.toList());
     }
 
+    // query top 10 prize info
+    @RequestMapping(value = "/drawPrize/{id}/top", method = RequestMethod.GET)
+    public List<MktDrawPrizeObject> getTop10MktDrawPrizeByMarketingId(
+            @PathVariable(value = "id") String marketingId) {
+
+        if (StringUtils.isEmpty(marketingId))
+            marketingId = null;
+
+        List<MktDrawPrizeEntity> entityList = mktDrawPrizeRepository.findTop10ByMarketingIdAndStatusCodeOrderByCreatedDateTimeDesc(marketingId, LookupCodes.MktDrawPrizeStatus.PAID);
+        return entityList.stream().map(this::toMktDrawPrizeObject).collect(Collectors.toList());
+    }
+
+
     //create marketing plan, provide API
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)

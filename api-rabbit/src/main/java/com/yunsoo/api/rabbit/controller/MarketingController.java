@@ -289,4 +289,13 @@ public class MarketingController {
         return new Marketing(marketingObject);
     }
 
+    @RequestMapping(value = "drawPrize/{id}/top", method = RequestMethod.GET)
+    public List<MktDrawPrize> getTop10MarketingPrizeList(@PathVariable(value = "id") String marketingId) {
+        if (marketingId == null)
+            throw new BadRequestException("marketing id can not be null");
+
+        return marketingDomain.getTop10PrizeList(marketingId).stream().map(MktDrawPrize::new).collect(Collectors.toList());
+    }
+
+
 }

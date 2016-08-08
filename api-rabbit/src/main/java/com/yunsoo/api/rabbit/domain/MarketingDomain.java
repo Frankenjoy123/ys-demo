@@ -97,6 +97,14 @@ public class MarketingDomain {
 
     }
 
+    public List<MktDrawPrizeObject> getTop10PrizeList(String marketingId) {
+
+        return dataApiClient.get("marketing/drawPrize/{id}/top", new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
+        }, marketingId);
+
+    }
+
+
     public MktDrawRuleObject getMktRandomPrize(String marketId) {
         MarketingObject obj = dataApiClient.get("marketing/{id}", MarketingObject.class, marketId);
         if (obj.getBalance() <= 0)
@@ -107,7 +115,6 @@ public class MarketingDomain {
             List<MktDrawRuleObject> newRuleList = new ArrayList<>();
 
             Long totalQuantity = dataApiClient.get("productkeybatch/sum/quantity?marketing_id=" + marketId, Long.class);
-            ;
             Integer sumQuantity = obj.getQuantity();
             if ((sumQuantity != null) || (sumQuantity > 0)) {
                 totalQuantity = new Long(sumQuantity);
