@@ -607,6 +607,12 @@ public class MarketingController {
                     }
                 }
             }
+            if ((object.getPrizeContactId() != null) && (!object.getPrizeContactId().equals(""))) {
+                MktPrizeContactObject mktPrizeContactObject = marketingDomain.getMktPrizeContactById(object.getPrizeContactId());
+                if (mktPrizeContactObject != null) {
+                    mktDrawPrize.setPrizeContact(new MktPrizeContact(mktPrizeContactObject));
+                }
+            }
             MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktDrawRuleById(object.getDrawRuleId());
             if (mktDrawRuleObject != null) {
                 mktDrawPrize.setMktDrawRule(new MktDrawRule(mktDrawRuleObject));
@@ -727,7 +733,6 @@ public class MarketingController {
             throw new BadRequestException("marketing draw record can not be null");
         }
         MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
-        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
 
     }

@@ -172,7 +172,7 @@ public class PermissionRegionService {
     }
 
     private List<String> toList(String restrictions) {
-        return Arrays.asList(StringUtils.commaDelimitedListToStringArray(restrictions));
+        return new ArrayList<>(Arrays.asList(StringUtils.commaDelimitedListToStringArray(restrictions)));
     }
 
     private String toString(List<String> restrictions) {
