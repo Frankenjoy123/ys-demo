@@ -48,6 +48,9 @@ public class MktConsumerRight {
     @JsonProperty("store_url")
     private String storeUrl;
 
+    @JsonProperty("image_name")
+    private String imageName;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -152,6 +155,14 @@ public class MktConsumerRight {
         this.storeUrl = storeUrl;
     }
 
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
     public String getCreatedAccountId() {
         return createdAccountId;
     }
@@ -200,6 +211,7 @@ public class MktConsumerRight {
             this.setCuccFlowId(object.getCuccFlowId());
             this.setCtccFlowId(object.getCtccFlowId());
             this.setStoreUrl(object.getStoreUrl());
+            this.setImageName(object.getImageName());
             this.setCreatedAccountId(object.getCreatedAccountId());
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
@@ -220,6 +232,7 @@ public class MktConsumerRight {
         object.setCuccFlowId(this.getCuccFlowId());
         object.setCtccFlowId(this.getCtccFlowId());
         object.setStoreUrl(this.getStoreUrl());
+        object.setImageName(this.getImageName());
         object.setCreatedAccountId(this.getCreatedAccountId());
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());

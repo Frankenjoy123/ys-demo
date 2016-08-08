@@ -47,6 +47,9 @@ public class MktConsumerRightObject {
     @JsonProperty("store_url")
     private String storeUrl;
 
+    @JsonProperty("image_name")
+    private String imageName;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -149,6 +152,14 @@ public class MktConsumerRightObject {
 
     public void setStoreUrl(String storeUrl) {
         this.storeUrl = storeUrl;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
     public String getCreatedAccountId() {

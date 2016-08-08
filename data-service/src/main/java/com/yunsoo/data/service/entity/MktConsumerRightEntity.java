@@ -51,6 +51,9 @@ public class MktConsumerRightEntity {
     @Column(name = "store_url")
     private String storeUrl;
 
+    @Column(name = "image_name")
+    private String imageName;
+
     @Column(name = "created_account_id")
     private String createdAccountId;
 
@@ -151,6 +154,14 @@ public class MktConsumerRightEntity {
 
     public void setStoreUrl(String storeUrl) {
         this.storeUrl = storeUrl;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
     public String getCreatedAccountId() {
