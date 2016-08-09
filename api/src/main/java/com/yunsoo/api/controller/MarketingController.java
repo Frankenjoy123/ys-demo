@@ -696,6 +696,26 @@ public class MarketingController {
         return new MktDrawRule(mktDrawRuleObject);
     }
 
+    @RequestMapping(value = "drawPrize/record/{id}", method = RequestMethod.GET)
+    public MktDrawPrize getMktDrawPrizeById(@PathVariable(value = "id") String id) {
+
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeById(id);
+        if (mktDrawPrizeObject != null) {
+            MktDrawPrize mktDrawPrize = new MktDrawPrize(mktDrawPrizeObject);
+
+            if ((mktDrawPrizeObject.getPrizeContactId() != null) && (!mktDrawPrizeObject.getPrizeContactId().equals(""))) {
+                MktPrizeContactObject mktPrizeContactObject = marketingDomain.getMktPrizeContactById(mktDrawPrizeObject.getPrizeContactId());
+                if (mktPrizeContactObject != null) {
+                    mktDrawPrize.setPrizeContact(new MktPrizeContact(mktPrizeContactObject));
+                }
+            }
+            return mktDrawPrize;
+        } else {
+            return null;
+        }
+    }
+
+
 
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.PUT)
     @com.yunsoo.api.aspect.OperationLog(operation = "'修改营销方案规则：' + #id", level = "P1")
