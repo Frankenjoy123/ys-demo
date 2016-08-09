@@ -291,6 +291,7 @@ public class MarketingController {
     public List<MktDrawPrizeObject> getMktDrawPrizeByMarketingId(
             @RequestParam(value = "marketing_id") String marketingId,
             @RequestParam(value = "account_type", required = false) String accountType,
+            @RequestParam(value = "prize_type_code", required = false) String prizeTypeCode,
             @RequestParam(value = "status_code", required = false) String statusCode,
             @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
             @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
@@ -299,6 +300,9 @@ public class MarketingController {
 
         if (StringUtils.isEmpty(accountType))
             accountType = null;
+        if (StringUtils.isEmpty(prizeTypeCode))
+            prizeTypeCode = null;
+
         if (StringUtils.isEmpty(statusCode))
             statusCode = null;
 
@@ -310,7 +314,7 @@ public class MarketingController {
         if ((endTime != null) && !StringUtils.isEmpty(endTime.toString()))
             endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
-        Page<MktDrawPrizeEntity> entityPage = mktDrawPrizeRepository.query(marketingId, accountType, statusCode, startDateTime, endDateTime, pageable);
+        Page<MktDrawPrizeEntity> entityPage = mktDrawPrizeRepository.query(marketingId, accountType, prizeTypeCode, statusCode, startDateTime, endDateTime, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
