@@ -61,7 +61,7 @@ public class MarketingController {
         if (mktDrawPrizeObject != null) {
             MktDrawPrize prize = new MktDrawPrize(mktDrawPrizeObject);
             MktDrawRuleObject rule = marketingDomain.getDrawRuleById(prize.getDrawRuleId());
-            if(StringUtils.hasText(rule.getConsumerRightId())){
+            if (StringUtils.hasText(rule.getConsumerRightId())) {
                 MktConsumerRightObject right = marketingDomain.getConsumerRightById(rule.getConsumerRightId());
                 prize.setMktConsumerRight(new MktConsumerRight(right));
             }
@@ -168,7 +168,7 @@ public class MarketingController {
         boolean result = true;
 
         MktDrawPrizeObject currentPrize = marketingDomain.getMktDrawPrizeByProductKey(mktDrawPrize.getProductKey());
-        if(currentPrize!=null &&( LookupCodes.MktDrawPrizeStatus.CREATED.equals(currentPrize.getStatusCode()))) {
+        if (currentPrize != null && (LookupCodes.MktDrawPrizeStatus.CREATED.equals(currentPrize.getStatusCode()))) {
             MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
             mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
             if (LookupCodes.MktPrizeType.MOBILE_FEE.equals(mktDrawPrize.getPrizeTypeCode())) {
@@ -191,15 +191,18 @@ public class MarketingController {
                     mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
                     mktDrawPrizeObject.setPaidDateTime(DateTime.now());
                 }
+            } else if (LookupCodes.MktPrizeType.COUPON.equals(mktDrawPrize.getPrizeTypeCode())) {
+                mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+
             }
 
             marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
-        }
-        else
+        } else
             throw new RestErrorResultException(new ErrorResult(5002, "prize had been sent"));
 
 
-        if(!result)
+        if (!result)
             throw new RestErrorResultException(new ErrorResult(5003, "send prize failed"));
     }
 
@@ -209,8 +212,8 @@ public class MarketingController {
             throw new BadRequestException("marketing draw record can not be null");
         }
         MktDrawPrizeObject currentPrize = marketingDomain.getMktDrawPrizeByProductKey(mktDrawPrize.getProductKey());
-        if(currentPrize!=null &&( LookupCodes.MktDrawPrizeStatus.CREATED.equals(currentPrize.getStatusCode())||
-                LookupCodes.MktDrawPrizeStatus.SUBMIT.equals(currentPrize.getStatusCode()) )) {
+        if (currentPrize != null && (LookupCodes.MktDrawPrizeStatus.CREATED.equals(currentPrize.getStatusCode()) ||
+                LookupCodes.MktDrawPrizeStatus.SUBMIT.equals(currentPrize.getStatusCode()))) {
             MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
             mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.INVALID);
             marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
@@ -233,9 +236,6 @@ public class MarketingController {
 
         return marketingDomain.validateVerificationCode(mobile, verificationCode);
     }
-
-
-
 
 
     @RequestMapping(value = "drawPrize/paid", method = RequestMethod.PUT)
