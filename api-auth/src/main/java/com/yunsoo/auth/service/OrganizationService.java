@@ -8,6 +8,7 @@ import com.yunsoo.auth.dao.repository.OrganizationRepository;
 import com.yunsoo.auth.dto.Organization;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
@@ -67,10 +68,16 @@ public class OrganizationService {
 
     @Transactional
     public Organization create(Organization org) {
+        if (!Constants.OrgType.ALL.contains(org.getTypeCode())) {
+            throw new BadRequestException("type_code invalid");
+        }
         if (organizationRepository.findByName(org.getName()).size() > 0) {
             throw new ConflictException("organization already exists with the same name: " + org.getName());
         }
         OrganizationEntity entity = new OrganizationEntity();
+        if (!StringUtils.isEmpty(org.getId())) {
+            entity.setId(org.getId()); //if id is not null or empty, create the org with the given id
+        }
         entity.setName(org.getName());
         entity.setTypeCode(org.getTypeCode());
         entity.setStatusCode(Constants.OrgStatus.CREATED);
@@ -78,7 +85,7 @@ public class OrganizationService {
         entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         entity.setCreatedDateTime(DateTime.now());
         entity = organizationRepository.save(entity);
-        log.info("organization created. " + StringFormatter.formatMap("name", org.getName(), "typeCode", org.getTypeCode()));
+        log.info("organization created. " + StringFormatter.formatMap("id", entity.getId(), "name", org.getName(), "typeCode", org.getTypeCode()));
         return toOrganization(entity);
     }
 
@@ -101,6 +108,16 @@ public class OrganizationService {
             entity.setDescription(org.getDescription());
         }
         organizationRepository.save(entity);
+    }
+
+    @Transactional
+    public Organization save(Organization org) {
+        if (StringUtils.isEmpty(org.getId()) || organizationRepository.findOne(org.getId()) == null) {
+            return create(org);
+        } else {
+            patchUpdate(org);
+            return org;
+        }
     }
 
     @Transactional

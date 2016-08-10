@@ -5,27 +5,43 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
+import javax.validation.constraints.NotNull;
+
 /**
- * Created by:   yan
- * Created on:   3/9/2016
+ * Created by:   Lijian
+ * Created on:   2016-08-05
  * Descriptions:
  */
-public class BrandObject extends OrganizationObject {
+public class OrgBrandObject {
 
+    @JsonProperty("org_id")
+    private String orgId;
+
+    @NotBlank(message = "org_name must not be null or empty")
+    @JsonProperty("org_name")
+    private String orgName;
+
+    @NotEmpty(message = "contact_name must not be null or empty")
     @JsonProperty("contact_name")
     private String contactName;
 
+    @NotEmpty(message = "contact_mobile must not be null or empty")
     @JsonProperty("contact_mobile")
     private String contactMobile;
 
+    @NotEmpty(message = "email must not be null or empty")
     @JsonProperty("email")
     private String email;
 
+    @NotEmpty(message = "business_license_number must not be null or empty")
     @JsonProperty("business_license_number")
     private String businessLicenseNumber;
 
+    @NotNull(message = "business_license_start must not be null")
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("business_license_start")
@@ -36,6 +52,7 @@ public class BrandObject extends OrganizationObject {
     @JsonProperty("business_license_end")
     private DateTime businessLicenseEnd;
 
+    @NotEmpty(message = "business_sphere must not be null or empty")
     @JsonProperty("business_sphere")
     private String businessSphere;
 
@@ -45,95 +62,31 @@ public class BrandObject extends OrganizationObject {
     @JsonProperty("carrier_id")
     private String carrierId;
 
-    @JsonProperty("payment_id")
-    private String paymentId;
-
     @JsonProperty("attachment")
     private String attachment;
-
-    @JsonProperty("password")
-    private String password;
-
-    @JsonProperty("hash_salt")
-    private String hashSalt;
-
-    @JsonProperty("identifier")
-    private String identifier;
-
-    @JsonProperty("investigator_attachment")
-    private String investigatorAttachment;
-
-    @JsonProperty("investigator_comments")
-    private String investigatorComments;
-
-    @JsonProperty("reject_reason")
-    private String rejectReason;
 
     @JsonProperty("category_id")
     private String categoryId;
 
-    public String getCategoryId() {
-        return categoryId;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @JsonProperty("created_datetime")
+    private DateTime createdDateTime;
+
+    public String getOrgId() {
+        return orgId;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
     }
 
-    public String getRejectReason() {
-        return rejectReason;
+    public String getOrgName() {
+        return orgName;
     }
 
-    public void setRejectReason(String rejectReason) {
-        this.rejectReason = rejectReason;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getHashSalt() {
-        return hashSalt;
-    }
-
-    public void setHashSalt(String hashSalt) {
-        this.hashSalt = hashSalt;
-    }
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public String getInvestigatorAttachment() {
-        return investigatorAttachment;
-    }
-
-    public void setInvestigatorAttachment(String investigatorAttachment) {
-        this.investigatorAttachment = investigatorAttachment;
-    }
-
-    public String getInvestigatorComments() {
-        return investigatorComments;
-    }
-
-    public void setInvestigatorComments(String investigatorComments) {
-        this.investigatorComments = investigatorComments;
-    }
-
-    public String getAttachment() {
-        return attachment;
-    }
-
-    public void setAttachment(String attachment) {
-        this.attachment = attachment;
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
     }
 
     public String getContactName() {
@@ -208,11 +161,27 @@ public class BrandObject extends OrganizationObject {
         this.carrierId = carrierId;
     }
 
-    public String getPaymentId() {
-        return paymentId;
+    public String getAttachment() {
+        return attachment;
     }
 
-    public void setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
+    public void setAttachment(String attachment) {
+        this.attachment = attachment;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 }

@@ -1,12 +1,10 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.BrandDomain;
+import com.yunsoo.api.domain.BrandApplicationDomain;
 import com.yunsoo.api.domain.PaymentDomain;
 import com.yunsoo.api.dto.Payment;
-import com.yunsoo.api.payment.AlipayNotify;
 import com.yunsoo.api.payment.ParameterNames;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.PaymentObject;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,7 @@ public class PaymentController {
     private PaymentDomain paymentDomain;
 
     @Autowired
-    private BrandDomain brandDomain;
+    private BrandApplicationDomain brandApplicationDomain;
 
 
     //create brand payment record
@@ -44,8 +42,7 @@ public class PaymentController {
         paymentObject.setTradeNo(id);
         paymentObject.setTypeCode(LookupCodes.PaymentType.ALIPAY);
         PaymentObject pObject = paymentDomain.createAlipayPayment(paymentObject);
-        Map<String, String> parametersMap = paymentDomain.getAlipaySubmitParametersByPaymentId(pObject.getId());
-        return parametersMap;
+        return paymentDomain.getAlipaySubmitParametersByPaymentId(pObject.getId());
     }
 
     @RequestMapping(value = "/brand/alipay/return", method = RequestMethod.GET)
@@ -58,8 +55,6 @@ public class PaymentController {
         PaymentObject paymentObject = paymentDomain.getPaymentById(paymentId);
 
         if (isSuccess.equals("T")) {
-            Map<String, String> parametersMap = AlipayNotify.getRequestParam(request.getParameterMap());
-
             String tradeNo = request.getParameter("trade_no");
             String tradeStatus = request.getParameter("trade_status");
             String buyerEmail = request.getParameter("buyer_email");
@@ -69,9 +64,7 @@ public class PaymentController {
                 paymentObject.setAccount(buyerEmail);
                 paymentDomain.updateAlipayPayment(paymentObject);
 
-                BrandObject brandObject = brandDomain.getBrandById(paymentObject.getBrandApplicationId());
-                brandObject.setPaymentId(paymentId);
-                brandDomain.updateBrand(brandObject);
+                brandApplicationDomain.setPaymentId(paymentObject.getBrandApplicationId(), paymentId);
             } else {
                 paymentObject.setStatusCode(LookupCodes.PaymentStatus.FAILED);
                 paymentDomain.updateAlipayPayment(paymentObject);
@@ -98,9 +91,7 @@ public class PaymentController {
             paymentObject.setAccount(buyerEmail);
             paymentDomain.updateAlipayPayment(paymentObject);
 
-            BrandObject brandObject = brandDomain.getBrandById(paymentObject.getBrandApplicationId());
-            brandObject.setPaymentId(paymentId);
-            brandDomain.updateBrand(brandObject);
+            brandApplicationDomain.setPaymentId(paymentObject.getBrandApplicationId(), paymentId);
         } else {
             paymentObject.setStatusCode(LookupCodes.PaymentStatus.FAILED);
             paymentDomain.updateAlipayPayment(paymentObject);

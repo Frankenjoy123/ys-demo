@@ -2,7 +2,7 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.api.payment.AlipayParameters;
 import com.yunsoo.api.payment.ParameterNames;
-import com.yunsoo.common.data.object.BrandObject;
+import com.yunsoo.common.data.object.BrandApplicationObject;
 import com.yunsoo.common.data.object.PaymentObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -24,6 +24,9 @@ public class PaymentDomain {
 
     @Autowired
     private RestClient dataApiClient;
+
+    @Autowired
+    private BrandApplicationDomain brandApplicationDomain;
 
     @Value("${yunsoo.alipay.pid}")
     private String pid;
@@ -78,11 +81,11 @@ public class PaymentDomain {
         PaymentObject paymentObject = dataApiClient.get("payment/brand/{id}", PaymentObject.class, paymentId);
         String brandApplicationId = paymentObject.getBrandApplicationId();
 
-        BrandObject brandObject = dataApiClient.get("brand/{id}", BrandObject.class, brandApplicationId);
+        BrandApplicationObject brandApplicationObject = brandApplicationDomain.getBrandApplicationById(brandApplicationId);
 
         //order info
         parameters.put(ParameterNames.OUT_TRADE_NO, paymentId);
-        parameters.put(ParameterNames.SUBJECT, brandObject.getName() + "审核费用");
+        parameters.put(ParameterNames.SUBJECT, brandApplicationObject.getBrandName() + "审核费用");
         parameters.put(ParameterNames.PAYMENT_TYPE, "1");
         parameters.put(ParameterNames.TOTAL_FEE, paymentObject.getPayTotals().toString());
         parameters.put(ParameterNames.SELLER_ID, pid);

@@ -7,7 +7,7 @@ import com.yunsoo.api.auth.dto.Organization;
 import com.yunsoo.api.auth.service.AuthOrganizationService;
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.util.AuthUtils;
-import com.yunsoo.common.data.object.BrandObject;
+import com.yunsoo.common.data.object.OrgBrandObject;
 import com.yunsoo.common.data.object.OrganizationConfigObject;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.util.StringFormatter;
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class OrganizationConfigDomain {
     private FileDomain fileDomain;
 
     @Autowired
-    private OrganizationDomain organizationDomain;
+    private OrganizationBrandDomain organizationBrandDomain;
 
     @Autowired
     private AuthOrganizationService authOrganizationService;
@@ -70,9 +71,9 @@ public class OrganizationConfigDomain {
             if (configObject == null) configObject = new OrganizationConfigObject();
 
             //extend carrier config if it's brand
-            BrandObject brandObject = organizationDomain.getBrandById(orgId);
-            if (brandObject != null) {
-                extend(configObject, getConfigObject(brandObject.getCarrierId()));
+            OrgBrandObject orgBrandObject = organizationBrandDomain.getOrgBrandObjectById(orgId);
+            if (orgBrandObject != null && !StringUtils.isEmpty(orgBrandObject.getCarrierId())) {
+                extend(configObject, getConfigObject(orgBrandObject.getCarrierId()));
             }
         }
         Map<String, OrganizationConfigObject.Item> items = configObject.getItems();

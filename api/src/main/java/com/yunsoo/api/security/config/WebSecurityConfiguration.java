@@ -44,19 +44,21 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers(HttpMethod.GET, "/health/**").permitAll()
-                .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
+                .antMatchers(HttpMethod.GET, "/debug/**").access(debug ? "permitAll" : "authenticated")
                 .antMatchers(HttpMethod.GET, "/application/*/config").permitAll()
                 .antMatchers(HttpMethod.GET, "/organization/public/config").permitAll()
+                .antMatchers(HttpMethod.GET, "/organization/*/logo/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/image/*").permitAll()
-                .antMatchers(HttpMethod.GET, "/config/organization/public").permitAll()
-                .antMatchers(HttpMethod.GET, "/organization/*/logo/*").permitAll()
+
+                .antMatchers("/attachment/**").permitAll()
                 .antMatchers(HttpMethod.PUT, "/organization/*/brand_logo").permitAll()
                 .antMatchers(HttpMethod.POST, "/brand/**").permitAll()
                 .antMatchers(HttpMethod.PUT, "/brand/*").permitAll()
                 .antMatchers(HttpMethod.GET, "/brand/attachment/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/brand").permitAll()
-                .antMatchers("/marketing/alipay/notify").permitAll()
-                .antMatchers("/payment/brand/**").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/payment/brand/alipay/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/marketing/alipay/notify").permitAll()
                 .anyRequest().authenticated().and()
 
                 // custom Token based authentication based on the header previously given to the client
