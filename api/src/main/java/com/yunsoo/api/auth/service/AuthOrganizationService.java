@@ -53,16 +53,12 @@ public class AuthOrganizationService {
         }
     }
 
-    public Organization getByName(String name) {
+    public boolean checkNameExists(String name) {
         if (StringUtils.isEmpty(name)) {
-            return null;
+            return false;
         }
-        List<Organization> organizations = authApiClient.get("organization?name={name}", new ParameterizedTypeReference<List<Organization>>() {
-        }, name);
-        if (organizations.size() == 0) {
-            return null;
-        }
-        return organizations.get(0);
+        Boolean result = authApiClient.post("organization/checkNameExists", name, Boolean.class);
+        return result != null && result;
     }
 
     public List<Organization> getByIdsIn(List<String> ids) {

@@ -80,6 +80,11 @@ public class OrganizationController {
         return organizations;
     }
 
+    @RequestMapping(value = "checkNameExists", method = RequestMethod.POST)
+    public Boolean checkNameExists(@RequestBody String name) {
+        return organizationService.getByName(name) != null;
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('*', 'org', 'organization:create')")
