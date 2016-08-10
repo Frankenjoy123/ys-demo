@@ -1,6 +1,5 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.auth.service.AuthOrganizationService;
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -10,16 +9,13 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 /**
  * Created by  : Lijian
@@ -29,31 +25,16 @@ import java.util.List;
 @Component
 @ObjectCacheConfig
 public class OrganizationDomain {
+
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     private RestClient dataApiClient;
 
-    @Autowired
-    private AuthOrganizationService authOrganizationService;
-
 
     private static final String ORG_LOGO_IMAGE_128X128 = "image-128x128";
 
     private static final String ORG_LOGO_IMAGE_200X200 = "image-200x200";
-
-    public int countBrand(String id, String status) {
-        if (StringUtils.hasText(status))
-            return dataApiClient.get("organization/{id}/brand/count?status={status}", Integer.class, id, status);
-        else
-            return dataApiClient.get("organization/{id}/brand/count", Integer.class, id);
-    }
-
-
-    public List<String> getBrandIdsForCarrier(String carrierId) {
-        return dataApiClient.get("organization/{id}/brandIds", new ParameterizedTypeReference<List<String>>() {
-        }, carrierId);
-    }
 
     public ResourceInputStream getLogoImage(String orgId, String imageName) {
         try {

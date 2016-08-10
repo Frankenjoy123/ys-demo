@@ -107,9 +107,9 @@ public class BrandApplicationDomain {
     }
 
     public BrandApplicationObject createBrandApplication(BrandApplicationObject obj) {
-        if (authOrganizationService.getByName(obj.getBrandName()) != null) {
-            throw new ConflictException("organization exists with the same name");
-        }
+//        if (authOrganizationService.getByName(obj.getBrandName()) != null) {
+//            throw new ConflictException("organization exists with the same name");
+//        }
         if (getBrandApplicationByName(obj.getBrandName()) != null) {
             throw new ConflictException("brandApplication exists with the same name");
         }

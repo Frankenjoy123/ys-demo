@@ -102,6 +102,7 @@ public class OrganizationService {
             if (organizationRepository.findByName(org.getName()).size() > 0) {
                 throw new ConflictException("organization already exists with the same name: " + org.getName());
             }
+            log.info(String.format("trying change name from %s to %s for org with id: %s" + entity.getName(), org.getName(), org.getId()));
             entity.setName(org.getName());
         }
         if (org.getDescription() != null) {

@@ -104,12 +104,14 @@ public class BrandApplicationController {
                                  @RequestBody BrandApplication brandApplication) {
         BrandApplicationObject obj = brandApplication.toBrandApplicationObject();
         obj.setId(id);
+        obj.setPassword(null);
         brandApplicationDomain.patchUpdateBrandApplication(obj);
     }
 
     @RequestMapping(value = "{id}/approve", method = RequestMethod.POST)
     //@com.yunsoo.api.aspect.OperationLog(operation = "通过审批品牌商入住申请：' + #id + ', 行业：' + #category", level = "P1")
-    public BrandApplication approveBrandApplication(@PathVariable("id") String id, @RequestParam("category_id") String categoryId) {
+    public BrandApplication approveBrandApplication(@PathVariable("id") String id,
+                                                    @RequestParam("category_id") String categoryId) {
         BrandApplicationObject obj = brandApplicationDomain.getBrandApplicationById(id);
         if (obj == null) {
             throw new NotFoundException("brandApplication not found by id: " + id);

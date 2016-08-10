@@ -12,6 +12,7 @@ import com.yunsoo.api.dto.OrganizationBrand;
 import com.yunsoo.common.data.object.OrgBrandObject;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.apache.commons.logging.Log;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -86,6 +88,14 @@ public class OrganizationBrandDomain {
             return 0L;
         }
         return dataApiClient.get("orgBrand/count?carrier_id={0}", Long.class, carrierId);
+    }
+
+    public List<String> getBrandIdsByCarrierId(String carrierId) {
+        if (StringUtils.isEmpty(carrierId)) {
+            return new ArrayList<>();
+        }
+        return dataApiClient.get("orgBrand/orgId?carrier_id={0}", new ParameterizedTypeReference<List<String>>() {
+        }, carrierId);
     }
 
     public OrganizationBrand getOrganizationBrandById(String orgId) {
@@ -172,8 +182,19 @@ public class OrganizationBrandDomain {
         return new OrganizationBrand(organization, orgBrandObject);
     }
 
-    public void patchUpdateOrganizationBrand(OrganizationBrand organizationBrand) {
+    public void patchUpdateOrganizationBrand(OrganizationBrand orgBrand) {
+        if (orgBrand == null || StringUtils.isEmpty(orgBrand.getId())) {
+            throw new BadRequestException();
+        }
+        OrgBrandObject obj = getOrgBrandObjectById(orgBrand.getId());
+        if (obj == null) {
+            throw new NotFoundException("organization brand not found by id: " + orgBrand.getId());
+        }
+        if (orgBrand.getContactName() != null) obj.setContactName(orgBrand.getContactName());
+        if (orgBrand.getContactMobile() != null) obj.setContactMobile(orgBrand.getContactMobile());
+        if (orgBrand.getEmail() != null) obj.setEmail(orgBrand.getEmail());
 
+        dataApiClient.put("orgBrand/{id}", obj, obj.getOrgId());
     }
 
 

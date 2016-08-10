@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.NotNull;
@@ -21,23 +19,23 @@ public class OrgBrandObject {
     @JsonProperty("org_id")
     private String orgId;
 
-    @NotBlank(message = "org_name must not be null or empty")
+    @NotNull(message = "org_name must not be null")
     @JsonProperty("org_name")
     private String orgName;
 
-    @NotEmpty(message = "contact_name must not be null or empty")
+    @NotNull(message = "contact_name must not be null")
     @JsonProperty("contact_name")
     private String contactName;
 
-    @NotEmpty(message = "contact_mobile must not be null or empty")
+    @NotNull(message = "contact_mobile must not be null")
     @JsonProperty("contact_mobile")
     private String contactMobile;
 
-    @NotEmpty(message = "email must not be null or empty")
+    @NotNull(message = "email must not be null")
     @JsonProperty("email")
     private String email;
 
-    @NotEmpty(message = "business_license_number must not be null or empty")
+    @NotNull(message = "business_license_number must not be null")
     @JsonProperty("business_license_number")
     private String businessLicenseNumber;
 
@@ -52,7 +50,7 @@ public class OrgBrandObject {
     @JsonProperty("business_license_end")
     private DateTime businessLicenseEnd;
 
-    @NotEmpty(message = "business_sphere must not be null or empty")
+    @NotNull(message = "business_sphere must not be null")
     @JsonProperty("business_sphere")
     private String businessSphere;
 

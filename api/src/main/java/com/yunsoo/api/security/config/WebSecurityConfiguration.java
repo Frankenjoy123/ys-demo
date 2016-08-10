@@ -48,14 +48,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/application/*/config").permitAll()
                 .antMatchers(HttpMethod.GET, "/organization/public/config").permitAll()
                 .antMatchers(HttpMethod.GET, "/organization/*/logo/**").permitAll()
+                .antMatchers(HttpMethod.PUT, "/organization/*/brand_logo").permitAll()
                 .antMatchers(HttpMethod.GET, "/image/*").permitAll()
 
                 .antMatchers("/attachment/**").permitAll()
-                .antMatchers(HttpMethod.PUT, "/organization/*/brand_logo").permitAll()
-                .antMatchers(HttpMethod.POST, "/brand/**").permitAll()
-                .antMatchers(HttpMethod.PUT, "/brand/*").permitAll()
-                .antMatchers(HttpMethod.GET, "/brand/attachment/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/brand").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/brandApplication/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/brandApplication").permitAll()
+                .antMatchers(HttpMethod.POST, "/brandApplication/login").permitAll()
+                .antMatchers(HttpMethod.PATCH, "/brandApplication/*").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/payment/brand/alipay/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/marketing/alipay/notify").permitAll()
