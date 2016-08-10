@@ -6,6 +6,7 @@ import com.yunsoo.auth.api.util.PageUtils;
 import com.yunsoo.auth.dao.entity.OrganizationEntity;
 import com.yunsoo.auth.dao.repository.OrganizationRepository;
 import com.yunsoo.auth.dto.Organization;
+import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -75,8 +76,10 @@ public class OrganizationService {
             throw new ConflictException("organization already exists with the same name: " + org.getName());
         }
         OrganizationEntity entity = new OrganizationEntity();
-        if (!StringUtils.isEmpty(org.getId())) {
+        if (ObjectIdGenerator.validate(org.getId())) {
             entity.setId(org.getId()); //if id is not null or empty, create the org with the given id
+        } else {
+            entity.setId(ObjectIdGenerator.getNew());
         }
         entity.setName(org.getName());
         entity.setTypeCode(org.getTypeCode());
