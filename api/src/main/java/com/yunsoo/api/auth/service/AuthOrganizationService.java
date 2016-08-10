@@ -81,7 +81,7 @@ public class AuthOrganizationService {
         if (StringUtils.isEmpty(orgId)) {
             return authApiClient.post("organization", org, Organization.class);
         } else {
-            authApiClient.put("organization/{id}", org, Organization.class, orgId);
+            authApiClient.put("organization/{id}", org, orgId);
             return getById(orgId);
         }
     }
