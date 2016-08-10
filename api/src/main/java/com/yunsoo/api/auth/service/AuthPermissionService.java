@@ -91,7 +91,7 @@ public class AuthPermissionService {
         pa.setPermission(permission.toString());
         pa.setEffect(effect.name());
 
-        authApiClient.post("account/{accountId}/allocate", pa, PermissionAllocation.class, accountId);
+        authApiClient.post("permissionAllocation/account/{accountId}/allocate", pa, PermissionAllocation[].class, accountId);
     }
 
 }

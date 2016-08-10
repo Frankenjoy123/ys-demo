@@ -3,6 +3,7 @@ package com.yunsoo.auth.api.controller;
 import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.TestBase;
 import com.yunsoo.auth.dto.Organization;
+import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
@@ -28,11 +29,12 @@ public class OrganizationControllerTest extends TestBase {
 
     private static List<String> orgIds;
     private String orgId;
+    private String orgName = "TestOrg" + RandomUtils.generateString(4);
 
     @Before
     public void createOrganizations() {
 
-        Organization org = restClient.post("organization", createOrg("TestOrg"), Organization.class);
+        Organization org = restClient.post("organization", createOrg(orgName), Organization.class);
         orgId = org.getId();
 
         if (orgIds == null) {
@@ -79,8 +81,7 @@ public class OrganizationControllerTest extends TestBase {
 
     @Test
     public void testGetById() throws Exception {
-        Organization org = getById(orgId);
-        assertEquals(org.getName(), "TestOrg");
+        getById(orgId);
     }
 
     @Test(expected = NotFoundException.class)
@@ -127,7 +128,7 @@ public class OrganizationControllerTest extends TestBase {
                 .build();
         List<Organization> list = restClient.get("organization" + query, new ParameterizedTypeReference<List<Organization>>() {
         });
-        assert list.size() == 1;
+        assert list.size() == 0;
     }
 
     @Test
@@ -172,7 +173,7 @@ public class OrganizationControllerTest extends TestBase {
     @Test
     public void testCreate() throws Exception {
         Organization org = getById(orgId);
-        assertEquals(org.getName(), "TestOrg");
+        assert org.getName().contains("TestOrg");
     }
 
     @Test(expected = BadRequestException.class)
@@ -214,7 +215,6 @@ public class OrganizationControllerTest extends TestBase {
     @Test
     public void testPatchUpdate_name() throws Exception {
         Organization org = getById(orgId);
-        assertEquals(org.getName(), "TestOrg");
         org.setName("TestOrg2222");
         restClient.patch("organization/{id}", org, orgId);
         assertEquals(getById(orgId).getName(), "TestOrg2222");
@@ -225,7 +225,7 @@ public class OrganizationControllerTest extends TestBase {
         Organization org = createOrg(null);
         restClient.patch("organization/{id}", org, orgId);
         org = getById(orgId);
-        assertEquals(org.getName(), "TestOrg");
+        assert org.getName().contains("TestOrg");
     }
 
     @Test
@@ -246,12 +246,12 @@ public class OrganizationControllerTest extends TestBase {
 
     @Test
     public void testDisable() throws Exception {
-        assertEquals(getById(orgId).getStatusCode(), Constants.OrgStatus.AVAILABLE);
+        assertEquals(getById(orgId).getStatusCode(), Constants.OrgStatus.CREATED);
         disableOrg(orgId);
         assertEquals(getById(orgId).getStatusCode(), Constants.OrgStatus.DISABLED);
     }
 
-    @Test
+    @Test(expected = NotFoundException.class)
     public void testDisable_notExistedId() throws Exception {
         disableOrg(orgId.substring(0, orgId.length() - 2));
     }

@@ -1,90 +1,109 @@
-package com.yunsoo.data.service.entity;
+package com.yunsoo.common.data.object;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
- * Created by:   yan
- * Created on:   4/26/2016
+ * Created by:   Lijian
+ * Created on:   2016-08-05
  * Descriptions:
  */
-@Entity
-@Table(name = "brand_application_history")
-public class BrandApplicationHistoryEntity {
+public class BrandApplicationObject {
 
-    @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
-    @Column(name = "id")
+    @JsonProperty("id")
     private String id;
 
-    @Column(name = "brand_id")
-    private String brandId;
-
-    @Column(name = "brand_name")
+    @NotEmpty(message = "brand_name must not be null or empty")
+    @JsonProperty("brand_name")
     private String brandName;
 
-    @Column(name = "brand_desc")
+    @NotEmpty(message = "brand_desc must not be null or empty")
+    @JsonProperty("brand_desc")
     private String brandDesc;
 
-    @Column(name = "contact_name")
+    @NotEmpty(message = "contact_name must not be null or empty")
+    @JsonProperty("contact_name")
     private String contactName;
 
-    @Column(name = "contact_mobile")
+    @NotEmpty(message = "contact_mobile must not be null or empty")
+    @JsonProperty("contact_mobile")
     private String contactMobile;
 
-    @Column(name = "email")
+    @NotEmpty(message = "email must not be null or empty")
+    @JsonProperty("email")
     private String email;
 
-    @Column(name = "status_code")
-    private String statusCode;
-
-    @Column(name = "business_license_number")
+    @NotEmpty(message = "business_license_number must not be null or empty")
+    @JsonProperty("business_license_number")
     private String businessLicenseNumber;
 
-    @Column(name = "business_license_start")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @NotNull(message = "business_license_start must not be null")
+    @JsonProperty("business_license_start")
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime businessLicenseStart;
 
-    @Column(name = "business_license_end")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @JsonProperty("business_license_end")
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime businessLicenseEnd;
 
-    @Column(name = "business_sphere")
+    @NotEmpty(message = "business_sphere must not be null or empty")
+    @JsonProperty("business_sphere")
     private String businessSphere;
 
-    @Column(name = "comments")
+    @JsonProperty("comments")
     private String comments;
 
-    @Column(name = "created_account_id")
-    private String createdAccountId;
+    @JsonProperty("carrier_id")
+    private String carrierId;
 
-    @Column(name = "created_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdDateTime;
-
-    @Column(name = "attachment")
-    private String attachment;
-
-    @Column(name = "investigator_attachment")
-    private String investigatorAttachment;
-
-    @Column(name = "investigator_comments")
-    private String investigatorComments;
-
-    @Column(name = "reject_reason")
-    private String rejectReason;
-
-    @Column(name = "payment_id")
+    @JsonProperty("payment_id")
     private String paymentId;
 
-    @Column(name = "password")
+    @JsonProperty("created_account_id")
+    private String createdAccountId;
+
+    @JsonProperty("created_datetime")
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime createdDateTime;
+
+    @JsonProperty("status_code")
+    private String statusCode;
+
+    @JsonProperty("attachment")
+    private String attachment;
+
+    @NotEmpty(message = "identifier must not be null or empty")
+    @JsonProperty("identifier")
+    private String identifier;
+
+    @NotEmpty(message = "password must not be null or empty")
+    @JsonProperty("password")
     private String password;
 
-    @Column(name = "category_id")
+    @NotEmpty(message = "hash_salt must not be null or empty")
+    @JsonProperty("hash_salt")
+    private String hashSalt;
+
+    @JsonProperty("investigator_attachment")
+    private String investigatorAttachment;
+
+    @JsonProperty("investigator_comments")
+    private String investigatorComments;
+
+    @JsonProperty("reject_reason")
+    private String rejectReason;
+
+    @JsonProperty("category_id")
     private String categoryId;
 
 
@@ -94,14 +113,6 @@ public class BrandApplicationHistoryEntity {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getBrandId() {
-        return brandId;
-    }
-
-    public void setBrandId(String brandId) {
-        this.brandId = brandId;
     }
 
     public String getBrandName() {
@@ -144,14 +155,6 @@ public class BrandApplicationHistoryEntity {
         this.email = email;
     }
 
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
-    }
-
     public String getBusinessLicenseNumber() {
         return businessLicenseNumber;
     }
@@ -192,6 +195,22 @@ public class BrandApplicationHistoryEntity {
         this.comments = comments;
     }
 
+    public String getCarrierId() {
+        return carrierId;
+    }
+
+    public void setCarrierId(String carrierId) {
+        this.carrierId = carrierId;
+    }
+
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
+    }
+
     public String getCreatedAccountId() {
         return createdAccountId;
     }
@@ -208,12 +227,44 @@ public class BrandApplicationHistoryEntity {
         this.createdDateTime = createdDateTime;
     }
 
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
+
     public String getAttachment() {
         return attachment;
     }
 
     public void setAttachment(String attachment) {
         this.attachment = attachment;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getHashSalt() {
+        return hashSalt;
+    }
+
+    public void setHashSalt(String hashSalt) {
+        this.hashSalt = hashSalt;
     }
 
     public String getInvestigatorAttachment() {
@@ -238,22 +289,6 @@ public class BrandApplicationHistoryEntity {
 
     public void setRejectReason(String rejectReason) {
         this.rejectReason = rejectReason;
-    }
-
-    public String getPaymentId() {
-        return paymentId;
-    }
-
-    public void setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getCategoryId() {

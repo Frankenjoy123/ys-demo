@@ -5,11 +5,14 @@ import com.yunsoo.auth.api.util.AuthUtils;
 import com.yunsoo.auth.api.util.PageUtils;
 import com.yunsoo.auth.dao.entity.AccountEntity;
 import com.yunsoo.auth.dao.repository.AccountRepository;
+import com.yunsoo.auth.dao.repository.OrganizationRepository;
 import com.yunsoo.auth.dto.Account;
 import com.yunsoo.auth.dto.AccountCreationRequest;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.exception.ConflictException;
+import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +34,9 @@ public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
 
 
     public Account getById(String id) {
@@ -89,7 +95,14 @@ public class AccountService {
      * @param request not null
      * @return new created account
      */
+    @Transactional
     public Account create(AccountCreationRequest request) {
+        if (organizationRepository.findOne(request.getOrgId()) == null) {
+            throw new UnprocessableEntityException("organization not exists with id: " + request.getOrgId());
+        }
+        if (getByOrgIdAndIdentifier(request.getOrgId(), request.getIdentifier()) != null) {
+            throw new ConflictException("account already exists with the same identifier");
+        }
         AccountEntity entity = new AccountEntity();
         entity.setOrgId(request.getOrgId());
         entity.setIdentifier(request.getIdentifier());
@@ -103,7 +116,7 @@ public class AccountService {
             hashSalt = RandomUtils.generateString(8);
             entity.setPassword(hashPassword(request.getPassword(), hashSalt));
         } else {
-            entity.setPassword(request.getPassword());
+            entity.setPassword(request.getPassword()); //keep the password as is if there's hash salt
         }
         entity.setHashSalt(hashSalt);
         if (Constants.SYSTEM_ACCOUNT_ID.equals(request.getCreatedAccountId())) {

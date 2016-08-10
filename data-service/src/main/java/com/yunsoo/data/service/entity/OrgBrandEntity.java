@@ -3,18 +3,26 @@ package com.yunsoo.data.service.entity;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
- * Created by yan on 3/9/2016.
+ * Created by:   yan
+ * Created on:   3/9/2016
+ * Descriptions:
  */
 @Entity
 @Table(name = "org_brand")
-public class BrandEntity {
+public class OrgBrandEntity {
 
     @Id
     @Column(name = "org_id")
     private String orgId;
+
+    @Column(name = "org_name")
+    private String orgName;
 
     @Column(name = "contact_name")
     private String contactName;
@@ -45,39 +53,16 @@ public class BrandEntity {
     @Column(name = "carrier_id")
     private String carrierId;
 
-    @OneToOne(targetEntity = OrganizationEntity.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "org_id", insertable = false, updatable = false)
-    private OrganizationEntity organization;
-
     @Column(name = "attachment")
     private String attachment;
 
     @Column(name = "category_id")
     private String categoryId;
 
-    public String getCategoryId() {
-        return categoryId;
-    }
+    @Column(name = "created_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdDateTime;
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getAttachment() {
-        return attachment;
-    }
-
-    public void setAttachment(String attachment) {
-        this.attachment = attachment;
-    }
-
-    public String getCarrierId() {
-        return carrierId;
-    }
-
-    public void setCarrierId(String carrierId) {
-        this.carrierId = carrierId;
-    }
 
     public String getOrgId() {
         return orgId;
@@ -85,6 +70,14 @@ public class BrandEntity {
 
     public void setOrgId(String orgId) {
         this.orgId = orgId;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
     }
 
     public String getContactName() {
@@ -151,11 +144,35 @@ public class BrandEntity {
         this.comments = comments;
     }
 
-    public OrganizationEntity getOrganization() {
-        return organization;
+    public String getCarrierId() {
+        return carrierId;
     }
 
-    public void setOrganization(OrganizationEntity organization) {
-        this.organization = organization;
+    public void setCarrierId(String carrierId) {
+        this.carrierId = carrierId;
+    }
+
+    public String getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(String attachment) {
+        this.attachment = attachment;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
     }
 }

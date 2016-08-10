@@ -53,16 +53,12 @@ public class AuthOrganizationService {
         }
     }
 
-    public Organization getByName(String name) {
+    public boolean checkNameExists(String name) {
         if (StringUtils.isEmpty(name)) {
-            return null;
+            return false;
         }
-        List<Organization> organizations = authApiClient.get("organization?name={name}", new ParameterizedTypeReference<List<Organization>>() {
-        }, name);
-        if (organizations.size() == 0) {
-            return null;
-        }
-        return organizations.get(0);
+        Boolean result = authApiClient.post("organization/checkNameExists", name, Boolean.class);
+        return result != null && result;
     }
 
     public List<Organization> getByIdsIn(List<String> ids) {
@@ -76,13 +72,26 @@ public class AuthOrganizationService {
         });
     }
 
-    public Organization createOrganizationForBrand(String name, String description) {
+    public Organization createOrganizationForBrand(String orgId, String name, String description) {
         Assert.hasText(name, "org name must not be null or empty");
         Organization org = new Organization();
         org.setName(name);
-        org.setDescription(description);
         org.setTypeCode(LookupCodes.OrgType.BRAND);
-        return authApiClient.post("organization", org, Organization.class);
+        org.setDescription(description);
+        if (StringUtils.isEmpty(orgId)) {
+            return authApiClient.post("organization", org, Organization.class);
+        } else {
+            authApiClient.put("organization/{id}", org, orgId);
+            return getById(orgId);
+        }
+    }
+
+    public void enableOrganization(String orgId) {
+        authApiClient.post("organization/{id}/enable", null, null, orgId);
+    }
+
+    public void deleteOrganization(String orgId) {
+        authApiClient.delete("organization/{id}", orgId);
     }
 
 }

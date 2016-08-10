@@ -1,13 +1,13 @@
 package com.yunsoo.api.rabbit.controller;
 
-import com.yunsoo.api.rabbit.domain.BrandDomain;
+import com.yunsoo.api.rabbit.domain.OrgBrandDomain;
 import com.yunsoo.api.rabbit.domain.OrganizationDomain;
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.api.rabbit.util.PageUtils;
-import com.yunsoo.common.data.object.BrandObject;
+import com.yunsoo.common.data.object.OrgBrandObject;
 import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
@@ -44,7 +44,7 @@ public class OrganizationController {
     private ProductBaseDomain productBaseDomain;
 
     @Autowired
-    private BrandDomain brandDomain;
+    private OrgBrandDomain orgBrandDomain;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Organization getOrganizationById(@PathVariable(value = "id") String id) {
@@ -94,10 +94,10 @@ public class OrganizationController {
 
         ProductObject productObject = getProductByKey(key);
         ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
-        BrandObject brandObject = brandDomain.getBrandById(productBaseObject.getOrgId());
+        OrgBrandObject brandObject = orgBrandDomain.getOrgBrandById(productBaseObject.getOrgId());
 
         if (brandObject == null) {
-            throw new NotFoundException("brand organization not found by [id: " + brandObject.getId() + "]");
+            throw new NotFoundException("brand organization not found by [id: " + productBaseObject.getOrgId() + "]");
         }
 
         return brandObject.getContactMobile();
