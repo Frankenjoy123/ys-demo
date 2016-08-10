@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -294,7 +295,20 @@ public class MarketingController {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        return marketingDomain.getTop10PrizeList(marketingId).stream().map(MktDrawPrize::new).collect(Collectors.toList());
+        List<MktDrawPrizeObject> mktDrawPrizeObjectList = marketingDomain.getTop10PrizeList(marketingId);
+        List<MktDrawPrize> mktDrawPrizeList = new ArrayList<>();
+
+        mktDrawPrizeObjectList.forEach(object -> {
+            MktDrawPrize mktDrawPrize = new MktDrawPrize(object);
+            MktDrawRuleObject mktDrawRuleObject = marketingDomain.getDrawRuleById(object.getDrawRuleId());
+            MktConsumerRightObject mktConsumerRightObject = marketingDomain.getConsumerRightById(mktDrawRuleObject.getConsumerRightId());
+            if (mktConsumerRightObject != null) {
+                mktDrawPrize.setMktConsumerRight(new MktConsumerRight(mktConsumerRightObject));
+            }
+            mktDrawPrizeList.add(mktDrawPrize);
+        });
+
+        return mktDrawPrizeList;
     }
 
 

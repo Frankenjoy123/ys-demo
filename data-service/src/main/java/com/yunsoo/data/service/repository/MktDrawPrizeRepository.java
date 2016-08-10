@@ -41,11 +41,13 @@ public interface MktDrawPrizeRepository extends FindOneAndSaveRepository<MktDraw
     @Query("select o from #{#entityName} o where " +
             "(o.marketingId = :marketingId) " +
             "and (:accountType is null or o.accountType = :accountType) " +
+            "and (:prizeTypeCode is null or o.prizeTypeCode = :prizeTypeCode) " +
             "and (:statusCode is null or o.statusCode = :statusCode) " +
             "and (:startTime is null or o.createdDateTime >= :startTime) " +
             "and (:endTime is null or o.createdDateTime <= :endTime) ")
     Page<MktDrawPrizeEntity> query(@Param("marketingId") String marketingId,
                                    @Param("accountType") String accountType,
+                                   @Param("prizeTypeCode") String prizeTypeCode,
                                    @Param("statusCode") String statusCode,
                                    @Param("startTime") DateTime startTime,
                                    @Param("endTime") DateTime endTime,

@@ -262,10 +262,11 @@ public class MarketingDomain {
     }
 
 
-    public Page<MktDrawPrizeObject> getMktDrawPrizeByFilter(String marketingId, String accountType, String statusCode, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime, Pageable pageable) {
+    public Page<MktDrawPrizeObject> getMktDrawPrizeByFilter(String marketingId, String accountType, String prizeTypeCode, String statusCode, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("marketing_id", marketingId)
                 .append("account_type", accountType)
+                .append("prize_type_code", prizeTypeCode)
                 .append("status_code", statusCode)
                 .append("start_time", startTime)
                 .append("end_time", endTime)

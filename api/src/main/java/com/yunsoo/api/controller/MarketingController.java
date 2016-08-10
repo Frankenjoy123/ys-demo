@@ -574,6 +574,7 @@ public class MarketingController {
     @RequestMapping(value = "drawPrize/marketing", method = RequestMethod.GET)
     public List<MktDrawPrize> getMktDrawPrizeByFilter(@RequestParam(value = "marketing_id") String marketingId,
                                                       @RequestParam(value = "account_type", required = false) String accountType,
+                                                      @RequestParam(value = "prize_type_code", required = false) String prizeTypeCode,
                                                       @RequestParam(value = "status_code", required = false) String statusCode,
                                                       @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
                                                       @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
@@ -581,7 +582,7 @@ public class MarketingController {
                                                       Pageable pageable,
                                                       HttpServletResponse response) {
 
-        Page<MktDrawPrizeObject> mktDrawPrizePage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, statusCode, startTime, endTime, pageable);
+        Page<MktDrawPrizeObject> mktDrawPrizePage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, prizeTypeCode, statusCode, startTime, endTime, pageable);
 
         List<MktDrawPrize> mktDrawPrizeList = new ArrayList<>();
         PageUtils.response(response, mktDrawPrizePage, pageable != null).forEach(object -> {
@@ -696,6 +697,26 @@ public class MarketingController {
         return new MktDrawRule(mktDrawRuleObject);
     }
 
+    @RequestMapping(value = "drawPrize/record/{id}", method = RequestMethod.GET)
+    public MktDrawPrize getMktDrawPrizeById(@PathVariable(value = "id") String id) {
+
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeById(id);
+        if (mktDrawPrizeObject != null) {
+            MktDrawPrize mktDrawPrize = new MktDrawPrize(mktDrawPrizeObject);
+
+            if ((mktDrawPrizeObject.getPrizeContactId() != null) && (!mktDrawPrizeObject.getPrizeContactId().equals(""))) {
+                MktPrizeContactObject mktPrizeContactObject = marketingDomain.getMktPrizeContactById(mktDrawPrizeObject.getPrizeContactId());
+                if (mktPrizeContactObject != null) {
+                    mktDrawPrize.setPrizeContact(new MktPrizeContact(mktPrizeContactObject));
+                }
+            }
+            return mktDrawPrize;
+        } else {
+            return null;
+        }
+    }
+
+
 
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.PUT)
     @com.yunsoo.api.aspect.OperationLog(operation = "'修改营销方案规则：' + #id", level = "P1")
@@ -776,13 +797,14 @@ public class MarketingController {
     @RequestMapping(value = "alipay_batchtransfer", method = RequestMethod.GET)
     public Map<String, String> batchTransfer(@RequestParam(value = "marketing_id") String marketingId,
                                              @RequestParam(value = "account_type") String accountType,
+                                             @RequestParam(value = "prize_type_code") String prizeTypeCode,
                                              @RequestParam(value = "status_code") String statusCode,
                                              @RequestParam(value = "start_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
                                              @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
                                              @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                              Pageable pageable,
                                              HttpServletResponse response) {
-        Page<MktDrawPrizeObject> mktDrawPrizeObjectPage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, statusCode, startTime, endTime, pageable);
+        Page<MktDrawPrizeObject> mktDrawPrizeObjectPage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, prizeTypeCode, statusCode, startTime, endTime, pageable);
 
         List<MktDrawPrize> mktDrawPrizeList = PageUtils.response(response, mktDrawPrizeObjectPage.map(MktDrawPrize::new), pageable != null);
         return marketingDomain.getAlipayBatchTansferParameters(mktDrawPrizeList);
