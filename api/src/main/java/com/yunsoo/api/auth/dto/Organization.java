@@ -24,7 +24,6 @@ public class Organization implements Serializable {
     @JsonProperty("name")
     private String name;
 
-    @NotEmpty(message = "type_code must not be null or empty")
     @JsonProperty("type_code")
     private String typeCode;
 
