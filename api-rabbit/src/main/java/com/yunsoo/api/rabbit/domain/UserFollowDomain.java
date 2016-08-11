@@ -1,16 +1,15 @@
 package com.yunsoo.api.rabbit.domain;
 
+import com.yunsoo.api.rabbit.auth.dto.Organization;
+import com.yunsoo.api.rabbit.auth.service.AuthOrganizationService;
 import com.yunsoo.api.rabbit.dto.UserOrganizationFollowing;
 import com.yunsoo.api.rabbit.dto.UserProductFollowing;
-import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.UserOrganizationFollowingObject;
 import com.yunsoo.common.data.object.UserProductFollowingObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +30,7 @@ public class UserFollowDomain {
     private RestClient dataApiClient;
 
     @Autowired
-    private OrganizationDomain organizationDomain;
+    private AuthOrganizationService authOrganizationService;
 
     @Autowired
     private ProductBaseDomain productBaseDomain;
@@ -39,14 +38,11 @@ public class UserFollowDomain {
     @Autowired
     private ProductCommentsDomain productCommentsDomain;
 
-    private Log log = LogFactory.getLog(this.getClass());
-
-
     public UserOrganizationFollowingObject ensureUserOrganizationFollowing(String userId, String orgId) {
         Assert.hasText(userId);
         Assert.hasText(orgId);
 
-        if (organizationDomain.getById(orgId) != null) {
+        if (authOrganizationService.getById(orgId) != null) {
             List<UserOrganizationFollowingObject> objects = dataApiClient.get("UserOrganizationFollowing?user_id={userId}&org_id={orgId}",
                     new ParameterizedTypeReference<List<UserOrganizationFollowingObject>>() {
                     }, userId, orgId);
@@ -97,7 +93,7 @@ public class UserFollowDomain {
         //fill organization
         Page<UserOrganizationFollowing> resultPage = userFollowingList.map(UserOrganizationFollowing::new);
         for (UserOrganizationFollowing userFollowing : resultPage) {
-            OrganizationObject org = organizationDomain.getById(userFollowing.getOrgId());
+            Organization org = authOrganizationService.getById(userFollowing.getOrgId());
             if (org != null) {
                 userFollowing.setOrgName(org.getName());
                 userFollowing.setOrgDesc(org.getDescription());

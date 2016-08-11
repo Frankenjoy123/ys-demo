@@ -2,7 +2,6 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.ProductWarrantyDomain;
 import com.yunsoo.api.rabbit.dto.ProductWarranty;
-import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductWarrantyObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +11,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/productwarranty")
 public class ProductWarrantyController {
-
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
 
     @Autowired
     private ProductWarrantyDomain productWarrantyDomain;

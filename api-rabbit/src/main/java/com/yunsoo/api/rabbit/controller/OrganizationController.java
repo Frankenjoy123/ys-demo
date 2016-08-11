@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.auth.service.AuthOrganizationService;
 import com.yunsoo.api.rabbit.domain.OrgBrandDomain;
+import com.yunsoo.api.rabbit.domain.OrganizationDomain;
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.Organization;
@@ -23,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,6 +39,9 @@ public class OrganizationController {
 
     @Autowired
     private AuthOrganizationService authOrganizationService;
+
+    @Autowired
+    private OrganizationDomain organizationDomain;
 
     @Autowired
     private ProductBaseDomain productBaseDomain;
@@ -57,7 +60,7 @@ public class OrganizationController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<Organization> getByFilter() {
-        return new ArrayList<>();
+        return organizationDomain.getOrganizationList();
     }
 
     @RequestMapping(value = "{id}/productbase", method = RequestMethod.GET)
@@ -66,6 +69,37 @@ public class OrganizationController {
 
         return PageUtils.response(response, productBasePage.map(ProductBase::new), pageable != null);
     }
+
+    @RequestMapping(value = "/{key}/brand/contactMobile", method = RequestMethod.GET)
+    public String getBrandPhoneById(@PathVariable(value = "key") String key) {
+
+        ProductObject productObject = getProductByKey(key);
+        ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
+        OrgBrandObject brandObject = orgBrandDomain.getOrgBrandById(productBaseObject.getOrgId());
+
+        if (brandObject == null) {
+            throw new NotFoundException("brand organization not found by [id: " + productBaseObject.getOrgId() + "]");
+        }
+
+        return brandObject.getContactMobile();
+    }
+
+    @RequestMapping(value = "{id}/logo", method = RequestMethod.GET)
+    public ResponseEntity<?> getOrganizationLogo(
+            @PathVariable(value = "id") String id,
+            @RequestParam(value = "image_name", required = false) String imageName) {
+        ResourceInputStream resourceInputStream = organizationDomain.getLogoImage(id, imageName);
+        if (resourceInputStream == null) {
+            throw new NotFoundException("logo not found");
+        }
+        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
+        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
+        if (resourceInputStream.getContentLength() > 0) {
+            builder.contentLength(resourceInputStream.getContentLength());
+        }
+        return builder.body(new InputStreamResource(resourceInputStream));
+    }
+
 
     private ProductObject getProductByKey(String key) {
         if (!KeyGenerator.validate(key)) {
@@ -87,36 +121,6 @@ public class OrganizationController {
             throw new NotFoundException("product not found");
         }
         return productBaseObject;
-    }
-
-    @RequestMapping(value = "/{key}/brand/contactMobile", method = RequestMethod.GET)
-    public String getBrandPhoneById(@PathVariable(value = "key") String key) {
-
-        ProductObject productObject = getProductByKey(key);
-        ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
-        OrgBrandObject brandObject = orgBrandDomain.getOrgBrandById(productBaseObject.getOrgId());
-
-        if (brandObject == null) {
-            throw new NotFoundException("brand organization not found by [id: " + productBaseObject.getOrgId() + "]");
-        }
-
-        return brandObject.getContactMobile();
-    }
-
-    @RequestMapping(value = "{id}/logo", method = RequestMethod.GET)
-    public ResponseEntity<?> getOrganizationLogo(
-            @PathVariable(value = "id") String id,
-            @RequestParam(value = "image_name", required = false) String imageName) {
-        ResourceInputStream resourceInputStream = null;//authOrganizationService.getLogoImage(id, imageName);
-        if (resourceInputStream == null) {
-            throw new NotFoundException("logo not found");
-        }
-        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
-        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
-        if (resourceInputStream.getContentLength() > 0) {
-            builder.contentLength(resourceInputStream.getContentLength());
-        }
-        return builder.body(new InputStreamResource(resourceInputStream));
     }
 
 }
