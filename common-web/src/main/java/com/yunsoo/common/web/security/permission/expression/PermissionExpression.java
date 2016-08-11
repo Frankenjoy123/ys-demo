@@ -90,6 +90,8 @@ public abstract class PermissionExpression extends ResourceExpression {
         private static final String TYPE = "policy";
         private static final String PREFIX = TYPE + DELIMITER;
 
+        public static final PolicyPermissionExpression ADMIN = new PolicyPermissionExpression("admin");
+
         public PolicyPermissionExpression(String expressionOrPolicyCode) {
             super(expressionOrPolicyCode);
             setType(TYPE);

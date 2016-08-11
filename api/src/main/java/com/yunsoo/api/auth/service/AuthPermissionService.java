@@ -6,7 +6,7 @@ import com.yunsoo.api.auth.dto.PermissionEntry;
 import com.yunsoo.api.client.AuthApiClient;
 import com.yunsoo.common.web.security.permission.PermissionEntry.Effect;
 import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
-import com.yunsoo.common.web.security.permission.expression.PermissionExpression.SimplePermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression.PolicyPermissionExpression;
 import com.yunsoo.common.web.security.permission.expression.PrincipalExpression.AccountPrincipalExpression;
 import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
 import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
@@ -58,7 +58,7 @@ public class AuthPermissionService {
         allocatePermissionByAccountId(
                 accountId,
                 OrgRestrictionExpression.CURRENT,
-                SimplePermissionExpression.ADMIN,
+                PolicyPermissionExpression.ADMIN,
                 Effect.allow);
     }
 
@@ -69,7 +69,7 @@ public class AuthPermissionService {
         allocatePermissionByAccountId(
                 accountId,
                 RegionRestrictionExpression.DEFAULT,
-                SimplePermissionExpression.ADMIN,
+                PolicyPermissionExpression.ADMIN,
                 Effect.allow);
     }
 
