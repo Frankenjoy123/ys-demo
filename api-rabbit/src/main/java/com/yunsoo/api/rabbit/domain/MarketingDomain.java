@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,11 @@ public class MarketingDomain {
         } catch (NotFoundException ignored) {
             return null;
         }
+    }
+
+    public List<MktDrawRecordObject> getMktDrawRecordList(String ysid) {
+        return dataApiClient.get("marketing/draw?ys_id={ysid}", new ParameterizedTypeReference<List<MktDrawRecordObject>>() {
+        }, ysid);
     }
 
     public MktDrawRecordObject getMktDrawRecordByProductKey(String key) {
@@ -90,6 +96,10 @@ public class MarketingDomain {
         dataApiClient.patch("marketing/drawPrize/{id}/contact", mktPrizeContactObject, mktPrizeContactObject.getMktPrizeId());
     }
 
+    public void updateMktDrawRecord(MktDrawRecordObject object) {
+        dataApiClient.patch("marketing/drawPrize/", object, object.getId());
+    }
+
 
     public List<MktDrawRuleObject> getRuleList(String marketingId) {
         return dataApiClient.get("marketing/drawRule/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>() {
@@ -97,11 +107,23 @@ public class MarketingDomain {
 
     }
 
-    public List<MktDrawPrizeObject> getTop10PrizeList(String marketingId) {
+    public List<MktDrawPrizeObject> getTop10PrizeList(String marketingId, String ysId) {
+        if(StringUtils.hasText(ysId)) {
+            List<MktDrawRecordObject> objectList = getMktDrawRecordList(ysId);
+            List<String> ids = new ArrayList<>();
+            objectList.forEach(item->{
+                ids.add(item.getId());
+            });
 
-        return dataApiClient.get("marketing/drawPrize/{id}/top", new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
-        }, marketingId);
+            String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                    .append("record_ids", ids)
+                    .build();
 
+            return dataApiClient.get("marketing/drawPrize/{id}/top" + query, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
+            }, marketingId);
+        }
+        else
+            return new ArrayList<MktDrawPrizeObject>();
     }
 
 

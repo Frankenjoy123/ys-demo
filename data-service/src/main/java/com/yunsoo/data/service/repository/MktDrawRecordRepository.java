@@ -17,6 +17,8 @@ public interface MktDrawRecordRepository extends FindOneAndSaveRepository<MktDra
 
     List<MktDrawRecordEntity> findByProductKey(String productKey);
 
+    List<MktDrawRecordEntity> findByYsid(String ysId);
+
     Long countByMarketingId(String marketingId);
 
     @Query("select count(o.id) from #{#entityName} o where " +

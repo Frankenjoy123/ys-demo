@@ -140,6 +140,8 @@ public class MarketingController {
         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
 
+
+
         return new MktPrizeContact(newObject);
     }
 
@@ -196,6 +198,10 @@ public class MarketingController {
                 mktDrawPrizeObject.setPaidDateTime(DateTime.now());
 
             }
+
+            MktDrawRecordObject record = marketingDomain.getMktDrawRecordByProductKey(mktDrawPrize.getProductKey());
+            record.setYsid(mktDrawPrize.getYsid());
+
 
             marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
         } else
@@ -291,11 +297,11 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "drawPrize/{id}/top", method = RequestMethod.GET)
-    public List<MktDrawPrize> getTop10MarketingPrizeList(@PathVariable(value = "id") String marketingId) {
+    public List<MktDrawPrize> getTop10MarketingPrizeList(@PathVariable(value = "id") String marketingId, @RequestParam(value = "ys_id", required = false)String ysId) {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        List<MktDrawPrizeObject> mktDrawPrizeObjectList = marketingDomain.getTop10PrizeList(marketingId);
+        List<MktDrawPrizeObject> mktDrawPrizeObjectList = marketingDomain.getTop10PrizeList(marketingId, ysId);
         List<MktDrawPrize> mktDrawPrizeList = new ArrayList<>();
 
         mktDrawPrizeObjectList.forEach(object -> {
@@ -310,6 +316,7 @@ public class MarketingController {
 
         return mktDrawPrizeList;
     }
+
 
 
 }

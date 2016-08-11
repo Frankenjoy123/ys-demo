@@ -27,6 +27,9 @@ public interface MktDrawPrizeRepository extends FindOneAndSaveRepository<MktDraw
 
     List<MktDrawPrizeEntity> findTop10ByMarketingIdAndStatusCodeOrderByCreatedDateTimeDesc(String marketingId, String statusCode);
 
+    List<MktDrawPrizeEntity> findTop10ByMarketingIdAndStatusCodeAndDrawRecordIdInOrderByCreatedDateTimeDesc(String marketingId, String statusCode, List<String> recordIds);
+
+
     Long countByMarketingIdIn(List<String> marketingIdIn);
 
     Long countByDrawRuleId(String drawRuleId);
