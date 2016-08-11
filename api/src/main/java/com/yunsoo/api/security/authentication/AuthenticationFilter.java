@@ -1,7 +1,7 @@
 package com.yunsoo.api.security.authentication;
 
-import com.yunsoo.api.Constants;
 import com.yunsoo.api.security.AuthDetails;
+import com.yunsoo.common.web.Constants;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;

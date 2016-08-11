@@ -1,27 +1,30 @@
-package com.yunsoo.api.rabbit.dto;
+package com.yunsoo.api.rabbit.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
-import java.util.List;
+import java.io.Serializable;
 
 /**
- * Created by  : Zhe
- * Created on  : 2015/2/27
+ * Created by:   Lijian
+ * Created on:   2016-07-05
  * Descriptions:
  */
-public class Organization {
+public class Organization implements Serializable {
 
     @JsonProperty("id")
     private String id;
 
+    @NotEmpty(message = "name must not be null or empty")
     @JsonProperty("name")
     private String name;
 
+    @NotEmpty(message = "type_code must not be null or empty")
     @JsonProperty("type_code")
     private String typeCode;
 
@@ -31,21 +34,14 @@ public class Organization {
     @JsonProperty("description")
     private String description;
 
+    @JsonProperty("created_account_id")
+    private String createdAccountId;
+
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
 
-    @JsonProperty("products")
-    private List<ProductBase> productBaseList;
-
-    public List<ProductBase> getProductBaseList() {
-        return productBaseList;
-    }
-
-    public void setProductBaseList(List<ProductBase> productBaseList) {
-        this.productBaseList = productBaseList;
-    }
 
     public String getId() {
         return id;
@@ -87,26 +83,20 @@ public class Organization {
         this.description = description;
     }
 
+    public String getCreatedAccountId() {
+        return createdAccountId;
+    }
+
+    public void setCreatedAccountId(String createdAccountId) {
+        this.createdAccountId = createdAccountId;
+    }
+
     public DateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
-    }
-
-    public Organization() {
-    }
-
-    public Organization(com.yunsoo.api.rabbit.auth.dto.Organization org) {
-        if (org != null) {
-            this.setId(org.getId());
-            this.setName(org.getName());
-            this.setStatusCode(org.getStatusCode());
-            this.setDescription(org.getDescription());
-            this.setTypeCode(org.getTypeCode());
-            this.setCreatedDateTime(org.getCreatedDateTime());
-        }
     }
 
 }

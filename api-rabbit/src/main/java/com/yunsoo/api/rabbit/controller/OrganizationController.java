@@ -1,14 +1,13 @@
 package com.yunsoo.api.rabbit.controller;
 
+import com.yunsoo.api.rabbit.auth.service.AuthOrganizationService;
 import com.yunsoo.api.rabbit.domain.OrgBrandDomain;
-import com.yunsoo.api.rabbit.domain.OrganizationDomain;
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.api.rabbit.dto.ProductBase;
 import com.yunsoo.api.rabbit.util.PageUtils;
 import com.yunsoo.common.data.object.OrgBrandObject;
-import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.util.KeyGenerator;
@@ -24,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,7 +38,7 @@ public class OrganizationController {
     private ProductDomain productDomain;
 
     @Autowired
-    private OrganizationDomain organizationDomain;
+    private AuthOrganizationService authOrganizationService;
 
     @Autowired
     private ProductBaseDomain productBaseDomain;
@@ -48,16 +48,16 @@ public class OrganizationController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Organization getOrganizationById(@PathVariable(value = "id") String id) {
-        OrganizationObject object = organizationDomain.getById(id);
-        if (object == null) {
+        com.yunsoo.api.rabbit.auth.dto.Organization org = authOrganizationService.getById(id);
+        if (org == null) {
             throw new NotFoundException("organization not found by [id: " + id + "]");
         }
-        return new Organization(object);
+        return new Organization(org);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<Organization> getByFilter() {
-        return organizationDomain.getOrganizationList();
+        return new ArrayList<>();
     }
 
     @RequestMapping(value = "{id}/productbase", method = RequestMethod.GET)
@@ -107,7 +107,7 @@ public class OrganizationController {
     public ResponseEntity<?> getOrganizationLogo(
             @PathVariable(value = "id") String id,
             @RequestParam(value = "image_name", required = false) String imageName) {
-        ResourceInputStream resourceInputStream = organizationDomain.getLogoImage(id, imageName);
+        ResourceInputStream resourceInputStream = null;//authOrganizationService.getLogoImage(id, imageName);
         if (resourceInputStream == null) {
             throw new NotFoundException("logo not found");
         }
