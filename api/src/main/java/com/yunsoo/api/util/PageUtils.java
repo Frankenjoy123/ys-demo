@@ -1,6 +1,6 @@
 package com.yunsoo.api.util;
 
-import com.yunsoo.api.Constants;
+import com.yunsoo.common.web.Constants;
 import com.yunsoo.common.web.client.Page;
 
 import javax.servlet.http.HttpServletResponse;

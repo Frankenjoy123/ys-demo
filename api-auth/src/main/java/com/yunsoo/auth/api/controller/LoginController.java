@@ -1,6 +1,5 @@
 package com.yunsoo.auth.api.controller;
 
-import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.auth.api.security.authentication.TokenAuthenticationService;
 import com.yunsoo.auth.api.util.IpUtils;
@@ -11,6 +10,7 @@ import com.yunsoo.auth.dto.Token;
 import com.yunsoo.auth.service.AccountLoginLogService;
 import com.yunsoo.auth.service.AccountTokenService;
 import com.yunsoo.auth.service.LoginService;
+import com.yunsoo.common.web.Constants;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.apache.commons.logging.Log;

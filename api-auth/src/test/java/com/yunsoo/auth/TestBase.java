@@ -27,6 +27,7 @@ import java.net.UnknownHostException;
 public class TestBase {
 
     protected static AsyncRestClient restClient;
+    protected static final String SYSTEM_ACCOUNT_ID = Constants.SYSTEM_ACCOUNT_ID;
     protected static final String YUNSU_ORG_ID = "2k0r1l55i2rs5544wz5";
 
     @Value("${local.server.port}")
@@ -42,13 +43,13 @@ public class TestBase {
             System.out.println("initializing restClient");
             String appId = "AuthUnitTest";
             String deviceId = getHostName();
-            String accessToken = tokenAuthenticationService.generateAccessToken(Constants.SYSTEM_ACCOUNT_ID, YUNSU_ORG_ID).getToken();
+            String accessToken = tokenAuthenticationService.generateAccessToken(SYSTEM_ACCOUNT_ID, YUNSU_ORG_ID).getToken();
             restClient = new AsyncRestClient("http://localhost:" + port);
             restClient.setPreRequestCallback(request -> {
                 HttpHeaders httpHeaders = request.getHeaders();
-                httpHeaders.set(Constants.HttpHeaderName.APP_ID, appId);
-                httpHeaders.set(Constants.HttpHeaderName.DEVICE_ID, deviceId);
-                httpHeaders.set(Constants.HttpHeaderName.ACCESS_TOKEN, accessToken);
+                httpHeaders.set(com.yunsoo.common.web.Constants.HttpHeaderName.APP_ID, appId);
+                httpHeaders.set(com.yunsoo.common.web.Constants.HttpHeaderName.DEVICE_ID, deviceId);
+                httpHeaders.set(com.yunsoo.common.web.Constants.HttpHeaderName.ACCESS_TOKEN, accessToken);
             });
         }
     }

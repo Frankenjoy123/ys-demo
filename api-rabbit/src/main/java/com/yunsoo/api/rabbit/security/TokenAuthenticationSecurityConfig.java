@@ -43,6 +43,7 @@ public class TokenAuthenticationSecurityConfig extends WebSecurityConfigurerAdap
                 .authorizeRequests()
 
                 .antMatchers("/").permitAll()
+                .antMatchers(HttpMethod.GET, "/health/**").permitAll()
                 //.antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/application/**").permitAll()
                 .antMatchers("/auth/**").permitAll()

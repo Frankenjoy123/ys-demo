@@ -65,8 +65,8 @@ public class OperationAspect {
 
             HttpServletRequest request = RequestUtils.getCurrentHttpServletRequest();
             if (request != null) {
-                object.setUserAgent(request.getHeader(Constants.HttpHeaderName.USER_AGENT));
-                String appId = request.getHeader(Constants.HttpHeaderName.APP_ID);
+                object.setUserAgent(request.getHeader("User-Agent"));
+                String appId = request.getHeader(com.yunsoo.common.web.Constants.HttpHeaderName.APP_ID);
                 object.setCreatedAppId(StringUtils.hasText(appId) ? appId : Constants.Ids.ENTERPRISE_APP_ID);
                 object.setIp(IpUtils.getIpFromRequest(request));
                 OperationCache.put(object);

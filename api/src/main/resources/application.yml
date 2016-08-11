@@ -51,7 +51,7 @@ yunsoo:
   environment: local
   client:
     auth_api:
-      base_url: http://dev.yunsu.co:6180/
+      base_url: http://localhost:6180/
     processor:
       base_url: http://dev.yunsu.co:4080/
   cache:

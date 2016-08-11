@@ -1,5 +1,7 @@
 package com.yunsoo.auth.api.controller;
 
+import com.yunsoo.auth.api.util.AuthUtils;
+import com.yunsoo.common.web.exception.UnauthorizedException;
 import com.yunsoo.common.web.health.Health;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +17,12 @@ public class HealthController {
 
     @RequestMapping(value = "")
     public Health health() {
-        return new Health(Health.Status.UP);
+        Health health = new Health(Health.Status.UP);
+        try {
+            health.withDetail("authAccount", AuthUtils.getCurrentAccount());
+        } catch (UnauthorizedException ignored) {
+        }
+        return health;
     }
 
 }
