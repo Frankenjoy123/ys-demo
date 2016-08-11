@@ -90,8 +90,8 @@ public class MarketingController {
 
     //get mktDrawRecord by product key, provide API-Rabbit
     @RequestMapping(value = "/draw", method = RequestMethod.GET)
-    public List<MktDrawRecordObject> queryRecord(@RequestParam("ys_id") String ysId) {
-        List<MktDrawRecordEntity> entities = mktDrawRecordRepository.findByYsid(ysId);
+    public List<MktDrawRecordObject> queryRecord(@RequestParam("ys_id") String ysId, @RequestParam("marketing_id") String marketingId) {
+        List<MktDrawRecordEntity> entities = mktDrawRecordRepository.findByYsidAndMarketingId(ysId, marketingId);
         return entities.stream().map(this::toMktDrawRecordObject).collect(Collectors.toList());
     }
 
@@ -488,9 +488,6 @@ public class MarketingController {
         }
         entity.setModifiedDateTime(null);
         MktPrizeContactEntity newEntity = mktPrizeContactRepository.save(entity);
-        String prizeContactId = newEntity.getId();
-        mktDrawPrizeEntity.setPrizeContactId(prizeContactId);
-        mktDrawPrizeRepository.save(mktDrawPrizeEntity);
         return toMktPrizeContactObject(newEntity);
     }
 
@@ -973,6 +970,7 @@ public class MarketingController {
         entity.setPrizeAccountName(object.getPrizeAccountName());
         entity.setPrizeContactId(object.getPrizeContactId());
         entity.setComments(object.getComments());
+        entity.setPrizeContactId(object.getPrizeContactId());
         return entity;
     }
 

@@ -138,6 +138,8 @@ public class MarketingController {
         mktDrawPrizeObject.setPrizeContactId(newObject.getId());
         mktDrawPrizeObject.setPrizeAccountName(mktPrizeContact.getName());
         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
+        mktDrawPrizeObject.setPrizeAccount(mktPrizeContact.getPhone());
+        mktDrawPrizeObject.setMobile(mktPrizeContact.getPhone());
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
 
 
@@ -201,8 +203,6 @@ public class MarketingController {
 
             MktDrawRecordObject record = marketingDomain.getMktDrawRecordByProductKey(mktDrawPrize.getProductKey());
             record.setYsid(mktDrawPrize.getYsid());
-
-
             marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
         } else
             throw new RestErrorResultException(new ErrorResult(5002, "prize had been sent"));

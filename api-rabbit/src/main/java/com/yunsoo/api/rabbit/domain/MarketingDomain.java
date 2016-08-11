@@ -37,9 +37,9 @@ public class MarketingDomain {
         }
     }
 
-    public List<MktDrawRecordObject> getMktDrawRecordList(String ysid) {
-        return dataApiClient.get("marketing/draw?ys_id={ysid}", new ParameterizedTypeReference<List<MktDrawRecordObject>>() {
-        }, ysid);
+    public List<MktDrawRecordObject> getMktDrawRecordList(String marketingId, String ysid) {
+        return dataApiClient.get("marketing/draw?ys_id={ysId}&marketing_id={marketingId}", new ParameterizedTypeReference<List<MktDrawRecordObject>>() {
+        }, ysid, marketingId);
     }
 
     public MktDrawRecordObject getMktDrawRecordByProductKey(String key) {
@@ -109,7 +109,7 @@ public class MarketingDomain {
 
     public List<MktDrawPrizeObject> getTop10PrizeList(String marketingId, String ysId) {
         if(StringUtils.hasText(ysId)) {
-            List<MktDrawRecordObject> objectList = getMktDrawRecordList(ysId);
+            List<MktDrawRecordObject> objectList = getMktDrawRecordList(marketingId, ysId);
             List<String> ids = new ArrayList<>();
             objectList.forEach(item->{
                 ids.add(item.getId());
@@ -123,7 +123,8 @@ public class MarketingDomain {
             }, marketingId);
         }
         else
-            return new ArrayList<MktDrawPrizeObject>();
+            return dataApiClient.get("marketing/drawPrize/{id}/top", new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
+            }, marketingId);
     }
 
 
