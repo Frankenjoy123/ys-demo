@@ -12,23 +12,27 @@ import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.util.FileNameUtils;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +70,26 @@ public class TaskFileController {
         Page<TaskFileEntryObject> page = taskFileDomain.getTaskFileEntryByFilter(orgId, appId, deviceId, typeCode, statusCodeIn, createdAccountId, createdDateTimeGE, createdDateTimeLE, pageable);
 
         return PageUtils.response(response, page.map(TaskFileEntry::new), pageable != null);
+    }
+
+    @RequestMapping(value = "/file/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> download(@PathVariable("id")String id) throws UnsupportedEncodingException {
+        TaskFileEntryObject entry = taskFileDomain.getTaskFileEntryById(id);
+        if (entry == null) {
+            throw new NotFoundException("taskFile not found");
+        }
+        ResourceInputStream resourceInputStream = taskFileDomain.getFile(entry.getOrgId(), entry.getFileId());
+        if (resourceInputStream == null) {
+            throw new NotFoundException("attachment not found");
+        }
+
+        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
+        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
+        if (resourceInputStream.getContentLength() > 0) {
+            builder.contentLength(resourceInputStream.getContentLength());
+        }
+        builder.header("Content-Disposition", "attachment;filename=" + URLEncoder.encode(entry.getName(), "UTF-8"));
+        return builder.body(new InputStreamResource(resourceInputStream));
     }
 
 

@@ -79,10 +79,10 @@ public class MarketingEntity {
     @Column(name = "rules_text")
     private String rulesText;
 
-    @Column(name = "isPrizedAll")
+    @Column(name = "is_prized_all")
     private Boolean isPrizedAll;
 
-    @Column(name = "isMobileVerified")
+    @Column(name = "is_mobile_verified")
     private Boolean isMobileVerified;
 
     public String getId() {

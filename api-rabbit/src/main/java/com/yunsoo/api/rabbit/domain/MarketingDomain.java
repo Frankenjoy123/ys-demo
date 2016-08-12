@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -117,13 +118,14 @@ public class MarketingDomain {
 
             String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                     .append("record_ids", ids)
+                    .append("status_code_in", Arrays.asList(LookupCodes.MktDrawPrizeStatus.SUBMIT, LookupCodes.MktDrawPrizeStatus.PAID))
                     .build();
 
             return dataApiClient.get("marketing/drawPrize/{id}/top" + query, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
             }, marketingId);
         }
         else
-            return dataApiClient.get("marketing/drawPrize/{id}/top", new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
+            return dataApiClient.get("marketing/drawPrize/{id}/top?status_code_in=" + LookupCodes.MktDrawPrizeStatus.PAID, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
             }, marketingId);
     }
 

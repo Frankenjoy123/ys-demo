@@ -252,7 +252,6 @@ public class JuheController {
         return null;
     }
 
-
     private MobileOrderResultObject mobileOrderInJuhe(String mobile, int number, String orderId) {
         String url = "http://op.juhe.cn/ofpay/mobile/onlineorder?key={key}&phoneno={mobile}&cardnum={number}&orderid={orderId}&sign={sign}";
         String sign = HashUtils.md5HexString(openId + mobileKey + mobile + number + orderId);

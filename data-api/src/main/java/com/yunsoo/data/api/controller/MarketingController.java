@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -334,16 +335,18 @@ public class MarketingController {
     // query top 10 prize info
     @RequestMapping(value = "/drawPrize/{id}/top", method = RequestMethod.GET)
     public List<MktDrawPrizeObject> getTop10MktDrawPrizeByMarketingId(
-            @PathVariable(value = "id") String marketingId, @RequestParam(value = "record_ids", required = false)List<String> recordIds) {
+            @PathVariable(value = "id") String marketingId,
+            @RequestParam(value = "status_code_in", required = false)List<String> statusCodeIn,
+            @RequestParam(value = "record_ids", required = false)List<String> recordIds) {
 
         if (StringUtils.isEmpty(marketingId))
             marketingId = null;
 
         List<MktDrawPrizeEntity> entityList;
         if(recordIds == null)
-            entityList = mktDrawPrizeRepository.findTop10ByMarketingIdAndStatusCodeOrderByCreatedDateTimeDesc(marketingId, LookupCodes.MktDrawPrizeStatus.PAID);
+            entityList = mktDrawPrizeRepository.findTop10ByMarketingIdAndStatusCodeInOrderByCreatedDateTimeDesc(marketingId, statusCodeIn);
         else
-            entityList = mktDrawPrizeRepository.findTop10ByMarketingIdAndStatusCodeAndDrawRecordIdInOrderByCreatedDateTimeDesc(marketingId, LookupCodes.MktDrawPrizeStatus.PAID, recordIds);
+            entityList = mktDrawPrizeRepository.findTop10ByMarketingIdAndStatusCodeInAndDrawRecordIdInOrderByCreatedDateTimeDesc(marketingId, statusCodeIn, recordIds);
 
         return entityList.stream().map(this::toMktDrawPrizeObject).collect(Collectors.toList());
     }
@@ -562,6 +565,8 @@ public class MarketingController {
             entity.setStatusCode(mktDrawPrizeObject.getStatusCode());
         if(mktDrawPrizeObject.getPaidDateTime() != null)
             entity.setPaidDateTime(mktDrawPrizeObject.getPaidDateTime());
+        if(mktDrawPrizeObject.getPrizeContactId() != null)
+            entity.setPrizeContactId(mktDrawPrizeObject.getPrizeContactId());
 
         MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
 
