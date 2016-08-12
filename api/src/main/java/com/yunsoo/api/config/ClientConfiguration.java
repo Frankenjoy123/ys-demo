@@ -1,12 +1,12 @@
 package com.yunsoo.api.config;
 
-import com.yunsoo.api.Constants;
 import com.yunsoo.api.client.AuthApiClient;
 import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.api.client.ProcessorClient;
 import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.security.authentication.AccountAuthentication;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.common.web.Constants;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;

@@ -15,6 +15,7 @@ import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
@@ -88,8 +89,14 @@ public class MarketingController {
     }
 
     //get mktDrawRecord by product key, provide API-Rabbit
+    @RequestMapping(value = "/draw", method = RequestMethod.GET)
+    public List<MktDrawRecordObject> queryRecord(@RequestParam("ys_id") String ysId, @RequestParam("marketing_id") String marketingId) {
+        List<MktDrawRecordEntity> entities = mktDrawRecordRepository.findByYsidAndMarketingId(ysId, marketingId);
+        return entities.stream().map(this::toMktDrawRecordObject).collect(Collectors.toList());
+    }
+
     @RequestMapping(value = "/draw/{key}", method = RequestMethod.GET)
-    public MktDrawRecordObject getMktDrawRecordByProductKey(@PathVariable String key) {
+    public MktDrawRecordObject getMktDrawRecordByProductKey(@PathVariable("key") String key) {
         List<MktDrawRecordEntity> entities = mktDrawRecordRepository.findByProductKey(key);
         if (entities.size() > 0) {
             MktDrawRecordEntity entity = entities.get(0);
@@ -328,12 +335,17 @@ public class MarketingController {
     // query top 10 prize info
     @RequestMapping(value = "/drawPrize/{id}/top", method = RequestMethod.GET)
     public List<MktDrawPrizeObject> getTop10MktDrawPrizeByMarketingId(
-            @PathVariable(value = "id") String marketingId) {
+            @PathVariable(value = "id") String marketingId, @RequestParam(value = "record_ids", required = false)List<String> recordIds) {
 
         if (StringUtils.isEmpty(marketingId))
             marketingId = null;
 
-        List<MktDrawPrizeEntity> entityList = mktDrawPrizeRepository.findTop10ByMarketingIdAndStatusCodeOrderByCreatedDateTimeDesc(marketingId, LookupCodes.MktDrawPrizeStatus.PAID);
+        List<MktDrawPrizeEntity> entityList;
+        if(recordIds == null)
+            entityList = mktDrawPrizeRepository.findTop10ByMarketingIdAndStatusCodeOrderByCreatedDateTimeDesc(marketingId, LookupCodes.MktDrawPrizeStatus.PAID);
+        else
+            entityList = mktDrawPrizeRepository.findTop10ByMarketingIdAndStatusCodeAndDrawRecordIdInOrderByCreatedDateTimeDesc(marketingId, LookupCodes.MktDrawPrizeStatus.PAID, recordIds);
+
         return entityList.stream().map(this::toMktDrawPrizeObject).collect(Collectors.toList());
     }
 
@@ -383,6 +395,22 @@ public class MarketingController {
         catch (org.hibernate.exception.ConstraintViolationException ex){
             throw new ConflictException("This product has been already drawed.");
         }
+    }
+
+    @RequestMapping(value = "/draw/{id}", method = RequestMethod.PATCH)
+    public void patchDrawRecord(@PathVariable("id")String id, @RequestBody MktDrawRecordObject record){
+        MktDrawRecordEntity entity = mktDrawRecordRepository.findOne(id);
+        if(entity!=null){
+            if(record.getYsid()!=null && record.getYsid() != entity.getYsid())
+                entity.setYsid(record.getYsid());
+
+            if(record.getOauthOpenid() != null && record.getOauthOpenid() != entity.getOauthOpenid())
+                entity.setOauthOpenid(record.getOauthOpenid());
+
+            mktDrawRecordRepository.save(entity);
+        }
+        else
+            throw new NotFoundException("the draw record not found with id: " + id);
     }
 
     //create marketing draw prize by draw record id, provide: API-Rabbit
@@ -460,9 +488,6 @@ public class MarketingController {
         }
         entity.setModifiedDateTime(null);
         MktPrizeContactEntity newEntity = mktPrizeContactRepository.save(entity);
-        String prizeContactId = newEntity.getId();
-        mktDrawPrizeEntity.setPrizeContactId(prizeContactId);
-        mktDrawPrizeRepository.save(mktDrawPrizeEntity);
         return toMktPrizeContactObject(newEntity);
     }
 
@@ -945,6 +970,7 @@ public class MarketingController {
         entity.setPrizeAccountName(object.getPrizeAccountName());
         entity.setPrizeContactId(object.getPrizeContactId());
         entity.setComments(object.getComments());
+        entity.setPrizeContactId(object.getPrizeContactId());
         return entity;
     }
 

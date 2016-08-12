@@ -1,6 +1,8 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.Constants;
+import com.yunsoo.api.rabbit.auth.dto.Organization;
+import com.yunsoo.api.rabbit.auth.service.AuthOrganizationService;
 import com.yunsoo.api.rabbit.domain.*;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.api.rabbit.dto.UserAccessToken;
@@ -43,7 +45,7 @@ public class WebScanController {
     private ProductBaseDomain productBaseDomain;
 
     @Autowired
-    private OrganizationDomain organizationDomain;
+    private AuthOrganizationService authOrganizationService;
 
     @Autowired
     private UserScanDomain userScanDomain;
@@ -56,9 +58,6 @@ public class WebScanController {
 
     @Autowired
     private UserAccessTokenDomain userAccessTokenDomain;
-
-    @Autowired
-    private OrganizationConfigDomain organizationConfigDomain;
 
     //region 一物一码
 
@@ -255,7 +254,7 @@ public class WebScanController {
         ProductBaseObject productBaseObject = getProductBaseById(productBaseId);
         ProductCategory productCategory = productBaseDomain.getProductCategoryById(productBaseObject.getCategoryId());
         String productBaseDetails = productBaseDomain.getProductBaseDetails(productBaseObject.getOrgId(), productBaseObject.getId(), productBaseObject.getVersion());
-        OrganizationObject organizationObject = organizationDomain.getById(productBaseObject.getOrgId());
+        Organization organizationObject = authOrganizationService.getById(productBaseObject.getOrgId());
 
         WebScanResponse.Product product = new WebScanResponse.Product();
         product.setId(productBaseObject.getId());
@@ -273,7 +272,6 @@ public class WebScanController {
             organization.setName(organizationObject.getName());
             organization.setStatusCode(organizationObject.getStatusCode());
             organization.setDescription(organizationObject.getDescription());
-            organization.setDetails(organizationObject.getDetails());
             response.setOrganization(organization);
         }
 

@@ -1,6 +1,6 @@
 package com.yunsoo.auth.api.util;
 
-import com.yunsoo.auth.Constants;
+import com.yunsoo.common.web.Constants;
 import com.yunsoo.common.web.client.Page;
 
 import javax.servlet.http.HttpServletResponse;

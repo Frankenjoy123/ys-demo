@@ -6,7 +6,6 @@ import com.yunsoo.auth.api.util.PageUtils;
 import com.yunsoo.auth.dto.Organization;
 import com.yunsoo.auth.service.OrganizationService;
 import com.yunsoo.common.web.client.Page;
-import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +36,7 @@ public class OrganizationController {
 
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @PostAuthorize("hasPermission(returnObject, 'organization:read')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:read')")
     public Organization getById(@PathVariable(value = "id") String orgId) {
         orgId = AuthUtils.fixOrgId(orgId);
         Organization organization = organizationService.getById(orgId);
@@ -81,18 +80,24 @@ public class OrganizationController {
         return organizations;
     }
 
+    @RequestMapping(value = "checkNameExists", method = RequestMethod.POST)
+    public Boolean checkNameExists(@RequestBody String name) {
+        return organizationService.getByName(name) != null;
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission('*', 'org', 'organization:create')")
     public Organization create(@RequestBody @Valid Organization org) {
-        if (!Constants.OrgType.ALL.contains(org.getTypeCode())) {
-            throw new BadRequestException("type_code invalid");
-        }
-        if (Constants.OrgType.BRAND.equals(org.getTypeCode())) {
-            AuthUtils.checkPermission("current", "organization", "create");
-        } else {
-            AuthUtils.checkPermission("*", "organization", "create");
-        }
         return organizationService.create(org);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
+    public void put(@PathVariable(value = "id") String orgId,
+                    @RequestBody @Valid Organization org) {
+        org.setId(orgId);
+        organizationService.save(org);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
@@ -105,7 +110,7 @@ public class OrganizationController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:write')")
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization:delete')")
     public void delete(@PathVariable(value = "id") String orgId) {
         organizationService.delete(orgId);
     }

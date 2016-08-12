@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yunsoo.auth.dto.util.OrgIdDetectable;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -21,18 +22,18 @@ public class AccountCreationRequest implements OrgIdDetectable, Serializable {
     @JsonProperty("identifier")
     private String identifier;
 
-    @NotBlank(message = "first_name must not be null or empty")
+    @NotNull(message = "first_name must not be null")
     @JsonProperty("first_name")
     private String firstName;
 
-    @NotBlank(message = "last_name must not be null or empty")
+    @NotNull(message = "last_name must not be null")
     @JsonProperty("last_name")
     private String lastName;
 
     @JsonProperty("email")
     private String email;
 
-    @NotBlank(message = "phone must not be null or empty")
+    @NotNull(message = "phone must not be null")
     @JsonProperty("phone")
     private String phone;
 

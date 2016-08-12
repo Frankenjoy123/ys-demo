@@ -4,19 +4,18 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
- * Created by yan on 4/26/2016.
+ * Created by:   yan
+ * Created on:   4/26/2016
+ * Descriptions:
  */
 @Entity
-@Table(name="brand_application_history")
+@Table(name = "brand_application_history")
 public class BrandApplicationHistoryEntity {
 
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(generator = "idGenerator")
     @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
@@ -29,7 +28,7 @@ public class BrandApplicationHistoryEntity {
     private String brandName;
 
     @Column(name = "brand_desc")
-    private String brandDescription;
+    private String brandDesc;
 
     @Column(name = "contact_name")
     private String contactName;
@@ -88,29 +87,6 @@ public class BrandApplicationHistoryEntity {
     @Column(name = "category_id")
     private String categoryId;
 
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPaymentId() {
-        return paymentId;
-    }
-
-    public void setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
-    }
 
     public String getId() {
         return id;
@@ -136,12 +112,12 @@ public class BrandApplicationHistoryEntity {
         this.brandName = brandName;
     }
 
-    public String getBrandDescription() {
-        return brandDescription;
+    public String getBrandDesc() {
+        return brandDesc;
     }
 
-    public void setBrandDescription(String brandDescription) {
-        this.brandDescription = brandDescription;
+    public void setBrandDesc(String brandDesc) {
+        this.brandDesc = brandDesc;
     }
 
     public String getContactName() {
@@ -262,5 +238,29 @@ public class BrandApplicationHistoryEntity {
 
     public void setRejectReason(String rejectReason) {
         this.rejectReason = rejectReason;
+    }
+
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 }

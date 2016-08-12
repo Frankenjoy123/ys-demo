@@ -4,19 +4,18 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
- * Created by yan on 3/16/2016.
+ * Created by:   yan
+ * Created on:   3/16/2016
+ * Descriptions:
  */
 @Entity
-@Table(name="brand_application")
+@Table(name = "brand_application")
 public class BrandApplicationEntity {
 
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(generator = "idGenerator")
     @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
@@ -26,7 +25,7 @@ public class BrandApplicationEntity {
     private String brandName;
 
     @Column(name = "brand_desc")
-    private String brandDescription;
+    private String brandDesc;
 
     @Column(name = "contact_name")
     private String contactName;
@@ -171,12 +170,12 @@ public class BrandApplicationEntity {
         this.brandName = brandName;
     }
 
-    public String getBrandDescription() {
-        return brandDescription;
+    public String getBrandDesc() {
+        return brandDesc;
     }
 
-    public void setBrandDescription(String brandDescription) {
-        this.brandDescription = brandDescription;
+    public void setBrandDesc(String brandDesc) {
+        this.brandDesc = brandDesc;
     }
 
     public String getContactName() {

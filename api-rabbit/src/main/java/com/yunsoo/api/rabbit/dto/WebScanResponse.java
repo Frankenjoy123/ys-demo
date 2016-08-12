@@ -248,9 +248,6 @@ public class WebScanResponse {
         @JsonProperty("description")
         private String description;
 
-        @JsonProperty("details")
-        private String details;
-
 
         public String getId() {
             return id;
@@ -284,13 +281,6 @@ public class WebScanResponse {
             this.description = description;
         }
 
-        public String getDetails() {
-            return details;
-        }
-
-        public void setDetails(String details) {
-            this.details = details;
-        }
     }
 
     public static class Security {

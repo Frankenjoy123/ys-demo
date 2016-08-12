@@ -20,7 +20,6 @@ import java.util.List;
  * Created on:   2016-07-07
  * Descriptions:
  */
-
 @RestController
 @RequestMapping("/application")
 public class ApplicationController {

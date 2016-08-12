@@ -15,8 +15,6 @@ import javax.persistence.*;
 @Table(name = "mkt_draw_prize")
 public class MktDrawPrizeEntity {
     @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "draw_record_id")
     private String drawRecordId;
 

@@ -12,16 +12,7 @@ public final class Constants {
     public static class Ids {
         public static final String SYSTEM_ACCOUNT_ID = "0010000000000000000";
         public static final String ANONYMOUS_USER_ID = "0020000000000000000";
-        public static final String YUNSU_ORG_ID = "2k0r1l55i2rs5544wz5";
         public static final String ENTERPRISE_APP_ID="2k2juhux4z5d6eceh4v";
-    }
-
-    public static class HttpHeaderName {
-        public static final String ACCESS_TOKEN = "X-YS-AccessToken";
-        public static final String APP_ID = "X-YS-AppId";
-        public static final String DEVICE_ID = "X-YS-DeviceId";
-        public static final String CONTENT_RANGE = "X-YS-ContentRange";
-        public static final String USER_AGENT = "User-Agent";
     }
 
 //    public static class PushBase {

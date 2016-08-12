@@ -4,18 +4,18 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
- * Created by yan on 3/22/2016.
+ * Created by:   yan
+ * Created on:   3/22/2016
+ * Descriptions:
  */
 @Entity
-@Table(name="attachment")
+@Table(name = "attachment")
 public class AttachmentEntity {
-    @javax.persistence.Id
+
+    @Id
     @GeneratedValue(generator = "idGenerator")
     @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
@@ -35,28 +35,13 @@ public class AttachmentEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modifiedDateTime;
 
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
-    public DateTime getModifiedDateTime() {
-        return modifiedDateTime;
-    }
-
-    public void setModifiedDateTime(DateTime modifiedDateTime) {
-        this.modifiedDateTime = modifiedDateTime;
     }
 
     public String getOriginalFileName() {
@@ -73,5 +58,21 @@ public class AttachmentEntity {
 
     public void setS3FileName(String s3FileName) {
         this.s3FileName = s3FileName;
+    }
+
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    public DateTime getModifiedDateTime() {
+        return modifiedDateTime;
+    }
+
+    public void setModifiedDateTime(DateTime modifiedDateTime) {
+        this.modifiedDateTime = modifiedDateTime;
     }
 }

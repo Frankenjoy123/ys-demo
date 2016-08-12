@@ -53,7 +53,7 @@ public class MarketingController {
     private UserScanDomain userScanDomain;
 
     @Autowired
-    private OrganizationDomain organizationDomain;
+    private OrganizationBrandDomain organizationBrandDomain;
 
     @Autowired
     private AuthOrganizationService authOrganizationService;
@@ -320,7 +320,7 @@ public class MarketingController {
                 orgIds.add(orgId);
                 orgId = null;
             } else
-                orgIds = organizationDomain.getBrandIdsForCarrier(carrierId);
+                orgIds = organizationBrandDomain.getBrandIdsByCarrierId(carrierId);
         } else
             orgId = AuthUtils.fixOrgId(orgId);
 

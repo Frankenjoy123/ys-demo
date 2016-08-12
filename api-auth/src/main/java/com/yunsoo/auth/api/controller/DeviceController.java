@@ -57,8 +57,7 @@ public class DeviceController {
 
     @RequestMapping(value = "register", method = RequestMethod.POST)
     @PreAuthorize("hasPermission('current', 'org', 'device:write')")
-    public Device register(
-            @RequestBody DeviceRegisterRequest request) {
+    public Device register(@RequestBody DeviceRegisterRequest request) {
         AuthDetails authDetails = AuthUtils.getAuthDetails();
         String appId = authDetails.getAppId();
         String deviceId = authDetails.getDeviceId();

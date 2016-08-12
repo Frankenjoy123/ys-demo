@@ -1,14 +1,16 @@
 package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.AttachmentEntity;
-import org.springframework.data.repository.CrudRepository;
+import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
 
 import java.util.List;
 
 /**
- * Created by yan on 3/22/2016.
+ * Created by:   yan
+ * Created on:   3/22/2016
+ * Descriptions:
  */
-public interface AttachmentRepository extends CrudRepository<AttachmentEntity, String> {
+public interface AttachmentRepository extends FindOneAndSaveRepository<AttachmentEntity, String> {
 
-    public List<AttachmentEntity> findByIdIn(List<String> Ids);
+    List<AttachmentEntity> findByIdIn(List<String> Ids);
 }

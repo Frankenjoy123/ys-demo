@@ -18,4 +18,14 @@ public class TokenHandlerTest {
         String token = tokenHandler.createToken(DateTime.now().plusMinutes(525600000), accountId);
         System.out.println(token);
     }
+
+    @Test
+    public void tool_createAccessTokenForSystemAccount() {
+        TokenHandler accessTokenHandler = new TokenHandler("lvtHDkfIUxJ2bLWHc0MNztUqCJSVPSJO");
+        String accountId = "0010000000000000000";
+        String orgId = "2k0r1l55i2rs5544wz5";
+        String token = accessTokenHandler.createToken(DateTime.now().plusYears(20), accountId, orgId);
+        System.out.println(token);
+    }
+
 }

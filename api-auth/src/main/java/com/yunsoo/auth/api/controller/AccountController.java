@@ -9,6 +9,7 @@ import com.yunsoo.auth.dto.*;
 import com.yunsoo.auth.service.AccountLoginLogService;
 import com.yunsoo.auth.service.AccountService;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
@@ -20,6 +21,7 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -130,6 +132,9 @@ public class AccountController {
 
     @RequestMapping(value = "{id}/password", method = RequestMethod.PUT)
     public void changePassword(@PathVariable("id") String accountId, @RequestBody String newPassword) {
+        if (StringUtils.isEmpty(newPassword)) {
+            throw new BadRequestException("password must not be null or empty");
+        }
         accountId = AuthUtils.fixAccountId(accountId); //auto fix current
         rejectUpdateOnSystemAccount(accountId);
         Account account = findAccountById(accountId);

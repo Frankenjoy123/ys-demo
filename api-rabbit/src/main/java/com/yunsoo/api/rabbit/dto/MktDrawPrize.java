@@ -69,6 +69,9 @@ public class MktDrawPrize {
     @JsonProperty("mkt_consumer_right")
     private MktConsumerRight mktConsumerRight;
 
+    @JsonProperty("ys_id")
+    private String ysid;
+
     public MktConsumerRight getMktConsumerRight() {
         return mktConsumerRight;
     }
@@ -203,6 +206,14 @@ public class MktDrawPrize {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public String getYsid() {
+        return ysid;
+    }
+
+    public void setYsid(String ysid) {
+        this.ysid = ysid;
     }
 
     public MktDrawPrize(){}

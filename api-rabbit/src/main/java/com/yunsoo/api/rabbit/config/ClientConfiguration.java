@@ -1,10 +1,14 @@
 package com.yunsoo.api.rabbit.config;
 
+import com.yunsoo.api.rabbit.Constants;
+import com.yunsoo.api.rabbit.client.AuthApiClient;
 import com.yunsoo.api.rabbit.client.DataApiClient;
 import com.yunsoo.api.rabbit.client.WeChatApiClient;
+import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 
 /**
  * Created by:   Lijian
@@ -14,8 +18,31 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ClientConfiguration {
 
+    @Value("${yunsoo.client.auth_api.base_url}")
+    private String authApiBaseUrl;
+
+    @Value("${yunsoo.client.auth_api.system_account_access_token}")
+    private String authApiSystemAccountAccessToken;
+
     @Value("${yunsoo.client.data_api.base_url}")
     private String dataApiBaseUrl;
+
+    @Bean
+    public AuthApiClient authApiClient() {
+        AuthApiClient authApiClient = new AuthApiClient(authApiBaseUrl);
+        authApiClient.setPreRequestCallback(request -> {
+            HttpHeaders httpHeaders = request.getHeaders();
+            try {
+                httpHeaders.set(Constants.HttpHeaderName.APP_ID, Constants.Ids.API_RABBIT_APP_ID);
+                //httpHeaders.set(Constants.HttpHeaderName.DEVICE_ID, null);
+                httpHeaders.set(Constants.HttpHeaderName.ACCESS_TOKEN, authApiSystemAccountAccessToken);
+            } catch (UnauthorizedException ignored) {
+                //ignored if not login
+            }
+        });
+
+        return authApiClient;
+    }
 
     @Bean
     public DataApiClient dataApiClient() {
