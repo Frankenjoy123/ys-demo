@@ -3,6 +3,7 @@ package com.yunsoo.auth.api.controller;
 import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.TestBase;
 import com.yunsoo.auth.dto.*;
+import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
@@ -30,11 +31,13 @@ public class AccountControllerTest extends TestBase {
 
     private String testAccountLoginToken;
 
+    private String accountIdentifier = "testAccount" + RandomUtils.generateString(4);
+
     @Before
     public void createAccount() {
         AccountCreationRequest r = new AccountCreationRequest();
         r.setOrgId(YUNSU_ORG_ID);
-        r.setIdentifier("testAccount");
+        r.setIdentifier(accountIdentifier);
         r.setFirstName("Account");
         r.setLastName("UT");
         r.setPhone("123456789");
