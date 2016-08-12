@@ -22,13 +22,15 @@ public class LoginControllerTest extends TestBase {
 
     private static String disabledAccountLoginToken;
 
+    private static String accountIdentifier = "testloginController";
+
     @Before
     public void createAccount() {
         if (testAccount == null) {
             System.out.println("init test account");
             AccountCreationRequest request = new AccountCreationRequest();
             request.setOrgId("2k0r1l55i2rs5544wz5");
-            request.setIdentifier("testlogin");
+            request.setIdentifier(accountIdentifier);
             request.setFirstName("Account for test");
             request.setLastName("UT");
             request.setPhone("123456789");
@@ -36,6 +38,7 @@ public class LoginControllerTest extends TestBase {
             testAccount = restClient.post("account", request, Account.class);
             testAccountLoginToken = restClient.get("loginToken?account_id={0}", Token.class, testAccount.getId()).getToken();
 
+            System.out.println("account id is " + testAccount.getId() + "identifier is" + accountIdentifier);
             request.setIdentifier("testlogin_disabled");
             disabledAccount = restClient.post("account", request, Account.class);
             disabledAccountLoginToken = restClient.get("loginToken?account_id={0}", Token.class, disabledAccount.getId()).getToken();
@@ -49,7 +52,7 @@ public class LoginControllerTest extends TestBase {
     public void test_loginWithPassword_200() {
         AccountLoginRequest request = new AccountLoginRequest();
         request.setOrganization("2k0r1l55i2rs5544wz5");
-        request.setIdentifier("testlogin");
+        request.setIdentifier(accountIdentifier);
         request.setPassword("test");
         AccountLoginResponse response = restClient.post("login/password", request, AccountLoginResponse.class);
         assert response.getAccessToken().getExpiresIn() > 0;
