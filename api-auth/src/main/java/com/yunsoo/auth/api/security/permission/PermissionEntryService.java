@@ -41,12 +41,13 @@ public class PermissionEntryService {
     @Autowired
     private PermissionAllocationService permissionAllocationService;
 
+    @Autowired
+    private PermissionAllocationService.Cached cached;
 
-    //todo: add cached logic
-    public List<String> getExpendedPermissionEntriesByAccountIdCached(String accountId) {
-        return this.getExpendedPermissionEntriesByAccountId(accountId).stream()
-                .map(PermissionEntry::toString)
-                .collect(Collectors.toList());
+
+    public List<PermissionEntry> getExpendedPermissionEntriesByAccountIdCached(String accountId) {
+        List<String> permissionEntries = cached.getExpendedPermissionEntriesByAccountIdCached(accountId, this::getExpendedPermissionEntriesByAccountId);
+        return permissionEntries.stream().map(PermissionEntry::parse).collect(Collectors.toList());
     }
 
     public List<PermissionEntry> getExpendedPermissionEntriesByAccountId(String accountId) {

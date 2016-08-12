@@ -79,6 +79,11 @@ public class MarketingEntity {
     @Column(name = "rules_text")
     private String rulesText;
 
+    @Column(name = "isPrizedAll")
+    private Boolean isPrizedAll;
+
+    @Column(name = "isMobileVerified")
+    private Boolean isMobileVerified;
 
     public String getId() {
         return id;
@@ -230,5 +235,21 @@ public class MarketingEntity {
 
     public void setRulesText(String rulesText) {
         this.rulesText = rulesText;
+    }
+
+    public Boolean getIsPrizedAll() {
+        return isPrizedAll;
+    }
+
+    public void setIsPrizedAll(Boolean isPrizedAll) {
+        this.isPrizedAll = isPrizedAll;
+    }
+
+    public Boolean getIsMobileVerified() {
+        return isMobileVerified;
+    }
+
+    public void setIsMobileVerified(Boolean isMobileVerified) {
+        this.isMobileVerified = isMobileVerified;
     }
 }

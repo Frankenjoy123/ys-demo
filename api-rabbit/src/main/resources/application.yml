@@ -39,8 +39,10 @@ logging:
     springfox.documentation: 'ERROR'
 
 yunsoo:
-  cache:
-    type: local
+  client:
+    auth_api:
+      base_url: http://dev.yunsu.co:6180/
+  cache.type: local
 
 ---
 spring:

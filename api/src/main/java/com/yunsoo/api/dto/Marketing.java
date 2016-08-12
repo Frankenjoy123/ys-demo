@@ -94,6 +94,12 @@ public class Marketing implements OrgIdDetectable {
     @JsonProperty("marketing_rules")
     private List<MktDrawRule> marketingRules;
 
+    @JsonProperty("isPrizedAll")
+    private Boolean isPrizedAll;
+
+    @JsonProperty("isMobileVerified")
+    private Boolean isMobileVerified;
+
 
     public String getId() {
         return id;
@@ -271,6 +277,22 @@ public class Marketing implements OrgIdDetectable {
         this.rulesText = rulesText;
     }
 
+    public Boolean getIsPrizedAll() {
+        return isPrizedAll;
+    }
+
+    public void setIsPrizedAll(Boolean isPrizedAll) {
+        this.isPrizedAll = isPrizedAll;
+    }
+
+    public Boolean getIsMobileVerified() {
+        return isMobileVerified;
+    }
+
+    public void setIsMobileVerified(Boolean isMobileVerified) {
+        this.isMobileVerified = isMobileVerified;
+    }
+
     public Marketing() {
 
     }
@@ -296,6 +318,8 @@ public class Marketing implements OrgIdDetectable {
             this.setStatusCode(object.getStatusCode());
             this.setComments(object.getComments());
             this.setRulesText(object.getRulesText());
+            this.setIsPrizedAll(object.getIsPrizedAll());
+            this.setIsMobileVerified(object.getIsMobileVerified());
         }
 
     }
@@ -321,6 +345,8 @@ public class Marketing implements OrgIdDetectable {
         object.setStatusCode(this.getStatusCode());
         object.setComments(this.getComments());
         object.setRulesText(this.getRulesText());
+        object.setIsPrizedAll(this.getIsPrizedAll());
+        object.setIsMobileVerified(this.getIsMobileVerified());
         return object;
     }
 

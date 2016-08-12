@@ -3,6 +3,7 @@ package com.yunsoo.auth.service;
 import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.api.util.AuthUtils;
 import com.yunsoo.auth.api.util.PageUtils;
+import com.yunsoo.auth.config.AuthCacheConfig;
 import com.yunsoo.auth.dao.entity.OrganizationEntity;
 import com.yunsoo.auth.dao.repository.OrganizationRepository;
 import com.yunsoo.auth.dto.Organization;
@@ -17,6 +18,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,7 @@ import java.util.List;
  * Created on:   2016-07-06
  * Descriptions:
  */
+@AuthCacheConfig
 @Service
 public class OrganizationService {
 
@@ -37,6 +41,7 @@ public class OrganizationService {
     @Autowired
     private OrganizationRepository organizationRepository;
 
+    @Cacheable(key = "'organization:' + #id")
     public Organization getById(String id) {
         if (StringUtils.isEmpty(id)) {
             return null;
@@ -92,6 +97,7 @@ public class OrganizationService {
         return toOrganization(entity);
     }
 
+    @CacheEvict(key = "'organization:' + #org.id")
     @Transactional
     public void patchUpdate(Organization org) {
         if (StringUtils.isEmpty(org.getId())) {
@@ -114,6 +120,7 @@ public class OrganizationService {
         organizationRepository.save(entity);
     }
 
+    @CacheEvict(key = "'organization:' + #org.id")
     @Transactional
     public Organization save(Organization org) {
         if (StringUtils.isEmpty(org.getId()) || organizationRepository.findOne(org.getId()) == null) {
@@ -124,6 +131,7 @@ public class OrganizationService {
         }
     }
 
+    @CacheEvict(key = "'organization:' + #orgId")
     @Transactional
     public void updateStatus(String orgId, String statusCode) {
         if (StringUtils.isEmpty(orgId) || !Constants.OrgStatus.ALL.contains(statusCode)) {
@@ -137,6 +145,7 @@ public class OrganizationService {
         organizationRepository.save(entity);
     }
 
+    @CacheEvict(key = "'organization:' + #orgId")
     @Transactional
     public void delete(String orgId) {
         if (!StringUtils.isEmpty(orgId)) {

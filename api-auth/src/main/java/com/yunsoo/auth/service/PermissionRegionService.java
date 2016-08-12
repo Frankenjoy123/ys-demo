@@ -27,6 +27,7 @@ public class PermissionRegionService {
     @Autowired
     private PermissionRegionRepository permissionRegionRepository;
 
+
     public PermissionRegion getById(String regionId) {
         if (StringUtils.isEmpty(regionId)) {
             return null;
@@ -98,20 +99,6 @@ public class PermissionRegionService {
         }
     }
 
-    /**
-     * put the orgRestriction(orgId) to the restrictions of default permission region of the masterOrgId
-     *
-     * @param masterOrgId    current org id
-     * @param orgRestriction sub org id
-     */
-    @Transactional
-    public void putOrgRestrictionToDefaultPermissionRegion(String masterOrgId, String orgRestriction) {
-        orgRestriction = new RestrictionExpression.OrgRestrictionExpression(orgRestriction).toString();
-        PermissionRegion defaultPR = getOrCreateDefaultPermissionRegion(masterOrgId);
-        defaultPR.getRestrictions().add(orgRestriction);
-        permissionRegionRepository.save(toPermissionRegionEntity(defaultPR));
-    }
-
     @Transactional
     public PermissionRegion getOrCreateDefaultPermissionRegion(String orgId) {
         PermissionRegionEntity defaultPR;
@@ -142,6 +129,8 @@ public class PermissionRegionService {
         return toPermissionRegion(defaultPR);
     }
 
+
+    //region private methods
 
     private PermissionRegion toPermissionRegion(PermissionRegionEntity entity) {
         if (entity == null) {
@@ -178,5 +167,7 @@ public class PermissionRegionService {
     private String toString(List<String> restrictions) {
         return restrictions == null ? "" : StringUtils.collectionToCommaDelimitedString(restrictions.stream().distinct().sorted().collect(Collectors.toList()));
     }
+
+    //endregion
 
 }

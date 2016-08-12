@@ -15,7 +15,6 @@ import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
@@ -773,6 +772,8 @@ public class MarketingController {
         object.setStartDateTime(entity.getStartDateTime());
         object.setEndDateTime(entity.getEndDateTime());
         object.setRulesText(entity.getRulesText());
+        object.setIsPrizedAll(entity.getIsPrizedAll());
+        object.setIsMobileVerified(entity.getIsMobileVerified());
         return object;
     }
 
@@ -908,6 +909,8 @@ public class MarketingController {
         entity.setStartDateTime(object.getStartDateTime());
         entity.setEndDateTime(object.getEndDateTime());
         entity.setRulesText(object.getRulesText());
+        entity.setIsPrizedAll(object.getIsPrizedAll());
+        entity.setIsMobileVerified(object.getIsMobileVerified());
         return entity;
     }
 
