@@ -79,6 +79,12 @@ public class Marketing {
     @JsonProperty("rules_text")
     private String rulesText;
 
+    @JsonProperty("isPrizedAll")
+    private Boolean isPrizedAll;
+
+    @JsonProperty("isMobileVerified")
+    private Boolean isMobileVerified;
+
 
     public String getId() {
         return id;
@@ -224,6 +230,22 @@ public class Marketing {
         this.rulesText = rulesText;
     }
 
+    public Boolean getIsPrizedAll() {
+        return isPrizedAll;
+    }
+
+    public void setIsPrizedAll(Boolean isPrizedAll) {
+        this.isPrizedAll = isPrizedAll;
+    }
+
+    public Boolean getIsMobileVerified() {
+        return isMobileVerified;
+    }
+
+    public void setIsMobileVerified(Boolean isMobileVerified) {
+        this.isMobileVerified = isMobileVerified;
+    }
+
     public Marketing() {
 
     }
@@ -247,6 +269,8 @@ public class Marketing {
             this.setStartDateTime(object.getStartDateTime());
             this.setEndDateTime(object.getEndDateTime());
             this.setRulesText(object.getRulesText());
+            this.setIsPrizedAll(object.getIsPrizedAll());
+            this.setIsMobileVerified(object.getIsMobileVerified());
         }
     }
 
@@ -269,6 +293,8 @@ public class Marketing {
         object.setStartDateTime(this.getStartDateTime());
         object.setEndDateTime(this.getEndDateTime());
         object.setRulesText(this.getRulesText());
+        object.setIsPrizedAll(this.getIsPrizedAll());
+        object.setIsMobileVerified(this.getIsMobileVerified());
         return object;
     }
 
