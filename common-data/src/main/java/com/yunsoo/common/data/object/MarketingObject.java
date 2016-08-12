@@ -78,10 +78,10 @@ public class MarketingObject {
     @JsonProperty("rules_text")
     private String rulesText;
 
-    @JsonProperty("isPrizedAll")
+    @JsonProperty("is_prized_all")
     private Boolean isPrizedAll;
 
-    @JsonProperty("isMobileVerified")
+    @JsonProperty("is_mobile_verified")
     private Boolean isMobileVerified;
 
     public String getId() {
