@@ -5,6 +5,7 @@ import com.yunsoo.auth.TestBase;
 import com.yunsoo.auth.dto.Account;
 import com.yunsoo.auth.dto.AccountCreationRequest;
 import com.yunsoo.auth.dto.Group;
+import com.yunsoo.common.util.RandomUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +22,7 @@ public class GroupAccountControllerTest extends TestBase {
 
     private List<String> accountIds;
     private String groupId;
+    private String accountIdentifier = "testAccount" + RandomUtils.generateString(4);
 
     @Before
     public void createGroup() {
@@ -50,7 +52,7 @@ public class GroupAccountControllerTest extends TestBase {
         accountIds = IntStream.range(0, 8).parallel().mapToObj(i -> {
             AccountCreationRequest r = new AccountCreationRequest();
             r.setOrgId(YUNSU_ORG_ID);
-            r.setIdentifier("test" + i);
+            r.setIdentifier(accountIdentifier + i);
             r.setFirstName("Account" + i);
             r.setLastName("UT");
             r.setPhone("123456789");

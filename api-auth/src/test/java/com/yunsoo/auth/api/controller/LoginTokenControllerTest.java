@@ -5,6 +5,7 @@ import com.yunsoo.auth.dto.Account;
 import com.yunsoo.auth.dto.AccountCreationRequest;
 import com.yunsoo.auth.dto.AccountLoginResponse;
 import com.yunsoo.auth.dto.Token;
+import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,11 +19,13 @@ public class LoginTokenControllerTest extends TestBase {
 
     private String testAccountLoginToken;
 
+    private String accountIdentifier = "testLoginToken" + RandomUtils.generateString(4);
+
     @Before
     public void createAccount() {
         AccountCreationRequest rrequest = new AccountCreationRequest();
         rrequest.setOrgId("2k0r1l55i2rs5544wz5");
-        rrequest.setIdentifier("testlogin");
+        rrequest.setIdentifier(accountIdentifier);
         rrequest.setFirstName("Account for test");
         rrequest.setLastName("UT");
         rrequest.setPhone("123456789");

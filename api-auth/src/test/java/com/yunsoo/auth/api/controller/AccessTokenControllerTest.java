@@ -2,6 +2,7 @@ package com.yunsoo.auth.api.controller;
 
 import com.yunsoo.auth.TestBase;
 import com.yunsoo.auth.dto.*;
+import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,13 +14,14 @@ public class AccessTokenControllerTest extends TestBase {
 
     private String permanentToken;
     private String accessToken;
+    private String accountIdentifier = "testAccount" + RandomUtils.generateString(4);
 
     @Before
     public void createPermanentToken() {
         createAccount();
         AccountLoginRequest request = new AccountLoginRequest();
         request.setOrganization("2k0r1l55i2rs5544wz5");
-        request.setIdentifier("testlogin");
+        request.setIdentifier(accountIdentifier);
         request.setPassword("test");
         AccountLoginResponse response = restClient.post("login/password", request, AccountLoginResponse.class);
         Token token = response.getPermanentToken();
@@ -31,7 +33,7 @@ public class AccessTokenControllerTest extends TestBase {
     public void createAccount() {
         AccountCreationRequest rrequest = new AccountCreationRequest();
         rrequest.setOrgId("2k0r1l55i2rs5544wz5");
-        rrequest.setIdentifier("testlogin");
+        rrequest.setIdentifier(accountIdentifier);
         rrequest.setFirstName("Account for test");
         rrequest.setLastName("UT");
         rrequest.setPhone("123456789");
