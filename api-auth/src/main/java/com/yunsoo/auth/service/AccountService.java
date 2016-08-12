@@ -3,6 +3,7 @@ package com.yunsoo.auth.service;
 import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.api.util.AuthUtils;
 import com.yunsoo.auth.api.util.PageUtils;
+import com.yunsoo.auth.config.AuthCacheConfig;
 import com.yunsoo.auth.dao.entity.AccountEntity;
 import com.yunsoo.auth.dao.repository.AccountRepository;
 import com.yunsoo.auth.dao.repository.OrganizationRepository;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
  * Created on:   2016-07-06
  * Descriptions:
  */
+@AuthCacheConfig
 @Service
 public class AccountService {
 
