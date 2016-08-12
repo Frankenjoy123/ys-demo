@@ -123,6 +123,12 @@ public class TaskFileDomain {
         return this.getTaskFileEntryById(obj.getFileId());
     }
 
+    public ResourceInputStream getFile(String orgId, String fileId){
+        String path = String.format("organization/%s/task_file/%s", orgId, fileId);
+        return fileDomain.getFile(path);
+    }
+
+
     public TaskFileEntryObject getTotal(String orgId, String appId, String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
