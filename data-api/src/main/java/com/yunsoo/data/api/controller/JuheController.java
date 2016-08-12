@@ -219,6 +219,7 @@ public class JuheController {
         }
     }
 
+
     public boolean verifySMSCode(String mobileNumber, String verificationCode) {
         MobileVerificationCodeEntity entity = mobileVerificationCodeRepository.findFirstByMobileAndSentDateTimeNotNullOrderBySentDateTimeDesc(mobileNumber);
         if (entity == null || entity.getUsedFlag() || !entity.getVerificationCode().equals(verificationCode)
@@ -271,19 +272,6 @@ public class JuheController {
             log.error("send mobile order error. reason: "+ result.getReason() +", mobile: " + mobile + ", pid: " + pid + ", order_id: " + orderId);
 
         return result;
-
-      /* test
-        MobileDataResultObject object = new MobileDataResultObject();
-        object.setErrorCode(0);
-        object.setReason("Success");
-        MobileDataResultObject.DataResultObject resultObject = object.new DataResultObject();
-        resultObject.setOrderId(orderId);
-        resultObject.setCardName("流量测试");
-        resultObject.setOrderPrice("3.10");
-        resultObject.setPhone(mobile);
-        resultObject.setJuheOrderId("146580480974645861");
-        object.setResult(resultObject);
-        return object;*/
     }
 
     private SMSResultObject sendSMSInJuhe(String mobile, int tempId, HashMap<String, String> variables) throws UnsupportedEncodingException {

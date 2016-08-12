@@ -175,7 +175,7 @@ public class MarketingController {
         if (currentPrize != null && (LookupCodes.MktDrawPrizeStatus.CREATED.equals(currentPrize.getStatusCode()))) {
             MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
             mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
-            if (LookupCodes.MktPrizeType.MOBILE_FEE.equals(mktDrawPrize.getPrizeTypeCode())) {
+            if (LookupCodes.MktPrizeType.MOBILE_FEE.equals(currentPrize.getPrizeTypeCode())) {
                 marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
                 boolean isMobileFeeSuccess = marketingDomain.createMobileOrder(mktDrawPrize.getDrawRecordId());
                 if (!isMobileFeeSuccess) {
@@ -185,7 +185,7 @@ public class MarketingController {
                     mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
                     mktDrawPrizeObject.setPaidDateTime(DateTime.now());
                 }
-            } else if (LookupCodes.MktPrizeType.MOBILE_DATA.equals(mktDrawPrize.getPrizeTypeCode())) {
+            } else if (LookupCodes.MktPrizeType.MOBILE_DATA.equals(currentPrize.getPrizeTypeCode())) {
                 marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
                 boolean isMobileDataSuccess = marketingDomain.createMobileDataFlow(mktDrawPrize.getDrawRecordId());
                 if (!isMobileDataSuccess) {
@@ -195,15 +195,18 @@ public class MarketingController {
                     mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
                     mktDrawPrizeObject.setPaidDateTime(DateTime.now());
                 }
-            } else if (LookupCodes.MktPrizeType.COUPON.equals(mktDrawPrize.getPrizeTypeCode())) {
+            } else if (LookupCodes.MktPrizeType.COUPON.equals(currentPrize.getPrizeTypeCode())) {
                 mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
                 mktDrawPrizeObject.setPaidDateTime(DateTime.now());
 
             }
+            marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+
 
             MktDrawRecordObject record = marketingDomain.getMktDrawRecordByProductKey(mktDrawPrize.getProductKey());
             record.setYsid(mktDrawPrize.getYsid());
-            marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+            marketingDomain.updateMktDrawRecord(record);
+
         } else
             throw new RestErrorResultException(new ErrorResult(5002, "prize had been sent"));
 

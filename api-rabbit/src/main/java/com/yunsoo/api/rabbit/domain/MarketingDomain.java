@@ -98,7 +98,7 @@ public class MarketingDomain {
     }
 
     public void updateMktDrawRecord(MktDrawRecordObject object) {
-        dataApiClient.patch("marketing/drawPrize/", object, object.getId());
+        dataApiClient.patch("marketing/draw/{id}", object, object.getId());
     }
 
 
