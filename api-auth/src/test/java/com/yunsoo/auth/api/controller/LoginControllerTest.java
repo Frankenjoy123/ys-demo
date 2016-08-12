@@ -23,7 +23,7 @@ public class LoginControllerTest extends TestBase {
 
     private static String disabledAccountLoginToken;
 
-    private String accountIdentifier = "testlogin" + RandomUtils.generateString(4);
+    private static String accountIdentifier = "testlogin" + RandomUtils.generateString(4);
 
     @Before
     public void createAccount() {
