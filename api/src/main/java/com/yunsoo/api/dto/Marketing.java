@@ -94,10 +94,10 @@ public class Marketing implements OrgIdDetectable {
     @JsonProperty("marketing_rules")
     private List<MktDrawRule> marketingRules;
 
-    @JsonProperty("isPrizedAll")
+    @JsonProperty("is_prized_all")
     private Boolean isPrizedAll;
 
-    @JsonProperty("isMobileVerified")
+    @JsonProperty("is_mobile_verified")
     private Boolean isMobileVerified;
 
 
