@@ -2,7 +2,6 @@ package com.yunsoo.auth.api.controller;
 
 import com.yunsoo.auth.TestBase;
 import com.yunsoo.auth.dto.*;
-import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.junit.Before;
@@ -23,7 +22,7 @@ public class LoginControllerTest extends TestBase {
 
     private static String disabledAccountLoginToken;
 
-    private String accountIdentifier = "testlogin" + RandomUtils.generateString(4);
+    private static String accountIdentifier = "testloginController";
 
     @Before
     public void createAccount() {
