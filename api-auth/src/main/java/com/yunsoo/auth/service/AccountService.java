@@ -15,6 +15,8 @@ import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,7 @@ public class AccountService {
     private OrganizationRepository organizationRepository;
 
 
+    @Cacheable(key = "'account:' + #id")
     public Account getById(String id) {
         if (StringUtils.isEmpty(id)) {
             return null;
@@ -128,6 +131,7 @@ public class AccountService {
         return toAccount(accountRepository.save(entity));
     }
 
+    @CacheEvict(key = "'account:' + #account.id")
     @Transactional
     public void patchUpdate(Account account) {
         if (StringUtils.isEmpty(account.getId())) {
@@ -145,6 +149,7 @@ public class AccountService {
         }
     }
 
+    @CacheEvict(key = "'account:' + #accountId")
     @Transactional
     public void updateStatus(String accountId, String statusCode) {
         if (StringUtils.isEmpty(accountId) || !Constants.AccountStatus.ALL.contains(statusCode)) {
@@ -159,6 +164,7 @@ public class AccountService {
         }
     }
 
+    @CacheEvict(key = "'account:' + #accountId")
     @Transactional
     public void updatePassword(String accountId, String rawNewPassword) {
         if (StringUtils.isEmpty(accountId) || StringUtils.isEmpty(rawNewPassword)) {
