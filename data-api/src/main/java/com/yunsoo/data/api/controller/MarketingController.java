@@ -564,7 +564,9 @@ public class MarketingController {
             entity.setPaidDateTime(mktDrawPrizeObject.getPaidDateTime());
         if(mktDrawPrizeObject.getPrizeContactId() != null)
             entity.setPrizeContactId(mktDrawPrizeObject.getPrizeContactId());
-
+        if (mktDrawPrizeObject.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.PAID)) {
+            entity.setPaidDateTime(DateTime.now());
+        }
         MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
 
         return toMktDrawPrizeObject(newEntity);
