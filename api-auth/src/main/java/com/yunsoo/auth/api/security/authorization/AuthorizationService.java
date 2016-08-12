@@ -13,9 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-;
-;
-
 /**
  * Created by:   Lijian
  * Created on:   2016-03-23
@@ -35,7 +32,7 @@ public class AuthorizationService {
     public List<PermissionEntry> getPermissionEntries(AccountAuthentication accountAuthentication) {
         String accountId = accountAuthentication.getPrincipal().getId();
         String orgId = accountAuthentication.getPrincipal().getOrgId();
-        List<PermissionEntry> permissionEntries = permissionEntryService.getExpendedPermissionEntriesByAccountId(accountId);
+        List<PermissionEntry> permissionEntries = permissionEntryService.getExpendedPermissionEntriesByAccountIdCached(accountId);
         //fix orgRestriction
         permissionEntries.forEach(p -> {
             p.setRestriction(fixOrgRestriction(p.getRestriction(), orgId));

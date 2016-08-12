@@ -98,8 +98,9 @@ public class GroupService {
         }
         GroupEntity entity = groupRepository.findOne(groupId);
         if (entity != null) {
-            accountGroupService.deleteAccountGroupsByGroupId(groupId);
+            //delete group related sources in order
             permissionAllocationService.deletePermissionAllocationsByGroupId(groupId);
+            accountGroupService.deleteAccountGroupsByGroupId(groupId);
             groupRepository.delete(entity);
         }
     }
