@@ -1,0 +1,15 @@
+server:
+  port: 0
+  address: 127.0.0.1
+management:
+  port: 0
+  address: 127.0.0.1
+
+spring:
+  profiles.active: local
+  application.name: 'api-file'
+  mvc.throw-exception-if-no-handler-found: true
+
+yunsoo:
+  debug: true
+  environment: local

@@ -1,0 +1,39 @@
+server:
+  port: 4180
+management:
+  port: 4181
+  add-application-context-header: false
+
+spring:
+  profiles.active: local
+  application.name: 'api-file'
+  mvc.throw-exception-if-no-handler-found: true
+
+logging:
+  file: /var/log/yunsoo/api-file.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'INFO'
+
+yunsoo:
+  debug: true
+  environment: dev
+
+---
+spring:
+  profiles: local
+  jpa.show_sql: true
+
+logging:
+  file: c:/logs/yunsoo/api-file.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'ERROR'
+
+yunsoo:
+  environment: local
+
+---
+spring:
+  profiles: dev
+
