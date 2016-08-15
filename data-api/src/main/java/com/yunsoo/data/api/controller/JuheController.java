@@ -1,8 +1,12 @@
 package com.yunsoo.data.api.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.data.object.fdn.OrderRequestCallbackObject;
+import com.yunsoo.common.data.object.fdn.OrderResponseObject;
 import com.yunsoo.common.data.object.juhe.*;
 import com.yunsoo.common.util.HashUtils;
+import com.yunsoo.common.util.ObjectUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
@@ -13,13 +17,22 @@ import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by yan on 6/8/2016.
@@ -51,6 +64,12 @@ public class JuheController {
 
     @Value("${yunsoo.juhe.keys.mobile_location}")
     private String mobileLocationKey;
+
+    @Value("${yunsoo.fdn.user_name}")
+    private String fdnUserName;
+
+    @Value("${yunsoo.fdn.key}")
+    private String fdnApiKey;
 
     @Autowired
     private SMSTemplateRepository repository;
@@ -219,6 +238,21 @@ public class JuheController {
         }
     }
 
+    @RequestMapping(value = "/mobile/data/test", method = RequestMethod.GET)
+    public OrderResponseObject fdnMobileData(@RequestParam("order")String carrierOrderNumber, @RequestParam("mobile")String mobile) throws JsonProcessingException {
+        return mobileDataOrderInFDN(mobile, carrierOrderNumber, "12345678");
+
+    }
+
+    @RequestMapping(value = "/mobile/data/callback", method = RequestMethod.POST)
+    public String fdnMobileDataCallback(@RequestBody OrderRequestCallbackObject object){
+        if("10100".equals(object.getResultCode())){
+
+        }
+        else
+            log.error("callback mobile data error. reason: "+ object.getResultMsg() + ", OrderId:" + object.getTransNo());
+        return "ok";
+    }
 
     public boolean verifySMSCode(String mobileNumber, String verificationCode) {
         MobileVerificationCodeEntity entity = mobileVerificationCodeRepository.findFirstByMobileAndSentDateTimeNotNullOrderBySentDateTimeDesc(mobileNumber);
@@ -261,6 +295,27 @@ public class JuheController {
             log.error("send mobile order error. reason: "+ result.getReason() +", mobile: " + mobile + ", number: " + number + ", order_id: " + orderId);
         return  result;
 
+    }
+
+    private OrderResponseObject mobileDataOrderInFDN(String mobile, String carrierOrderNumber, String orderId) throws JsonProcessingException {
+        String url="https://capi.fdn.chinanetcenter.com/user/order";
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("phone", mobile);
+        paramMap.put("cpOrderNos", carrierOrderNumber);
+        paramMap.put("cpUserName", fdnUserName);
+        paramMap.put("timestamp", DateTime.now().toString("yyyyMMddHHmmss"));
+        paramMap.put("transNo", orderId);
+        String sign = HashUtils.md5HexString(ObjectUtils.toJson(paramMap) + fdnApiKey );
+
+        HttpHeaders header =  new HttpHeaders();
+        header.set("X-FDN-Auth", sign);
+
+        ResponseEntity<OrderResponseObject> entity = template.exchange(url, HttpMethod.POST, new HttpEntity<>(paramMap, header), OrderResponseObject.class);
+        OrderResponseObject returnObj = entity.getBody();
+        if(10000 == returnObj.getResponseCode())
+            log.error("send mobile data in fdn error. reason: "+ returnObj.getResponseMsg());
+        return  returnObj;
     }
 
     private MobileDataResultObject mobileDataFlowInJuhe(String mobile, int pid,  String orderId) {
@@ -316,5 +371,7 @@ public class JuheController {
 
         return result;
     }
+
+
 
 }
