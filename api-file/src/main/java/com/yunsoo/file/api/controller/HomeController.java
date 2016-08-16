@@ -1,4 +1,4 @@
-package com.yunsoo.key.api.controller;
+package com.yunsoo.file.api.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

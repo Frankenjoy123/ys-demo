@@ -33,6 +33,9 @@ logging:
 yunsoo:
   debug: true
   environment: dev
+  client:
+    file_api:
+      base_url: http://localhost:4180/
 
 ---
 spring:

@@ -1,7 +1,7 @@
-package com.yunsoo.key.service.impl;
+package com.yunsoo.file.service.impl;
 
 import com.yunsoo.common.web.client.ResourceInputStream;
-import com.yunsoo.key.service.FileService;
+import com.yunsoo.file.service.FileService;
 
 /**
  * Created by:   Lijian

@@ -1,4 +1,4 @@
-package com.yunsoo.key.api.controller;
+package com.yunsoo.file.api.controller;
 
 import com.yunsoo.common.web.health.Health;
 import org.springframework.web.bind.annotation.RequestMapping;
