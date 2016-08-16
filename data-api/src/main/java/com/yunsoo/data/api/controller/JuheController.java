@@ -21,13 +21,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequest;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -65,10 +61,10 @@ public class JuheController {
     @Value("${yunsoo.juhe.keys.mobile_location}")
     private String mobileLocationKey;
 
-    @Value("${yunsoo.fdn.user_name}")
+    //@Value("${yunsoo.fdn.user_name}")
     private String fdnUserName;
 
-    @Value("${yunsoo.fdn.key}")
+    //@Value("${yunsoo.fdn.key}")
     private String fdnApiKey;
 
     @Autowired
