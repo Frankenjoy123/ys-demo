@@ -2,9 +2,11 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.DomainDirectoryDomain;
 import com.yunsoo.api.domain.OrganizationConfigDomain;
+import com.yunsoo.api.domain.WeChatAPIDomain;
+import com.yunsoo.api.dto.WeChatOpenIdList;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.DomainDirectoryObject;
-import com.yunsoo.common.data.object.OrganizationConfigObject;
+import com.yunsoo.common.web.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,9 @@ public class OrganizationConfigController {
 
     @Autowired
     private DomainDirectoryDomain domainDirectoryDomain;
+
+    @Autowired
+    private WeChatAPIDomain weChatAPIDomain;
 
 
     @RequestMapping(value = "public/config", method = RequestMethod.GET)
@@ -52,6 +57,22 @@ public class OrganizationConfigController {
                           @RequestBody Map<String, Object> configItems) {
         orgId = AuthUtils.fixOrgId(orgId);
         organizationConfigDomain.saveConfig(orgId, configItems);
+    }
+
+    @RequestMapping(value = "{id}/config/wechat", method = RequestMethod.PUT)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'organization_config:write')")
+    public void putWechatConfig(@PathVariable(value = "id") String orgId,
+                          @RequestBody Map<String, Object> configItems) {
+        orgId = AuthUtils.fixOrgId(orgId);
+        String secret = configItems.get("webchat.app_secret").toString();
+        String appId = configItems.get("webchat.app_id").toString();
+
+        WeChatOpenIdList list = weChatAPIDomain.getOpenIds(orgId, appId, secret);
+        if(list!=null)
+            organizationConfigDomain.saveConfig(orgId, configItems);
+        else
+            throw new BadRequestException("app id or secret not correct");
+
     }
 
 }

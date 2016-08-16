@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by yan on 7/20/2016.
  */
-public class WXOpenIdList {
+public class WeChatOpenIdList {
 
     @JsonProperty("total")
     private int total;

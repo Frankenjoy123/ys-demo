@@ -1,31 +1,27 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.client.DataApiClient;
+import com.yunsoo.api.client.WeChatApiClient;
 import com.yunsoo.api.dto.AccessToken;
 import com.yunsoo.api.dto.JsApi_Ticket;
-import com.yunsoo.api.dto.WXOpenIdList;
+import com.yunsoo.api.dto.WeChatOpenIdList;
 import com.yunsoo.common.data.object.UserAccessTokenObject;
-import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Created by Admin on 6/29/2016.
  */
-//@Component
-public class WeixinAPIDomain {
+@Component
+public class WeChatAPIDomain {
 
-    //@Autowired
-    private RestClient dataAPIClient;
+    @Autowired
+    private DataApiClient dataAPIClient;
 
-    private RestClient wxapiClient;
-
-    public WeixinAPIDomain(){
-        wxapiClient = new RestClient();
-    }
-
+    @Autowired
+    private WeChatApiClient wxapiClient;
 
     public UserAccessTokenObject getUserAccessTokenObject(String orgId, String appId, String secret) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -56,23 +52,18 @@ public class WeixinAPIDomain {
         return null;
     }
 
-    public WXOpenIdList getOpenIds(String orgId, String appId, String secret){
+    public WeChatOpenIdList getOpenIds(String orgId, String appId, String secret){
 
         UserAccessTokenObject tokenObject = getUserAccessTokenObject(orgId, appId, secret);
         if(tokenObject!=null) {
-            String url = "https://api.weixin.qq.com/cgi-bin/user/get?access_token={token}&next_openid={id}";
-            WXOpenIdList list = wxapiClient.get(url, WXOpenIdList.class, tokenObject.getAccessToken(), "");
+            String url = "user/get?access_token={token}&next_openid={id}";
+            WeChatOpenIdList list = wxapiClient.get(url, WeChatOpenIdList.class, tokenObject.getAccessToken(), "");
             return list;
         }
 
         return null;
     }
 
-    public void sendRedPack(String appId, String mchId, String privateKey, byte[] wxCert, byte[] wxKey){
-
-
-        String url="https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack";
-    }
 
 
 

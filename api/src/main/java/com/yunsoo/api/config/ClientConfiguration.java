@@ -3,6 +3,7 @@ package com.yunsoo.api.config;
 import com.yunsoo.api.client.AuthApiClient;
 import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.api.client.ProcessorClient;
+import com.yunsoo.api.client.WeChatApiClient;
 import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.security.authentication.AccountAuthentication;
 import com.yunsoo.api.util.AuthUtils;
@@ -61,5 +62,11 @@ public class ClientConfiguration {
     public ProcessorClient processorClient() {
         return new ProcessorClient(processorBaseUrl);
     }
+
+    @Bean
+    public WeChatApiClient weChatApiClient() {
+        return new WeChatApiClient("https://api.weixin.qq.com/cgi-bin/");
+    }
+
 
 }
