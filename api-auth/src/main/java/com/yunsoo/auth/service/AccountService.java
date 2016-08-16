@@ -2,14 +2,23 @@ package com.yunsoo.auth.service;
 
 import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.api.util.AuthUtils;
+import com.yunsoo.auth.api.util.PageUtils;
+import com.yunsoo.auth.config.AuthCacheConfig;
 import com.yunsoo.auth.dao.entity.AccountEntity;
 import com.yunsoo.auth.dao.repository.AccountRepository;
+import com.yunsoo.auth.dao.repository.OrganizationRepository;
 import com.yunsoo.auth.dto.Account;
 import com.yunsoo.auth.dto.AccountCreationRequest;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.RandomUtils;
+import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.exception.ConflictException;
+import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -23,13 +32,18 @@ import java.util.stream.Collectors;
  * Created on:   2016-07-06
  * Descriptions:
  */
+@AuthCacheConfig
 @Service
 public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private OrganizationRepository organizationRepository;
 
+
+    @Cacheable(key = "'account:' + #id")
     public Account getById(String id) {
         if (StringUtils.isEmpty(id)) {
             return null;
@@ -64,16 +78,13 @@ public class AccountService {
     }
 
 
-    //    public Page<Account> getByOrgId(String orgId, String statusCode, String searchText, DateTime start, DateTime end, Pageable pageable) {
-//        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-//                .append("org_id", orgId).append("status", status).append("search_text", searchText)
-//                .append("start_datetime", start).append("end_datetime", end)
-//                .append(pageable)
-//                .build();
-//
-//        return dataAPIClient.getPaged("account" + query, new ParameterizedTypeReference<List<AccountObject>>() {
-//        });
-//    }
+    public Page<Account> search(String orgId, String statusCode, String searchText, DateTime createdDateTimeGE, DateTime createdDateTimeLE, Pageable pageable) {
+        if (StringUtils.isEmpty(orgId)) {
+            return Page.empty();
+        }
+
+        return PageUtils.convert(accountRepository.search(orgId, statusCode, searchText, createdDateTimeGE, createdDateTimeLE, pageable)).map(this::toAccount);
+    }
 
 
     public long count(String orgId, List<String> statusCodeIn) {
@@ -89,7 +100,14 @@ public class AccountService {
      * @param request not null
      * @return new created account
      */
+    @Transactional
     public Account create(AccountCreationRequest request) {
+        if (organizationRepository.findOne(request.getOrgId()) == null) {
+            throw new UnprocessableEntityException("organization not exists with id: " + request.getOrgId());
+        }
+        if (getByOrgIdAndIdentifier(request.getOrgId(), request.getIdentifier()) != null) {
+            throw new ConflictException("account already exists with the same identifier");
+        }
         AccountEntity entity = new AccountEntity();
         entity.setOrgId(request.getOrgId());
         entity.setIdentifier(request.getIdentifier());
@@ -103,16 +121,19 @@ public class AccountService {
             hashSalt = RandomUtils.generateString(8);
             entity.setPassword(hashPassword(request.getPassword(), hashSalt));
         } else {
-            entity.setPassword(request.getPassword());
+            entity.setPassword(request.getPassword()); //keep the password as is if there's hash salt
         }
         entity.setHashSalt(hashSalt);
-        if (!Constants.SYSTEM_ACCOUNT_ID.equals(request.getCreatedAccountId())) {
+        if (Constants.SYSTEM_ACCOUNT_ID.equals(request.getCreatedAccountId())) {
+            entity.setCreatedAccountId(request.getCreatedAccountId());
+        } else {
             entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         }
         entity.setCreatedDateTime(DateTime.now());
         return toAccount(accountRepository.save(entity));
     }
 
+    @CacheEvict(key = "'account:' + #account.id")
     @Transactional
     public void patchUpdate(Account account) {
         if (StringUtils.isEmpty(account.getId())) {
@@ -130,6 +151,7 @@ public class AccountService {
         }
     }
 
+    @CacheEvict(key = "'account:' + #accountId")
     @Transactional
     public void updateStatus(String accountId, String statusCode) {
         if (StringUtils.isEmpty(accountId) || !Constants.AccountStatus.ALL.contains(statusCode)) {
@@ -144,6 +166,7 @@ public class AccountService {
         }
     }
 
+    @CacheEvict(key = "'account:' + #accountId")
     @Transactional
     public void updatePassword(String accountId, String rawNewPassword) {
         if (StringUtils.isEmpty(accountId) || StringUtils.isEmpty(rawNewPassword)) {

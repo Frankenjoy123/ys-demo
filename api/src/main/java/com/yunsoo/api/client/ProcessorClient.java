@@ -1,7 +1,6 @@
 package com.yunsoo.api.client;
 
 import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.client.RestResponseErrorHandler;
 
 /**
  * Created by:   Lijian
@@ -10,8 +9,8 @@ import com.yunsoo.common.web.client.RestResponseErrorHandler;
  */
 public class ProcessorClient extends RestClient {
 
-    public ProcessorClient(String baseURL) {
-        super(baseURL, new RestResponseErrorHandler());
+    public ProcessorClient(String baseUrl) {
+        super(baseUrl);
     }
 
 

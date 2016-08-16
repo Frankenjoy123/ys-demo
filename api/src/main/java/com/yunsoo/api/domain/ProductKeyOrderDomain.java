@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class ProductKeyOrderDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
     private ProductKeyTransactionDomain productKeyTransactionDomain;
@@ -37,7 +37,7 @@ public class ProductKeyOrderDomain {
     public ProductKeyOrder getById(String orderId) {
         ProductKeyOrderObject orderObject;
         try {
-            orderObject = dataAPIClient.get("productKeyOrder/{id}", ProductKeyOrderObject.class, orderId);
+            orderObject = dataApiClient.get("productKeyOrder/{id}", ProductKeyOrderObject.class, orderId);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -76,7 +76,7 @@ public class ProductKeyOrderDomain {
                 .append(pageable)
                 .build();
 
-        Page<ProductKeyOrderObject> orderObjects = dataAPIClient.getPaged("productKeyOrder" + query, new ParameterizedTypeReference<List<ProductKeyOrderObject>>() {
+        Page<ProductKeyOrderObject> orderObjects = dataApiClient.getPaged("productKeyOrder" + query, new ParameterizedTypeReference<List<ProductKeyOrderObject>>() {
         });
 
         return orderObjects.map(this::toProductKeyOrder);
@@ -84,7 +84,7 @@ public class ProductKeyOrderDomain {
 
     public ProductKeyOrder create(ProductKeyOrder order) {
         ProductKeyOrderObject object = toProductKeyOrderObject(order);
-        ProductKeyOrderObject newObject = dataAPIClient.post("productKeyOrder", object, ProductKeyOrderObject.class);
+        ProductKeyOrderObject newObject = dataApiClient.post("productKeyOrder", object, ProductKeyOrderObject.class);
         return toProductKeyOrder(newObject);
     }
 
@@ -120,7 +120,7 @@ public class ProductKeyOrderDomain {
 
     public void patchUpdate(ProductKeyOrder order){
         ProductKeyOrderObject object = toProductKeyOrderObject(order);
-        dataAPIClient.patch("productKeyOrder/{id}", object, object.getId());
+        dataApiClient.patch("productKeyOrder/{id}", object, object.getId());
 
     }
 
@@ -128,7 +128,7 @@ public class ProductKeyOrderDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("org_ids", orgIds)
                 .append("is_total", isTotal)
                 .build();
-        return dataAPIClient.get("productKeyOrder/count" + query , Long.class);
+        return dataApiClient.get("productKeyOrder/count" + query, Long.class);
     }
 
     public List<ProductKeyOrder> statistics(List<String> orgIds, Pageable pageable){
@@ -136,7 +136,7 @@ public class ProductKeyOrderDomain {
                 .append("org_ids", orgIds)
                 .append(pageable)
                 .build();
-        List<ProductKeyOrderObject> objectList = dataAPIClient.get("productKeyOrder/statistics" + query, new ParameterizedTypeReference<List<ProductKeyOrderObject>>() {
+        List<ProductKeyOrderObject> objectList = dataApiClient.get("productKeyOrder/statistics" + query, new ParameterizedTypeReference<List<ProductKeyOrderObject>>() {
         });
 
         return objectList.stream().map(this::toProductKeyOrder).collect(Collectors.toList());

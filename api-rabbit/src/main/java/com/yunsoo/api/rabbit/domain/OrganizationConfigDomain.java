@@ -1,24 +1,17 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.BrandObject;
 import com.yunsoo.common.data.object.OrganizationConfigObject;
-import com.yunsoo.common.data.object.OrganizationObject;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,10 +26,6 @@ public class OrganizationConfigDomain {
 
     @Autowired
     private FileDomain fileDomain;
-
-    @Autowired
-    private OrganizationDomain organizationDomain;
-
 
     private static ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -53,7 +42,7 @@ public class OrganizationConfigDomain {
     public Map<String, Object> getConfig(String orgId, boolean publicOnly) {
         Map<String, Object> configItems = new HashMap<>();
         OrganizationConfigObject configObject = getConfigObject(orgId);
-        Map<String, OrganizationConfigObject.Item> items = configObject.getItems();
+        Map<String, OrganizationConfigObject.Item> items = configObject != null ? configObject.getItems() : null;
         if (items == null || items.size() == 0) return configItems;
         items.keySet().forEach(k -> {
             OrganizationConfigObject.Item item = items.get(k);

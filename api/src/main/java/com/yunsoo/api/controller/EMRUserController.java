@@ -6,6 +6,7 @@ import com.yunsoo.api.domain.EMRUserProductEventStasticsDomain;
 import com.yunsoo.api.domain.UserBlockDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,9 @@ public class EMRUserController {
         stastics.setRewardCount(object.getRewardCount());
         stastics.setScanCount(object.getScanCount());
         stastics.setWinCount(object.getWinCount());
+        stastics.setCommentCount(object.getCommentCount());
+        stastics.setShareCount(object.getShareCount());
+        stastics.setStoreCount(object.getStoreCount());
 
         return stastics;
     }
@@ -113,11 +117,7 @@ public class EMRUserController {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<EMRUserObject> entityPage = emrUserDomain.getEMRUserList(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStart, createdDateTimeEnd, userTags, wxUser, pageable);
 
-        if (pageable != null) {
-            response.setHeader("Content-Range", entityPage.toContentRange());
-        }
-
-        List<EMRUser> emrUsers = entityPage.map(emr -> {
+        return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
 
             List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
@@ -128,9 +128,7 @@ public class EMRUserController {
             }
 
             return user;
-        }).getContent();
-
-        return emrUsers;
+        }), pageable != null);
     }
 
     @RequestMapping(value = "scan", method = RequestMethod.GET)
@@ -148,11 +146,7 @@ public class EMRUserController {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<EMRUserObject> entityPage = emrUserDomain.getEMRScanUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
 
-        if (pageable != null) {
-            response.setHeader("Content-Range", entityPage.toContentRange());
-        }
-
-        List<EMRUser> emrUsers = entityPage.map(emr -> {
+        return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
 
             List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
@@ -163,9 +157,7 @@ public class EMRUserController {
             }
 
             return user;
-        }).getContent();
-
-        return emrUsers;
+        }), pageable != null);
     }
 
     @RequestMapping(value = "draw", method = RequestMethod.GET)
@@ -182,12 +174,7 @@ public class EMRUserController {
 
         orgId = AuthUtils.fixOrgId(orgId);
         Page<EMRUserObject> entityPage = emrUserDomain.getEMRDrawUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
-
-        if (pageable != null) {
-            response.setHeader("Content-Range", entityPage.toContentRange());
-        }
-
-        List<EMRUser> emrUsers = entityPage.map(emr -> {
+        return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
 
             List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
@@ -198,9 +185,7 @@ public class EMRUserController {
             }
 
             return user;
-        }).getContent();
-
-        return emrUsers;
+        }), pageable != null);
     }
 
     @RequestMapping(value = "wx", method = RequestMethod.GET)
@@ -218,11 +203,7 @@ public class EMRUserController {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<EMRUserObject> entityPage = emrUserDomain.getEMRWXUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
 
-        if (pageable != null) {
-            response.setHeader("Content-Range", entityPage.toContentRange());
-        }
-
-        List<EMRUser> emrUsers = entityPage.map(emr -> {
+        return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
 
             List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
@@ -233,9 +214,7 @@ public class EMRUserController {
             }
 
             return user;
-        }).getContent();
-
-        return emrUsers;
+        }), pageable != null);
     }
 
     @RequestMapping(value = "win", method = RequestMethod.GET)
@@ -253,11 +232,7 @@ public class EMRUserController {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<EMRUserObject> entityPage = emrUserDomain.getEMRWinUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
 
-        if (pageable != null) {
-            response.setHeader("Content-Range", entityPage.toContentRange());
-        }
-
-        List<EMRUser> emrUsers = entityPage.map(emr -> {
+        return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
 
             List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
@@ -268,9 +243,7 @@ public class EMRUserController {
             }
 
             return user;
-        }).getContent();
-
-        return emrUsers;
+        }), pageable != null);
     }
 
     @RequestMapping(value = "reward", method = RequestMethod.GET)
@@ -288,11 +261,7 @@ public class EMRUserController {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<EMRUserObject> entityPage = emrUserDomain.getEMRRewardUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
 
-        if (pageable != null) {
-            response.setHeader("Content-Range", entityPage.toContentRange());
-        }
-
-        List<EMRUser> emrUsers = entityPage.map(emr -> {
+        return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
 
             List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
@@ -303,9 +272,94 @@ public class EMRUserController {
             }
 
             return user;
-        }).getContent();
+        }), pageable != null);
+    }
 
-        return emrUsers;
+    @RequestMapping(value = "share", method = RequestMethod.GET)
+    public List<EMRUser> queryShareUser(@RequestParam(value = "org_id", required = false) String orgId,
+                                        @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                        @RequestParam(value = "province", required = false) String province,
+                                        @RequestParam(value = "city", required = false) String city,
+                                        @RequestParam(value = "create_datetime_start", required = false)
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                        @RequestParam(value = "create_datetime_end", required = false)
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                        Pageable pageable,
+                                        HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMRUserObject> entityPage = emrUserDomain.getEMRShareUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        return PageUtils.response(response, entityPage.map(emr -> {
+            EMRUser user = new EMRUser(emr);
+
+            List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
+            if (userBlockObjects == null || userBlockObjects.size() == 0) {
+                user.setUserBlockId("");
+            } else {
+                user.setUserBlockId(userBlockObjects.get(0).getId());
+            }
+
+            return user;
+        }), pageable != null);
+    }
+
+    @RequestMapping(value = "store_url", method = RequestMethod.GET)
+    public List<EMRUser> queryStoreUrlUser(@RequestParam(value = "org_id", required = false) String orgId,
+                                           @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                           @RequestParam(value = "province", required = false) String province,
+                                           @RequestParam(value = "city", required = false) String city,
+                                           @RequestParam(value = "create_datetime_start", required = false)
+                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                           @RequestParam(value = "create_datetime_end", required = false)
+                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                           Pageable pageable,
+                                           HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMRUserObject> entityPage = emrUserDomain.getEMRStoreUrlUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        return PageUtils.response(response, entityPage.map(emr -> {
+            EMRUser user = new EMRUser(emr);
+
+            List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
+            if (userBlockObjects == null || userBlockObjects.size() == 0) {
+                user.setUserBlockId("");
+            } else {
+                user.setUserBlockId(userBlockObjects.get(0).getId());
+            }
+
+            return user;
+        }), pageable != null);
+    }
+
+    @RequestMapping(value = "comment", method = RequestMethod.GET)
+    public List<EMRUser> queryCommentUser(@RequestParam(value = "org_id", required = false) String orgId,
+                                          @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                          @RequestParam(value = "province", required = false) String province,
+                                          @RequestParam(value = "city", required = false) String city,
+                                          @RequestParam(value = "create_datetime_start", required = false)
+                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                          @RequestParam(value = "create_datetime_end", required = false)
+                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                          Pageable pageable,
+                                          HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMRUserObject> entityPage = emrUserDomain.getEMRCommentUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        return PageUtils.response(response, entityPage.map(emr -> {
+            EMRUser user = new EMRUser(emr);
+
+            List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(user.getUserId(), user.getYsId(), user.getOrgId());
+            if (userBlockObjects == null || userBlockObjects.size() == 0) {
+                user.setUserBlockId("");
+            } else {
+                user.setUserBlockId(userBlockObjects.get(0).getId());
+            }
+
+            return user;
+        }), pageable != null);
     }
 
     @RequestMapping(value = "funnel", method = RequestMethod.GET)
@@ -323,4 +377,21 @@ public class EMRUserController {
 
         return new EMRUserReport(userReportObject);
     }
+
+    @RequestMapping(value = "action", method = RequestMethod.GET)
+    public EMRActionReport queryUserActionReport(@RequestParam(value = "org_id", required = false) String orgId,
+                                                 @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                 @RequestParam(value = "province", required = false) String province,
+                                                 @RequestParam(value = "city", required = false) String city,
+                                                 @RequestParam(value = "create_datetime_start", required = false)
+                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                 @RequestParam(value = "create_datetime_end", required = false)
+                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        EMRActionReportObject userActionReportObject = emrUserDomain.getEMRActionReport(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+
+        return new EMRActionReport(userActionReportObject);
+    }
+
 }

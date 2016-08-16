@@ -6,6 +6,7 @@ import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductCategory;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductBaseVersionsObject;
@@ -91,21 +92,15 @@ public class ProductBaseController {
                                          HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable, proName, createAccount, createdDateTimeStart, createdDateTimeEnd);
-        if (pageable != null) {
-            response.setHeader("Content-Range", productBasePage.toContentRange());
-        }
+
         Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
         List<Lookup> lookupList = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
-        List<ProductBase> productBases = productBasePage.map(p -> {
+        return PageUtils.response(response, productBasePage.map(p -> {
             ProductBase pb = new ProductBase(p);
             pb.setCategory(new ProductCategory(productCategoryDomain.getById(p.getCategoryId(), productCategoryObjectMap)));
             pb.setProductKeyTypes(Lookup.fromCodeList(lookupList, p.getProductKeyTypeCodes()));
             return pb;
-        }).getContent();
-
-        //productBases.forEach(productBase -> productBase.setFollowingUsersTotalNumber(followingDomain.getFollowingUsersCountByProductBaseId(productBase.getId())));
-
-        return productBases;
+        }), pageable != null);
     }
 
     @RequestMapping(value = "/count", method = RequestMethod.GET)
@@ -127,6 +122,8 @@ public class ProductBaseController {
         ProductBaseObject productBaseObject = new ProductBaseObject();
         ProductBaseVersionsObject productBaseVersionsObject = new ProductBaseVersionsObject();
         productBaseObject.setName(productBase.getName());
+        productBaseObject.setWebTemplateName(productBase.getWebTemplateName());
+        productBaseObject.setWebTemplateVersion(productBase.getWebTemplateVersion());
         productBaseObject.setVersion(1);
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
 
@@ -178,6 +175,8 @@ public class ProductBaseController {
         productBaseObject.setId(productBaseId);
         productBaseObject.setVersion(version);
         productBaseObject.setName(productBase.getName());
+        productBaseObject.setWebTemplateVersion(productBase.getWebTemplateVersion());
+        productBaseObject.setWebTemplateName(productBase.getWebTemplateName());
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
         productBaseObject.setOrgId(StringUtils.hasText(productBase.getOrgId())
                 ? productBase.getOrgId()

@@ -60,6 +60,9 @@ public class MktDrawPrize {
     @JsonProperty("prize_account_name")
     private String prizeAccountName;
 
+    @JsonProperty("prize_contact_id")
+    private String prizeContactId;
+
     @JsonProperty("comments")
     private String comments;
 
@@ -72,8 +75,17 @@ public class MktDrawPrize {
     @JsonProperty("mkt_draw_rule")
     private MktDrawRule mktDrawRule;
 
+    @JsonProperty("prize_contact")
+    private MktPrizeContact prizeContact;
+
     @JsonProperty("gravatar_url")
     private String gravatarUrl;
+
+    @JsonProperty("wx_name")
+    private String wxName;
+
+    @JsonProperty("oauth_openid")
+    private String oauthOpenid;
 
     public String getDrawRecordId() {
         return drawRecordId;
@@ -187,6 +199,14 @@ public class MktDrawPrize {
         this.prizeAccountName = prizeAccountName;
     }
 
+    public String getPrizeContactId() {
+        return prizeContactId;
+    }
+
+    public void setPrizeContactId(String prizeContactId) {
+        this.prizeContactId = prizeContactId;
+    }
+
     public String getComments() {
         return comments;
     }
@@ -219,12 +239,36 @@ public class MktDrawPrize {
         this.mktDrawRule = mktDrawRule;
     }
 
+    public MktPrizeContact getPrizeContact() {
+        return prizeContact;
+    }
+
+    public void setPrizeContact(MktPrizeContact prizeContact) {
+        this.prizeContact = prizeContact;
+    }
+
     public String getGravatarUrl() {
         return gravatarUrl;
     }
 
     public void setGravatarUrl(String gravatarUrl) {
         this.gravatarUrl = gravatarUrl;
+    }
+
+    public String getWxName() {
+        return wxName;
+    }
+
+    public void setWxName(String wxName) {
+        this.wxName = wxName;
+    }
+
+    public String getOauthOpenid() {
+        return oauthOpenid;
+    }
+
+    public void setOauthOpenid(String oauthOpenid) {
+        this.oauthOpenid = oauthOpenid;
     }
 
     public MktDrawPrize() {
@@ -246,6 +290,7 @@ public class MktDrawPrize {
             this.setAccountType(object.getAccountType());
             this.setPrizeAccount(object.getPrizeAccount());
             this.setPrizeAccountName(object.getPrizeAccountName());
+            this.setPrizeContactId(object.getPrizeContactId());
             this.setComments(object.getComments());
         }
     }
@@ -266,6 +311,7 @@ public class MktDrawPrize {
         object.setAccountType(this.getAccountType());
         object.setPrizeAccount(this.getPrizeAccount());
         object.setPrizeAccountName(this.getPrizeAccountName());
+        object.setPrizeContactId(this.getPrizeContactId());
         object.setComments(this.getComments());
         return object;
     }

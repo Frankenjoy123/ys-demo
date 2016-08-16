@@ -18,19 +18,13 @@ yunsoo:
   debug: true
   environment: dev
   client:
-    dataapi:
-      baseurl: http://localhost:3080/
+    auth_api:
+      base_url: http://localhost:6180/
+    data_api:
+      base_url: http://localhost:3080/
     processor:
-      baseurl: http://localhost:4080/
+      base_url: http://localhost:4080/
   product_key_base_url: http://dev.yunsu.co:7080/
-  permanent_token:
-    expires_minutes: 4320 #three days
-  access_token:
-    expires_minutes: 60
-    hash_salt: lvtHDkfIUxJ2bLWHc0MNztUqCJSVPSJO
-  login_token:
-    expires_minutes: 5
-    hash_salt: nC9UYPUupMaViIG3UBODY7B19IYW6Z0X
   alipay:
     pid: 2088121812016826
     key: e0opacdva54q9todmujp0vc5pwqlcj10
@@ -55,6 +49,11 @@ logging:
 
 yunsoo:
   environment: local
+  client:
+    auth_api:
+      base_url: http://dev.yunsu.co:6180/
+    processor:
+      base_url: http://dev.yunsu.co:4080/
   cache:
     type: local
   alipay:

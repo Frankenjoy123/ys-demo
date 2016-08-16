@@ -60,11 +60,17 @@ public class MktDrawPrize {
     @JsonProperty("prize_account_name")
     private String prizeAccountName;
 
+    @JsonProperty("prize_contact_id")
+    private String prizeContactId;
+
     @JsonProperty("comments")
     private String comments;
 
     @JsonProperty("mkt_consumer_right")
     private MktConsumerRight mktConsumerRight;
+
+    @JsonProperty("ys_id")
+    private String ysid;
 
     public MktConsumerRight getMktConsumerRight() {
         return mktConsumerRight;
@@ -186,12 +192,28 @@ public class MktDrawPrize {
         this.prizeAccountName = prizeAccountName;
     }
 
+    public String getPrizeContactId() {
+        return prizeContactId;
+    }
+
+    public void setPrizeContactId(String prizeContactId) {
+        this.prizeContactId = prizeContactId;
+    }
+
     public String getComments() {
         return comments;
     }
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public String getYsid() {
+        return ysid;
+    }
+
+    public void setYsid(String ysid) {
+        this.ysid = ysid;
     }
 
     public MktDrawPrize(){}
@@ -212,6 +234,7 @@ public class MktDrawPrize {
             this.setAccountType(object.getAccountType());
             this.setPrizeAccount(object.getPrizeAccount());
             this.setPrizeAccountName(object.getPrizeAccountName());
+            this.setPrizeContactId(object.getPrizeContactId());
             this.setComments(object.getComments());
         }
     }
@@ -232,6 +255,7 @@ public class MktDrawPrize {
         object.setAccountType(this.getAccountType());
         object.setPrizeAccount(this.getPrizeAccount());
         object.setPrizeAccountName(this.getPrizeAccountName());
+        object.setPrizeContactId(this.getPrizeContactId());
         object.setComments(this.getComments());
         return object;
     }

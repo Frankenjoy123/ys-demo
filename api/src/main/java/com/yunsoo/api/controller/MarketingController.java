@@ -1,10 +1,12 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.aspect.*;
+import com.yunsoo.api.auth.dto.Organization;
+import com.yunsoo.api.auth.service.AuthOrganizationService;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.payment.ParameterNames;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
@@ -51,7 +53,10 @@ public class MarketingController {
     private UserScanDomain userScanDomain;
 
     @Autowired
-    private OrganizationDomain organizationDomain;
+    private OrganizationBrandDomain organizationBrandDomain;
+
+    @Autowired
+    private AuthOrganizationService authOrganizationService;
 
     @Autowired
     private UserDomain userDomain;
@@ -163,7 +168,6 @@ public class MarketingController {
     }
 
 
-
     //query marketing plan by org id
     @RequestMapping(value = "analysis", method = RequestMethod.GET)
     public List<MarketingResult> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
@@ -175,13 +179,10 @@ public class MarketingController {
 
 
         Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, null, LookupCodes.MktStatus.AVALAIBLESTATUS, null, null, null, null, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", marketingPage.toContentRange());
-        }
 
         List<MarketingResult> marketingResultList = new ArrayList<>();
 
-        marketingPage.getContent().forEach(object -> {
+        PageUtils.response(response, marketingPage, pageable != null).forEach(object -> {
             MarketingResult marketingResult = new MarketingResult();
 
             String marketingId = object.getId();
@@ -313,16 +314,14 @@ public class MarketingController {
 
         List<String> orgIds = null;
 
-        if(carrierId != null) {
-            if(orgId != null) {
+        if (carrierId != null) {
+            if (orgId != null) {
                 orgIds = new ArrayList<>();
                 orgIds.add(orgId);
                 orgId = null;
-            }
-            else
-                orgIds = organizationDomain.getBrandIdsForCarrier(carrierId);
-        }
-        else
+            } else
+                orgIds = organizationBrandDomain.getBrandIdsByCarrierId(carrierId);
+        } else
             orgId = AuthUtils.fixOrgId(orgId);
 
         List<Marketing> marketingList = new ArrayList<>();
@@ -331,30 +330,26 @@ public class MarketingController {
         }
 
         Page<MarketingObject> marketingPage = marketingDomain.getMarketingList(orgId, orgIds, status, searchText, startTime, endTime, productBaseId, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", marketingPage.toContentRange());
-        }
-
 
         Map<String, String> orgList = new HashMap<>();
-        marketingPage.getContent().forEach(object -> {
+        PageUtils.response(response, marketingPage, pageable != null).forEach(object -> {
             Marketing marketing = new Marketing(object);
             ProductBaseObject pbo = productBaseDomain.getProductBaseById(object.getProductBaseId());
             if (pbo != null) {
                 marketing.setProductBaseName(pbo.getName());
             }
-            if(carrierId != null){
-                if(orgList.containsKey(marketing.getOrgId()))
+            if (carrierId != null) {
+                if (orgList.containsKey(marketing.getOrgId()))
                     marketing.setOrgName(orgList.get(marketing.getOrgId()));
                 else {
-                    OrganizationObject org = organizationDomain.getOrganizationById(marketing.getOrgId());
+                    Organization org = authOrganizationService.getById(marketing.getOrgId());
                     if (org != null) {
                         orgList.put(org.getId(), org.getName());
                         marketing.setOrgName(org.getName());
                     }
                 }
             }
-            if(needRules == null || needRules){
+            if (needRules == null || needRules) {
                 List<MktDrawRuleObject> mktDrawRuleObjectList = marketingDomain.getRuleList(object.getId());
                 if (mktDrawRuleObjectList != null) {
                     List<MktDrawRule> mktDrawRuleList = mktDrawRuleObjectList.stream().map(MktDrawRule::new).collect(Collectors.toList());
@@ -430,11 +425,8 @@ public class MarketingController {
                                                               HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<MktConsumerRightObject> mktConsumerRightPage = marketingDomain.getMktConsumerRightByOrgId(orgId, typeCode, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", mktConsumerRightPage.toContentRange());
-        }
 
-        return mktConsumerRightPage.map(MktConsumerRight::new).getContent();
+        return PageUtils.response(response, mktConsumerRightPage.map(MktConsumerRight::new), pageable != null);
     }
 
     //create marketing consumer right
@@ -582,6 +574,7 @@ public class MarketingController {
     @RequestMapping(value = "drawPrize/marketing", method = RequestMethod.GET)
     public List<MktDrawPrize> getMktDrawPrizeByFilter(@RequestParam(value = "marketing_id") String marketingId,
                                                       @RequestParam(value = "account_type", required = false) String accountType,
+                                                      @RequestParam(value = "prize_type_code", required = false) String prizeTypeCode,
                                                       @RequestParam(value = "status_code", required = false) String statusCode,
                                                       @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
                                                       @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
@@ -589,13 +582,10 @@ public class MarketingController {
                                                       Pageable pageable,
                                                       HttpServletResponse response) {
 
-        Page<MktDrawPrizeObject> mktDrawPrizePage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, statusCode, startTime, endTime, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", mktDrawPrizePage.toContentRange());
-        }
+        Page<MktDrawPrizeObject> mktDrawPrizePage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, prizeTypeCode, statusCode, startTime, endTime, pageable);
 
         List<MktDrawPrize> mktDrawPrizeList = new ArrayList<>();
-        mktDrawPrizePage.getContent().forEach(object -> {
+        PageUtils.response(response, mktDrawPrizePage, pageable != null).forEach(object -> {
             MktDrawPrize mktDrawPrize = new MktDrawPrize(object);
             String productBaseId = marketingDomain.getProductBaseIdByScanRecordId(object.getScanRecordId());
             if (productBaseId != null) {
@@ -613,7 +603,15 @@ public class MarketingController {
                     UserObject userObject = userDomain.getUserById(userId);
                     if ((userObject != null) && (userObject.getGravatarUrl() != null)) {
                         mktDrawPrize.setGravatarUrl(userObject.getGravatarUrl());
+                        mktDrawPrize.setWxName(userObject.getName());
+                        mktDrawPrize.setOauthOpenid(userObject.getOauthOpenid());
                     }
+                }
+            }
+            if ((object.getPrizeContactId() != null) && (!object.getPrizeContactId().equals(""))) {
+                MktPrizeContactObject mktPrizeContactObject = marketingDomain.getMktPrizeContactById(object.getPrizeContactId());
+                if (mktPrizeContactObject != null) {
+                    mktDrawPrize.setPrizeContact(new MktPrizeContact(mktPrizeContactObject));
                 }
             }
             MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktDrawRuleById(object.getDrawRuleId());
@@ -679,7 +677,7 @@ public class MarketingController {
         if ((ruleList != null) && (ruleList.size() > 0)) {
             for (MktDrawRule rule : ruleList) {
                 MarketingObject object = marketingDomain.getMarketingById(rule.getMarketingId());
-                if (object != null) {
+                if ((object != null) && (!object.getStatusCode().equals(LookupCodes.MktStatus.DELETED))) {
                     marketingList.add(object.getName());
                 }
             }
@@ -698,6 +696,26 @@ public class MarketingController {
         MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktDrawRuleById(id);
         return new MktDrawRule(mktDrawRuleObject);
     }
+
+    @RequestMapping(value = "drawPrize/record/{id}", method = RequestMethod.GET)
+    public MktDrawPrize getMktDrawPrizeById(@PathVariable(value = "id") String id) {
+
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeById(id);
+        if (mktDrawPrizeObject != null) {
+            MktDrawPrize mktDrawPrize = new MktDrawPrize(mktDrawPrizeObject);
+
+            if ((mktDrawPrizeObject.getPrizeContactId() != null) && (!mktDrawPrizeObject.getPrizeContactId().equals(""))) {
+                MktPrizeContactObject mktPrizeContactObject = marketingDomain.getMktPrizeContactById(mktDrawPrizeObject.getPrizeContactId());
+                if (mktPrizeContactObject != null) {
+                    mktDrawPrize.setPrizeContact(new MktPrizeContact(mktPrizeContactObject));
+                }
+            }
+            return mktDrawPrize;
+        } else {
+            return null;
+        }
+    }
+
 
 
     @RequestMapping(value = "/drawRule/{id}", method = RequestMethod.PUT)
@@ -736,7 +754,6 @@ public class MarketingController {
             throw new BadRequestException("marketing draw record can not be null");
         }
         MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
-        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
 
     }
@@ -770,7 +787,7 @@ public class MarketingController {
 
     @RequestMapping(value = "statistics")
     public List<Marketing> marketingStatistics(@RequestParam("org_ids") List<String> orgIds, Pageable pageable) {
-        if(orgIds.size() == 0)
+        if (orgIds.size() == 0)
             return new ArrayList<Marketing>();
         List<MarketingObject> statisticsObjectList = marketingDomain.statisticsMarketing(orgIds, Arrays.asList(LookupCodes.MktStatus.PAID, LookupCodes.MktStatus.AVAILABLE), pageable);
         return statisticsObjectList.stream().map(Marketing::new).collect(Collectors.toList());
@@ -780,23 +797,17 @@ public class MarketingController {
     @RequestMapping(value = "alipay_batchtransfer", method = RequestMethod.GET)
     public Map<String, String> batchTransfer(@RequestParam(value = "marketing_id") String marketingId,
                                              @RequestParam(value = "account_type") String accountType,
+                                             @RequestParam(value = "prize_type_code") String prizeTypeCode,
                                              @RequestParam(value = "status_code") String statusCode,
                                              @RequestParam(value = "start_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
                                              @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
                                              @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                              Pageable pageable,
                                              HttpServletResponse response) {
+        Page<MktDrawPrizeObject> mktDrawPrizeObjectPage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, prizeTypeCode, statusCode, startTime, endTime, pageable);
 
-        Page<MktDrawPrizeObject> mktDrawPrizeObjectPage = marketingDomain.getMktDrawPrizeByFilter(marketingId, accountType, statusCode, startTime, endTime, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", mktDrawPrizeObjectPage.toContentRange());
-        }
-        List<MktDrawPrize> mktDrawPrizeList = mktDrawPrizeObjectPage.map(MktDrawPrize::new).getContent();
-        Map<String, String> parametersMap = marketingDomain.getAlipayBatchTansferParameters(mktDrawPrizeList);
-        List<String> keys = new ArrayList<>(parametersMap.keySet());
-        keys.sort(null);
-        return parametersMap;
-
+        List<MktDrawPrize> mktDrawPrizeList = PageUtils.response(response, mktDrawPrizeObjectPage.map(MktDrawPrize::new), pageable != null);
+        return marketingDomain.getAlipayBatchTansferParameters(mktDrawPrizeList);
     }
 
     @RequestMapping(value = "alipay/notify", method = RequestMethod.POST)

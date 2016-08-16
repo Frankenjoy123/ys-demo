@@ -155,7 +155,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         if (batch.getMarketingId() != null) {
             entity.setMarketingId(batch.getMarketingId());
         }
-        if(batch.getDownloadNo() !=0 ){
+        if (batch.getDownloadNo() != 0) {
             entity.setDownloadNo(batch.getDownloadNo());
         }
 
@@ -269,6 +269,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         batch.setOrgId(entity.getOrgId());
         batch.setProductBaseId(entity.getProductBaseId());
         batch.setCreatedAppId(entity.getCreatedAppId());
+        batch.setCreatedDeviceId(entity.getCreatedDeviceId());
         batch.setCreatedAccountId(entity.getCreatedAccountId());
         batch.setCreatedDateTime(entity.getCreatedDateTime());
         String codes = entity.getProductKeyTypeCodes();
@@ -291,6 +292,7 @@ public class ProductKeyBatchServiceImpl implements ProductKeyBatchService {
         entity.setOrgId(batch.getOrgId());
         entity.setProductBaseId(batch.getProductBaseId());
         entity.setCreatedAppId(batch.getCreatedAppId());
+        entity.setCreatedDeviceId(batch.getCreatedDeviceId());
         entity.setCreatedAccountId(batch.getCreatedAccountId());
         entity.setCreatedDateTime(batch.getCreatedDateTime());
         List<String> codes = batch.getProductKeyTypeCodes();

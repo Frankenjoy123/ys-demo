@@ -9,17 +9,17 @@ import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
- * Created by yan on 3/22/2016.
+ * Created by:   yan
+ * Created on:   3/22/2016
+ * Descriptions:
  */
 public class Attachment {
+
     @JsonProperty("id")
     private String id;
 
     @JsonProperty("original_file_name")
     private String originalFileName;
-
-    @JsonProperty("s3_file_name")
-    private String s3FileName;
 
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
@@ -30,6 +30,7 @@ public class Attachment {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
+
 
     public String getId() {
         return id;
@@ -63,38 +64,29 @@ public class Attachment {
         this.originalFileName = originalFileName;
     }
 
-    public String getS3FileName() {
-        return s3FileName;
+
+    public Attachment() {
     }
 
-    public void setS3FileName(String s3FileName) {
-        this.s3FileName = s3FileName;
-    }
-
-    public Attachment(){}
-
-    public Attachment(AttachmentObject attachment){
-        if(attachment != null) {
-            setId(attachment.getId());
-            setOriginalFileName(attachment.getOriginalFileName());
-            setS3FileName(attachment.getS3FileName());
-            setCreatedDateTime(attachment.getCreatedDateTime());
-            setModifiedDateTime(attachment.getModifiedDateTime());
+    public Attachment(AttachmentObject obj) {
+        if (obj != null) {
+            setId(obj.getId());
+            setOriginalFileName(obj.getOriginalFileName());
+            setCreatedDateTime(obj.getCreatedDateTime());
+            setModifiedDateTime(obj.getModifiedDateTime());
         }
 
     }
 
-    public AttachmentObject toAttachmentObject(Attachment attachment){
-        if(attachment == null)
+    public AttachmentObject toAttachmentObject(Attachment attachment) {
+        if (attachment == null) {
             return null;
-
-        AttachmentObject attachmentObj = new AttachmentObject();
-        attachmentObj.setId(attachment.getId());
-        attachmentObj.setOriginalFileName(attachment.getOriginalFileName());
-        attachmentObj.setS3FileName(attachment.getS3FileName());
-        attachmentObj.setCreatedDateTime(attachment.getCreatedDateTime());
-        attachmentObj.setModifiedDateTime(attachment.getModifiedDateTime());
-        return attachmentObj;
-
+        }
+        AttachmentObject obj = new AttachmentObject();
+        obj.setId(attachment.getId());
+        obj.setOriginalFileName(attachment.getOriginalFileName());
+        obj.setCreatedDateTime(attachment.getCreatedDateTime());
+        obj.setModifiedDateTime(attachment.getModifiedDateTime());
+        return obj;
     }
 }

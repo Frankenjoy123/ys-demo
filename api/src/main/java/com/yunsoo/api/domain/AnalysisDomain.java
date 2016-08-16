@@ -20,14 +20,14 @@ import java.util.List;
 public class AnalysisDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
 
     public List<ScanRecordAnalysisObject> getScanAnalysisReport(String orgId, org.joda.time.LocalDate startTime,  org.joda.time.LocalDate  endTime, String productBaseId, String batchId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("product_base_id", productBaseId)
                 .append("batch_id", batchId).build();
-        return dataAPIClient.get("analysis/scan_data" + query, new ParameterizedTypeReference<List<ScanRecordAnalysisObject>>() {
+        return dataApiClient.get("analysis/scan_data" + query, new ParameterizedTypeReference<List<ScanRecordAnalysisObject>>() {
         });
     }
 
@@ -35,7 +35,7 @@ public class AnalysisDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("product_base_id", productBaseId)
                 .append("batch_id", batchId).build();
-        return dataAPIClient.get("analysis/scan_data_location" + query, new ParameterizedTypeReference<List<ScanRecordLocationAnalysisObject>>() {
+        return dataApiClient.get("analysis/scan_data_location" + query, new ParameterizedTypeReference<List<ScanRecordLocationAnalysisObject>>() {
         });
     }
 
@@ -43,7 +43,7 @@ public class AnalysisDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("product_base_id", productBaseId)
                 .build();
-        return dataAPIClient.get("analysis/batch_key_report" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
+        return dataApiClient.get("analysis/batch_key_report" + query, new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
         });
     }
 
@@ -52,7 +52,7 @@ public class AnalysisDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("marketing_id", marketing_id)
                 .build();
-        return dataAPIClient.get("analysis/market_user_area" + query, new ParameterizedTypeReference<List<MarketUserAreaAnalysisObject>>() {
+        return dataApiClient.get("analysis/market_user_area" + query, new ParameterizedTypeReference<List<MarketUserAreaAnalysisObject>>() {
         });
     }
 
@@ -60,7 +60,7 @@ public class AnalysisDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("marketing_id", marketing_id)
                 .build();
-        return dataAPIClient.get("analysis/market_user_device" + query, new ParameterizedTypeReference<List<MarketUserDeviceAnalysisObject>>() {
+        return dataApiClient.get("analysis/market_user_device" + query, new ParameterizedTypeReference<List<MarketUserDeviceAnalysisObject>>() {
         });
     }
 
@@ -68,7 +68,7 @@ public class AnalysisDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("marketing_id", marketing_id)
                 .build();
-        return dataAPIClient.get("analysis/market_user_gender" + query, new ParameterizedTypeReference<List<MarketUserGenderAnalysisObject>>() {
+        return dataApiClient.get("analysis/market_user_gender" + query, new ParameterizedTypeReference<List<MarketUserGenderAnalysisObject>>() {
         });
     }
 
@@ -76,7 +76,7 @@ public class AnalysisDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("marketing_id", marketing_id)
                 .build();
-        return dataAPIClient.get("analysis/market_user_usage" + query, new ParameterizedTypeReference<List<MarketUserUsageAnalysisObject>>() {
+        return dataApiClient.get("analysis/market_user_usage" + query, new ParameterizedTypeReference<List<MarketUserUsageAnalysisObject>>() {
         });
     }
 
@@ -84,14 +84,44 @@ public class AnalysisDomain {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime).append("marketing_id", marketing_id)
                 .build();
-        return dataAPIClient.get("analysis/market_user_location" + query, new ParameterizedTypeReference<List<MarketUserLocationAnalysisObject>>() {
+        return dataApiClient.get("analysis/market_user_location" + query, new ParameterizedTypeReference<List<MarketUserLocationAnalysisObject>>() {
         });
     }
 
     @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).TAGS.toString(), 'all')")
     public List<LuTagObject> getTags() {
-        return dataAPIClient.get("analysis/market_user_tags", new ParameterizedTypeReference<List<LuTagObject>>() { });
+        return dataApiClient.get("analysis/market_user_tags", new ParameterizedTypeReference<List<LuTagObject>>() {
+        });
     }
+
+    public EMREventReportObject getEMREventReport(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("province", province)
+                .append("city", city)
+                .append("create_datetime_start", createdDateTimeStart)
+                .append("create_datetime_end", createdDateTimeEnd)
+                .build();
+
+        return dataApiClient.get("analysis/user/event" + query, new ParameterizedTypeReference<EMREventReportObject>() {
+        });
+    }
+
+    public List<EMREventLocationReportObject> getEMRLocationReport(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("product_base_id", productBaseId)
+                .append("province", province)
+                .append("city", city)
+                .append("create_datetime_start", createdDateTimeStart)
+                .append("create_datetime_end", createdDateTimeEnd)
+                .build();
+
+        return dataApiClient.get("analysis/user/event/location" + query, new ParameterizedTypeReference<List<EMREventLocationReportObject>>() {
+        });
+    }
+
 
 
 

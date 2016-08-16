@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.EMREventDomain;
 import com.yunsoo.api.dto.EMREvent;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.EMREventObject;
 import com.yunsoo.common.web.client.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Admin on 6/13/2016.
@@ -44,12 +44,63 @@ public class EMREventController {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<EMREventObject> entityPage = emrEventDomain.getEMREventList(orgId, userId, ysId, eventDateTimeStart, eventDateTimeEnd, pageable);
 
-        if (pageable != null) {
-            response.setHeader("Content-Range", entityPage.toContentRange());
-        }
+        return PageUtils.response(response, entityPage.map(EMREvent::new), pageable != null);
+    }
 
-        return entityPage.getContent().stream()
-                .map(EMREvent::new)
-                .collect(Collectors.toList());
+    @RequestMapping(value = "share", method = RequestMethod.GET)
+    public List<EMREvent> queryShareEvent(@RequestParam(value = "org_id", required = false) String orgId,
+                                          @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                          @RequestParam(value = "province", required = false) String province,
+                                          @RequestParam(value = "city", required = false) String city,
+                                          @RequestParam(value = "create_datetime_start", required = false)
+                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                          @RequestParam(value = "create_datetime_end", required = false)
+                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                          @SortDefault(value = "eventDateTime", direction = Sort.Direction.DESC)
+                                          Pageable pageable,
+                                          HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMREventObject> entityPage = emrEventDomain.getEMREventFilterByShare(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        return PageUtils.response(response, entityPage.map(EMREvent::new), pageable != null);
+    }
+
+    @RequestMapping(value = "store_url", method = RequestMethod.GET)
+    public List<EMREvent> queryStoreUrlEvent(@RequestParam(value = "org_id", required = false) String orgId,
+                                             @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                             @RequestParam(value = "province", required = false) String province,
+                                             @RequestParam(value = "city", required = false) String city,
+                                             @RequestParam(value = "create_datetime_start", required = false)
+                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                             @RequestParam(value = "create_datetime_end", required = false)
+                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                             @SortDefault(value = "eventDateTime", direction = Sort.Direction.DESC)
+                                             Pageable pageable,
+                                             HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMREventObject> entityPage = emrEventDomain.getEMREventFilterByStoreUrl(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        return PageUtils.response(response, entityPage.map(EMREvent::new), pageable != null);
+    }
+
+    @RequestMapping(value = "comment", method = RequestMethod.GET)
+    public List<EMREvent> queryCommentEvent(@RequestParam(value = "org_id", required = false) String orgId,
+                                            @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                            @RequestParam(value = "province", required = false) String province,
+                                            @RequestParam(value = "city", required = false) String city,
+                                            @RequestParam(value = "create_datetime_start", required = false)
+                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                            @RequestParam(value = "create_datetime_end", required = false)
+                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                            @SortDefault(value = "eventDateTime", direction = Sort.Direction.DESC)
+                                            Pageable pageable,
+                                            HttpServletResponse response) {
+
+        orgId = AuthUtils.fixOrgId(orgId);
+        Page<EMREventObject> entityPage = emrEventDomain.getEMREventFilterByComment(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+
+        return PageUtils.response(response, entityPage.map(EMREvent::new), pageable != null);
     }
 }

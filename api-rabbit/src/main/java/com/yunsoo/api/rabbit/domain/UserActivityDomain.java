@@ -1,6 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.client.DataAPIClient;
+import com.yunsoo.api.rabbit.client.DataApiClient;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserActivityObject;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -21,7 +21,7 @@ public class UserActivityDomain {
     private static final int[] SIGN_IN_POINTS_REWARDS = new int[]{10, 15, 20, 25, 30};
 
     @Autowired
-    private DataAPIClient dataAPIClient;
+    private DataApiClient dataApiClient;
 
     @Autowired
     private UserPointDomain userPointDomain;
@@ -45,7 +45,7 @@ public class UserActivityDomain {
             userActivityObject.setUserId(userId);
             userActivityObject.setLastSignInContinuousDays(days);
             userActivityObject.setLastSignInDateTime(DateTime.now());
-            dataAPIClient.put("useractivity/{userId}", userActivityObject, userId);
+            dataApiClient.put("useractivity/{userId}", userActivityObject, userId);
         } else {
             if (userActivityObject.getLastSignInDateTime() == null
                     || userActivityObject.getLastSignInContinuousDays() == null
@@ -65,7 +65,7 @@ public class UserActivityDomain {
             }
             userActivityObject.setLastSignInContinuousDays(days);
             userActivityObject.setLastSignInDateTime(DateTime.now());
-            dataAPIClient.patch("useractivity/{userId}", userActivityObject, userId);
+            dataApiClient.patch("useractivity/{userId}", userActivityObject, userId);
         }
 
         if (points > 0) {
@@ -80,7 +80,7 @@ public class UserActivityDomain {
 
     private UserActivityObject getUserActivityByUserId(String userId) {
         try {
-            return dataAPIClient.get("useractivity/{userId}", UserActivityObject.class, userId);
+            return dataApiClient.get("useractivity/{userId}", UserActivityObject.class, userId);
 
         } catch (NotFoundException ignored) {
             return null;

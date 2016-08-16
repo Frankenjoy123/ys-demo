@@ -13,7 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -60,8 +60,8 @@ public class TaskFileEntryManageTaskExecutor implements TaskExecutor {
 
     private List<TaskFileEntryObject> getTaskFileEntries() {
         String typeCode = LookupCodes.TaskFileType.PACKAGE;
-        List<String> statusCodes = Arrays.asList(LookupCodes.TaskFileStatus.UPLOADED);
-        Page<TaskFileEntryObject> page = taskFileDomain.getTaskFileEntryByFilter(null, null, null, typeCode, statusCodes, null, null, null, null);
+        List<String> statusCodes = Collections.singletonList(LookupCodes.TaskFileStatus.UPLOADED);
+        Page<TaskFileEntryObject> page = taskFileDomain.getTaskFileEntryByFilter(typeCode, statusCodes);
         return page.getContent();
     }
 }

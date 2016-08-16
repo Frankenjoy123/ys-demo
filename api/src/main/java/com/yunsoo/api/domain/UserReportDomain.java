@@ -23,30 +23,30 @@ import java.util.List;
 @ObjectCacheConfig
 public class UserReportDomain {
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public Page<UserReportObject> getUserReportsByProductBaseId(List<String> productBaseIds, Pageable pageable) {
         QueryStringBuilder builder = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("product_base_id_in", productBaseIds).append(pageable);
 
-        Page<UserReportObject> objectPage = dataAPIClient.getPaged("userReport" + builder.toString(), new ParameterizedTypeReference<List<UserReportObject>>() {
+        Page<UserReportObject> objectPage = dataApiClient.getPaged("userReport" + builder.toString(), new ParameterizedTypeReference<List<UserReportObject>>() {
         });
 
         return objectPage;
     }
 
     public UserReportObject getReportById(String id) {
-        return dataAPIClient.get("userReport/{id}", UserReportObject.class, id);
+        return dataApiClient.get("userReport/{id}", UserReportObject.class, id);
     }
 
     public List<String> getReportImageNames(String userId, String reportId) {
-        return dataAPIClient.get("file/s3/list?path=user/{uerId}/report/{reportId}", new ParameterizedTypeReference<List<String>>() {
+        return dataApiClient.get("file/s3/list?path=user/{uerId}/report/{reportId}", new ParameterizedTypeReference<List<String>>() {
         }, userId, reportId);
     }
 
     public ResourceInputStream getReportImage(String userId, String reportId, String imageName) {
         try {
-            return dataAPIClient.getResourceInputStream("file/s3?path=user/{userId}/report/{reportId}/{imageName}", userId, reportId, imageName);
+            return dataApiClient.getResourceInputStream("file/s3?path=user/{userId}/report/{reportId}/{imageName}", userId, reportId, imageName);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -55,7 +55,7 @@ public class UserReportDomain {
     @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #id )")
     public UserObject getUserById(String id) {
         try {
-            return dataAPIClient.get("user/{id}", UserObject.class, id);
+            return dataApiClient.get("user/{id}", UserObject.class, id);
         } catch (NotFoundException ex) {
             return null;
         }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.object.EMREventObject;
-import com.yunsoo.common.data.object.EMRUserObject;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
@@ -73,6 +72,9 @@ public class EMREvent implements Serializable {
 
     @JsonProperty("marketing_id")
     private String marketingId;
+
+    @JsonProperty("value")
+    private String value;
 
     public String getId() {
         return id;
@@ -218,6 +220,14 @@ public class EMREvent implements Serializable {
         this.marketingId = marketingId;
     }
 
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
     public EMREvent() {
     }
 
@@ -241,6 +251,7 @@ public class EMREvent implements Serializable {
             this.setEventDateTime(object.getEventDateTime());
             this.setWxOpenId(object.getWxOpenId());
             this.setMarketingId(object.getMarketingId());
+            this.setValue(object.getValue());
         }
     }
 }

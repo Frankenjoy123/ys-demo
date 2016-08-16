@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.domain.ProductCommentsDomain;
 import com.yunsoo.api.dto.ProductComments;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.ProductCommentsObject;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -33,7 +34,7 @@ public class ProductCommentsController {
 
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<ProductComments> getProductCommentsByFilter(@RequestParam(value = "product_base_id", required = true) String productBaseId,
+    public List<ProductComments> getProductCommentsByFilter(@RequestParam(value = "product_base_id", required = false) String productBaseId,
                                                             @RequestParam(value = "score_ge", required = false) Integer scoreGE,
                                                             @RequestParam(value = "score_le", required = false) Integer scoreLE,
                                                             @RequestParam(value = "last_comment_datetime_ge", required = false)
@@ -41,15 +42,12 @@ public class ProductCommentsController {
                                                             @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
                                                             Pageable pageable,
                                                             HttpServletResponse response) {
-        if (productBaseId == null || productBaseId.isEmpty()) {
-            throw new BadRequestException("product base id is not valid");
-        }
+//        if (productBaseId == null || productBaseId.isEmpty()) {
+//            throw new BadRequestException("product base id is not valid");
+//        }
 
         Page<ProductCommentsObject> productCommentsPage = productCommentsDomain.getProductCommentsByFilter(productBaseId, scoreGE, scoreLE, lastCommentDatetimeGE, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", productCommentsPage.toContentRange());
-        }
-        return productCommentsPage.map(ProductComments::new).getContent();
+        return PageUtils.response(response, productCommentsPage.map(ProductComments::new), pageable != null);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)

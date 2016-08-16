@@ -3,15 +3,18 @@ package com.yunsoo.auth.service;
 import com.yunsoo.auth.dao.entity.AccountTokenEntity;
 import com.yunsoo.auth.dao.repository.AccountTokenRepository;
 import com.yunsoo.auth.dto.AccountToken;
+import com.yunsoo.auth.dto.Application;
 import com.yunsoo.auth.dto.Token;
 import com.yunsoo.common.util.HashUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -21,8 +24,13 @@ import java.util.UUID;
 @Service
 public class AccountTokenService {
 
+    private static final int PERMANENT_TOKEN_EXPIRES_MINUTES = 4000;
+
     @Autowired
     private AccountTokenRepository accountTokenRepository;
+
+    @Autowired
+    private ApplicationService applicationService;
 
 
     public AccountToken getNonExpiredByPermanentToken(String permanentToken) {
@@ -39,15 +47,24 @@ public class AccountTokenService {
     }
 
     /**
-     * @param accountId      not null
-     * @param appId          not null
-     * @param deviceId       nullable
-     * @param expiresMinutes nullable
+     * @param accountId not null
+     * @param appId     not null
+     * @param deviceId  nullable
      * @return permanent token object
      */
-    public Token createPermanentToken(String accountId, String appId, String deviceId, Integer expiresMinutes) {
+    public Token createPermanentToken(String accountId, String appId, String deviceId) {
         DateTime now = DateTime.now();
-        DateTime expires = expiresMinutes != null && expiresMinutes > 0 ? now.plusMinutes(expiresMinutes) : null;
+        Integer expiresMinutes = null;
+
+        Application application = applicationService.getById(appId);
+        if (application != null) {
+            expiresMinutes = application.getPermanentTokenExpiresMinutes();
+        }
+        if (expiresMinutes == null || expiresMinutes == 0) {
+            expiresMinutes = PERMANENT_TOKEN_EXPIRES_MINUTES; //default expires minutes
+        }
+
+        DateTime expires = expiresMinutes > 0 ? now.plusMinutes(expiresMinutes) : null;
         String permanentToken = HashUtils.sha1HexString(UUID.randomUUID().toString()); //random sha1
         AccountTokenEntity accountTokenEntity = new AccountTokenEntity();
         accountTokenEntity.setAccountId(accountId);
@@ -58,6 +75,34 @@ public class AccountTokenService {
         accountTokenEntity.setCreatedDateTime(now);
         accountTokenEntity = accountTokenRepository.save(accountTokenEntity);
         return new Token(accountTokenEntity.getPermanentToken(), accountTokenEntity.getPermanentTokenExpiresDateTime());
+    }
+
+    public void expirePermanentTokenByDeviceId(String deviceId) {
+        if (StringUtils.isEmpty(deviceId)) {
+            return;
+        }
+        List<AccountTokenEntity> entities = accountTokenRepository.findByDeviceId(deviceId)
+                .stream()
+                .filter(at -> at.getPermanentTokenExpiresDateTime() == null || at.getPermanentTokenExpiresDateTime().isAfterNow())
+                .map(e -> {
+                    e.setPermanentTokenExpiresDateTime(DateTime.now());
+                    return e;
+                })
+                .collect(Collectors.toList());
+        if (entities.size() > 0) {
+            accountTokenRepository.save(entities);
+        }
+    }
+
+    @Transactional
+    public int deleteExpiredPermanentToken() {
+        DateTime now = DateTime.now();
+        List<AccountTokenEntity> entities = accountTokenRepository.findByPermanentTokenExpiresDateTimeNotNull()
+                .stream()
+                .filter(e -> e.getPermanentTokenExpiresDateTime() != null && e.getPermanentTokenExpiresDateTime().plusDays(1).isBefore(now))
+                .collect(Collectors.toList());
+        accountTokenRepository.delete(entities);
+        return entities.size();
     }
 
     private AccountToken toAccountToken(AccountTokenEntity entity) {

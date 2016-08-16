@@ -1,6 +1,7 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.TaskFileEntryObject;
+import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.TaskFileEntryEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +48,7 @@ public class TaskFileEntryController {
             @RequestParam(value = "device_id", required = false) String deviceId,
             @RequestParam(value = "type_code", required = false) String typeCode,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+            @RequestParam(value = "product_base_id", required = false) String productBaseId,
             @RequestParam(value = "created_account_id", required = false) String createdAccountId,
             @RequestParam(value = "created_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeGE,
             @RequestParam(value = "created_datetime_le", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeLE,
@@ -58,6 +61,7 @@ public class TaskFileEntryController {
                 typeCode,
                 statusCodeIn == null || statusCodeIn.size() == 0 ? null : statusCodeIn,
                 statusCodeIn == null || statusCodeIn.size() == 0,
+                productBaseId,
                 createdAccountId,
                 createdDateTimeGE,
                 createdDateTimeLE,
@@ -90,6 +94,82 @@ public class TaskFileEntryController {
     }
 
 
+    @RequestMapping(value = "sum", method = RequestMethod.GET)
+    public TaskFileEntryObject getTotalTaskFiles(@RequestParam(value = "org_id", required = false) String orgId,
+                                                 @RequestParam(value = "device_id", required = false) String deviceId,
+                                                 @RequestParam(value = "app_id", required = false) String app_id,
+                                                 @RequestParam(value = "type_code") String typeCode,
+                                                 @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+                                                 @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+                                                 @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
+
+        Object[] result = (Object[]) taskFileEntryRepository.getTotal(orgId, app_id, deviceId, typeCode, start, end,
+                statusCodeIn == null || statusCodeIn.size() == 0 ? null : statusCodeIn,
+                statusCodeIn == null || statusCodeIn.size() == 0);
+        TaskFileEntryObject object = new TaskFileEntryObject();
+        object.setPackageCount(result[0] == null ? 0 : Integer.parseInt(result[0].toString()));
+        object.setProductCount(result[1] == null ? 0 : Integer.parseInt(result[1].toString()));
+        return object;
+    }
+
+
+    @RequestMapping(value = "count", method = RequestMethod.GET)
+    public int countTaskFiles(@RequestParam(value = "org_id") String orgId,
+                              @RequestParam(value = "device_ids") List<String> deviceId,
+                              @RequestParam(value = "type_code") String typeCode,
+                              @RequestParam(value = "status_code_in") List<String> statusCodeIn,  @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+                              @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
+
+        return taskFileEntryRepository.count(deviceId, typeCode, start, end,
+                statusCodeIn == null || statusCodeIn.size() == 0 ? null : statusCodeIn,
+                statusCodeIn == null || statusCodeIn.size() == 0);
+    }
+
+    @RequestMapping(value = "sum/date", method = RequestMethod.GET)
+    public List<TaskFileEntryObject> getTotalTaskFilesByDate(@RequestParam(value = "device_id") String deviceId,
+                                                             @RequestParam(value = "type_code") String typeCode,
+                                                             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+                                                             @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+                                                             @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
+
+        List<Object> result = taskFileEntryRepository.getTotalByDate(deviceId, typeCode, DateTimeUtils.toDBString(start), DateTimeUtils.toDBString(end),
+                statusCodeIn == null || statusCodeIn.size() == 0 ? null : statusCodeIn,
+                statusCodeIn == null || statusCodeIn.size() == 0);
+        List<TaskFileEntryObject> returnObj = new ArrayList<>();
+        for (Object item : result) {
+            Object[] itemResult = (Object[]) item;
+            TaskFileEntryObject object = new TaskFileEntryObject();
+            object.setName((String) itemResult[0]);
+            object.setPackageCount(itemResult[1] == null ? 0 : Integer.parseInt(itemResult[1].toString()));
+            object.setProductCount(itemResult[2] == null ? 0 : Integer.parseInt(itemResult[2].toString()));
+            returnObj.add(object);
+        }
+
+        return returnObj;
+    }
+
+    @RequestMapping(value = "sum/device", method = RequestMethod.GET)
+    public List<TaskFileEntryObject> getTotalTaskFilesByDevice(@RequestParam(value = "device_id") List<String> deviceId,
+                                                               @RequestParam(value = "type_code") String typeCode,
+                                                               @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+                                                               @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+                                                               @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
+
+        List<Object> result = taskFileEntryRepository.getTotalByDevice(deviceId, typeCode, start, end, statusCodeIn == null || statusCodeIn.size() == 0 ? null : statusCodeIn,
+                statusCodeIn == null || statusCodeIn.size() == 0);
+        List<TaskFileEntryObject> returnObj = new ArrayList<>();
+        for (Object item : result) {
+            Object[] itemResult = (Object[]) item;
+            TaskFileEntryObject object = new TaskFileEntryObject();
+            object.setDeviceId((String) itemResult[0]);
+            object.setPackageCount(itemResult[1] == null ? 0 : Integer.parseInt(itemResult[1].toString()));
+            object.setProductCount(itemResult[2] == null ? 0 : Integer.parseInt(itemResult[2].toString()));
+            returnObj.add(object);
+        }
+
+        return returnObj;
+    }
+
     private TaskFileEntryObject toTaskFileEntryObject(TaskFileEntryEntity entity) {
         if (entity == null) {
             return null;
@@ -102,6 +182,10 @@ public class TaskFileEntryController {
         obj.setName(entity.getName());
         obj.setTypeCode(entity.getTypeCode());
         obj.setStatusCode(entity.getStatusCode());
+        obj.setProductBaseId(entity.getProductBaseId());
+        obj.setPackageCount(entity.getPackageCount());
+        obj.setPackageSize(entity.getPackageSize());
+        obj.setProductCount(entity.getProductCount());
         obj.setCreatedAccountId(entity.getCreatedAccountId());
         obj.setCreatedDateTime(entity.getCreatedDateTime());
         return obj;
@@ -119,6 +203,10 @@ public class TaskFileEntryController {
         entity.setName(obj.getName());
         entity.setTypeCode(obj.getTypeCode());
         entity.setStatusCode(obj.getStatusCode());
+        entity.setProductBaseId(obj.getProductBaseId());
+        entity.setPackageCount(obj.getPackageCount());
+        entity.setPackageSize(obj.getPackageSize());
+        entity.setProductCount(obj.getProductCount());
         entity.setCreatedAccountId(obj.getCreatedAccountId());
         entity.setCreatedDateTime(obj.getCreatedDateTime());
         return entity;

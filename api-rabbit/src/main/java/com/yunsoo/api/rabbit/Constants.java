@@ -13,12 +13,14 @@ public final class Constants {
         public static final String SYSTEM_ACCOUNT_ID = "0010000000000000000";
         public static final String ANONYMOUS_USER_ID = "0020000000000000000";
         public static final String YUNSU_ORG_ID = "2k0r1l55i2rs5544wz5";
+        public static final String API_RABBIT_APP_ID = "api-rabbit";
     }
 
     public static class HttpHeaderName {
         public static final String ACCESS_TOKEN = "X-YS-AccessToken";
         public static final String APP_ID = "X-YS-AppId";
         public static final String DEVICE_ID = "X-YS-DeviceId";
+        public static final String CONTENT_RANGE = "X-YS-ContentRange";
     }
 
     public static class CookieName {

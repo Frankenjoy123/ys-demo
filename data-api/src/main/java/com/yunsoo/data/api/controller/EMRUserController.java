@@ -276,6 +276,108 @@ public class EMRUserController {
                 .collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/share", method = RequestMethod.GET)
+    public List<EMRUserObject> findEventUsersFilterByShare(@RequestParam(value = "org_id", required = false) String orgId,
+                                                           @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                           @RequestParam(value = "province", required = false) String province,
+                                                           @RequestParam(value = "city", required = false) String city,
+                                                           @RequestParam(value = "create_datetime_start", required = false)
+                                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                           @RequestParam(value = "create_datetime_end", required = false)
+                                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                           Pageable pageable,
+                                                           HttpServletResponse response) {
+
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
+
+        Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByShare(orgId, productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toEMRUserObject)
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/store_url", method = RequestMethod.GET)
+    public List<EMRUserObject> findEventUsersFilterByStoreUrl(@RequestParam(value = "org_id", required = false) String orgId,
+                                                              @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                              @RequestParam(value = "province", required = false) String province,
+                                                              @RequestParam(value = "city", required = false) String city,
+                                                              @RequestParam(value = "create_datetime_start", required = false)
+                                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                              @RequestParam(value = "create_datetime_end", required = false)
+                                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                              Pageable pageable,
+                                                              HttpServletResponse response) {
+
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
+
+        Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByStoreUrl(orgId, productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toEMRUserObject)
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/comment", method = RequestMethod.GET)
+    public List<EMRUserObject> findEventUsersFilterByComment(@RequestParam(value = "org_id", required = false) String orgId,
+                                                             @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                             @RequestParam(value = "province", required = false) String province,
+                                                             @RequestParam(value = "city", required = false) String city,
+                                                             @RequestParam(value = "create_datetime_start", required = false)
+                                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                             @RequestParam(value = "create_datetime_end", required = false)
+                                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                             Pageable pageable,
+                                                             HttpServletResponse response) {
+
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
+
+        Page<EMRUserEntity> entityPage = emrUserRepository.findEventUsersFilterByComment(orgId, productBaseId, province, city, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toEMRUserObject)
+                .collect(Collectors.toList());
+    }
+
     @RequestMapping(value = "/event_stats", method = RequestMethod.GET)
     public List<EMRUserProductEventStasticsObject> queryUserEventStats(@RequestParam(value = "org_id", required = true) String orgId,
                                                                        @RequestParam(value = "ys_id", required = false) String ysId,
@@ -313,6 +415,9 @@ public class EMRUserController {
         object.setRewardCount(entity.getRewardCount());
         object.setScanCount(entity.getScanCount());
         object.setWinCount(entity.getWinCount());
+        object.setCommentCount(entity.getCommentCount());
+        object.setShareCount(entity.getShareCount());
+        object.setStoreCount(entity.getStoreCount());
         //object.setWxScanCount(entity.getWxScanCount());
 
         return object;

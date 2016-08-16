@@ -1,5 +1,6 @@
 package com.yunsoo.auth.api.util;
 
+import com.yunsoo.common.web.Constants;
 import com.yunsoo.common.web.client.Page;
 
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +22,16 @@ public final class PageUtils {
 
     public static <T> List<T> response(HttpServletResponse response, Page<T> page) {
         response.setHeader("Content-Range", page.toContentRange());
+        response.setHeader(Constants.HttpHeaderName.CONTENT_RANGE, page.toContentRange());
+        return page.getContent();
+    }
+
+    public static <T> List<T> response(HttpServletResponse response, Page<T> page, boolean setHeader) {
+        if (setHeader) {
+            String contentRange = page.toContentRange();
+            response.setHeader("Content-Range", contentRange);
+            response.setHeader(Constants.HttpHeaderName.CONTENT_RANGE, contentRange);
+        }
         return page.getContent();
     }
 

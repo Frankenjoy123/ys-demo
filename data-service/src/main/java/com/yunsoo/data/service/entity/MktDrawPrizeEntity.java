@@ -15,8 +15,6 @@ import javax.persistence.*;
 @Table(name = "mkt_draw_prize")
 public class MktDrawPrizeEntity {
     @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "draw_record_id")
     private String drawRecordId;
 
@@ -60,6 +58,9 @@ public class MktDrawPrizeEntity {
 
     @Column(name = "prize_account_name")
     private String prizeAccountName;
+
+    @Column(name = "prize_contact_id")
+    private String prizeContactId;
 
     @Column(name = "comments")
     private String comments;
@@ -174,6 +175,14 @@ public class MktDrawPrizeEntity {
 
     public void setPrizeAccountName(String prizeAccountName) {
         this.prizeAccountName = prizeAccountName;
+    }
+
+    public String getPrizeContactId() {
+        return prizeContactId;
+    }
+
+    public void setPrizeContactId(String prizeContactId) {
+        this.prizeContactId = prizeContactId;
     }
 
     public String getComments() {

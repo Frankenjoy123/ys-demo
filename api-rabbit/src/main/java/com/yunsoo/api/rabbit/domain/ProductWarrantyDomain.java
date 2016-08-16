@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 public class ProductWarrantyDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public ProductWarrantyObject createProductWarranty(ProductWarrantyObject productWarrantyObject) {
         productWarrantyObject.setId(null);
         productWarrantyObject.setStatusCode("new");
         productWarrantyObject.setCreatedDateTime(DateTime.now());
-        return dataAPIClient.post("productwarranty", productWarrantyObject, ProductWarrantyObject.class);
+        return dataApiClient.post("productwarranty", productWarrantyObject, ProductWarrantyObject.class);
     }
 }

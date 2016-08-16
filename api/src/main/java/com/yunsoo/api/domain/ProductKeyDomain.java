@@ -47,7 +47,7 @@ public class ProductKeyDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
     private ProcessorClient processorClient;
@@ -73,7 +73,7 @@ public class ProductKeyDomain {
 
     public ProductKeyObject getProductKey(String productKey) {
         try {
-            return dataAPIClient.get("productkey/{key}", ProductKeyObject.class, productKey);
+            return dataApiClient.get("productkey/{key}", ProductKeyObject.class, productKey);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -81,7 +81,7 @@ public class ProductKeyDomain {
 
     public void setProductKeyDisabled(String productKey, Boolean disabled) {
         try {
-            dataAPIClient.put("productkey/{key}/disabled", disabled, productKey);
+            dataApiClient.put("productkey/{key}/disabled", disabled, productKey);
         } catch (NotFoundException ex) {
             throw new NotFoundException("product key not found. " + productKey);
         }
@@ -93,21 +93,21 @@ public class ProductKeyDomain {
 
     public ProductKeyBatch getProductKeyBatchById(String id) {
         return toProductKeyBatch(
-                dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id),
+                dataApiClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id),
                 lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType),
                 lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus));
     }
 
     public ProductKeyBatchObject getProductKeyBatchObjectById(String id) {
         try {
-            return dataAPIClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id);
+            return dataApiClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
     }
 
 
-    public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Boolean isPackage, String createAccount, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
+    public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Boolean isPackage, String createAccount, String deviceId, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
         String[] statusCodes = new String[]{
                 LookupCodes.ProductKeyBatchStatus.CREATING,
                 LookupCodes.ProductKeyBatchStatus.AVAILABLE
@@ -119,6 +119,7 @@ public class ProductKeyDomain {
                     .append("status_code_in", statusCodes)
                     .append("product_base_id", productBaseId)
                     .append("create_account", createAccount)
+                    .append("device_id", deviceId)
                     .append("create_datetime_start", createdDateTimeStart)
                     .append("create_datetime_end", createdDateTimeEnd)
                     .append(pageable);
@@ -127,7 +128,7 @@ public class ProductKeyDomain {
                     .append("product_base_id", productBaseId)
                     .append("status_code_in", statusCodes)
                     .append(pageable);
-        Page<ProductKeyBatchObject> objectsPage = dataAPIClient.getPaged("productkeybatch" + query.build(), new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
+        Page<ProductKeyBatchObject> objectsPage = dataApiClient.getPaged("productkeybatch" + query.build(), new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
         });
 
         List<Lookup> productKeyTypes = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
@@ -141,7 +142,7 @@ public class ProductKeyDomain {
                 .append("org_id", orgId)
                 .append("product_base_id", productBaseId)
                 .build();
-        return dataAPIClient.get("productkeybatch/sum/quantity" + query, Long.class);
+        return dataApiClient.get("productkeybatch/sum/quantity" + query, Long.class);
     }
 
     public Long sumTime(String orgId, String productBaseId, DateTime startTime, DateTime endTime) {
@@ -151,7 +152,7 @@ public class ProductKeyDomain {
                 .append("start_time", startTime)
                 .append("end_time", endTime)
                 .build();
-        return dataAPIClient.get("productkeybatch/sum/time" + query, Long.class);
+        return dataApiClient.get("productkeybatch/sum/time" + query, Long.class);
     }
 
     public ProductKeyBatch createProductKeyBatch(ProductKeyBatchObject batchObj) {
@@ -176,7 +177,7 @@ public class ProductKeyDomain {
 
         //create new product key batch
         batchObj.setStatusCode(LookupCodes.ProductKeyBatchStatus.NEW);
-        ProductKeyBatchObject newBatchObj = dataAPIClient.post("productkeybatch", batchObj, ProductKeyBatchObject.class);
+        ProductKeyBatchObject newBatchObj = dataApiClient.post("productkeybatch", batchObj, ProductKeyBatchObject.class);
         log.info(String.format("ProductKeyBatch created [id: %s, statusCode: %s]", newBatchObj.getId(), newBatchObj.getStatusCode()));
 
         //purchase
@@ -189,7 +190,7 @@ public class ProductKeyDomain {
 
         //update status to creating
         newBatchObj.setStatusCode(LookupCodes.ProductKeyBatchStatus.CREATING);
-        dataAPIClient.patch("productkeybatch/{id}", newBatchObj, newBatchObj.getId());
+        dataApiClient.patch("productkeybatch/{id}", newBatchObj, newBatchObj.getId());
         log.info(String.format("ProductKeyBatch status changed [id: %s, statusCode: %s]", newBatchObj.getId(), newBatchObj.getStatusCode()));
 
         //send sqs message to processor
@@ -208,22 +209,21 @@ public class ProductKeyDomain {
     }
 
     public void patchUpdateProductKeyBatch(ProductKeyBatchObject batchObj) {
-        dataAPIClient.patch("productkeybatch/{id}", batchObj, batchObj.getId());
+        dataApiClient.patch("productkeybatch/{id}", batchObj, batchObj.getId());
     }
 
     public void putMarketingId(String id, String marketingId) {
-        dataAPIClient.put("productkeybatch/{id}/marketing_id", marketingId, id);
+        dataApiClient.put("productkeybatch/{id}/marketing_id", marketingId, id);
     }
 
     public List<ProductKeyBatchObject> getProductKeybatchByMarketingId(String marketingId) {
-        return dataAPIClient.get("productkeybatch/marketing/{id}", new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
+        return dataApiClient.get("productkeybatch/marketing/{id}", new ParameterizedTypeReference<List<ProductKeyBatchObject>>() {
         }, marketingId);
     }
 
 
-
     public byte[] getProductKeysByBatchId(String id) {
-        ProductKeysObject object = dataAPIClient.get("productkeybatch/{batchId}/keys", ProductKeysObject.class, id);
+        ProductKeysObject object = dataApiClient.get("productkeybatch/{batchId}/keys", ProductKeysObject.class, id);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         if (object == null) {
             return null;
@@ -288,6 +288,7 @@ public class ProductKeyDomain {
         batch.setProductBaseId(object.getProductBaseId());
         batch.setOrgId(object.getOrgId());
         batch.setCreatedAppId(object.getCreatedAppId());
+        batch.setCreatedDeviceId(object.getCreatedDeviceId());
         batch.setCreatedAccountId(object.getCreatedAccountId());
         batch.setCreatedDateTime(object.getCreatedDateTime());
         batch.setMarketingId(object.getMarketingId());

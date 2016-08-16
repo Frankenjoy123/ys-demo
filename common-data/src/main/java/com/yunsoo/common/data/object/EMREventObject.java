@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
@@ -69,6 +68,9 @@ public class EMREventObject implements Serializable {
 
     @JsonProperty("marketing_id")
     private String marketingId;
+
+    @JsonProperty("value")
+    private String value;
 
     public String getId() {
         return id;
@@ -212,5 +214,13 @@ public class EMREventObject implements Serializable {
 
     public void setMarketingId(String marketingId) {
         this.marketingId = marketingId;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

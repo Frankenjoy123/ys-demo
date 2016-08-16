@@ -1,5 +1,6 @@
 package com.yunsoo.auth.api.controller;
 
+import com.yunsoo.auth.api.util.PageUtils;
 import com.yunsoo.auth.dto.Application;
 import com.yunsoo.auth.service.ApplicationService;
 import com.yunsoo.common.web.client.Page;
@@ -19,7 +20,6 @@ import java.util.List;
  * Created on:   2016-07-07
  * Descriptions:
  */
-
 @RestController
 @RequestMapping("/application")
 public class ApplicationController {
@@ -43,10 +43,7 @@ public class ApplicationController {
     public List<Application> getList(Pageable pageable,
                                      HttpServletResponse response) {
         Page<Application> applications = applicationService.getAll(pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", applications.toContentRange());
-        }
-        return applications.getContent();
+        return PageUtils.response(response, applications, pageable != null);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

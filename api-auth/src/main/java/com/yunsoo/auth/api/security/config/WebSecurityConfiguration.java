@@ -1,11 +1,12 @@
 package com.yunsoo.auth.api.security.config;
 
-import com.yunsoo.auth.api.security.authentication.TokenAuthenticationFilter;
+import com.yunsoo.auth.api.security.authentication.AuthenticationFilter;
 import com.yunsoo.auth.api.security.authentication.TokenAuthenticationService;
 import com.yunsoo.auth.api.security.authentication.TokenInvalidAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -41,14 +42,17 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 .antMatchers("/").permitAll()
+                .antMatchers(HttpMethod.GET, "/health/**").permitAll()
+                .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/login/**").permitAll()
-                .antMatchers("/accesstoken").permitAll()
-                .antMatchers("/debug/**").access(debug ? "permitAll" : "authenticated")
+                .antMatchers("/accesstoken/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/organization/*/name").permitAll()
+                .antMatchers(HttpMethod.POST, "/organization/checkNameExists").permitAll()
                 .anyRequest().authenticated().and()
 
                 // custom Token based authentication based on the header previously given to the client
-                .addFilterBefore(new TokenAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new AuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
     }
 
 }

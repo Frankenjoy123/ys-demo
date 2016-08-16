@@ -1,7 +1,6 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.OrganizationConfigDomain;
-import com.yunsoo.api.rabbit.domain.OrganizationDomain;
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -10,7 +9,10 @@ import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -25,9 +27,6 @@ public class OrganizationConfigController {
 
     @Autowired
     private ProductDomain productDomain;
-
-    @Autowired
-    private OrganizationDomain organizationDomain;
 
     @Autowired
     private ProductBaseDomain productBaseDomain;

@@ -2,7 +2,7 @@ package com.yunsoo.api.domain;
 
 import com.yunsoo.api.payment.AlipayParameters;
 import com.yunsoo.api.payment.ParameterNames;
-import com.yunsoo.common.data.object.BrandObject;
+import com.yunsoo.common.data.object.BrandApplicationObject;
 import com.yunsoo.common.data.object.PaymentObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -23,7 +23,10 @@ import java.util.Map;
 public class PaymentDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
+
+    @Autowired
+    private BrandApplicationDomain brandApplicationDomain;
 
     @Value("${yunsoo.alipay.pid}")
     private String pid;
@@ -50,17 +53,17 @@ public class PaymentDomain {
     public PaymentObject createAlipayPayment(PaymentObject paymentObject) {
         paymentObject.setId(null);
         paymentObject.setCreatedDateTime(DateTime.now());
-        return dataAPIClient.post("payment/brand/alipay", paymentObject, PaymentObject.class);
+        return dataApiClient.post("payment/brand/alipay", paymentObject, PaymentObject.class);
     }
 
     public void updateAlipayPayment(PaymentObject paymentObject) {
-        dataAPIClient.put("payment/brand/alipay/{id}", paymentObject, paymentObject.getId());
+        dataApiClient.put("payment/brand/alipay/{id}", paymentObject, paymentObject.getId());
     }
 
 
     public PaymentObject getPaymentById(String paymentId) {
         try {
-            return dataAPIClient.get("payment/brand/{id}", PaymentObject.class, paymentId);
+            return dataApiClient.get("payment/brand/{id}", PaymentObject.class, paymentId);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -75,14 +78,14 @@ public class PaymentDomain {
         String detail_data = "";
         Integer batchNum = 0;
         BigDecimal batchFee = new BigDecimal("0");
-        PaymentObject paymentObject = dataAPIClient.get("payment/brand/{id}", PaymentObject.class, paymentId);
+        PaymentObject paymentObject = dataApiClient.get("payment/brand/{id}", PaymentObject.class, paymentId);
         String brandApplicationId = paymentObject.getBrandApplicationId();
 
-        BrandObject brandObject = dataAPIClient.get("brand/{id}", BrandObject.class, brandApplicationId);
+        BrandApplicationObject brandApplicationObject = brandApplicationDomain.getBrandApplicationById(brandApplicationId);
 
         //order info
         parameters.put(ParameterNames.OUT_TRADE_NO, paymentId);
-        parameters.put(ParameterNames.SUBJECT, brandObject.getName() + "审核费用");
+        parameters.put(ParameterNames.SUBJECT, brandApplicationObject.getBrandName() + "审核费用");
         parameters.put(ParameterNames.PAYMENT_TYPE, "1");
         parameters.put(ParameterNames.TOTAL_FEE, paymentObject.getPayTotals().toString());
         parameters.put(ParameterNames.SELLER_ID, pid);

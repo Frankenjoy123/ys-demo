@@ -23,4 +23,6 @@ public interface OrganizationRepository extends Repository<OrganizationEntity, S
     Page<OrganizationEntity> findByIdIn(Iterable<String> Ids, Pageable pageable);
 
     OrganizationEntity save(OrganizationEntity entity);
+
+    void delete(OrganizationEntity entity);
 }

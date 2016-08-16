@@ -33,7 +33,7 @@ import java.util.List;
 public class LogisticsPathController {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
     private ProductFileDomain productFileDomain;
@@ -54,7 +54,7 @@ public class LogisticsPathController {
         String createdBy = AuthUtils.getCurrentAccount().getId();
         logisticsPathObject.setOperator(createdBy);
 
-        dataAPIClient.post("logisticspath/create", logisticsPathObject, Long.class);
+        dataApiClient.post("logisticspath/create", logisticsPathObject, Long.class);
     }
 
     @RequestMapping(value = "/file", method = RequestMethod.POST)
@@ -115,7 +115,7 @@ public class LogisticsPathController {
             logisticsBatchPathObject.setActionId(actionId);
             logisticsBatchPathObject.setStartCheckPoint("0");
 
-            dataAPIClient.post("/logisticspath/batch", logisticsBatchPathObject, Long.class);
+            dataApiClient.post("/logisticspath/batch", logisticsBatchPathObject, Long.class);
 
             productFileObject.setStatus(1);
             productFileDomain.createProductFile(productFileObject);

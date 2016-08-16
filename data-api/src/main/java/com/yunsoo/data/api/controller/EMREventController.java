@@ -59,6 +59,138 @@ public class EMREventController {
                 .collect(Collectors.toList());
     }
 
+    /*
+    * filter by share
+    * @param orgId
+    * @param productBaseId
+    * @param province
+    * @param city
+    * @param city
+    * @param createdDateTimeStart
+    * @param createdDateTimeEnd
+    */
+    @RequestMapping(value = "share", method = RequestMethod.GET)
+    public List<EMREventObject> findEventFilterByShare(@RequestParam(value = "org_id") String orgId,
+                                                       @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                       @RequestParam(value = "province", required = false) String province,
+                                                       @RequestParam(value = "city", required = false) String city,
+                                                       @RequestParam(value = "create_datetime_start", required = false)
+                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                       @RequestParam(value = "create_datetime_end", required = false)
+                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                       Pageable pageable,
+                                                       HttpServletResponse response) {
+
+        DateTime startDateTime = null;
+        DateTime endDateTime = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            startDateTime = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            endDateTime = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
+
+        Page<EMREventEntity> entityPage = emrEventRepository.findEventFilterByShare(orgId, productBaseId, province, city, startDateTime, endDateTime, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toEMREventObject)
+                .collect(Collectors.toList());
+    }
+
+    /*
+    * filter by store_url
+    * @param orgId
+    * @param productBaseId
+    * @param province
+    * @param city
+    * @param city
+    * @param createdDateTimeStart
+    * @param createdDateTimeEnd
+    */
+    @RequestMapping(value = "store_url", method = RequestMethod.GET)
+    public List<EMREventObject> findEventFilterByStoreUrl(@RequestParam(value = "org_id") String orgId,
+                                                          @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                          @RequestParam(value = "province", required = false) String province,
+                                                          @RequestParam(value = "city", required = false) String city,
+                                                          @RequestParam(value = "create_datetime_start", required = false)
+                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                          @RequestParam(value = "create_datetime_end", required = false)
+                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                          Pageable pageable,
+                                                          HttpServletResponse response) {
+
+        DateTime startDateTime = null;
+        DateTime endDateTime = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            startDateTime = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            endDateTime = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
+
+        Page<EMREventEntity> entityPage = emrEventRepository.findEventFilterByStoreUrl(orgId, productBaseId, province, city, startDateTime, endDateTime, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toEMREventObject)
+                .collect(Collectors.toList());
+    }
+
+    /*
+    * filter by comment
+    * @param orgId
+    * @param productBaseId
+    * @param province
+    * @param city
+    * @param city
+    * @param createdDateTimeStart
+    * @param createdDateTimeEnd
+    */
+    @RequestMapping(value = "comment", method = RequestMethod.GET)
+    public List<EMREventObject> findEventFilterByComment(@RequestParam(value = "org_id") String orgId,
+                                                         @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                         @RequestParam(value = "province", required = false) String province,
+                                                         @RequestParam(value = "city", required = false) String city,
+                                                         @RequestParam(value = "create_datetime_start", required = false)
+                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                                         @RequestParam(value = "create_datetime_end", required = false)
+                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                                         Pageable pageable,
+                                                         HttpServletResponse response) {
+
+        DateTime startDateTime = null;
+        DateTime endDateTime = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            startDateTime = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            endDateTime = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        productBaseId = StringUtils.isEmpty(productBaseId) ? null : productBaseId;
+
+        Page<EMREventEntity> entityPage = emrEventRepository.findEventFilterByComment(orgId, productBaseId, province, city, startDateTime, endDateTime, pageable);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toEMREventObject)
+                .collect(Collectors.toList());
+    }
+
 
     /**
      * 最近一次消费
@@ -124,7 +256,7 @@ public class EMREventController {
         object.setEventDateTime(entity.getEventDateTime());
         object.setWxOpenId(entity.getWxOpenId());
         object.setMarketingId(entity.getMarketingId());
-
+        object.setValue(entity.getValue());
         return object;
     }
 

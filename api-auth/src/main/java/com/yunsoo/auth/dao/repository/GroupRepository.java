@@ -22,6 +22,6 @@ public interface GroupRepository extends Repository<GroupEntity, String> {
 
     GroupEntity save(GroupEntity entity);
 
-    void delete(String id);
+    void delete(GroupEntity entity);
 
 }

@@ -1,10 +1,11 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.Constants;
 import com.yunsoo.api.aspect.OperationLog;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
+import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
@@ -88,8 +89,8 @@ public class ProductKeyBatchController {
         AuthUtils.checkPermission(batch.getOrgId(), "product_key_batch", "read");
 
         Map<String, Object> configMap = orgConfigDomain.getConfig(batch.getOrgId(), false, null);
-        int downloadNo = (int)configMap.get("enterprise.download_no");
-        if(downloadNo <= batch.getDownloadNo())
+        int downloadNo = (int) configMap.get("enterprise.download_no");
+        if (downloadNo <= batch.getDownloadNo())
             throw new BadRequestException("the download number exceed the max download");
         String downloadFileFormat = configMap.get("enterprise.product_key.format").toString();
 
@@ -131,6 +132,7 @@ public class ProductKeyBatchController {
     @PostAuthorize("hasPermission('current', 'org', 'product_key_batch:read')")
     public List<ProductKeyBatch> getByFilterPaged(@RequestParam(value = "product_base_id", required = false) String productBaseId,
                                                   @RequestParam(value = "create_account", required = false) String createAccount,
+                                                  @RequestParam(value = "device_id", required = false) String deviceId,
                                                   @RequestParam(value = "create_datetime_start", required = false)
                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
                                                   @RequestParam(value = "create_datetime_end", required = false)
@@ -141,13 +143,9 @@ public class ProductKeyBatchController {
                                                   Pageable pageable,
                                                   HttpServletResponse response) {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
-        Page<ProductKeyBatch> productKeyBatchPage;
-        productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, isPackage, createAccount, createdDateTimeStart, createdDateTimeEnd, pageable);
+        Page<ProductKeyBatch> productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, isPackage, createAccount, deviceId, createdDateTimeStart, createdDateTimeEnd, pageable);
 
-        if (pageable != null) {
-            response.setHeader("Content-Range", productKeyBatchPage.toContentRange());
-        }
-        return productKeyBatchPage.getContent();
+        return PageUtils.response(response, productKeyBatchPage, pageable != null);
     }
 
     @RequestMapping(value = "sum/quantity", method = RequestMethod.GET)
@@ -178,16 +176,15 @@ public class ProductKeyBatchController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission('current', 'org', 'product_key_batch:create')")
     @OperationLog(operation = "'创建产品码批次' + #request.productBaseId", level = "P1")
-    public ProductKeyBatch create(
-            @RequestHeader(value = Constants.HttpHeaderName.APP_ID, required = false) String appId,
-            @Valid @RequestBody ProductKeyBatchRequest request) {
+    public ProductKeyBatch create(@Valid @RequestBody ProductKeyBatchRequest request) {
+        AuthDetails authDetails = AuthUtils.getAuthDetails();
+        String appId = authDetails.getAppId();
+        String deviceId = authDetails.getDeviceId();
         int quantity = request.getQuantity();
         String productBaseId = request.getProductBaseId();
         List<String> productKeyTypeCodes = request.getProductKeyTypeCodes();
 
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
-
-        appId = (appId == null) ? "unknown" : appId;
 
         if (productBaseId != null) {
             //create corresponding product according to the productBaseId
@@ -211,6 +208,7 @@ public class ProductKeyBatchController {
         batchObj.setProductKeyTypeCodes(productKeyTypeCodes);
         batchObj.setOrgId(orgId);
         batchObj.setCreatedAppId(appId);
+        batchObj.setCreatedDeviceId(deviceId);
         log.info(String.format("ProductKeyBatch creating started [quantity: %s]", batchObj.getQuantity()));
         ProductKeyBatch newBatch = productKeyDomain.createProductKeyBatch(batchObj);
         log.info(String.format("ProductKeyBatch created [id: %s, quantity: %s]", newBatch.getId(), newBatch.getQuantity()));
@@ -222,7 +220,7 @@ public class ProductKeyBatchController {
     public List<ProductBatchCollection> getProductBatchCollection() {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
         Page<ProductBaseObject> pageProductBase = productBaseDomain.getProductBaseByOrgId(orgId, null, null, null, null, null);
-        Page<ProductKeyBatch> pageBatch = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, null, false, null, null, null, null);
+        Page<ProductKeyBatch> pageBatch = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, null, false, null, null, null, null, null);
 
 
         return pageProductBase.getContent().stream().map(p -> {

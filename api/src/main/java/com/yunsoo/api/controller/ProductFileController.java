@@ -23,7 +23,7 @@ import java.util.List;
 public class ProductFileController {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -37,7 +37,7 @@ public class ProductFileController {
             createby = AuthUtils.getCurrentAccount().getId();
 
         ProductFileObject[] objects =
-                dataAPIClient.get("productfile?createby={createby}&&status={status}&&filetype={filetype}&&pageIndex={pageIndex}&&pageSize={pageSize}",
+                dataApiClient.get("productfile?createby={createby}&&status={status}&&filetype={filetype}&&pageIndex={pageIndex}&&pageSize={pageSize}",
                         ProductFileObject[].class,
                         createby,
                         status,
@@ -62,7 +62,7 @@ public class ProductFileController {
             createby = AuthUtils.getCurrentAccount().getId();
 
         Long count = 0l;
-        count = dataAPIClient.get("productfile/count?createby={createby}&&status={status}&&filetype={filetype}",
+        count = dataApiClient.get("productfile/count?createby={createby}&&status={status}&&filetype={filetype}",
                 Long.class,
                 createby,
                 status,

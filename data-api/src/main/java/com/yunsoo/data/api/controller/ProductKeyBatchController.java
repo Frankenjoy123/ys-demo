@@ -94,6 +94,7 @@ public class ProductKeyBatchController {
             @RequestParam(value = "org_id") String orgId,
             @RequestParam(value = "product_base_id", required = false) String productBaseId,
             @RequestParam(value = "create_account", required = false) String createAccount,
+            @RequestParam(value = "device_id", required = false) String deviceId,
             @RequestParam(value = "create_datetime_start", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
             @RequestParam(value = "create_datetime_end", required = false)
@@ -107,7 +108,7 @@ public class ProductKeyBatchController {
 
         if (isPackage != null) {
             if (isPackage)
-                entityPage = productKeyBatchRepository.findByOrgIdAndProductKeyTypeCodesAndStatusCodeIn(orgId, LookupCodes.ProductKeyType.PACKAGE, statusCodeIn, pageable);
+                entityPage = productKeyBatchRepository.findByOrgIdAndProductKeyTypeCodesAndStatusCodeInAndCreatedDeviceId(orgId, LookupCodes.ProductKeyType.PACKAGE, statusCodeIn, deviceId, pageable);
             else {
 
                 DateTime createdDateTimeStartTo = null;
@@ -234,6 +235,7 @@ public class ProductKeyBatchController {
         batchObj.setOrgId(batch.getOrgId());
         batchObj.setProductBaseId(batch.getProductBaseId());
         batchObj.setCreatedAppId(batch.getCreatedAppId());
+        batchObj.setCreatedDeviceId(batch.getCreatedDeviceId());
         batchObj.setCreatedAccountId(batch.getCreatedAccountId());
         batchObj.setCreatedDateTime(batch.getCreatedDateTime());
         batchObj.setProductKeyTypeCodes(batch.getProductKeyTypeCodes());
@@ -256,6 +258,7 @@ public class ProductKeyBatchController {
         object.setProductBaseId(entity.getProductBaseId());
         object.setOrgId(entity.getOrgId());
         object.setCreatedAppId(entity.getCreatedAppId());
+        object.setCreatedDeviceId(entity.getCreatedDeviceId());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setMarketingId(entity.getMarketingId());
@@ -275,6 +278,7 @@ public class ProductKeyBatchController {
         batch.setOrgId(batchObj.getOrgId());
         batch.setProductBaseId(batchObj.getProductBaseId());
         batch.setCreatedAppId(batchObj.getCreatedAppId());
+        batch.setCreatedDeviceId(batchObj.getCreatedDeviceId());
         batch.setCreatedAccountId(batchObj.getCreatedAccountId());
         batch.setCreatedDateTime(batchObj.getCreatedDateTime());
         batch.setProductKeyTypeCodes(batchObj.getProductKeyTypeCodes());

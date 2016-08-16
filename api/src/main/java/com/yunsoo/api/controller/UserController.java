@@ -2,6 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.UserDomain;
 import com.yunsoo.api.dto.User;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.web.client.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
@@ -38,14 +38,8 @@ public class UserController {
                                 Pageable pageable,
                                 HttpServletResponse response) {
 
-        Page<UserObject> entityPage = userDomain.getUserList(sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStart, createdDateTimeEnd, pageable);
+        Page<UserObject> page = userDomain.getUserList(sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStart, createdDateTimeEnd, pageable);
 
-        if (pageable != null) {
-            response.setHeader("Content-Range", entityPage.toContentRange());
-        }
-
-        return entityPage.getContent().stream()
-                .map(User::new)
-                .collect(Collectors.toList());
+        return PageUtils.response(response, page.map(User::new), pageable != null);
     }
 }

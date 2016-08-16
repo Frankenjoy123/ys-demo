@@ -18,7 +18,7 @@ import java.util.List;
 public interface ProductCommentsRepository extends FindOneAndSaveRepository<ProductCommentsEntity, String> {
 
     @Query("select o from #{#entityName} o where " +
-            "(o.productBaseId = :productBaseId) " +
+            "(:productBaseId is null or :productBaseId = '' or o.productBaseId = :productBaseId) " +
             "and (:scoreGE is null or o.score >= :scoreGE) " +
             "and (:scoreLE is null or o.score <= :scoreLE) " +
             "and (:lastCommentDatetimeGE is null or o.createdDateTime >= :lastCommentDatetimeGE)")

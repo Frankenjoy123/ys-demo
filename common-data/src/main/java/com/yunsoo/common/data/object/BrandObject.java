@@ -8,7 +8,9 @@ import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 /**
- * Created by yan on 3/9/2016.
+ * Created by:   yan
+ * Created on:   3/9/2016
+ * Descriptions:
  */
 public class BrandObject extends OrganizationObject {
 

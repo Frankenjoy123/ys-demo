@@ -22,13 +22,13 @@ public class FileDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public void putFile(String path, ResourceInputStream resourceInputStream) {
         Assert.hasText(path, "path must not be null or empty");
         Assert.notNull(resourceInputStream, "resourceInputStream must not be null");
 
-        dataAPIClient.put("file/s3?path={path}", resourceInputStream, path);
+        dataApiClient.put("file/s3?path={path}", resourceInputStream, path);
 
         log.info(String.format("new file saved to s3 [path: %s]", path));
     }
@@ -38,7 +38,7 @@ public class FileDomain {
             return null;
         }
         try {
-            return dataAPIClient.getResourceInputStream("file/s3?path={path}", path);
+            return dataApiClient.getResourceInputStream("file/s3?path={path}", path);
         } catch (NotFoundException ignored) {
             log.warn("file not found in s3 " + StringFormatter.formatMap("path", path));
             return null;

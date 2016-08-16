@@ -4,6 +4,7 @@ import com.yunsoo.api.rabbit.domain.UserFollowDomain;
 import com.yunsoo.api.rabbit.dto.UserOrganizationFollowing;
 import com.yunsoo.api.rabbit.dto.UserProductFollowing;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.api.rabbit.util.PageUtils;
 import com.yunsoo.common.web.client.Page;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -49,10 +50,7 @@ public class UserFollowingController {
         String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
         Page<UserOrganizationFollowing> followingPage = userFollowDomain.getUserOrganizationFollowingsByUserId(userId, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", followingPage.toContentRange());
-        }
-        return followingPage.getContent();
+        return PageUtils.response(response, followingPage, pageable != null);
     }
 
     @RequestMapping(value = "organization", method = RequestMethod.POST)
@@ -87,10 +85,7 @@ public class UserFollowingController {
         String userId = tokenAuthenticationService.getAuthentication().getDetails().getId();
 
         Page<UserProductFollowing> followingPage = userFollowDomain.getUserProductFollowingsByUserId(userId, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", followingPage.toContentRange());
-        }
-        return followingPage.getContent();
+        return PageUtils.response(response, followingPage, pageable != null);
     }
 
     @RequestMapping(value = "product", method = RequestMethod.POST)

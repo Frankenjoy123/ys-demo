@@ -1,6 +1,5 @@
 package com.yunsoo.api.rabbit.domain;
 
-import com.yunsoo.api.rabbit.dto.MktDrawRule;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
@@ -10,8 +9,10 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,61 +25,113 @@ import java.util.List;
 public class MarketingDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public MarketingObject getMarketingById(String id) {
         if (id == null) {
             return null;
         }
         try {
-            return dataAPIClient.get("marketing/{id}", MarketingObject.class, id);
+            return dataApiClient.get("marketing/{id}", MarketingObject.class, id);
         } catch (NotFoundException ignored) {
             return null;
         }
     }
 
+    public List<MktDrawRecordObject> getMktDrawRecordList(String marketingId, String ysid) {
+        return dataApiClient.get("marketing/draw?ys_id={ysId}&marketing_id={marketingId}", new ParameterizedTypeReference<List<MktDrawRecordObject>>() {
+        }, ysid, marketingId);
+    }
+
     public MktDrawRecordObject getMktDrawRecordByProductKey(String key) {
-        return dataAPIClient.get("marketing/draw/{key}", MktDrawRecordObject.class, key);
+        return dataApiClient.get("marketing/draw/{key}", MktDrawRecordObject.class, key);
     }
 
     public MktDrawPrizeObject getMktDrawPrizeByProductKey(String key) {
-        return dataAPIClient.get("marketing/drawprize/{key}", MktDrawPrizeObject.class, key);
+        return dataApiClient.get("marketing/drawprize/{key}", MktDrawPrizeObject.class, key);
     }
 
+    public MktDrawPrizeObject getMktDrawPrizeByPrizeId(String prizeId) {
+        return dataApiClient.get("marketing/drawPrize/record/{id}", MktDrawPrizeObject.class, prizeId);
+    }
+
+    public MktPrizeContactObject getMktPrizeContactById(String id) {
+        return dataApiClient.get("marketing/drawPrize/contact/{id}", MktPrizeContactObject.class, id);
+    }
+
+
+
     public MktConsumerRightObject getConsumerRightById(String id) {
-        return dataAPIClient.get("marketing/consumer/{id}", MktConsumerRightObject.class, id);
+        return dataApiClient.get("marketing/consumer/{id}", MktConsumerRightObject.class, id);
     }
 
     public MktDrawRuleObject getDrawRuleById(String id){
-        return  dataAPIClient.get("marketing/Rule/{id}", MktDrawRuleObject.class, id);
+        return dataApiClient.get("marketing/Rule/{id}", MktDrawRuleObject.class, id);
     }
 
 
     public MktDrawRecordObject createMktDrawRecord(MktDrawRecordObject mktDrawRecordObject) {
         mktDrawRecordObject.setId(null);
         mktDrawRecordObject.setCreatedDateTime(DateTime.now());
-        return dataAPIClient.post("marketing/draw", mktDrawRecordObject, MktDrawRecordObject.class);
+        return dataApiClient.post("marketing/draw", mktDrawRecordObject, MktDrawRecordObject.class);
     }
 
     public MktDrawPrizeObject createMktDrawPrize(MktDrawPrizeObject mktDrawPrizeObject) {
         mktDrawPrizeObject.setCreatedDateTime(DateTime.now());
         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.CREATED);
-        return dataAPIClient.post("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
+        return dataApiClient.post("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
     }
 
+    public MktPrizeContactObject createMktPrizeContact(MktPrizeContactObject mktPrizeContactObject) {
+        mktPrizeContactObject.setCreatedDateTime(DateTime.now());
+        mktPrizeContactObject.setModifiedDateTime(null);
+        return dataApiClient.post("marketing/drawPrize/{id}/contact", mktPrizeContactObject, MktPrizeContactObject.class, mktPrizeContactObject.getMktPrizeId());
+    }
+
+
     public void updateMktDrawPrize(MktDrawPrizeObject mktDrawPrizeObject) {
-        dataAPIClient.patch("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
+        dataApiClient.patch("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
+    }
+
+    public void updateMktPrizeContact(MktPrizeContactObject mktPrizeContactObject) {
+        dataApiClient.patch("marketing/drawPrize/{id}/contact", mktPrizeContactObject, mktPrizeContactObject.getMktPrizeId());
+    }
+
+    public void updateMktDrawRecord(MktDrawRecordObject object) {
+        dataApiClient.patch("marketing/draw/{id}", object, object.getId());
     }
 
 
     public List<MktDrawRuleObject> getRuleList(String marketingId) {
-        return dataAPIClient.get("marketing/drawRule/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>() {
+        return dataApiClient.get("marketing/drawRule/{id}", new ParameterizedTypeReference<List<MktDrawRuleObject>>() {
         }, marketingId);
 
     }
 
+    public List<MktDrawPrizeObject> getTop10PrizeList(String marketingId, String ysId) {
+        if(StringUtils.hasText(ysId)) {
+            List<MktDrawRecordObject> objectList = getMktDrawRecordList(marketingId, ysId);
+            List<String> ids = new ArrayList<>();
+            objectList.forEach(item->{
+                ids.add(item.getId());
+            });
+
+            String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                    .append("record_ids", ids)
+                    .append("status_code_in", Arrays.asList(LookupCodes.MktDrawPrizeStatus.SUBMIT, LookupCodes.MktDrawPrizeStatus.PAID))
+                    .build();
+
+            return dataApiClient.get("marketing/drawPrize/{id}/top" + query, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
+            }, marketingId);
+        }
+        else
+            return dataApiClient.get("marketing/drawPrize/{id}/top?status_code_in=" + LookupCodes.MktDrawPrizeStatus.PAID, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
+            }, marketingId);
+    }
+
+
     public MktDrawRuleObject getMktRandomPrize(String marketId) {
-        MarketingObject obj = dataAPIClient.get("marketing/{id}", MarketingObject.class, marketId);
+        MarketingObject obj = dataApiClient.get("marketing/{id}", MarketingObject.class, marketId);
         if (obj.getBalance() <= 0)
             return null;
 
@@ -86,8 +139,7 @@ public class MarketingDomain {
             List<MktDrawRuleObject> ruleList = getRuleList(marketId);
             List<MktDrawRuleObject> newRuleList = new ArrayList<>();
 
-            Long totalQuantity = dataAPIClient.get("productkeybatch/sum/quantity?marketing_id=" + marketId, Long.class);
-            ;
+            Long totalQuantity = dataApiClient.get("productkeybatch/sum/quantity?marketing_id=" + marketId, Long.class);
             Integer sumQuantity = obj.getQuantity();
             if ((sumQuantity != null) || (sumQuantity > 0)) {
                 totalQuantity = new Long(sumQuantity);
@@ -122,7 +174,7 @@ public class MarketingDomain {
             if (envelopeRuleList == null || envelopeRuleList.size() != 2 || envelopeRuleList.get(0).getAvailableQuantity() < 1) {
                 return null;
             }
-            Long totalEnvelopeQuantity = dataAPIClient.get("productkeybatch/sum/quantity?marketing_id=" + marketId, Long.class);
+            Long totalEnvelopeQuantity = dataApiClient.get("productkeybatch/sum/quantity?marketing_id=" + marketId, Long.class);
             ;
             Integer sumEnvelopeQuantity = obj.getQuantity();
             if ((sumEnvelopeQuantity != null) || (sumEnvelopeQuantity > 0)) {
@@ -150,16 +202,16 @@ public class MarketingDomain {
 
     public boolean createMobileOrder(String prizeId) {
         //return  true;
-        return dataAPIClient.get("juhe/mobile/order?draw_prize_id=" + prizeId, Boolean.class);
+        return dataApiClient.get("juhe/mobile/order?draw_prize_id=" + prizeId, Boolean.class);
     }
 
     public boolean createMobileDataFlow(String prizeId) {
         //return true;
-        return dataAPIClient.get("juhe/mobile/data?draw_prize_id=" + prizeId, Boolean.class);
+        return dataApiClient.get("juhe/mobile/data?draw_prize_id=" + prizeId, Boolean.class);
     }
 
     public boolean sendVerificationCode(String mobile, String templateName) {
-        return dataAPIClient.get("juhe/verificationCode/{mobile}?temp_name={name}", Boolean.class, mobile, templateName);
+        return dataApiClient.get("juhe/verificationCode/{mobile}?temp_name={name}", Boolean.class, mobile, templateName);
     }
 
     public boolean validateVerificationCode(String mobile, String verificationCode) {
@@ -168,7 +220,7 @@ public class MarketingDomain {
                 .append("verification_code", verificationCode)
                 .build();
 
-        return dataAPIClient.post("juhe/verifycode" + query, null, Boolean.class);
+        return dataApiClient.post("juhe/verifycode" + query, null, Boolean.class);
     }
 
 

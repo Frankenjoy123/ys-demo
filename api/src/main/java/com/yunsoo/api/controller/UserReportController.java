@@ -6,6 +6,7 @@ import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.User;
 import com.yunsoo.api.dto.UserReport;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.data.object.UserReportObject;
@@ -58,11 +59,8 @@ public class UserReportController {
 
         Page<UserReportObject> objectPage = domain.getUserReportsByProductBaseId(productBaseIds, pageable);
 
-        if (pageable != null)
-            response.setHeader("Content-Range", objectPage.toContentRange());
-
         List<UserReport> reportList = new ArrayList<>();
-        objectPage.getContent().forEach(object -> {
+        PageUtils.response(response, objectPage, pageable != null).forEach(object -> {
             UserReport report = new UserReport(object);
             ProductBaseObject pbo = productBaseDomain.getProductBaseById(object.getProductBaseId());
             if (pbo != null) {

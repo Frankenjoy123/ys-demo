@@ -6,15 +6,12 @@ import com.yunsoo.common.web.client.RestClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by yan on 5/24/2016.
@@ -24,27 +21,27 @@ public class OrganizationCategoryDomain {
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public List<OrganizationCategoryObject> getCategoriesByOrgId(String orgId){
-        return dataAPIClient.get("orgcategory?org_id=" + orgId, new ParameterizedTypeReference<List<OrganizationCategoryObject>>() {
+        return dataApiClient.get("orgcategory?org_id=" + orgId, new ParameterizedTypeReference<List<OrganizationCategoryObject>>() {
         });
     }
 
     public OrganizationCategoryObject getById(String id){
-        return dataAPIClient.get("orgcategory/" + id, OrganizationCategoryObject.class);
+        return dataApiClient.get("orgcategory/" + id, OrganizationCategoryObject.class);
     }
 
     public OrganizationCategoryObject save(OrganizationCategoryObject object){
-        return dataAPIClient.post("orgcategory", object, OrganizationCategoryObject.class);
+        return dataApiClient.post("orgcategory", object, OrganizationCategoryObject.class);
     }
 
     public void update(OrganizationCategoryObject object){
-        dataAPIClient.put("orgcategory/{id}", object, object.getId());
+        dataApiClient.put("orgcategory/{id}", object, object.getId());
     }
 
     public void delete(String id){
-        dataAPIClient.delete("orgcategory/{id}", id);
+        dataApiClient.delete("orgcategory/{id}", id);
     }
 
     public void saveList(String orgId, List<OrganizationCategory> orgCategoryList){
@@ -61,7 +58,7 @@ public class OrganizationCategoryDomain {
 
         });
 
-        dataAPIClient.put("orgcategory", objectList);
+        dataApiClient.put("orgcategory", objectList);
     }
 
 

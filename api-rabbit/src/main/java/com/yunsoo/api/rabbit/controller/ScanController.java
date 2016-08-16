@@ -1,7 +1,12 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.Constants;
-import com.yunsoo.api.rabbit.domain.*;
+import com.yunsoo.api.rabbit.auth.dto.Organization;
+import com.yunsoo.api.rabbit.auth.service.AuthOrganizationService;
+import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
+import com.yunsoo.api.rabbit.domain.ProductDomain;
+import com.yunsoo.api.rabbit.domain.UserFollowDomain;
+import com.yunsoo.api.rabbit.domain.UserScanDomain;
 import com.yunsoo.api.rabbit.dto.ScanRequest;
 import com.yunsoo.api.rabbit.dto.ScanResponse;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
@@ -52,7 +57,7 @@ public class ScanController {
     private ProductBaseDomain productBaseDomain;
 
     @Autowired
-    private OrganizationDomain organizationDomain;
+    private AuthOrganizationService authOrganizationService;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -156,13 +161,13 @@ public class ScanController {
         return productBaseObject;
     }
 
-    private OrganizationObject getOrganizationById(String orgId) {
-        OrganizationObject organizationObject = organizationDomain.getById(orgId);
-        if (organizationObject == null) {
+    private Organization getOrganizationById(String orgId) {
+        Organization org = authOrganizationService.getById(orgId);
+        if (org == null) {
             log.error("organization not found by id: " + orgId);
             throw new NotFoundException("organization not found");
         }
-        return organizationObject;
+        return org;
     }
 
     private UserScanRecordObject saveScanRecord(String productKey,
@@ -208,12 +213,12 @@ public class ScanController {
         return security;
     }
 
-    private ScanResponse.Organization toOrganization(OrganizationObject organizationObject) {
+    private ScanResponse.Organization toOrganization(Organization org) {
         ScanResponse.Organization organization = new ScanResponse.Organization();
-        organization.setId(organizationObject.getId());
-        organization.setName(organizationObject.getName());
-        organization.setStatusCode(organizationObject.getStatusCode());
-        organization.setDescription(organizationObject.getDescription());
+        organization.setId(org.getId());
+        organization.setName(org.getName());
+        organization.setStatusCode(org.getStatusCode());
+        organization.setDescription(org.getDescription());
         return organization;
     }
 

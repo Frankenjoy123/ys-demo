@@ -4,6 +4,7 @@ import com.yunsoo.api.domain.OrgAgencyDomain;
 import com.yunsoo.api.dto.Location;
 import com.yunsoo.api.dto.OrgAgency;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.OrgAgencyObject;
 import com.yunsoo.common.web.client.Page;
@@ -58,11 +59,8 @@ public class OrgAgencyController {
                                        HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, searchText, startTime, endTime, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", orgAgencyPage.toContentRange());
-        }
 
-        return orgAgencyPage.map(OrgAgency::new).getContent();
+        return PageUtils.response(response, orgAgencyPage.map(OrgAgency::new), pageable != null);
     }
 
     //query locations

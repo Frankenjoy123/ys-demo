@@ -1,11 +1,12 @@
 package com.yunsoo.auth.dao.entity;
 
-import com.yunsoo.auth.dao.util.IdGenerator;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by:   Lijian
@@ -17,8 +18,6 @@ import javax.persistence.*;
 public class OrganizationEntity {
 
     @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = IdGenerator.CLASS)
     @Column(name = "id")
     private String id;
 

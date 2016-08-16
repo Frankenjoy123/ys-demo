@@ -1,14 +1,19 @@
 package com.yunsoo.auth;
 
-import com.yunsoo.common.web.client.RestClient;
-import com.yunsoo.common.web.client.RestResponseErrorHandler;
+import com.yunsoo.auth.api.security.authentication.TokenAuthenticationService;
+import com.yunsoo.common.web.client.AsyncRestClient;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Created by:   Lijian
@@ -17,20 +22,43 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {Application.class})
-@WebIntegrationTest()
+@WebIntegrationTest("server.port=0")
 @Ignore
 public class TestBase {
+
+    protected static AsyncRestClient restClient;
+    protected static final String SYSTEM_ACCOUNT_ID = Constants.SYSTEM_ACCOUNT_ID;
+    protected static final String YUNSU_ORG_ID = "2k0r1l55i2rs5544wz5";
 
     @Value("${local.server.port}")
     public int port;
 
-    public static RestClient restClient;
+    @Autowired
+    private TokenAuthenticationService tokenAuthenticationService;
+
 
     @Before
     public void initRestClient() {
         if (restClient == null) {
             System.out.println("initializing restClient");
-            restClient = new RestClient("http://localhost:" + port, new RestResponseErrorHandler());
+            String appId = "AuthUnitTest";
+            String deviceId = getHostName();
+            String accessToken = tokenAuthenticationService.generateAccessToken(SYSTEM_ACCOUNT_ID, YUNSU_ORG_ID).getToken();
+            restClient = new AsyncRestClient("http://localhost:" + port);
+            restClient.setPreRequestCallback(request -> {
+                HttpHeaders httpHeaders = request.getHeaders();
+                httpHeaders.set(com.yunsoo.common.web.Constants.HttpHeaderName.APP_ID, appId);
+                httpHeaders.set(com.yunsoo.common.web.Constants.HttpHeaderName.DEVICE_ID, deviceId);
+                httpHeaders.set(com.yunsoo.common.web.Constants.HttpHeaderName.ACCESS_TOKEN, accessToken);
+            });
+        }
+    }
+
+    protected String getHostName() {
+        try {
+            return InetAddress.getLocalHost().getHostName().split("\\..")[0];
+        } catch (UnknownHostException e) {
+            return "Unknown";
         }
     }
 

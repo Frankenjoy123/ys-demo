@@ -3,17 +3,26 @@ package com.yunsoo.auth.service;
 import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.api.util.AuthUtils;
 import com.yunsoo.auth.api.util.PageUtils;
+import com.yunsoo.auth.config.AuthCacheConfig;
 import com.yunsoo.auth.dao.entity.OrganizationEntity;
 import com.yunsoo.auth.dao.repository.OrganizationRepository;
 import com.yunsoo.auth.dto.Organization;
+import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.ConflictException;
+import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -23,6 +32,7 @@ import java.util.List;
  * Created on:   2016-07-06
  * Descriptions:
  */
+@AuthCacheConfig
 @Service
 public class OrganizationService {
 
@@ -31,6 +41,7 @@ public class OrganizationService {
     @Autowired
     private OrganizationRepository organizationRepository;
 
+    @Cacheable(key = "'organization:' + #id")
     public Organization getById(String id) {
         if (StringUtils.isEmpty(id)) {
             return null;
@@ -61,39 +72,91 @@ public class OrganizationService {
         return PageUtils.convert(organizationRepository.findByIdIn(idsIn, pageable)).map(this::toOrganization);
     }
 
+    @Transactional
     public Organization create(Organization org) {
+        if (!Constants.OrgType.ALL.contains(org.getTypeCode())) {
+            throw new BadRequestException("type_code invalid");
+        }
+        if (organizationRepository.findByName(org.getName()).size() > 0) {
+            throw new ConflictException("organization already exists with the same name: " + org.getName());
+        }
         OrganizationEntity entity = new OrganizationEntity();
+        if (ObjectIdGenerator.validate(org.getId())) {
+            entity.setId(org.getId()); //if id is not null or empty, create the org with the given id
+        } else {
+            entity.setId(ObjectIdGenerator.getNew());
+        }
         entity.setName(org.getName());
         entity.setTypeCode(org.getTypeCode());
-        entity.setStatusCode(Constants.OrgStatus.AVAILABLE);
+        entity.setStatusCode(Constants.OrgStatus.CREATED);
         entity.setDescription(org.getDescription());
         entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         entity.setCreatedDateTime(DateTime.now());
         entity = organizationRepository.save(entity);
-        log.info("organization created. " + StringFormatter.formatMap("name", org.getName(), "typeCode", org.getTypeCode()));
+        log.info("organization created. " + StringFormatter.formatMap("id", entity.getId(), "name", org.getName(), "typeCode", org.getTypeCode()));
         return toOrganization(entity);
     }
 
+    @CacheEvict(key = "'organization:' + #org.id")
+    @Transactional
     public void patchUpdate(Organization org) {
         if (StringUtils.isEmpty(org.getId())) {
             return;
         }
         OrganizationEntity entity = organizationRepository.findOne(org.getId());
-        if (entity != null) {
-            if (StringUtils.hasText(org.getName())) entity.setName(org.getName());
-            if (org.getDescription() != null) entity.setDescription(org.getDescription());
-            organizationRepository.save(entity);
+        if (entity == null) {
+            throw new NotFoundException("organization not found by id: " + org.getId());
+        }
+        if (StringUtils.hasText(org.getName()) && !org.getName().equals(entity.getName())) {
+            if (organizationRepository.findByName(org.getName()).size() > 0) {
+                throw new ConflictException("organization already exists with the same name: " + org.getName());
+            }
+            log.info(String.format("trying change name from %s to %s for org with id: %s", entity.getName(), org.getName(), org.getId()));
+            entity.setName(org.getName());
+        }
+        if (org.getDescription() != null) {
+            entity.setDescription(org.getDescription());
+        }
+        organizationRepository.save(entity);
+    }
+
+    @CacheEvict(key = "'organization:' + #org.id")
+    @Transactional
+    public Organization save(Organization org) {
+        if (StringUtils.isEmpty(org.getId()) || organizationRepository.findOne(org.getId()) == null) {
+            return create(org);
+        } else {
+            patchUpdate(org);
+            return org;
         }
     }
 
+    @CacheEvict(key = "'organization:' + #orgId")
+    @Transactional
     public void updateStatus(String orgId, String statusCode) {
         if (StringUtils.isEmpty(orgId) || !Constants.OrgStatus.ALL.contains(statusCode)) {
             return;
         }
         OrganizationEntity entity = organizationRepository.findOne(orgId);
-        if (entity != null) {
-            entity.setStatusCode(statusCode);
-            organizationRepository.save(entity);
+        if (entity == null) {
+            throw new NotFoundException("organization not found by id: " + orgId);
+        }
+        entity.setStatusCode(statusCode);
+        organizationRepository.save(entity);
+    }
+
+    @CacheEvict(key = "'organization:' + #orgId")
+    @Transactional
+    public void delete(String orgId) {
+        if (!StringUtils.isEmpty(orgId)) {
+            OrganizationEntity entity = organizationRepository.findOne(orgId);
+            if (entity != null) {
+                if (Constants.OrgStatus.CREATED.equals(entity.getStatusCode())) {
+                    organizationRepository.delete(entity);
+                } else {
+                    throw new UnprocessableEntityException("organization can not be deleted on status: " + entity.getStatusCode());
+                }
+            }
         }
     }
 

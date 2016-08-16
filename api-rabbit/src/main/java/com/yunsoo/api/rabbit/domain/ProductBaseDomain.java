@@ -34,7 +34,7 @@ import java.util.Map;
 public class ProductBaseDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     @Autowired
     private LookupDomain lookupDomain;
@@ -47,7 +47,7 @@ public class ProductBaseDomain {
             return null;
         }
         try {
-            return dataAPIClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
+            return dataApiClient.get("productbase/{id}", ProductBaseObject.class, productBaseId);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -55,7 +55,7 @@ public class ProductBaseDomain {
 
     public String getProductBaseDetails(String orgId, String productBaseId, int version) {
         try {
-            ResourceInputStream resourceInputStream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json",
+            ResourceInputStream resourceInputStream = dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json",
                     orgId, productBaseId, version);
             byte[] bytes = StreamUtils.copyToByteArray(resourceInputStream);
             return new String(bytes, StandardCharsets.UTF_8);
@@ -70,7 +70,7 @@ public class ProductBaseDomain {
                 .append(pageable)
                 .build();
 
-        return dataAPIClient.getPaged("productbase" + query, new ParameterizedTypeReference<List<ProductBaseObject>>() {
+        return dataApiClient.getPaged("productbase" + query, new ParameterizedTypeReference<List<ProductBaseObject>>() {
         });
     }
 
@@ -78,7 +78,7 @@ public class ProductBaseDomain {
     public ResourceInputStream getProductBaseImage(String productBaseId, String imageName) {
         try {
             ProductBaseObject productBaseObject = getProductBaseById(productBaseId);
-            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}", productBaseObject.getOrgId(), productBaseId, productBaseObject.getVersion(), imageName);
+            return dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}", productBaseObject.getOrgId(), productBaseId, productBaseObject.getVersion(), imageName);
         } catch (NotFoundException ex) {
             return null;
         }

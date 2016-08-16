@@ -1,28 +1,28 @@
 package com.yunsoo.auth.service;
 
-import com.yunsoo.auth.api.security.permission.PermissionEntry;
-import com.yunsoo.auth.api.security.permission.expression.PermissionExpression;
-import com.yunsoo.auth.api.security.permission.expression.PermissionExpression.SimplePermissionExpression;
-import com.yunsoo.auth.api.security.permission.expression.PrincipalExpression;
-import com.yunsoo.auth.api.security.permission.expression.PrincipalExpression.AccountPrincipalExpression;
-import com.yunsoo.auth.api.security.permission.expression.PrincipalExpression.GroupPrincipalExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
-import com.yunsoo.auth.api.security.permission.expression.RestrictionExpression.RegionRestrictionExpression;
 import com.yunsoo.auth.api.util.AuthUtils;
+import com.yunsoo.auth.config.AuthCacheConfig;
 import com.yunsoo.auth.dao.entity.PermissionAllocationEntity;
 import com.yunsoo.auth.dao.repository.PermissionAllocationRepository;
-import com.yunsoo.auth.dto.Account;
 import com.yunsoo.auth.dto.PermissionAllocation;
-import com.yunsoo.auth.dto.PermissionRegion;
+import com.yunsoo.common.web.security.permission.PermissionEntry;
+import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
+import com.yunsoo.common.web.security.permission.expression.PrincipalExpression;
+import com.yunsoo.common.web.security.permission.expression.PrincipalExpression.AccountPrincipalExpression;
+import com.yunsoo.common.web.security.permission.expression.PrincipalExpression.GroupPrincipalExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
+import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -37,13 +37,10 @@ public class PermissionAllocationService {
     private PermissionAllocationRepository permissionAllocationRepository;
 
     @Autowired
-    private PermissionService permissionService;
-
-    @Autowired
     private AccountGroupService accountGroupService;
 
     @Autowired
-    private AccountService accountService;
+    private PermissionAllocationService.Cached cached;
 
 
     /**
@@ -75,35 +72,17 @@ public class PermissionAllocationService {
                 : getPermissionAllocationsByPrincipal(new GroupPrincipalExpression(groupId).toString());
     }
 
+    public List<PermissionAllocation> getPermissionAllocationsByPrincipal(PrincipalExpression principal) {
+        if (principal == null) {
+            return new ArrayList<>();
+        }
+        return this.getPermissionAllocationsByPrincipal(principal.toString());
+    }
+
     public void deletePermissionAllocationsByGroupId(String groupId) {
-        permissionAllocationRepository.deleteByPrincipal(new GroupPrincipalExpression(groupId).toString());
-    }
-
-    @Transactional
-    public void allocateAdminPermissionOnCurrentOrgToAccount(String accountId) {
-        if (StringUtils.isEmpty(accountId)) {
-            return;
-        }
-        allocatePermission(
-                new AccountPrincipalExpression(accountId),
-                OrgRestrictionExpression.CURRENT,
-                SimplePermissionExpression.ADMIN,
-                PermissionEntry.Effect.allow);
-    }
-
-    @Transactional
-    public void allocateAdminPermissionOnDefaultRegionToAccount(String accountId) {
-        Account account = accountService.getById(accountId);
-        if (account == null) {
-            return;
-        }
-
-        PermissionRegion defaultPR = permissionService.getOrCreateDefaultPermissionRegion(account.getOrgId());
-        allocatePermission(
-                new AccountPrincipalExpression(accountId),
-                new RegionRestrictionExpression(defaultPR.getId()),
-                SimplePermissionExpression.ADMIN,
-                PermissionEntry.Effect.allow);
+        PrincipalExpression principal = new GroupPrincipalExpression(groupId);
+        permissionAllocationRepository.deleteByPrincipal(principal.toString());
+        permissionAllocationCacheEvict(principal);
     }
 
     @Transactional
@@ -118,6 +97,7 @@ public class PermissionAllocationService {
             }
         }
         createPermissionAllocation(principal.toString(), restriction.toString(), permission.toString(), effect.name());
+        permissionAllocationCacheEvict(principal);
     }
 
     @Transactional
@@ -125,14 +105,16 @@ public class PermissionAllocationService {
                                      RestrictionExpression restriction,
                                      PermissionExpression permission,
                                      PermissionEntry.Effect effect) {
-        List<PermissionAllocation> pAOs = getPermissionAllocationsByPrincipal(principal.toString());
-        for (PermissionAllocation p : pAOs) {
-            if (isEqualPermissionAllocation(p, principal, restriction, permission, effect)) {
-                //allocation item exists
-                permissionAllocationRepository.delete(p.getId());
-            }
-        }
+        getPermissionAllocationsByPrincipal(principal.toString())
+                .stream()
+                .filter(p -> isEqualPermissionAllocation(p, principal, restriction, permission, effect))
+                .forEach(p -> {
+                    //delete allocation item exists
+                    permissionAllocationRepository.delete(p.getId());
+                });
+        permissionAllocationCacheEvict(principal);
     }
+
 
     //region private methods
 
@@ -180,7 +162,8 @@ public class PermissionAllocationService {
         entity.setEffect(effect);
         entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         entity.setCreatedDateTime(DateTime.now());
-        return toPermissionAllocation(permissionAllocationRepository.save(entity));
+        entity = permissionAllocationRepository.save(entity);
+        return toPermissionAllocation(entity);
     }
 
     private PermissionAllocation toPermissionAllocation(PermissionAllocationEntity entity) {
@@ -198,6 +181,35 @@ public class PermissionAllocationService {
         return permissionAllocation;
     }
 
+    private void permissionAllocationCacheEvict(PrincipalExpression principal) {
+        if (principal != null) {
+            cached.permissionAllocationCacheEvict(principal);
+            if (principal instanceof GroupPrincipalExpression) {
+                accountGroupService.getAccountIdsByGroupId(principal.getValue())
+                        .stream()
+                        .forEach(aId -> cached.permissionAllocationCacheEvict(new AccountPrincipalExpression(aId)));
+            }
+        }
+    }
+
     //endregion
+
+
+    @AuthCacheConfig
+    @Service
+    public static class Cached {
+
+        @Cacheable(key = "'permission_allocation:account/' + #accountId")
+        public List<String> getExpendedPermissionEntriesByAccountIdCached(String accountId, Function<String, List<PermissionEntry>> function) {
+            return function.apply(accountId).stream()
+                    .map(PermissionEntry::toString)
+                    .collect(Collectors.toList());
+        }
+
+        @CacheEvict(key = "'permission_allocation:' + #principal")
+        public void permissionAllocationCacheEvict(PrincipalExpression principal) {
+        }
+
+    }
 
 }

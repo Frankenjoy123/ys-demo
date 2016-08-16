@@ -30,11 +30,11 @@ public class MessageDomain {
     private static ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public MessageObject getById(String id) {
         try {
-            return dataAPIClient.get("message/{id}", MessageObject.class, id);
+            return dataApiClient.get("message/{id}", MessageObject.class, id);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -43,7 +43,7 @@ public class MessageDomain {
     public ResourceInputStream getMessageImage(String orgId, String id, String imageName) {
 
         try {
-            return dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/message/{id}/{imageName}", orgId, id, imageName);
+            return dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/message/{id}/{imageName}", orgId, id, imageName);
         } catch (NotFoundException ex) {
             return null;
         }
@@ -53,7 +53,7 @@ public class MessageDomain {
     public MessageDetails getMessageDetails(String orgId, String id) {
         ResourceInputStream resourceInputStream;
         try {
-            resourceInputStream = dataAPIClient.getResourceInputStream("file/s3?path=organization/{orgId}/message/{messageId}/{fileName}",
+            resourceInputStream = dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/message/{messageId}/{fileName}",
                     orgId, id, DETAILS_FILE_NAME);
         } catch (NotFoundException ex) {
             return null;
@@ -70,7 +70,7 @@ public class MessageDomain {
                 .append("org_id", orgId)
                 .build();
 
-        return dataAPIClient.get("message" + query, new ParameterizedTypeReference<List<MessageObject>>() {
+        return dataApiClient.get("message" + query, new ParameterizedTypeReference<List<MessageObject>>() {
         });
     }
 }

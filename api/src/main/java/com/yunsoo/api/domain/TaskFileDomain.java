@@ -1,6 +1,6 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.client.DataAPIClient;
+import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.TaskFileEntryObject;
@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -33,7 +34,7 @@ public class TaskFileDomain {
     private static final String[] FILE_TYPE_ARRAY = new String[]{LookupCodes.TaskFileType.PACKAGE, LookupCodes.TaskFileType.TRACE};
 
     @Autowired
-    private DataAPIClient dataAPIClient;
+    private DataApiClient dataApiClient;
 
     @Autowired
     private FileDomain fileDomain;
@@ -43,7 +44,7 @@ public class TaskFileDomain {
 
     public TaskFileEntryObject getTaskFileEntryById(String fileId) {
         try {
-            return dataAPIClient.get("taskFileEntry/{id}", TaskFileEntryObject.class, fileId);
+            return dataApiClient.get("taskFileEntry/{id}", TaskFileEntryObject.class, fileId);
         } catch (NotFoundException ignored) {
             return null;
         }
@@ -70,13 +71,13 @@ public class TaskFileDomain {
                 .append("created_datetime_le", createdDateTimeLE)
                 .append(pageable)
                 .build();
-        return dataAPIClient.getPaged("taskFileEntry" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
+        return dataApiClient.getPaged("taskFileEntry" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
         });
     }
 
     public void updateStatusToUploaded(String fileId) {
         try {
-            dataAPIClient.put("taskFileEntry/{id}/statusCode", LookupCodes.TaskFileStatus.UPLOADED, fileId);
+            dataApiClient.put("taskFileEntry/{id}/statusCode", LookupCodes.TaskFileStatus.UPLOADED, fileId);
         } catch (Exception e) {
             log.error("update statusCode failed for taskFileEntry " + StringFormatter.formatMap("fileId", fileId));
         }
@@ -104,6 +105,10 @@ public class TaskFileDomain {
         obj.setDeviceId(deviceId);
         obj.setName(fileName);
         obj.setTypeCode(fileType);
+        obj.setProductBaseId(ysFile.getHeader("product_base_id"));
+        obj.setPackageCount(tryParseInt(ysFile.getHeader("package_count")));
+        obj.setPackageSize(tryParseInt(ysFile.getHeader("package_size")));
+        obj.setProductCount(tryParseInt(ysFile.getHeader("product_count")));
         //create file entry
         obj = this.createTaskFileEntry(obj);
 
@@ -118,12 +123,69 @@ public class TaskFileDomain {
         return this.getTaskFileEntryById(obj.getFileId());
     }
 
+    public ResourceInputStream getFile(String orgId, String fileId){
+        String path = String.format("organization/%s/task_file/%s", orgId, fileId);
+        return fileDomain.getFile(path);
+    }
+
+
+    public TaskFileEntryObject getTotal(String orgId, String appId, String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("app_id", appId)
+                .append("device_id", deviceId)
+                .append("type_code", typeCode)
+                .append("status_code_in", statusCodeIn)
+                .append("created_datetime_start", start)
+                .append("created_datetime_end", end)
+                .build();
+
+        return dataApiClient.get("/taskFileEntry/sum" + query, TaskFileEntryObject.class);
+    }
+
+    public int countByDevice(String orgId, List<String> deviceId, String typeCode, List<String> statusCodeIn) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("device_ids", deviceId)
+                .append("type_code", typeCode)
+                .append("status_code_in", statusCodeIn)
+                .build();
+
+        return dataApiClient.get("/taskFileEntry/count" + query, Integer.class);
+    }
+
+    public List<TaskFileEntryObject> getTotalByDate(String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("device_id", deviceId)
+                .append("type_code", typeCode)
+                .append("status_code_in", statusCodeIn)
+                .append("created_datetime_start", start)
+                .append("created_datetime_end", end)
+                .build();
+
+        return dataApiClient.get("/taskFileEntry/sum/date" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
+        });
+    }
+
+    public List<TaskFileEntryObject> getTotalByDevice(List<String> deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("device_id", deviceId)
+                .append("type_code", typeCode)
+                .append("status_code_in", statusCodeIn)
+                .append("created_datetime_start", start)
+                .append("created_datetime_end", end)
+                .build();
+
+        return dataApiClient.get("/taskFileEntry/sum/device" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
+        });
+    }
+
     private TaskFileEntryObject createTaskFileEntry(TaskFileEntryObject obj) {
         obj.setFileId(null);
         obj.setStatusCode(LookupCodes.TaskFileStatus.UPLOADING);
         obj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         obj.setCreatedDateTime(DateTime.now());
-        return dataAPIClient.post("taskFileEntry", obj, TaskFileEntryObject.class);
+        return dataApiClient.post("taskFileEntry", obj, TaskFileEntryObject.class);
     }
 
     private boolean validateFileType(String fileType) {
@@ -134,6 +196,28 @@ public class TaskFileDomain {
             }
         }
         return false;
+    }
+
+    private Long tryParseLong(String intValue) {
+        if (StringUtils.isEmpty(intValue)) {
+            return null;
+        }
+        try {
+            return Long.parseLong(intValue);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private Integer tryParseInt(String intValue) {
+        if (StringUtils.isEmpty(intValue)) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(intValue);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
 }

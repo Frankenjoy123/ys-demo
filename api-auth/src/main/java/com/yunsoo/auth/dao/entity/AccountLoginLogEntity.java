@@ -25,11 +25,11 @@ public class AccountLoginLogEntity {
     @Column(name = "account_id")
     private String accountId;
 
-    @Column(name = "app_id")
-    private String appId;
-
     @Column(name = "channel")
     private String channel;
+
+    @Column(name = "app_id")
+    private String appId;
 
     @Column(name = "device_id")
     private String deviceId;
@@ -61,20 +61,20 @@ public class AccountLoginLogEntity {
         this.accountId = accountId;
     }
 
-    public String getAppId() {
-        return appId;
-    }
-
-    public void setAppId(String appId) {
-        this.appId = appId;
-    }
-
     public String getChannel() {
         return channel;
     }
 
     public void setChannel(String channel) {
         this.channel = channel;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
     }
 
     public String getDeviceId() {

@@ -1,8 +1,7 @@
 package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.EMREventEntity;
-import com.yunsoo.data.service.entity.EMRUserEntity;
-import com.yunsoo.data.service.entity.MarketUserLocationAnalysisEntity;
+import com.yunsoo.data.service.entity.ScanRecordLocationAnalysisEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
@@ -26,4 +25,48 @@ public interface EMREventRepository extends FindOneAndSaveRepository<EMREventEnt
     Page<EMREventEntity> findByFilter(@Param("orgId") String orgId, @Param("userId") String userId, @Param("ysId") String ysId,
                                       @Param("eventDateTimeStart") DateTime eventDateTimeStart,
                                       @Param("eventDateTimeEnd") DateTime eventDateTimeEnd, Pageable pageable);
+
+    @Query("select o from #{#entityName} o where o.name = 'share'" +
+            "and o.orgId = :orgId " +
+            "and (:productBaseId is null or o.productBaseId = :productBaseId) " +
+            "and (:province is null or :province = '' or o.province like ('%' || :province || '%'))" +
+            "and (:city is null or :city = '' or o.city like ('%' || :city || '%')) " +
+            "and (:createdDateTimeStart is null or o.eventDateTime >= :createdDateTimeStart) " +
+            "and (:createdDateTimeEnd is null or o.eventDateTime <= :createdDateTimeEnd) order by o.eventDateTime DESC")
+    Page<EMREventEntity> findEventFilterByShare(@Param("orgId") String orgId,
+                                                @Param("productBaseId") String productBaseId,
+                                                @Param("province") String province, @Param("city") String city,
+                                                @Param("createdDateTimeStart") DateTime createdDateTimeStart,
+                                                @Param("createdDateTimeEnd") DateTime createdDateTimeEnd,
+                                                Pageable pageable);
+
+    @Query("select o from #{#entityName} o where o.name = 'store_url'" +
+            "and o.orgId = :orgId " +
+            "and (:productBaseId is null or o.productBaseId = :productBaseId) " +
+            "and (:province is null or :province = '' or o.province like ('%' || :province || '%'))" +
+            "and (:city is null or :city = '' or o.city like ('%' || :city || '%')) " +
+            "and (:createdDateTimeStart is null or o.eventDateTime >= :createdDateTimeStart) " +
+            "and (:createdDateTimeEnd is null or o.eventDateTime <= :createdDateTimeEnd) order by o.eventDateTime DESC")
+    Page<EMREventEntity> findEventFilterByStoreUrl(@Param("orgId") String orgId,
+                                                   @Param("productBaseId") String productBaseId,
+                                                   @Param("province") String province, @Param("city") String city,
+                                                   @Param("createdDateTimeStart") DateTime createdDateTimeStart,
+                                                   @Param("createdDateTimeEnd") DateTime createdDateTimeEnd,
+                                                   Pageable pageable);
+
+    @Query("select o from #{#entityName} o where o.name = 'comment'" +
+            "and o.orgId = :orgId " +
+            "and (:productBaseId is null or o.productBaseId = :productBaseId) " +
+            "and (:province is null or :province = '' or o.province like ('%' || :province || '%'))" +
+            "and (:city is null or :city = '' or o.city like ('%' || :city || '%')) " +
+            "and (:createdDateTimeStart is null or o.eventDateTime >= :createdDateTimeStart) " +
+            "and (:createdDateTimeEnd is null or o.eventDateTime <= :createdDateTimeEnd) order by o.eventDateTime DESC")
+    Page<EMREventEntity> findEventFilterByComment(@Param("orgId") String orgId,
+                                                  @Param("productBaseId") String productBaseId,
+                                                  @Param("province") String province, @Param("city") String city,
+                                                  @Param("createdDateTimeStart") DateTime createdDateTimeStart,
+                                                  @Param("createdDateTimeEnd") DateTime createdDateTimeEnd,
+                                                  Pageable pageable);
+
+
 }

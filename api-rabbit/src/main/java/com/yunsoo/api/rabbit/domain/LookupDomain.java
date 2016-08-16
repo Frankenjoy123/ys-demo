@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 public class LookupDomain {
 
     @Autowired
-    private RestClient dataAPIClient;
+    private RestClient dataApiClient;
 
     public List<Lookup> getAllLookupList(Boolean active) {
-        return dataAPIClient.get("lookup" + formatActive(active), new ParameterizedTypeReference<List<Lookup>>() {
+        return dataApiClient.get("lookup" + formatActive(active), new ParameterizedTypeReference<List<Lookup>>() {
         });
     }
 
@@ -56,7 +56,7 @@ public class LookupDomain {
 
     @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT_CATEGORY.toString(), 'map')")
     public Map<String, ProductCategoryObject> getProductCategoryMap() {
-        List<ProductCategoryObject> categoryObjects = dataAPIClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {
+        List<ProductCategoryObject> categoryObjects = dataApiClient.get("productcategory", new ParameterizedTypeReference<List<ProductCategoryObject>>() {
         });
         return categoryObjects.stream().collect(Collectors.toMap(ProductCategoryObject::getId, c -> c));
     }

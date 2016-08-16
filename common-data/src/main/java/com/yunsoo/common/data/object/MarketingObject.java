@@ -78,6 +78,11 @@ public class MarketingObject {
     @JsonProperty("rules_text")
     private String rulesText;
 
+    @JsonProperty("is_prized_all")
+    private Boolean isPrizedAll;
+
+    @JsonProperty("is_mobile_verified")
+    private Boolean isMobileVerified;
 
     public String getId() {
         return id;
@@ -232,5 +237,21 @@ public class MarketingObject {
 
     public void setRulesText(String rulesText) {
         this.rulesText = rulesText;
+    }
+
+    public Boolean getIsPrizedAll() {
+        return isPrizedAll;
+    }
+
+    public void setIsPrizedAll(Boolean isPrizedAll) {
+        this.isPrizedAll = isPrizedAll;
+    }
+
+    public Boolean getIsMobileVerified() {
+        return isMobileVerified;
+    }
+
+    public void setIsMobileVerified(Boolean isMobileVerified) {
+        this.isMobileVerified = isMobileVerified;
     }
 }
