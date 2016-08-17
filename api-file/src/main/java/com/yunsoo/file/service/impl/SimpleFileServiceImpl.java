@@ -10,6 +10,12 @@ import com.yunsoo.file.service.FileService;
  */
 public class SimpleFileServiceImpl implements FileService {
 
+    private String basePath;
+
+    public SimpleFileServiceImpl(String basePath) {
+        this.basePath = basePath;
+    }
+
     @Override
     public ResourceInputStream getFileByPath(String path) {
         return null;
