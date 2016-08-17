@@ -19,9 +19,10 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
  * Created on:   2015/2/28
  * Descriptions:
  */
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalControllerExceptionHandler {
 
     private static final String FROM = "api-auth";
@@ -45,6 +46,7 @@ public class GlobalControllerExceptionHandler {
 
     //business
     @ExceptionHandler(RestErrorResultException.class)
+    @ResponseBody
     public ResponseEntity<ErrorResult> handleRestError(HttpServletRequest req, RestErrorResultException ex) {
         HttpStatus status = ex.getHttpStatus();
         ErrorResult result = ex.getErrorResult();
@@ -59,6 +61,7 @@ public class GlobalControllerExceptionHandler {
             MethodArgumentNotValidException.class,
             MethodArgumentTypeMismatchException.class,
             MissingServletRequestParameterException.class})
+    @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResult handleMissingRequestParameterException(HttpServletRequest req, Exception ex) {
         String message;
@@ -79,6 +82,7 @@ public class GlobalControllerExceptionHandler {
 
     //401
     @ExceptionHandler({UnauthorizedException.class})
+    @ResponseBody
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResult handleUnauthorized(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.UNAUTHORIZED, "unauthorized request");
@@ -88,6 +92,7 @@ public class GlobalControllerExceptionHandler {
 
     //403
     @ExceptionHandler({ForbiddenException.class, AccessDeniedException.class})
+    @ResponseBody
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResult handleForbiddenException(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.FORBIDDEN, "forbidden request");
@@ -97,6 +102,7 @@ public class GlobalControllerExceptionHandler {
 
     //404
     @ExceptionHandler({NoHandlerFoundException.class})
+    @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResult handleNoHandlerFound(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.NOT_FOUND, "no handler found");
@@ -106,6 +112,7 @@ public class GlobalControllerExceptionHandler {
 
     //405
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+    @ResponseBody
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     public ErrorResult handleMethodNotSupported(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.METHOD_NOT_ALLOWED, "method not allowed");
@@ -115,6 +122,7 @@ public class GlobalControllerExceptionHandler {
 
     //500
     @ExceptionHandler(Exception.class)
+    @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResult handleServerError(HttpServletRequest req, Exception ex) {
         ErrorResult result = new ErrorResult(RestErrorResultCode.INTERNAL_SERVER_ERROR, "server error");

@@ -60,8 +60,8 @@ public class CacheConfiguration {
             return redisCacheManager;
         }
 
-        @Bean
         @Primary
+        @Bean(name = "org.springframework.autoconfigure.redis.RedisProperties")
         @ConfigurationProperties(prefix = "yunsoo.cache.redis")
         public RedisProperties redisProperties() {
             return new RedisProperties();
