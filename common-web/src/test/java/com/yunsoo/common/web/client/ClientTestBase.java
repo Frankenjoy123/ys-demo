@@ -2,23 +2,23 @@ package com.yunsoo.common.web.client;
 
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Created by:   Lijian
  * Created on:   2016-07-22
  * Descriptions:
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {MockRestApiServer.class})
-@WebIntegrationTest("server.port=0")
+@RunWith(SpringRunner.class)
+@SpringBootTest(
+        classes = {MockRestApiServer.class},
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Ignore
 public class ClientTestBase {
 
-    @Value("${local.server.port}")
+    @LocalServerPort
     public int port;
 
 }

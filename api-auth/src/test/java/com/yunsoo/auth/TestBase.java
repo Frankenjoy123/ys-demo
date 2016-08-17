@@ -6,11 +6,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -20,9 +19,10 @@ import java.net.UnknownHostException;
  * Created on:   2016-02-16
  * Descriptions:
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {Application.class})
-@WebIntegrationTest("server.port=0")
+@RunWith(SpringRunner.class)
+@SpringBootTest(
+        classes = {Application.class},
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Ignore
 public class TestBase {
 
@@ -30,7 +30,7 @@ public class TestBase {
     protected static final String SYSTEM_ACCOUNT_ID = Constants.SYSTEM_ACCOUNT_ID;
     protected static final String YUNSU_ORG_ID = "2k0r1l55i2rs5544wz5";
 
-    @Value("${local.server.port}")
+    @LocalServerPort
     public int port;
 
     @Autowired
