@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -59,7 +60,8 @@ public class CacheConfiguration {
             return redisCacheManager;
         }
 
-        @Bean(name = "org.springframework.autoconfigure.redis.RedisProperties")
+        @Bean
+        @Primary
         @ConfigurationProperties(prefix = "yunsoo.cache.redis")
         public RedisProperties redisProperties() {
             return new RedisProperties();
