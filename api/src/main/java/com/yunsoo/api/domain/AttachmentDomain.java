@@ -107,6 +107,11 @@ public class AttachmentDomain {
         ResourceInputStream file = fileDomain.getFile(oldPath);
         if (file != null) {
             fileDomain.putFile(formatPath(attachmentId), file);
+            AttachmentObject obj = getAttachmentById(attachmentId);
+            if (obj != null) {
+                obj.setS3FileName(null);
+                dataApiClient.put("attachment/{0}", obj, attachmentId);
+            }
         }
         return file;
     }
