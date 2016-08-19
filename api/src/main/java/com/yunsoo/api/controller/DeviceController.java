@@ -2,12 +2,14 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.auth.dto.Device;
 import com.yunsoo.api.auth.service.AuthDeviceService;
-import com.yunsoo.api.domain.DeviceDomain;
+import com.yunsoo.api.file.service.FileService;
 import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -27,7 +30,7 @@ import java.io.IOException;
 public class DeviceController {
 
     @Autowired
-    private DeviceDomain deviceDomain;
+    private FileService fileService;
 
     @Autowired
     private AuthDeviceService authDeviceService;
@@ -52,7 +55,10 @@ public class DeviceController {
         } else {
             fileName = fileName.replace("/", "");
         }
-        deviceDomain.uploadLog(appId, deviceId, fileName, request.getContentLength(), request.getInputStream());
+
+        String s3FileName =  String.format("application/%s/device/%s/log/%s",appId, deviceId, fileName);
+        ResourceInputStream stream = new ResourceInputStream(request.getInputStream(), request.getContentLength(), MediaType.TEXT_PLAIN_VALUE);
+        fileService.putFile(s3FileName, stream);
 
     }
 

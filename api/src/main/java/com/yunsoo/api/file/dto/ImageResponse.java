@@ -1,4 +1,4 @@
-package com.yunsoo.api.dto;
+package com.yunsoo.api.file.dto;
 
 /**
  * Created by:   Lijian

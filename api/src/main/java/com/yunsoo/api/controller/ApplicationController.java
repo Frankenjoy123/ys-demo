@@ -1,7 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.config.YSConfigProperties;
-import com.yunsoo.api.domain.FileDomain;
+import com.yunsoo.api.file.service.FileService;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -26,8 +26,7 @@ public class ApplicationController {
     private YSConfigProperties YSConfig;
 
     @Autowired
-    private FileDomain fileDomain;
-
+    private FileService fileService;
 
     //region config
 
@@ -37,9 +36,9 @@ public class ApplicationController {
             throw new BadRequestException("appId not valid");
         }
         String env = YSConfig.getEnvironment();
-        ResourceInputStream resourceInputStream = fileDomain.getFile(String.format("application/%s/config.%s", appId, env));
+        ResourceInputStream resourceInputStream = fileService.getFile(String.format("application/%s/config.%s", appId, env));
         if (resourceInputStream == null) {
-            resourceInputStream = fileDomain.getFile(String.format("application/%s/config", appId));
+            resourceInputStream = fileService.getFile(String.format("application/%s/config", appId));
         }
         if (resourceInputStream == null) {
             throw new NotFoundException("config not found");

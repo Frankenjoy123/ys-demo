@@ -1,6 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.DataApiClient;
+import com.yunsoo.api.file.service.FileService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.TaskFileEntryObject;
@@ -37,7 +38,7 @@ public class TaskFileDomain {
     private DataApiClient dataApiClient;
 
     @Autowired
-    private FileDomain fileDomain;
+    private FileService fileService;
 
     private Log log = LogFactory.getLog(this.getClass());
 
@@ -115,7 +116,7 @@ public class TaskFileDomain {
         String path = String.format("organization/%s/task_file/%s", orgId, obj.getFileId());
         byte[] data = ysFile.toBytes();
         //save file
-        fileDomain.putFile(path, new ResourceInputStream(new ByteArrayInputStream(data), data.length, "text/plain"));
+        fileService.putFile(path, new ResourceInputStream(new ByteArrayInputStream(data), data.length, "text/plain"));
 
         //update status of the file entry
         this.updateStatusToUploaded(obj.getFileId());
@@ -125,7 +126,7 @@ public class TaskFileDomain {
 
     public ResourceInputStream getFile(String orgId, String fileId){
         String path = String.format("organization/%s/task_file/%s", orgId, fileId);
-        return fileDomain.getFile(path);
+        return fileService.getFile(path);
     }
 
 

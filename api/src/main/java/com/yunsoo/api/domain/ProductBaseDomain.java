@@ -142,14 +142,6 @@ public class ProductBaseDomain {
         dataApiClient.delete("productbaseversions/{product_base_id}/{version}", productBaseId, version);
     }
 
-    public ResourceInputStream getProductBaseImage(String orgId, String productBaseId, Integer version, String imageName) {
-        try {
-            return dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}", orgId, productBaseId, version, imageName);
-        } catch (NotFoundException ex) {
-            return null;
-        }
-    }
-
     public ProductBaseObject copyFromProductBaseVersionsObject(ProductBaseVersionsObject productBaseVersionsObject) {
         if (productBaseVersionsObject == null) {
             return null;

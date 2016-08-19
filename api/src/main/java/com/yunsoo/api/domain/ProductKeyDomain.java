@@ -4,6 +4,7 @@ import com.yunsoo.api.client.ProcessorClient;
 import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyCredit;
+import com.yunsoo.api.file.service.FileService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.message.ProductKeyBatchCreateMessage;
@@ -56,7 +57,7 @@ public class ProductKeyDomain {
     private LookupDomain lookupDomain;
 
     @Autowired
-    private FileDomain fileDomain;
+    private FileService fileService;
 
     @Autowired
     private ProductKeyOrderDomain productKeyOrderDomain;
@@ -249,7 +250,7 @@ public class ProductKeyDomain {
 
     public YSFile getProductKeyFile(String batchId, String orgId) {
         String path = String.format("organization/%s/product_key_batch/%s/keys.pks", orgId, batchId);
-        ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+        ResourceInputStream resourceInputStream = fileService.getFile(path);
         if (resourceInputStream == null) {
             return null;
         }

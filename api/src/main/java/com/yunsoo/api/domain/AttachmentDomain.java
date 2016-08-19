@@ -1,6 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.DataApiClient;
+import com.yunsoo.api.file.service.FileService;
 import com.yunsoo.common.data.object.AttachmentObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
@@ -28,7 +29,7 @@ public class AttachmentDomain {
     private DataApiClient dataApiClient;
 
     @Autowired
-    private FileDomain fileDomain;
+    private FileService fileService;
 
 
     public AttachmentObject getAttachmentById(String attachmentId) {
@@ -65,7 +66,7 @@ public class AttachmentDomain {
         String path = formatPath(obj.getId());
         try {
             ResourceInputStream stream = new ResourceInputStream(file.getInputStream(), file.getSize(), file.getContentType());
-            fileDomain.putFile(path, stream);
+            fileService.putFile(path, stream);
         } catch (IOException e) {
             throw new InternalServerErrorException("upload attachment failed");
         }
@@ -82,7 +83,7 @@ public class AttachmentDomain {
         String path = formatPath(obj.getId());
         try {
             ResourceInputStream stream = new ResourceInputStream(file.getInputStream(), file.getSize(), file.getContentType());
-            fileDomain.putFile(path, stream);
+            fileService.putFile(path, stream);
         } catch (IOException e) {
             throw new InternalServerErrorException("upload attachment failed");
         }
@@ -96,7 +97,7 @@ public class AttachmentDomain {
         if (path == null) {
             return null;
         }
-        return fileDomain.getFile(path);
+        return fileService.getFile(path);
     }
 
     //tobe deleted on next release
@@ -104,9 +105,9 @@ public class AttachmentDomain {
         if (StringUtils.isEmpty(oldPath)) {
             return getAttachmentFileById(attachmentId);
         }
-        ResourceInputStream file = fileDomain.getFile(oldPath);
+        ResourceInputStream file = fileService.getFile(oldPath);
         if (file != null) {
-            fileDomain.putFile(formatPath(attachmentId), file);
+            fileService.putFile(formatPath(attachmentId), file);
         }
         return file;
     }

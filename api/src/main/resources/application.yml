@@ -24,6 +24,7 @@ yunsoo:
       base_url: http://localhost:3080/
     processor:
       base_url: http://localhost:4080/
+
   product_key_base_url: http://dev.yunsu.co:7080/
   alipay:
     pid: 2088121812016826
@@ -54,6 +55,8 @@ yunsoo:
       base_url: http://dev.yunsu.co:6180/
     processor:
       base_url: http://dev.yunsu.co:4080/
+    file:
+      base_url: http://dev.yunsu.co:4180/
   cache:
     type: local
   alipay:

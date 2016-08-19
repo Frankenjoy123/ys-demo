@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -40,6 +41,7 @@ public class FileController {
         if (file == null) {
             throw new NotFoundException("file not found by path: " + path);
         }
+
         String contentType = file.getContentType();
         long contentLength = file.getContentLength();
 
@@ -67,4 +69,11 @@ public class FileController {
         fileService.putFileToPath(path, file);
     }
 
+    @RequestMapping(value = "list", method = RequestMethod.GET)
+    public List<String> getFileNamesByFolderPath(@RequestParam(value = "path", required = true) String path) throws IOException {
+        if (StringUtils.isEmpty(path)) {
+            throw new BadRequestException("path must not be null or empty");
+        }
+        return fileService.getFileNamesByFolderName(path);
+    }
 }

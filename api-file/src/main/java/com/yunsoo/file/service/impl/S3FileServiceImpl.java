@@ -11,6 +11,9 @@ import org.springframework.util.StreamUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -71,5 +74,25 @@ public class S3FileServiceImpl implements FileService {
         }
         s3ItemDao.putItem(bucketName, path, inputStream, metadata);
     }
+
+    @Override
+    public List<String> getFileNamesByFolderName(String folderName){
+        try {
+            List<String> nameList = s3ItemDao.getItemNamesByFolderName(bucketName, folderName);
+            return nameList.stream().map(this::getFileShortName).collect(Collectors.toList());
+        } catch (AmazonS3Exception s3ex) {
+            if (s3ex.getStatusCode() == 404) {
+                return new ArrayList<>();
+            } else {
+                throw s3ex;
+            }
+        }
+    }
+
+    private String getFileShortName(String fileFullName){
+        String[] names = fileFullName.split("/");
+        return names[names.length -1];
+    }
+
 
 }

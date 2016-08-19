@@ -1,4 +1,4 @@
-package com.yunsoo.api.dto;
+package com.yunsoo.api.file.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotBlank;
