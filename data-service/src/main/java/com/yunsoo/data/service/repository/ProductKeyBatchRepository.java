@@ -1,6 +1,5 @@
 package com.yunsoo.data.service.repository;
 
-import com.yunsoo.data.service.entity.ProductBaseEntity;
 import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
 import com.yunsoo.data.service.repository.basic.FindOneAndSaveRepository;
 import org.joda.time.DateTime;
@@ -62,8 +61,6 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
 
     Page<ProductKeyBatchEntity> findByOrgIdAndProductKeyTypeCodesAndStatusCodeInAndCreatedDeviceId(String orgId, String typeCode, List<String> statusCodeIn, String deviceId, Pageable pageable);
 
-    Page<ProductKeyBatchEntity> findByOrgIdAndProductKeyTypeCodesNotAndStatusCodeIn(String orgId, String typeCode, List<String> statusCodeIn, Pageable pageable);
-
     @Query("from #{#entityName} o where " +
             "(o.orgId = :orgId) " +
             "and productKeyTypeCodes != 'package'" +
@@ -72,8 +69,6 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
             "and createdDateTime >=:startTime and createdDateTime <= :endTime")
     List<ProductKeyBatchEntity> queryDailyKeyUsageReport(@Param("orgId") String orgId,
                                                          @Param("productBaseId") String productBaseId, @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime);
-
-    ProductKeyBatchEntity findFirstByOrgIdOrderByIdDesc(String orgId);
 
     List<ProductKeyBatchEntity> save(Iterable<ProductKeyBatchEntity> entities);
 
