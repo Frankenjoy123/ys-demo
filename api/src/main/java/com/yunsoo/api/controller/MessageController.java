@@ -162,7 +162,7 @@ public class MessageController {
             @PathVariable(value = "image_name") String imageName) {
         MessageObject messageObject = findMessageById(id);
         String orgId = messageObject.getOrgId();
-        String path = String.format("organization/{orgId}/message/{id}/{imageName}", orgId, id, imageName);
+        String path = String.format("organization/%s/message/%s/%s", orgId, id, imageName);
         return imageService.getImage(path);
     }
 
