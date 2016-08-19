@@ -1,0 +1,88 @@
+package com.yunsoo.key.service.impl;
+
+import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.key.dao.dao.ProductDao;
+import com.yunsoo.key.dao.model.ProductModel;
+import com.yunsoo.key.dto.Product;
+import com.yunsoo.key.service.ProductService;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
+/**
+ * Created by:   Lijian
+ * Created on:   2016-08-18
+ * Descriptions:
+ */
+@Service
+public class DynamodbProductServiceImpl implements ProductService {
+
+    @Autowired
+    private ProductDao productDao;
+
+    @Override
+    public Product getByKey(String productKey) {
+        Assert.notNull(productKey, "productKey must not be null");
+
+        ProductModel productModel = productDao.getByKey(productKey);
+        if (productModel == null
+                || (productModel.getProductKeyDisabled() != null && productModel.getProductKeyDisabled())) {
+            return null;
+        }
+        String productKeyTypeCode = productModel.getProductKeyTypeCode();
+        String productKeyBatchId = productModel.getProductKeyBatchId();
+
+        if (!productModel.isPrimary() && productModel.getPrimaryProductKey() != null) {
+            //get the primary product key
+            productModel = productDao.getByKey(productModel.getPrimaryProductKey());
+        }
+        if (productModel == null) {
+            return null;
+        }
+
+        Product product = new Product();
+        product.setKey(productKey);
+        product.setTypeCode(productKeyTypeCode);
+        product.setKeyBatchId(productKeyBatchId);
+        product.setKeySet(productModel.getProductKeySet());
+        product.setCreatedDateTime(productModel.getCreatedDateTime());
+
+        product.setProductBaseId(productModel.getProductBaseId());
+        product.setStatusCode(productModel.getProductStatusCode());
+        product.setManufacturingDateTime(productModel.getManufacturingDateTime());
+        product.setDetails(productModel.getDetails());
+
+        return product;
+    }
+
+    @Override
+    public void patchUpdate(Product product) {
+        Assert.notNull(product, "product must not be null");
+        Assert.notNull(product.getKey(), "productKey must not be null");
+
+        ProductModel productModel = productDao.getByKey(product.getKey());
+        if (productModel == null
+                || (productModel.getProductKeyDisabled() != null && productModel.getProductKeyDisabled())) {
+            throw new NotFoundException("product not found"); //product not found
+        }
+        if (!productModel.isPrimary()) {
+            //get the primary product key
+            productModel = productDao.getByKey(productModel.getPrimaryProductKey());
+        }
+        if (productModel == null) {
+            throw new NotFoundException("product not found"); //product not found
+        }
+
+        String statusCode = product.getStatusCode();
+        DateTime manufacturingDateTime = product.getManufacturingDateTime();
+        String details = product.getDetails();
+
+        if (statusCode != null) productModel.setProductStatusCode(statusCode);
+        if (manufacturingDateTime != null) productModel.setManufacturingDateTime(manufacturingDateTime);
+        if (details != null) productModel.setDetails(details);
+
+        productDao.save(productModel);
+    }
+
+}
