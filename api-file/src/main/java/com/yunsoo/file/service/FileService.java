@@ -15,6 +15,6 @@ public interface FileService {
 
     void putFileToPath(String path, ResourceInputStream inputStream);
 
-    public List<String> getFileNamesByFolderName(String folderName);
+    List<String> getFileNamesByFolderName(String folderName);
 
 }
