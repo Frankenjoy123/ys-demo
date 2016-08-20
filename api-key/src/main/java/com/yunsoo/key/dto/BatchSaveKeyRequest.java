@@ -7,6 +7,7 @@ import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
  * Created on:   2016-08-18
  * Descriptions:
  */
-public class BatchSaveKeyRequest {
+public class BatchSaveKeyRequest implements Serializable {
 
     @JsonProperty("key_batch_id")
     private String keyBatchId;
