@@ -84,6 +84,62 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         return queryDailyEventCount("comment", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
     }
 
+
+    //region 用于统计比如全国数据，排除任何group by, 次数，人数
+    @Override
+    public List<int[]> eventLocationCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        int[] scanCount = queryEventCount("scan", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+        int[] shareCount = queryEventCount("share", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+        int[] storeUrlCount = queryEventCount("store_url", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+        int[] commentCount = queryEventCount("comment", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
+        List<int[]> list = new ArrayList<>();
+        list.add(scanCount);
+        list.add(shareCount);
+        list.add(storeUrlCount);
+        list.add((commentCount));
+        return list;
+    }
+
+    private int[] queryEventCount(String eventName, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, int i) {
+        String sql = "select count(1), count(distinct u.id) from emr_event ev inner join emr_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.name= :eventName" +
+                " and ev.org_id =:orgId";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("eventName", eventName);
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isNullOrEmpty(province)) {
+            sql = sql + " and ev.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and ev.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and ev.event_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        Object[] data = (Object[]) query.getSingleResult();
+        int[] array = new int[2];
+        array[0] = ((BigInteger) data[0]).intValue();
+        array[1] = ((BigInteger) data[1]).intValue();
+        return array;
+    }
+    // endregion
+
     @Override
     public List<String[]> scanLocationCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
         return queryEventLocationCount("scan", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, 0);
@@ -106,7 +162,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
 
     @Override
     public List<ScanRecordLocationAnalysisEntity> consumerLocationCount(String orgId, String productBaseId, String batchId, DateTime startDateTime, DateTime endDateTime) {
-        String sql = "select case when ev.province is null or ev.province ='' then '未公开省份'  else  ev.province END as province, case when ev.city is null or ev.city = '' then '未公开城市' else ev.city END as city,ev.product_base_id as product, count(1), count(distinct ev.user_id, ev.ys_id) from emr_event ev  where ev.name= :eventName" +
+        String sql = "select case when ev.province is null or ev.province ='' then '未公开省份'  else  ev.province END as provinceA, case when ev.city is null or ev.city = '' then '未公开城市' else ev.city END as cityA,ev.product_base_id as product, count(1), count(distinct ev.user_id, ev.ys_id) from emr_event ev  where ev.name= :eventName" +
                 " and ev.org_id =:orgId";
 
         HashMap<String, Object> parameters = new HashMap<>();
@@ -124,11 +180,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
             sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
             parameters.put("createdDateTimeEnd", endDateTime.toString("yyyy-MM-dd HH:mm:ss"));
         }
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
-            sql = sql + " group by province, city, product";
-        } else {
-            sql = sql + " group by province, city";
-        }
+        sql = sql + " group by provinceA, cityA";
 
         Query query = entityManager.createNativeQuery(sql);
         for (String key : parameters.keySet()) {
@@ -306,7 +358,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
     }
 
     private List<String[]> queryEventLocationCount(String action, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, int level) {
-        String sql = "select case when ev.province is null or ev.province ='' then '未公开省份'  else  ev.province END as province, case when ev.city is null or ev.city = '' then '未公开城市' else ev.city END as city,ev.product_base_id as product, count(1), count(distinct u.id) from emr_event ev inner join emr_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.name= :eventName" +
+        String sql = "select case when ev.province is null or ev.province ='' then '未公开省份'  else  ev.province END as provinceA, case when ev.city is null or ev.city = '' then '未公开城市' else ev.city END as cityA,ev.product_base_id as product, count(1), count(distinct u.id) from emr_event ev inner join emr_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.name= :eventName" +
                 " and ev.org_id =:orgId";
 
         HashMap<String, Object> parameters = new HashMap<>();
@@ -347,7 +399,8 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         if (level > 3) {
             sql = sql + " and ev.price_status_code in ('submit','paid')";
         }
-        sql = sql + " group by province, city, product";
+
+        sql = sql + " group by provinceA, cityA";
 
         Query query = entityManager.createNativeQuery(sql);
         for (String key : parameters.keySet()) {

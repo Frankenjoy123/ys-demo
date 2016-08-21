@@ -552,10 +552,26 @@ public class AnalysisController {
             createdDateTimeEnd = now.plusDays(-1);
         }
 
-        List<EMREventLocationReportObject> locationList = analysisDomain.getEMRLocationReport(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+        List<EMREventLocationReportObject> dataList = analysisDomain.getEMRLocationReport(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
 
         EMREventLocationReport emrEventLocationReport = new EMREventLocationReport();
 
+        // 为了避免用户跨省跨市导致的问题
+        EMREventLocationReportObject allObject = dataList.stream().filter(t -> t.getProvince().equals(EMREventLocationReportObject.ALL_PROVINCE)).findFirst().get();
+        EMREventLocationReport.NameValue allNV = new EMREventLocationReport.NameValue();
+        allNV.setName(allObject.getProvince());
+        EMREventCountObject eventCountObject = allObject.getEvent_count();
+        allNV.setCommentEventCount(eventCountObject.getCommentEventCount());
+        allNV.setCommentUserCount(eventCountObject.getCommentUserCount());
+        allNV.setStoreUrlEventCount(eventCountObject.getStoreUrlEventCount());
+        allNV.setStoreUrlUserCount(eventCountObject.getStoreUrlUserCount());
+        allNV.setShareEventCount(eventCountObject.getShareEventCount());
+        allNV.setShareUserCount(eventCountObject.getShareUserCount());
+        allNV.setScanEventCount(eventCountObject.getScanEventCount());
+        allNV.setScanUserCount(eventCountObject.getScanUserCount());
+        emrEventLocationReport.setAggregatedData(allNV);
+
+        List<EMREventLocationReportObject> locationList = dataList.stream().filter(t->!t.getProvince().equals(EMREventLocationReportObject.ALL_PROVINCE)).collect(Collectors.toList());
         // province Scan event data
         Map<String, Integer> provinceScanEventData = locationList.stream().collect(Collectors.groupingBy(EMREventLocationReportObject::getProvince, Collectors.summingInt(o -> {
             return o.getEvent_count().getScanEventCount();

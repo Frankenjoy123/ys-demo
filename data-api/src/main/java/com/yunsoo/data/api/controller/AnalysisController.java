@@ -504,6 +504,25 @@ public class AnalysisController {
 
         List<EMREventLocationReportObject> emrEventLocationReportObjectList = new ArrayList<>();
 
+        // region ########加载all的数据，用来避免因为有用户同时跨省，跨市导致的数据不一致的问题
+        List<int[]> bypassData = eventRepository.eventLocationCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        EMREventLocationReportObject bypassLocationObject = new EMREventLocationReportObject();
+        bypassLocationObject.setProductBaseId(productBaseId);
+        bypassLocationObject.setProvince(EMREventLocationReportObject.ALL_PROVINCE);
+        bypassLocationObject.setCity(EMREventLocationReportObject.ALL_CITY);
+        EMREventCountObject bypassEventCountObject = new EMREventCountObject();
+        bypassEventCountObject.setScanEventCount(bypassData.get(0)[0]);
+        bypassEventCountObject.setScanUserCount(bypassData.get(0)[1]);
+        bypassEventCountObject.setShareEventCount(bypassData.get(1)[0]);
+        bypassEventCountObject.setShareUserCount(bypassData.get(1)[1]);
+        bypassEventCountObject.setStoreUrlEventCount(bypassData.get(2)[0]);
+        bypassEventCountObject.setStoreUrlUserCount(bypassData.get(2)[1]);
+        bypassEventCountObject.setCommentEventCount(bypassData.get(3)[0]);
+        bypassEventCountObject.setCommentUserCount(bypassData.get(3)[1]);
+        bypassLocationObject.setEvent_count(bypassEventCountObject);
+        emrEventLocationReportObjectList.add(bypassLocationObject);
+        // endregion
+
         List<String[]> scanList = eventRepository.scanLocationCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
         if ((scanList != null) && (scanList.size() > 0)) {
             for (String[] temp : scanList) {

@@ -11,6 +11,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EMREventLocationReport {
 
+    @JsonProperty("aggregated_data")
+    private NameValue aggregatedData;
+
     @JsonProperty("data")
     private NameValue[] provinceData;
 
@@ -20,6 +23,14 @@ public class EMREventLocationReport {
 
     public void setProvinceData(NameValue[] provinceData) {
         this.provinceData = provinceData;
+    }
+
+    public NameValue getAggregatedData() {
+        return aggregatedData;
+    }
+
+    public void setAggregatedData(NameValue aggregatedData) {
+        this.aggregatedData = aggregatedData;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

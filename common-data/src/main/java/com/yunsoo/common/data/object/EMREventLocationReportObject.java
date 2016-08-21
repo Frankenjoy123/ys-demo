@@ -54,4 +54,7 @@ public class EMREventLocationReportObject implements Serializable {
     public void setEvent_count(EMREventCountObject event_count) {
         this.event_count = event_count;
     }
+
+    public final static String ALL_PROVINCE = "all";
+    public final static String ALL_CITY = "all";
 }
