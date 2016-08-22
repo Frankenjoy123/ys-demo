@@ -823,6 +823,8 @@ public class MarketingController {
         object.setAmount(entity.getAmount());
         object.setProbability(entity.getProbability());
         object.setComments(entity.getComments());
+        object.setAppliedEnv(entity.getAppliedEnv());
+        object.setWeight(entity.getWeight());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
@@ -978,6 +980,8 @@ public class MarketingController {
         entity.setAmount(object.getAmount());
         entity.setProbability(object.getProbability());
         entity.setComments(object.getComments());
+        entity.setAppliedEnv(object.getAppliedEnv());
+        entity.setWeight(object.getWeight());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());

@@ -213,6 +213,7 @@ public class LookupCodes {
         public static final String REDPACKETS = "REDPACKETS";
         public static final String ENVELOPE = "ENVELOPE";
         public static final String SHAKE = "SHAKE";
+        public static final String BIGDRAW = "BIGDRAW";
 
     }
 
