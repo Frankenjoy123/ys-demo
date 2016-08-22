@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +54,9 @@ public class MarketingController {
 
     @Autowired
     private ProductKeyBatchRepository productKeyBatchRepository;
+
+    @Autowired
+    private MktConsumerRightRedeemCodeRepository mktConsumerRightRedeemCodeRepository;
 
 
     @Autowired
@@ -222,6 +224,33 @@ public class MarketingController {
         MktConsumerRightEntity newEntity = mktConsumerRightRepository.save(entity);
         return toMktConsumerRightObject(newEntity);
     }
+
+    //get marketing consumer right redeem code by consumer right id
+    @RequestMapping(value = "consumer/redeemcode/{id}", method = RequestMethod.GET)
+    public MktConsumerRightRedeemCodeObject getRedeemCodeByConsumerRightId(@PathVariable String id,
+                                                                           @RequestParam(value = "draw_prize_id") String drawPrizeId) {
+
+        MktConsumerRightRedeemCodeEntity entity = mktConsumerRightRedeemCodeRepository.findTop1ByConsumerRightIdAndStatusCodeOrderByCreatedDateTime(id, LookupCodes.MktConsumerRightRedeemCodeStatus.AVAILABLE);
+        if (entity == null) {
+            throw new NotFoundException("consumer right redeem code not found.");
+        }
+        if (entity.getTypeCode().equals(LookupCodes.MktConsumerRightRedeemCodeType.UNIQUE)) {
+            entity.setStatusCode(LookupCodes.MktConsumerRightRedeemCodeStatus.USED);
+            entity.setModifiedDateTime(DateTime.now());
+            entity.setDrawPrizeId(drawPrizeId);
+        } else if (entity.getTypeCode().equals(LookupCodes.MktConsumerRightRedeemCodeType.COMMON)) {
+            entity.setModifiedDateTime(DateTime.now());
+            entity.setDrawPrizeId(drawPrizeId);
+        }
+        mktConsumerRightRedeemCodeRepository.save(entity);
+
+        MktDrawPrizeEntity prizeEntity = mktDrawPrizeRepository.findOne(drawPrizeId);
+        prizeEntity.setPrizeContent(entity.getValue());
+        mktDrawPrizeRepository.save(prizeEntity);
+
+        return toMktConsumerRightRedeemCodeObject(entity);
+    }
+
 
 
     //query marketing prize, provide API
@@ -841,6 +870,7 @@ public class MarketingController {
         object.setAccountType(entity.getAccountType());
         object.setPrizeAccount(entity.getPrizeAccount());
         object.setPrizeAccountName(entity.getPrizeAccountName());
+        object.setPrizeContent(entity.getPrizeContent());
         object.setPrizeContactId(entity.getPrizeContactId());
         object.setComments(entity.getComments());
         return object;
@@ -884,6 +914,23 @@ public class MarketingController {
         object.setCity(entity.getCity());
         object.setDistrict(entity.getDistrict());
         object.setAddress(entity.getAddress());
+        object.setCreatedDateTime(entity.getCreatedDateTime());
+        object.setModifiedDateTime(entity.getModifiedDateTime());
+        return object;
+    }
+
+    private MktConsumerRightRedeemCodeObject toMktConsumerRightRedeemCodeObject(MktConsumerRightRedeemCodeEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        MktConsumerRightRedeemCodeObject object = new MktConsumerRightRedeemCodeObject();
+        object.setId(entity.getId());
+        object.setConsumerRightId(entity.getConsumerRightId());
+        object.setOrgId(entity.getOrgId());
+        object.setTypeCode(entity.getTypeCode());
+        object.setStatusCode(entity.getStatusCode());
+        object.setValue(entity.getValue());
+        object.setDrawPrizeId(entity.getDrawPrizeId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedDateTime(entity.getModifiedDateTime());
         return object;
@@ -978,6 +1025,7 @@ public class MarketingController {
         entity.setAccountType(object.getAccountType());
         entity.setPrizeAccount(object.getPrizeAccount());
         entity.setPrizeAccountName(object.getPrizeAccountName());
+        entity.setPrizeContent(object.getPrizeContent());
         entity.setPrizeContactId(object.getPrizeContactId());
         entity.setComments(object.getComments());
         entity.setPrizeContactId(object.getPrizeContactId());

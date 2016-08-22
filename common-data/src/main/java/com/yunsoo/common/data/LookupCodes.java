@@ -241,6 +241,26 @@ public class LookupCodes {
 
     }
 
+    public static class MktConsumerRightRedeemCodeType {
+        private MktConsumerRightRedeemCodeType() {
+        }
+
+        public static final String COMMON = "common";
+        public static final String UNIQUE = "unique";
+
+    }
+
+
+    public static class MktConsumerRightRedeemCodeStatus {
+        private MktConsumerRightRedeemCodeStatus() {
+        }
+
+        public static final String AVAILABLE = "available";
+        public static final String USED = "used";
+
+    }
+
+
 
     public static class PaymentStatus {
         private PaymentStatus() {

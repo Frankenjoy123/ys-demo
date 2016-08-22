@@ -1,10 +1,12 @@
 package com.yunsoo.data.service.entity;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by  : Haitao
@@ -58,6 +60,9 @@ public class MktDrawPrizeEntity {
 
     @Column(name = "prize_account_name")
     private String prizeAccountName;
+
+    @Column(name = "prize_content")
+    private String prizeContent;
 
     @Column(name = "prize_contact_id")
     private String prizeContactId;
@@ -175,6 +180,14 @@ public class MktDrawPrizeEntity {
 
     public void setPrizeAccountName(String prizeAccountName) {
         this.prizeAccountName = prizeAccountName;
+    }
+
+    public String getPrizeContent() {
+        return prizeContent;
+    }
+
+    public void setPrizeContent(String prizeContent) {
+        this.prizeContent = prizeContent;
     }
 
     public String getPrizeContactId() {
