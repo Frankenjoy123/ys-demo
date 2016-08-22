@@ -5,6 +5,7 @@ import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.key.Constants;
 import com.yunsoo.key.dao.entity.KeyBatchEntity;
 import com.yunsoo.key.dao.repository.KeyBatchRepository;
 import com.yunsoo.key.dto.KeyBatch;
@@ -78,12 +79,6 @@ public class KeyBatchServiceImpl implements KeyBatchService {
     @Transactional
     @Override
     public KeyBatch create(KeyBatch batch) {
-        int quantity = batch.getQuantity();
-        List<String> keyTypeCodes = batch.getKeyTypeCodes();
-
-        Assert.isTrue(quantity > 0, "quantity must be greater than 0");
-        Assert.isTrue(keyTypeCodes.size() > 0, "keyTypeCodes must not be empty");
-
         //generate productKeys
         List<List<String>> keyList = generateProductKeys(batch);
 
@@ -123,7 +118,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         if (batch.getProductBaseId() != null) {
             entity.setProductBaseId(batch.getProductBaseId());
         }
-        if (batch.getStatusCode() != null) {
+        if (batch.getStatusCode() != null && Constants.KeyBatchStatus.ALL.contains(batch.getStatusCode())) {
             entity.setStatusCode(batch.getStatusCode());
         }
 

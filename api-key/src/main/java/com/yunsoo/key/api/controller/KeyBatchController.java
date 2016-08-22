@@ -1,7 +1,9 @@
 package com.yunsoo.key.api.controller;
 
 import com.yunsoo.common.web.client.ResourceInputStream;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.key.Constants;
 import com.yunsoo.key.api.util.ResponseEntityUtils;
 import com.yunsoo.key.dto.KeyBatch;
 import com.yunsoo.key.dto.Keys;
@@ -42,6 +44,9 @@ public class KeyBatchController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public KeyBatch create(@RequestBody @Valid KeyBatch batch) {
+        if (!batch.getKeyTypeCodes().stream().allMatch(Constants.ProductKeyType.ALL::contains)) {
+            throw new BadRequestException("key_type_codes not valid");
+        }
         batch.setId(null);
         return keyBatchService.create(batch);
     }
