@@ -39,7 +39,7 @@ public class KeyController {
         keyService.setDisabled(key, false);
     }
 
-    @RequestMapping(value = "batch", method = RequestMethod.PUT)
+    @RequestMapping(value = "batchSave", method = RequestMethod.POST)
     public void batchSave(@RequestBody BatchSaveKeyRequest request) {
         Product productTemplate = new Product();
         productTemplate.setProductBaseId(request.getProductBaseId());

@@ -1,5 +1,8 @@
 package com.yunsoo.key;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by:   Lijian
  * Created on:   2016-08-19
@@ -27,6 +30,7 @@ public class Constants {
         public static final String ACTIVATED = "activated";
         public static final String RECALLED = "recalled";
         public static final String DELETED = "deleted";
+        public static final List<String> ALL = Arrays.asList(CREATED, ACTIVATED, RECALLED, DELETED);
     }
 
     public static class ProductKeyType {

@@ -13,12 +13,12 @@ import java.util.Set;
  * Created on:   2015/1/29
  * Descriptions:
  * "product": {
- * "product_key": "(String(22))",
- * "product_key_type_code": "product_key_type.code",
- * "product_key_disabled": "(Boolean)",
- * "product_key_batch_id": "product_key_batch.id(String)",
- * "primary_product_key": "product.product_key(String(22))",
- * "product_key_set": ["product.product_key(String(22))"],
+ * "key": "(String(22))",
+ * "key_type_code": "key_type.code",
+ * "key_disabled": "(Boolean)",
+ * "key_batch_id": "key_batch.id(String)",
+ * "primary_key": "product.key(String(22))",
+ * "key_set": ["product.key(String(22))"],
  * "created_datetime": "(Long)",
  * "product_base_id": "product_base.id(String)",
  * "product_status_code": "product_status.code(String)",
@@ -28,13 +28,13 @@ import java.util.Set;
 @DynamoDBTable(tableName = "product")
 public class ProductModel {
 
-    private String productKey;
+    private String key;
 
-    private String productKeyTypeCode;
-    private Boolean productKeyDisabled;
-    private String productKeyBatchId;
-    private String primaryProductKey; //if primaryProductKey is null, then it's a primary item.
-    private Set<String> productKeySet; //only exists when primaryProductKey is null
+    private String keyTypeCode;
+    private Boolean keyDisabled;
+    private String keyBatchId;
+    private String primaryKey; //if primaryKey is null, then it's a primary item.
+    private Set<String> keySet; //only exists when primaryKey is null
     private Long createdDateTimeValue;
 
     //only a primary item can contain below product info
@@ -44,58 +44,58 @@ public class ProductModel {
     private String details;
 
 
-    @DynamoDBHashKey(attributeName = "key") //product_key
-    public String getProductKey() {
-        return productKey;
+    @DynamoDBHashKey(attributeName = "key") //key
+    public String getKey() {
+        return key;
     }
 
-    public void setProductKey(String productKey) {
-        this.productKey = productKey;
+    public void setKey(String key) {
+        this.key = key;
     }
 
-    @DynamoDBAttribute(attributeName = "key_type_code") //product_key_type_code
-    public String getProductKeyTypeCode() {
-        return productKeyTypeCode;
+    @DynamoDBAttribute(attributeName = "key_type_code") //key_type_code
+    public String getKeyTypeCode() {
+        return keyTypeCode;
     }
 
-    public void setProductKeyTypeCode(String productKeyTypeCode) {
-        this.productKeyTypeCode = productKeyTypeCode;
+    public void setKeyTypeCode(String keyTypeCode) {
+        this.keyTypeCode = keyTypeCode;
     }
 
-    @DynamoDBAttribute(attributeName = "key_disabled") //product_key_disabled
-    public Boolean getProductKeyDisabled() {
-        return productKeyDisabled;
+    @DynamoDBAttribute(attributeName = "key_disabled") //key_disabled
+    public Boolean getKeyDisabled() {
+        return keyDisabled;
     }
 
-    public void setProductKeyDisabled(Boolean productKeyDisabled) {
-        this.productKeyDisabled = productKeyDisabled;
+    public void setKeyDisabled(Boolean keyDisabled) {
+        this.keyDisabled = keyDisabled;
     }
 
-    @DynamoDBAttribute(attributeName = "key_batch_id") //product_key_batch_id
-    public String getProductKeyBatchId() {
-        return productKeyBatchId;
+    @DynamoDBAttribute(attributeName = "key_batch_id") //key_batch_id
+    public String getKeyBatchId() {
+        return keyBatchId;
     }
 
-    public void setProductKeyBatchId(String productKeyBatchId) {
-        this.productKeyBatchId = productKeyBatchId;
+    public void setKeyBatchId(String keyBatchId) {
+        this.keyBatchId = keyBatchId;
     }
 
-    @DynamoDBAttribute(attributeName = "primary_key") //primary_product_key
-    public String getPrimaryProductKey() {
-        return primaryProductKey;
+    @DynamoDBAttribute(attributeName = "primary_key") //primary_key
+    public String getPrimaryKey() {
+        return primaryKey;
     }
 
-    public void setPrimaryProductKey(String primaryProductKey) {
-        this.primaryProductKey = primaryProductKey;
+    public void setPrimaryKey(String primaryKey) {
+        this.primaryKey = primaryKey;
     }
 
-    @DynamoDBAttribute(attributeName = "key_set") //product_key_set
-    public Set<String> getProductKeySet() {
-        return productKeySet;
+    @DynamoDBAttribute(attributeName = "key_set") //key_set
+    public Set<String> getKeySet() {
+        return keySet;
     }
 
-    public void setProductKeySet(Set<String> productKeySet) {
-        this.productKeySet = productKeySet;
+    public void setKeySet(Set<String> keySet) {
+        this.keySet = keySet;
     }
 
     @DynamoDBAttribute(attributeName = "created_dt") //created_datetime
@@ -146,12 +146,12 @@ public class ProductModel {
 
     @DynamoDBIgnore
     public boolean isPrimary() {
-        return primaryProductKey == null || primaryProductKey.equals(productKey);
+        return primaryKey == null || primaryKey.equals(key);
     }
 
     @DynamoDBIgnore
-    public boolean isProductKeyDisabled() {
-        return this.productKeyDisabled != null && this.productKeyDisabled;
+    public boolean isKeyDisabled() {
+        return this.keyDisabled != null && this.keyDisabled;
     }
 
     @DynamoDBIgnore

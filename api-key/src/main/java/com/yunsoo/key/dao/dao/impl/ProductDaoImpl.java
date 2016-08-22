@@ -34,7 +34,7 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void save(ProductModel product) {
-        if (product == null || product.getProductKey() == null) {
+        if (product == null || product.getKey() == null) {
             return;
         }
         dynamoDBMapper.save(product);

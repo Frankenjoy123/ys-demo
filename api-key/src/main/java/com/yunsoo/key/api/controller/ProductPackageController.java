@@ -30,8 +30,8 @@ public class ProductPackageController {
         return productPackage;
     }
 
-    @RequestMapping(value = "batch", method = RequestMethod.POST)
-    public int batchPackage(@RequestBody List<ProductPackage> packages) {
+    @RequestMapping(value = "batchSave", method = RequestMethod.POST)
+    public int batchSave(@RequestBody List<ProductPackage> packages) {
         return productPackageService.batchSave(packages);
     }
 

@@ -14,10 +14,6 @@ public interface ProductPackageService {
 
     ProductPackage getByKey(String key);
 
-    /**
-     * @param key packageKey
-     * @return keySet of all children, include itself.
-     */
     Set<String> getAllChildKeySetByKey(String key);
 
     void disable(String key);

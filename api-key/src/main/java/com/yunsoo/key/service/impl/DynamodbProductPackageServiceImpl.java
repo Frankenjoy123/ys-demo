@@ -28,6 +28,10 @@ public class DynamodbProductPackageServiceImpl implements ProductPackageService 
         return productPackageModel != null ? toProductPackage(productPackageModel) : null;
     }
 
+    /**
+     * @param key packageKey
+     * @return keySet of all children, include itself.
+     */
     @Override
     public Set<String> getAllChildKeySetByKey(String key) {
         Set<String> keySet = new HashSet<>();
@@ -83,6 +87,8 @@ public class DynamodbProductPackageServiceImpl implements ProductPackageService 
         return count;
     }
 
+    //region private methods
+
     private ProductPackageModel findByKey(String key) {
         ProductPackageModel productPackageModel = productPackageDao.getByKey(key);
         if (productPackageModel != null && !productPackageModel.isDisabled()) {
@@ -124,7 +130,7 @@ public class DynamodbProductPackageServiceImpl implements ProductPackageService 
 
         if (hasChild && current.canBeOverrideOn(packageDateTime)) {
             //update current
-            current.appendChildProductKey(childProductKeySet);
+            current.setChildProductKeySet(childProductKeySet);
             currentHasChanged = true;
 
             //update child
@@ -166,5 +172,7 @@ public class DynamodbProductPackageServiceImpl implements ProductPackageService 
         productPackage.setPackageDateTime(model.getPackageDateTime());
         return productPackage;
     }
+
+    //endregion
 
 }
