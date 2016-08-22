@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
@@ -23,18 +25,21 @@ public class KeyBatch implements Serializable {
     @JsonProperty("batch_no")
     private String batchNo;
 
+    @Range(min = 1, max = 1000000, message = "quantity must in range of 1 to 1000000")
     @JsonProperty("quantity")
     private Integer quantity;
 
     @JsonProperty("status_code")
     private String statusCode;
 
+    @NotEmpty(message = "key_type_codes must not be null or empty")
     @JsonProperty("key_type_codes")
     private List<String> keyTypeCodes;
 
     @JsonProperty("product_base_id")
     private String productBaseId;
 
+    @NotEmpty(message = "org_id must not be null or empty")
     @JsonProperty("org_id")
     private String orgId;
 

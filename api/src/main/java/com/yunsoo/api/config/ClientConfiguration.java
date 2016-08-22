@@ -34,6 +34,9 @@ public class ClientConfiguration {
     @Value("${yunsoo.client.file_api.base_url}")
     private String fileApiBaseUrl;
 
+    @Value("${yunsoo.client.key_api.base_url}")
+    private String keyApiBaseUrl;
+
     @Bean
     public AuthApiClient authApiClient() {
         AuthApiClient authApiClient = new AuthApiClient(authApiBaseUrl);
@@ -69,7 +72,12 @@ public class ClientConfiguration {
     }
 
     @Bean
-    public FileApiClient fileApiClient(){
+    public FileApiClient fileApiClient() {
         return new FileApiClient(fileApiBaseUrl);
+    }
+
+    @Bean
+    public KeyApiClient keyApiClient() {
+        return new KeyApiClient(keyApiBaseUrl);
     }
 }

@@ -1,20 +1,21 @@
 package com.yunsoo.key.api.controller;
 
 import com.yunsoo.common.web.client.ResourceInputStream;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.key.Constants;
 import com.yunsoo.key.api.util.ResponseEntityUtils;
 import com.yunsoo.key.dto.KeyBatch;
 import com.yunsoo.key.dto.Keys;
 import com.yunsoo.key.service.KeyBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.IOException;
 
 /**
@@ -39,6 +40,24 @@ public class KeyBatchController {
         return keyBatch;
     }
 
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public KeyBatch create(@RequestBody @Valid KeyBatch batch) {
+        if (!batch.getKeyTypeCodes().stream().allMatch(Constants.ProductKeyType.ALL::contains)) {
+            throw new BadRequestException("key_type_codes not valid");
+        }
+        batch.setId(null);
+        return keyBatchService.create(batch);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public void patchUpdate(@PathVariable(value = "id") String id, @RequestBody KeyBatch batch) {
+        batch.setId(id);
+        keyBatchService.patchUpdate(batch);
+    }
+
+
     @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
     public Keys getProductKeys(@PathVariable(value = "id") String id) {
         Keys keys = keyBatchService.getKeysById(id);
@@ -52,7 +71,7 @@ public class KeyBatchController {
     public ResponseEntity<?> getProductKeyBatchDetails(@PathVariable(value = "id") String id) throws IOException {
         ResourceInputStream details = keyBatchService.getKeyBatchDetails(id);
         if (details == null) {
-            throw new NotFoundException("keyBatch details not found by id: " + id);
+            return null;
         }
         return ResponseEntityUtils.convert(details);
     }

@@ -5,6 +5,7 @@ import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.key.Constants;
 import com.yunsoo.key.dao.entity.KeyBatchEntity;
 import com.yunsoo.key.dao.repository.KeyBatchRepository;
 import com.yunsoo.key.dto.KeyBatch;
@@ -17,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -74,14 +76,9 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         return keys;
     }
 
+    @Transactional
     @Override
     public KeyBatch create(KeyBatch batch) {
-        int quantity = batch.getQuantity();
-        List<String> keyTypeCodes = batch.getKeyTypeCodes();
-
-        Assert.isTrue(quantity > 0, "quantity must be greater than 0");
-        Assert.isTrue(keyTypeCodes.size() > 0, "productKeyTypeCodes must not be empty");
-
         //generate productKeys
         List<List<String>> keyList = generateProductKeys(batch);
 
@@ -90,7 +87,9 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         if (batch.getCreatedDateTime() == null) {
             batch.setCreatedDateTime(DateTime.now());
         }
-        batch.setBatchNo(BatchNoGenerator.getNew());
+        if (batch.getBatchNo() == null) {
+            batch.setBatchNo(BatchNoGenerator.getNew());
+        }
         KeyBatchEntity newEntity = keyBatchRepository.save(toProductKeyBatchEntity(batch));
 
         //save product keys to S3
@@ -101,9 +100,12 @@ public class KeyBatchServiceImpl implements KeyBatchService {
                 newEntity.getKeyTypeCodes(),
                 keyList);
 
+        log.info(String.format("KeyBatch created [id: %s, quantity: %d]", newEntity.getId(), newEntity.getQuantity()));
+
         return toKeyBatch(newEntity);
     }
 
+    @Transactional
     @Override
     public void patchUpdate(KeyBatch batch) {
         Assert.hasText(batch.getId(), "batchId must not be null or empty");
@@ -116,7 +118,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         if (batch.getProductBaseId() != null) {
             entity.setProductBaseId(batch.getProductBaseId());
         }
-        if (batch.getStatusCode() != null) {
+        if (batch.getStatusCode() != null && Constants.KeyBatchStatus.ALL.contains(batch.getStatusCode())) {
             entity.setStatusCode(batch.getStatusCode());
         }
 
@@ -127,7 +129,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
     public ResourceInputStream getKeyBatchDetails(String batchId) {
         KeyBatchEntity batchEntity = keyBatchRepository.findOne(batchId);
         if (batchEntity == null) {
-            return null;
+            throw new NotFoundException("keyBatch not found by id: " + batchId);
         }
         String path = formatKeyBatchDetailsFilePath(batchEntity.getOrgId(), batchId);
         return fileService.getFile(path);

@@ -29,12 +29,8 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/{key}", method = RequestMethod.PATCH)
-    public void patchUpdate(@PathVariable(value = "key") String key, @RequestBody Product productRequest) {
-        Product product = new Product();
+    public void patchUpdate(@PathVariable(value = "key") String key, @RequestBody Product product) {
         product.setKey(key);
-        product.setStatusCode(productRequest.getStatusCode());
-        product.setManufacturingDateTime(productRequest.getManufacturingDateTime());
-        product.setDetails(productRequest.getDetails());
         productService.patchUpdate(product);
     }
 

@@ -213,6 +213,7 @@ public class LookupCodes {
         public static final String REDPACKETS = "REDPACKETS";
         public static final String ENVELOPE = "ENVELOPE";
         public static final String SHAKE = "SHAKE";
+        public static final String BIGDRAW = "BIGDRAW";
 
     }
 
@@ -240,6 +241,26 @@ public class LookupCodes {
         public static final String DELETED = "deleted";
 
     }
+
+    public static class MktConsumerRightRedeemCodeType {
+        private MktConsumerRightRedeemCodeType() {
+        }
+
+        public static final String COMMON = "common";
+        public static final String UNIQUE = "unique";
+
+    }
+
+
+    public static class MktConsumerRightRedeemCodeStatus {
+        private MktConsumerRightRedeemCodeStatus() {
+        }
+
+        public static final String AVAILABLE = "available";
+        public static final String USED = "used";
+
+    }
+
 
 
     public static class PaymentStatus {

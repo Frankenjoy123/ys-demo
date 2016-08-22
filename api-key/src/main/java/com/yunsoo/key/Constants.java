@@ -1,5 +1,8 @@
 package com.yunsoo.key;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by:   Lijian
  * Created on:   2016-08-19
@@ -17,6 +20,7 @@ public class Constants {
         public static final String CREATING = "creating";
         public static final String AVAILABLE = "available";
         public static final String DELETED = "deleted";
+        public static final List<String> ALL = Arrays.asList(NEW, CREATING, AVAILABLE, DELETED);
     }
 
     public static class ProductStatus {
@@ -27,6 +31,7 @@ public class Constants {
         public static final String ACTIVATED = "activated";
         public static final String RECALLED = "recalled";
         public static final String DELETED = "deleted";
+        public static final List<String> ALL = Arrays.asList(CREATED, ACTIVATED, RECALLED, DELETED);
     }
 
     public static class ProductKeyType {
@@ -36,7 +41,8 @@ public class Constants {
         public static final String PACKAGE = "package";
         public static final String QR_PUBLIC = "qr_public";
         public static final String QR_SECURE = "qr_secure";
-        public static final String RFID = "rfid";
+        public static final String RFID = "rfid"; //not used yet
+        public static final List<String> ALL = Arrays.asList(PACKAGE, QR_PUBLIC, QR_SECURE);
     }
 
 }
