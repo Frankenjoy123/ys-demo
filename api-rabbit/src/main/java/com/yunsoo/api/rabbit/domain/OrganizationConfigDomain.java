@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.domain;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yunsoo.api.rabbit.file.service.FileService;
 import com.yunsoo.common.data.object.OrganizationConfigObject;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.util.StringFormatter;
@@ -25,7 +26,7 @@ import java.util.Map;
 public class OrganizationConfigDomain {
 
     @Autowired
-    private FileDomain fileDomain;
+    private FileService fileService;
 
     private static ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -56,7 +57,7 @@ public class OrganizationConfigDomain {
 
     private OrganizationConfigObject getConfigObject(String orgId) {
         String path = getConfigFilePath(orgId);
-        ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+        ResourceInputStream resourceInputStream = fileService.getFile(path);
         if (resourceInputStream == null) return null;
         try {
             return objectMapper.readValue(StreamUtils.copyToByteArray(resourceInputStream), OrganizationConfigObject.class);

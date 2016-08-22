@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
+import com.yunsoo.api.rabbit.file.service.FileService;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductCategoryObject;
 import com.yunsoo.common.web.client.Page;
@@ -39,6 +40,9 @@ public class ProductBaseDomain {
     @Autowired
     private LookupDomain lookupDomain;
 
+    @Autowired
+    private FileService fileService;
+
     private Log log = LogFactory.getLog(this.getClass());
 
     @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTBASE.toString(),#productBaseId )")
@@ -55,8 +59,8 @@ public class ProductBaseDomain {
 
     public String getProductBaseDetails(String orgId, String productBaseId, int version) {
         try {
-            ResourceInputStream resourceInputStream = dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/details.json",
-                    orgId, productBaseId, version);
+            String path = String.format("organization/%s/product_base/%s/%s/details.json", orgId, productBaseId, version);
+            ResourceInputStream resourceInputStream = fileService.getFile(path);
             byte[] bytes = StreamUtils.copyToByteArray(resourceInputStream);
             return new String(bytes, StandardCharsets.UTF_8);
         } catch (NotFoundException | IOException ignored) {
@@ -74,15 +78,6 @@ public class ProductBaseDomain {
         });
     }
 
-    // get product images
-    public ResourceInputStream getProductBaseImage(String productBaseId, String imageName) {
-        try {
-            ProductBaseObject productBaseObject = getProductBaseById(productBaseId);
-            return dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_base/{productBaseId}/{version}/{imageName}", productBaseObject.getOrgId(), productBaseId, productBaseObject.getVersion(), imageName);
-        } catch (NotFoundException ex) {
-            return null;
-        }
-    }
 
     public ProductCategory getProductCategoryById(String id) {
         if (id == null) {

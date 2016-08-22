@@ -3,6 +3,7 @@ package com.yunsoo.api.rabbit.config;
 import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.client.AuthApiClient;
 import com.yunsoo.api.rabbit.client.DataApiClient;
+import com.yunsoo.api.rabbit.client.FileApiClient;
 import com.yunsoo.api.rabbit.client.WeChatApiClient;
 import com.yunsoo.common.web.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,9 @@ public class ClientConfiguration {
 
     @Value("${yunsoo.client.data_api.base_url}")
     private String dataApiBaseUrl;
+
+    @Value("${yunsoo.client.file_api.base_url}")
+    private String fileApiBaseUrl;
 
     @Bean
     public AuthApiClient authApiClient() {
@@ -54,4 +58,8 @@ public class ClientConfiguration {
         return new WeChatApiClient("https://api.weixin.qq.com/cgi-bin/");
     }
 
+    @Bean
+    public FileApiClient fileApiClient(){
+        return new FileApiClient(fileApiBaseUrl);
+    }
 }
