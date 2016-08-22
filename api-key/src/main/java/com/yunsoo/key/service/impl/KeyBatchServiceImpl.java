@@ -127,7 +127,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
     public ResourceInputStream getKeyBatchDetails(String batchId) {
         KeyBatchEntity batchEntity = keyBatchRepository.findOne(batchId);
         if (batchEntity == null) {
-            return null;
+            throw new NotFoundException("keyBatch not found by id: " + batchId);
         }
         String path = formatKeyBatchDetailsFilePath(batchEntity.getOrgId(), batchId);
         return fileService.getFile(path);

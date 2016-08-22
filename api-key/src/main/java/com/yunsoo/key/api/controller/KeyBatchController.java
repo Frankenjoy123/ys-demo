@@ -52,7 +52,7 @@ public class KeyBatchController {
     public ResponseEntity<?> getProductKeyBatchDetails(@PathVariable(value = "id") String id) throws IOException {
         ResourceInputStream details = keyBatchService.getKeyBatchDetails(id);
         if (details == null) {
-            throw new NotFoundException("keyBatch details not found by id: " + id);
+            return null;
         }
         return ResponseEntityUtils.convert(details);
     }
