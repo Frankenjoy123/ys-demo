@@ -31,7 +31,7 @@ public class ClientConfiguration {
     @Value("${yunsoo.client.processor.base_url}")
     private String processorBaseUrl;
 
-    @Value("${yunsoo.client.file.base_url}")
+    @Value("${yunsoo.client.file_api.base_url}")
     private String fileApiBaseUrl;
 
     @Bean
