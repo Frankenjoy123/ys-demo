@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -74,13 +75,14 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         return keys;
     }
 
+    @Transactional
     @Override
     public KeyBatch create(KeyBatch batch) {
         int quantity = batch.getQuantity();
         List<String> keyTypeCodes = batch.getKeyTypeCodes();
 
         Assert.isTrue(quantity > 0, "quantity must be greater than 0");
-        Assert.isTrue(keyTypeCodes.size() > 0, "productKeyTypeCodes must not be empty");
+        Assert.isTrue(keyTypeCodes.size() > 0, "keyTypeCodes must not be empty");
 
         //generate productKeys
         List<List<String>> keyList = generateProductKeys(batch);
@@ -90,7 +92,9 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         if (batch.getCreatedDateTime() == null) {
             batch.setCreatedDateTime(DateTime.now());
         }
-        batch.setBatchNo(BatchNoGenerator.getNew());
+        if (batch.getBatchNo() == null) {
+            batch.setBatchNo(BatchNoGenerator.getNew());
+        }
         KeyBatchEntity newEntity = keyBatchRepository.save(toProductKeyBatchEntity(batch));
 
         //save product keys to S3
@@ -101,9 +105,12 @@ public class KeyBatchServiceImpl implements KeyBatchService {
                 newEntity.getKeyTypeCodes(),
                 keyList);
 
+        log.info(String.format("KeyBatch created [id: %s, quantity: %d]", newEntity.getId(), newEntity.getQuantity()));
+
         return toKeyBatch(newEntity);
     }
 
+    @Transactional
     @Override
     public void patchUpdate(KeyBatch batch) {
         Assert.hasText(batch.getId(), "batchId must not be null or empty");
