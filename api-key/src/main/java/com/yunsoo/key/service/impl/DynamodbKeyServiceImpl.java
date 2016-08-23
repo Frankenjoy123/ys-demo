@@ -43,6 +43,11 @@ public class DynamodbKeyServiceImpl implements KeyService {
     }
 
     @Override
+    public String formatExternalKey(String partitionId, String externalKey) {
+        return String.format("%s/%s", partitionId, externalKey);
+    }
+
+    @Override
     public void setDisabled(String key, Boolean disabled) {
         Assert.notNull(key, "productKey must not be null");
 

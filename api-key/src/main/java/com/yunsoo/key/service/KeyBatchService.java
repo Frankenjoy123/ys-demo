@@ -2,6 +2,7 @@ package com.yunsoo.key.service;
 
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.key.dto.KeyBatch;
+import com.yunsoo.key.dto.KeyBatchCreationRequest;
 import com.yunsoo.key.dto.Keys;
 
 /**
@@ -15,9 +16,11 @@ public interface KeyBatchService {
 
     Keys getKeysById(String batchId);
 
-    KeyBatch create(KeyBatch batch);
+
+    KeyBatch create(KeyBatchCreationRequest request);
 
     void patchUpdate(KeyBatch batch);
+
 
     ResourceInputStream getKeyBatchDetails(String batchId);
 

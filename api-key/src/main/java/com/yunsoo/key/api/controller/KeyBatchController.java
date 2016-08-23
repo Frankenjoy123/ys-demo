@@ -1,11 +1,10 @@
 package com.yunsoo.key.api.controller;
 
 import com.yunsoo.common.web.client.ResourceInputStream;
-import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.key.Constants;
 import com.yunsoo.key.api.util.ResponseEntityUtils;
 import com.yunsoo.key.dto.KeyBatch;
+import com.yunsoo.key.dto.KeyBatchCreationRequest;
 import com.yunsoo.key.dto.Keys;
 import com.yunsoo.key.service.KeyBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,15 +39,10 @@ public class KeyBatchController {
         return keyBatch;
     }
 
-
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public KeyBatch create(@RequestBody @Valid KeyBatch batch) {
-        if (!batch.getKeyTypeCodes().stream().allMatch(Constants.ProductKeyType.ALL::contains)) {
-            throw new BadRequestException("key_type_codes not valid");
-        }
-        batch.setId(null);
-        return keyBatchService.create(batch);
+    public KeyBatch create(@RequestBody @Valid KeyBatchCreationRequest request) {
+        return keyBatchService.create(request);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
@@ -56,7 +50,6 @@ public class KeyBatchController {
         batch.setId(id);
         keyBatchService.patchUpdate(batch);
     }
-
 
     @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
     public Keys getProductKeys(@PathVariable(value = "id") String id) {

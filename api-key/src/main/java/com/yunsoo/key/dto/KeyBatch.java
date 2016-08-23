@@ -1,5 +1,6 @@
 package com.yunsoo.key.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -21,6 +22,10 @@ public class KeyBatch implements Serializable {
 
     @JsonProperty("id")
     private String id;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @JsonProperty("partition_id")
+    private String partitionId;
 
     @JsonProperty("batch_no")
     private String batchNo;
@@ -64,6 +69,14 @@ public class KeyBatch implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getPartitionId() {
+        return partitionId;
+    }
+
+    public void setPartitionId(String partitionId) {
+        this.partitionId = partitionId;
     }
 
     public String getBatchNo() {
