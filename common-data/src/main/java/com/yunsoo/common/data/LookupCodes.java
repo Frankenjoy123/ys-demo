@@ -337,6 +337,23 @@ public class LookupCodes {
         public static final String SHARE = "share";
     }
 
+    public static class UserDeviceType {
+        private UserDeviceType() {
+        }
+
+        public static final String NONANDROID = "non_android";
+        public static final String IOS = "ios";
+        public static final String ANDROID = "android";
+    }
+
+    public static class SystemIds {
+        private SystemIds() {
+        }
+
+        public static final String ANONYMOUS_USER_ID = "0020000000000000000";
+    }
+
+
     public static class SMSTemplate{
         private SMSTemplate(){
 

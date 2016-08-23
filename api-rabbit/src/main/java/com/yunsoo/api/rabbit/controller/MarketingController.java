@@ -273,11 +273,11 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "drawPrize/{id}/random", method = RequestMethod.GET)
-    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId) {
+    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId, @RequestParam(value = "scan_record_id", required = false) String scanRecordId) {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId);
+        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId, scanRecordId);
         if (mktDrawRuleObject != null) {
             MktDrawRule mktDrawRule = new MktDrawRule(mktDrawRuleObject);
             String consumerRightId = mktDrawRuleObject.getConsumerRightId();

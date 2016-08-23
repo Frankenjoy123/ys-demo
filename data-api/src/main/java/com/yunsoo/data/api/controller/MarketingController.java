@@ -672,6 +672,47 @@ public class MarketingController {
         return batchIds;
     }
 
+    // query prized rule id list by user id or ys_id
+
+    @RequestMapping(value = "/drawprize/rulelist", method = RequestMethod.GET)
+    public List<String> getPrizedRuleIdListByUser(@RequestParam(value = "marketing_id") String marketingId,
+                                                  @RequestParam(value = "user_id", required = false) String userId,
+                                                  @RequestParam(value = "ys_id", required = false) String ysId) {
+
+        if ((userId == null) && (ysId == null)) {
+            throw new BadRequestException("one of the request parameter user_id or ys_id is required");
+        }
+        List<MktDrawRecordEntity> mktDrawRecordEntityList = new ArrayList<>();
+        List<String> productKeyList = new ArrayList<>();
+        List<String> ruleIdList = new ArrayList<>();
+        if ((userId != null) && (!userId.equals(LookupCodes.SystemIds.ANONYMOUS_USER_ID))) {
+            mktDrawRecordEntityList = mktDrawRecordRepository.findByMarketingIdAndUserIdAndIsPrized(marketingId, userId, true);
+        } else if (ysId != null) {
+            mktDrawRecordEntityList = mktDrawRecordRepository.findByMarketingIdAndYsidAndIsPrized(marketingId, ysId, true);
+        }
+        if (mktDrawRecordEntityList.size() > 0) {
+            for (MktDrawRecordEntity mdrEntity : mktDrawRecordEntityList) {
+                if (mdrEntity.getProductKey() != null) {
+                    productKeyList.add(mdrEntity.getProductKey());
+                }
+            }
+        }
+        if (productKeyList.size() > 0) {
+            for (String productKey : productKeyList) {
+                List<MktDrawPrizeEntity> mktDrawPrizeEntities = mktDrawPrizeRepository.findByProductKey(productKey);
+                if (mktDrawPrizeEntities.size() > 0) {
+                    MktDrawPrizeEntity prizeEntity = mktDrawPrizeEntities.get(0);
+                    if (prizeEntity.getDrawRuleId() != null) {
+                        ruleIdList.add(prizeEntity.getDrawRuleId());
+                    }
+                }
+            }
+        }
+
+        return ruleIdList;
+    }
+
+
     //delete marketing plan
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -825,6 +866,7 @@ public class MarketingController {
         object.setComments(entity.getComments());
         object.setAppliedEnv(entity.getAppliedEnv());
         object.setWeight(entity.getWeight());
+        object.setIsEqual(entity.getIsEqual());
         object.setCreatedAccountId(entity.getCreatedAccountId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
         object.setModifiedAccountId(entity.getModifiedAccountId());
@@ -982,6 +1024,7 @@ public class MarketingController {
         entity.setComments(object.getComments());
         entity.setAppliedEnv(object.getAppliedEnv());
         entity.setWeight(object.getWeight());
+        entity.setIsEqual(object.getIsEqual());
         entity.setCreatedAccountId(object.getCreatedAccountId());
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedAccountId(object.getModifiedAccountId());
