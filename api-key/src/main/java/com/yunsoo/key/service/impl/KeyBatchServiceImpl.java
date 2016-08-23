@@ -14,6 +14,7 @@ import com.yunsoo.key.dto.KeyBatch;
 import com.yunsoo.key.dto.KeyBatchCreationRequest;
 import com.yunsoo.key.dto.Keys;
 import com.yunsoo.key.file.service.FileService;
+import com.yunsoo.key.processor.service.ProcessorService;
 import com.yunsoo.key.service.KeyBatchService;
 import com.yunsoo.key.service.KeyService;
 import com.yunsoo.key.service.util.BatchNoGenerator;
@@ -51,6 +52,9 @@ public class KeyBatchServiceImpl implements KeyBatchService {
 
     @Autowired
     private KeyService keyService;
+
+    @Autowired
+    private ProcessorService processorService;
 
 
     @Override
@@ -92,6 +96,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         int quantity = request.getQuantity();
         List<String> keyTypeCodes = request.getKeyTypeCodes();
         List<String> externalKeys = request.getExternalKeys();
+        String productStatusCode = request.getProductStatusCode();
         for (String c : keyTypeCodes) {
             if (!Constants.KeyType.ALL.contains(c)) {
                 throw new BadRequestException("key_type_codes not valid");
@@ -113,6 +118,11 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         } else {
             externalKeys = null;
         }
+        if (productStatusCode == null || productStatusCode.length() == 0) {
+            productStatusCode = Constants.ProductStatus.ACTIVATED; // default activated
+        } else if (!Constants.ProductStatus.ALL.contains(productStatusCode)) {
+            throw new BadRequestException("product_status_code not valid");
+        }
         //endregion
 
         //init batch
@@ -120,7 +130,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         batch.setPartitionId(partitionId);
         batch.setBatchNo(request.getBatchNo() != null ? request.getBatchNo() : BatchNoGenerator.getNew());
         batch.setQuantity(quantity);
-        batch.setStatusCode(Constants.KeyBatchStatus.NEW);
+        batch.setStatusCode(Constants.KeyBatchStatus.CREATING);
         batch.setKeyTypeCodes(keyTypeCodes);
         batch.setProductBaseId(request.getProductBaseId());
         batch.setOrgId(request.getOrgId());
@@ -139,6 +149,9 @@ public class KeyBatchServiceImpl implements KeyBatchService {
 
         //save keys to file
         saveKeysToFile(entity.getOrgId(), entity.getId(), entity.getQuantity(), entity.getKeyTypeCodes(), keyList);
+
+        //put to queue
+        processorService.putKeyBatchCreateMessageToQueue(entity.getId(), productStatusCode);
 
         log.info(String.format("KeyBatch created [id: %s, quantity: %d]", entity.getId(), entity.getQuantity()));
 

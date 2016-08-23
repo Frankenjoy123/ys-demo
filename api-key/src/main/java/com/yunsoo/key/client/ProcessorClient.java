@@ -4,12 +4,12 @@ import com.yunsoo.common.web.client.RestClient;
 
 /**
  * Created by:   Lijian
- * Created on:   2016-08-19
+ * Created on:   2016-08-23
  * Descriptions:
  */
-public class FileApiClient extends RestClient {
+public class ProcessorClient extends RestClient {
 
-    public FileApiClient(String baseUrl) {
+    public ProcessorClient(String baseUrl) {
         super(baseUrl);
     }
 

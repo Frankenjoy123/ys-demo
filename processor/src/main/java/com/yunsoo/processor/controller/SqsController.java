@@ -24,7 +24,7 @@ public class SqsController {
 
     @RequestMapping(value = "message/" + ProductKeyBatchCreateMessage.PAYLOAD_TYPE, method = RequestMethod.PUT)
     public void sendProductKeyBatchCreateMassage(@RequestBody ProductKeyBatchCreateMessage message) {
-        messageSender.sendMessage(message);
+        messageSender.sendMessage(message, 5); //send with delay 5 seconds
     }
 
     @RequestMapping(value = "message/" + ProductPackageMessage.PAYLOAD_TYPE, method = RequestMethod.PUT)
