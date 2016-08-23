@@ -43,6 +43,11 @@ public class DynamodbKeyServiceImpl implements KeyService {
     }
 
     @Override
+    public String formatExternalKey(String partitionId, String externalKey) {
+        return String.format("%s/%s", partitionId, externalKey);
+    }
+
+    @Override
     public void setDisabled(String key, Boolean disabled) {
         Assert.notNull(key, "productKey must not be null");
 
@@ -50,17 +55,17 @@ public class DynamodbKeyServiceImpl implements KeyService {
         if (productModel == null) {
             throw new NotFoundException("product key not found: " + key);
         }
-        productModel.setProductKeyDisabled(disabled);
+        productModel.setKeyDisabled(disabled);
         productDao.save(productModel);
     }
 
     @Override
-    public void batchSave(String productKeyBatchId,
-                          List<String> productKeyTypeCodes,
+    public void batchSave(String keyBatchId,
+                          List<String> keyTypeCodes,
                           List<List<String>> productKeys,
                           Product productTemplate) {
-        Assert.notNull(productKeyBatchId, "productKeyBatchId must not be null");
-        Assert.notEmpty(productKeyTypeCodes, "productKeyTypeIds must not be empty or null");
+        Assert.notNull(keyBatchId, "keyBatchId must not be null");
+        Assert.notEmpty(keyTypeCodes, "keyTypeCodes must not be empty or null");
         Assert.notEmpty(productKeys, "productKeys must not be empty or null");
 
         if (productTemplate == null) {
@@ -68,55 +73,56 @@ public class DynamodbKeyServiceImpl implements KeyService {
         }
 
         DateTime startDateTime = DateTime.now();
+
         //generate ProductModel List
-        List<ProductModel> productModels = generateProductModelList(productKeyBatchId, productKeyTypeCodes, productKeys, productTemplate);
+        List<ProductModel> productModels = generateProductModelList(keyBatchId, keyTypeCodes, productKeys, productTemplate);
 
         //save productModel
         productDao.batchSave(productModels);
 
         log.info("batch save product keys successfully. " + StringFormatter.formatMap(
-                "productKeyBatchId", productKeyBatchId,
-                "productKeyTypeCodes.size", productKeyTypeCodes.size(),
+                "keyBatchId", keyBatchId,
+                "keyTypeCodes.size", keyTypeCodes.size(),
                 "productKeys.size", productKeys.size(),
                 "seconds", (DateTime.now().getMillis() - startDateTime.getMillis()) / 1000.0));
     }
 
-    private List<ProductModel> generateProductModelList(String productKeyBatchId,
-                                                        List<String> productKeyTypeCodes,
+    private List<ProductModel> generateProductModelList(String keyBatchId,
+                                                        List<String> keyTypeCodes,
                                                         List<List<String>> productKeys,
                                                         Product productTemplate) {
         if (productTemplate.getCreatedDateTime() == null) {
             productTemplate.setCreatedDateTime(DateTime.now());
         }
 
-        int productKeyTypeCodesSize = productKeyTypeCodes.size();
-        List<ProductModel> productModelList = new ArrayList<>(productKeys.size() * productKeyTypeCodesSize);
-        if (productKeyTypeCodesSize == 1) {
+        int keyTypeCodesSize = keyTypeCodes.size();
+        List<ProductModel> productModelList = new ArrayList<>(productKeys.size() * keyTypeCodesSize);
+        if (keyTypeCodesSize == 1) {
             productKeys.stream().forEach(keys -> {
                 if (keys != null && keys.size() > 0) {
                     ProductModel productModel = generateProductModel(productTemplate);
-                    productModel.setProductKey(keys.get(0));
-                    productModel.setProductKeyTypeCode(productKeyTypeCodes.get(0));
-                    productModel.setProductKeyBatchId(productKeyBatchId);
+                    productModel.setKey(keys.get(0));
+                    productModel.setKeyTypeCode(keyTypeCodes.get(0));
+                    productModel.setKeyBatchId(keyBatchId);
                     productModelList.add(productModel);
                 }
             });
         } else { //multi keys for each product
             productKeys.stream().forEach(keys -> {
-                if (keys != null && keys.size() >= productKeyTypeCodesSize) {
+                if (keys != null && keys.size() >= keyTypeCodesSize) {
                     Set<String> keySet = new HashSet<>();
                     String primaryKey = keys.get(0);
-                    for (int j = 0; j < productKeyTypeCodesSize; j++) {
+                    for (int j = 0; j < keyTypeCodesSize; j++) {
                         String key = keys.get(j);
                         keySet.add(key);
                         ProductModel productModel = generateProductModel(productTemplate);
-                        productModel.setProductKey(key);
-                        productModel.setProductKeyTypeCode(productKeyTypeCodes.get(j));
-                        productModel.setProductKeyBatchId(productKeyBatchId);
+                        productModel.setKey(key);
+                        productModel.setKeyTypeCode(keyTypeCodes.get(j));
+                        productModel.setKeyBatchId(keyBatchId);
                         if (j == 0) {
-                            productModel.setProductKeySet(keySet);
+                            productModel.setKeySet(keySet);
                         } else {
-                            productModel.setPrimaryProductKey(primaryKey);
+                            productModel.setPrimaryKey(primaryKey);
                         }
                         productModelList.add(productModel);
                     }
@@ -137,13 +143,13 @@ public class DynamodbKeyServiceImpl implements KeyService {
 
     private Key toKey(ProductModel productModel) {
         Key key = new Key();
-        key.setKey(productModel.getProductKey());
-        key.setTypeCode(productModel.getProductKeyTypeCode());
-        key.setDisabled(productModel.isProductKeyDisabled());
+        key.setKey(productModel.getKey());
+        key.setTypeCode(productModel.getKeyTypeCode());
+        key.setDisabled(productModel.isKeyDisabled());
         key.setPrimary(productModel.isPrimary());
-        key.setBatchId(productModel.getProductKeyBatchId());
-        key.setPrimaryKey(productModel.getPrimaryProductKey());
-        key.setKeySet(productModel.getProductKeySet());
+        key.setBatchId(productModel.getKeyBatchId());
+        key.setPrimaryKey(productModel.getPrimaryKey());
+        key.setKeySet(productModel.getKeySet());
         key.setCreatedDateTime(productModel.getCreatedDateTime());
         return key;
     }

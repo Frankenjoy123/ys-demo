@@ -129,6 +129,16 @@ public class MarketingDomain {
             }, marketingId);
     }
 
+    public MktConsumerRightRedeemCodeObject getMktConsumerRightRedeemCodeByIdAndPrizeId(String consumerRightId, String prizeId) {
+
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("draw_prize_id", prizeId)
+                .build();
+
+        return dataApiClient.get("consumer/redeemcode/{id}" + query, MktConsumerRightRedeemCodeObject.class, consumerRightId);
+    }
+
+
 
     public MktDrawRuleObject getMktRandomPrize(String marketId) {
         MarketingObject obj = dataApiClient.get("marketing/{id}", MarketingObject.class, marketId);

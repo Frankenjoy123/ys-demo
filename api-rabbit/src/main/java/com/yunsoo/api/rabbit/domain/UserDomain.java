@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
+import com.yunsoo.api.rabbit.file.service.ImageService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserConfigObject;
 import com.yunsoo.common.data.object.UserObject;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -40,6 +42,9 @@ public class UserDomain {
 
     @Autowired
     private UserFollowDomain userFollowDomain;
+
+    @Autowired
+    private ImageService imageService;
 
     private static final String DEFAULT_GRAVATAR_IMAGE_NAME = "image-400x400";
 
@@ -96,26 +101,16 @@ public class UserDomain {
         }
     }
 
-    public ResourceInputStream getUserGravatar(String userId, String imageName) {
-        if (StringUtils.isEmpty(imageName)) {
-            imageName = DEFAULT_GRAVATAR_IMAGE_NAME;
-        }
-        try {
-            return dataApiClient.getResourceInputStream("file/s3?path=user/{userId}/gravatar/{imageName}", userId, imageName);
-        } catch (NotFoundException ex) {
-            return null;
-        }
-    }
 
     public void saveUserGravatar(String userId, byte[] imageDataBytes) {
         String imageName = DEFAULT_GRAVATAR_IMAGE_NAME;
         try {
             ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
             ByteArrayOutputStream image400x400OutputStream = new ByteArrayOutputStream();
-            imageProcessor.resize(400, 400).write(image400x400OutputStream, "image/png");
-            dataApiClient.put("file/s3?path=user/{userId}/gravatar/{imageName}",
-                    new ResourceInputStream(new ByteArrayInputStream(image400x400OutputStream.toByteArray()), image400x400OutputStream.size(), "image/png"),
-                    userId, imageName);
+            imageProcessor.resize(400, 400).write(image400x400OutputStream, MediaType.IMAGE_PNG_VALUE);
+            String path = String.format("user/%s/gravatar/%s",userId, imageName);
+            imageService.save(image400x400OutputStream.toByteArray(),path, MediaType.IMAGE_PNG_VALUE);
+
         } catch (IOException e) {
             throw new InternalServerErrorException("gravatar upload failed [userId: " + userId + "]");
         }

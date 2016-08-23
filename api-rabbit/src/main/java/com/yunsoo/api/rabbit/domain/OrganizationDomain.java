@@ -4,6 +4,7 @@ import com.yunsoo.api.rabbit.auth.service.AuthOrganizationService;
 import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.api.rabbit.dto.ProductBase;
+import com.yunsoo.api.rabbit.file.service.FileService;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
@@ -31,7 +32,7 @@ public class OrganizationDomain {
     private RestClient dataApiClient;
 
     @Autowired
-    private FileDomain fileDomain;
+    private FileService fileService;
 
     @Autowired
     private AuthOrganizationService authOrganizationService;
@@ -63,7 +64,7 @@ public class OrganizationDomain {
             return null;
         }
         String path = String.format("organization/%s/logo/%s", orgId, imageName);
-        return fileDomain.getFile(path);
+        return fileService.getFile(path);
     }
 
 }

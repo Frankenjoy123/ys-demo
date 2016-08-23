@@ -1,5 +1,6 @@
 package com.yunsoo.key.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -32,9 +33,11 @@ public class Key implements Serializable {
     @JsonProperty("batch_id")
     private String batchId;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @JsonProperty("primary_key")
     private String primaryKey;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @JsonProperty("key_set")
     private Set<String> keySet;
 
