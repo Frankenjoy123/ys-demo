@@ -3,20 +3,26 @@ package com.yunsoo.key.service.impl;
 import com.amazonaws.util.IOUtils;
 import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.util.KeyGenerator;
+import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.client.ResourceInputStream;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.key.Constants;
 import com.yunsoo.key.dao.entity.KeyBatchEntity;
 import com.yunsoo.key.dao.repository.KeyBatchRepository;
 import com.yunsoo.key.dto.KeyBatch;
+import com.yunsoo.key.dto.KeyBatchCreationRequest;
 import com.yunsoo.key.dto.Keys;
 import com.yunsoo.key.file.service.FileService;
 import com.yunsoo.key.service.KeyBatchService;
+import com.yunsoo.key.service.KeyService;
 import com.yunsoo.key.service.util.BatchNoGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -43,6 +49,9 @@ public class KeyBatchServiceImpl implements KeyBatchService {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private KeyService keyService;
+
 
     @Override
     public KeyBatch getById(String batchId) {
@@ -59,14 +68,14 @@ public class KeyBatchServiceImpl implements KeyBatchService {
             return null;
         }
 
-        List<List<String>> keyList = getProductKeyListFromFile(batchEntity.getOrgId(), batchId);
+        List<List<String>> keyList = getKeysFromFile(batchEntity.getOrgId(), batchId);
 
         if (keyList == null) {
             return null;
         }
         KeyBatch keyBatch = toKeyBatch(batchEntity);
         Keys keys = new Keys();
-        keys.setBatchId(batchEntity.getId());
+        keys.setKeyBatchId(batchEntity.getId());
         keys.setQuantity(batchEntity.getQuantity());
         keys.setCreatedDateTime(batchEntity.getCreatedDateTime());
         keys.setKeyTypeCodes(keyBatch.getKeyTypeCodes());
@@ -74,36 +83,69 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         return keys;
     }
 
+    @Transactional
     @Override
-    public KeyBatch create(KeyBatch batch) {
-        int quantity = batch.getQuantity();
-        List<String> keyTypeCodes = batch.getKeyTypeCodes();
+    public KeyBatch create(KeyBatchCreationRequest request) {
+        //region validation and pre-processing
+        boolean hasExternalKeys = false;
+        String partitionId = request.getPartitionId();
+        int quantity = request.getQuantity();
+        List<String> keyTypeCodes = request.getKeyTypeCodes();
+        List<String> externalKeys = request.getExternalKeys();
+        for (String c : keyTypeCodes) {
+            if (!Constants.KeyType.ALL.contains(c)) {
+                throw new BadRequestException("key_type_codes not valid");
+            }
+            if (Constants.KeyType.EXTERNAL.equals(c)) {
+                if (hasExternalKeys) {
+                    throw new BadRequestException("key_type_codes not valid");
+                }
+                hasExternalKeys = true;
+            }
+        }
+        if (hasExternalKeys) {
+            if (externalKeys == null || externalKeys.size() != quantity) {
+                throw new BadRequestException("external_keys not valid");
+            }
+            if (partitionId == null || partitionId.length() == 0) {
+                partitionId = ObjectIdGenerator.getNew();
+            }
+        } else {
+            externalKeys = null;
+        }
+        //endregion
 
-        Assert.isTrue(quantity > 0, "quantity must be greater than 0");
-        Assert.isTrue(keyTypeCodes.size() > 0, "productKeyTypeCodes must not be empty");
+        //init batch
+        KeyBatch batch = new KeyBatch();
+        batch.setPartitionId(partitionId);
+        batch.setBatchNo(request.getBatchNo() != null ? request.getBatchNo() : BatchNoGenerator.getNew());
+        batch.setQuantity(quantity);
+        batch.setStatusCode(Constants.KeyBatchStatus.NEW);
+        batch.setKeyTypeCodes(keyTypeCodes);
+        batch.setProductBaseId(request.getProductBaseId());
+        batch.setOrgId(request.getOrgId());
+        batch.setCreatedAppId(request.getCreatedAppId());
+        batch.setCreatedDeviceId(request.getCreatedDeviceId());
+        batch.setCreatedAccountId(request.getCreatedAccountId());
+        batch.setCreatedDateTime(DateTime.now());
 
-        //generate productKeys
-        List<List<String>> keyList = generateProductKeys(batch);
+        //generate keys
+        List<List<String>> keyList = hasExternalKeys
+                ? generateProductKeys(quantity, keyTypeCodes, partitionId, externalKeys)
+                : generateProductKeys(quantity, keyTypeCodes);
 
         //save batch
-        batch.setId(null); //set to null for creating new item
-        if (batch.getCreatedDateTime() == null) {
-            batch.setCreatedDateTime(DateTime.now());
-        }
-        batch.setBatchNo(BatchNoGenerator.getNew());
-        KeyBatchEntity newEntity = keyBatchRepository.save(toProductKeyBatchEntity(batch));
+        KeyBatchEntity entity = keyBatchRepository.save(toKeyBatchEntity(batch));
 
-        //save product keys to S3
-        saveProductKeyListToFile(
-                newEntity.getOrgId(),
-                newEntity.getId(),
-                newEntity.getQuantity(),
-                newEntity.getKeyTypeCodes(),
-                keyList);
+        //save keys to file
+        saveKeysToFile(entity.getOrgId(), entity.getId(), entity.getQuantity(), entity.getKeyTypeCodes(), keyList);
 
-        return toKeyBatch(newEntity);
+        log.info(String.format("KeyBatch created [id: %s, quantity: %d]", entity.getId(), entity.getQuantity()));
+
+        return toKeyBatch(entity);
     }
 
+    @Transactional
     @Override
     public void patchUpdate(KeyBatch batch) {
         Assert.hasText(batch.getId(), "batchId must not be null or empty");
@@ -116,7 +158,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         if (batch.getProductBaseId() != null) {
             entity.setProductBaseId(batch.getProductBaseId());
         }
-        if (batch.getStatusCode() != null) {
+        if (batch.getStatusCode() != null && Constants.KeyBatchStatus.ALL.contains(batch.getStatusCode())) {
             entity.setStatusCode(batch.getStatusCode());
         }
 
@@ -127,7 +169,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
     public ResourceInputStream getKeyBatchDetails(String batchId) {
         KeyBatchEntity batchEntity = keyBatchRepository.findOne(batchId);
         if (batchEntity == null) {
-            return null;
+            throw new NotFoundException("keyBatch not found by id: " + batchId);
         }
         String path = formatKeyBatchDetailsFilePath(batchEntity.getOrgId(), batchId);
         return fileService.getFile(path);
@@ -146,12 +188,8 @@ public class KeyBatchServiceImpl implements KeyBatchService {
 
     //region private methods
 
-    private List<List<String>> generateProductKeys(KeyBatch batch) {
-        int quantity = batch.getQuantity();
-        List<String> keyTypeCodes = batch.getKeyTypeCodes();
-
+    private List<List<String>> generateProductKeys(int quantity, List<String> keyTypeCodes) {
         List<List<String>> keyList = new ArrayList<>(quantity);
-
         for (int i = 0, len = keyTypeCodes.size(); i < quantity; i++) {
             List<String> tempKeys = new ArrayList<>(len);
             for (int j = 0; j < len; j++) {
@@ -163,16 +201,37 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         return keyList;
     }
 
-    private void saveProductKeyListToFile(String orgId,
-                                          String batchId,
-                                          int quantity,
-                                          String productKeyTypeCodes,
-                                          List<List<String>> keyList) {
+    private List<List<String>> generateProductKeys(int quantity, List<String> keyTypeCodes,
+                                                   String partitionId, List<String> externalKeys) {
+        int externalIndex = -1;
+        for (int i = 0; i < keyTypeCodes.size(); i++) {
+            if (Constants.KeyType.EXTERNAL.equals(keyTypeCodes.get(i))) {
+                externalIndex = i;
+            }
+        }
+
+        List<List<String>> keyList = new ArrayList<>(quantity);
+        for (int i = 0, len = keyTypeCodes.size(); i < quantity; i++) {
+            List<String> tempKeys = new ArrayList<>(len);
+            for (int j = 0; j < len; j++) {
+                if (j == externalIndex) {
+                    tempKeys.add(keyService.formatExternalKey(partitionId, externalKeys.get(i)));
+                } else {
+                    tempKeys.add(KeyGenerator.getNew());
+                }
+            }
+            keyList.add(tempKeys);
+        }
+
+        return keyList;
+    }
+
+    private void saveKeysToFile(String orgId, String batchId, int quantity, String keyTypeCodes, List<List<String>> keyList) {
         YSFile ysFile = new YSFile(YSFile.EXT_PKS);
         ysFile.putHeader("org_id", orgId);
         ysFile.putHeader("product_key_batch_id", batchId);
         ysFile.putHeader("quantity", Integer.toString(quantity));
-        ysFile.putHeader("product_key_type_codes", productKeyTypeCodes);
+        ysFile.putHeader("product_key_type_codes", keyTypeCodes);
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < quantity; i++) {
@@ -191,7 +250,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         fileService.putFile(path, new ResourceInputStream(inputStream, data.length, "application/vnd+ys.pks"));
     }
 
-    private List<List<String>> getProductKeyListFromFile(String orgId, String batchId) {
+    private List<List<String>> getKeysFromFile(String orgId, String batchId) {
         String path = formatKeyBatchKeysFilePath(orgId, batchId);
         ResourceInputStream resourceInputStream = fileService.getFile(path);
         if (resourceInputStream == null) {
@@ -202,7 +261,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
             byte[] buffer = IOUtils.toByteArray(resourceInputStream);
             ysFile = YSFile.read(buffer);
         } catch (Exception e) {
-            log.error(String.format("getProductKeyListFromFile exception: [path: %s]", path), e);
+            log.error(String.format("getKeysFromFile exception: [path: %s]", path), e);
             return null;
         }
         byte[] content = ysFile.getContent();
@@ -218,7 +277,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         if (quantity != null && Integer.parseInt(quantity) == result.size()) {
             return result;
         } else {
-            log.error(String.format("getProductKeyListFromFile result size not equal to quantity: [path: %s]", path));
+            log.error(String.format("getKeysFromFile result size not equal to quantity: [path: %s]", path));
             return null;
         }
     }
@@ -238,6 +297,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         }
         KeyBatch batch = new KeyBatch();
         batch.setId(entity.getId());
+        batch.setPartitionId(entity.getPartitionId());
         batch.setBatchNo(entity.getBatchNo());
         batch.setQuantity(entity.getQuantity());
         batch.setStatusCode(entity.getStatusCode());
@@ -251,12 +311,13 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         return batch;
     }
 
-    private KeyBatchEntity toProductKeyBatchEntity(KeyBatch batch) {
+    private KeyBatchEntity toKeyBatchEntity(KeyBatch batch) {
         if (batch == null) {
             return null;
         }
         KeyBatchEntity entity = new KeyBatchEntity();
         entity.setId(batch.getId());
+        entity.setPartitionId(batch.getPartitionId());
         entity.setBatchNo(batch.getBatchNo());
         entity.setQuantity(batch.getQuantity());
         entity.setStatusCode(batch.getStatusCode());

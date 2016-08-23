@@ -17,8 +17,8 @@ import java.util.List;
  */
 public class Keys implements Serializable {
 
-    @JsonProperty("batch_id")
-    private String batchId;
+    @JsonProperty("key_batch_id")
+    private String keyBatchId;
 
     @JsonProperty("quantity")
     private Integer quantity;
@@ -34,12 +34,12 @@ public class Keys implements Serializable {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
 
-    public String getBatchId() {
-        return batchId;
+    public String getKeyBatchId() {
+        return keyBatchId;
     }
 
-    public void setBatchId(String batchId) {
-        this.batchId = batchId;
+    public void setKeyBatchId(String keyBatchId) {
+        this.keyBatchId = keyBatchId;
     }
 
     public Integer getQuantity() {

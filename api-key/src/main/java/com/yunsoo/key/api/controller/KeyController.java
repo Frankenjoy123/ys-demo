@@ -24,7 +24,18 @@ public class KeyController {
     public Key getKey(@PathVariable(value = "key") String key) {
         Key productKey = keyService.get(key);
         if (productKey == null) {
-            throw new NotFoundException("product key not found: " + key);
+            throw new NotFoundException("key not found: " + key);
+        }
+        return productKey;
+    }
+
+    @RequestMapping(value = "external/{partitionId}/{externalKey}", method = RequestMethod.GET)
+    public Key getExternalKey(@PathVariable(value = "partitionId") String partitionId,
+                              @PathVariable(value = "externalKey") String externalKey) {
+        String key = String.format("%s/%s", partitionId, externalKey);
+        Key productKey = keyService.get(key);
+        if (productKey == null) {
+            throw new NotFoundException("key not found: " + key);
         }
         return productKey;
     }
@@ -39,7 +50,7 @@ public class KeyController {
         keyService.setDisabled(key, false);
     }
 
-    @RequestMapping(value = "batch", method = RequestMethod.PUT)
+    @RequestMapping(value = "batchSave", method = RequestMethod.POST)
     public void batchSave(@RequestBody BatchSaveKeyRequest request) {
         Product productTemplate = new Product();
         productTemplate.setProductBaseId(request.getProductBaseId());

@@ -1,10 +1,11 @@
 package com.yunsoo.api.rabbit.controller;
 
-import com.yunsoo.api.rabbit.domain.FileDomain;
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
 import com.yunsoo.api.rabbit.dto.ProductBase;
+import com.yunsoo.api.rabbit.file.service.FileService;
+import com.yunsoo.api.rabbit.file.service.ImageService;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -37,7 +38,10 @@ public class ProductBaseController {
     private UserFollowDomain followDomain;
 
     @Autowired
-    private FileDomain fileDomain;
+    private FileService fileService;
+
+    @Autowired
+    private ImageService imageService;
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -64,16 +68,9 @@ public class ProductBaseController {
     public ResponseEntity<?> getProductBaseImage(
             @PathVariable(value = "product_base_id") String productBaseId,
             @PathVariable(value = "image_name") String imageName) {
-        ResourceInputStream resourceInputStream = productBaseDomain.getProductBaseImage(productBaseId, imageName);
-        if (resourceInputStream == null) {
-            throw new NotFoundException("product image found");
-        }
-        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
-        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
-        if (resourceInputStream.getContentLength() > 0) {
-            builder.contentLength(resourceInputStream.getContentLength());
-        }
-        return builder.body(new InputStreamResource(resourceInputStream));
+        ProductBaseObject productBaseObject = productBaseDomain.getProductBaseById(productBaseId);
+        String path = String.format("organization/%s/product_base/%s/%s/%s", productBaseObject.getOrgId(), productBaseId, productBaseObject.getVersion(), imageName);
+        return imageService.getImage(path);
 
     }
 
@@ -114,7 +111,7 @@ public class ProductBaseController {
     private ResourceInputStream getProductBaseFile(ProductBaseObject productBaseObject, String relativePath) {
         String path = String.format("organization/%s/product_base/%s/%s/%s",
                 productBaseObject.getOrgId(), productBaseObject.getId(), productBaseObject.getVersion(), relativePath);
-        ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+        ResourceInputStream resourceInputStream = fileService.getFile(path);
         if (resourceInputStream == null) {
             throw new NotFoundException();
         }

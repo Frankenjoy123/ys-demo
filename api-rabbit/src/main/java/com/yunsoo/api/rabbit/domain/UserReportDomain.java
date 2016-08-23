@@ -1,5 +1,6 @@
 package com.yunsoo.api.rabbit.domain;
 
+import com.yunsoo.api.rabbit.file.service.ImageService;
 import com.yunsoo.common.data.object.UserReportObject;
 import com.yunsoo.common.util.ImageProcessor;
 import com.yunsoo.common.util.ObjectIdGenerator;
@@ -11,6 +12,7 @@ import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -27,6 +29,9 @@ import java.util.List;
 public class UserReportDomain {
     @Autowired
     private RestClient dataApiClient;
+
+    @Autowired
+    private ImageService imageService;
 
     public UserReportObject saveUserReport(UserReportObject object){
         return dataApiClient.post("userReport", object, UserReportObject.class);
@@ -50,10 +55,9 @@ public class UserReportDomain {
         try {
             ImageProcessor imageProcessor = new ImageProcessor().read(new ByteArrayInputStream(imageDataBytes));
             ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
-            imageProcessor.write(imageOutputStream, "image/png");
-            dataApiClient.put("file/s3?path=user/{userId}/report/{reportId}/{imageName}",
-                    new ResourceInputStream(new ByteArrayInputStream(imageOutputStream.toByteArray()), imageOutputStream.size(), "image/png"),
-                    userId, reportId, imageName);
+            imageProcessor.write(imageOutputStream, MediaType.IMAGE_PNG_VALUE);
+            String path = String.format("ser/%s/report/%s/%s", userId, reportId, imageName);
+            imageService.save(imageOutputStream.toByteArray(), path, MediaType.IMAGE_PNG_VALUE);
         } catch (IOException e) {
             throw new InternalServerErrorException("report Image upload failed [userId: " + userId + "], [reportId: " + reportId +"]");
         }
