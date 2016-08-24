@@ -31,6 +31,9 @@ public class KeyBatchCreationRequest implements Serializable {
     @JsonProperty("product_base_id")
     private String productBaseId;
 
+    @JsonProperty("product_status_code")
+    private String productStatusCode;
+
     @NotEmpty(message = "org_id must not be null or empty")
     @JsonProperty("org_id")
     private String orgId;
@@ -86,6 +89,14 @@ public class KeyBatchCreationRequest implements Serializable {
 
     public void setProductBaseId(String productBaseId) {
         this.productBaseId = productBaseId;
+    }
+
+    public String getProductStatusCode() {
+        return productStatusCode;
+    }
+
+    public void setProductStatusCode(String productStatusCode) {
+        this.productStatusCode = productStatusCode;
     }
 
     public String getOrgId() {

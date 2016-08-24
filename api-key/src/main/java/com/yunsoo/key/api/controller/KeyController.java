@@ -32,7 +32,7 @@ public class KeyController {
     @RequestMapping(value = "external/{partitionId}/{externalKey}", method = RequestMethod.GET)
     public Key getExternalKey(@PathVariable(value = "partitionId") String partitionId,
                               @PathVariable(value = "externalKey") String externalKey) {
-        String key = String.format("%s/%s", partitionId, externalKey);
+        String key = keyService.formatExternalKey(partitionId, externalKey);
         Key productKey = keyService.get(key);
         if (productKey == null) {
             throw new NotFoundException("key not found: " + key);
