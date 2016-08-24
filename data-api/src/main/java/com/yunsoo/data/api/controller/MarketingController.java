@@ -735,7 +735,9 @@ public class MarketingController {
                 if (mktDrawPrizeEntities.size() > 0) {
                     MktDrawPrizeEntity prizeEntity = mktDrawPrizeEntities.get(0);
                     if (prizeEntity.getDrawRuleId() != null) {
-                        ruleIdList.add(prizeEntity.getDrawRuleId());
+                        if (!ruleIdList.contains(prizeEntity.getDrawRuleId())) {
+                            ruleIdList.add(prizeEntity.getDrawRuleId());
+                        }
                     }
                 }
             }
