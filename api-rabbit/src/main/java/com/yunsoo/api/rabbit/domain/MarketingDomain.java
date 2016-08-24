@@ -65,6 +65,11 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/consumer/{id}", MktConsumerRightObject.class, id);
     }
 
+    public MktConsumerRightObject getConsumerRightByProductKey(String productKey) {
+        return dataApiClient.get("marketing/consumer/key/{key}", MktConsumerRightObject.class, productKey);
+    }
+
+
     public MktDrawRuleObject getDrawRuleById(String id){
         return dataApiClient.get("marketing/Rule/{id}", MktDrawRuleObject.class, id);
     }
@@ -219,7 +224,7 @@ public class MarketingDomain {
                 return null;
             }
         }
-        if (LookupCodes.MktType.BIGDRAW.equals(obj.getTypeCode())) {
+        if (LookupCodes.MktType.DRAW01.equals(obj.getTypeCode())) {
             List<MktDrawRuleObject> ruleList = getRuleList(marketId);
             List<MktDrawRuleObject> newRuleList = new ArrayList<>();
             List<String> prizedRuleList = new ArrayList<>();

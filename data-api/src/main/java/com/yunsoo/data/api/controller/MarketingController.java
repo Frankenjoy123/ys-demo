@@ -225,6 +225,38 @@ public class MarketingController {
         return toMktConsumerRightObject(newEntity);
     }
 
+    //get marketing consumer right by key
+    @RequestMapping(value = "consumer/key/{key}", method = RequestMethod.GET)
+    public MktConsumerRightObject getMktConsumerRightByProductKey(@PathVariable(value = "key") String key) {
+
+        List<MktDrawPrizeEntity> mktDrawPrizeEntityList = mktDrawPrizeRepository.findByProductKey(key);
+        if (mktDrawPrizeEntityList.size() > 0) {
+            MktDrawPrizeEntity mktDrawPrizeEntity = mktDrawPrizeEntityList.get(0);
+            String drawRuleId = mktDrawPrizeEntity.getDrawRuleId();
+            MktDrawRuleEntity mktDrawRuleEntity = mktDrawRuleRepository.findOne(drawRuleId);
+            if (mktDrawRuleEntity != null) {
+                String consumerRightId = mktDrawRuleEntity.getConsumerRightId();
+                if (consumerRightId != null) {
+                    MktConsumerRightEntity mktConsumerRightEntity = mktConsumerRightRepository.findOne(consumerRightId);
+                    if (mktConsumerRightEntity != null) {
+                        return toMktConsumerRightObject(mktConsumerRightEntity);
+                    } else {
+                        return null;
+                    }
+
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+
+        } else {
+            return null;
+        }
+    }
+
+
     //get marketing consumer right redeem code by consumer right id
     @RequestMapping(value = "consumer/redeemcode/{id}", method = RequestMethod.GET)
     public MktConsumerRightRedeemCodeObject getRedeemCodeByConsumerRightId(@PathVariable String id,

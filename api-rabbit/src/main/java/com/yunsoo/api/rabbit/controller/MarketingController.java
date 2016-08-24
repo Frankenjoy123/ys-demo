@@ -242,6 +242,18 @@ public class MarketingController {
         }
     }
 
+    @RequestMapping(value = "consumer/key/{key}", method = RequestMethod.GET)
+    public MktConsumerRight getMktConsumerRightByProductKey(@PathVariable String key) {
+        if (key == null) {
+            throw new BadRequestException("product key can not be null");
+        }
+        MktConsumerRightObject mktConsumerRightObject = marketingDomain.getConsumerRightByProductKey(key);
+        if (mktConsumerRightObject != null) {
+            return new MktConsumerRight(mktConsumerRightObject);
+        } else {
+            return null;
+        }
+    }
 
 
     @RequestMapping(value = "drawPrize/{key}/sms", method = RequestMethod.PUT)
