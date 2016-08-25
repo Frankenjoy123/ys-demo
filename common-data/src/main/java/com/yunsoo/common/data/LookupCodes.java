@@ -52,6 +52,7 @@ public class LookupCodes {
         public static final String QR_PUBLIC = "qr_public";
         public static final String QR_SECURE = "qr_secure";
         public static final String RFID = "rfid";
+        public static final String EXTERNAL = "external";
     }
 
     public static class AccountStatus {
