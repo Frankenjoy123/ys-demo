@@ -257,30 +257,60 @@ public class MarketingController {
     }
 
 
-    //get marketing consumer right redeem code by consumer right id
-    @RequestMapping(value = "consumer/redeemcode/{id}", method = RequestMethod.GET)
-    public MktConsumerRightRedeemCodeObject getRedeemCodeByConsumerRightId(@PathVariable String id,
-                                                                           @RequestParam(value = "draw_prize_id") String drawPrizeId) {
+    //get marketing consumer right redeem code by product key
+    @RequestMapping(value = "consumer/redeemcode/{key}", method = RequestMethod.GET)
+    public MktConsumerRightRedeemCodeObject getRedeemCodeByConsumerRightId(@PathVariable String key) {
 
-        MktConsumerRightRedeemCodeEntity entity = mktConsumerRightRedeemCodeRepository.findTop1ByConsumerRightIdAndStatusCodeOrderByCreatedDateTime(id, LookupCodes.MktConsumerRightRedeemCodeStatus.AVAILABLE);
-        if (entity == null) {
-            throw new NotFoundException("consumer right redeem code not found.");
+        List<MktDrawPrizeEntity> mktDrawPrizeEntityList = mktDrawPrizeRepository.findByProductKey(key);
+        if (mktDrawPrizeEntityList.size() > 0) {
+            MktDrawPrizeEntity mktDrawPrizeEntity = mktDrawPrizeEntityList.get(0);
+            String prizeId = mktDrawPrizeEntity.getDrawRecordId();
+            String ruleId = mktDrawPrizeEntity.getDrawRuleId();
+
+            List<MktConsumerRightRedeemCodeEntity> mktConsumerRightRedeemCodeEntities = mktConsumerRightRedeemCodeRepository.findByDrawPrizeId(prizeId);
+            if (mktConsumerRightRedeemCodeEntities.size() > 0) {
+                MktConsumerRightRedeemCodeEntity mktConsumerRightRedeemCodeEntity = mktConsumerRightRedeemCodeEntities.get(0);
+                return toMktConsumerRightRedeemCodeObject(mktConsumerRightRedeemCodeEntity);
+
+            } else {
+
+                if (ruleId != null) {
+                    MktDrawRuleEntity mktDrawRuleEntity = mktDrawRuleRepository.findOne(ruleId);
+                    if (mktDrawRuleEntity != null) {
+                        String consumerRightId = mktDrawRuleEntity.getConsumerRightId();
+                        if (consumerRightId != null) {
+                            MktConsumerRightRedeemCodeEntity entity = mktConsumerRightRedeemCodeRepository.findTop1ByConsumerRightIdAndStatusCodeOrderByCreatedDateTime(consumerRightId, LookupCodes.MktConsumerRightRedeemCodeStatus.AVAILABLE);
+                            if (entity == null) {
+                                throw new NotFoundException("consumer right redeem code not found.");
+                            }
+                            if (entity.getTypeCode().equals(LookupCodes.MktConsumerRightRedeemCodeType.UNIQUE)) {
+                                entity.setStatusCode(LookupCodes.MktConsumerRightRedeemCodeStatus.USED);
+                                entity.setModifiedDateTime(DateTime.now());
+                                entity.setDrawPrizeId(prizeId);
+                            } else if (entity.getTypeCode().equals(LookupCodes.MktConsumerRightRedeemCodeType.COMMON)) {
+                                entity.setModifiedDateTime(DateTime.now());
+                                entity.setDrawPrizeId(prizeId);
+                            }
+                            mktConsumerRightRedeemCodeRepository.save(entity);
+                            MktDrawPrizeEntity prizeEntity = mktDrawPrizeRepository.findOne(prizeId);
+                            prizeEntity.setPrizeContent(entity.getValue());
+                            mktDrawPrizeRepository.save(prizeEntity);
+                            return toMktConsumerRightRedeemCodeObject(entity);
+
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        throw new NotFoundException("marketing rule not found.");
+                    }
+                } else {
+                    throw new NotFoundException("marketing rule not found.");
+                }
+            }
+        } else {
+            throw new NotFoundException("prize record not found.");
         }
-        if (entity.getTypeCode().equals(LookupCodes.MktConsumerRightRedeemCodeType.UNIQUE)) {
-            entity.setStatusCode(LookupCodes.MktConsumerRightRedeemCodeStatus.USED);
-            entity.setModifiedDateTime(DateTime.now());
-            entity.setDrawPrizeId(drawPrizeId);
-        } else if (entity.getTypeCode().equals(LookupCodes.MktConsumerRightRedeemCodeType.COMMON)) {
-            entity.setModifiedDateTime(DateTime.now());
-            entity.setDrawPrizeId(drawPrizeId);
-        }
-        mktConsumerRightRedeemCodeRepository.save(entity);
 
-        MktDrawPrizeEntity prizeEntity = mktDrawPrizeRepository.findOne(drawPrizeId);
-        prizeEntity.setPrizeContent(entity.getValue());
-        mktDrawPrizeRepository.save(prizeEntity);
-
-        return toMktConsumerRightRedeemCodeObject(entity);
     }
 
 

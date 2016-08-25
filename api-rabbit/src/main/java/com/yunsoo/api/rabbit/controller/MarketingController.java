@@ -230,10 +230,9 @@ public class MarketingController {
 
     }
 
-    @RequestMapping(value = "consumer/redeemcode/{id}", method = RequestMethod.GET)
-    public MktConsumerRightRedeemCode getConsumerRedeemCodeByIdAndPrizeId(@PathVariable String id,
-                                                                          @RequestParam(value = "draw_prize_id") String drawPrizeId) {
-        MktConsumerRightRedeemCodeObject mktConsumerRightRedeemCodeObject = marketingDomain.getMktConsumerRightRedeemCodeByIdAndPrizeId(id, drawPrizeId);
+    @RequestMapping(value = "consumer/redeemcode/{key}", method = RequestMethod.GET)
+    public MktConsumerRightRedeemCode getConsumerRedeemCodeByIdAndPrizeId(@PathVariable String key) {
+        MktConsumerRightRedeemCodeObject mktConsumerRightRedeemCodeObject = marketingDomain.getMktConsumerRightRedeemCodeByProductKey(key);
 
         if (mktConsumerRightRedeemCodeObject != null) {
             return new MktConsumerRightRedeemCode(mktConsumerRightRedeemCodeObject);
