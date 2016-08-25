@@ -1,5 +1,6 @@
 package com.yunsoo.processor.controller;
 
+import com.yunsoo.common.web.health.AbstractHealthController;
 import com.yunsoo.common.web.health.Health;
 import com.yunsoo.processor.client.DataApiClient;
 import com.yunsoo.processor.client.FileApiClient;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/health")
-public class AbstractHealthController extends AbstractHealthController {
+public class HealthController extends AbstractHealthController {
 
     @Autowired
     private DataApiClient dataApiClient;
