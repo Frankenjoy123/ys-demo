@@ -2,9 +2,13 @@ package com.yunsoo.processor.controller;
 
 import com.yunsoo.common.web.health.Health;
 import com.yunsoo.processor.client.DataApiClient;
+import com.yunsoo.processor.client.FileApiClient;
+import com.yunsoo.processor.client.KeyApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -13,17 +17,21 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/health")
-public class HealthController {
+public class AbstractHealthController extends AbstractHealthController {
 
     @Autowired
     private DataApiClient dataApiClient;
 
-    @RequestMapping(value = "")
-    public Health health() {
-        Health dataApi = dataApiClient.checkHealth();
-        return new Health(Health.Status.UP)
-                .mergeStatus(dataApi.getStatus())
-                .withDetail("dataApi", dataApi);
+    @Autowired
+    private FileApiClient fileApiClient;
+
+    @Autowired
+    private KeyApiClient keyApiClient;
+
+
+    @Override
+    public void expandHealth(Health health, List<String> path, boolean debug) {
+        health.checkClient(dataApiClient, path).checkClient(fileApiClient, path).checkClient(keyApiClient, path);
     }
 
 }

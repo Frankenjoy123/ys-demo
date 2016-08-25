@@ -1,6 +1,5 @@
 package com.yunsoo.common.web.client;
 
-import com.yunsoo.common.web.health.Health;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -61,10 +60,6 @@ public class AsyncRestClient extends RestClient {
         return this.asyncRestTemplate;
     }
 
-
-    public ListenableFuture<Health> checkHealthAsync() {
-        return getAsync("health", Health.class);
-    }
 
     //GET
     public <T> ListenableFuture<T> getAsync(String url, Class<T> responseType, Object... uriVariables) {
