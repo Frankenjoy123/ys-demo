@@ -140,7 +140,7 @@ public class MarketingDomain {
                 .append("draw_prize_id", prizeId)
                 .build();
 
-        return dataApiClient.get("consumer/redeemcode/{id}" + query, MktConsumerRightRedeemCodeObject.class, consumerRightId);
+        return dataApiClient.get("marketing/consumer/redeemcode/{id}" + query, MktConsumerRightRedeemCodeObject.class, consumerRightId);
     }
 
     public List<String> getPrizedRuleListByUser(String marketingId, String userId, String ysId) {
