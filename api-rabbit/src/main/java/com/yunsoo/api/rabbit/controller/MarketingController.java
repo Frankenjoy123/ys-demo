@@ -242,8 +242,9 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "consumer/redeemcode/generate/{key}", method = RequestMethod.GET)
-    public MktConsumerRightRedeemCode getRandomConsumerRedeemCodeByIdAndPrizeId(@PathVariable String key) {
-        MktConsumerRightRedeemCodeObject mktConsumerRightRedeemCodeObject = marketingDomain.getRandomMktConsumerRightRedeemCodeByProductKey(key);
+    public MktConsumerRightRedeemCode getRandomConsumerRedeemCodeByIdAndPrizeId(@PathVariable String key,
+                                                                                @RequestParam(value = "draw_rule_id") String drawRuleId) {
+        MktConsumerRightRedeemCodeObject mktConsumerRightRedeemCodeObject = marketingDomain.getRandomMktConsumerRightRedeemCodeByProductKey(key, drawRuleId);
 
         if (mktConsumerRightRedeemCodeObject != null) {
             return new MktConsumerRightRedeemCode(mktConsumerRightRedeemCodeObject);
