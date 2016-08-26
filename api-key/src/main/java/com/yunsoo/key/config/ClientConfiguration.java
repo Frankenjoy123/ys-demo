@@ -14,20 +14,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ClientConfiguration {
 
-    @Value("${yunsoo.client.processor.base_url}")
-    private String processorBaseUrl;
-
-    @Value("${yunsoo.client.file_api.base_url}")
-    private String fileApiBaseUrl;
-
-
     @Bean
-    public ProcessorClient processorClient() {
+    public ProcessorClient processorClient(@Value("${yunsoo.client.processor.base_url}") String processorBaseUrl) {
         return new ProcessorClient(processorBaseUrl);
     }
 
     @Bean
-    public FileApiClient fileApiClient() {
+    public FileApiClient fileApiClient(@Value("${yunsoo.client.file_api.base_url}") String fileApiBaseUrl) {
         return new FileApiClient(fileApiBaseUrl);
     }
 

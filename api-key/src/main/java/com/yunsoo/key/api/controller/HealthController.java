@@ -1,11 +1,14 @@
 package com.yunsoo.key.api.controller;
 
+import com.yunsoo.common.web.health.AbstractHealthController;
 import com.yunsoo.common.web.health.Health;
 import com.yunsoo.key.client.FileApiClient;
 import com.yunsoo.key.client.ProcessorClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -14,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/health")
-public class HealthController {
+public class HealthController extends AbstractHealthController {
 
     @Autowired
     private ProcessorClient processorClient;
@@ -22,13 +25,11 @@ public class HealthController {
     @Autowired
     private FileApiClient fileApiClient;
 
-    @RequestMapping(value = "")
-    public Health health() {
-        Health processor = processorClient.checkHealth();
-        Health fileApi = fileApiClient.checkHealth();
-        return new Health(Health.Status.UP)
-                .withDetail("processor", processor)
-                .withDetail("fileApi", fileApi);
+    @Override
+    public void expandHealth(Health health, List<String> path, boolean debug) {
+        health
+                .checkClient(processorClient, path)
+                .checkClient(fileApiClient, path);
     }
 
 }
