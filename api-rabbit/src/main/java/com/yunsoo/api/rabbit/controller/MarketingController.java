@@ -1,5 +1,6 @@
 package com.yunsoo.api.rabbit.controller;
 
+import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.domain.MarketingDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.*;
@@ -272,27 +273,42 @@ public class MarketingController {
 
     }
 
-    @RequestMapping(value = "drawPrize/{id}/random", method = RequestMethod.GET)
-    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId) {
+    @RequestMapping(value = "drawPrize/{id}/random", method = RequestMethod.POST)
+    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId, @RequestBody MktDraw mktDraw) {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
         MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId);
+
         if (mktDrawRuleObject != null) {
+            MktDrawPrize prize = mktDraw.getPrize();
+            prize.setPrizeTypeCode(mktDrawRuleObject.getPrizeTypeCode());
+
             MktDrawRule mktDrawRule = new MktDrawRule(mktDrawRuleObject);
             String consumerRightId = mktDrawRuleObject.getConsumerRightId();
             if (consumerRightId != null) {
                 MktConsumerRightObject consumerRightObject = marketingDomain.getConsumerRightById(consumerRightId);
                 if (consumerRightObject != null) {
                     mktDrawRule.setMktConsumerRight(new MktConsumerRight(consumerRightObject));
+                    prize.setPrizeTypeCode(consumerRightObject.getTypeCode());
                 }
             }
+
+            //save prize
+            MktDrawRecord record = mktDraw.getRecord();
+            record.setIsPrized(mktDrawRuleObject.getAmount() > 0 ? true: false);
+            marketingDomain.createMktDrawRecord(record.toMktDrawRecordObject());
+
+            setAccount(prize);
+            prize.setDrawRuleId(mktDrawRule.getId());
+            prize.setAmount(mktDrawRule.getAmount());
+            marketingDomain.createMktDrawPrize(prize.toMktDrawPrizeObject());
+
             return mktDrawRule;
 
         } else {
             return new MktDrawRule(mktDrawRuleObject);
         }
-//        return new MktDrawRule(marketingDomain.getMktRandomPrize(marketingId));
     }
 
     @RequestMapping(value = "drawRule/{id}", method = RequestMethod.GET)
@@ -333,6 +349,17 @@ public class MarketingController {
         return mktDrawPrizeList;
     }
 
+    private void setAccount(MktDrawPrize prize){
+        prize.setAccountType(prize.getPrizeTypeCode());
 
+        if(LookupCodes.MktPrizeType.MOBILE_FEE.equals(prize.getPrizeTypeCode()) || LookupCodes.MktPrizeType.MOBILE_DATA.equals(prize.getPrizeTypeCode()) ){
+            prize.setAccountType("mobile");
+            prize.setPrizeAccountName("手机用户");
+        }
+        else if (LookupCodes.MktPrizeType.COUPON.equals(prize.getPrizeTypeCode())){
+            if(prize.getPrizeAccountName() == null)
+            prize.setPrizeAccountName("手机用户");
+        }
+    }
 
 }

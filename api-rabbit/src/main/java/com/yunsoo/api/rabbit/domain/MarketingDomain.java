@@ -118,7 +118,7 @@ public class MarketingDomain {
 
             String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                     .append("record_ids", ids)
-                    .append("status_code_in", Arrays.asList(LookupCodes.MktDrawPrizeStatus.SUBMIT, LookupCodes.MktDrawPrizeStatus.PAID))
+                    .append("status_code_in", Arrays.asList(LookupCodes.MktDrawPrizeStatus.SUBMIT, LookupCodes.MktDrawPrizeStatus.PAID, LookupCodes.MktDrawPrizeStatus.CREATED))
                     .build();
 
             return dataApiClient.get("marketing/drawPrize/{id}/top" + query, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
