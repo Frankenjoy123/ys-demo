@@ -262,6 +262,16 @@ public class LookupCodes {
 
     }
 
+    public static class MktVerifyStatus {
+        private MktVerifyStatus() {
+        }
+
+        public static final String VALID = "valid";
+        public static final String INVALID = "invalid";
+
+    }
+
+
 
 
     public static class PaymentStatus {

@@ -1,12 +1,14 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.MarketingDomain;
+import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.error.ErrorResult;
+import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
@@ -35,6 +37,10 @@ public class MarketingController {
 
     @Autowired
     private ProductDomain productDomain;
+
+    @Autowired
+    private ProductBaseDomain productBaseDomain;
+
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -267,6 +273,42 @@ public class MarketingController {
         }
     }
 
+    @RequestMapping(value = "validate/key/{key}", method = RequestMethod.GET)
+    public String getMarketingValidateByProductKey(@PathVariable String key) {
+        if (key == null) {
+            throw new BadRequestException("product key can not be null");
+        }
+
+        //search product by key
+        ProductObject productObject = getProductByKey(key);
+
+        ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(productObject.getProductKeyBatchId());
+
+        if (productKeyBatchObject != null) {
+            //marketing info
+            String marketingId = productKeyBatchObject.getMarketingId();
+            if (marketingId != null) {
+                MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+                long now = DateTime.now().getMillis();
+                if (marketingObject != null
+                        && (marketingObject.getStartDateTime() == null || marketingObject.getStartDateTime().getMillis() <= now)
+                        && (marketingObject.getEndDateTime() == null || marketingObject.getEndDateTime().getMillis() >= now)
+                        && LookupCodes.MktStatus.PAID.equals(marketingObject.getStatusCode())) {
+                    return LookupCodes.MktVerifyStatus.VALID;
+                } else {
+                    return LookupCodes.MktVerifyStatus.INVALID;
+                }
+            } else {
+                return LookupCodes.MktVerifyStatus.INVALID;
+            }
+        } else {
+            throw new BadRequestException("product key batch not found");
+        }
+
+
+    }
+
+
 
     @RequestMapping(value = "drawPrize/{key}/sms", method = RequestMethod.PUT)
     public boolean sendPrizeSMS(@PathVariable(value = "key") String productKey,
@@ -356,6 +398,18 @@ public class MarketingController {
 
         return mktDrawPrizeList;
     }
+
+    private ProductObject getProductByKey(String key) {
+        if (!KeyGenerator.validate(key)) {
+            throw new NotFoundException("product not found");
+        }
+        ProductObject productObject = productDomain.getProduct(key);
+        if (productObject == null || productObject.getProductBaseId() == null) {
+            throw new NotFoundException("product not found");
+        }
+        return productObject;
+    }
+
 
 
 
