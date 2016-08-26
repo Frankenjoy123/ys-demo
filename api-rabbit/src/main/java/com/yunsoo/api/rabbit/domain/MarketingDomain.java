@@ -138,6 +138,10 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/consumer/redeemcode/{key}", MktConsumerRightRedeemCodeObject.class, productKey);
     }
 
+    public MktConsumerRightRedeemCodeObject getRandomMktConsumerRightRedeemCodeByProductKey(String productKey) {
+        return dataApiClient.get("marketing/consumer/redeemcode/generate/{key}", MktConsumerRightRedeemCodeObject.class, productKey);
+    }
+
     public List<String> getPrizedRuleListByUser(String marketingId, String userId, String ysId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("marketing_id", marketingId)

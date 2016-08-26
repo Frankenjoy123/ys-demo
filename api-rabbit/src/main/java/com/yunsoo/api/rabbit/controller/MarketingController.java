@@ -241,6 +241,18 @@ public class MarketingController {
         }
     }
 
+    @RequestMapping(value = "consumer/redeemcode/generate/{key}", method = RequestMethod.GET)
+    public MktConsumerRightRedeemCode getRandomConsumerRedeemCodeByIdAndPrizeId(@PathVariable String key) {
+        MktConsumerRightRedeemCodeObject mktConsumerRightRedeemCodeObject = marketingDomain.getRandomMktConsumerRightRedeemCodeByProductKey(key);
+
+        if (mktConsumerRightRedeemCodeObject != null) {
+            return new MktConsumerRightRedeemCode(mktConsumerRightRedeemCodeObject);
+        } else {
+            return null;
+        }
+    }
+
+
     @RequestMapping(value = "consumer/key/{key}", method = RequestMethod.GET)
     public MktConsumerRight getMktConsumerRightByProductKey(@PathVariable String key) {
         if (key == null) {
