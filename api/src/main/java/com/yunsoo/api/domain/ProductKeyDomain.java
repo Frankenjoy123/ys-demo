@@ -33,7 +33,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -224,19 +223,21 @@ public class ProductKeyDomain {
 
 
     public byte[] getProductKeysByBatchId(String id) {
-        ProductKeysObject object = dataApiClient.get("productkeybatch/{batchId}/keys", ProductKeysObject.class, id);
+        ProductKeysObject productKeys = dataApiClient.get("productkeybatch/{batchId}/keys", ProductKeysObject.class, id);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        if (object == null) {
+        if (productKeys == null) {
             return null;
         }
         try {
-//            List<String> productKeyTypeCodes = object.getProductKeyTypeCodes();
-//            outputStream.write(
-//                    StringUtils.collectionToDelimitedString(productKeyTypeCodes, ",")
-//                            .getBytes(Charset.forName("UTF-8")));
-//            outputStream.write(CR_LF);
-            for (List<String> i : object.getProductKeys()) {
-                List<String> ks = i.stream().map(k -> productKeyBaseUrl + k).collect(Collectors.toList());
+            List<String> productKeyTypeCodes = productKeys.getProductKeyTypeCodes();
+            for (List<String> ks : productKeys.getProductKeys()) {
+                for (int j = 0; j < ks.size(); j++) {
+                    if (LookupCodes.ProductKeyType.EXTERNAL.equals(productKeyTypeCodes.get(j))) {
+                        ks.set(j, productKeyBaseUrl + "external/" + ks.get(j));
+                    } else {
+                        ks.set(j, productKeyBaseUrl + ks.get(j));
+                    }
+                }
                 outputStream.write(
                         StringUtils.collectionToDelimitedString(ks, ",")
                                 .getBytes(Charset.forName("UTF-8")));

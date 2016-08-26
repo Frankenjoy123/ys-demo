@@ -2,10 +2,15 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.client.AuthApiClient;
 import com.yunsoo.api.rabbit.client.DataApiClient;
+import com.yunsoo.api.rabbit.client.FileApiClient;
+import com.yunsoo.api.rabbit.client.KeyApiClient;
+import com.yunsoo.common.web.health.AbstractHealthController;
 import com.yunsoo.common.web.health.Health;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -14,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/health")
-public class HealthController {
+public class HealthController extends AbstractHealthController {
 
     @Autowired
     private AuthApiClient authApiClient;
@@ -22,15 +27,20 @@ public class HealthController {
     @Autowired
     private DataApiClient dataApiClient;
 
-    @RequestMapping(value = "")
-    public Health health() {
-        Health authApi = authApiClient.checkHealth();
-        Health dataApi = dataApiClient.checkHealth();
-        return new Health(Health.Status.UP)
-                .mergeStatus(authApi.getStatus())
-                .mergeStatus(dataApi.getStatus())
-                .withDetail("authApi", authApi)
-                .withDetail("dataApi", dataApi);
+    @Autowired
+    private FileApiClient fileApiClient;
+
+    @Autowired
+    private KeyApiClient keyApiClient;
+
+
+    @Override
+    public void expandHealth(Health health, List<String> path, boolean debug) {
+        health
+                .checkClient(authApiClient, path)
+                .checkClient(dataApiClient, path)
+                .checkClient(fileApiClient, path)
+                .checkClient(keyApiClient, path);
     }
 
 }

@@ -48,6 +48,9 @@ public class MktDrawRule {
     @JsonProperty("weight")
     private Integer weight;
 
+    @JsonProperty("is_equal")
+    private Boolean isEqual;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -152,6 +155,14 @@ public class MktDrawRule {
         this.weight = weight;
     }
 
+    public Boolean getIsEqual() {
+        return isEqual;
+    }
+
+    public void setIsEqual(Boolean isEqual) {
+        this.isEqual = isEqual;
+    }
+
     public String getCreatedAccountId() {
         return createdAccountId;
     }
@@ -200,6 +211,7 @@ public class MktDrawRule {
             this.setComments(object.getComments());
             this.setAppliedEnv(object.getAppliedEnv());
             this.setWeight(object.getWeight());
+            this.setIsEqual(object.getIsEqual());
             this.setCreatedAccountId(object.getCreatedAccountId());
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
@@ -220,6 +232,7 @@ public class MktDrawRule {
         object.setComments(this.getComments());
         object.setAppliedEnv(this.getAppliedEnv());
         object.setWeight(this.getWeight());
+        object.setIsEqual(this.getIsEqual());
         object.setCreatedAccountId(this.getCreatedAccountId());
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());

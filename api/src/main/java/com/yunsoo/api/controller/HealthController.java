@@ -1,10 +1,13 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.client.*;
+import com.yunsoo.common.web.health.AbstractHealthController;
 import com.yunsoo.common.web.health.Health;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -13,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/health")
-public class HealthController {
+public class HealthController extends AbstractHealthController {
 
     @Autowired
     private AuthApiClient authApiClient;
 
     @Autowired
-    private ProcessorClient processorClient;
+    private DataApiClient dataApiClient;
 
     @Autowired
-    private DataApiClient dataApiClient;
+    private ProcessorClient processorClient;
 
     @Autowired
     private FileApiClient fileApiClient;
@@ -30,22 +33,15 @@ public class HealthController {
     @Autowired
     private KeyApiClient keyApiClient;
 
-    @RequestMapping(value = "")
-    public Health health() {
-        Health authApi = authApiClient.checkHealth();
-        Health processor = processorClient.checkHealth();
-        Health dataApi = dataApiClient.checkHealth();
-        Health fileApi = fileApiClient.checkHealth();
-        Health keyApi = keyApiClient.checkHealth();
-        return new Health(Health.Status.UP)
-                .mergeStatus(authApi.getStatus())
-                .mergeStatus(processor.getStatus())
-                .mergeStatus(dataApi.getStatus())
-                .withDetail("authApi", authApi)
-                .withDetail("processor", processor)
-                .withDetail("dataApi", dataApi)
-                .withDetail("fileApi", fileApi)
-                .withDetail("keyApi", keyApi);
+
+    @Override
+    public void expandHealth(Health health, List<String> path, boolean debug) {
+        health
+                .checkClient(authApiClient, path)
+                .checkClient(dataApiClient, path)
+                .checkClient(processorClient, path)
+                .checkClient(fileApiClient, path)
+                .checkClient(keyApiClient, path);
     }
 
 }

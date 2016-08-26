@@ -2,9 +2,13 @@ package com.yunsoo.common.web.health;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yunsoo.common.web.client.RestClient;
+import org.joda.time.DateTime;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,12 +19,25 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public final class Health {
 
+    @JsonProperty("name")
+    private String name;
+
     @JsonProperty("status")
     private Status status;
+
+    @JsonProperty("time")
+    private Long time;
 
     @JsonProperty("details")
     private Map<String, Object> details;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Status getStatus() {
         return status;
@@ -30,6 +47,14 @@ public final class Health {
         this.status = status;
     }
 
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
     public Map<String, Object> getDetails() {
         return details;
     }
@@ -37,6 +62,7 @@ public final class Health {
     public void setDetails(Map<String, Object> details) {
         this.details = details;
     }
+
 
     public Health() {
         this(Status.UNKNOWN);
@@ -60,6 +86,19 @@ public final class Health {
         }
         this.details.put(key, data);
         return this;
+    }
+
+    public Health checkClient(RestClient client, List<String> path) {
+        if (client == null) {
+            return this;
+        }
+        long startTime = DateTime.now().getMillis();
+        Health clientHealth = client.checkHealth(path);
+        clientHealth.setTime(DateTime.now().getMillis() - startTime);
+        String name = StringUtils.isEmpty(clientHealth.getName()) ? client.getClass().getSimpleName() : clientHealth.getName();
+        return this
+                .mergeStatus(clientHealth.getStatus())
+                .withDetail(name, clientHealth);
     }
 
     public enum Status {

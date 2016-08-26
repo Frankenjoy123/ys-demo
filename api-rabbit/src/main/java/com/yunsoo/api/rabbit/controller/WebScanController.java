@@ -135,12 +135,15 @@ public class WebScanController {
         }
 
         ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
-        String usId = userScanRecordObject.getYsid();
+        String ysId = userScanRecordObject.getYsid();
+        String userId = userScanRecordObject.getUserId();
 
-        if (!StringUtils.isEmpty(userScanRecordObject.getUserId()))
-            usId = null;
+        if (!StringUtils.isEmpty(userId) && !Constants.Ids.ANONYMOUS_USER_ID.equals(userId))
+            ysId = null;
+        else
+            userId = null;
 
-        List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(userScanRecordObject.getUserId(), usId, productBaseObject.getOrgId());
+        List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(userId, ysId, productBaseObject.getOrgId());
         if (!(userBlockObjects == null || userBlockObjects.size() == 0)) {
             throw new ForbiddenException("you are forbidden!");
         }

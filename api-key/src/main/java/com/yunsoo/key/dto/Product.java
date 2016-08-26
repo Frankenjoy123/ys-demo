@@ -20,8 +20,8 @@ public class Product implements Serializable {
     @JsonProperty("key")
     private String key;
 
-    @JsonProperty("type_code")
-    private String typeCode;
+    @JsonProperty("key_type_code")
+    private String keyTypeCode;
 
     @JsonProperty("key_batch_id")
     private String keyBatchId;
@@ -57,12 +57,12 @@ public class Product implements Serializable {
         this.key = key;
     }
 
-    public String getTypeCode() {
-        return typeCode;
+    public String getKeyTypeCode() {
+        return keyTypeCode;
     }
 
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
+    public void setKeyTypeCode(String keyTypeCode) {
+        this.keyTypeCode = keyTypeCode;
     }
 
     public String getKeyBatchId() {

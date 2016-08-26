@@ -22,6 +22,9 @@ public class KeyBatchEntity {
     @Column(name = "id")
     private String id;
 
+    @Column(name = "partition_id")
+    private String partitionId;
+
     @Column(name = "batch_no")
     private String batchNo;
 
@@ -60,6 +63,14 @@ public class KeyBatchEntity {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getPartitionId() {
+        return partitionId;
+    }
+
+    public void setPartitionId(String partitionId) {
+        this.partitionId = partitionId;
     }
 
     public String getBatchNo() {

@@ -50,6 +50,9 @@ public class MktDrawRuleEntity {
     @Column(name = "weight")
     private Integer weight;
 
+    @Column(name = "is_equal")
+    private Boolean isEqual;
+
     @Column(name = "created_account_id")
     private String createdAccountId;
 
@@ -151,6 +154,14 @@ public class MktDrawRuleEntity {
 
     public void setWeight(Integer weight) {
         this.weight = weight;
+    }
+
+    public Boolean getIsEqual() {
+        return isEqual;
+    }
+
+    public void setIsEqual(Boolean isEqual) {
+        this.isEqual = isEqual;
     }
 
     public String getCreatedAccountId() {

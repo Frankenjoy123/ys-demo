@@ -52,6 +52,7 @@ public class LookupCodes {
         public static final String QR_PUBLIC = "qr_public";
         public static final String QR_SECURE = "qr_secure";
         public static final String RFID = "rfid";
+        public static final String EXTERNAL = "external";
     }
 
     public static class AccountStatus {
@@ -213,7 +214,7 @@ public class LookupCodes {
         public static final String REDPACKETS = "REDPACKETS";
         public static final String ENVELOPE = "ENVELOPE";
         public static final String SHAKE = "SHAKE";
-        public static final String BIGDRAW = "BIGDRAW";
+        public static final String DRAW01 = "DRAW01";
 
     }
 
@@ -260,6 +261,16 @@ public class LookupCodes {
         public static final String USED = "used";
 
     }
+
+    public static class MktVerifyStatus {
+        private MktVerifyStatus() {
+        }
+
+        public static final String VALID = "valid";
+        public static final String INVALID = "invalid";
+
+    }
+
 
 
 
@@ -336,6 +347,23 @@ public class LookupCodes {
         public static final String CLICK = "click";
         public static final String SHARE = "share";
     }
+
+    public static class UserDeviceType {
+        private UserDeviceType() {
+        }
+
+        public static final String NONANDROID = "non_android";
+        public static final String IOS = "ios";
+        public static final String ANDROID = "android";
+    }
+
+    public static class SystemIds {
+        private SystemIds() {
+        }
+
+        public static final String ANONYMOUS_USER_ID = "0020000000000000000";
+    }
+
 
     public static class SMSTemplate{
         private SMSTemplate(){

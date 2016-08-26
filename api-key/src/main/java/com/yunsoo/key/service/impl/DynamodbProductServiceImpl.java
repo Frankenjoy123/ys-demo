@@ -31,8 +31,8 @@ public class DynamodbProductServiceImpl implements ProductService {
                 || (productModel.getKeyDisabled() != null && productModel.getKeyDisabled())) {
             return null;
         }
-        String productKeyTypeCode = productModel.getKeyTypeCode();
-        String productKeyBatchId = productModel.getKeyBatchId();
+        String keyTypeCode = productModel.getKeyTypeCode();
+        String keyBatchId = productModel.getKeyBatchId();
 
         if (!productModel.isPrimary() && productModel.getPrimaryKey() != null) {
             //get the primary product key
@@ -44,8 +44,8 @@ public class DynamodbProductServiceImpl implements ProductService {
 
         Product product = new Product();
         product.setKey(productKey);
-        product.setTypeCode(productKeyTypeCode);
-        product.setKeyBatchId(productKeyBatchId);
+        product.setKeyTypeCode(keyTypeCode);
+        product.setKeyBatchId(keyBatchId);
         product.setKeySet(productModel.getKeySet());
         product.setCreatedDateTime(productModel.getCreatedDateTime());
 

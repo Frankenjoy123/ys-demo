@@ -34,6 +34,8 @@ yunsoo:
   debug: true
   environment: dev
   client:
+    processor:
+      base_url: http://localhost:4080/
     file_api:
       base_url: http://localhost:4180/
   storage:
@@ -55,6 +57,8 @@ logging:
 yunsoo:
   environment: local
   client:
+    processor:
+      base_url: http://dev.yunsu.co:4080/
     file_api:
       base_url: http://dev.yunsu.co:4180/
 ---

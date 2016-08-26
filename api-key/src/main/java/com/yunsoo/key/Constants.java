@@ -34,15 +34,16 @@ public class Constants {
         public static final List<String> ALL = Arrays.asList(CREATED, ACTIVATED, RECALLED, DELETED);
     }
 
-    public static class ProductKeyType {
-        private ProductKeyType() {
+    public static class KeyType {
+        private KeyType() {
         }
 
         public static final String PACKAGE = "package";
         public static final String QR_PUBLIC = "qr_public";
         public static final String QR_SECURE = "qr_secure";
-        public static final String RFID = "rfid"; //not used yet
-        public static final List<String> ALL = Arrays.asList(PACKAGE, QR_PUBLIC, QR_SECURE);
+        public static final String EXTERNAL = "external";
+        //public static final String RFID = "rfid"; //not used yet
+        public static final List<String> ALL = Arrays.asList(PACKAGE, QR_PUBLIC, QR_SECURE, EXTERNAL);
     }
 
 }

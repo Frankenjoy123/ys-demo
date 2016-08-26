@@ -47,6 +47,9 @@ public class MktDrawRuleObject {
     @JsonProperty("weight")
     private Integer weight;
 
+    @JsonProperty("is_equal")
+    private Boolean isEqual;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -149,6 +152,14 @@ public class MktDrawRuleObject {
 
     public void setWeight(Integer weight) {
         this.weight = weight;
+    }
+
+    public Boolean getIsEqual() {
+        return isEqual;
+    }
+
+    public void setIsEqual(Boolean isEqual) {
+        this.isEqual = isEqual;
     }
 
     public String getCreatedAccountId() {

@@ -2,12 +2,14 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.domain.MarketingDomain;
+import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.error.ErrorResult;
+import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
@@ -36,6 +38,10 @@ public class MarketingController {
 
     @Autowired
     private ProductDomain productDomain;
+
+    @Autowired
+    private ProductBaseDomain productBaseDomain;
+
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
@@ -231,16 +237,76 @@ public class MarketingController {
 
     }
 
-    @RequestMapping(value = "consumer/redeemcode/{id}", method = RequestMethod.GET)
-    public MktConsumerRightRedeemCode getConsumerRedeemCodeByIdAndPrizeId(@PathVariable String id,
-                                                                          @RequestParam(value = "draw_prize_id") String drawPrizeId) {
-        MktConsumerRightRedeemCodeObject mktConsumerRightRedeemCodeObject = marketingDomain.getMktConsumerRightRedeemCodeByIdAndPrizeId(id, drawPrizeId);
+    @RequestMapping(value = "consumer/redeemcode/{key}", method = RequestMethod.GET)
+    public MktConsumerRightRedeemCode getConsumerRedeemCodeByIdAndPrizeId(@PathVariable String key) {
+        MktConsumerRightRedeemCodeObject mktConsumerRightRedeemCodeObject = marketingDomain.getMktConsumerRightRedeemCodeByProductKey(key);
 
         if (mktConsumerRightRedeemCodeObject != null) {
             return new MktConsumerRightRedeemCode(mktConsumerRightRedeemCodeObject);
         } else {
             return null;
         }
+    }
+
+    @RequestMapping(value = "consumer/redeemcode/generate/{key}", method = RequestMethod.GET)
+    public MktConsumerRightRedeemCode getRandomConsumerRedeemCodeByIdAndPrizeId(@PathVariable String key,
+                                                                                @RequestParam(value = "draw_rule_id") String drawRuleId) {
+        MktConsumerRightRedeemCodeObject mktConsumerRightRedeemCodeObject = marketingDomain.getRandomMktConsumerRightRedeemCodeByProductKey(key, drawRuleId);
+
+        if (mktConsumerRightRedeemCodeObject != null) {
+            return new MktConsumerRightRedeemCode(mktConsumerRightRedeemCodeObject);
+        } else {
+            return null;
+        }
+    }
+
+
+    @RequestMapping(value = "consumer/key/{key}", method = RequestMethod.GET)
+    public MktConsumerRight getMktConsumerRightByProductKey(@PathVariable String key) {
+        if (key == null) {
+            throw new BadRequestException("product key can not be null");
+        }
+        MktConsumerRightObject mktConsumerRightObject = marketingDomain.getConsumerRightByProductKey(key);
+        if (mktConsumerRightObject != null) {
+            return new MktConsumerRight(mktConsumerRightObject);
+        } else {
+            return null;
+        }
+    }
+
+    @RequestMapping(value = "validate/key/{key}", method = RequestMethod.GET)
+    public String getMarketingValidateByProductKey(@PathVariable String key) {
+        if (key == null) {
+            throw new BadRequestException("product key can not be null");
+        }
+
+        //search product by key
+        ProductObject productObject = getProductByKey(key);
+
+        ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(productObject.getProductKeyBatchId());
+
+        if (productKeyBatchObject != null) {
+            //marketing info
+            String marketingId = productKeyBatchObject.getMarketingId();
+            if (marketingId != null) {
+                MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+                long now = DateTime.now().getMillis();
+                if (marketingObject != null
+                        && (marketingObject.getStartDateTime() == null || marketingObject.getStartDateTime().getMillis() <= now)
+                        && (marketingObject.getEndDateTime() == null || marketingObject.getEndDateTime().getMillis() >= now)
+                        && LookupCodes.MktStatus.PAID.equals(marketingObject.getStatusCode())) {
+                    return LookupCodes.MktVerifyStatus.VALID;
+                } else {
+                    return LookupCodes.MktVerifyStatus.INVALID;
+                }
+            } else {
+                return LookupCodes.MktVerifyStatus.INVALID;
+            }
+        } else {
+            throw new BadRequestException("product key batch not found");
+        }
+
+
     }
 
 
@@ -278,8 +344,7 @@ public class MarketingController {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId);
-
+        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId, scanRecordId);
         if (mktDrawRuleObject != null) {
             MktDrawPrize prize = mktDraw.getPrize();
             prize.setPrizeTypeCode(mktDrawRuleObject.getPrizeTypeCode());
@@ -348,6 +413,18 @@ public class MarketingController {
 
         return mktDrawPrizeList;
     }
+
+    private ProductObject getProductByKey(String key) {
+        if (!KeyGenerator.validate(key)) {
+            throw new NotFoundException("product not found");
+        }
+        ProductObject productObject = productDomain.getProduct(key);
+        if (productObject == null || productObject.getProductBaseId() == null) {
+            throw new NotFoundException("product not found");
+        }
+        return productObject;
+    }
+
 
     private void setAccount(MktDrawPrize prize){
         prize.setAccountType(prize.getPrizeTypeCode());

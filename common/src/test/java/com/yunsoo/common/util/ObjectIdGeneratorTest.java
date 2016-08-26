@@ -27,7 +27,6 @@ public class ObjectIdGeneratorTest {
         for (int i = 0; i < 34; i++) {
             String id = ObjectIdGenerator.getNew();
             System.out.println(id);
-            System.out.println(ObjectIdGenerator.validate(id));
         }
     }
 
@@ -37,7 +36,7 @@ public class ObjectIdGeneratorTest {
 //        Set<String> set = new HashSet<>();
         for (int i = 0; i < 1000000; i++) {
             String id = ObjectIdGenerator.getNew();
-            ObjectIdGenerator.validate(id);
+//            ObjectIdGenerator.validate(id);
 //            if (set.contains(id)) {
 //                throw new RuntimeException("Id duplicated: " + id);
 //            }
