@@ -1,45 +1,49 @@
-package com.yunsoo.processor.domain;
+package com.yunsoo.processor.file.service;
 
 import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.processor.client.DataApiClient;
+import com.yunsoo.processor.client.FileApiClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * Created by:   Lijian
- * Created on:   2016-04-26
+ * Created on:   2016-08-18
  * Descriptions:
  */
-@Component
-public class FileDomain {
+@Service
+public class FileService {
 
     private Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    private DataApiClient dataApiClient;
+    private FileApiClient fileApiClient;
+
+    public ResourceInputStream getFile(String path) {
+        if (StringUtils.isEmpty(path)) {
+            return null;
+        }
+        try {
+            return fileApiClient.getResourceInputStream("file?path={path}", path);
+        } catch (NotFoundException ignored) {
+            log.warn("file not found by path: " + path);
+            return null;
+        }
+    }
 
     public void putFile(String path, ResourceInputStream resourceInputStream) {
         Assert.hasText(path, "path must not be null or empty");
         Assert.notNull(resourceInputStream, "resourceInputStream must not be null");
 
-        dataApiClient.put("file/s3?path={path}", resourceInputStream, path);
+        fileApiClient.put("file?path={path}", resourceInputStream, path);
 
-        log.info(String.format("new file saved to s3 [path: %s]", path));
-    }
-
-    public ResourceInputStream getFile(String path) {
-        try {
-            return dataApiClient.getResourceInputStream("file/s3?path={path}", path);
-        } catch (NotFoundException ignored) {
-            log.warn("file not found in s3. " + StringFormatter.formatMap("path", path));
-            return null;
-        }
+        log.info("file saved to path: " + path);
     }
 
     public YSFile getYSFile(String path) {

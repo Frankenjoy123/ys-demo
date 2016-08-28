@@ -5,6 +5,7 @@ import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.processor.client.DataApiClient;
+import com.yunsoo.processor.file.service.FileService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class ProductKeyDomain {
     private DataApiClient dataApiClient;
 
     @Autowired
-    private FileDomain fileDomain;
+    private FileService fileService;
 
 
     public ProductKeyBatchObject getProductKeyBatchById(String id) {
@@ -46,7 +47,7 @@ public class ProductKeyDomain {
 
     public List<List<String>> getProductKeys(ProductKeyBatchObject productKeyBatchObject) {
         String path = String.format("organization/%s/product_key_batch/%s/keys.pks", productKeyBatchObject.getOrgId(), productKeyBatchObject.getId());
-        YSFile ysFile = fileDomain.getYSFile(path);
+        YSFile ysFile = fileService.getYSFile(path);
         if (ysFile == null) {
             return null;
         }
