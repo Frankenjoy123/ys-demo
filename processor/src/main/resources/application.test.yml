@@ -34,6 +34,10 @@ yunsoo:
   client:
     data_api:
       base_url: http://localhost:3080/
+    file_api:
+      base_url: http://localhost:4180/
+    key_api:
+      base_url: http://localhost:4280/
 
 jdbc:
   processor:
