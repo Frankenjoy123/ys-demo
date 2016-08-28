@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -254,8 +255,6 @@ public class MarketingController {
 
     }
 
-
-
     //todo  校验本次扫码的key是否符合发送短信到指定用户的权限，方法用POST   for 林总
     @RequestMapping(value = "drawPrize/{key}/sms", method = RequestMethod.PUT)
     public boolean sendPrizeSMS(@PathVariable(value = "key") String productKey,
@@ -286,14 +285,14 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "drawPrize/{id}/random", method = RequestMethod.POST)
-    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId, @RequestBody MktDraw mktDraw) {
+    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId, @RequestBody @Valid MktDraw mktDraw) {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        if(mktDraw == null || mktDraw.getPrize() == null || mktDraw.getRecord() == null)
+        if(mktDraw == null)
             throw new BadRequestException("prize content can not be null");
 
-        String key = mktDraw.getRecord().getProductKey();
+        String key = mktDraw.getProductKey();
 
         ProductObject product = productDomain.getProduct(key);
         if (product == null) {
@@ -304,9 +303,14 @@ public class MarketingController {
         if(currentRecord != null)
             throw new ConflictException("key already prized");
 
-        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId, mktDraw.getRecord().getScanRecordId());
+        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId, mktDraw.getScanRecordId());
+
         if (mktDrawRuleObject != null) {
-            MktDrawPrize prize = mktDraw.getPrize();
+            MktDrawPrizeObject prize = new MktDrawPrizeObject();
+            prize.setPrizeAccountName(mktDraw.getPrizeAccountName());
+            prize.setMarketingId(mktDraw.getMarketingId());
+            prize.setProductKey(mktDraw.getProductKey());
+            prize.setScanRecordId(mktDraw.getScanRecordId());
             prize.setPrizeTypeCode(mktDrawRuleObject.getPrizeTypeCode());
 
             MktDrawRule mktDrawRule = new MktDrawRule(mktDrawRuleObject);
@@ -320,15 +324,22 @@ public class MarketingController {
             }
 
             //save prize
-            MktDrawRecord record = mktDraw.getRecord();
+            MktDrawRecordObject record = new MktDrawRecordObject();
+            record.setOauthOpenid(mktDraw.getOauthOpenId());
+            record.setScanRecordId(mktDraw.getScanRecordId());
+            record.setProductBaseId(mktDraw.getProductBaseId());
+            record.setProductKey(mktDraw.getProductKey());
+            record.setMarketingId(mktDraw.getMarketingId());
+            record.setYsid(mktDraw.getYsId());
+            record.setUserId(mktDraw.getUserId());
             record.setIsPrized(mktDrawRuleObject.getAmount() > 0 ? true: false);
-            MktDrawRecordObject saveRecord = marketingDomain.createMktDrawRecord(record.toMktDrawRecordObject());
+            MktDrawRecordObject saveRecord = marketingDomain.createMktDrawRecord(record);
 
             setAccount(prize);
             prize.setDrawRecordId(saveRecord.getId());
             prize.setDrawRuleId(mktDrawRule.getId());
             prize.setAmount(mktDrawRule.getAmount());
-            marketingDomain.createMktDrawPrize(prize.toMktDrawPrizeObject());
+            marketingDomain.createMktDrawPrize(prize);
 
             return mktDrawRule;
 
@@ -387,7 +398,7 @@ public class MarketingController {
     }
 
 
-    private void setAccount(MktDrawPrize prize){
+    private void setAccount(MktDrawPrizeObject prize){
         prize.setAccountType(prize.getPrizeTypeCode());
 
         if(LookupCodes.MktPrizeType.MOBILE_FEE.equals(prize.getPrizeTypeCode()) || LookupCodes.MktPrizeType.MOBILE_DATA.equals(prize.getPrizeTypeCode()) ){
