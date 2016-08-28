@@ -1,6 +1,5 @@
 package com.yunsoo.api.rabbit.controller;
 
-import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.domain.MarketingDomain;
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
@@ -77,42 +76,6 @@ public class MarketingController {
         } else {
             return null;
         }
-    }
-
-    @RequestMapping(value = "draw", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public MktDrawRecord createMktDrawRecord(@RequestBody MktDrawRecord mktDrawRecord) {
-        if (mktDrawRecord == null) {
-            throw new BadRequestException("marketing draw record can not be null");
-        }
-        String productKey = mktDrawRecord.getProductKey();
-        ProductObject product = productDomain.getProduct(productKey);
-        if (product == null) {
-            throw new NotFoundException("product can not be found by the key");
-        }
-        MktDrawRecordObject mktDrawRecordObject = mktDrawRecord.toMktDrawRecordObject();
-        // String currentUserId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-        //  mktDrawRecordObject.setUserId(currentUserId);
-
-        MktDrawRecordObject newMktDrawRecordObject = marketingDomain.createMktDrawRecord(mktDrawRecordObject);
-        return new MktDrawRecord(newMktDrawRecordObject);
-    }
-
-    @RequestMapping(value = "drawPrize", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public MktDrawPrize createMktDrawPrize(@RequestBody MktDrawPrize mktDrawPrize) {
-        if (mktDrawPrize == null) {
-            throw new BadRequestException("marketing draw record can not be null");
-        }
-        String productKey = mktDrawPrize.getProductKey();
-        ProductObject product = productDomain.getProduct(productKey);
-        if (product == null) {
-            throw new NotFoundException("product can not be found by the key");
-        }
-        MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
-
-        MktDrawPrizeObject newMktDrawPrizeObject = marketingDomain.createMktDrawPrize(mktDrawPrizeObject);
-        return new MktDrawPrize(newMktDrawPrizeObject);
     }
 
     @RequestMapping(value = "drawPrize/contact/{id}", method = RequestMethod.GET)
