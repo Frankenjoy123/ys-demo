@@ -115,4 +115,6 @@ public class MarketUserUsageAnalysisEntity {
     public String getUniqueKey() {
         return drawDate.toString("yyyy-MM-dd") + orgId + marketingId + timeSpan;
     }
+
+
 }
