@@ -90,6 +90,7 @@ public class MarketingController {
     }
 
 
+    //本接口应该遵循幂等原则，使用PUT方法
     @RequestMapping(value = "drawPrize/{id}/contact", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public MktPrizeContact createMktPrizeContact(@PathVariable(value = "id") String prizeId, @RequestBody MktPrizeContact mktPrizeContact) {
@@ -104,6 +105,8 @@ public class MarketingController {
         }
 
         MktPrizeContactObject mktPrizeContactObject = mktPrizeContact.toMktPrizeContactObject();
+        //todo 需要修改
+        //把prizeid作为凭证号，一个prizeid对应的领奖人信息，只能被创建一次，假定每次put的contact信息相同，N次创建和一次创建的结果应该相同
         MktPrizeContactObject newObject = marketingDomain.createMktPrizeContact(mktPrizeContactObject);
 
         mktDrawPrizeObject.setPrizeContactId(newObject.getId());
@@ -118,6 +121,7 @@ public class MarketingController {
         return new MktPrizeContact(newObject);
     }
 
+    //本接口遵循幂等原则
     @RequestMapping(value = "drawPrize/{id}/contact", method = RequestMethod.PUT)
     public void updateMktPrizeContact(@PathVariable(value = "id") String prizeId, @RequestBody MktPrizeContact mktPrizeContact) {
         if (mktPrizeContact == null) {
