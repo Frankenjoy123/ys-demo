@@ -21,7 +21,7 @@ public class ProcessorService {
         KeyBatchCreationMessage message = new KeyBatchCreationMessage();
         message.setKeyBatchId(keyBatchId);
         message.setProductStatusCode(productStatusCode);
-        processorClient.put("sqs/message/key_batch_creation", message);
+        processorClient.put("sqs/message/{payLoad}", message, KeyBatchCreationMessage.PAYLOAD_TYPE);
     }
 
 }

@@ -1,8 +1,8 @@
 package com.yunsoo.processor.controller;
 
-import com.yunsoo.common.data.message.ProductKeyBatchCreateMessage;
 import com.yunsoo.common.data.message.ProductPackageMessage;
 import com.yunsoo.processor.sqs.MessageSender;
+import com.yunsoo.processor.sqs.message.KeyBatchCreationMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +22,8 @@ public class SqsController {
     private MessageSender messageSender;
 
 
-    @RequestMapping(value = "message/" + ProductKeyBatchCreateMessage.PAYLOAD_TYPE, method = RequestMethod.PUT)
-    public void sendProductKeyBatchCreateMassage(@RequestBody ProductKeyBatchCreateMessage message) {
+    @RequestMapping(value = "message/" + KeyBatchCreationMessage.PAYLOAD_TYPE, method = RequestMethod.PUT)
+    public void sendProductKeyBatchCreateMassage(@RequestBody KeyBatchCreationMessage message) {
         messageSender.sendMessage(message, 5); //send with delay 5 seconds
     }
 
