@@ -1,9 +1,11 @@
 package com.yunsoo.common.web.health;
 
+import com.yunsoo.common.web.exception.InternalServerErrorException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +30,15 @@ public abstract class AbstractHealthController {
             expandHealth(health, path, debug);
         }
         return health;
+    }
+
+    @RequestMapping(value = "check")
+    public Health health() {
+        Health health = health(new ArrayList<>(), false);
+        if (Health.Status.UP.equals(health.getStatus())) {
+            return new Health(Health.Status.UP);
+        }
+        throw new InternalServerErrorException("health check failed");
     }
 
     protected void expandHealth(Health health, List<String> path, boolean debug) {

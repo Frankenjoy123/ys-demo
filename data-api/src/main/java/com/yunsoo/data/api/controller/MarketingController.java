@@ -674,9 +674,6 @@ public class MarketingController {
         MktDrawPrizeEntity entity = entities.get(0);
         if (!entity.getDrawRecordId().equals(mktDrawPrizeObject.getDrawRecordId()))
             throw new NotFoundException("This draw prize has not been found");
-
-        if(mktDrawPrizeObject.getAccountType() != null)
-            entity.setAccountType(mktDrawPrizeObject.getAccountType());
         if(mktDrawPrizeObject.getPrizeAccount() != null)
             entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
         if(mktDrawPrizeObject.getPrizeAccountName() != null)
