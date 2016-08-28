@@ -9,9 +9,9 @@ import java.io.Serializable;
  * Created on:   2016-08-23
  * Descriptions:
  */
-public class KeyBatchCreateMessage implements Serializable {
+public class KeyBatchCreationMessage implements Serializable {
 
-    @JsonProperty("product_key_batch_id")
+    @JsonProperty("key_batch_id")
     private String keyBatchId;
 
     @JsonProperty("product_status_code")

@@ -42,7 +42,7 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<ProductKeyBa
 
     @Override
     public void process(ProductKeyBatchCreateMessage message) {
-        String productKeyBatchId = message.getProductKeyBatchId();
+        String productKeyBatchId = message.getKeyBatchId();
         String productStatusCode = !StringUtils.isEmpty(message.getProductStatusCode())
                 ? message.getProductStatusCode()
                 : LookupCodes.ProductStatus.CREATED;

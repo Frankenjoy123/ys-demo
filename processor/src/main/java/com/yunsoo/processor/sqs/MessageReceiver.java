@@ -65,7 +65,7 @@ public class MessageReceiver {
                     productKeyBatchCreateHandler.process(pkbMsg);
                 } catch (Exception e) {
                     log.error("product_key_batch_create failed with exception " + StringFormatter.formatMap("message", pkbMsg), e);
-                    logDomain.logError(ProductKeyBatchCreateMessage.PAYLOAD_TYPE, e.getMessage(), pkbMsg != null ? pkbMsg.getProductKeyBatchId() : null, "product_key_batch_id");
+                    logDomain.logError(ProductKeyBatchCreateMessage.PAYLOAD_TYPE, e.getMessage(), pkbMsg != null ? pkbMsg.getKeyBatchId() : null, "product_key_batch_id");
                     throw e;
                 }
                 break;

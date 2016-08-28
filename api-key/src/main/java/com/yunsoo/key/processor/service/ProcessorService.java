@@ -1,7 +1,7 @@
 package com.yunsoo.key.processor.service;
 
 import com.yunsoo.key.client.ProcessorClient;
-import com.yunsoo.key.processor.dto.KeyBatchCreateMessage;
+import com.yunsoo.key.processor.dto.KeyBatchCreationMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +18,10 @@ public class ProcessorService {
 
 
     public void putKeyBatchCreateMessageToQueue(String keyBatchId, String productStatusCode) {
-        KeyBatchCreateMessage message = new KeyBatchCreateMessage();
+        KeyBatchCreationMessage message = new KeyBatchCreationMessage();
         message.setKeyBatchId(keyBatchId);
         message.setProductStatusCode(productStatusCode);
-        processorClient.put("sqs/message/product_key_batch_create", message);
+        processorClient.put("sqs/message/key_batch_creation", message);
     }
 
 }
