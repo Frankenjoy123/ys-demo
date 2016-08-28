@@ -195,7 +195,7 @@ public class ProductKeyDomain {
 
         //send sqs message to processor
         ProductKeyBatchCreateMessage sqsMessage = new ProductKeyBatchCreateMessage();
-        sqsMessage.setProductKeyBatchId(newBatchObj.getId());
+        sqsMessage.setKeyBatchId(newBatchObj.getId());
         sqsMessage.setProductStatusCode(LookupCodes.ProductStatus.ACTIVATED);  //default activated
 
         try {
