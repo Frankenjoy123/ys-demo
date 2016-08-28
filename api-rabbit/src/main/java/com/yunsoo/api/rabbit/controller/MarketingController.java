@@ -46,6 +46,7 @@ public class MarketingController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
+    //获取Key所对应的抽奖记录
     @RequestMapping(value = "draw/{key}", method = RequestMethod.GET)
     public MktDrawRecord getMktDrawRecordByProductKey(@PathVariable String key) {
         if (key == null) {
@@ -59,6 +60,7 @@ public class MarketingController {
         }
     }
 
+    //获取Key所对应的兑奖情况
     @RequestMapping(value = "drawPrize/{key}", method = RequestMethod.GET)
     public MktDrawPrize getMktDrawPrizeByProductKey(@PathVariable String key) {
         if (key == null) {
@@ -77,18 +79,6 @@ public class MarketingController {
             return null;
         }
     }
-
-    @RequestMapping(value = "drawPrize/contact/{id}", method = RequestMethod.GET)
-    public MktPrizeContact getMktPrizeContactById(@PathVariable String id) {
-        MktPrizeContactObject mktPrizeContactObject = marketingDomain.getMktPrizeContactById(id);
-
-        if (mktPrizeContactObject != null) {
-            return new MktPrizeContact(mktPrizeContactObject);
-        } else {
-            return null;
-        }
-    }
-
 
     //本接口应该遵循幂等原则，使用PUT方法
     @RequestMapping(value = "drawPrize/{id}/contact", method = RequestMethod.POST)
@@ -120,24 +110,6 @@ public class MarketingController {
 
         return new MktPrizeContact(newObject);
     }
-
-    //本接口遵循幂等原则
-    @RequestMapping(value = "drawPrize/{id}/contact", method = RequestMethod.PUT)
-    public void updateMktPrizeContact(@PathVariable(value = "id") String prizeId, @RequestBody MktPrizeContact mktPrizeContact) {
-        if (mktPrizeContact == null) {
-            throw new BadRequestException("marketing prize contact can not be null");
-        }
-        mktPrizeContact.setMktPrizeId(prizeId);
-
-        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByPrizeId(prizeId);
-        if ((mktDrawPrizeObject == null) || (mktDrawPrizeObject.getPrizeContactId() == null) || (mktDrawPrizeObject.getPrizeContactId().equals(""))) {
-            throw new BadRequestException("Invalid operation: update marketing prize contact error");
-        }
-
-        MktPrizeContactObject mktPrizeContactObject = mktPrizeContact.toMktPrizeContactObject();
-        marketingDomain.updateMktPrizeContact(mktPrizeContactObject);
-    }
-
 
     @RequestMapping(value = "drawPrize", method = RequestMethod.PUT)
     public void updateMktDrawPrize(@RequestBody MktDrawPrize mktDrawPrize) {
@@ -207,8 +179,10 @@ public class MarketingController {
 
     }
 
+    //业务API需要做校验： 比如先判断Key是否中奖 for 海涛
     @RequestMapping(value = "consumer/redeemcode/{key}", method = RequestMethod.GET)
     public MktConsumerRightRedeemCode getConsumerRedeemCodeByIdAndPrizeId(@PathVariable String key) {
+       //todo 去掉不用返回的数据
         MktConsumerRightRedeemCodeObject mktConsumerRightRedeemCodeObject = marketingDomain.getMktConsumerRightRedeemCodeByProductKey(key);
 
         if (mktConsumerRightRedeemCodeObject != null) {
@@ -218,6 +192,7 @@ public class MarketingController {
         }
     }
 
+    //业务API需要做校验： 比如先判断Key是否中奖  for 海涛
     @RequestMapping(value = "consumer/redeemcode/generate/{key}", method = RequestMethod.GET)
     public MktConsumerRightRedeemCode getRandomConsumerRedeemCodeByIdAndPrizeId(@PathVariable String key,
                                                                                 @RequestParam(value = "draw_rule_id") String drawRuleId) {
@@ -231,6 +206,7 @@ public class MarketingController {
     }
 
 
+    //todo 海涛，仅仅返回必须的数据
     @RequestMapping(value = "consumer/key/{key}", method = RequestMethod.GET)
     public MktConsumerRight getMktConsumerRightByProductKey(@PathVariable String key) {
         if (key == null) {
@@ -244,6 +220,7 @@ public class MarketingController {
         }
     }
 
+    //判断营销方案是否可用，暨用户能否参加营销活动
     @RequestMapping(value = "validate/key/{key}", method = RequestMethod.GET)
     public String getMarketingValidateByProductKey(@PathVariable String key) {
         if (key == null) {
@@ -281,6 +258,7 @@ public class MarketingController {
 
 
 
+    //todo  校验本次扫码的key是否符合发送短信到指定用户的权限，方法用POST   for 林总
     @RequestMapping(value = "drawPrize/{key}/sms", method = RequestMethod.PUT)
     public boolean sendPrizeSMS(@PathVariable(value = "key") String productKey,
                                 @RequestParam(value = "mobile") String mobile) {
@@ -288,15 +266,15 @@ public class MarketingController {
         return marketingDomain.sendVerificationCode(mobile, LookupCodes.SMSTemplate.SENDPRIZE);
     }
 
-    @RequestMapping(value = "drawPrize/{key}/smsverfiy", method = RequestMethod.PUT)
-    public boolean validatePrizeVerificationCode(@PathVariable(value = "key") String productKey,
-                                                 @RequestParam(value = "mobile") String mobile,
+    //todo  remove input key for 林总
+    @RequestMapping(value = "drawPrize/smsverfiy", method = RequestMethod.PUT)
+    public boolean validatePrizeVerificationCode(@RequestParam(value = "mobile") String mobile,
                                                  @RequestParam(value = "verification_code") String verificationCode) {
 
         return marketingDomain.validateVerificationCode(mobile, verificationCode);
     }
 
-
+    //todo  remove this method, for 林总
     @RequestMapping(value = "drawPrize/paid", method = RequestMethod.PUT)
     public void updateMktDrawPrizeAfterPaid(@RequestBody MktDrawPrize mktDrawPrize) {
         if (mktDrawPrize == null) {
@@ -361,6 +339,7 @@ public class MarketingController {
         }
     }
 
+    //todo  remove unused data, for 海涛
     @RequestMapping(value = "drawRule/{id}", method = RequestMethod.GET)
     public List<MktDrawRule> getMarketingRuleList(@PathVariable(value = "id") String marketingId) {
         if (marketingId == null)
@@ -369,6 +348,7 @@ public class MarketingController {
         return marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
     }
 
+    //todo  remove unused data, for 海涛
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Marketing getMarketing(@PathVariable(value = "id") String marketingId) {
         MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
@@ -378,6 +358,7 @@ public class MarketingController {
         return new Marketing(marketingObject);
     }
 
+    //todo  remove unused data, for 海涛
     @RequestMapping(value = "drawPrize/{id}/top", method = RequestMethod.GET)
     public List<MktDrawPrize> getTop10MarketingPrizeList(@PathVariable(value = "id") String marketingId, @RequestParam(value = "ys_id", required = false)String ysId) {
         if (marketingId == null)
