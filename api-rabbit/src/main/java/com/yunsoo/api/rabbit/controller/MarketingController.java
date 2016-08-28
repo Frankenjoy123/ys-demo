@@ -11,6 +11,7 @@ import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
 import org.joda.time.DateTime;
@@ -182,6 +183,7 @@ public class MarketingController {
         if (currentPrize != null && (LookupCodes.MktDrawPrizeStatus.CREATED.equals(currentPrize.getStatusCode()))) {
             MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
             mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
+            mktDrawPrizeObject.setDrawRecordId(currentPrize.getDrawRecordId());
             if (LookupCodes.MktPrizeType.MOBILE_FEE.equals(currentPrize.getPrizeTypeCode())) {
                 marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
                 boolean isMobileFeeSuccess = marketingDomain.createMobileOrder(mktDrawPrize.getDrawRecordId());
@@ -232,6 +234,7 @@ public class MarketingController {
                 LookupCodes.MktDrawPrizeStatus.SUBMIT.equals(currentPrize.getStatusCode()))) {
             MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
             mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.INVALID);
+            mktDrawPrizeObject.setDrawRecordId(currentPrize.getDrawRecordId());
             marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
         }
 
@@ -344,7 +347,21 @@ public class MarketingController {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId, scanRecordId);
+        if(mktDraw == null || mktDraw.getPrize() == null || mktDraw.getRecord() == null)
+            throw new BadRequestException("prize content can not be null");
+
+        String key = mktDraw.getRecord().getProductKey();
+
+        ProductObject product = productDomain.getProduct(key);
+        if (product == null) {
+            throw new NotFoundException("product can not be found by the key");
+        }
+
+        MktDrawRecordObject currentRecord = marketingDomain.getMktDrawRecordByProductKey(key);
+        if(currentRecord != null)
+            throw new ConflictException("key already prized");
+
+        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId, mktDraw.getRecord().getScanRecordId());
         if (mktDrawRuleObject != null) {
             MktDrawPrize prize = mktDraw.getPrize();
             prize.setPrizeTypeCode(mktDrawRuleObject.getPrizeTypeCode());
@@ -362,9 +379,10 @@ public class MarketingController {
             //save prize
             MktDrawRecord record = mktDraw.getRecord();
             record.setIsPrized(mktDrawRuleObject.getAmount() > 0 ? true: false);
-            marketingDomain.createMktDrawRecord(record.toMktDrawRecordObject());
+            MktDrawRecordObject saveRecord = marketingDomain.createMktDrawRecord(record.toMktDrawRecordObject());
 
             setAccount(prize);
+            prize.setDrawRecordId(saveRecord.getId());
             prize.setDrawRuleId(mktDrawRule.getId());
             prize.setAmount(mktDrawRule.getAmount());
             marketingDomain.createMktDrawPrize(prize.toMktDrawPrizeObject());
