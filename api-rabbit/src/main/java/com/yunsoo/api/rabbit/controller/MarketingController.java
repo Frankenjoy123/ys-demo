@@ -80,8 +80,7 @@ public class MarketingController {
         }
     }
 
-    //本接口应该遵循幂等原则，使用PUT方法
-    @RequestMapping(value = "drawPrize/{id}/contact", method = RequestMethod.POST)
+    @RequestMapping(value = "drawPrize/{id}/contact", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.CREATED)
     public MktPrizeContact createMktPrizeContact(@PathVariable(value = "id") String prizeId, @RequestBody MktPrizeContact mktPrizeContact) {
         if (mktPrizeContact == null) {
@@ -93,10 +92,11 @@ public class MarketingController {
         if (mktDrawPrizeObject == null) {
             throw new NotFoundException("marketing draw prize can not be found");
         }
-
+        MktPrizeContactObject prizeContactObject = marketingDomain.getMktPrizeContactByPrizeId(prizeId);
+        if (mktPrizeContact != null) {
+            return new MktPrizeContact(prizeContactObject);
+        }
         MktPrizeContactObject mktPrizeContactObject = mktPrizeContact.toMktPrizeContactObject();
-        //todo 需要修改
-        //把prizeid作为凭证号，一个prizeid对应的领奖人信息，只能被创建一次，假定每次put的contact信息相同，N次创建和一次创建的结果应该相同
         MktPrizeContactObject newObject = marketingDomain.createMktPrizeContact(mktPrizeContactObject);
 
         mktDrawPrizeObject.setPrizeContactId(newObject.getId());
@@ -182,7 +182,6 @@ public class MarketingController {
     //业务API需要做校验： 比如先判断Key是否中奖 for 海涛
     @RequestMapping(value = "consumer/redeemcode/{key}", method = RequestMethod.GET)
     public MktConsumerRightRedeemCode getConsumerRedeemCodeByIdAndPrizeId(@PathVariable String key) {
-       //todo 去掉不用返回的数据
         MktConsumerRightRedeemCodeObject mktConsumerRightRedeemCodeObject = marketingDomain.getMktConsumerRightRedeemCodeByProductKey(key);
 
         if (mktConsumerRightRedeemCodeObject != null) {
@@ -206,7 +205,6 @@ public class MarketingController {
     }
 
 
-    //todo 海涛，仅仅返回必须的数据
     @RequestMapping(value = "consumer/key/{key}", method = RequestMethod.GET)
     public MktConsumerRight getMktConsumerRightByProductKey(@PathVariable String key) {
         if (key == null) {
@@ -339,7 +337,6 @@ public class MarketingController {
         }
     }
 
-    //todo  remove unused data, for 海涛
     @RequestMapping(value = "drawRule/{id}", method = RequestMethod.GET)
     public List<MktDrawRule> getMarketingRuleList(@PathVariable(value = "id") String marketingId) {
         if (marketingId == null)
@@ -348,7 +345,6 @@ public class MarketingController {
         return marketingDomain.getRuleList(marketingId).stream().map(MktDrawRule::new).collect(Collectors.toList());
     }
 
-    //todo  remove unused data, for 海涛
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Marketing getMarketing(@PathVariable(value = "id") String marketingId) {
         MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
@@ -358,7 +354,6 @@ public class MarketingController {
         return new Marketing(marketingObject);
     }
 
-    //todo  remove unused data, for 海涛
     @RequestMapping(value = "drawPrize/{id}/top", method = RequestMethod.GET)
     public List<MktDrawPrize> getTop10MarketingPrizeList(@PathVariable(value = "id") String marketingId, @RequestParam(value = "ys_id", required = false)String ysId) {
         if (marketingId == null)

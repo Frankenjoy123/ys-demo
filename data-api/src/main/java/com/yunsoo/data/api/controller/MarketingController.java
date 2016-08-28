@@ -593,6 +593,19 @@ public class MarketingController {
         return toMktPrizeContactObject(entity);
     }
 
+    //get marketing prize contact by prize Id
+    @RequestMapping(value = "/drawPrize/contact/prize/{id}", method = RequestMethod.GET)
+    public MktPrizeContactObject getMktPrizeContactByPrizeId(@PathVariable(value = "id") String id) {
+        List<MktPrizeContactEntity> mktPrizeContactEntityList = mktPrizeContactRepository.findByMktPrizeId(id);
+        if ((mktPrizeContactEntityList != null) && (mktPrizeContactEntityList.size() > 0)) {
+            MktPrizeContactEntity mktPrizeContactEntity = mktPrizeContactEntityList.get(0);
+            return toMktPrizeContactObject(mktPrizeContactEntity);
+        } else {
+            return null;
+        }
+    }
+
+
 
     //create marketing prize contact, provide: API-Rabbit
     @RequestMapping(value = "/drawPrize/{id}/contact", method = RequestMethod.POST)
