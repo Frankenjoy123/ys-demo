@@ -1,13 +1,13 @@
 package com.yunsoo.processor.sqs.handler.impl;
 
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.message.ProductKeyBatchCreateMessage;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.processor.domain.LogDomain;
 import com.yunsoo.processor.domain.ProductKeyDomain;
 import com.yunsoo.processor.sqs.MessageSender;
 import com.yunsoo.processor.sqs.handler.MessageHandler;
+import com.yunsoo.processor.sqs.message.KeyBatchCreationMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
@@ -23,7 +23,7 @@ import java.util.List;
  * Descriptions:
  */
 @Component
-public class ProductKeyBatchCreateHandler implements MessageHandler<ProductKeyBatchCreateMessage> {
+public class ProductKeyBatchCreateHandler implements MessageHandler<KeyBatchCreationMessage> {
 
     private static final int BATCH_LIMIT = 1000;
     private static final int TIMEOUT_SECONDS = 600;
@@ -41,8 +41,8 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<ProductKeyBa
     private LogDomain logDomain;
 
     @Override
-    public void process(ProductKeyBatchCreateMessage message) {
-        String productKeyBatchId = message.getProductKeyBatchId();
+    public void process(KeyBatchCreationMessage message) {
+        String productKeyBatchId = message.getKeyBatchId();
         String productStatusCode = !StringUtils.isEmpty(message.getProductStatusCode())
                 ? message.getProductStatusCode()
                 : LookupCodes.ProductStatus.CREATED;
@@ -104,7 +104,7 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<ProductKeyBa
         productKeyDomain.updateProductKeyBatchStatus(productKeyBatchId, LookupCodes.ProductKeyBatchStatus.AVAILABLE);
 
         DateTime endDateTime = DateTime.now();
-        logDomain.logInfo(ProductKeyBatchCreateMessage.PAYLOAD_TYPE,
+        logDomain.logInfo(KeyBatchCreationMessage.PAYLOAD_TYPE,
                 "finished " + StringFormatter.formatMap("totalSeconds", (endDateTime.getMillis() - productKeyBatchObject.getCreatedDateTime().getMillis()) / 1000.0),
                 productKeyBatchId,
                 "product_key_batch_id");

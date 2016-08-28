@@ -2,6 +2,8 @@ package com.yunsoo.data.service.repository;
 
 import com.yunsoo.data.service.entity.EMRUserEntity;
 import com.yunsoo.data.service.entity.EMRUserProductEventStatistics;
+import com.yunsoo.data.service.entity.UserProfileLocationCountEntity;
+import com.yunsoo.data.service.entity.UserProfileTagCountEntity;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Pageable;
 
@@ -26,5 +28,11 @@ public interface CustomEMRUserRepository {
 
     List<EMRUserProductEventStatistics> queryUserEventStatistics(String orgId, String userId, String ysId, DateTime createdDateTimeStart,
                                                                  DateTime createdDateTimeEnd);
+
+    List<UserProfileTagCountEntity> queryUserProfileTimeUsage(String orgId, DateTime startDateTime, DateTime endDateTime);
+    List<UserProfileTagCountEntity> queryUserProfileDeviceUsage(String orgId);
+    List<UserProfileTagCountEntity> queryUserProfileGenderUsage(String orgId);
+    List<UserProfileTagCountEntity> queryUserProfileAreaReport(String orgId);
+    List<UserProfileLocationCountEntity> queryUserProfileLocationReport(String orgId);
 
 }

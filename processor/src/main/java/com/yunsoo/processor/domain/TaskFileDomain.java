@@ -7,6 +7,7 @@ import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import com.yunsoo.processor.client.DataApiClient;
+import com.yunsoo.processor.file.service.FileService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class TaskFileDomain {
     private DataApiClient dataApiClient;
 
     @Autowired
-    private FileDomain fileDomain;
+    private FileService fileService;
 
 
     public TaskFileEntryObject getTaskFileEntryById(String fileId) {
@@ -65,7 +66,7 @@ public class TaskFileDomain {
             return null;
         }
         String path = String.format("organization/%s/task_file/%s", orgId, fileId);
-        return fileDomain.getYSFile(path);
+        return fileService.getYSFile(path);
     }
 
 }

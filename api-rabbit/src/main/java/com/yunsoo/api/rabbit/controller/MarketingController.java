@@ -124,37 +124,47 @@ public class MarketingController {
             MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
             mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
             mktDrawPrizeObject.setDrawRecordId(currentPrize.getDrawRecordId());
-            if (LookupCodes.MktPrizeType.MOBILE_FEE.equals(currentPrize.getPrizeTypeCode())) {
-                marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
-                boolean isMobileFeeSuccess = marketingDomain.createMobileOrder(mktDrawPrize.getDrawRecordId());
-                if (!isMobileFeeSuccess) {
-                    mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
-                    result = false;
-                } else {
-                    mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-                    mktDrawPrizeObject.setPaidDateTime(DateTime.now());
-                }
-            } else if (LookupCodes.MktPrizeType.MOBILE_DATA.equals(currentPrize.getPrizeTypeCode())) {
-                marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
-                boolean isMobileDataSuccess = marketingDomain.createMobileDataFlow(mktDrawPrize.getDrawRecordId());
-                if (!isMobileDataSuccess) {
-                    mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
-                    result = false;
-                } else {
-                    mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-                    mktDrawPrizeObject.setPaidDateTime(DateTime.now());
-                }
-            } else if (LookupCodes.MktPrizeType.COUPON.equals(currentPrize.getPrizeTypeCode())) {
-                mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-                mktDrawPrizeObject.setPaidDateTime(DateTime.now());
 
+            switch (currentPrize.getPrizeTypeCode()){
+                case LookupCodes.MktPrizeType.MOBILE_FEE:
+                    marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+                    boolean isMobileFeeSuccess = marketingDomain.createMobileOrder(mktDrawPrize.getDrawRecordId());
+                    if (!isMobileFeeSuccess) {
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
+                        result = false;
+                    } else {
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                        mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+                    }
+                    break;
+                case LookupCodes.MktPrizeType.MOBILE_DATA:
+                    marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+                    boolean isMobileDataSuccess = marketingDomain.createMobileDataFlow(mktDrawPrize.getDrawRecordId());
+                    if (!isMobileDataSuccess) {
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
+                        result = false;
+                    } else {
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                        mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+                    }
+                    break;
+                case LookupCodes.MktPrizeType.COUPON:
+                case LookupCodes.MktPrizeType.WEBCHAT:
+                    mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                    mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+                    break;
+
+                default:
+                    break;
             }
+
             marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
 
-
-            MktDrawRecordObject record = marketingDomain.getMktDrawRecordByProductKey(mktDrawPrize.getProductKey());
-            record.setYsid(mktDrawPrize.getYsid());
-            marketingDomain.updateMktDrawRecord(record);
+            if(mktDrawPrize.getYsid() != null) {
+                MktDrawRecordObject record = marketingDomain.getMktDrawRecordByProductKey(mktDrawPrize.getProductKey());
+                record.setYsid(mktDrawPrize.getYsid());
+                marketingDomain.updateMktDrawRecord(record);
+            }
 
         } else
             throw new RestErrorResultException(new ErrorResult(5002, "prize had been sent"));
@@ -255,33 +265,20 @@ public class MarketingController {
 
     }
 
-    //todo  校验本次扫码的key是否符合发送短信到指定用户的权限，方法用POST   for 林总
-    @RequestMapping(value = "drawPrize/{key}/sms", method = RequestMethod.PUT)
+    @RequestMapping(value = "drawPrize/{key}/sms", method = RequestMethod.POST)
     public boolean sendPrizeSMS(@PathVariable(value = "key") String productKey,
                                 @RequestParam(value = "mobile") String mobile) {
-
+        MktDrawPrizeObject prize = marketingDomain.getMktDrawPrizeByProductKey(productKey);
+        if(prize == null)
+            throw new NotFoundException("prize for product key not found");
         return marketingDomain.sendVerificationCode(mobile, LookupCodes.SMSTemplate.SENDPRIZE);
     }
 
-    //todo  remove input key for 林总
     @RequestMapping(value = "drawPrize/smsverfiy", method = RequestMethod.PUT)
     public boolean validatePrizeVerificationCode(@RequestParam(value = "mobile") String mobile,
                                                  @RequestParam(value = "verification_code") String verificationCode) {
 
         return marketingDomain.validateVerificationCode(mobile, verificationCode);
-    }
-
-    //todo  remove this method, for 林总
-    @RequestMapping(value = "drawPrize/paid", method = RequestMethod.PUT)
-    public void updateMktDrawPrizeAfterPaid(@RequestBody MktDrawPrize mktDrawPrize) {
-        if (mktDrawPrize == null) {
-            throw new BadRequestException("marketing draw record can not be null");
-        }
-        MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
-        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-        mktDrawPrizeObject.setPaidDateTime(DateTime.now());
-        marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
-
     }
 
     @RequestMapping(value = "drawPrize/{id}/random", method = RequestMethod.POST)
@@ -303,14 +300,26 @@ public class MarketingController {
         if(currentRecord != null)
             throw new ConflictException("key already prized");
 
+        MktDrawPrizeObject prize = new MktDrawPrizeObject();
+        prize.setPrizeAccountName(mktDraw.getPrizeAccountName());
+        prize.setMarketingId(mktDraw.getMarketingId());
+        prize.setProductKey(mktDraw.getProductKey());
+        prize.setScanRecordId(mktDraw.getScanRecordId());
+        //save prize
+        MktDrawRecordObject record = new MktDrawRecordObject();
+        record.setOauthOpenid(mktDraw.getOauthOpenId());
+        record.setScanRecordId(mktDraw.getScanRecordId());
+        record.setProductBaseId(mktDraw.getProductBaseId());
+        record.setProductKey(mktDraw.getProductKey());
+        record.setMarketingId(mktDraw.getMarketingId());
+        record.setYsid(mktDraw.getYsId());
+        record.setUserId(mktDraw.getUserId());
+
+
         MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId, mktDraw.getScanRecordId());
 
         if (mktDrawRuleObject != null) {
-            MktDrawPrizeObject prize = new MktDrawPrizeObject();
-            prize.setPrizeAccountName(mktDraw.getPrizeAccountName());
-            prize.setMarketingId(mktDraw.getMarketingId());
-            prize.setProductKey(mktDraw.getProductKey());
-            prize.setScanRecordId(mktDraw.getScanRecordId());
+            record.setIsPrized(true);
             prize.setPrizeTypeCode(mktDrawRuleObject.getPrizeTypeCode());
 
             MktDrawRule mktDrawRule = new MktDrawRule(mktDrawRuleObject);
@@ -324,26 +333,20 @@ public class MarketingController {
             }
 
             //save prize
-            MktDrawRecordObject record = new MktDrawRecordObject();
-            record.setOauthOpenid(mktDraw.getOauthOpenId());
-            record.setScanRecordId(mktDraw.getScanRecordId());
-            record.setProductBaseId(mktDraw.getProductBaseId());
-            record.setProductKey(mktDraw.getProductKey());
-            record.setMarketingId(mktDraw.getMarketingId());
-            record.setYsid(mktDraw.getYsId());
-            record.setUserId(mktDraw.getUserId());
-            record.setIsPrized(mktDrawRuleObject.getAmount() > 0 ? true: false);
             MktDrawRecordObject saveRecord = marketingDomain.createMktDrawRecord(record);
 
-            setAccount(prize);
-            prize.setDrawRecordId(saveRecord.getId());
             prize.setDrawRuleId(mktDrawRule.getId());
             prize.setAmount(mktDrawRule.getAmount());
+            setAccount(prize);
+            prize.setDrawRecordId(saveRecord.getId());
             marketingDomain.createMktDrawPrize(prize);
 
             return mktDrawRule;
 
         } else {
+            record.setIsPrized(false);
+            marketingDomain.createMktDrawRecord(record);
+
             return new MktDrawRule(mktDrawRuleObject);
         }
     }

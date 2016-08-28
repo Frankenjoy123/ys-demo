@@ -4,6 +4,7 @@ import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.util.QueryStringBuilder;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -122,7 +123,46 @@ public class AnalysisDomain {
         });
     }
 
+// region 消费者属性分析
+    public List<UserProfileTagCountObject> getUserProfileAreaReport(String orgId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .build();
+        return dataApiClient.get("analysis/user_profile/area" + query, new ParameterizedTypeReference<List<UserProfileTagCountObject>>() {
+        });
+    }
+
+    public List<UserProfileTagCountObject> getUserProfileGenderReport(String orgId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .build();
+        return dataApiClient.get("analysis/user_profile/gender" + query, new ParameterizedTypeReference<List<UserProfileTagCountObject>>() {
+        });
+    }
 
 
 
+    public List<UserProfileTagCountObject> getUserProfileScanUsageReport(String orgId, LocalDate startTime, LocalDate endTime) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId).append("start_time", startTime).append("end_time", endTime)
+                .build();
+        return dataApiClient.get("analysis/user_profile/scan_time_range" + query, new ParameterizedTypeReference<List<UserProfileTagCountObject>>() {
+        });
+    }
+
+    public List<UserProfileTagCountObject> getUserProfileDeviceReport(String orgId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .build();
+        return dataApiClient.get("analysis/user_profile/device" + query, new ParameterizedTypeReference<List<UserProfileTagCountObject>>() {
+        });
+    }
+
+    public List<UserProfileLocationCountObject> getUserProfileLocationReport(String orgId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId).build();
+        return dataApiClient.get("analysis/user_profile/location" + query, new ParameterizedTypeReference<List<UserProfileLocationCountObject>>() {
+        });
+    }
+    // endregion 消费者属性分析
 }
