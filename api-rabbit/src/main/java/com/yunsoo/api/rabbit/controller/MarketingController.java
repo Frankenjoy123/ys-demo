@@ -81,7 +81,7 @@ public class MarketingController {
         }
     }
 
-    @RequestMapping(value = "drawPrize/{id}/contact", method = RequestMethod.PUT)
+    @RequestMapping(value = "drawPrize/{id}/contact", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public MktPrizeContact createMktPrizeContact(@PathVariable(value = "id") String prizeId, @RequestBody MktPrizeContact mktPrizeContact) {
         if (mktPrizeContact == null) {
@@ -94,8 +94,8 @@ public class MarketingController {
             throw new NotFoundException("marketing draw prize can not be found");
         }
         MktPrizeContactObject prizeContactObject = marketingDomain.getMktPrizeContactByPrizeId(prizeId);
-        if (mktPrizeContact != null) {
-            return new MktPrizeContact(prizeContactObject);
+        if (prizeContactObject != null) {
+            throw new BadRequestException("marketing prize contact has been already input.");
         }
         MktPrizeContactObject mktPrizeContactObject = mktPrizeContact.toMktPrizeContactObject();
         MktPrizeContactObject newObject = marketingDomain.createMktPrizeContact(mktPrizeContactObject);
