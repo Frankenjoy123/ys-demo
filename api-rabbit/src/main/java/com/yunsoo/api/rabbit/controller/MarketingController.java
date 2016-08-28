@@ -300,14 +300,26 @@ public class MarketingController {
         if(currentRecord != null)
             throw new ConflictException("key already prized");
 
+        MktDrawPrizeObject prize = new MktDrawPrizeObject();
+        prize.setPrizeAccountName(mktDraw.getPrizeAccountName());
+        prize.setMarketingId(mktDraw.getMarketingId());
+        prize.setProductKey(mktDraw.getProductKey());
+        prize.setScanRecordId(mktDraw.getScanRecordId());
+        //save prize
+        MktDrawRecordObject record = new MktDrawRecordObject();
+        record.setOauthOpenid(mktDraw.getOauthOpenId());
+        record.setScanRecordId(mktDraw.getScanRecordId());
+        record.setProductBaseId(mktDraw.getProductBaseId());
+        record.setProductKey(mktDraw.getProductKey());
+        record.setMarketingId(mktDraw.getMarketingId());
+        record.setYsid(mktDraw.getYsId());
+        record.setUserId(mktDraw.getUserId());
+
+
         MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId, mktDraw.getScanRecordId());
 
         if (mktDrawRuleObject != null) {
-            MktDrawPrizeObject prize = new MktDrawPrizeObject();
-            prize.setPrizeAccountName(mktDraw.getPrizeAccountName());
-            prize.setMarketingId(mktDraw.getMarketingId());
-            prize.setProductKey(mktDraw.getProductKey());
-            prize.setScanRecordId(mktDraw.getScanRecordId());
+            record.setIsPrized(true);
             prize.setPrizeTypeCode(mktDrawRuleObject.getPrizeTypeCode());
 
             MktDrawRule mktDrawRule = new MktDrawRule(mktDrawRuleObject);
@@ -321,26 +333,20 @@ public class MarketingController {
             }
 
             //save prize
-            MktDrawRecordObject record = new MktDrawRecordObject();
-            record.setOauthOpenid(mktDraw.getOauthOpenId());
-            record.setScanRecordId(mktDraw.getScanRecordId());
-            record.setProductBaseId(mktDraw.getProductBaseId());
-            record.setProductKey(mktDraw.getProductKey());
-            record.setMarketingId(mktDraw.getMarketingId());
-            record.setYsid(mktDraw.getYsId());
-            record.setUserId(mktDraw.getUserId());
-            record.setIsPrized(mktDrawRuleObject.getAmount() > 0 ? true: false);
             MktDrawRecordObject saveRecord = marketingDomain.createMktDrawRecord(record);
 
-            setAccount(prize);
-            prize.setDrawRecordId(saveRecord.getId());
             prize.setDrawRuleId(mktDrawRule.getId());
             prize.setAmount(mktDrawRule.getAmount());
+            setAccount(prize);
+            prize.setDrawRecordId(saveRecord.getId());
             marketingDomain.createMktDrawPrize(prize);
 
             return mktDrawRule;
 
         } else {
+            record.setIsPrized(false);
+            marketingDomain.createMktDrawRecord(record);
+
             return new MktDrawRule(mktDrawRuleObject);
         }
     }
