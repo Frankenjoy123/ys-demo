@@ -352,9 +352,9 @@ public class LookupCodes {
         private UserDeviceType() {
         }
 
-        public static final String NONANDROID = "non_android";
+        public static final String NONANDROID = "non_Android";
         public static final String IOS = "ios";
-        public static final String ANDROID = "android";
+        public static final String ANDROID = "Android";
     }
 
     public static class SystemIds {
