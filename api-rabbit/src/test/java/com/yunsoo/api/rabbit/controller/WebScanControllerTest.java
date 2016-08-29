@@ -74,7 +74,7 @@ public class WebScanControllerTest {
                     result.add(Arrays.asList(StringUtils.commaDelimitedListToStringArray(line)).get(0));
                 }
             }
-            return result.subList(50, 54);
+            return result.subList(62, 70);
         } catch (NotFoundException | IOException ignored) {
         }
         return null;
@@ -119,27 +119,18 @@ public class WebScanControllerTest {
             String productBaseId = scanRecord.getProductBaseId();
 
             MktDraw mktDraw = new MktDraw();
-            MktDrawRecord drawRecord = new MktDrawRecord();
-            MktDrawPrize drawPrize = new MktDrawPrize();
 
-            drawRecord.setUserId(Constants.Ids.ANONYMOUS_USER_ID);
-            drawRecord.setYsid(ysId);
-            drawRecord.setProductBaseId(productBaseId);
-            drawRecord.setProductKey(productKey);
-            drawRecord.setScanRecordId(scanRecordId);
-            drawRecord.setMarketingId(marketingId);
+            mktDraw.setUserId(Constants.Ids.ANONYMOUS_USER_ID);
+            mktDraw.setYsId(ysId);
+            mktDraw.setProductBaseId(productBaseId);
+            mktDraw.setProductKey(productKey);
+            mktDraw.setScanRecordId(scanRecordId);
+            mktDraw.setMarketingId(marketingId);
 
-            drawPrize.setProductKey(productKey);
-            drawPrize.setYsid(ysId);
-            drawPrize.setScanRecordId(scanRecordId);
-            drawPrize.setMarketingId(marketingId);
-
-            mktDraw.setPrize(drawPrize);
-            mktDraw.setRecord(drawRecord);
 
             MktDrawRule rule = restClient.post("marketing/drawPrize/{id}/random", mktDraw, MktDrawRule.class, marketingId);
             String ruleId = (isAndroid? "Android" : "iOS") + "-" + rule.getId();
-            System.out.println("rule id is " + rule.getId());
+            System.out.println("rule id: " + rule.getId() + " header: "+ (isAndroid? "Android" : "iOS"));
 
             map.put(ruleId, map.getOrDefault(ruleId, 0) + 1);
         });
@@ -158,8 +149,6 @@ public class WebScanControllerTest {
 
         }
         System.out.println("result is: \n" + stringBuilder.toString());
-
-
     }
 
 }
