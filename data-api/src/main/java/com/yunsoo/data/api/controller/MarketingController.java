@@ -525,10 +525,10 @@ public class MarketingController {
     public void patchDrawRecord(@PathVariable("id")String id, @RequestBody MktDrawRecordObject record){
         MktDrawRecordEntity entity = mktDrawRecordRepository.findOne(id);
         if(entity!=null){
-            if(record.getYsid()!=null && record.getYsid() != entity.getYsid())
+            if(record.getYsid()!=null && !record.getYsid().equals(entity.getYsid()))
                 entity.setYsid(record.getYsid());
 
-            if(record.getOauthOpenid() != null && record.getOauthOpenid() != entity.getOauthOpenid())
+            if(record.getOauthOpenid() != null && !record.getOauthOpenid().equals(entity.getOauthOpenid()))
                 entity.setOauthOpenid(record.getOauthOpenid());
 
             mktDrawRecordRepository.save(entity);
@@ -700,7 +700,7 @@ public class MarketingController {
             entity.setPaidDateTime(mktDrawPrizeObject.getPaidDateTime());
         if(mktDrawPrizeObject.getPrizeContactId() != null)
             entity.setPrizeContactId(mktDrawPrizeObject.getPrizeContactId());
-        if (mktDrawPrizeObject.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.PAID)) {
+        if (LookupCodes.MktDrawPrizeStatus.PAID.equals(mktDrawPrizeObject.getStatusCode())) {
             entity.setPaidDateTime(DateTime.now());
         }
         MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
