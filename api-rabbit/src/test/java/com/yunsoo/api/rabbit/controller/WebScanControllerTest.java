@@ -7,6 +7,7 @@ import com.yunsoo.api.rabbit.dto.MktDrawRule;
 import com.yunsoo.api.rabbit.dto.WebScanRequest;
 import com.yunsoo.api.rabbit.dto.WebScanResponse;
 import com.yunsoo.api.rabbit.file.service.FileService;
+import com.yunsoo.api.rabbit.util.YSIDGenerator;
 import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.web.client.AsyncRestClient;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -80,7 +81,7 @@ public class WebScanControllerTest {
                     result.add(Arrays.asList(StringUtils.commaDelimitedListToStringArray(line)).get(0));
                 }
             }
-            return result.subList(260, 270);
+            return result.subList(380, 390);
         } catch (NotFoundException | IOException ignored) {
         }
         return null;
@@ -119,6 +120,7 @@ public class WebScanControllerTest {
             WebScanRequest request = new WebScanRequest();
             request.setUserId(Constants.Ids.ANONYMOUS_USER_ID);
             request.setAddress("hang zhou");
+            request.setYsid(YSIDGenerator.getNew());
 
             Boolean isAndroid = setHeaders();
 
@@ -143,7 +145,7 @@ public class WebScanControllerTest {
                 Date date = new Date();
                 String drawRuleIdDate = dateFormat.format(date);
 
-                HashMap<String, String> dictionary = (HashMap<String, String>)map.get(ruleId);
+                HashMap<String, String> dictionary = (HashMap<String, String>) map.get(ruleId);
                 if (dictionary == null) {
                     dictionary = new HashMap();
                 }
@@ -151,7 +153,7 @@ public class WebScanControllerTest {
                 dictionary.put("productKeyList", keyList);
 
                 dictionary.put("comments", String.format("%-14s", rule.getComments()));
-                dictionary.put("device",String.format("%-7s",(isAndroid? "Android" : "iOS")));
+                dictionary.put("device", String.format("%-7s", (isAndroid ? "Android" : "iOS")));
                 dictionary.put("createtime", drawRuleIdDate);
 
                 Integer count = Integer.parseInt(dictionary.getOrDefault("count", "0")) + 1;
@@ -160,9 +162,8 @@ public class WebScanControllerTest {
 
             } catch (Exception e) {
                 if (e instanceof ConflictException) {
-                    if (((ConflictException) e).getHttpStatus().equals(HttpStatus.CONFLICT)){
+                    if (((ConflictException) e).getHttpStatus().equals(HttpStatus.CONFLICT)) {
                         prizedKeys.add(productKey);
-//                        System.out.println("key already prized: "+productKey);
                     }
                 } else if (e instanceof NullPointerException) {
                     System.out.println("null pointer exception");
@@ -177,8 +178,8 @@ public class WebScanControllerTest {
              BufferedOutputStream bf = new BufferedOutputStream(fos)) {
 
             int index = 0;
-            stringBuilder.append("  " + String.format("%-8s","device") + String.format("%-20s","ruleid") + String.format("%-17s","comments")
-            + String.format("%-8s", "count") + String.format("%-20s", "date")+ "\n");
+            stringBuilder.append("  " + String.format("%-8s","device") + String.format("%-20s","ruleid")
+            + String.format("%-6s", "count") + String.format("%-20s", "date")+ String.format("%-17s","comments")+ "\n");
 
             for (Map.Entry<String, HashMap> entry : map.entrySet())
             {
@@ -186,10 +187,10 @@ public class WebScanControllerTest {
                 stringBuilder.append(index + " ");
                 HashMap theMap = entry.getValue();
                 stringBuilder.append(theMap.get("device") + " ");
-                stringBuilder.append(entry.getKey() + " ");
-                stringBuilder.append(theMap.get("comments") + " ");
-                stringBuilder.append(String.format("%-6s", theMap.get("count")));
+                stringBuilder.append(entry.getKey() + "   ");
+                stringBuilder.append(String.format("%-4s", theMap.get("count")));
                 stringBuilder.append(theMap.get("createtime") + " ");
+                stringBuilder.append(theMap.get("comments") + " ");
 //                stringBuilder.append(theMap.get("productKeyList") + " ");
 
                 stringBuilder.append("\n");
