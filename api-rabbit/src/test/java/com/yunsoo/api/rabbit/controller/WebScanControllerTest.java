@@ -53,6 +53,7 @@ public class WebScanControllerTest {
     protected static AsyncRestClient restClient;
     protected String userAgent;
     protected int startIndex, endIndex;
+    protected String yunsuId;
 
     protected static final String filePath = "organization/2k0r1l55i2rs5544wz5/product_key_batch/2msavp1xsq3z1o50cbo/keys.pks";
     protected static final String marketingId = "2msb69lkn0qotkzm3ay";
@@ -90,9 +91,10 @@ public class WebScanControllerTest {
 
     @Before
     public void initRestClient() {
-        startIndex = 1180;
-        endIndex = 1190;
+        startIndex = 1200;
+        endIndex = 1210;
         userAgent = iPhone;
+        yunsuId = "xxxxx";
         if (restClient == null) {
             System.out.println("initializing restClient");
             restClient = new AsyncRestClient("http://localhost:" + port);
@@ -102,7 +104,7 @@ public class WebScanControllerTest {
     private Boolean setHeaders() {
         Random random = new Random();
         String agent;
-        if (userAgent.isEmpty()) {
+        if (userAgent == null || !userAgent.equals(iPhone) || !userAgent.equals(Android)) {
             agent = random.nextBoolean() ? iPhone : Android;
         } else {
             agent = userAgent;
@@ -127,10 +129,10 @@ public class WebScanControllerTest {
 
         productKeys.parallelStream().forEach(productKey -> {
             WebScanRequest request = new WebScanRequest();
+
             request.setUserId(Constants.Ids.ANONYMOUS_USER_ID);
             request.setAddress("hang zhou");
-            request.setYsid(YSIDGenerator.getNew());
-
+            request.setYsid(yunsuId == null ? YSIDGenerator.getNew() : yunsuId);
             Boolean isAndroid = setHeaders();
 
             WebScanResponse.ScanRecord scanRecord = restClient.post("webScan/{0}", request, WebScanResponse.ScanRecord.class, productKey);
