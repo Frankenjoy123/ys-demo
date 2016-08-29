@@ -51,7 +51,8 @@ public class WebScanControllerTest {
     FileService fileService;
 
     protected static AsyncRestClient restClient;
-
+    protected String userAgent;
+    protected int startIndex, endIndex;
 
     protected static final String filePath = "organization/2k0r1l55i2rs5544wz5/product_key_batch/2msavp1xsq3z1o50cbo/keys.pks";
     protected static final String marketingId = "2msb69lkn0qotkzm3ay";
@@ -69,7 +70,7 @@ public class WebScanControllerTest {
     }
 
     @SuppressWarnings("unchecked")
-    private List<String> readProductKeyFile() {
+    private List<String> readProductKeyFile(int startIndex, int endIndex) {
         try {
             List<String> result = new ArrayList<>();
             ResourceInputStream resourceInputStream = fileService.getFile(filePath);
@@ -81,7 +82,7 @@ public class WebScanControllerTest {
                     result.add(Arrays.asList(StringUtils.commaDelimitedListToStringArray(line)).get(0));
                 }
             }
-            return result.subList(1130, 1140);
+            return result.subList(startIndex, endIndex);
         } catch (NotFoundException | IOException ignored) {
         }
         return null;
@@ -89,6 +90,9 @@ public class WebScanControllerTest {
 
     @Before
     public void initRestClient() {
+        startIndex = 1180;
+        endIndex = 1190;
+        userAgent = iPhone;
         if (restClient == null) {
             System.out.println("initializing restClient");
             restClient = new AsyncRestClient("http://localhost:" + port);
@@ -97,7 +101,12 @@ public class WebScanControllerTest {
 
     private Boolean setHeaders() {
         Random random = new Random();
-        String agent = random.nextBoolean() ? iPhone : Android;
+        String agent;
+        if (userAgent.isEmpty()) {
+            agent = random.nextBoolean() ? iPhone : Android;
+        } else {
+            agent = userAgent;
+        }
         restClient.setPreRequestCallback(request -> {
             HttpHeaders httpHeaders = request.getHeaders();
             httpHeaders.set(com.yunsoo.common.web.Constants.HttpHeaderName.APP_ID, "AuthUnitTest");
@@ -111,10 +120,8 @@ public class WebScanControllerTest {
     @Test
     public void testPostKeyScan() throws Exception {
 
-        List<String> productKeys = readProductKeyFile();
+        List<String> productKeys = readProductKeyFile(startIndex, endIndex);
         List<String> prizedKeys = new ArrayList<>();
-        List<String> iOSList = new ArrayList<>();
-        List<String> androidList = new ArrayList<>();
 
         Map<String, HashMap> map = new HashMap<>();
 
