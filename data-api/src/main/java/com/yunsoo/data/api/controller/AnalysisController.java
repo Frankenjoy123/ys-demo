@@ -34,7 +34,7 @@ public class AnalysisController {
     @Autowired
     private ScanRecordAnalysisRepository scanRecordAnalysisRepository;
 
-    // S 新增营销方案的repository
+    // region 新增营销方案的repository
     @Autowired
     private MarketUserAreaAnalysisRepository marketUserAreaAnalysisRepository;
     @Autowired
@@ -48,11 +48,15 @@ public class AnalysisController {
 
     @Autowired
     private LuTagRepository luTagRepository;
-    // E 营销方案
+    // endregion
 
     //S 消费者漏斗分析
     @Autowired
     private EMREventRepository eventRepository;
+
+    // 用户属性分析
+    @Autowired
+    private EMRUserRepository emrUserRepository;
 
 
     @Autowired
@@ -96,7 +100,7 @@ public class AnalysisController {
         DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
         DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
-        List<ScanRecordLocationAnalysisEntity> list = eventRepository.consumerLocationCount(orgId, productBaseId,batchId, startDateTime, endDateTime);
+        List<ScanRecordLocationAnalysisEntity> list = eventRepository.consumerLocationCount(orgId, productBaseId, batchId, startDateTime, endDateTime);
         return list.stream().map(ScanRecordLocationAnalysisEntity::toDataObject).collect(Collectors.toList());
     }
 
@@ -615,6 +619,49 @@ public class AnalysisController {
             return provinceItem;
         }).collect(Collectors.toList());
     }
+
+
+    // region 消费者属性分析
+    @RequestMapping(value = "/user_profile/area", method = RequestMethod.GET)
+    public List<UserProfileTagCountObject> queryUserProfileArea(@RequestParam(value = "org_id") String orgId) {
+        List<UserProfileTagCountEntity> list = emrUserRepository.queryUserProfileAreaReport(orgId);
+        return list.stream().map(UserProfileTagCountEntity::toDataObject).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/user_profile/scan_time_range", method = RequestMethod.GET)
+    public List<UserProfileTagCountObject> queryUserProfileTimeRange(@RequestParam(value = "org_id") String orgId,
+                                                                @RequestParam(value = "start_time")
+                                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                                @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime
+
+    ) {
+        DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+
+        List<UserProfileTagCountEntity> list = emrUserRepository.queryUserProfileTimeUsage(orgId, startDateTime, endDateTime);
+        return list.stream().map(UserProfileTagCountEntity::toDataObject).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/user_profile/device", method = RequestMethod.GET)
+    public List<UserProfileTagCountObject> queryUserProfileDevice(@RequestParam(value = "org_id") String orgId) {
+
+        List<UserProfileTagCountEntity> list = emrUserRepository.queryUserProfileDeviceUsage(orgId);
+        return list.stream().map(UserProfileTagCountEntity::toDataObject).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/user_profile/gender", method = RequestMethod.GET)
+    public List<UserProfileTagCountObject> queryUserProfileGender(@RequestParam(value = "org_id") String orgId) {
+        List<UserProfileTagCountEntity> list = emrUserRepository.queryUserProfileGenderUsage(orgId);
+        return list.stream().map(UserProfileTagCountEntity::toDataObject).collect(Collectors.toList());
+    }
+
+
+    @RequestMapping(value = "/user_profile/location", method = RequestMethod.GET)
+    public List<UserProfileLocationCountObject> queryUserProfileLocation(@RequestParam(value = "org_id") String orgId) {
+        List<UserProfileLocationCountEntity> list = emrUserRepository.queryUserProfileLocationReport(orgId);
+        return list.stream().map(UserProfileLocationCountEntity::toDataObject).collect(Collectors.toList());
+    }
+    // endregion
 
 
 }

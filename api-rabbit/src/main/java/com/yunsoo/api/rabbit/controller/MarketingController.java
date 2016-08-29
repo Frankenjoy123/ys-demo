@@ -1,6 +1,5 @@
 package com.yunsoo.api.rabbit.controller;
 
-import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.domain.MarketingDomain;
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
@@ -20,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,6 +47,7 @@ public class MarketingController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
+    //获取Key所对应的抽奖记录
     @RequestMapping(value = "draw/{key}", method = RequestMethod.GET)
     public MktDrawRecord getMktDrawRecordByProductKey(@PathVariable String key) {
         if (key == null) {
@@ -60,6 +61,7 @@ public class MarketingController {
         }
     }
 
+    //获取Key所对应的兑奖情况
     @RequestMapping(value = "drawPrize/{key}", method = RequestMethod.GET)
     public MktDrawPrize getMktDrawPrizeByProductKey(@PathVariable String key) {
         if (key == null) {
@@ -79,54 +81,6 @@ public class MarketingController {
         }
     }
 
-    @RequestMapping(value = "draw", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public MktDrawRecord createMktDrawRecord(@RequestBody MktDrawRecord mktDrawRecord) {
-        if (mktDrawRecord == null) {
-            throw new BadRequestException("marketing draw record can not be null");
-        }
-        String productKey = mktDrawRecord.getProductKey();
-        ProductObject product = productDomain.getProduct(productKey);
-        if (product == null) {
-            throw new NotFoundException("product can not be found by the key");
-        }
-        MktDrawRecordObject mktDrawRecordObject = mktDrawRecord.toMktDrawRecordObject();
-        // String currentUserId = tokenAuthenticationService.getAuthentication().getDetails().getId();
-        //  mktDrawRecordObject.setUserId(currentUserId);
-
-        MktDrawRecordObject newMktDrawRecordObject = marketingDomain.createMktDrawRecord(mktDrawRecordObject);
-        return new MktDrawRecord(newMktDrawRecordObject);
-    }
-
-    @RequestMapping(value = "drawPrize", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public MktDrawPrize createMktDrawPrize(@RequestBody MktDrawPrize mktDrawPrize) {
-        if (mktDrawPrize == null) {
-            throw new BadRequestException("marketing draw record can not be null");
-        }
-        String productKey = mktDrawPrize.getProductKey();
-        ProductObject product = productDomain.getProduct(productKey);
-        if (product == null) {
-            throw new NotFoundException("product can not be found by the key");
-        }
-        MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
-
-        MktDrawPrizeObject newMktDrawPrizeObject = marketingDomain.createMktDrawPrize(mktDrawPrizeObject);
-        return new MktDrawPrize(newMktDrawPrizeObject);
-    }
-
-    @RequestMapping(value = "drawPrize/contact/{id}", method = RequestMethod.GET)
-    public MktPrizeContact getMktPrizeContactById(@PathVariable String id) {
-        MktPrizeContactObject mktPrizeContactObject = marketingDomain.getMktPrizeContactById(id);
-
-        if (mktPrizeContactObject != null) {
-            return new MktPrizeContact(mktPrizeContactObject);
-        } else {
-            return null;
-        }
-    }
-
-
     @RequestMapping(value = "drawPrize/{id}/contact", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public MktPrizeContact createMktPrizeContact(@PathVariable(value = "id") String prizeId, @RequestBody MktPrizeContact mktPrizeContact) {
@@ -139,7 +93,10 @@ public class MarketingController {
         if (mktDrawPrizeObject == null) {
             throw new NotFoundException("marketing draw prize can not be found");
         }
-
+        MktPrizeContactObject prizeContactObject = marketingDomain.getMktPrizeContactByPrizeId(prizeId);
+        if (prizeContactObject != null) {
+            throw new BadRequestException("marketing prize contact has been already input.");
+        }
         MktPrizeContactObject mktPrizeContactObject = mktPrizeContact.toMktPrizeContactObject();
         MktPrizeContactObject newObject = marketingDomain.createMktPrizeContact(mktPrizeContactObject);
 
@@ -155,23 +112,6 @@ public class MarketingController {
         return new MktPrizeContact(newObject);
     }
 
-    @RequestMapping(value = "drawPrize/{id}/contact", method = RequestMethod.PUT)
-    public void updateMktPrizeContact(@PathVariable(value = "id") String prizeId, @RequestBody MktPrizeContact mktPrizeContact) {
-        if (mktPrizeContact == null) {
-            throw new BadRequestException("marketing prize contact can not be null");
-        }
-        mktPrizeContact.setMktPrizeId(prizeId);
-
-        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByPrizeId(prizeId);
-        if ((mktDrawPrizeObject == null) || (mktDrawPrizeObject.getPrizeContactId() == null) || (mktDrawPrizeObject.getPrizeContactId().equals(""))) {
-            throw new BadRequestException("Invalid operation: update marketing prize contact error");
-        }
-
-        MktPrizeContactObject mktPrizeContactObject = mktPrizeContact.toMktPrizeContactObject();
-        marketingDomain.updateMktPrizeContact(mktPrizeContactObject);
-    }
-
-
     @RequestMapping(value = "drawPrize", method = RequestMethod.PUT)
     public void updateMktDrawPrize(@RequestBody MktDrawPrize mktDrawPrize) {
         if (mktDrawPrize == null) {
@@ -184,37 +124,54 @@ public class MarketingController {
             MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
             mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
             mktDrawPrizeObject.setDrawRecordId(currentPrize.getDrawRecordId());
-            if (LookupCodes.MktPrizeType.MOBILE_FEE.equals(currentPrize.getPrizeTypeCode())) {
-                marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
-                boolean isMobileFeeSuccess = marketingDomain.createMobileOrder(mktDrawPrize.getDrawRecordId());
-                if (!isMobileFeeSuccess) {
-                    mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
-                    result = false;
-                } else {
-                    mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-                    mktDrawPrizeObject.setPaidDateTime(DateTime.now());
-                }
-            } else if (LookupCodes.MktPrizeType.MOBILE_DATA.equals(currentPrize.getPrizeTypeCode())) {
-                marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
-                boolean isMobileDataSuccess = marketingDomain.createMobileDataFlow(mktDrawPrize.getDrawRecordId());
-                if (!isMobileDataSuccess) {
-                    mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
-                    result = false;
-                } else {
-                    mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-                    mktDrawPrizeObject.setPaidDateTime(DateTime.now());
-                }
-            } else if (LookupCodes.MktPrizeType.COUPON.equals(currentPrize.getPrizeTypeCode())) {
-                mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-                mktDrawPrizeObject.setPaidDateTime(DateTime.now());
 
+            if(currentPrize.getPrizeTypeCode() == null)
+                currentPrize.setPrizeTypeCode(LookupCodes.MktPrizeType.WEBCHAT);
+
+            switch (currentPrize.getPrizeTypeCode()){
+                case LookupCodes.MktPrizeType.MOBILE_FEE:
+                    marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+                    boolean isMobileFeeSuccess = marketingDomain.createMobileOrder(mktDrawPrize.getDrawRecordId());
+                    if (!isMobileFeeSuccess) {
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
+                        result = false;
+                    } else {
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                        mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+                    }
+                    break;
+                case LookupCodes.MktPrizeType.MOBILE_DATA:
+                    marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+                    boolean isMobileDataSuccess = marketingDomain.createMobileDataFlow(mktDrawPrize.getDrawRecordId());
+                    if (!isMobileDataSuccess) {
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
+                        result = false;
+                    } else {
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                        mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+                    }
+                    break;
+                case LookupCodes.MktPrizeType.COUPON:
+                    mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                    mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+                    break;
+                case LookupCodes.MktPrizeType.WEBCHAT:
+                    if(LookupCodes.MktDrawPrizeStatus.PAID.equals(mktDrawPrize.getStatusCode())) {
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                        mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+                    }
+                    break;
+                default:
+                    break;
             }
+
             marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
 
-
-            MktDrawRecordObject record = marketingDomain.getMktDrawRecordByProductKey(mktDrawPrize.getProductKey());
-            record.setYsid(mktDrawPrize.getYsid());
-            marketingDomain.updateMktDrawRecord(record);
+            if(mktDrawPrize.getYsid() != null) {
+                MktDrawRecordObject record = marketingDomain.getMktDrawRecordByProductKey(mktDrawPrize.getProductKey());
+                record.setYsid(mktDrawPrize.getYsid());
+                marketingDomain.updateMktDrawRecord(record);
+            }
 
         } else
             throw new RestErrorResultException(new ErrorResult(5002, "prize had been sent"));
@@ -240,6 +197,7 @@ public class MarketingController {
 
     }
 
+    //业务API需要做校验： 比如先判断Key是否中奖 for 海涛
     @RequestMapping(value = "consumer/redeemcode/{key}", method = RequestMethod.GET)
     public MktConsumerRightRedeemCode getConsumerRedeemCodeByIdAndPrizeId(@PathVariable String key) {
         MktConsumerRightRedeemCodeObject mktConsumerRightRedeemCodeObject = marketingDomain.getMktConsumerRightRedeemCodeByProductKey(key);
@@ -251,6 +209,7 @@ public class MarketingController {
         }
     }
 
+    //业务API需要做校验： 比如先判断Key是否中奖  for 海涛
     @RequestMapping(value = "consumer/redeemcode/generate/{key}", method = RequestMethod.GET)
     public MktConsumerRightRedeemCode getRandomConsumerRedeemCodeByIdAndPrizeId(@PathVariable String key,
                                                                                 @RequestParam(value = "draw_rule_id") String drawRuleId) {
@@ -277,6 +236,7 @@ public class MarketingController {
         }
     }
 
+    //判断营销方案是否可用，暨用户能否参加营销活动
     @RequestMapping(value = "validate/key/{key}", method = RequestMethod.GET)
     public String getMarketingValidateByProductKey(@PathVariable String key) {
         if (key == null) {
@@ -312,45 +272,31 @@ public class MarketingController {
 
     }
 
-
-
-    @RequestMapping(value = "drawPrize/{key}/sms", method = RequestMethod.PUT)
+    @RequestMapping(value = "drawPrize/{key}/sms", method = RequestMethod.POST)
     public boolean sendPrizeSMS(@PathVariable(value = "key") String productKey,
                                 @RequestParam(value = "mobile") String mobile) {
-
+        MktDrawPrizeObject prize = marketingDomain.getMktDrawPrizeByProductKey(productKey);
+        if(prize == null)
+            throw new NotFoundException("prize for product key not found");
         return marketingDomain.sendVerificationCode(mobile, LookupCodes.SMSTemplate.SENDPRIZE);
     }
 
-    @RequestMapping(value = "drawPrize/{key}/smsverfiy", method = RequestMethod.PUT)
-    public boolean validatePrizeVerificationCode(@PathVariable(value = "key") String productKey,
-                                                 @RequestParam(value = "mobile") String mobile,
+    @RequestMapping(value = "drawPrize/smsverfiy", method = RequestMethod.PUT)
+    public boolean validatePrizeVerificationCode(@RequestParam(value = "mobile") String mobile,
                                                  @RequestParam(value = "verification_code") String verificationCode) {
 
         return marketingDomain.validateVerificationCode(mobile, verificationCode);
     }
 
-
-    @RequestMapping(value = "drawPrize/paid", method = RequestMethod.PUT)
-    public void updateMktDrawPrizeAfterPaid(@RequestBody MktDrawPrize mktDrawPrize) {
-        if (mktDrawPrize == null) {
-            throw new BadRequestException("marketing draw record can not be null");
-        }
-        MktDrawPrizeObject mktDrawPrizeObject = mktDrawPrize.toMktDrawPrizeObject();
-        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-        mktDrawPrizeObject.setPaidDateTime(DateTime.now());
-        marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
-
-    }
-
     @RequestMapping(value = "drawPrize/{id}/random", method = RequestMethod.POST)
-    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId, @RequestBody MktDraw mktDraw) {
+    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId, @RequestBody @Valid MktDraw mktDraw) {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        if(mktDraw == null || mktDraw.getPrize() == null || mktDraw.getRecord() == null)
+        if(mktDraw == null)
             throw new BadRequestException("prize content can not be null");
 
-        String key = mktDraw.getRecord().getProductKey();
+        String key = mktDraw.getProductKey();
 
         ProductObject product = productDomain.getProduct(key);
         if (product == null) {
@@ -361,10 +307,30 @@ public class MarketingController {
         if(currentRecord != null)
             throw new ConflictException("key already prized");
 
-        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId, mktDraw.getRecord().getScanRecordId());
+        MktDrawPrizeObject prize = new MktDrawPrizeObject();
+        prize.setPrizeAccountName(mktDraw.getPrizeAccountName());
+        prize.setMarketingId(mktDraw.getMarketingId());
+        prize.setProductKey(mktDraw.getProductKey());
+        prize.setScanRecordId(mktDraw.getScanRecordId());
+        //save prize
+        MktDrawRecordObject record = new MktDrawRecordObject();
+        record.setOauthOpenid(mktDraw.getOauthOpenId());
+        record.setScanRecordId(mktDraw.getScanRecordId());
+        record.setProductBaseId(mktDraw.getProductBaseId());
+        record.setProductKey(mktDraw.getProductKey());
+        record.setMarketingId(mktDraw.getMarketingId());
+        record.setYsid(mktDraw.getYsId());
+        record.setUserId(mktDraw.getUserId());
+
+
+        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId, mktDraw.getScanRecordId());
+
         if (mktDrawRuleObject != null) {
-            MktDrawPrize prize = mktDraw.getPrize();
-            prize.setPrizeTypeCode(mktDrawRuleObject.getPrizeTypeCode());
+            record.setIsPrized(true);
+            if(mktDrawRuleObject.getPrizeTypeCode() != null)
+                prize.setPrizeTypeCode(mktDrawRuleObject.getPrizeTypeCode());
+            else
+                prize.setPrizeTypeCode(LookupCodes.MktPrizeType.WEBCHAT);
 
             MktDrawRule mktDrawRule = new MktDrawRule(mktDrawRuleObject);
             String consumerRightId = mktDrawRuleObject.getConsumerRightId();
@@ -377,19 +343,20 @@ public class MarketingController {
             }
 
             //save prize
-            MktDrawRecord record = mktDraw.getRecord();
-            record.setIsPrized(mktDrawRuleObject.getAmount() > 0 ? true: false);
-            MktDrawRecordObject saveRecord = marketingDomain.createMktDrawRecord(record.toMktDrawRecordObject());
+            MktDrawRecordObject saveRecord = marketingDomain.createMktDrawRecord(record);
 
-            setAccount(prize);
-            prize.setDrawRecordId(saveRecord.getId());
             prize.setDrawRuleId(mktDrawRule.getId());
             prize.setAmount(mktDrawRule.getAmount());
-            marketingDomain.createMktDrawPrize(prize.toMktDrawPrizeObject());
+            setAccount(prize);
+            prize.setDrawRecordId(saveRecord.getId());
+            marketingDomain.createMktDrawPrize(prize);
 
             return mktDrawRule;
 
         } else {
+            record.setIsPrized(false);
+            marketingDomain.createMktDrawRecord(record);
+
             return new MktDrawRule(mktDrawRuleObject);
         }
     }
@@ -444,7 +411,7 @@ public class MarketingController {
     }
 
 
-    private void setAccount(MktDrawPrize prize){
+    private void setAccount(MktDrawPrizeObject prize){
         prize.setAccountType(prize.getPrizeTypeCode());
 
         if(LookupCodes.MktPrizeType.MOBILE_FEE.equals(prize.getPrizeTypeCode()) || LookupCodes.MktPrizeType.MOBILE_DATA.equals(prize.getPrizeTypeCode()) ){

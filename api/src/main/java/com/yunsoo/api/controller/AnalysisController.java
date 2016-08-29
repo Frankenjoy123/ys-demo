@@ -27,7 +27,7 @@ public class AnalysisController {
     @Autowired
     private AnalysisDomain analysisDomain;
 
-
+    // region 数据分析
     @RequestMapping(value = "/scan_report", method = RequestMethod.GET)
     public ScanAnalysisReport getScanAnalysisReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
                                                     @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
@@ -43,14 +43,6 @@ public class AnalysisController {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
 
         List<ScanRecordAnalysisObject> data = analysisDomain.getScanAnalysisReport(orgId, startTime, endTime, productBaseId, batchId);
-   /*     Map<DateTime, Integer> pvData = data.stream().collect(Collectors.groupingBy(ScanRecordAnalysisObject::getScanDate, Collectors.summingInt(ScanRecordAnalysisObject::getPv)))
-                .entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
-                    throw new IllegalStateException();
-                }, LinkedHashMap::new));
-        Map<DateTime, Integer> uvData = data.stream().collect(Collectors.groupingBy(ScanRecordAnalysisObject::getScanDate, Collectors.summingInt(ScanRecordAnalysisObject::getUv)))
-                .entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
-                    throw new IllegalStateException();
-                }, LinkedHashMap::new));*/
 
         Map<DateTime, ScanRecordAnalysisObject> mapData =  data.stream().collect(Collectors.toMap(ScanRecordAnalysisObject::getScanDate, p->p, (k, v) -> {
             throw new IllegalStateException();
@@ -93,7 +85,6 @@ public class AnalysisController {
         report.setData(pvuv);
         report.setDate(dateList.toArray(new String[0]));
         return report;
-
     }
 
     @RequestMapping(value = "/scan_location_report", method = RequestMethod.GET)
@@ -225,6 +216,9 @@ public class AnalysisController {
         return report;
     }
 
+    // endregion
+
+    // region 营销用户分析
     @RequestMapping(value = "/market_user_area_report", method = RequestMethod.GET)
     public MarketUserCategoryAndValueReport getMarketUserAreaReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
                                                                     @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
@@ -418,6 +412,16 @@ public class AnalysisController {
         return report;
     }
 
+    // endregion
+
+
+    /**
+     * 用于整个数据分析的加载
+     * @param startTime
+     * @param endTime
+     * @param marketing_id
+     * @return
+     */
     @RequestMapping(value = "/market_user_analysis", method = RequestMethod.GET)
     public MarketUserAnalysisReport getMarketUserAnalysisReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
                                                                 @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
@@ -440,6 +444,7 @@ public class AnalysisController {
         return report;
     }
 
+    // region 用戶看板
     @RequestMapping(value = "/event_report", method = RequestMethod.GET)
     public EMREventAnalysisReport getScanAnalysisReport(@RequestParam(value = "org_id", required = false) String orgId,
                                                         @RequestParam(value = "product_base_id", required = false) String productBaseId,
@@ -719,4 +724,139 @@ public class AnalysisController {
         emrEventLocationReport.setProvinceData(nvProvinceData);
         return emrEventLocationReport;
     }
+    // endregion
+
+    // region 用户属性分析
+
+    @RequestMapping(value = "/user_profile_analysis", method = RequestMethod.GET)
+    public MarketUserAnalysisReport getUserAnalysisReport(@RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                          @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime
+                                                                ) {
+
+        LocalDate now = LocalDate.now();
+        if (startTime == null) {
+            startTime = now.plusDays(-90);
+        }
+        if (endTime == null) {
+            endTime = now.plusDays(-1);
+        }
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
+        MarketUserAnalysisReport report = new MarketUserAnalysisReport();
+        MarketUserLocationReport locationReport = getUserLocationReport(orgId);
+        MarketUserCategoryAndValueReport genderReport = getUserGenderReport(orgId);
+        MarketUserCategoryAndValueReport deviceReport = getUserDeviceReport(orgId);
+        MarketUserCategoryAndValueReport usageReport = getUserScanUsageReport(orgId, startTime, endTime);
+        MarketUserCategoryAndValueReport areaReport = getUserAreaReport(orgId);
+
+
+        report.setLocationReport(locationReport);
+        report.setGenderReport(genderReport);
+        report.setDeviceReport(deviceReport);
+        report.setUsageReport(usageReport);
+        report.setAreaReport(areaReport);
+
+        return report;
+    }
+
+    private MarketUserCategoryAndValueReport getUserAreaReport(String orgId) {
+        List<UserProfileTagCountObject> list = analysisDomain.getUserProfileAreaReport(orgId);
+        Map<String, Integer> quantityMap = list.stream().collect(Collectors.toMap(UserProfileTagCountObject::getTag, t->t.getCount()));
+
+        List<LuTagObject> tags = analysisDomain.getTags();
+        List<String> categories = tags.stream().filter(t -> t.getCategory() == 1).map(LuTagObject::getTagName).collect(Collectors.toList());
+        List<Integer> values = categories.stream().map(t -> {
+            if (quantityMap.containsKey(t)) {
+                return quantityMap.get(t);
+            } else {
+                return 0;
+            }
+        }).collect(Collectors.toList());
+
+        MarketUserCategoryAndValueReport report = new MarketUserCategoryAndValueReport();
+        report.setDataCategory(categories.toArray(new String[0]));
+        report.setQuantity(values.stream().mapToInt(Integer::intValue).toArray());
+        return report;
+    }
+
+    private MarketUserCategoryAndValueReport getUserScanUsageReport(String orgId, LocalDate startTime, LocalDate endTime) {
+        List<UserProfileTagCountObject> list = analysisDomain.getUserProfileScanUsageReport(orgId, startTime, endTime);
+        Map<String, Integer> quantityMap = list.stream().collect(Collectors.toMap(UserProfileTagCountObject::getTag, t->t.getCount()));
+
+        List<LuTagObject> tags = analysisDomain.getTags();
+        List<String> categories = tags.stream().filter(t -> t.getCategory() == 4).map(LuTagObject::getTagName).collect(Collectors.toList());
+        List<Integer> values = tags.stream().filter(t -> t.getCategory() == 4).map(t -> {
+            if (quantityMap.containsKey(t.getTagName())) {
+                return quantityMap.get(t.getTagName());
+            } else {
+                return 0;
+            }
+        }).collect(Collectors.toList());
+        MarketUserCategoryAndValueReport report = new MarketUserCategoryAndValueReport();
+        report.setDataCategory(categories.toArray(new String[0]));
+        report.setQuantity(values.stream().mapToInt(Integer::intValue).toArray());
+
+        return report;
+    }
+
+    private MarketUserCategoryAndValueReport getUserDeviceReport(String orgId) {
+
+        List<UserProfileTagCountObject> list = analysisDomain.getUserProfileDeviceReport(orgId);
+        Map<String, Integer> quantityMap = list.stream().collect(Collectors.toMap(UserProfileTagCountObject::getTag, t->t.getCount()));
+
+        List<LuTagObject> tags = analysisDomain.getTags();
+        List<String> categories = tags.stream().filter(t -> t.getCategory() == 3).map(LuTagObject::getTagName).collect(Collectors.toList());
+        List<Integer> values = tags.stream().filter(t -> t.getCategory() == 3).map(t -> {
+            if (quantityMap.containsKey(t.getTagName())) {
+                return quantityMap.get(t.getTagName());
+            } else {
+                return 0;
+            }
+        }).collect(Collectors.toList());
+        MarketUserCategoryAndValueReport report = new MarketUserCategoryAndValueReport();
+        report.setDataCategory(categories.toArray(new String[0]));
+        report.setQuantity(values.stream().mapToInt(Integer::intValue).toArray());
+        return report;
+    }
+
+    private MarketUserCategoryAndValueReport getUserGenderReport(String orgId) {
+        List<UserProfileTagCountObject> list = analysisDomain.getUserProfileGenderReport(orgId);
+        Map<String, Integer> quantityMap = list.stream().collect(Collectors.toMap(UserProfileTagCountObject::getTag, t->t.getCount()));
+        List<LuTagObject> tags = analysisDomain.getTags();
+        List<String> categories = tags.stream().filter(t -> t.getCategory() == 2).map(LuTagObject::getTagName).collect(Collectors.toList());
+        List<Integer> values = tags.stream().filter(t -> t.getCategory() == 2).map(t -> {
+            if (quantityMap.containsKey(t.getTagName())) {
+                return quantityMap.get(t.getTagName());
+            } else return 0;
+        }).collect(Collectors.toList());
+        MarketUserCategoryAndValueReport report = new MarketUserCategoryAndValueReport();
+        report.setDataCategory(categories.toArray(new String[0]));
+        report.setQuantity(values.stream().mapToInt(Integer::intValue).toArray());
+
+        return report;
+    }
+
+    private MarketUserLocationReport getUserLocationReport(String orgId) {
+        List<UserProfileLocationCountObject> list = analysisDomain.getUserProfileLocationReport(orgId);
+        Map<String, Integer> quantityMap = list.stream()
+                .collect(Collectors.groupingBy(UserProfileLocationCountObject::getProvince, Collectors.summingInt(UserProfileLocationCountObject::getCount)))
+                .entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
+                    throw new IllegalStateException();
+                }, LinkedHashMap::new));
+
+
+        MarketUserLocationReport report = new MarketUserLocationReport();
+        MarketUserLocationReport.NameValue[] data = quantityMap.entrySet().stream().map(entry -> {
+
+            MarketUserLocationReport.NameValue nv = new MarketUserLocationReport.NameValue();
+            nv.setName(entry.getKey());
+            nv.setCount(entry.getValue());
+            return nv;
+        }).toArray(MarketUserLocationReport.NameValue[]::new);
+        report.setProvinceData(data);
+        return report;
+    }
+
+    // endregion
+
 }

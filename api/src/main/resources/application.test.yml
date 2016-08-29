@@ -24,6 +24,11 @@ yunsoo:
       base_url: http://localhost:3080/
     processor:
       base_url: http://localhost:4080/
+    file_api:
+      base_url: http://localhost:4180/
+    key_api:
+      base_url: http://localhost:4280/
+
   product_key_base_url: https://t-m.yunsu.co:9443/
   cache:
     type: redis

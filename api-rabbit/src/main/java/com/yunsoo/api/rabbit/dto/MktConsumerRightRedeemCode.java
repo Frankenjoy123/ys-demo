@@ -1,12 +1,7 @@
 package com.yunsoo.api.rabbit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.object.MktConsumerRightRedeemCodeObject;
-import com.yunsoo.common.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.databind.DateTimeJsonSerializer;
-import org.joda.time.DateTime;
 
 /**
  * Created by:  haitao
@@ -20,9 +15,6 @@ public class MktConsumerRightRedeemCode {
     @JsonProperty("consumer_right_id")
     private String consumerRightId;
 
-    @JsonProperty("org_id")
-    private String orgId;
-
     @JsonProperty("type_code")
     private String typeCode;
 
@@ -34,16 +26,6 @@ public class MktConsumerRightRedeemCode {
 
     @JsonProperty("draw_prize_id")
     private String drawPrizeId;
-
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("created_datetime")
-    private DateTime createdDateTime;
-
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("modified_datetime")
-    private DateTime modifiedDateTime;
 
     public String getId() {
         return id;
@@ -59,14 +41,6 @@ public class MktConsumerRightRedeemCode {
 
     public void setConsumerRightId(String consumerRightId) {
         this.consumerRightId = consumerRightId;
-    }
-
-    public String getOrgId() {
-        return orgId;
-    }
-
-    public void setOrgId(String orgId) {
-        this.orgId = orgId;
     }
 
     public String getTypeCode() {
@@ -101,22 +75,6 @@ public class MktConsumerRightRedeemCode {
         this.drawPrizeId = drawPrizeId;
     }
 
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
-    public DateTime getModifiedDateTime() {
-        return modifiedDateTime;
-    }
-
-    public void setModifiedDateTime(DateTime modifiedDateTime) {
-        this.modifiedDateTime = modifiedDateTime;
-    }
-
     public MktConsumerRightRedeemCode() {
     }
 
@@ -124,13 +82,10 @@ public class MktConsumerRightRedeemCode {
         if (object != null) {
             this.setId(object.getId());
             this.setConsumerRightId(object.getConsumerRightId());
-            this.setOrgId(object.getOrgId());
             this.setTypeCode(object.getTypeCode());
             this.setStatusCode(object.getStatusCode());
             this.setValue(object.getValue());
             this.setDrawPrizeId(object.getDrawPrizeId());
-            this.setCreatedDateTime(object.getCreatedDateTime());
-            this.setModifiedDateTime(object.getModifiedDateTime());
         }
     }
 
@@ -138,13 +93,10 @@ public class MktConsumerRightRedeemCode {
         MktConsumerRightRedeemCodeObject object = new MktConsumerRightRedeemCodeObject();
         object.setId(this.getId());
         object.setConsumerRightId(this.getConsumerRightId());
-        object.setOrgId(this.getOrgId());
         object.setTypeCode(this.getTypeCode());
         object.setStatusCode(this.getStatusCode());
         object.setValue(this.getValue());
         object.setDrawPrizeId(this.getDrawPrizeId());
-        object.setCreatedDateTime(this.getCreatedDateTime());
-        object.setModifiedDateTime(this.getModifiedDateTime());
         return object;
     }
 

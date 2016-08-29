@@ -1,8 +1,8 @@
 package com.yunsoo.processor.sqs;
 
-import com.yunsoo.common.data.message.ProductKeyBatchCreateMessage;
 import com.yunsoo.common.data.message.ProductPackageMessage;
 import com.yunsoo.common.util.StringFormatter;
+import com.yunsoo.processor.sqs.message.KeyBatchCreationMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +58,8 @@ public class MessageSender {
     }
 
     private String getPayloadTypeByMessageType(Class<?> messageType) {
-        if (messageType.isAssignableFrom(ProductKeyBatchCreateMessage.class)) {
-            return ProductKeyBatchCreateMessage.PAYLOAD_TYPE;
+        if (messageType.isAssignableFrom(KeyBatchCreationMessage.class)) {
+            return KeyBatchCreationMessage.PAYLOAD_TYPE;
         } else if (messageType.isAssignableFrom(ProductPackageMessage.class)) {
             return ProductPackageMessage.PAYLOAD_TYPE;
         } else {

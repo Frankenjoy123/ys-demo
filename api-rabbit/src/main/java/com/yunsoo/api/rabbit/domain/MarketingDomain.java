@@ -59,6 +59,9 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/drawPrize/contact/{id}", MktPrizeContactObject.class, id);
     }
 
+    public MktPrizeContactObject getMktPrizeContactByPrizeId(String prizeId) {
+        return dataApiClient.get("marketing/drawPrize/contact/prize/{id}", MktPrizeContactObject.class, prizeId);
+    }
 
 
     public MktConsumerRightObject getConsumerRightById(String id) {

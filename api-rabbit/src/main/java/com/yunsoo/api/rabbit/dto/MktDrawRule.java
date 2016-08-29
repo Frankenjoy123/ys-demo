@@ -1,12 +1,7 @@
 package com.yunsoo.api.rabbit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.data.object.MktDrawRuleObject;
-import com.yunsoo.common.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.databind.DateTimeJsonSerializer;
-import org.joda.time.DateTime;
 
 /**
  * Created by:  haitao
@@ -30,42 +25,15 @@ public class MktDrawRule {
     @JsonProperty("amount")
     private Double amount;
 
-    @JsonProperty("total_quantity")
-    private Integer totalQuantity;
-
-    @JsonProperty("available_quantity")
-    private Integer availableQuantity;
-
-    @JsonProperty("probability")
-    private double probability;
-
     @JsonProperty("comments")
     private String comments;
 
     @JsonProperty("applied_env")
     private String appliedEnv;
 
-    @JsonProperty("weight")
-    private Integer weight;
-
     @JsonProperty("is_equal")
     private Boolean isEqual;
 
-    @JsonProperty("created_account_id")
-    private String createdAccountId;
-
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("created_datetime")
-    private DateTime createdDateTime;
-
-    @JsonProperty("modified_account_id")
-    private String modifiedAccountId;
-
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("modified_datetime")
-    private DateTime modifiedDateTime;
 
     @JsonProperty("mkt_consumer_right")
     private MktConsumerRight mktConsumerRight;
@@ -110,14 +78,6 @@ public class MktDrawRule {
         this.amount = amount;
     }
 
-    public double getProbability() {
-        return probability;
-    }
-
-    public void setProbability(double probability) {
-        this.probability = probability;
-    }
-
     public String getComments() {
         return comments;
     }
@@ -134,14 +94,6 @@ public class MktDrawRule {
         this.appliedEnv = appliedEnv;
     }
 
-    public Integer getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
-
     public Boolean getIsEqual() {
         return isEqual;
     }
@@ -150,53 +102,6 @@ public class MktDrawRule {
         this.isEqual = isEqual;
     }
 
-    public String getCreatedAccountId() {
-        return createdAccountId;
-    }
-
-    public void setCreatedAccountId(String createdAccountId) {
-        this.createdAccountId = createdAccountId;
-    }
-
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
-    public String getModifiedAccountId() {
-        return modifiedAccountId;
-    }
-
-    public void setModifiedAccountId(String modifiedAccountId) {
-        this.modifiedAccountId = modifiedAccountId;
-    }
-
-    public DateTime getModifiedDateTime() {
-        return modifiedDateTime;
-    }
-
-    public void setModifiedDateTime(DateTime modifiedDateTime) {
-        this.modifiedDateTime = modifiedDateTime;
-    }
-
-    public Integer getTotalQuantity() {
-        return totalQuantity;
-    }
-
-    public void setTotalQuantity(Integer totalQuantity) {
-        this.totalQuantity = totalQuantity;
-    }
-
-    public Integer getAvailableQuantity() {
-        return availableQuantity;
-    }
-
-    public void setAvailableQuantity(Integer availableQuantity) {
-        this.availableQuantity = availableQuantity;
-    }
 
     public MktConsumerRight getMktConsumerRight() {
         return mktConsumerRight;
@@ -216,18 +121,9 @@ public class MktDrawRule {
             this.setConsumerRightId(object.getConsumerRightId());
             this.setPrizeTypeCode(object.getPrizeTypeCode());
             this.setAmount(object.getAmount());
-            this.setTotalQuantity(object.getTotalQuantity());
-            this.setAvailableQuantity(object.getAvailableQuantity());
-            this.setProbability(object.getProbability());
             this.setComments(object.getComments());
             this.setAppliedEnv(object.getAppliedEnv());
-            this.setWeight(object.getWeight());
             this.setIsEqual(object.getIsEqual());
-            this.setCreatedAccountId(object.getCreatedAccountId());
-            this.setCreatedDateTime(object.getCreatedDateTime());
-            this.setModifiedAccountId(object.getModifiedAccountId());
-            this.setModifiedDateTime(object.getModifiedDateTime());
-
         }
     }
 
@@ -238,17 +134,9 @@ public class MktDrawRule {
         object.setConsumerRightId(this.getConsumerRightId());
         object.setPrizeTypeCode(this.getPrizeTypeCode());
         object.setAmount(this.getAmount());
-        object.setTotalQuantity(this.getTotalQuantity());
-        object.setAvailableQuantity(this.getAvailableQuantity());
-        object.setProbability(this.getProbability());
         object.setComments(this.getComments());
         object.setAppliedEnv(this.getAppliedEnv());
-        object.setWeight(this.getWeight());
         object.setIsEqual(this.getIsEqual());
-        object.setCreatedAccountId(this.getCreatedAccountId());
-        object.setCreatedDateTime(this.getCreatedDateTime());
-        object.setModifiedAccountId(this.getModifiedAccountId());
-        object.setModifiedDateTime(this.getModifiedDateTime());
         return object;
     }
 }

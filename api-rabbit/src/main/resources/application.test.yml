@@ -30,6 +30,10 @@ yunsoo:
       system_account_access_token: IMdaKJHWZRmyopWEsXPB8PzuKG0oEFgfA2WUQS6WE6GXMjEwMjAzNjM1MjAxNiwwMDEwMDAwMDAwMDAwMDAwMDAwLDJrMHIxbDU1aTJyczU1NDR3ejU
     data_api:
       base_url: http://localhost:3080/
+    file_api:
+      base_url: http://localhost:4180/
+    key_api:
+      base_url: http://localhost:4280/
   access_token:
     expires_minutes: 5256000
     hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU

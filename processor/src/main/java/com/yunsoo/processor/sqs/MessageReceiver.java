@@ -2,12 +2,12 @@ package com.yunsoo.processor.sqs;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yunsoo.common.data.message.ProductKeyBatchCreateMessage;
 import com.yunsoo.common.data.message.ProductPackageMessage;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.processor.domain.LogDomain;
 import com.yunsoo.processor.sqs.handler.impl.ProductKeyBatchCreateHandler;
 import com.yunsoo.processor.sqs.handler.impl.ProductPackageHandler;
+import com.yunsoo.processor.sqs.message.KeyBatchCreationMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,14 +58,14 @@ public class MessageReceiver {
                 "queueName", resourceIdResolver.resolveToPhysicalResourceId(QUEUE_NAME_PROCESSOR)));
 
         switch (payloadType) {
-            case ProductKeyBatchCreateMessage.PAYLOAD_TYPE:
-                ProductKeyBatchCreateMessage pkbMsg = null;
+            case KeyBatchCreationMessage.PAYLOAD_TYPE:
+                KeyBatchCreationMessage pkbMsg = null;
                 try {
-                    pkbMsg = parseMessage(message, ProductKeyBatchCreateMessage.class);
+                    pkbMsg = parseMessage(message, KeyBatchCreationMessage.class);
                     productKeyBatchCreateHandler.process(pkbMsg);
                 } catch (Exception e) {
                     log.error("product_key_batch_create failed with exception " + StringFormatter.formatMap("message", pkbMsg), e);
-                    logDomain.logError(ProductKeyBatchCreateMessage.PAYLOAD_TYPE, e.getMessage(), pkbMsg != null ? pkbMsg.getProductKeyBatchId() : null, "product_key_batch_id");
+                    logDomain.logError(KeyBatchCreationMessage.PAYLOAD_TYPE, e.getMessage(), pkbMsg != null ? pkbMsg.getKeyBatchId() : null, "product_key_batch_id");
                     throw e;
                 }
                 break;

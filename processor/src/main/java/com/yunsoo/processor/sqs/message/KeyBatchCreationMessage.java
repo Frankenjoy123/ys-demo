@@ -1,16 +1,14 @@
-package com.yunsoo.common.data.message;
+package com.yunsoo.processor.sqs.message;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yunsoo.common.util.StringFormatter;
 
-import java.io.Serializable;
-
 /**
  * Created by:   Lijian
- * Created on:   2016-04-27
+ * Created on:   2016-08-28
  * Descriptions:
  */
-public class ProductKeyBatchCreateMessage implements Serializable {
+public class KeyBatchCreationMessage {
 
     public static final String PAYLOAD_TYPE = "key_batch_creation";
 

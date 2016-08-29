@@ -593,6 +593,19 @@ public class MarketingController {
         return toMktPrizeContactObject(entity);
     }
 
+    //get marketing prize contact by prize Id
+    @RequestMapping(value = "/drawPrize/contact/prize/{id}", method = RequestMethod.GET)
+    public MktPrizeContactObject getMktPrizeContactByPrizeId(@PathVariable(value = "id") String id) {
+        List<MktPrizeContactEntity> mktPrizeContactEntityList = mktPrizeContactRepository.findByMktPrizeId(id);
+        if ((mktPrizeContactEntityList != null) && (mktPrizeContactEntityList.size() > 0)) {
+            MktPrizeContactEntity mktPrizeContactEntity = mktPrizeContactEntityList.get(0);
+            return toMktPrizeContactObject(mktPrizeContactEntity);
+        } else {
+            return null;
+        }
+    }
+
+
 
     //create marketing prize contact, provide: API-Rabbit
     @RequestMapping(value = "/drawPrize/{id}/contact", method = RequestMethod.POST)
@@ -674,8 +687,6 @@ public class MarketingController {
         MktDrawPrizeEntity entity = entities.get(0);
         if (!entity.getDrawRecordId().equals(mktDrawPrizeObject.getDrawRecordId()))
             throw new NotFoundException("This draw prize has not been found");
-        if(mktDrawPrizeObject.getAccountType() != null)
-            entity.setAccountType(mktDrawPrizeObject.getAccountType());
         if(mktDrawPrizeObject.getPrizeAccount() != null)
             entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
         if(mktDrawPrizeObject.getPrizeAccountName() != null)
