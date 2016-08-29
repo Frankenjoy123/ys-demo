@@ -81,7 +81,7 @@ public class WebScanControllerTest {
                     result.add(Arrays.asList(StringUtils.commaDelimitedListToStringArray(line)).get(0));
                 }
             }
-            return result.subList(380, 390);
+            return result.subList(500, 600);
         } catch (NotFoundException | IOException ignored) {
         }
         return null;
@@ -116,7 +116,7 @@ public class WebScanControllerTest {
 
         Map<String, HashMap> map = new HashMap<>();
 
-        productKeys.stream().forEach(productKey -> {
+        productKeys.parallelStream().forEach(productKey -> {
             WebScanRequest request = new WebScanRequest();
             request.setUserId(Constants.Ids.ANONYMOUS_USER_ID);
             request.setAddress("hang zhou");
@@ -178,6 +178,7 @@ public class WebScanControllerTest {
              BufferedOutputStream bf = new BufferedOutputStream(fos)) {
 
             int index = 0;
+            stringBuilder.append("total: " + productKeys.size() + "\n");
             stringBuilder.append("  " + String.format("%-8s","device") + String.format("%-20s","ruleid")
             + String.format("%-6s", "count") + String.format("%-20s", "date")+ String.format("%-17s","comments")+ "\n");
 
