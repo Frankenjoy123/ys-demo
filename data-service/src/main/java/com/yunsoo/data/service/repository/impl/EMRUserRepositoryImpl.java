@@ -190,11 +190,11 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
 
         if (startDateTime != null) {
             sql = sql + " and ev.event_datetime >=:createdDateTimeStart";
-            parameters.put("createdDateTimeStart", startDateTime.toString("yyyy-MM-dd"));
+            parameters.put("createdDateTimeStart", startDateTime.toString("yyyy-MM-dd HH:mm:ss"));
         }
         if (endDateTime != null) {
             sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
-            parameters.put("createdDateTimeEnd", endDateTime.toString("yyyy-MM-dd"));
+            parameters.put("createdDateTimeEnd", endDateTime.toString("yyyy-MM-dd HH:mm:ss"));
         }
         sql = sql + " group by hourNum";
 
