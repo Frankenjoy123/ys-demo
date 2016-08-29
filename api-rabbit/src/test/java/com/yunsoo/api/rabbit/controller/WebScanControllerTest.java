@@ -74,7 +74,7 @@ public class WebScanControllerTest {
                     result.add(Arrays.asList(StringUtils.commaDelimitedListToStringArray(line)).get(0));
                 }
             }
-            return result.subList(62, 70);
+            return result.subList(72, 74);
         } catch (NotFoundException | IOException ignored) {
         }
         return null;
@@ -130,16 +130,15 @@ public class WebScanControllerTest {
 
             MktDrawRule rule = restClient.post("marketing/drawPrize/{id}/random", mktDraw, MktDrawRule.class, marketingId);
             String ruleId = (isAndroid? "Android" : "iOS") + "-" + rule.getId();
-            System.out.println("rule id: " + rule.getId() + " header: "+ (isAndroid? "Android" : "iOS"));
+//            System.out.println("rule id: " + rule.getId() + " header: "+ (isAndroid? "Android" : "iOS"));
 
             map.put(ruleId, map.getOrDefault(ruleId, 0) + 1);
         });
 
         StringBuilder stringBuilder = new StringBuilder();
-        Date date = new Date() ;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd HH-mm-ss") ;
+        String fileName = new SimpleDateFormat("MM-dd hh-mm-ss'.log'").format(new Date());
 
-        try (FileOutputStream fos = new FileOutputStream(dateFormat.format(date) + ".log");
+        try (FileOutputStream fos = new FileOutputStream(fileName);
              BufferedOutputStream bf = new BufferedOutputStream(fos)) {
             map.forEach((key, value) -> stringBuilder.append(key + ":" + value + "\n"));
             bf.write(stringBuilder.toString().getBytes("utf-8"));
