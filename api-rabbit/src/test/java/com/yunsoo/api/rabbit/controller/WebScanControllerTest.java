@@ -155,7 +155,6 @@ public class WebScanControllerTest {
                 dictionary.put("createtime", drawRuleIdDate);
 
                 Integer count = Integer.parseInt(dictionary.getOrDefault("count", "0")) + 1;
-                System.out.println("count is " + count);
                 dictionary.put("count", Integer.toString(count));
                 map.put(ruleId, dictionary);
 
@@ -191,7 +190,7 @@ public class WebScanControllerTest {
                 stringBuilder.append(theMap.get("comments") + " ");
                 stringBuilder.append(String.format("%-6s", theMap.get("count")));
                 stringBuilder.append(theMap.get("createtime") + " ");
-                stringBuilder.append(theMap.get("productKeyList") + " ");
+//                stringBuilder.append(theMap.get("productKeyList") + " ");
 
                 stringBuilder.append("\n");
             }
