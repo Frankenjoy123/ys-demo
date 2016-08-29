@@ -81,7 +81,7 @@ public class WebScanControllerTest {
                     result.add(Arrays.asList(StringUtils.commaDelimitedListToStringArray(line)).get(0));
                 }
             }
-            return result.subList(500, 600);
+            return result.subList(1130, 1140);
         } catch (NotFoundException | IOException ignored) {
         }
         return null;
@@ -113,6 +113,8 @@ public class WebScanControllerTest {
 
         List<String> productKeys = readProductKeyFile();
         List<String> prizedKeys = new ArrayList<>();
+        List<String> iOSList = new ArrayList<>();
+        List<String> androidList = new ArrayList<>();
 
         Map<String, HashMap> map = new HashMap<>();
 
@@ -145,19 +147,23 @@ public class WebScanControllerTest {
                 Date date = new Date();
                 String drawRuleIdDate = dateFormat.format(date);
 
-                HashMap<String, String> dictionary = (HashMap<String, String>) map.get(ruleId);
-                if (dictionary == null) {
-                    dictionary = new HashMap();
-                }
+                HashMap<String, String> dictionary = map.getOrDefault(ruleId, new HashMap<String, String>());
+
                 String keyList = dictionary.getOrDefault("productKeyList", "") + productKey + ", ";
                 dictionary.put("productKeyList", keyList);
 
                 dictionary.put("comments", String.format("%-14s", rule.getComments()));
-                dictionary.put("device", String.format("%-7s", (isAndroid ? "Android" : "iOS")));
+                dictionary.put("iOS", String.format("%-7s", (isAndroid ? "Android" : "iOS")));
                 dictionary.put("createtime", drawRuleIdDate);
+
+                String device = (isAndroid ? "Android" : "iOS") + "Count";
+
+                Integer deviceCount = Integer.parseInt(dictionary.getOrDefault(device, "0")) + 1;
+                dictionary.put(device, Integer.toString(deviceCount));
 
                 Integer count = Integer.parseInt(dictionary.getOrDefault("count", "0")) + 1;
                 dictionary.put("count", Integer.toString(count));
+
                 map.put(ruleId, dictionary);
 
             } catch (Exception e) {
@@ -179,17 +185,20 @@ public class WebScanControllerTest {
 
             int index = 0;
             stringBuilder.append("total: " + productKeys.size() + "\n");
-            stringBuilder.append("  " + String.format("%-8s","device") + String.format("%-20s","ruleid")
-            + String.format("%-6s", "count") + String.format("%-20s", "date")+ String.format("%-17s","comments")+ "\n");
+            stringBuilder.append("  " + String.format("%-20s","ruleid")
+            + String.format("%-6s", "count") + String.format("%-5s","iOS") + String.format("%-8s","Android") + String.format("%-20s", "date")+ String.format("%-17s","comments")+ "\n");
 
             for (Map.Entry<String, HashMap> entry : map.entrySet())
             {
                 index++;
                 stringBuilder.append(index + " ");
                 HashMap theMap = entry.getValue();
-                stringBuilder.append(theMap.get("device") + " ");
                 stringBuilder.append(entry.getKey() + "   ");
                 stringBuilder.append(String.format("%-4s", theMap.get("count")));
+                if (theMap.get("iOSCount") == null) theMap.put("iOSCount", "0");
+                if (theMap.get("AndroidCount") == null) theMap.put("AndroidCount", "0");
+                stringBuilder.append(String.format("%-5s", theMap.get("iOSCount")));
+                stringBuilder.append(String.format("%-8s", theMap.get("AndroidCount")));
                 stringBuilder.append(theMap.get("createtime") + " ");
                 stringBuilder.append(theMap.get("comments") + " ");
 //                stringBuilder.append(theMap.get("productKeyList") + " ");
