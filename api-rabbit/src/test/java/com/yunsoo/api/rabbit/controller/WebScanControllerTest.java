@@ -91,10 +91,10 @@ public class WebScanControllerTest {
 
     @Before
     public void initRestClient() {
-        startIndex = 1200;
-        endIndex = 1210;
+        startIndex = 1230;
+        endIndex = 1240;
         userAgent = iPhone;
-        yunsuId = "xxxxx";
+//        yunsuId = "xxxxx";
         if (restClient == null) {
             System.out.println("initializing restClient");
             restClient = new AsyncRestClient("http://localhost:" + port);
@@ -104,10 +104,14 @@ public class WebScanControllerTest {
     private Boolean setHeaders() {
         Random random = new Random();
         String agent;
-        if (userAgent == null || !userAgent.equals(iPhone) || !userAgent.equals(Android)) {
+        if (userAgent == null) {
             agent = random.nextBoolean() ? iPhone : Android;
         } else {
-            agent = userAgent;
+            if (userAgent.equals(iPhone) || userAgent.equals(Android)) {
+                agent = userAgent;
+            } else {
+                agent = random.nextBoolean() ? iPhone : Android;
+            }
         }
         restClient.setPreRequestCallback(request -> {
             HttpHeaders httpHeaders = request.getHeaders();
