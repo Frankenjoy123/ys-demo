@@ -19,10 +19,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.StringUtils;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -71,7 +74,7 @@ public class WebScanControllerTest {
                     result.add(Arrays.asList(StringUtils.commaDelimitedListToStringArray(line)).get(0));
                 }
             }
-            return result.subList(38, 42);
+            return result.subList(50, 54);
         } catch (NotFoundException | IOException ignored) {
         }
         return null;
@@ -142,8 +145,10 @@ public class WebScanControllerTest {
         });
 
         StringBuilder stringBuilder = new StringBuilder();
+        Date date = new Date() ;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd HH-mm-ss") ;
 
-        try (FileOutputStream fos = new FileOutputStream("drawResult");
+        try (FileOutputStream fos = new FileOutputStream(dateFormat.format(date) + ".log");
              BufferedOutputStream bf = new BufferedOutputStream(fos)) {
             map.forEach((key, value) -> stringBuilder.append(key + ":" + value + "\n"));
             bf.write(stringBuilder.toString().getBytes("utf-8"));
@@ -152,6 +157,8 @@ public class WebScanControllerTest {
             System.out.println("save drawResult failed at" + e.getLocalizedMessage());
 
         }
+        System.out.println("result is: \n" + stringBuilder.toString());
+
 
     }
 
