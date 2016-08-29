@@ -2,11 +2,15 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.Application;
 import com.yunsoo.api.rabbit.Constants;
-import com.yunsoo.api.rabbit.dto.*;
+import com.yunsoo.api.rabbit.dto.MktDraw;
+import com.yunsoo.api.rabbit.dto.MktDrawRule;
+import com.yunsoo.api.rabbit.dto.WebScanRequest;
+import com.yunsoo.api.rabbit.dto.WebScanResponse;
 import com.yunsoo.api.rabbit.file.service.FileService;
 import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.web.client.AsyncRestClient;
 import com.yunsoo.common.web.client.ResourceInputStream;
+import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.StringUtils;
 
@@ -25,6 +30,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -74,7 +80,7 @@ public class WebScanControllerTest {
                     result.add(Arrays.asList(StringUtils.commaDelimitedListToStringArray(line)).get(0));
                 }
             }
-            return result.subList(72, 74);
+            return result.subList(125, 135);
         } catch (NotFoundException | IOException ignored) {
         }
         return null;
@@ -100,11 +106,14 @@ public class WebScanControllerTest {
         return agent.equals(Android);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testPostKeyScan() throws Exception {
 
         List<String> productKeys = readProductKeyFile();
-        Map<String, Integer> map = new HashMap<>();
+        List<String> prizedKeys = new ArrayList<>();
+
+        Map<String, HashMap> map = new HashMap<>();
 
         productKeys.stream().forEach(productKey -> {
             WebScanRequest request = new WebScanRequest();
@@ -127,12 +136,41 @@ public class WebScanControllerTest {
             mktDraw.setScanRecordId(scanRecordId);
             mktDraw.setMarketingId(marketingId);
 
+            try {
+                MktDrawRule rule = restClient.post("marketing/drawPrize/{id}/random", mktDraw, MktDrawRule.class, marketingId);
+                String ruleId = rule.getId();
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                Date date = new Date();
+                String drawRuleIdDate = dateFormat.format(date);
 
-            MktDrawRule rule = restClient.post("marketing/drawPrize/{id}/random", mktDraw, MktDrawRule.class, marketingId);
-            String ruleId = (isAndroid? "Android" : "iOS") + "-" + rule.getId();
-//            System.out.println("rule id: " + rule.getId() + " header: "+ (isAndroid? "Android" : "iOS"));
+                HashMap<String, String> dictionary = (HashMap<String, String>)map.get(ruleId);
+                if (dictionary == null) {
+                    dictionary = new HashMap();
+                }
+                String keyList = dictionary.getOrDefault("productKeyList", "") + productKey + ", ";
+                dictionary.put("productKeyList", keyList);
 
-            map.put(ruleId, map.getOrDefault(ruleId, 0) + 1);
+                dictionary.put("comments", String.format("%-14s", rule.getComments()));
+                dictionary.put("device",String.format("%-7s",(isAndroid? "Android" : "iOS")));
+                dictionary.put("createtime", drawRuleIdDate);
+
+                Integer count = Integer.parseInt(dictionary.getOrDefault("count", "0")) + 1;
+                dictionary.put("count", Integer.toString(count));
+                map.put(ruleId, dictionary);
+
+            } catch (Exception e) {
+                if (e instanceof ConflictException) {
+                    if (((ConflictException) e).getHttpStatus().equals(HttpStatus.CONFLICT)){
+                        prizedKeys.add(productKey);
+//                        System.out.println("key already prized: "+productKey);
+                    }
+                } else if (e instanceof NullPointerException) {
+                    System.out.println("null pointer exception");
+                } else {
+                    System.out.println("exception");
+                }
+
+            }
         });
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -140,7 +178,29 @@ public class WebScanControllerTest {
 
         try (FileOutputStream fos = new FileOutputStream(fileName);
              BufferedOutputStream bf = new BufferedOutputStream(fos)) {
-            map.forEach((key, value) -> stringBuilder.append(key + ":" + value + "\n"));
+
+            int index = 0;
+
+            for (Map.Entry<String, HashMap> entry : map.entrySet())
+            {
+                index++;
+                stringBuilder.append(index + " ");
+                HashMap theMap = entry.getValue();
+                stringBuilder.append(theMap.get("device") + " ");
+                stringBuilder.append(entry.getKey() + " ");
+                stringBuilder.append(theMap.get("comments") + " ");
+                stringBuilder.append(theMap.get("count") + " ");
+                stringBuilder.append(theMap.get("createtime") + " ");
+                stringBuilder.append(theMap.get("productKeyList") + " ");
+
+                stringBuilder.append("\n");
+            }
+
+
+            if (prizedKeys.size() > 0) {
+                stringBuilder.append("prizedKeys :\n" + prizedKeys);
+            }
+
             bf.write(stringBuilder.toString().getBytes("utf-8"));
             bf.flush();
         } catch (Exception e) {
