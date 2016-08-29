@@ -80,7 +80,7 @@ public class WebScanControllerTest {
                     result.add(Arrays.asList(StringUtils.commaDelimitedListToStringArray(line)).get(0));
                 }
             }
-            return result.subList(125, 135);
+            return result.subList(147, 149);
         } catch (NotFoundException | IOException ignored) {
         }
         return null;
@@ -155,7 +155,7 @@ public class WebScanControllerTest {
                 dictionary.put("createtime", drawRuleIdDate);
 
                 Integer count = Integer.parseInt(dictionary.getOrDefault("count", "0")) + 1;
-                dictionary.put("count", Integer.toString(count));
+                dictionary.put("count", String.format("%-5s", Integer.toString(count)));
                 map.put(ruleId, dictionary);
 
             } catch (Exception e) {
@@ -180,6 +180,8 @@ public class WebScanControllerTest {
              BufferedOutputStream bf = new BufferedOutputStream(fos)) {
 
             int index = 0;
+            stringBuilder.append("  " + String.format("%-8s","device") + String.format("%-20s","ruleid") + String.format("%-17s","comments")
+            + String.format("%-8s", "count") + String.format("%-20s", "date") + "productkeys" + "\n");
 
             for (Map.Entry<String, HashMap> entry : map.entrySet())
             {
