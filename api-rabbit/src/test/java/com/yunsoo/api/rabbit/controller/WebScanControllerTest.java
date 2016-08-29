@@ -178,7 +178,7 @@ public class WebScanControllerTest {
 
             int index = 0;
             stringBuilder.append("  " + String.format("%-8s","device") + String.format("%-20s","ruleid") + String.format("%-17s","comments")
-            + String.format("%-8s", "count") + String.format("%-20s", "date") + "productkeys" + "\n");
+            + String.format("%-8s", "count") + String.format("%-20s", "date")+ "\n");
 
             for (Map.Entry<String, HashMap> entry : map.entrySet())
             {
