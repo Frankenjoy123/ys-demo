@@ -86,13 +86,15 @@ public class RestClient {
     }
 
     public Health checkHealth() {
-        return checkHealth(null);
+        return checkHealth(null, false);
     }
 
-    public Health checkHealth(List<String> path) {
+    public Health checkHealth(List<String> path, boolean debug) {
         try {
-            String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK).append("path", path).build();
-            return get("health" + query, Health.class);
+            QueryStringBuilder builder = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK);
+            if (path != null && path.size() > 0) builder.append("path", path);
+            if (debug) builder.append("debug", true);
+            return get("health" + builder.build(), Health.class);
         } catch (Exception e) {
             return new Health(Health.Status.DOWN).withDetail("exception", e.getMessage());
         }

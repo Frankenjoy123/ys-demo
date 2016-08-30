@@ -88,13 +88,16 @@ public final class Health {
         return this;
     }
 
-    public Health checkClient(RestClient client, List<String> path) {
+    public Health checkClient(RestClient client, List<String> path, boolean debug) {
         if (client == null) {
             return this;
         }
         long startTime = DateTime.now().getMillis();
-        Health clientHealth = client.checkHealth(path);
+        Health clientHealth = client.checkHealth(path, debug);
         clientHealth.setTime(DateTime.now().getMillis() - startTime);
+        if (debug) {
+            clientHealth.withDetail("base_url", client.getBaseUrl());
+        }
         String name = StringUtils.isEmpty(clientHealth.getName()) ? client.getClass().getSimpleName() : clientHealth.getName();
         return this
                 .mergeStatus(clientHealth.getStatus())
