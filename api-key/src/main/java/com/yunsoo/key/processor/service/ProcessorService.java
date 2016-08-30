@@ -17,10 +17,9 @@ public class ProcessorService {
     private ProcessorClient processorClient;
 
 
-    public void putKeyBatchCreateMessageToQueue(String keyBatchId, String productStatusCode) {
+    public void putKeyBatchCreateMessageToQueue(String keyBatchId) {
         KeyBatchCreationMessage message = new KeyBatchCreationMessage();
         message.setKeyBatchId(keyBatchId);
-        message.setProductStatusCode(productStatusCode);
         processorClient.put("sqs/message/{payLoad}", message, KeyBatchCreationMessage.PAYLOAD_TYPE);
     }
 

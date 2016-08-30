@@ -16,9 +16,6 @@ public class KeyBatchCreationMessage implements Serializable {
     @JsonProperty("key_batch_id")
     private String keyBatchId;
 
-    @JsonProperty("product_status_code")
-    private String productStatusCode;
-
 
     public String getKeyBatchId() {
         return keyBatchId;
@@ -26,14 +23,6 @@ public class KeyBatchCreationMessage implements Serializable {
 
     public void setKeyBatchId(String keyBatchId) {
         this.keyBatchId = keyBatchId;
-    }
-
-    public String getProductStatusCode() {
-        return productStatusCode;
-    }
-
-    public void setProductStatusCode(String productStatusCode) {
-        this.productStatusCode = productStatusCode;
     }
 
 }

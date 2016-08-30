@@ -37,6 +37,9 @@ public class KeyBatchEntity {
     @Column(name = "product_key_type_codes")
     private String keyTypeCodes;
 
+    @Column(name = "product_status_code")
+    private String productStatusCode;
+
     @Column(name = "product_base_id")
     private String productBaseId;
 
@@ -103,6 +106,14 @@ public class KeyBatchEntity {
 
     public void setKeyTypeCodes(String keyTypeCodes) {
         this.keyTypeCodes = keyTypeCodes;
+    }
+
+    public String getProductStatusCode() {
+        return productStatusCode;
+    }
+
+    public void setProductStatusCode(String productStatusCode) {
+        this.productStatusCode = productStatusCode;
     }
 
     public String getProductBaseId() {
