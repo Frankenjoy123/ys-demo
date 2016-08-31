@@ -1,6 +1,5 @@
 package com.yunsoo.api.auth.service;
 
-import com.yunsoo.api.auth.dto.Application;
 import com.yunsoo.api.client.AuthApiClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
@@ -22,14 +21,14 @@ public class AuthApplicationService {
     @Autowired
     private AuthApiClient authApiClient;
 
-    public Application getById(String appId) {
+    public String getNameById(String appId) {
         if (StringUtils.isEmpty(appId)) {
             return null;
         }
         try {
-            return authApiClient.get("application/{id}", Application.class, appId);
+            return authApiClient.get("application/{id}/name", String.class, appId);
         } catch (NotFoundException ignored) {
-            log.warn("application not found by id: " + appId);
+            log.warn("application name not found by id: " + appId);
             return null;
         }
     }
