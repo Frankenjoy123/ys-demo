@@ -2,9 +2,12 @@ package com.yunsoo.auth.api.controller;
 
 import com.yunsoo.auth.api.util.AuthUtils;
 import com.yunsoo.common.web.exception.UnauthorizedException;
+import com.yunsoo.common.web.health.AbstractHealthController;
 import com.yunsoo.common.web.health.Health;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -13,16 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/health")
-public class HealthController {
+public class HealthController extends AbstractHealthController {
 
-    @RequestMapping(value = "")
-    public Health health() {
-        Health health = new Health(Health.Status.UP);
+    @Override
+    public void expandHealth(Health health, List<String> path, boolean debug) {
         try {
             health.withDetail("authAccount", AuthUtils.getCurrentAccount());
         } catch (UnauthorizedException ignored) {
         }
-        return health;
     }
 
 }

@@ -3,6 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.aspect.OperationLog;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
+import com.yunsoo.api.file.service.FileService;
 import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
@@ -62,7 +63,7 @@ public class ProductKeyBatchController {
     private ProductKeyDomain productKeyDomain;
 
     @Autowired
-    private FileDomain fileDomain;
+    private FileService fileService;
 
     @Autowired
     private OrganizationConfigDomain orgConfigDomain;
@@ -269,7 +270,7 @@ public class ProductKeyBatchController {
         AuthUtils.checkPermission(batch.getOrgId(), "product_key_batch", "read");
 
         String path = String.format("organization/%s/product_key_batch/%s/details.json", batch.getOrgId(), id);
-        ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+        ResourceInputStream resourceInputStream = fileService.getFile(path);
         ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON);
         if (resourceInputStream == null) {
             return bodyBuilder.body(null);
@@ -291,7 +292,7 @@ public class ProductKeyBatchController {
 
         String path = String.format("organization/%s/product_key_batch/%s/details.json", orgId, id);
         byte[] bytes = details.getBytes(StandardCharsets.UTF_8);
-        fileDomain.putFile(path, new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE));
+        fileService.putFile(path, new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE));
     }
 
     @RequestMapping(value = "/marketing/{id}", method = RequestMethod.GET)

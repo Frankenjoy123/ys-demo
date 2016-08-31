@@ -8,6 +8,7 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,15 @@ public class ApplicationController {
             throw new NotFoundException("application not found by [id:" + appId + "]");
         }
         return application;
+    }
+
+    @RequestMapping(value = "{appId}/name", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public String getNameById(@PathVariable("appId") String appId) {
+        Application application = applicationService.getById(appId);
+        if (application == null) {
+            throw new NotFoundException("application not found by [id:" + appId + "]");
+        }
+        return application.getName();
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)

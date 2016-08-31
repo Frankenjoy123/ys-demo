@@ -34,7 +34,7 @@ public class AnalysisController {
     @Autowired
     private ScanRecordAnalysisRepository scanRecordAnalysisRepository;
 
-    // S 新增营销方案的repository
+    // region 新增营销方案的repository
     @Autowired
     private MarketUserAreaAnalysisRepository marketUserAreaAnalysisRepository;
     @Autowired
@@ -48,11 +48,15 @@ public class AnalysisController {
 
     @Autowired
     private LuTagRepository luTagRepository;
-    // E 营销方案
+    // endregion
 
     //S 消费者漏斗分析
     @Autowired
     private EMREventRepository eventRepository;
+
+    // 用户属性分析
+    @Autowired
+    private EMRUserRepository emrUserRepository;
 
 
     @Autowired
@@ -96,7 +100,7 @@ public class AnalysisController {
         DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
         DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
-        List<ScanRecordLocationAnalysisEntity> list = eventRepository.consumerLocationCount(orgId, productBaseId,batchId, startDateTime, endDateTime);
+        List<ScanRecordLocationAnalysisEntity> list = eventRepository.consumerLocationCount(orgId, productBaseId, batchId, startDateTime, endDateTime);
         return list.stream().map(ScanRecordLocationAnalysisEntity::toDataObject).collect(Collectors.toList());
     }
 
@@ -504,6 +508,25 @@ public class AnalysisController {
 
         List<EMREventLocationReportObject> emrEventLocationReportObjectList = new ArrayList<>();
 
+        // region ########加载all的数据，用来避免因为有用户同时跨省，跨市导致的数据不一致的问题
+        List<int[]> bypassData = eventRepository.eventLocationCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
+        EMREventLocationReportObject bypassLocationObject = new EMREventLocationReportObject();
+        bypassLocationObject.setProductBaseId(productBaseId);
+        bypassLocationObject.setProvince(EMREventLocationReportObject.ALL_PROVINCE);
+        bypassLocationObject.setCity(EMREventLocationReportObject.ALL_CITY);
+        EMREventCountObject bypassEventCountObject = new EMREventCountObject();
+        bypassEventCountObject.setScanEventCount(bypassData.get(0)[0]);
+        bypassEventCountObject.setScanUserCount(bypassData.get(0)[1]);
+        bypassEventCountObject.setShareEventCount(bypassData.get(1)[0]);
+        bypassEventCountObject.setShareUserCount(bypassData.get(1)[1]);
+        bypassEventCountObject.setStoreUrlEventCount(bypassData.get(2)[0]);
+        bypassEventCountObject.setStoreUrlUserCount(bypassData.get(2)[1]);
+        bypassEventCountObject.setCommentEventCount(bypassData.get(3)[0]);
+        bypassEventCountObject.setCommentUserCount(bypassData.get(3)[1]);
+        bypassLocationObject.setEvent_count(bypassEventCountObject);
+        emrEventLocationReportObjectList.add(bypassLocationObject);
+        // endregion
+
         List<String[]> scanList = eventRepository.scanLocationCount(orgId, productBaseId, province, city, startDateTime, endDateTime);
         if ((scanList != null) && (scanList.size() > 0)) {
             for (String[] temp : scanList) {
@@ -596,6 +619,49 @@ public class AnalysisController {
             return provinceItem;
         }).collect(Collectors.toList());
     }
+
+
+    // region 消费者属性分析
+    @RequestMapping(value = "/user_profile/area", method = RequestMethod.GET)
+    public List<UserProfileTagCountObject> queryUserProfileArea(@RequestParam(value = "org_id") String orgId) {
+        List<UserProfileTagCountEntity> list = emrUserRepository.queryUserProfileAreaReport(orgId);
+        return list.stream().map(UserProfileTagCountEntity::toDataObject).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/user_profile/scan_time_range", method = RequestMethod.GET)
+    public List<UserProfileTagCountObject> queryUserProfileTimeRange(@RequestParam(value = "org_id") String orgId,
+                                                                @RequestParam(value = "start_time")
+                                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                                @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime
+
+    ) {
+        DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+
+        List<UserProfileTagCountEntity> list = emrUserRepository.queryUserProfileTimeUsage(orgId, startDateTime, endDateTime);
+        return list.stream().map(UserProfileTagCountEntity::toDataObject).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/user_profile/device", method = RequestMethod.GET)
+    public List<UserProfileTagCountObject> queryUserProfileDevice(@RequestParam(value = "org_id") String orgId) {
+
+        List<UserProfileTagCountEntity> list = emrUserRepository.queryUserProfileDeviceUsage(orgId);
+        return list.stream().map(UserProfileTagCountEntity::toDataObject).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/user_profile/gender", method = RequestMethod.GET)
+    public List<UserProfileTagCountObject> queryUserProfileGender(@RequestParam(value = "org_id") String orgId) {
+        List<UserProfileTagCountEntity> list = emrUserRepository.queryUserProfileGenderUsage(orgId);
+        return list.stream().map(UserProfileTagCountEntity::toDataObject).collect(Collectors.toList());
+    }
+
+
+    @RequestMapping(value = "/user_profile/location", method = RequestMethod.GET)
+    public List<UserProfileLocationCountObject> queryUserProfileLocation(@RequestParam(value = "org_id") String orgId) {
+        List<UserProfileLocationCountEntity> list = emrUserRepository.queryUserProfileLocationReport(orgId);
+        return list.stream().map(UserProfileLocationCountEntity::toDataObject).collect(Collectors.toList());
+    }
+    // endregion
 
 
 }

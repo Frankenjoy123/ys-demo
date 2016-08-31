@@ -39,19 +39,6 @@ public class UserReportDomain {
         return dataApiClient.get("userReport/{id}", UserReportObject.class, id);
     }
 
-    public List<String> getReportImageNames(String userId, String reportId) {
-        return dataApiClient.get("file/s3/list?path=user/{uerId}/report/{reportId}", new ParameterizedTypeReference<List<String>>() {
-        }, userId, reportId);
-    }
-
-    public ResourceInputStream getReportImage(String userId, String reportId, String imageName) {
-        try {
-            return dataApiClient.getResourceInputStream("file/s3?path=user/{userId}/report/{reportId}/{imageName}", userId, reportId, imageName);
-        } catch (NotFoundException ex) {
-            return null;
-        }
-    }
-
     @Cacheable(key = "T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).USER.toString(), #id )")
     public UserObject getUserById(String id) {
         try {

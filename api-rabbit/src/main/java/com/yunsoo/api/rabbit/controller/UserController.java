@@ -4,6 +4,7 @@ import com.yunsoo.api.rabbit.domain.UserActivityDomain;
 import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.dto.User;
 import com.yunsoo.api.rabbit.dto.UserConfig;
+import com.yunsoo.api.rabbit.file.service.ImageService;
 import com.yunsoo.api.rabbit.object.TUser;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.common.data.object.UserConfigObject;
@@ -39,6 +40,8 @@ public class UserController {
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
 
+    @Autowired
+    private ImageService imageService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public User getUserById(@PathVariable(value = "id") String userId) {
@@ -94,16 +97,8 @@ public class UserController {
     public ResponseEntity<?> getUserGravatar(@PathVariable(value = "id") String userId,
                                              @RequestParam(value = "image_name", required = false) String imageName) {
         userId = fixUserId(userId);
-        ResourceInputStream resourceInputStream = userDomain.getUserGravatar(userId, imageName);
-        if (resourceInputStream == null) {
-            throw new NotFoundException("gravatar not found");
-        }
-        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
-        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
-        if (resourceInputStream.getContentLength() > 0) {
-            builder.contentLength(resourceInputStream.getContentLength());
-        }
-        return builder.body(new InputStreamResource(resourceInputStream));
+        String path = String.format("user/%s/gravatar/%s", userId, imageName);
+        return imageService.getImage(path);
     }
 
     @RequestMapping(value = "{id}/gravatar", method = RequestMethod.PUT)
@@ -112,6 +107,7 @@ public class UserController {
                                  @RequestBody byte[] imageDataBytes) {
         if (imageDataBytes != null && imageDataBytes.length > 0) {
             userId = fixUserId(userId);
+
             userDomain.saveUserGravatar(userId, imageDataBytes);
         }
     }

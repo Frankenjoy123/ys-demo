@@ -59,11 +59,19 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/drawPrize/contact/{id}", MktPrizeContactObject.class, id);
     }
 
+    public MktPrizeContactObject getMktPrizeContactByPrizeId(String prizeId) {
+        return dataApiClient.get("marketing/drawPrize/contact/prize/{id}", MktPrizeContactObject.class, prizeId);
+    }
 
 
     public MktConsumerRightObject getConsumerRightById(String id) {
         return dataApiClient.get("marketing/consumer/{id}", MktConsumerRightObject.class, id);
     }
+
+    public MktConsumerRightObject getConsumerRightByProductKey(String productKey) {
+        return dataApiClient.get("marketing/consumer/key/{key}", MktConsumerRightObject.class, productKey);
+    }
+
 
     public MktDrawRuleObject getDrawRuleById(String id){
         return dataApiClient.get("marketing/Rule/{id}", MktDrawRuleObject.class, id);
@@ -118,7 +126,7 @@ public class MarketingDomain {
 
             String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                     .append("record_ids", ids)
-                    .append("status_code_in", Arrays.asList(LookupCodes.MktDrawPrizeStatus.SUBMIT, LookupCodes.MktDrawPrizeStatus.PAID))
+                    .append("status_code_in", Arrays.asList(LookupCodes.MktDrawPrizeStatus.SUBMIT, LookupCodes.MktDrawPrizeStatus.PAID, LookupCodes.MktDrawPrizeStatus.CREATED))
                     .build();
 
             return dataApiClient.get("marketing/drawPrize/{id}/top" + query, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
@@ -129,13 +137,36 @@ public class MarketingDomain {
             }, marketingId);
     }
 
+    public MktConsumerRightRedeemCodeObject getMktConsumerRightRedeemCodeByProductKey(String productKey) {
+        return dataApiClient.get("marketing/consumer/redeemcode/{key}", MktConsumerRightRedeemCodeObject.class, productKey);
+    }
 
-    public MktDrawRuleObject getMktRandomPrize(String marketId) {
+    public MktConsumerRightRedeemCodeObject getRandomMktConsumerRightRedeemCodeByProductKey(String productKey, String drawRuleId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("draw_rule_id", drawRuleId)
+                .build();
+
+        return dataApiClient.get("marketing/consumer/redeemcode/generate/{key}" + query, MktConsumerRightRedeemCodeObject.class, productKey);
+    }
+
+    public List<String> getPrizedRuleListByUser(String marketingId, String userId, String ysId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("marketing_id", marketingId)
+                .append("user_id", userId)
+                .append("ys_id", ysId)
+                .build();
+
+        return dataApiClient.get("marketing/drawprize/rulelist" + query, new ParameterizedTypeReference<List<String>>() {
+        });
+    }
+
+
+    public MktDrawRuleObject getMktRandomPrize(String marketId, String scanRecordId) {
         MarketingObject obj = dataApiClient.get("marketing/{id}", MarketingObject.class, marketId);
         if (obj.getBalance() <= 0)
             return null;
 
-        if (!LookupCodes.MktType.ENVELOPE.equals(obj.getTypeCode())) {
+        if (LookupCodes.MktType.DRAW.equals(obj.getTypeCode()) || LookupCodes.MktType.SHAKE.equals(obj.getTypeCode()) || LookupCodes.MktType.REDPACKETS.equals(obj.getTypeCode())) {
             List<MktDrawRuleObject> ruleList = getRuleList(marketId);
             List<MktDrawRuleObject> newRuleList = new ArrayList<>();
 
@@ -169,7 +200,8 @@ public class MarketingDomain {
                 }
             }
             return null;
-        } else {
+        }
+        if (LookupCodes.MktType.ENVELOPE.equals(obj.getTypeCode())) {
             List<MktDrawRuleObject> envelopeRuleList = getRuleList(marketId);
             if (envelopeRuleList == null || envelopeRuleList.size() != 2 || envelopeRuleList.get(0).getAvailableQuantity() < 1) {
                 return null;
@@ -198,6 +230,73 @@ public class MarketingDomain {
                 return null;
             }
         }
+        if (LookupCodes.MktType.DRAW01.equals(obj.getTypeCode())) {
+            List<MktDrawRuleObject> ruleList = getRuleList(marketId);
+            List<MktDrawRuleObject> newRuleList = new ArrayList<>();
+            List<String> prizedRuleList = new ArrayList<>();
+
+            String userDeviceType = LookupCodes.UserDeviceType.NONANDROID;
+
+            // check if the prize only for android user device type
+            if (scanRecordId != null) {
+                UserScanRecordObject userScanRecordObject = dataApiClient.get("userScanRecord/{id}", UserScanRecordObject.class, scanRecordId);
+                if (userScanRecordObject != null) {
+                    String userAgent = userScanRecordObject.getUserAgent();
+                    if (userAgent != null) {
+                        if (userAgent.contains(LookupCodes.UserDeviceType.ANDROID)) {
+                            userDeviceType = LookupCodes.UserDeviceType.ANDROID;
+                        }
+                    }
+                    prizedRuleList = getPrizedRuleListByUser(marketId, userScanRecordObject.getUserId(), userScanRecordObject.getYsid());
+                }
+            }
+
+            Long totalWeight = new Long(0);
+
+            // check if the prized already get by current user
+            for (MktDrawRuleObject object : ruleList) {
+                Boolean isRuleIdPrized = false;
+                if (prizedRuleList.size() > 0) {
+                    if (prizedRuleList.contains(object.getId())) {
+                        isRuleIdPrized = true;
+                    }
+                }
+                if (object.getAppliedEnv() == null) {
+                    if (!object.getIsEqual() || !isRuleIdPrized) {
+                        newRuleList.add(object);
+                        if (object.getWeight() != null) {
+                            totalWeight += object.getWeight();
+                        }
+                    }
+                } else if (object.getAppliedEnv().equals(LookupCodes.UserDeviceType.ANDROID)) {
+                    if (userDeviceType.equals(LookupCodes.UserDeviceType.ANDROID)) {
+                        if (!object.getIsEqual() || !isRuleIdPrized) {
+                            newRuleList.add(object);
+                            if (object.getWeight() != null) {
+                                totalWeight += object.getWeight();
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            double prizeIndex = Math.floor(Math.random() * totalWeight);
+
+            Double indexBefore = new Double(0);
+            Double indexAfter = new Double(0);
+
+            for (int i = 0; i < newRuleList.size(); i++) {
+                indexAfter += newRuleList.get(i).getWeight();
+                if ((prizeIndex >= indexBefore) && (prizeIndex < indexAfter)) {
+                    return newRuleList.get(i);
+                } else {
+                    indexBefore = indexAfter;
+                }
+            }
+            return null;
+        }
+        return null;
     }
 
     public boolean createMobileOrder(String prizeId) {

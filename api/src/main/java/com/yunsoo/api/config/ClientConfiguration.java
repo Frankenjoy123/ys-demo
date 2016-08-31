@@ -1,9 +1,6 @@
 package com.yunsoo.api.config;
 
-import com.yunsoo.api.client.AuthApiClient;
-import com.yunsoo.api.client.DataApiClient;
-import com.yunsoo.api.client.ProcessorClient;
-import com.yunsoo.api.client.WeChatApiClient;
+import com.yunsoo.api.client.*;
 import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.security.authentication.AccountAuthentication;
 import com.yunsoo.api.util.AuthUtils;
@@ -33,6 +30,12 @@ public class ClientConfiguration {
 
     @Value("${yunsoo.client.processor.base_url}")
     private String processorBaseUrl;
+
+    @Value("${yunsoo.client.file_api.base_url}")
+    private String fileApiBaseUrl;
+
+    @Value("${yunsoo.client.key_api.base_url}")
+    private String keyApiBaseUrl;
 
     @Bean
     public AuthApiClient authApiClient() {
@@ -68,5 +71,13 @@ public class ClientConfiguration {
         return new WeChatApiClient("https://api.weixin.qq.com/cgi-bin/");
     }
 
+    @Bean
+    public FileApiClient fileApiClient() {
+        return new FileApiClient(fileApiBaseUrl);
+    }
 
+    @Bean
+    public KeyApiClient keyApiClient() {
+        return new KeyApiClient(keyApiBaseUrl);
+    }
 }

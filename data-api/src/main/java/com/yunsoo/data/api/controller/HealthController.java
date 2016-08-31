@@ -1,6 +1,6 @@
 package com.yunsoo.data.api.controller;
 
-import com.yunsoo.common.web.health.Health;
+import com.yunsoo.common.web.health.AbstractHealthController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,11 +11,5 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/health")
-public class HealthController {
-
-    @RequestMapping(value = "")
-    public Health health() {
-        return new Health(Health.Status.UP);
-    }
-
+public class HealthController extends AbstractHealthController {
 }

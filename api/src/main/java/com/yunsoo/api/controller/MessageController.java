@@ -2,23 +2,24 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.MessageDomain;
 import com.yunsoo.api.dto.Message;
-import com.yunsoo.api.dto.MessageBodyImage;
 import com.yunsoo.api.dto.MessageImageRequest;
+import com.yunsoo.api.file.dto.ImageResponse;
+import com.yunsoo.api.file.service.ImageService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.MessageObject;
+import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.Page;
-import com.yunsoo.common.web.client.ResourceInputStream;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -45,6 +47,10 @@ public class MessageController {
     @Autowired
     private MessageDomain messageDomain;
 
+    @Autowired
+    private ImageService imageService;
+
+    private final String COVER_IMAGE_NAME = "image-cover";
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'message:read')")
@@ -156,38 +162,27 @@ public class MessageController {
             @PathVariable(value = "image_name") String imageName) {
         MessageObject messageObject = findMessageById(id);
         String orgId = messageObject.getOrgId();
-
-        ResourceInputStream resourceInputStream = messageDomain.getMessageImage(orgId, id, imageName);
-        if (resourceInputStream == null) {
-            throw new NotFoundException("image not found");
-        }
-        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
-        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
-        if (resourceInputStream.getContentLength() > 0) {
-            builder.contentLength(resourceInputStream.getContentLength());
-        }
-        return builder.body(new InputStreamResource(resourceInputStream));
+        String path = String.format("organization/%s/message/%s/%s", orgId, id, imageName);
+        return imageService.getImage(path);
     }
 
     @RequestMapping(value = "{id}/coverimage", method = RequestMethod.PUT)
     public void putMessageCoverImage(@PathVariable(value = "id") String id,
-                                     @RequestBody @Valid MessageImageRequest messageImageRequest) {
+                                     @RequestBody @Valid MessageImageRequest messageImageRequest) throws IOException {
         MessageObject messageObject = findMessageById(id);
         String orgId = messageObject.getOrgId();
-        messageDomain.saveMessageCoverImage(messageImageRequest, orgId, id);
-        log.info(String.format("message cover image saved [orgId: %s, messageId:%s]", orgId, id));
+        String path = String.format("organization/%s/message/%s/%s", orgId, id, COVER_IMAGE_NAME);
+
+        saveImage(messageImageRequest, path);
     }
 
     @RequestMapping(value = "{id}/bodyimage", method = RequestMethod.PUT)
-    public MessageBodyImage putMessageBodyImage(@PathVariable(value = "id") String id,
-                                                @RequestBody @Valid MessageImageRequest messageImageRequest) {
+    public ImageResponse putMessageBodyImage(@PathVariable(value = "id") String id,
+                                                @RequestBody @Valid MessageImageRequest messageImageRequest) throws IOException {
         MessageObject messageObject = findMessageById(id);
-        MessageBodyImage messageBodyImage = new MessageBodyImage();
         String orgId = messageObject.getOrgId();
-        String imageName = messageDomain.saveMessageBodyImage(messageImageRequest, orgId, id);
-        messageBodyImage.setImageName(imageName);
-        log.info(String.format("message body image saved [orgId: %s, messageId:%s, name:%s]", orgId, id, imageName));
-        return messageBodyImage;
+        String path = String.format("organization/%s/message/%s/%s", orgId, id, RandomUtils.generateString(10));
+        return saveImage(messageImageRequest, path);
     }
 
     private MessageObject findMessageById(String id) {
@@ -196,6 +191,21 @@ public class MessageController {
             throw new NotFoundException("message not found");
         }
         return messageObject;
+    }
+
+    private ImageResponse saveImage(MessageImageRequest messageImageRequest, String path) throws IOException {
+        String imageData = messageImageRequest.getData();
+        //data:image/png;base64,
+        if (((imageData == null) || ("".equals(imageData)))) {
+            throw new BadRequestException("upload cover image failed");
+        }
+        int splitIndex = imageData.indexOf(",");
+        String metaHeader = imageData.substring(0, splitIndex);
+        String contentType = metaHeader.split(";")[0].split(":")[1];
+        String imageDataBase64 = imageData.substring(splitIndex + 1);
+        byte[] imageDataBytes = Base64.decodeBase64(imageDataBase64);
+
+        return imageService.saveImage(imageDataBytes, contentType, path);
     }
 
 }

@@ -42,6 +42,15 @@ public class MktDrawRule {
     @JsonProperty("comments")
     private String comments;
 
+    @JsonProperty("applied_env")
+    private String appliedEnv;
+
+    @JsonProperty("weight")
+    private Integer weight;
+
+    @JsonProperty("is_equal")
+    private Boolean isEqual;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -130,6 +139,30 @@ public class MktDrawRule {
         this.comments = comments;
     }
 
+    public String getAppliedEnv() {
+        return appliedEnv;
+    }
+
+    public void setAppliedEnv(String appliedEnv) {
+        this.appliedEnv = appliedEnv;
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
+    public Boolean getIsEqual() {
+        return isEqual;
+    }
+
+    public void setIsEqual(Boolean isEqual) {
+        this.isEqual = isEqual;
+    }
+
     public String getCreatedAccountId() {
         return createdAccountId;
     }
@@ -176,6 +209,9 @@ public class MktDrawRule {
             this.setAvailableQuantity(object.getAvailableQuantity());
             this.setProbability(object.getProbability());
             this.setComments(object.getComments());
+            this.setAppliedEnv(object.getAppliedEnv());
+            this.setWeight(object.getWeight());
+            this.setIsEqual(object.getIsEqual());
             this.setCreatedAccountId(object.getCreatedAccountId());
             this.setCreatedDateTime(object.getCreatedDateTime());
             this.setModifiedAccountId(object.getModifiedAccountId());
@@ -194,6 +230,9 @@ public class MktDrawRule {
         object.setAvailableQuantity(this.getAvailableQuantity());
         object.setProbability(this.getProbability());
         object.setComments(this.getComments());
+        object.setAppliedEnv(this.getAppliedEnv());
+        object.setWeight(this.getWeight());
+        object.setIsEqual(this.getIsEqual());
         object.setCreatedAccountId(this.getCreatedAccountId());
         object.setCreatedDateTime(this.getCreatedDateTime());
         object.setModifiedAccountId(this.getModifiedAccountId());

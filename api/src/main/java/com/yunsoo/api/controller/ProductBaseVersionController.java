@@ -5,6 +5,8 @@ import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.ProductBaseVersions;
 import com.yunsoo.api.dto.ProductCategory;
+import com.yunsoo.api.file.service.FileService;
+import com.yunsoo.api.file.service.ImageService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
@@ -57,7 +59,10 @@ public class ProductBaseVersionController {
     private UserFollowingDomain followingDomain;
 
     @Autowired
-    private FileDomain fileDomain;
+    private FileService fileService;
+
+    @Autowired
+    private ImageService imageService;
 
     public static final String APPROVED = "approved";
     public static final String REJECTED = "rejected";
@@ -347,21 +352,8 @@ public class ProductBaseVersionController {
         if (imageName == null) {
             throw new NotFoundException("image not found");
         }
-        ResourceInputStream resourceInputStream = fileDomain.getFile(String.format("image/%s", imageName));
-        if (resourceInputStream == null) {
-            throw new NotFoundException("image not found");
-        }
-        String contentType = resourceInputStream.getContentType();
-        long contentLength = resourceInputStream.getContentLength();
 
-        ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
-        if (contentType != null) {
-            bodyBuilder.contentType(MediaType.parseMediaType(contentType));
-        }
-        if (contentLength > 0) {
-            bodyBuilder.contentLength(contentLength);
-        }
-        return bodyBuilder.body(new InputStreamResource(resourceInputStream));
+        return imageService.getImage(String.format("image/%s", imageName));
     }
 
     //endregion
@@ -378,7 +370,7 @@ public class ProductBaseVersionController {
         }
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
         String path = String.format("organization/%s/product_base/%s/%s/details.json", orgId, productBaseId, version);
-        ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+        ResourceInputStream resourceInputStream = fileService.getFile(path);
         if (resourceInputStream == null) {
             throw new NotFoundException("product base details not found");
         }
@@ -403,7 +395,7 @@ public class ProductBaseVersionController {
             throw new NotFoundException("specific version of product base not found");
         }
         byte[] bytes = details.getBytes(StandardCharsets.UTF_8);
-        fileDomain.putFile(path, new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE));
+        fileService.putFile(path, new ResourceInputStream(new ByteArrayInputStream(bytes), bytes.length, MediaType.APPLICATION_JSON_VALUE));
     }
 
     //endregion

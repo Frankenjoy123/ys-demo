@@ -18,6 +18,12 @@ logging:
 yunsoo:
   debug: true
   environment: dev
+  storage:
+    type: s3
+    s3:
+      bucket_name: dev-yunsoo
+    simple:
+      base_path: c:/yunsoo_files/
 
 ---
 spring:

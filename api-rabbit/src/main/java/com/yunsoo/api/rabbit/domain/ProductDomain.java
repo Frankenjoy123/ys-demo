@@ -1,6 +1,7 @@
 package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
+import com.yunsoo.api.rabbit.file.service.FileService;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -30,6 +31,9 @@ public class ProductDomain {
     @Autowired
     ProductBaseDomain productBaseDomain;
 
+    @Autowired
+    private FileService fileService;
+
     private Log log = LogFactory.getLog(this.getClass());
 
     //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT.toString(),#key)")
@@ -52,8 +56,12 @@ public class ProductDomain {
 
     public String getProductKeyBatchDetails(String orgId, String productKeyBatchId) {
         try {
-            ResourceInputStream resourceInputStream = dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/product_key_batch/{pkbId}/details.json",
+            String path = String.format("organization/%s/product_key_batch/%s/details.json",
                     orgId, productKeyBatchId);
+            ResourceInputStream resourceInputStream = fileService.getFile(path);
+            if(resourceInputStream == null)
+                return null;
+
             byte[] bytes = StreamUtils.copyToByteArray(resourceInputStream);
             return new String(bytes, StandardCharsets.UTF_8);
         } catch (NotFoundException | IOException ignored) {

@@ -5,6 +5,8 @@ import com.yunsoo.api.domain.UserReportDomain;
 import com.yunsoo.api.dto.ProductBase;
 import com.yunsoo.api.dto.User;
 import com.yunsoo.api.dto.UserReport;
+import com.yunsoo.api.file.service.FileService;
+import com.yunsoo.api.file.service.ImageService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.ProductBaseObject;
@@ -23,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +42,12 @@ public class UserReportController {
 
     @Autowired
     private ProductBaseDomain productBaseDomain;
+
+    @Autowired
+    private FileService fileService;
+
+    @Autowired
+    private ImageService imageService;
 
 
     @RequestMapping(method = RequestMethod.GET, value = "{id}")
@@ -70,7 +79,7 @@ public class UserReportController {
             if (uo != null) {
                 report.setUser(new User(uo));
             }
-            report.setImageNames(domain.getReportImageNames(object.getUserId(), object.getId()));
+            report.setImageNames(fileService.getFileNamesByFolder(String.format("user/{uerId}/report/{reportId}", object.getUserId(), object.getId())));
             reportList.add(report);
         });
 
@@ -82,17 +91,8 @@ public class UserReportController {
             @PathVariable(value = "report_id") String reportId,
             @PathVariable(value = "image_name") String imageName) {
         UserReportObject object = domain.getReportById(reportId);
+        return imageService.getImage(String.format("user/%s/report/%s/%s", object.getUserId(), reportId, imageName));
 
-        ResourceInputStream resourceInputStream = domain.getReportImage(object.getUserId(), reportId, imageName);
-        if (resourceInputStream == null) {
-            throw new NotFoundException("image not found");
-        }
-        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
-        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
-        if (resourceInputStream.getContentLength() > 0) {
-            builder.contentLength(resourceInputStream.getContentLength());
-        }
-        return builder.body(new InputStreamResource(resourceInputStream));
     }
 
 

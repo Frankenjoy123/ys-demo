@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.MessageDomain;
 import com.yunsoo.api.rabbit.dto.Message;
+import com.yunsoo.api.rabbit.file.service.ImageService;
 import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -27,6 +28,9 @@ public class MessageController {
     @Autowired
     private MessageDomain messageDomain;
 
+    @Autowired
+    private ImageService imageService;
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Message getMessageById(@PathVariable(value = "id") String id) throws NotFoundException {
         if (id == null) throw new BadRequestException("Id can not be null！");
@@ -50,6 +54,7 @@ public class MessageController {
     public ResponseEntity<?> getMessageImage(
             @PathVariable(value = "id") String id,
             @PathVariable(value = "image_name") String imageName) {
+
         if (id == null) {
             throw new BadRequestException("message id should be valid");
         }
@@ -57,16 +62,7 @@ public class MessageController {
         if (messageObject == null) {
             throw new NotFoundException("message can not be found");
         }
-        ResourceInputStream resourceInputStream = messageDomain.getMessageImage(messageObject.getOrgId(), id, imageName);
-        if (resourceInputStream == null) {
-            throw new NotFoundException("message image found");
-        }
-        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
-        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
-        if (resourceInputStream.getContentLength() > 0) {
-            builder.contentLength(resourceInputStream.getContentLength());
-        }
-        return builder.body(new InputStreamResource(resourceInputStream));
-
+        String path = String.format("organization/%s/message/%s/%s",messageObject.getOrgId(), id, imageName );
+        return imageService.getImage(path);
     }
 }

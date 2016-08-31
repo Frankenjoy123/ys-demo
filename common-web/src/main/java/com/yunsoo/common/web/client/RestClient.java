@@ -3,6 +3,7 @@ package com.yunsoo.common.web.client;
 import com.yunsoo.common.web.Constants;
 import com.yunsoo.common.web.health.Health;
 import com.yunsoo.common.web.util.PageableUtils;
+import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -85,8 +86,15 @@ public class RestClient {
     }
 
     public Health checkHealth() {
+        return checkHealth(null, false);
+    }
+
+    public Health checkHealth(List<String> path, boolean debug) {
         try {
-            return get("health", Health.class);
+            QueryStringBuilder builder = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK);
+            if (path != null && path.size() > 0) builder.append("path", path);
+            if (debug) builder.append("debug", true);
+            return get("health" + builder.build(), Health.class);
         } catch (Exception e) {
             return new Health(Health.Status.DOWN).withDetail("exception", e.getMessage());
         }

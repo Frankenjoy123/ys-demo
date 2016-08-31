@@ -44,6 +44,15 @@ public class MktDrawRuleEntity {
     @Column(name = "comments")
     private String comments;
 
+    @Column(name = "applied_env")
+    private String appliedEnv;
+
+    @Column(name = "weight")
+    private Integer weight;
+
+    @Column(name = "is_equal")
+    private Boolean isEqual;
+
     @Column(name = "created_account_id")
     private String createdAccountId;
 
@@ -129,6 +138,30 @@ public class MktDrawRuleEntity {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public String getAppliedEnv() {
+        return appliedEnv;
+    }
+
+    public void setAppliedEnv(String appliedEnv) {
+        this.appliedEnv = appliedEnv;
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
+    public Boolean getIsEqual() {
+        return isEqual;
+    }
+
+    public void setIsEqual(Boolean isEqual) {
+        this.isEqual = isEqual;
     }
 
     public String getCreatedAccountId() {

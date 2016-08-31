@@ -12,10 +12,10 @@ import java.io.Serializable;
  */
 public class ProductKeyBatchCreateMessage implements Serializable {
 
-    public static final String PAYLOAD_TYPE = "product_key_batch_create";
+    public static final String PAYLOAD_TYPE = "key_batch_creation";
 
-    @JsonProperty("product_key_batch_id")
-    private String productKeyBatchId;
+    @JsonProperty("key_batch_id")
+    private String keyBatchId;
 
     @JsonProperty("product_status_code")
     private String productStatusCode;
@@ -24,12 +24,12 @@ public class ProductKeyBatchCreateMessage implements Serializable {
     private Integer continueOffset;
 
 
-    public String getProductKeyBatchId() {
-        return productKeyBatchId;
+    public String getKeyBatchId() {
+        return keyBatchId;
     }
 
-    public void setProductKeyBatchId(String productKeyBatchId) {
-        this.productKeyBatchId = productKeyBatchId;
+    public void setKeyBatchId(String keyBatchId) {
+        this.keyBatchId = keyBatchId;
     }
 
     public String getProductStatusCode() {
@@ -51,7 +51,7 @@ public class ProductKeyBatchCreateMessage implements Serializable {
     @Override
     public String toString() {
         return StringFormatter.formatMap(
-                "productKeyBatchId", productKeyBatchId,
+                "keyBatchId", keyBatchId,
                 "productStatusCode", productStatusCode,
                 "continueOffset", continueOffset);
     }

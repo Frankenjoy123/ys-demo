@@ -41,6 +41,15 @@ public class MktDrawRuleObject {
     @JsonProperty("comments")
     private String comments;
 
+    @JsonProperty("applied_env")
+    private String appliedEnv;
+
+    @JsonProperty("weight")
+    private Integer weight;
+
+    @JsonProperty("is_equal")
+    private Boolean isEqual;
+
     @JsonProperty("created_account_id")
     private String createdAccountId;
 
@@ -127,6 +136,30 @@ public class MktDrawRuleObject {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public String getAppliedEnv() {
+        return appliedEnv;
+    }
+
+    public void setAppliedEnv(String appliedEnv) {
+        this.appliedEnv = appliedEnv;
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
+    public Boolean getIsEqual() {
+        return isEqual;
+    }
+
+    public void setIsEqual(Boolean isEqual) {
+        this.isEqual = isEqual;
     }
 
     public String getCreatedAccountId() {

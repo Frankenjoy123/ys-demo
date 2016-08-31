@@ -68,10 +68,17 @@ public interface CustomEMREventRepository {
                                      DateTime createdDateTimeStart,
                                      DateTime createdDateTimeEnd);
 
+    List<int[]> eventLocationCount(String orgId, String productBaseId,
+                                   String province, String city,
+                                   DateTime createdDateTimeStart,
+                                   DateTime createdDateTimeEnd);
+
     List<String[]> scanLocationCount(String orgId, String productBaseId,
                                      String province, String city,
                                      DateTime createdDateTimeStart,
                                      DateTime createdDateTimeEnd);
+
+
 
     List<String[]> shareLocationCount(String orgId, String productBaseId,
                                       String province, String city,

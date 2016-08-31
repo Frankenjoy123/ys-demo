@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.rabbit.dto.MessageDetails;
+import com.yunsoo.api.rabbit.file.service.FileService;
 import com.yunsoo.common.data.object.MessageObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
@@ -32,6 +33,9 @@ public class MessageDomain {
     @Autowired
     private RestClient dataApiClient;
 
+    @Autowired
+    private FileService fileService;
+
     public MessageObject getById(String id) {
         try {
             return dataApiClient.get("message/{id}", MessageObject.class, id);
@@ -40,21 +44,11 @@ public class MessageDomain {
         }
     }
 
-    public ResourceInputStream getMessageImage(String orgId, String id, String imageName) {
-
-        try {
-            return dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/message/{id}/{imageName}", orgId, id, imageName);
-        } catch (NotFoundException ex) {
-            return null;
-        }
-    }
-
-
     public MessageDetails getMessageDetails(String orgId, String id) {
         ResourceInputStream resourceInputStream;
         try {
-            resourceInputStream = dataApiClient.getResourceInputStream("file/s3?path=organization/{orgId}/message/{messageId}/{fileName}",
-                    orgId, id, DETAILS_FILE_NAME);
+            String path = String.format("organization/%s/message/%s/%s", orgId, id, DETAILS_FILE_NAME);
+            resourceInputStream = fileService.getFile(path);
         } catch (NotFoundException ex) {
             return null;
         }

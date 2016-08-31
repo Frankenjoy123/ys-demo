@@ -37,30 +37,8 @@ public class Marketing {
     @JsonProperty("type_code")
     private String typeCode;
 
-    @JsonProperty("budget")
-    private Double budget;
-
-    @JsonProperty("balance")
-    private Double balance;
-
     @JsonProperty("prize_type_code")
     private String prizeTypeCode;
-
-    @JsonProperty("created_account_id")
-    private String createdAccountId;
-
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("created_datetime")
-    private DateTime createdDateTime;
-
-    @JsonProperty("modified_account_id")
-    private String modifiedAccountId;
-
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("modified_datetime")
-    private DateTime modifiedDateTime;
 
     @JsonProperty("product_base_name")
     private String productBaseName;
@@ -134,60 +112,12 @@ public class Marketing {
         this.typeCode = typeCode;
     }
 
-    public Double getBudget() {
-        return budget;
-    }
-
-    public void setBudget(Double budget) {
-        this.budget = budget;
-    }
-
-    public Double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(Double balance) {
-        this.balance = balance;
-    }
-
     public String getPrizeTypeCode() {
         return prizeTypeCode;
     }
 
     public void setPrizeTypeCode(String prizeTypeCode) {
         this.prizeTypeCode = prizeTypeCode;
-    }
-
-    public String getCreatedAccountId() {
-        return createdAccountId;
-    }
-
-    public void setCreatedAccountId(String createdAccountId) {
-        this.createdAccountId = createdAccountId;
-    }
-
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
-    public String getModifiedAccountId() {
-        return modifiedAccountId;
-    }
-
-    public void setModifiedAccountId(String modifiedAccountId) {
-        this.modifiedAccountId = modifiedAccountId;
-    }
-
-    public DateTime getModifiedDateTime() {
-        return modifiedDateTime;
-    }
-
-    public void setModifiedDateTime(DateTime modifiedDateTime) {
-        this.modifiedDateTime = modifiedDateTime;
     }
 
     public String getProductBaseName() {
@@ -258,13 +188,7 @@ public class Marketing {
             this.setOrgId(object.getOrgId());
             this.setProductBaseId(object.getProductBaseId());
             this.setTypeCode(object.getTypeCode());
-            this.setBudget(object.getBudget());
-            this.setBalance(object.getBalance());
             this.setPrizeTypeCode(object.getPrizeTypeCode());
-            this.setCreatedAccountId(object.getCreatedAccountId());
-            this.setCreatedDateTime(object.getCreatedDateTime());
-            this.setModifiedAccountId(object.getModifiedAccountId());
-            this.setModifiedDateTime(object.getModifiedDateTime());
             this.setQuantity(object.getQuantity());
             this.setStartDateTime(object.getStartDateTime());
             this.setEndDateTime(object.getEndDateTime());
@@ -282,13 +206,7 @@ public class Marketing {
         object.setOrgId(this.getOrgId());
         object.setProductBaseId(this.getProductBaseId());
         object.setTypeCode(this.getTypeCode());
-        object.setBudget(this.getBudget());
-        object.setBalance(this.getBalance());
         object.setPrizeTypeCode(this.getPrizeTypeCode());
-        object.setCreatedAccountId(this.getCreatedAccountId());
-        object.setCreatedDateTime(this.getCreatedDateTime());
-        object.setModifiedAccountId(this.getModifiedAccountId());
-        object.setModifiedDateTime(this.getModifiedDateTime());
         object.setQuantity(this.getQuantity());
         object.setStartDateTime(this.getStartDateTime());
         object.setEndDateTime(this.getEndDateTime());

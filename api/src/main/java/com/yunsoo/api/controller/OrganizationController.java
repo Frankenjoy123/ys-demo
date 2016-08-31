@@ -1,7 +1,9 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.OrganizationDomain;
-import com.yunsoo.api.dto.ImageRequest;
+import com.yunsoo.api.file.dto.ImageRequest;
+import com.yunsoo.api.file.service.FileService;
+import com.yunsoo.api.file.service.ImageService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.awt.*;
+import java.io.IOException;
 
 /**
  * Created by  : Zhe
@@ -28,21 +32,19 @@ public class OrganizationController {
     @Autowired
     private OrganizationDomain organizationDomain;
 
+    @Autowired
+    private ImageService imageService;
+    
+    @Autowired
+    private FileService fileService;
 
     @RequestMapping(value = "{id}/logo/{imageName}", method = RequestMethod.GET)
     public ResponseEntity<?> getLogo(
             @PathVariable(value = "id") String id,
             @PathVariable(value = "imageName") String imageName) {
-        ResourceInputStream resourceInputStream = organizationDomain.getLogoImage(id, imageName);
-        if (resourceInputStream == null) {
-            throw new NotFoundException("logo not found");
-        }
-        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
-        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
-        if (resourceInputStream.getContentLength() > 0) {
-            builder.contentLength(resourceInputStream.getContentLength());
-        }
-        return builder.body(new InputStreamResource(resourceInputStream));
+
+        String path = String.format("organization/%s/logo/%s", id, imageName);
+        return imageService.getImage(path);
     }
 
     @RequestMapping(value = "{id}/logo", method = RequestMethod.PUT)
@@ -58,7 +60,7 @@ public class OrganizationController {
     @RequestMapping(value = "{id}/logo/{imageName}", method = RequestMethod.PUT)
     @PreAuthorize("hasPermission(#orgId, 'org', 'organization_config:write')")
     public void saveCarrierLogo(@PathVariable(value = "id") String orgId, @PathVariable(value = "imageName") String imageName,
-                                @RequestBody @Valid ImageRequest imageRequest) {
+                                @RequestBody @Valid ImageRequest imageRequest) throws IOException {
 
         String imageData = imageRequest.getData(); //data:image/png;base64,
         int splitIndex = imageData.indexOf(",");
@@ -67,7 +69,7 @@ public class OrganizationController {
 
         if (imageDataBytes != null && imageDataBytes.length > 0) {
             orgId = AuthUtils.fixOrgId(orgId);
-            organizationDomain.saveOrgLogo(orgId, imageName, imageDataBytes);
+            imageService.saveImage(imageDataBytes, MediaType.IMAGE_PNG_VALUE, String.format("organization/%s/logo/$s", orgId, imageName));
         }
     }
 
@@ -89,7 +91,7 @@ public class OrganizationController {
 
     @RequestMapping(value = "{id}/webchatKeys", method = RequestMethod.POST)
     @PreAuthorize("hasPermission(#orgId, 'org', 'organization_config:write')")
-    public void saveWebChatKeys(@PathVariable("id") String orgId, @RequestParam("file") MultipartFile keyFile, @RequestParam("type") String fileType) {
+    public void saveWebChatKeys(@PathVariable("id") String orgId, @RequestParam("file") MultipartFile keyFile, @RequestParam("type") String fileType) throws IOException {
         if (keyFile == null)
             throw new NotFoundException("no file uploaded!");
         String fileName = keyFile.getOriginalFilename();
@@ -103,7 +105,9 @@ public class OrganizationController {
             default:
                 break;
         }
-        organizationDomain.saveWebChatKey(orgId, keyFile, fileName);
+
+        String filePath = String.format("organization/%s/webchat/%s", orgId, fileName);
+        fileService.putFile(filePath, new ResourceInputStream(keyFile.getInputStream(), keyFile.getSize(), keyFile.getContentType()));
     }
 
 }

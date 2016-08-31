@@ -28,6 +28,10 @@ yunsoo:
   client:
     data_api:
       base_url: http://localhost:3080/
+    file_api:
+      base_url: http://localhost:4180/
+    key_api:
+      base_url: http://localhost:4280/
 
 jdbc:
   processor:
@@ -36,7 +40,8 @@ jdbc:
     username: root
     password: admin201512
     initial_size: 1
-    max_idle: 10
+    min_idle: 1
+    max_idle: 5
     test_on_borrow: true
     validation_query: select 1
 
@@ -47,6 +52,13 @@ spring:
 yunsoo:
   processor:
     environment: local
+  client:
+    data_api:
+      base_url: http://dev.yunsu.co:3080/
+    file_api:
+      base_url: http://dev.yunsu.co:4180/
+    key_api:
+      base_url: http://dev.yunsu.co:4280/
 
 logging:
   file: c:/logs/yunsoo/processor.log

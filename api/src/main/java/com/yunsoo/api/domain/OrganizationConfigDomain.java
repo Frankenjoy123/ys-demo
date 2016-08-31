@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunsoo.api.auth.dto.Organization;
 import com.yunsoo.api.auth.service.AuthOrganizationService;
 import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
+import com.yunsoo.api.file.service.FileService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.OrgBrandObject;
 import com.yunsoo.common.data.object.OrganizationConfigObject;
@@ -36,7 +37,7 @@ import java.util.Map;
 public class OrganizationConfigDomain {
 
     @Autowired
-    private FileDomain fileDomain;
+    private FileService fileService;
 
     @Autowired
     private OrganizationBrandDomain organizationBrandDomain;
@@ -156,7 +157,7 @@ public class OrganizationConfigDomain {
 
     private OrganizationConfigObject getConfigObject(String orgId) {
         String path = getConfigFilePath(orgId);
-        ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+        ResourceInputStream resourceInputStream = fileService.getFile(path);
         if (resourceInputStream == null) return null;
         try {
             return objectMapper.readValue(StreamUtils.copyToByteArray(resourceInputStream), OrganizationConfigObject.class);
@@ -172,7 +173,7 @@ public class OrganizationConfigDomain {
         byte[] buffer;
         try {
             buffer = objectMapper.writeValueAsBytes(configObject);
-            fileDomain.putFile(path, new ResourceInputStream(new ByteArrayInputStream(buffer), buffer.length, MediaType.APPLICATION_JSON_UTF8_VALUE));
+            fileService.putFile(path, new ResourceInputStream(new ByteArrayInputStream(buffer), buffer.length, MediaType.APPLICATION_JSON_UTF8_VALUE));
         } catch (JsonProcessingException e) {
             log.error("organization config read exception " + StringFormatter.formatMap("path", path), e);
         }

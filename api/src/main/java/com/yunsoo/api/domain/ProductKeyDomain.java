@@ -4,6 +4,7 @@ import com.yunsoo.api.client.ProcessorClient;
 import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyCredit;
+import com.yunsoo.api.file.service.FileService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.message.ProductKeyBatchCreateMessage;
@@ -32,7 +33,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -56,7 +56,7 @@ public class ProductKeyDomain {
     private LookupDomain lookupDomain;
 
     @Autowired
-    private FileDomain fileDomain;
+    private FileService fileService;
 
     @Autowired
     private ProductKeyOrderDomain productKeyOrderDomain;
@@ -195,7 +195,7 @@ public class ProductKeyDomain {
 
         //send sqs message to processor
         ProductKeyBatchCreateMessage sqsMessage = new ProductKeyBatchCreateMessage();
-        sqsMessage.setProductKeyBatchId(newBatchObj.getId());
+        sqsMessage.setKeyBatchId(newBatchObj.getId());
         sqsMessage.setProductStatusCode(LookupCodes.ProductStatus.ACTIVATED);  //default activated
 
         try {
@@ -223,19 +223,21 @@ public class ProductKeyDomain {
 
 
     public byte[] getProductKeysByBatchId(String id) {
-        ProductKeysObject object = dataApiClient.get("productkeybatch/{batchId}/keys", ProductKeysObject.class, id);
+        ProductKeysObject productKeys = dataApiClient.get("productkeybatch/{batchId}/keys", ProductKeysObject.class, id);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        if (object == null) {
+        if (productKeys == null) {
             return null;
         }
         try {
-//            List<String> productKeyTypeCodes = object.getProductKeyTypeCodes();
-//            outputStream.write(
-//                    StringUtils.collectionToDelimitedString(productKeyTypeCodes, ",")
-//                            .getBytes(Charset.forName("UTF-8")));
-//            outputStream.write(CR_LF);
-            for (List<String> i : object.getProductKeys()) {
-                List<String> ks = i.stream().map(k -> productKeyBaseUrl + k).collect(Collectors.toList());
+            List<String> productKeyTypeCodes = productKeys.getProductKeyTypeCodes();
+            for (List<String> ks : productKeys.getProductKeys()) {
+                for (int j = 0; j < ks.size(); j++) {
+                    if (LookupCodes.ProductKeyType.EXTERNAL.equals(productKeyTypeCodes.get(j))) {
+                        ks.set(j, productKeyBaseUrl + "external/" + ks.get(j));
+                    } else {
+                        ks.set(j, productKeyBaseUrl + ks.get(j));
+                    }
+                }
                 outputStream.write(
                         StringUtils.collectionToDelimitedString(ks, ",")
                                 .getBytes(Charset.forName("UTF-8")));
@@ -249,7 +251,7 @@ public class ProductKeyDomain {
 
     public YSFile getProductKeyFile(String batchId, String orgId) {
         String path = String.format("organization/%s/product_key_batch/%s/keys.pks", orgId, batchId);
-        ResourceInputStream resourceInputStream = fileDomain.getFile(path);
+        ResourceInputStream resourceInputStream = fileService.getFile(path);
         if (resourceInputStream == null) {
             return null;
         }
