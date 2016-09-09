@@ -75,7 +75,7 @@ public class KeyBatchController {
     }
 
     @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
-    public Keys getProductKeys(@PathVariable(value = "id") String id) {
+    public Keys getKeys(@PathVariable(value = "id") String id) {
         Keys keys = keyBatchService.getKeysById(id);
         if (keys == null) {
             throw new NotFoundException("keys not found by batchId: " + id);
@@ -99,6 +99,7 @@ public class KeyBatchController {
         ServletInputStream inputStream = request.getInputStream();
         keyBatchService.saveKeyBatchDetails(id, new ResourceInputStream(inputStream, contentLength, contentType));
     }
+
 
     private KeyBatchCreationRequest toKeyBatchCreationRequest(YSFile ysFile) {
         String partitionId = ysFile.getHeader("partition_id");

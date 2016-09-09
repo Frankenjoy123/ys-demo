@@ -1,62 +1,66 @@
-package com.yunsoo.key.dao.entity;
+package com.yunsoo.processor.key.dto;
 
-import com.yunsoo.key.dao.util.IdGenerator;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.common.databind.DateTimeJsonDeserializer;
+import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by:   Lijian
- * Created on:   2016-08-18
+ * Created on:   2016-08-19
  * Descriptions:
  */
-@Entity
-@Table(name = "product_key_batch")
-public class KeyBatchEntity {
+public class KeyBatch implements Serializable {
 
-    @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = IdGenerator.CLASS)
-    @Column(name = "id")
+    @JsonProperty("id")
     private String id;
 
-    @Column(name = "partition_id")
+    @JsonProperty("partition_id")
     private String partitionId;
 
-    @Column(name = "batch_no")
+    @JsonProperty("batch_no")
     private String batchNo;
 
-    @Column(name = "quantity")
+    @Range(min = 1, max = 1000000, message = "quantity must in range of 1 to 1000000")
+    @JsonProperty("quantity")
     private Integer quantity;
 
-    @Column(name = "status_code")
+    @JsonProperty("status_code")
     private String statusCode;
 
-    @Column(name = "product_key_type_codes")
-    private String keyTypeCodes;
+    @NotEmpty(message = "key_type_codes must not be null or empty")
+    @JsonProperty("key_type_codes")
+    private List<String> keyTypeCodes;
 
-    @Column(name = "product_status_code")
+    @JsonProperty("product_status_code")
     private String productStatusCode;
 
-    @Column(name = "product_base_id")
+    @JsonProperty("product_base_id")
     private String productBaseId;
 
-    @Column(name = "org_id")
+    @NotEmpty(message = "org_id must not be null or empty")
+    @JsonProperty("org_id")
     private String orgId;
 
-    @Column(name = "created_app_id")
+    @JsonProperty("created_app_id")
     private String createdAppId;
 
-    @Column(name = "created_device_id")
+    @JsonProperty("created_device_id")
     private String createdDeviceId;
 
-    @Column(name = "created_account_id")
+    @JsonProperty("created_account_id")
     private String createdAccountId;
 
-    @Column(name = "created_datetime")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    @JsonProperty("created_datetime")
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
 
 
@@ -100,11 +104,11 @@ public class KeyBatchEntity {
         this.statusCode = statusCode;
     }
 
-    public String getKeyTypeCodes() {
+    public List<String> getKeyTypeCodes() {
         return keyTypeCodes;
     }
 
-    public void setKeyTypeCodes(String keyTypeCodes) {
+    public void setKeyTypeCodes(List<String> keyTypeCodes) {
         this.keyTypeCodes = keyTypeCodes;
     }
 

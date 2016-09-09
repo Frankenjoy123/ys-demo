@@ -1,6 +1,5 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.auth.dto.Application;
 import com.yunsoo.api.auth.service.AuthApplicationService;
 import com.yunsoo.api.domain.OperationLogDomain;
 import com.yunsoo.api.dto.OperationLog;
@@ -49,16 +48,16 @@ public class OperationLogController {
             throw new BadRequestException("the parameter account_ids should have value");
         Page<OperationLogObject> operationPage = domain.query(accountIds, operation, appId, start, end, pageable);
 
-        HashMap<String, Application> appList = new HashMap<>();
+        HashMap<String, String> appNameList = new HashMap<>();
         return PageUtils.response(response, operationPage.map(OperationLog::new).map(operationLog -> {
             String applicationId = operationLog.getCreatedAppId();
-            if (appList.containsKey(applicationId))
-                operationLog.setCreatedAppName(appList.get(applicationId).getName());
+            if (appNameList.containsKey(applicationId))
+                operationLog.setCreatedAppName(appNameList.get(applicationId));
             else {
-                Application application = authApplicationService.getById(applicationId);
-                if (application != null) {
-                    appList.put(applicationId, application);
-                    operationLog.setCreatedAppName(application.getName());
+                String applicationName = authApplicationService.getNameById(applicationId);
+                if (applicationName != null) {
+                    appNameList.put(applicationId, applicationName);
+                    operationLog.setCreatedAppName(applicationName);
                 }
             }
             return operationLog;

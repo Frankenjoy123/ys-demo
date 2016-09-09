@@ -182,6 +182,9 @@ public class MarketingController {
             mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
             mktDrawPrizeObject.setDrawRecordId(currentPrize.getDrawRecordId());
 
+            if(currentPrize.getPrizeTypeCode() == null)
+                currentPrize.setPrizeTypeCode(LookupCodes.MktPrizeType.WEBCHAT);
+
             switch (currentPrize.getPrizeTypeCode()){
                 case LookupCodes.MktPrizeType.MOBILE_FEE:
                     marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
@@ -206,11 +209,15 @@ public class MarketingController {
                     }
                     break;
                 case LookupCodes.MktPrizeType.COUPON:
-                case LookupCodes.MktPrizeType.WEBCHAT:
                     mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
                     mktDrawPrizeObject.setPaidDateTime(DateTime.now());
                     break;
-
+                case LookupCodes.MktPrizeType.WEBCHAT:
+                    if(LookupCodes.MktDrawPrizeStatus.PAID.equals(mktDrawPrize.getStatusCode())) {
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                        mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+                    }
+                    break;
                 default:
                     break;
             }
@@ -377,7 +384,10 @@ public class MarketingController {
 
         if (mktDrawRuleObject != null) {
             record.setIsPrized(true);
-            prize.setPrizeTypeCode(mktDrawRuleObject.getPrizeTypeCode());
+            if(mktDrawRuleObject.getPrizeTypeCode() != null)
+                prize.setPrizeTypeCode(mktDrawRuleObject.getPrizeTypeCode());
+            else
+                prize.setPrizeTypeCode(LookupCodes.MktPrizeType.WEBCHAT);
 
             MktDrawRule mktDrawRule = new MktDrawRule(mktDrawRuleObject);
             String consumerRightId = mktDrawRuleObject.getConsumerRightId();

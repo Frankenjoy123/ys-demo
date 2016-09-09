@@ -28,8 +28,8 @@ public class HealthController extends AbstractHealthController {
     @Override
     public void expandHealth(Health health, List<String> path, boolean debug) {
         health
-                .checkClient(processorClient, path)
-                .checkClient(fileApiClient, path);
+                .checkClient(processorClient, path, debug)
+                .checkClient(fileApiClient, path, debug);
     }
 
 }

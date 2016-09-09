@@ -132,6 +132,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         batch.setQuantity(quantity);
         batch.setStatusCode(Constants.KeyBatchStatus.CREATING);
         batch.setKeyTypeCodes(keyTypeCodes);
+        batch.setProductStatusCode(productStatusCode);
         batch.setProductBaseId(request.getProductBaseId());
         batch.setOrgId(request.getOrgId());
         batch.setCreatedAppId(request.getCreatedAppId());
@@ -151,7 +152,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         saveKeysToFile(entity.getOrgId(), entity.getId(), entity.getQuantity(), entity.getKeyTypeCodes(), keyList);
 
         //put to queue
-        processorService.putKeyBatchCreateMessageToQueue(entity.getId(), productStatusCode);
+        processorService.putKeyBatchCreateMessageToQueue(entity.getId());
 
         log.info(String.format("KeyBatch created [id: %s, quantity: %d]", entity.getId(), entity.getQuantity()));
 
@@ -168,6 +169,9 @@ public class KeyBatchServiceImpl implements KeyBatchService {
             throw new NotFoundException("keyBatch not found by id: " + batch.getId());
         }
 
+        if (batch.getBatchNo() != null) {
+            entity.setBatchNo(batch.getBatchNo());
+        }
         if (batch.getProductBaseId() != null) {
             entity.setProductBaseId(batch.getProductBaseId());
         }
@@ -315,6 +319,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         batch.setQuantity(entity.getQuantity());
         batch.setStatusCode(entity.getStatusCode());
         batch.setKeyTypeCodes(Arrays.asList(StringUtils.commaDelimitedListToStringArray(entity.getKeyTypeCodes())));
+        batch.setProductStatusCode(entity.getProductStatusCode());
         batch.setProductBaseId(entity.getProductBaseId());
         batch.setOrgId(entity.getOrgId());
         batch.setCreatedAppId(entity.getCreatedAppId());
@@ -335,6 +340,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         entity.setQuantity(batch.getQuantity());
         entity.setStatusCode(batch.getStatusCode());
         entity.setKeyTypeCodes(StringUtils.collectionToCommaDelimitedString(batch.getKeyTypeCodes()));
+        entity.setProductStatusCode(batch.getProductStatusCode());
         entity.setProductBaseId(batch.getProductBaseId());
         entity.setOrgId(batch.getOrgId());
         entity.setCreatedAppId(batch.getCreatedAppId());

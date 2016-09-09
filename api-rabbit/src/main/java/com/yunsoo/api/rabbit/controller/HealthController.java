@@ -36,11 +36,12 @@ public class HealthController extends AbstractHealthController {
 
     @Override
     public void expandHealth(Health health, List<String> path, boolean debug) {
+        debug = false; //always false
         health
-                .checkClient(authApiClient, path)
-                .checkClient(dataApiClient, path)
-                .checkClient(fileApiClient, path)
-                .checkClient(keyApiClient, path);
+                .checkClient(authApiClient, path, debug)
+                .checkClient(dataApiClient, path, debug)
+                .checkClient(fileApiClient, path, debug)
+                .checkClient(keyApiClient, path, debug);
     }
 
 }
