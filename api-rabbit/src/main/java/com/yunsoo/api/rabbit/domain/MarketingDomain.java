@@ -160,8 +160,17 @@ public class MarketingDomain {
         });
     }
 
+    public MktDrawRuleKeyObject getMktDrawRuleByProductKeyAndMarketingId(String productKey, String marketingId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("product_key", productKey)
+                .append("marketing_id", marketingId)
+                .build();
 
-    public MktDrawRuleObject getMktRandomPrize(String marketId, String scanRecordId) {
+        return dataApiClient.get("marketing/drawRule/key" + query, MktDrawRuleKeyObject.class);
+    }
+
+
+    public MktDrawRuleObject getMktRandomPrize(String marketId, String scanRecordId, String productKey) {
         MarketingObject obj = dataApiClient.get("marketing/{id}", MarketingObject.class, marketId);
         if (obj.getBalance() <= 0)
             return null;
@@ -231,9 +240,30 @@ public class MarketingDomain {
             }
         }
         if (LookupCodes.MktType.DRAW01.equals(obj.getTypeCode())) {
-            List<MktDrawRuleObject> ruleList = getRuleList(marketId);
+            List<MktDrawRuleObject> originalRuleList = getRuleList(marketId);
+
+            List<MktDrawRuleObject> ruleList = new ArrayList<>();
             List<MktDrawRuleObject> newRuleList = new ArrayList<>();
             List<String> prizedRuleList = new ArrayList<>();
+
+            for (MktDrawRuleObject tempObject : originalRuleList) {
+                if ((tempObject.getAvailableQuantity() != null) && (tempObject.getAvailableQuantity() > 0)) {
+                    ruleList.add(tempObject);
+                }
+            }
+
+            // query if the product key match the draw rule for key
+            MktDrawRuleKeyObject mktDrawRuleKeyObject = getMktDrawRuleByProductKeyAndMarketingId(productKey, marketId);
+            if ((mktDrawRuleKeyObject != null) && (StringUtils.hasText(mktDrawRuleKeyObject.getRuleId()))) {
+                String ruleId = mktDrawRuleKeyObject.getRuleId();
+                MktDrawRuleObject productKeyRuleObject = dataApiClient.get("marketing/Rule/{id}", MktDrawRuleObject.class, ruleId);
+                if (productKeyRuleObject != null) {
+                    return productKeyRuleObject;
+                } else {
+                    return null;
+                }
+            }
+
 
             String userDeviceType = LookupCodes.UserDeviceType.NONANDROID;
 
