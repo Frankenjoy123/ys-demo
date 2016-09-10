@@ -256,12 +256,13 @@ public class MarketingDomain {
             MktDrawRuleKeyObject mktDrawRuleKeyObject = getMktDrawRuleByProductKeyAndMarketingId(productKey, marketId);
             if ((mktDrawRuleKeyObject != null) && (StringUtils.hasText(mktDrawRuleKeyObject.getRuleId()))) {
                 String ruleId = mktDrawRuleKeyObject.getRuleId();
-                MktDrawRuleObject productKeyRuleObject = dataApiClient.get("marketing/Rule/{id}", MktDrawRuleObject.class, ruleId);
-                if (productKeyRuleObject != null) {
-                    return productKeyRuleObject;
-                } else {
-                    return null;
+
+                for (MktDrawRuleObject temp : ruleList) {
+                    if ((temp.getId() != null) && (temp.getId().equals(ruleId))) {
+                        return temp;
+                    }
                 }
+                return null;
             }
 
 
