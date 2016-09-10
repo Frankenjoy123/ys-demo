@@ -20,8 +20,8 @@ jdbc:
     username: root
     password: admin201512
     initial_size: 1
-    min_idle: 1
-    max_idle: 5
+    min_idle: 5
+    max_idle: 30
     test_on_borrow: true
     validation_query: select 1
 
