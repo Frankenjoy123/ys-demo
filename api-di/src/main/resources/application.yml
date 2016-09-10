@@ -1,0 +1,67 @@
+server:
+  port: 4380
+management:
+  port: 4381
+  add-application-context-header: false
+
+spring:
+  profiles.active: local
+  application.name: 'api-di'
+  mvc.throw-exception-if-no-handler-found: true
+  jpa:
+    show_sql: false
+    database: MYSQL
+    generate_ddl: false
+
+jdbc:
+  di:
+    driver_class_name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://dev-yunsoo-di.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/di?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: admin201609
+    initial_size: 1
+    min_idle: 1
+    max_idle: 5
+    test_on_borrow: true
+    validation_query: select 1
+
+logging:
+  file: /var/log/yunsoo/api-di.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'INFO'
+
+yunsoo:
+  debug: true
+  environment: dev
+  access_token:
+    expires_minutes: 60
+    hash_salt: lvtHDkfIUxJ2bLWHc0MNztUqCJSVPSJO
+  login_token:
+    expires_minutes: 5
+    hash_salt: nC9UYPUupMaViIG3UBODY7B19IYW6Z0X
+  cache:
+    type: redis
+    default_expire_time: 600 #seconds
+    redis:
+      host: dev-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn
+
+---
+spring:
+  profiles: local
+  jpa.show_sql: true
+
+logging:
+  file: c:/logs/yunsoo/api-di.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'ERROR'
+
+yunsoo:
+  environment: local
+  cache.type: local
+
+---
+spring:
+  profiles: dev
+
