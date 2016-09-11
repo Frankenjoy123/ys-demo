@@ -55,7 +55,7 @@ public class WebScanControllerTest {
     protected int startIndex, endIndex;
     protected String yunsuId;
 
-    protected static final String filePath = "organization/2k0r1l55i2rs5544wz5/product_key_batch/2msavp1xsq3z1o50cbo/keys.pks";
+    protected static final String filePath = "organization/2k0r1l55i2rs5544wz5/product_key_batch/2mvhxmm6qzoliqntwqp/keys.pks";
     protected static final String marketingId = "2msb69lkn0qotkzm3ay";
     protected static final String iPhone =
     "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1";
@@ -91,9 +91,9 @@ public class WebScanControllerTest {
 
     @Before
     public void initRestClient() {
-        startIndex = 1230;
-        endIndex = 1240;
-        userAgent = iPhone;
+        startIndex = 1200;
+        endIndex = 1300;
+//        userAgent = iPhone;
 //        yunsuId = "xxxxx";
         if (restClient == null) {
             System.out.println("initializing restClient");
@@ -131,7 +131,9 @@ public class WebScanControllerTest {
 
         Map<String, HashMap> map = new HashMap<>();
 
-        productKeys.parallelStream().forEach(productKey -> {
+        Optional<List<String>> pksOptional = Optional.of(productKeys);
+
+        pksOptional.ifPresent(value -> value.forEach(productKey -> {
             WebScanRequest request = new WebScanRequest();
 
             request.setUserId(Constants.Ids.ANONYMOUS_USER_ID);
@@ -188,7 +190,7 @@ public class WebScanControllerTest {
                     System.out.println("null pointer exception");
                 }
             }
-        });
+        }));
 
         StringBuilder stringBuilder = new StringBuilder();
         String fileName = new SimpleDateFormat("MM-dd hh-mm-ss'.log'").format(new Date());
