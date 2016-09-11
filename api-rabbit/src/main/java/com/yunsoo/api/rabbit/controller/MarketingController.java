@@ -112,6 +112,63 @@ public class MarketingController {
         return new MktPrizeContact(newObject);
     }
 
+
+    // query draw01 prize contact by product key
+    @RequestMapping(value = "drawPrize/contact/{key}", method = RequestMethod.GET)
+    public MktPrizeContact getPrizeContactByProductKey(@PathVariable(value = "key") String productKey) {
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKey(productKey);
+        if (mktDrawPrizeObject == null) {
+            throw new NotFoundException("marketing draw prize can not be found");
+        }
+        String prizeContactId = mktDrawPrizeObject.getPrizeContactId();
+        if (!StringUtils.hasText(prizeContactId)) {
+            return null;
+        }
+        MktPrizeContactObject mktPrizeContactObject = marketingDomain.getMktPrizeContactById(prizeContactId);
+
+        if ((!mktDrawPrizeObject.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.CREATED)) && (mktPrizeContactObject != null)) {
+            return new MktPrizeContact(mktPrizeContactObject);
+        } else {
+            return null;
+        }
+    }
+
+    // create draw01 prize contact and update draw prize record
+    @RequestMapping(value = "drawPrize/contact/{key}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public MktPrizeContact createPrizeContact(@PathVariable(value = "key") String productKey, @RequestBody MktPrizeContact mktPrizeContact) {
+        if (mktPrizeContact == null) {
+            throw new BadRequestException("marketing prize contact can not be null");
+        }
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKey(productKey);
+        if (mktDrawPrizeObject == null) {
+            throw new NotFoundException("marketing draw prize can not be found");
+        }
+        if (!mktDrawPrizeObject.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.CREATED)) {
+            throw new BadRequestException("Only created draw prize can be allowed to update contact.");
+        }
+        String prizeId = mktDrawPrizeObject.getDrawRecordId();
+
+        mktPrizeContact.setMktPrizeId(prizeId);
+
+        MktPrizeContactObject prizeContactObject = marketingDomain.getMktPrizeContactByPrizeId(prizeId);
+        if (prizeContactObject != null) {
+            throw new BadRequestException("marketing prize contact has been already input.");
+        }
+        MktPrizeContactObject mktPrizeContactObject = mktPrizeContact.toMktPrizeContactObject();
+        MktPrizeContactObject newObject = marketingDomain.createMktPrizeContact(mktPrizeContactObject);
+
+        mktDrawPrizeObject.setPrizeContactId(newObject.getId());
+        mktDrawPrizeObject.setPrizeAccountName(mktPrizeContact.getName());
+        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
+        mktDrawPrizeObject.setPrizeAccount(mktPrizeContact.getPhone());
+        mktDrawPrizeObject.setMobile(mktPrizeContact.getPhone());
+        marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+
+        return new MktPrizeContact(newObject);
+    }
+
+
     @RequestMapping(value = "drawPrize", method = RequestMethod.PUT)
     public void updateMktDrawPrize(@RequestBody MktDrawPrize mktDrawPrize) {
         if (mktDrawPrize == null) {
@@ -323,7 +380,7 @@ public class MarketingController {
         record.setUserId(mktDraw.getUserId());
 
 
-        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId, mktDraw.getScanRecordId());
+        MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId, mktDraw.getScanRecordId(), key);
 
         if (mktDrawRuleObject != null) {
             record.setIsPrized(true);
