@@ -58,6 +58,9 @@ public class MarketingController {
     @Autowired
     private MktConsumerRightRedeemCodeRepository mktConsumerRightRedeemCodeRepository;
 
+    @Autowired
+    private MktDrawRuleKeyRepository mktDrawRuleKeyRepository;
+
 
     @Autowired
     private ProductService productService;
@@ -875,6 +878,25 @@ public class MarketingController {
         return mktDrawRuleEntities.stream().map(this::toMktDrawRuleObject).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/drawRule/key", method = RequestMethod.GET)
+    public MktDrawRuleKeyObject getDrawRuleByKey(@RequestParam(value = "marketing_id") String marketingId,
+                                                 @RequestParam(value = "product_key") String productKey) {
+
+        if ((marketingId == null) || (productKey == null)) {
+            throw new BadRequestException("Request parameter marketing_id or product_key is required");
+        }
+        List<MktDrawRuleKeyEntity> mktDrawRuleKeyEntityList = new ArrayList<>();
+
+        mktDrawRuleKeyEntityList = mktDrawRuleKeyRepository.findByProductKeyAndMarketingId(productKey, marketingId);
+        if (mktDrawRuleKeyEntityList.size() > 0) {
+            MktDrawRuleKeyEntity mktDrawRuleKeyEntity = mktDrawRuleKeyEntityList.get(0);
+            return toMktDrawRuleKeyObject(mktDrawRuleKeyEntity);
+        } else {
+            return null;
+        }
+    }
+
+
 
     @RequestMapping(value = "/drawPrize/record/{id}", method = RequestMethod.GET)
     public MktDrawPrizeObject findMktDrawPrizeById(@PathVariable(value = "id") String id) {
@@ -1082,6 +1104,22 @@ public class MarketingController {
         object.setValue(entity.getValue());
         object.setDrawPrizeId(entity.getDrawPrizeId());
         object.setCreatedDateTime(entity.getCreatedDateTime());
+        object.setModifiedDateTime(entity.getModifiedDateTime());
+        return object;
+    }
+
+    private MktDrawRuleKeyObject toMktDrawRuleKeyObject(MktDrawRuleKeyEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        MktDrawRuleKeyObject object = new MktDrawRuleKeyObject();
+        object.setId(entity.getId());
+        object.setMarketingId(entity.getMarketingId());
+        object.setProductKey(entity.getProductKey());
+        object.setRuleId(entity.getRuleId());
+        object.setCreatedAccountId(entity.getCreatedAccountId());
+        object.setCreatedDateTime(entity.getCreatedDateTime());
+        object.setModifiedAccountId(entity.getModifiedAccountId());
         object.setModifiedDateTime(entity.getModifiedDateTime());
         return object;
     }
