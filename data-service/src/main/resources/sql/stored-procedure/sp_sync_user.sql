@@ -9,6 +9,8 @@ BEGIN
 
     drop table if exists sp_sync_user_tmp_user;
      drop table if exists sp_sync_user_tmp_user_phone;
+      drop table if exists sp_sync_user_user_latest_scan;
+       drop table if exists sp_sync_user_ys_user_latest_scan;
 
     create temporary table sp_sync_user_tmp_user
     (
@@ -30,14 +32,38 @@ BEGIN
       `last_event_ip` varchar(55) DEFAULT NULL COMMENT 'ip',
       `last_user_agent` varchar(255) DEFAULT NULL COMMENT '设备'
     );
-    
+
 	create temporary table sp_sync_user_tmp_user_phone
     (
       `user_id` char(19) DEFAULT NULL COMMENT '用户id',
       `ys_id` varchar(32) DEFAULT NULL COMMENT 'ysid，当匿名访问时，ysid作为唯一区分用户的id',
       `org_id` char(19) DEFAULT NULL COMMENT '品牌商id',
-      `phone` nvarchar(50) DEFAULT NULL COMMENT '手机号码'      
+      `phone` nvarchar(50) DEFAULT NULL COMMENT '手机号码'
     );
+
+    create temporary table sp_sync_user_user_latest_scan
+    (
+      `id` char(19) DEFAULT NULL COMMENT '用户id',
+      `user_id` char(19) DEFAULT NULL COMMENT '用户id',
+      `org_id` char(19) DEFAULT NULL COMMENT '品牌商id',
+       primary key(id,user_id, org_id)
+    );
+
+     create temporary table sp_sync_user_ys_user_latest_scan
+    (
+      `id` char(19) DEFAULT NULL COMMENT '用户id',
+      `org_id` char(19) DEFAULT NULL COMMENT '品牌商id',
+       primary key(id, org_id)
+    );
+
+	insert into sp_sync_user_user_latest_scan SELECT min(usr.id) as 'min_id', usr.user_id, pb.org_id
+                     FROM yunsoo2015DB.user_scan_record usr inner join product_base pb
+                         on usr.product_base_id = pb.id group by  pb.org_id, usr.user_id;
+
+    insert into sp_sync_user_ys_user_latest_scan SELECT  min(usr2.id) as 'min_id',pb.org_id
+    FROM yunsoo2015DB.user_scan_record usr2 inner join product_base pb
+                         on usr2.product_base_id = pb.id where  (usr2.user_id is null or usr2.user_id = '0020000000000000000') group by pb.org_id,usr2.ysid;
+
 
 
 
@@ -53,43 +79,40 @@ BEGIN
     -- 先读取user表中新增用户的信息，因为有可能不需要scan也能有user的情况。
     insert into sp_sync_user_tmp_user
       SELECT u.id, '', usr2.org_id as 'org_id', '' as 'org_name', u.name, u.phone, u.email, u.age, u.sex, u.gravatar_url, case when u.oauth_type_code = 'webchat' then u.oauth_openid else null END,
-        case when isnull(u.province) or length(u.province) = 0 then usr2.province else u.province end,
-        case when isnull(u.city) or length(u.city) = 0 then usr2.city else u.city end,
-        ifnull(u.address, usr2.address), usr2.created_datetime,
-        usr2.ip,usr2.user_agent
+        usr3.province,
+        usr3.city,
+        usr3.address,
+		usr3.created_datetime,
+        usr3.ip,usr3.user_agent
       from  user u
-        inner join (
-                     SELECT usr.user_id, pb.org_id, min(usr.created_datetime) as 'created_datetime', max(usr.created_datetime) as 'last_event_time', usr.id, province, city, address, usr.ip, usr.user_agent
-                     FROM yunsoo2015DB.user_scan_record usr inner join product_base pb
-                         on usr.product_base_id = pb.id group by usr.user_id, pb.org_id order by usr.id desc) as usr2 on u.id = usr2.user_id
-        
+        inner join sp_sync_user_user_latest_scan as usr2 on u.id = usr2.user_id
+        inner join yunsoo2015DB.user_scan_record usr3 on usr2.id = usr3.id
       where (u.created_datetime >= min_value_date AND u.created_datetime < max_value_date)
             or(u.modified_datetime >= min_value_date AND u.modified_datetime < max_value_date)
-            or (usr2.last_event_time >= min_value_date AND usr2.last_event_time < max_value_date);
+            or (usr3.created_datetime >= min_value_date AND usr3.created_datetime < max_value_date);
 
     -- where (u.modified_datetime is null and u.created_datetime >= @max_value_date) or u.modified_datetime >= @max_value_date;
-    
+
     -- 插入ysId不为空，而user——id为空或者固定的。用来读取匿名用户
     insert into sp_sync_user_tmp_user
-      SELECT '', usr.ysid, pb.org_id as 'org_id', '' as 'org_name', null, null, null, null, null, null, null,
+      SELECT '', usr.ysid, usr3.org_id as 'org_id', '' as 'org_name', null, null, null, null, null, null, null,
         usr.province, usr.city, usr.address, usr.created_datetime,usr.ip, usr.user_agent
-      from user_scan_record usr inner join product_base pb
-          on usr.product_base_id = pb.id     
-      where usr.created_datetime >= min_value_date and usr.created_datetime < max_value_date
-            and (usr.user_id is null or usr.user_id = '0020000000000000000')
-      group by usr.ysid, pb.org_id order by usr.id desc;
+      from user_scan_record usr
+      inner join  sp_sync_user_ys_user_latest_scan as usr3
+      on usr.id = usr3.id
+      where usr.created_datetime >= min_value_date and usr.created_datetime < max_value_date;
 
     -- select * from sp_sync_user_tmp_user;
-    
+
     -- select * from sp_sync_user_tmp_user;
-    insert into sp_sync_user_tmp_user_phone 
+    insert into sp_sync_user_tmp_user_phone
    select up.user_id, up.ys_id, up.org_id, mdp.mobile
-    FROM mkt_draw_prize mdp inner join 
+    FROM mkt_draw_prize mdp inner join
    (select case when usr.user_id is null or usr.user_id = '0020000000000000000' then '' else usr.user_id end as 'user_id',
 case when usr.user_id is not null and usr.user_id <> '0020000000000000000' then '' else usr.ysid end as 'ys_id'
 , pb.org_id, max(mdp2.draw_record_id) as 'last_draw_prize_id' FROM user_scan_record usr inner join product_base pb
           on usr.product_base_id = pb.id
-        inner join mkt_draw_prize mdp2 on mdp2.scan_record_id = usr.id 
+        inner join mkt_draw_prize mdp2 on mdp2.scan_record_id = usr.id
         where mdp2.status_code in('paid','submit') and mdp2.mobile is not null group by user_id, ys_id, pb.org_id)
         as up on mdp.draw_record_id = up.last_draw_prize_id
         where mdp.paid_datetime >= min_value_date and mdp.paid_datetime < max_value_date;
@@ -97,14 +120,14 @@ case when usr.user_id is not null and usr.user_id <> '0020000000000000000' then 
     start transaction;
 
     -- 先更新部分数据
-  update emr_user u 
+  update emr_user u
       inner join sp_sync_user_tmp_user tmp
         on u.org_id = tmp.org_id and (u.user_id = tmp.user_id and u.ys_id = tmp.ys_id)
            left join lu_province_city l on (l.city = tmp.city  or l.city = concat(tmp.city,'市') )
         set u.email = tmp.email, u.age = tmp.age, u.name = tmp.name, u.sex = tmp.sex, u.gravatar_url = tmp.gravatar_url,
         u.wx_openid = tmp.wx_openid, u.province = ifnull(l.province,tmp.province),
         u.city =  ifnull(l.city,tmp.city);
-  
+
 
 
     -- 插入user——id
@@ -129,6 +152,8 @@ case when usr.user_id is not null and usr.user_id <> '0020000000000000000' then 
 
     drop table sp_sync_user_tmp_user;
     drop table sp_sync_user_tmp_user_phone;
+    drop table sp_sync_user_user_latest_scan;
+     drop table sp_sync_user_ys_user_latest_scan;
 
 
   END
