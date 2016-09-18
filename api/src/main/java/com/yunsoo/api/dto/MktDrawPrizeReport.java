@@ -53,6 +53,13 @@ public class MktDrawPrizeReport {
     @JsonProperty("rule_name")
     private String ruleName;
 
+    @JsonProperty("gravatar_url")
+    private String gravatarUrl;
+
+    @JsonProperty("oauth_openid")
+    private String oauthOpenid;
+
+
     public String getProductKey() {
         return productKey;
     }
@@ -149,6 +156,22 @@ public class MktDrawPrizeReport {
         this.ruleName = ruleName;
     }
 
+    public String getGravatarUrl() {
+        return gravatarUrl;
+    }
+
+    public void setGravatarUrl(String gravatarUrl) {
+        this.gravatarUrl = gravatarUrl;
+    }
+
+    public String getOauthOpenid() {
+        return oauthOpenid;
+    }
+
+    public void setOauthOpenid(String oauthOpenid) {
+        this.oauthOpenid = oauthOpenid;
+    }
+
     public MktDrawPrizeReport() {
     }
 
@@ -166,6 +189,8 @@ public class MktDrawPrizeReport {
             this.setIp(object.getIp());
             this.setCity(object.getCity());
             this.setRuleName(object.getRuleName());
+            this.setGravatarUrl(object.getGravatarUrl());
+            this.setOauthOpenid(object.getOauthOpenid());
         }
     }
 
@@ -183,6 +208,8 @@ public class MktDrawPrizeReport {
         object.setIp(this.getIp());
         object.setCity(this.getCity());
         object.setRuleName(this.getRuleName());
+        object.setGravatarUrl(this.getGravatarUrl());
+        object.setOauthOpenid(this.getOauthOpenid());
         return object;
     }
 

@@ -49,6 +49,13 @@ public class MktDrawPrizeReportEntity {
     @Column(name = "rule_name")
     private String ruleName;
 
+    @Column(name = "gravatar_url")
+    private String gravatarUrl;
+
+    @Column(name = "oauth_openid")
+    private String oauthOpenid;
+
+
     public String getProductKey() {
         return productKey;
     }
@@ -143,5 +150,21 @@ public class MktDrawPrizeReportEntity {
 
     public void setRuleName(String ruleName) {
         this.ruleName = ruleName;
+    }
+
+    public String getGravatarUrl() {
+        return gravatarUrl;
+    }
+
+    public void setGravatarUrl(String gravatarUrl) {
+        this.gravatarUrl = gravatarUrl;
+    }
+
+    public String getOauthOpenid() {
+        return oauthOpenid;
+    }
+
+    public void setOauthOpenid(String oauthOpenid) {
+        this.oauthOpenid = oauthOpenid;
     }
 }

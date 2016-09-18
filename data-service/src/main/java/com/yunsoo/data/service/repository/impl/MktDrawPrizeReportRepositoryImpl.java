@@ -31,6 +31,7 @@ public class MktDrawPrizeReportRepositoryImpl implements MktDrawPrizeReportRepos
                 " FROM mkt_draw_prize prize " +
                 " left join user_scan_record scan on prize.scan_record_id = scan.id " +
                 " left join product_base product on scan.product_base_id = product.id " +
+                " left join user usr on scan.user_id = usr.id " +
                 " inner join mkt_draw_rule rule on prize.draw_rule_id = rule.id " +
                 " where prize.marketing_id = :marketingId ";
 
