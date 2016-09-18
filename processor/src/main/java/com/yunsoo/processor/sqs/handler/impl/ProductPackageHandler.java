@@ -2,13 +2,13 @@ package com.yunsoo.processor.sqs.handler.impl;
 
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.message.ProductPackageMessage;
-import com.yunsoo.common.data.object.ProductPackageObject;
 import com.yunsoo.common.data.object.TaskFileEntryObject;
 import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.processor.domain.LogDomain;
-import com.yunsoo.processor.domain.ProductPackageDomain;
 import com.yunsoo.processor.domain.TaskFileDomain;
+import com.yunsoo.processor.key.dto.ProductPackage;
+import com.yunsoo.processor.key.service.ProductPackageService;
 import com.yunsoo.processor.sqs.MessageSender;
 import com.yunsoo.processor.sqs.handler.MessageHandler;
 import org.apache.commons.logging.Log;
@@ -44,7 +44,7 @@ public class ProductPackageHandler implements MessageHandler<ProductPackageMessa
     private TaskFileDomain taskFileDomain;
 
     @Autowired
-    private ProductPackageDomain productPackageDomain;
+    private ProductPackageService productPackageService;
 
     @Autowired
     private MessageSender messageSender;
@@ -97,7 +97,7 @@ public class ProductPackageHandler implements MessageHandler<ProductPackageMessa
         }
 
         for (int lineSteps, i = continueOffset; i < linesSize; i += lineSteps) {
-            List<ProductPackageObject> packages = new ArrayList<>();
+            List<ProductPackage> packages = new ArrayList<>();
             lineSteps = parseLines(lines, i, BATCH_LIMIT, packages);
             continueOffset += lineSteps;
 
@@ -106,7 +106,7 @@ public class ProductPackageHandler implements MessageHandler<ProductPackageMessa
                 continue;
             }
             batchStartDateTime = DateTime.now();
-            int responseCount = productPackageDomain.batchPackage(packages);
+            int responseCount = productPackageService.batchSave(packages);
             DateTime batchEndDateTime = DateTime.now();
 
             log.info("batch package " + StringFormatter.formatMap(
@@ -149,32 +149,32 @@ public class ProductPackageHandler implements MessageHandler<ProductPackageMessa
                 "totalSeconds", totalTime / 1000.0));
     }
 
-    private int parseLines(List<String> lines, int index, int keyLimit, List<ProductPackageObject> resultPackages) {
+    private int parseLines(List<String> lines, int index, int keyLimit, List<ProductPackage> resultPackages) {
         int i = index, size = lines.size(), keyCount = 0;
         for (; i < size; i++) {
-            ProductPackageObject obj = parseLine(lines.get(i), i);
-            if (obj != null) {
-                if (obj.getParentProductKey() != null) keyCount += 1;
-                if (obj.getChildProductKeySet() != null) keyCount += obj.getChildProductKeySet().size();
+            ProductPackage pkg = parseLine(lines.get(i), i);
+            if (pkg != null) {
+                if (pkg.getParentKey() != null) keyCount += 1;
+                if (pkg.getChildKeySet() != null) keyCount += pkg.getChildKeySet().size();
                 if (keyCount > keyLimit) {
                     break;
                 }
-                resultPackages.add(obj);
+                resultPackages.add(pkg);
             }
         }
         return i - index;
     }
 
     //2016-06-20T12:13:14.123Z key:ckey,ckey,ckey
-    private ProductPackageObject parseLine(String line, int lineNum) {
+    private ProductPackage parseLine(String line, int lineNum) {
         line = line != null ? line.trim() : null;
         if (line == null || line.length() == 0) {
             return null;
         }
-        ProductPackageObject obj = new ProductPackageObject();
+        ProductPackage pkg = new ProductPackage();
         String exp;
         if (line.length() > 24 && REGEXP_DATETIME_PREFIX.matcher(line).matches()) {
-            obj.setPackageDateTime(DateTime.parse(line.substring(0, 24)));
+            pkg.setPackageDateTime(DateTime.parse(line.substring(0, 24)));
             exp = line.substring(24, line.length()).trim();
         } else {
             exp = line;
@@ -183,10 +183,10 @@ public class ProductPackageHandler implements MessageHandler<ProductPackageMessa
         //key:ckey,ckey,ckey
         String[] tempArray = exp.split(":");
         if (tempArray.length == 2) {
-            obj.setProductKey(tempArray[0]);
-            obj.setChildProductKeySet(Arrays.asList(tempArray[1].split(",")).stream().filter(k -> k != null && k.length() > 0).collect(Collectors.toSet()));
-            if (obj.getProductKey() != null && obj.getProductKey().length() > 0 && obj.getChildProductKeySet().size() > 0) {
-                return obj;
+            pkg.setKey(tempArray[0]);
+            pkg.setChildKeySet(Arrays.asList(tempArray[1].split(",")).stream().filter(k -> k != null && k.length() > 0).collect(Collectors.toSet()));
+            if (pkg.getKey() != null && pkg.getKey().length() > 0 && pkg.getChildKeySet().size() > 0) {
+                return pkg;
             }
         }
         throw new RuntimeException("parse line failed at line " + lineNum + ": " + line);

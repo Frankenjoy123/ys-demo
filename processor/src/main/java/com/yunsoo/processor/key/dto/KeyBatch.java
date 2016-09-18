@@ -39,6 +39,9 @@ public class KeyBatch implements Serializable {
     @JsonProperty("key_type_codes")
     private List<String> keyTypeCodes;
 
+    @JsonProperty("product_status_code")
+    private String productStatusCode;
+
     @JsonProperty("product_base_id")
     private String productBaseId;
 
@@ -107,6 +110,14 @@ public class KeyBatch implements Serializable {
 
     public void setKeyTypeCodes(List<String> keyTypeCodes) {
         this.keyTypeCodes = keyTypeCodes;
+    }
+
+    public String getProductStatusCode() {
+        return productStatusCode;
+    }
+
+    public void setProductStatusCode(String productStatusCode) {
+        this.productStatusCode = productStatusCode;
     }
 
     public String getProductBaseId() {

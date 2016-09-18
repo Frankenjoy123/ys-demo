@@ -51,9 +51,11 @@ public class WebScanControllerTest {
     FileService fileService;
 
     protected static AsyncRestClient restClient;
+    protected String userAgent;
+    protected int startIndex, endIndex;
+    protected String yunsuId;
 
-
-    protected static final String filePath = "organization/2k0r1l55i2rs5544wz5/product_key_batch/2msavp1xsq3z1o50cbo/keys.pks";
+    protected static final String filePath = "organization/2k0r1l55i2rs5544wz5/product_key_batch/2mvhxmm6qzoliqntwqp/keys.pks";
     protected static final String marketingId = "2msb69lkn0qotkzm3ay";
     protected static final String iPhone =
     "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1";
@@ -69,7 +71,7 @@ public class WebScanControllerTest {
     }
 
     @SuppressWarnings("unchecked")
-    private List<String> readProductKeyFile() {
+    private List<String> readProductKeyFile(int startIndex, int endIndex) {
         try {
             List<String> result = new ArrayList<>();
             ResourceInputStream resourceInputStream = fileService.getFile(filePath);
@@ -81,7 +83,7 @@ public class WebScanControllerTest {
                     result.add(Arrays.asList(StringUtils.commaDelimitedListToStringArray(line)).get(0));
                 }
             }
-            return result.subList(1130, 1140);
+            return result.subList(startIndex, endIndex);
         } catch (NotFoundException | IOException ignored) {
         }
         return null;
@@ -89,6 +91,10 @@ public class WebScanControllerTest {
 
     @Before
     public void initRestClient() {
+        startIndex = 1200;
+        endIndex = 1300;
+//        userAgent = iPhone;
+//        yunsuId = "xxxxx";
         if (restClient == null) {
             System.out.println("initializing restClient");
             restClient = new AsyncRestClient("http://localhost:" + port);
@@ -97,7 +103,16 @@ public class WebScanControllerTest {
 
     private Boolean setHeaders() {
         Random random = new Random();
-        String agent = random.nextBoolean() ? iPhone : Android;
+        String agent;
+        if (userAgent == null) {
+            agent = random.nextBoolean() ? iPhone : Android;
+        } else {
+            if (userAgent.equals(iPhone) || userAgent.equals(Android)) {
+                agent = userAgent;
+            } else {
+                agent = random.nextBoolean() ? iPhone : Android;
+            }
+        }
         restClient.setPreRequestCallback(request -> {
             HttpHeaders httpHeaders = request.getHeaders();
             httpHeaders.set(com.yunsoo.common.web.Constants.HttpHeaderName.APP_ID, "AuthUnitTest");
@@ -111,19 +126,19 @@ public class WebScanControllerTest {
     @Test
     public void testPostKeyScan() throws Exception {
 
-        List<String> productKeys = readProductKeyFile();
+        List<String> productKeys = readProductKeyFile(startIndex, endIndex);
         List<String> prizedKeys = new ArrayList<>();
-        List<String> iOSList = new ArrayList<>();
-        List<String> androidList = new ArrayList<>();
 
         Map<String, HashMap> map = new HashMap<>();
 
-        productKeys.parallelStream().forEach(productKey -> {
+        Optional<List<String>> pksOptional = Optional.of(productKeys);
+
+        pksOptional.ifPresent(value -> value.forEach(productKey -> {
             WebScanRequest request = new WebScanRequest();
+
             request.setUserId(Constants.Ids.ANONYMOUS_USER_ID);
             request.setAddress("hang zhou");
-            request.setYsid(YSIDGenerator.getNew());
-
+            request.setYsid(yunsuId == null ? YSIDGenerator.getNew() : yunsuId);
             Boolean isAndroid = setHeaders();
 
             WebScanResponse.ScanRecord scanRecord = restClient.post("webScan/{0}", request, WebScanResponse.ScanRecord.class, productKey);
@@ -175,7 +190,7 @@ public class WebScanControllerTest {
                     System.out.println("null pointer exception");
                 }
             }
-        });
+        }));
 
         StringBuilder stringBuilder = new StringBuilder();
         String fileName = new SimpleDateFormat("MM-dd hh-mm-ss'.log'").format(new Date());

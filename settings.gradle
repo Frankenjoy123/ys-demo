@@ -10,4 +10,5 @@ include 'api-auth'
 include 'api-file'
 include 'api-key'
 include 'api-rabbit'
-//include 'web-scan-taobao'
+include 'api-di'
+
