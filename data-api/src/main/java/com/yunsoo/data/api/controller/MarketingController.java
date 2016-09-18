@@ -61,6 +61,9 @@ public class MarketingController {
     @Autowired
     private MktDrawRuleKeyRepository mktDrawRuleKeyRepository;
 
+    @Autowired
+    private MktDrawPrizeReportRepository mktDrawPrizeReportRepository;
+
 
     @Autowired
     private ProductService productService;
@@ -474,6 +477,42 @@ public class MarketingController {
             entityList = mktDrawPrizeRepository.findTop10ByMarketingIdAndStatusCodeInAndDrawRecordIdInOrderByCreatedDateTimeDesc(marketingId, statusCodeIn, recordIds);
 
         return entityList.stream().map(this::toMktDrawPrizeObject).collect(Collectors.toList());
+    }
+
+    //query marketing prize, provide API
+    @RequestMapping(value = "/drawPrizeReport/marketing", method = RequestMethod.GET)
+    public List<MktDrawPrizeReportObject> getMktDrawPrizeReportByMarketingId(
+            @RequestParam(value = "marketing_id") String marketingId,
+            @RequestParam(value = "account_type", required = false) String accountType,
+            @RequestParam(value = "prize_type_code", required = false) String prizeTypeCode,
+            @RequestParam(value = "status_code", required = false) String statusCode,
+            @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+            @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime) {
+
+        if (StringUtils.isEmpty(accountType))
+            accountType = null;
+        if (StringUtils.isEmpty(prizeTypeCode))
+            prizeTypeCode = null;
+
+        if (StringUtils.isEmpty(statusCode))
+            statusCode = null;
+
+        DateTime startDateTime = null;
+        DateTime endDateTime = null;
+
+        if ((startTime != null) && !StringUtils.isEmpty(startTime.toString()))
+            startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        if ((endTime != null) && !StringUtils.isEmpty(endTime.toString()))
+            endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
+
+        List<MktDrawPrizeReportEntity> entityList = mktDrawPrizeReportRepository.queryMktDrawPrizeReport(marketingId, accountType, prizeTypeCode, statusCode, startDateTime, endDateTime);
+        if ((entityList != null) && (entityList.size() > 0)) {
+            return entityList.stream()
+                    .map(this::toMktDrawPrizeReportObject)
+                    .collect(Collectors.toList());
+        } else {
+            return null;
+        }
     }
 
 
@@ -1263,6 +1302,26 @@ public class MarketingController {
         entity.setCreatedDateTime(object.getCreatedDateTime());
         entity.setModifiedDateTime(object.getModifiedDateTime());
         return entity;
+    }
+
+    private MktDrawPrizeReportObject toMktDrawPrizeReportObject(MktDrawPrizeReportEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        MktDrawPrizeReportObject object = new MktDrawPrizeReportObject();
+        object.setProductKey(entity.getProductKey());
+        object.setAmount(entity.getAmount());
+        object.setMobile(entity.getMobile());
+        object.setStatusCode(entity.getStatusCode());
+        object.setCreatedDateTime(entity.getCreatedDateTime());
+        object.setAccountType(entity.getAccountType());
+        object.setPrizeAccount(entity.getPrizeAccount());
+        object.setPrizeAccountName(entity.getPrizeAccountName());
+        object.setProductBaseName(entity.getProductBaseName());
+        object.setIp(entity.getIp());
+        object.setCity(entity.getCity());
+        object.setRuleName(entity.getRuleName());
+        return object;
     }
 
 
