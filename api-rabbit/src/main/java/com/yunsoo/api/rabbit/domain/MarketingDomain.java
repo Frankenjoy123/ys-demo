@@ -327,6 +327,82 @@ public class MarketingDomain {
             }
             return null;
         }
+        if (LookupCodes.MktType.DRAW02.equals(obj.getTypeCode())) {
+            List<MktDrawRuleObject> originalRuleList = getRuleList(marketId);
+
+            List<MktDrawRuleObject> ruleList = new ArrayList<>();
+            List<MktDrawRuleObject> newRuleList = new ArrayList<>();
+
+            for (MktDrawRuleObject tempObject : originalRuleList) {
+                if ((tempObject.getAvailableQuantity() != null) && (tempObject.getAvailableQuantity() > 0)) {
+                    ruleList.add(tempObject);
+                }
+            }
+
+            // query if the product key match the draw rule for key
+            MktDrawRuleKeyObject mktDrawRuleKeyObject = getMktDrawRuleByProductKeyAndMarketingId(productKey, marketId);
+            if ((mktDrawRuleKeyObject != null) && (StringUtils.hasText(mktDrawRuleKeyObject.getRuleId()))) {
+                String ruleId = mktDrawRuleKeyObject.getRuleId();
+
+                for (MktDrawRuleObject temp : ruleList) {
+                    if ((temp.getId() != null) && (temp.getId().equals(ruleId))) {
+                        return temp;
+                    }
+                }
+                return null;
+            }
+
+
+            String userDeviceType = LookupCodes.UserDeviceType.NONANDROID;
+
+            // check if the prize only for android user device type
+            if (scanRecordId != null) {
+                UserScanRecordObject userScanRecordObject = dataApiClient.get("userScanRecord/{id}", UserScanRecordObject.class, scanRecordId);
+                if (userScanRecordObject != null) {
+                    String userAgent = userScanRecordObject.getUserAgent();
+                    if (userAgent != null) {
+                        if (userAgent.contains(LookupCodes.UserDeviceType.ANDROID)) {
+                            userDeviceType = LookupCodes.UserDeviceType.ANDROID;
+                        }
+                    }
+                }
+            }
+
+            Long totalWeight = new Long(0);
+
+            // check if the prized already get by current user
+            for (MktDrawRuleObject object : ruleList) {
+                if (object.getAppliedEnv() == null) {
+                    newRuleList.add(object);
+                    if (object.getWeight() != null) {
+                        totalWeight += object.getWeight();
+                    }
+                } else if (object.getAppliedEnv().equals(LookupCodes.UserDeviceType.ANDROID)) {
+                    if (userDeviceType.equals(LookupCodes.UserDeviceType.ANDROID)) {
+                        newRuleList.add(object);
+                        if (object.getWeight() != null) {
+                            totalWeight += object.getWeight();
+                        }
+                    }
+                }
+            }
+
+
+            double prizeIndex = Math.floor(Math.random() * totalWeight);
+
+            Double indexBefore = new Double(0);
+            Double indexAfter = new Double(0);
+
+            for (int i = 0; i < newRuleList.size(); i++) {
+                indexAfter += newRuleList.get(i).getWeight();
+                if ((prizeIndex >= indexBefore) && (prizeIndex < indexAfter)) {
+                    return newRuleList.get(i);
+                } else {
+                    indexBefore = indexAfter;
+                }
+            }
+            return null;
+        }
         return null;
     }
 

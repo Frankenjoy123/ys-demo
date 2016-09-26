@@ -1321,6 +1321,8 @@ public class MarketingController {
         object.setIp(entity.getIp());
         object.setCity(entity.getCity());
         object.setRuleName(entity.getRuleName());
+        object.setGravatarUrl(entity.getGravatarUrl());
+        object.setOauthOpenid(entity.getOauthOpenid());
         return object;
     }
 

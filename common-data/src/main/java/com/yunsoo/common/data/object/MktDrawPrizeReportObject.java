@@ -52,6 +52,13 @@ public class MktDrawPrizeReportObject {
     @JsonProperty("rule_name")
     private String ruleName;
 
+    @JsonProperty("gravatar_url")
+    private String gravatarUrl;
+
+    @JsonProperty("oauth_openid")
+    private String oauthOpenid;
+
+
     public String getProductKey() {
         return productKey;
     }
@@ -146,5 +153,21 @@ public class MktDrawPrizeReportObject {
 
     public void setRuleName(String ruleName) {
         this.ruleName = ruleName;
+    }
+
+    public String getGravatarUrl() {
+        return gravatarUrl;
+    }
+
+    public void setGravatarUrl(String gravatarUrl) {
+        this.gravatarUrl = gravatarUrl;
+    }
+
+    public String getOauthOpenid() {
+        return oauthOpenid;
+    }
+
+    public void setOauthOpenid(String oauthOpenid) {
+        this.oauthOpenid = oauthOpenid;
     }
 }
