@@ -4,10 +4,7 @@ import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.auth.dto.Organization;
 import com.yunsoo.api.rabbit.auth.service.AuthOrganizationService;
 import com.yunsoo.api.rabbit.domain.*;
-import com.yunsoo.api.rabbit.dto.ProductCategory;
-import com.yunsoo.api.rabbit.dto.UserAccessToken;
-import com.yunsoo.api.rabbit.dto.WebScanRequest;
-import com.yunsoo.api.rabbit.dto.WebScanResponse;
+import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.util.IpUtils;
 import com.yunsoo.api.rabbit.util.YSIDGenerator;
 import com.yunsoo.common.data.LookupCodes;
@@ -58,6 +55,7 @@ public class WebScanController {
 
     @Autowired
     private UserAccessTokenDomain userAccessTokenDomain;
+
 
     //region 一物一码
 
@@ -148,11 +146,66 @@ public class WebScanController {
             throw new ForbiddenException("you are forbidden!");
         }
 
-        return toScanRecord(userScanRecordObject);
+
+        WebScanResponse.ScanRecord result = toScanRecord(userScanRecordObject);
+        if(StringUtils.hasText(productBaseObject.getWebTemplateName()) && productBaseObject.getWebTemplateName().indexOf(":") >0)
+            result.setIsTemplate(true);
+        else
+            result.setIsTemplate(false);
+        return result;
+    }
+
+    @RequestMapping(value = "/key/{key}", method = RequestMethod.GET)
+    public WebScanResponse getProductKeyScan(@PathVariable(value = "key") String key) {
+        //search product by key
+        ProductObject productObject = getProductByKey(key);
+        ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
+        WebScanResponse webScanResponse = new WebScanResponse();
+
+        //product info specific
+        WebScanResponse.Product product = new WebScanResponse.Product();
+        product.setId(productObject.getProductBaseId());
+        product.setBatchId(productObject.getProductKeyBatchId());
+        product.setKey(key);
+        product.setStatusCode(productObject.getProductStatusCode());
+        product.setManufacturingDatetime(productObject.getManufacturingDateTime());
+        product.setWebTemplateName(productBaseObject.getWebTemplateName());
+        webScanResponse.setProduct(product);
+
+        ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(productObject.getProductKeyBatchId());
+        if (productKeyBatchObject != null) {
+            webScanResponse.setMarketing(getMarketingInfo(productKeyBatchObject.getMarketingId()));
+
+            WebScanResponse.Organization org = new WebScanResponse.Organization();
+            org.setId(productKeyBatchObject.getOrgId());
+            webScanResponse.setOrganization(org);
+        }
+
+        //security info
+        webScanResponse.setSecurity(getSecurityInfo(productObject));
+
+//        Map<String, Object> config = organizationConfigDomain.getConfig(productKeyBatchObject.getOrgId(), false);
+//        String appId = config.get("webchat.app_id").toString();
+//        String secret = config.get("webchat.app_secret").toString();
+
+        String appId = "wx89c1685a0c14e8bf"; //todo: put in to config
+        String secret = "c1e1d31f" + "ac7e0e31" + "a64417ec" + "ef3b3682"; //todo: put in to config
+
+        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject(productKeyBatchObject.getOrgId(), appId, secret);
+        UserAccessToken userAccessToken = new UserAccessToken(userAccessTokenObject);
+        userAccessToken.setAppId(appId);
+
+        webScanResponse.setUserAccessToken(userAccessToken);
+
+        return webScanResponse;
     }
 
 
     //endregion
+
+
+
+
 
     //region 产品码
 
