@@ -123,7 +123,7 @@ case when usr.user_id is not null and usr.user_id <> '0020000000000000000' then 
   update emr_user u
       inner join sp_sync_user_tmp_user tmp
         on u.org_id = tmp.org_id and (u.user_id = tmp.user_id and u.ys_id = tmp.ys_id)
-           left join lu_province_city l on (l.city = tmp.city  or l.city = concat(tmp.city,'市') )
+           left join lu_province_city l on (l.city = tmp.city  or l.city = concat(tmp.city,'市') or (length(tmp.city) >0 and l.city like concat(tmp.city,'%'))  )
         set u.email = tmp.email, u.age = tmp.age, u.name = tmp.name, u.sex = tmp.sex, u.gravatar_url = tmp.gravatar_url,
         u.wx_openid = tmp.wx_openid, u.province = ifnull(l.province,tmp.province),
         u.city =  ifnull(l.city,tmp.city);
@@ -140,7 +140,7 @@ case when usr.user_id is not null and usr.user_id <> '0020000000000000000' then 
         when usr.last_user_agent like '%windows%' then 'Windows'
         else '其他' end
       from sp_sync_user_tmp_user usr
-        left join lu_province_city l on (l.city = usr.city  or l.city = concat(usr.city,'市') )
+        left join lu_province_city l on (l.city = usr.city  or l.city = concat(usr.city,'市') or (length(usr.city) >0 and l.city like concat(usr.city,'%')) )
       where not exists (select 1 from emr_user where user_id = usr.user_id and org_id = usr.org_id and ys_id = usr.ys_id);
 
 	update emr_user inner join sp_sync_user_tmp_user_phone on emr_user.user_id = sp_sync_user_tmp_user_phone.user_id

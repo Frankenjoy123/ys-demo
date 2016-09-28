@@ -114,7 +114,7 @@ ifnull(l.province,ev.province), ifnull(l.city,ev.city),
 ev.org_id, ev.org_name, ev.product_base_id, ev.product_name, ev.key_batch_id, ev.product_key,
 ev.scan_record_id, ev.scan_datetime, ev.draw_id,ev.draw_datetime, ev.is_priced, ev.price_status_code, ev.price_id, ev.marketing_id, ev.value
 from sp_sync_event_tmp_event ev
-left join lu_province_city l on (l.city = ev.city  or l.city = concat(ev.city,'市') )
+left join lu_province_city l on (l.city = ev.city  or l.city = concat(ev.city,'市') or (length(ev.city) >0 and l.city like concat(ev.city,'%'))  )
 order by ev.event_datetime asc;
 
 insert into emr_task (task_id, task_name, last_value, created_datetime) values(8,'同步事件信息', max_value_date, now());
