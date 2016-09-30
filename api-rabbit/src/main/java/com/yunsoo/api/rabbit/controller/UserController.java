@@ -78,7 +78,8 @@ public class UserController {
             patchUpdateUser(user.getId(), user);
             return user;
         }
-        return null;
+        else
+            return new User(existingUser);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH)

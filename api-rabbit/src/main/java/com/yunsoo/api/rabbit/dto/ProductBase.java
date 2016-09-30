@@ -37,6 +37,8 @@ public class ProductBase {
     private List<User> followingUsers;
     @JsonProperty("is_following")
     private boolean isFollowing;
+    @JsonProperty("web_template_name")
+    private String webTemplateName;
 
     public String getDetailUrl() {
         return detailUrl;
@@ -143,6 +145,14 @@ public class ProductBase {
         this.isFollowing = isFollowing;
     }
 
+    public String getWebTemplateName() {
+        return webTemplateName;
+    }
+
+    public void setWebTemplateName(String webTemplateName) {
+        this.webTemplateName = webTemplateName;
+    }
+
     public ProductBase() {
     }
 
@@ -155,6 +165,7 @@ public class ProductBase {
             this.setOrgId(object.getOrgId());
             this.setShelfLife(object.getShelfLife());
             this.setShelfLifeInterval(object.getOrgId());
+            this.setWebTemplateName(object.getWebTemplateName());
         }
     }
 

@@ -278,6 +278,22 @@ public class MarketingDomain {
 
     }
 
+    public List<MktDrawPrizeReportObject> getMktDrawPrizeReportByFilter(String marketingId, String accountType, String prizeTypeCode, String statusCode, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("marketing_id", marketingId)
+                .append("account_type", accountType)
+                .append("prize_type_code", prizeTypeCode)
+                .append("status_code", statusCode)
+                .append("start_time", startTime)
+                .append("end_time", endTime)
+                .build();
+
+        return dataApiClient.get("marketing/drawPrizeReport/marketing" + query, new ParameterizedTypeReference<List<MktDrawPrizeReportObject>>() {
+        });
+
+    }
+
+
     public void updateMktDrawRule(MktDrawRuleObject mktDrawRuleObject) {
         dataApiClient.put("marketing/drawRule/{id}", mktDrawRuleObject, mktDrawRuleObject.getId());
     }

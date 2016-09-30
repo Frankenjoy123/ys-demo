@@ -1,7 +1,6 @@
 package com.yunsoo.api.rabbit.file.service;
 
 import com.yunsoo.api.rabbit.client.FileApiClient;
-import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
@@ -29,7 +28,7 @@ public class FileService {
         try {
             return fileApiClient.getResourceInputStream("file?path={path}", path);
         } catch (NotFoundException ignored) {
-            log.warn("file not found in s3 " + StringFormatter.formatMap("path", path));
+            //log.warn("file not found in s3 " + StringFormatter.formatMap("path", path));
             return null;
         }
     }

@@ -624,6 +624,22 @@ public class MarketingController {
         return mktDrawPrizeList;
     }
 
+    @RequestMapping(value = "drawPrizeReport/marketing", method = RequestMethod.GET)
+    public List<MktDrawPrizeReport> getMktDrawPrizeReportByFilter(@RequestParam(value = "marketing_id") String marketingId,
+                                                                  @RequestParam(value = "account_type", required = false) String accountType,
+                                                                  @RequestParam(value = "prize_type_code", required = false) String prizeTypeCode,
+                                                                  @RequestParam(value = "status_code", required = false) String statusCode,
+                                                                  @RequestParam(value = "start_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
+                                                                  @RequestParam(value = "end_time", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime) {
+
+        List<MktDrawPrizeReportObject> mktDrawPrizeReportList = marketingDomain.getMktDrawPrizeReportByFilter(marketingId, accountType, prizeTypeCode, statusCode, startTime, endTime);
+        if ((mktDrawPrizeReportList != null) && (mktDrawPrizeReportList.size() > 0)) {
+            return mktDrawPrizeReportList.stream().map(MktDrawPrizeReport::new).collect(Collectors.toList());
+        } else {
+            return null;
+        }
+    }
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Marketing getMarketing(@PathVariable(value = "id") String marketingId) {
         if (marketingId == null)

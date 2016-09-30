@@ -111,6 +111,9 @@ public class WebScanResponse {
         @JsonProperty("manufacturing_datetime")
         private DateTime manufacturingDatetime;
 
+        @JsonProperty("web_template_name")
+        private String webTemplateName;
+
         @JsonProperty("details")
         private String details;
 
@@ -231,6 +234,14 @@ public class WebScanResponse {
 
         public void setKeyDetails(String keyDetails) {
             this.keyDetails = keyDetails;
+        }
+
+        public String getWebTemplateName() {
+            return webTemplateName;
+        }
+
+        public void setWebTemplateName(String webTemplateName) {
+            this.webTemplateName = webTemplateName;
         }
     }
 
@@ -359,6 +370,17 @@ public class WebScanResponse {
         @JsonProperty("created_datetime")
         private DateTime createdDateTime;
 
+        @JsonProperty("is_template")
+        private Boolean isTemplate;
+
+
+        public Boolean getIsTemplate() {
+            return isTemplate;
+        }
+
+        public void setIsTemplate(Boolean isTemplate) {
+            this.isTemplate = isTemplate;
+        }
 
         public String getId() {
             return id;

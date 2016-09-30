@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -156,6 +157,8 @@ public class TaskFileDomain {
     }
 
     public List<TaskFileEntryObject> getTotalByDate(String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
+        if(start == null && end == null)
+            start = DateTime.now().minusDays(90);
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("device_id", deviceId)
                 .append("type_code", typeCode)
@@ -164,8 +167,21 @@ public class TaskFileDomain {
                 .append("created_datetime_end", end)
                 .build();
 
-        return dataApiClient.get("/taskFileEntry/sum/date" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
+        List<TaskFileEntryObject> resultList = dataApiClient.get("/taskFileEntry/sum/date" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
         });
+        if(resultList.size() > 0) {
+            DateTime lastDate = DateTime.parse(resultList.get(resultList.size() - 1).getName()+ "T00:00");
+            while (DateTime.now().getDayOfYear() > lastDate.getDayOfYear()){
+                lastDate = lastDate.plusDays(1);
+                TaskFileEntryObject object = new TaskFileEntryObject();
+                object.setName(lastDate.toString("YYYY-MM-dd"));
+                object.setProductCount(0);
+                object.setPackageCount(0);
+                resultList.add(object);
+            }
+        }
+
+        return  resultList;
     }
 
     public List<TaskFileEntryObject> getTotalByDevice(List<String> deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
