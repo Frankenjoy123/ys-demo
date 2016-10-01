@@ -35,6 +35,10 @@ where date(convert_tz(mr.created_datetime,'+00:00','+08:00')) = chooseDate;
 update tmp_market_user_location
 set province = trim(trailing'省'FROM province) where province like '%省';
 
+    UPDATE tmp_market_user_location
+    SET province = '未知省份'
+    WHERE province IS NULL;
+
 start transaction;
 -- 删除该天数据
 delete from emr_market_user_location_analysis where date(draw_date) = chooseDate;
