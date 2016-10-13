@@ -11,4 +11,5 @@ include 'api-file'
 include 'api-key'
 include 'api-rabbit'
 include 'api-di'
+include 'api-marketing'
 
