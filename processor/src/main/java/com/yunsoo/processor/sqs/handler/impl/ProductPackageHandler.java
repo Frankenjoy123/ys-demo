@@ -66,7 +66,7 @@ public class ProductPackageHandler implements MessageHandler<ProductPackageMessa
         if (LookupCodes.TaskFileStatus.FAILED.equals(tObj.getStatusCode())) {
             return;
         }
-        if (!LookupCodes.TaskFileStatus.UPLOADED.equals(tObj.getStatusCode())
+        if (!LookupCodes.TaskFileStatus.PENDING.equals(tObj.getStatusCode())
                 && !LookupCodes.TaskFileStatus.PROCESSING.equals(tObj.getStatusCode())) {
             throw new RuntimeException("taskFileEntry status invalid. "
                     + StringFormatter.formatMap("fileId", fileId, "statusCode", tObj.getStatusCode()));
