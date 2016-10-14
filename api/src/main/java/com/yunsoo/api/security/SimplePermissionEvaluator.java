@@ -1,12 +1,11 @@
 package com.yunsoo.api.security;
 
-import com.yunsoo.api.auth.dto.Organization;
-import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import com.yunsoo.api.security.authentication.AccountAuthentication;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
 import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
 import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
+import com.yunsoo.common.web.security.util.OrgIdDetectable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.access.PermissionEvaluator;
@@ -101,8 +100,6 @@ public class SimplePermissionEvaluator implements PermissionEvaluator {
             if (orgId == null || orgId.length() == 0) {
                 return OrgRestrictionExpression.CURRENT;
             }
-        } else if (targetDomainObject instanceof Organization) {
-            orgId = ((Organization) targetDomainObject).getId();
         }
         return orgId == null ? null : new OrgRestrictionExpression(orgId);
     }

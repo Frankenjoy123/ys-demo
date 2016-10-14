@@ -8,6 +8,7 @@ import com.yunsoo.marketing.security.authorization.AuthorizationService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -49,7 +50,7 @@ public class AccountAuthentication implements Authentication {
 
     @Override
     public List<GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
