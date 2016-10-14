@@ -46,6 +46,7 @@ public class DynamodbProductServiceImpl implements ProductService {
         product.setKey(productKey);
         product.setKeyTypeCode(keyTypeCode);
         product.setKeyBatchId(keyBatchId);
+        product.setPrimaryKey(productModel.getKey());
         product.setKeySet(productModel.getKeySet());
         product.setCreatedDateTime(productModel.getCreatedDateTime());
 
