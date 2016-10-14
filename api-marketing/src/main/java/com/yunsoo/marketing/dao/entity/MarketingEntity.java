@@ -35,6 +35,9 @@ public class MarketingEntity {
     @Column(name = "status_code")
     private String statusCode;
 
+    @Column(name = "template_id")
+    private String templateId;
+
     @Column(name = "budget")
     private BigDecimal budget;
 
@@ -96,6 +99,14 @@ public class MarketingEntity {
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public String getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
     }
 
     public BigDecimal getBudget() {
