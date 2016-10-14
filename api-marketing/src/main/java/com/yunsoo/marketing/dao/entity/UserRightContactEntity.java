@@ -1,12 +1,12 @@
 package com.yunsoo.marketing.dao.entity;
 
-import com.yunsoo.marketing.dao.util.IdGenerator;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
-import java.math.BigDecimal;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by:   Haitao
@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 @Table(name = "user_right_contact")
 public class UserRightContactEntity {
 
+    @Id
     @Column(name = "user_right_id")
     private String userRightId;
 
