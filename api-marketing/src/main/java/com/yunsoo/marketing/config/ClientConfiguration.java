@@ -1,5 +1,6 @@
 package com.yunsoo.marketing.config;
 
+import com.yunsoo.marketing.client.AuthApiClient;
 import com.yunsoo.marketing.client.FileApiClient;
 import com.yunsoo.marketing.client.KeyApiClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,11 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class ClientConfiguration {
+
+    @Bean
+    public AuthApiClient authApiClient(@Value("${yunsoo.client.auth_api.base_url}") String authApiBaseUrl) {
+        return new AuthApiClient(authApiBaseUrl);
+    }
 
     @Bean
     public FileApiClient fileApiClient(@Value("${yunsoo.client.file_api.base_url}") String fileApiBaseUrl) {

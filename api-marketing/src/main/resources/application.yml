@@ -35,6 +35,8 @@ yunsoo:
   debug: true
   environment: dev
   client:
+    auth_api:
+      base_url: http://localhost:6180/
     file_api:
       base_url: http://localhost:4180/
     key_api:
@@ -53,6 +55,8 @@ logging:
 yunsoo:
   environment: local
   client:
+    auth_api:
+      base_url: http://dev.yunsu.co:6180/
     file_api:
       base_url: http://dev.yunsu.co:4180/
     key_api:
