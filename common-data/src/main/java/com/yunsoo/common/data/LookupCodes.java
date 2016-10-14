@@ -274,8 +274,6 @@ public class LookupCodes {
     }
 
 
-
-
     public static class PaymentStatus {
         private PaymentStatus() {
         }
@@ -315,6 +313,7 @@ public class LookupCodes {
 
         public static final String UPLOADING = "uploading";
         public static final String UPLOADED = "uploaded";
+        public static final String PENDING = "pending";
         public static final String PROCESSING = "processing";
         public static final String FAILED = "failed";
         public static final String FINISHED = "finished";
@@ -367,12 +366,12 @@ public class LookupCodes {
     }
 
 
-    public static class SMSTemplate{
-        private SMSTemplate(){
+    public static class SMSTemplate {
+        private SMSTemplate() {
 
         }
 
-        public static final String RESETPASSWORD="reset_password";
+        public static final String RESETPASSWORD = "reset_password";
         public static final String SENDPRIZE = "send_prize";
     }
 

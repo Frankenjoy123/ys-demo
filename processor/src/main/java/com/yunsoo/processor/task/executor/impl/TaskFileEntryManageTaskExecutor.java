@@ -39,7 +39,7 @@ public class TaskFileEntryManageTaskExecutor implements TaskExecutor {
         if (taskFiles.size() > 0) {
             log.info(String.format("start processing %d task files", taskFiles.size()));
             for (TaskFileEntryObject f : taskFiles) {
-                if (LookupCodes.TaskFileStatus.UPLOADED.equals(f.getStatusCode())) {
+                if (LookupCodes.TaskFileStatus.PENDING.equals(f.getStatusCode())) {
                     if (LookupCodes.TaskFileType.PACKAGE.equals(f.getTypeCode())) {
                         ProductPackageMessage message = new ProductPackageMessage();
                         message.setTaskFileId(f.getFileId());
@@ -60,7 +60,7 @@ public class TaskFileEntryManageTaskExecutor implements TaskExecutor {
 
     private List<TaskFileEntryObject> getTaskFileEntries() {
         String typeCode = LookupCodes.TaskFileType.PACKAGE;
-        List<String> statusCodes = Collections.singletonList(LookupCodes.TaskFileStatus.UPLOADED);
+        List<String> statusCodes = Collections.singletonList(LookupCodes.TaskFileStatus.PENDING);
         Page<TaskFileEntryObject> page = taskFileDomain.getTaskFileEntryByFilter(typeCode, statusCodes);
         return page.getContent();
     }
