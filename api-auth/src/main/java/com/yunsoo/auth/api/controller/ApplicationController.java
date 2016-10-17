@@ -51,8 +51,9 @@ public class ApplicationController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission('*', 'org', 'application:read')")
     public List<Application> getList(Pageable pageable,
+                                     @RequestParam(value = "type_code", required = false) String typeCode,
                                      HttpServletResponse response) {
-        Page<Application> applications = applicationService.getAll(pageable);
+        Page<Application> applications = applicationService.getList(typeCode, pageable);
         return PageUtils.response(response, applications, pageable != null);
     }
 
