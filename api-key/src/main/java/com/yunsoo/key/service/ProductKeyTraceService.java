@@ -16,6 +16,8 @@ public interface ProductKeyTraceService {
 
     void save(ProductTrace trace);
 
+    void batchSave(List<ProductTrace> traceList);
+
 
 
 }

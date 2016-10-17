@@ -222,10 +222,10 @@ public class ProductKeyBatchController {
                 .collect(Collectors.toList());
     }
 
-//    @RequestMapping(value = "/partition", method = RequestMethod.GET)
-//    public List<String> getPartitionIdByOrgId(@RequestParam("org_id") String orgId){
-//        return productKeyBatchRepository.findDistinctPartitionId(orgId);
-//    }
+    @RequestMapping(value = "/partition", method = RequestMethod.GET)
+    public List<String> getPartitionIdByOrgId(@RequestParam("org_id") String orgId){
+        return productKeyBatchRepository.findDistinctPartitionIdByOrgIdOrderByCreatedDateTimeDesc(orgId);
+    }
 
 
     private ProductKeyBatchObject toProductKeyBatchObject(ProductKeyBatch batch) {

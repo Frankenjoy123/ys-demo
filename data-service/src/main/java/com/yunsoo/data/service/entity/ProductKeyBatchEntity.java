@@ -61,6 +61,9 @@ public class ProductKeyBatchEntity {
     @Column(name = "marketing_id")
     private String marketingId;
 
+    @Column(name = "partition_id")
+    private String partitionId;
+
 
     public String getId() {
         return id;
@@ -164,6 +167,14 @@ public class ProductKeyBatchEntity {
 
     public void setDownloadNo(Integer downloadNo) {
         this.downloadNo = downloadNo;
+    }
+
+    public String getPartitionId() {
+        return partitionId;
+    }
+
+    public void setPartitionId(String partitionId) {
+        this.partitionId = partitionId;
     }
 
     public static ProductKeyBatchObject toDataObject(ProductKeyBatchEntity entity) {

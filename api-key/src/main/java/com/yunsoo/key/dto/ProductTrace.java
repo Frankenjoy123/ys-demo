@@ -37,6 +37,17 @@ public class ProductTrace implements Comparable {
     @JsonProperty("product_count")
     private Integer productCount;
 
+    @JsonProperty("status_code")
+    private String statusCode;
+
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
+
     public String getProductKey() {
         return productKey;
     }

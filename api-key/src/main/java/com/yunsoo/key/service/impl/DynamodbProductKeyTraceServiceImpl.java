@@ -8,10 +8,8 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by yan on 10/11/2016.
@@ -49,23 +47,45 @@ public class DynamodbProductKeyTraceServiceImpl implements ProductKeyTraceServic
 
     @Override
     public void save(ProductTrace trace) {
-        ProductTraceModel traceModel = productTraceDao.getByKey(trace.getProductKey());
-        if(traceModel == null){
-            traceModel = new ProductTraceModel();
-            traceModel.setProductKey(trace.getProductKey());
-            traceModel.setActionList(Arrays.asList(trace.getAction()));
-            traceModel.setDateTimeList(Arrays.asList(trace.getCreatedDateTime().getMillis()));
-            traceModel.setSourceIdList(Arrays.asList(trace.getSourceId()));
-            traceModel.setSourceTypeList(Arrays.asList(trace.getSourceType()));
-        }
-        else{
-            traceModel.getActionList().add(trace.getAction());
-            traceModel.getDateTimeList().add(trace.getCreatedDateTime().getMillis());
-            traceModel.getSourceIdList().add(trace.getSourceId());
-            traceModel.getSourceTypeList().add(trace.getSourceType());
-        }
+        productTraceDao.save(toModel(trace));
 
-        productTraceDao.save(traceModel);
+    }
+
+    @Override
+    public void batchSave(List<ProductTrace> traceList) {
+        List<ProductTraceModel> modelList = new ArrayList<>();
+        Map<String, ProductTraceModel> modelMap = new HashMap<>();
+        traceList.forEach(trace -> {
+            if(modelMap.containsKey(trace.getProductKey())){
+                ProductTraceModel traceModel = modelMap.get(trace.getProductKey());
+                traceModel.getActionList().add(trace.getAction());
+                traceModel.getDateTimeList().add(trace.getCreatedDateTime().getMillis());
+                traceModel.getSourceIdList().add(trace.getSourceId());
+                traceModel.getSourceTypeList().add(trace.getSourceType());
+            }
+            else{
+                ProductTraceModel traceModel = new ProductTraceModel(trace);
+                modelMap.put(trace.getProductKey(), traceModel);
+            }
+        });
+
+        modelMap.keySet().forEach(key->{
+            ProductTraceModel model = modelMap.get(key);
+            ProductTraceModel traceModel = productTraceDao.getByKey(key);
+            if(traceModel == null){
+                modelList.add(model);
+            }
+            else{
+                traceModel.getActionList().addAll(model.getActionList());
+                traceModel.getDateTimeList().addAll(model.getDateTimeList());
+                traceModel.getSourceIdList().addAll(model.getSourceIdList());
+                traceModel.getSourceTypeList().addAll(model.getSourceTypeList());
+                modelList.add(traceModel);
+            }
+
+        });
+
+        productTraceDao.batchSave(modelList);
 
     }
 
@@ -91,6 +111,19 @@ public class DynamodbProductKeyTraceServiceImpl implements ProductKeyTraceServic
         return traceList;
     }
 
+    private ProductTraceModel toModel(ProductTrace trace){
+        ProductTraceModel traceModel = productTraceDao.getByKey(trace.getProductKey());
+        if(traceModel == null){
+            new ProductTraceModel(trace);
+        }
+        else{
+            traceModel.getActionList().add(trace.getAction());
+            traceModel.getDateTimeList().add(trace.getCreatedDateTime().getMillis());
+            traceModel.getSourceIdList().add(trace.getSourceId());
+            traceModel.getSourceTypeList().add(trace.getSourceType());
+        }
 
+        return traceModel;
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.domain.ProductTraceDomain;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductTrace;
@@ -24,8 +25,8 @@ public class ProductTraceController {
     @Autowired
     ProductTraceDomain domain;
 
-    //@Autowired
-
+    @Autowired
+    ProductKeyDomain keyDomain;
 
     @RequestMapping(value = "/external/{partitionId}/{externalKey}", method = RequestMethod.GET)
     public List<ProductTrace> getProductTraceByPartitionAndKey(@PathVariable("partitionId") String partitionId, @PathVariable("externalKey") String externalKey){
@@ -36,9 +37,9 @@ public class ProductTraceController {
     @RequestMapping(value = "/external/{externalKey}", method = RequestMethod.GET)
     public List<ProductTrace> getProductTraceByKey(@PathVariable("externalKey") String externalKey){
         String orgId = AuthUtils.fixOrgId(null);
+        String partitionId = keyDomain.getKeyBatchPartitionId(orgId);
 
-
-        return domain.getProductTraceByKey(orgId, "", externalKey);
+        return domain.getProductTraceByKey(orgId, partitionId, externalKey);
     }
 
     @RequestMapping(value = "/external/{partitionId}/{externalKey}", method = RequestMethod.POST)
@@ -47,6 +48,18 @@ public class ProductTraceController {
         if(trace == null)
             throw new BadRequestException("product trace could not be null");
         trace.setProductKey(externalKey);
+        return domain.save(partitionId, trace);
+    }
+
+    @RequestMapping(value = "/external/{externalKey}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProductTrace save(@PathVariable("externalKey") String externalKey, @RequestBody ProductTrace trace){
+        if(trace == null)
+            throw new BadRequestException("product trace could not be null");
+        trace.setProductKey(externalKey);
+        String orgId = AuthUtils.fixOrgId(null);
+        String partitionId = keyDomain.getKeyBatchPartitionId(orgId);
+
         return domain.save(partitionId, trace);
     }
 

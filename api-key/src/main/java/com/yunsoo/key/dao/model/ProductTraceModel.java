@@ -3,7 +3,10 @@ package com.yunsoo.key.dao.model;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.yunsoo.key.dto.ProductTrace;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -65,5 +68,15 @@ public class ProductTraceModel {
 
     public void setSourceTypeList(List<String> sourceTypeList) {
         this.sourceTypeList = sourceTypeList;
+    }
+
+    public ProductTraceModel(){}
+
+    public ProductTraceModel(ProductTrace trace){
+        this.setProductKey(trace.getProductKey());
+        this.setActionList(new ArrayList<>(Arrays.asList(trace.getAction())));
+        this.setDateTimeList(new ArrayList<>(Arrays.asList(trace.getCreatedDateTime().getMillis())));
+        this.setSourceIdList(new ArrayList<>(Arrays.asList(trace.getSourceId())));
+        this.setSourceTypeList(new ArrayList<>(Arrays.asList(trace.getSourceType())));
     }
 }

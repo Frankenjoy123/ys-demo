@@ -1,4 +1,4 @@
-package com.yunsoo.api.dto;
+package com.yunsoo.processor.key.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
 
 /**
  * Created by yan on 10/10/2016.

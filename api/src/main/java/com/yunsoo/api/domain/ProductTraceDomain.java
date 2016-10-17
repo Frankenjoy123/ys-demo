@@ -3,6 +3,7 @@ package com.yunsoo.api.domain;
 import com.yunsoo.api.client.KeyApiClient;
 import com.yunsoo.api.dto.OrgAgency;
 import com.yunsoo.api.dto.ProductTrace;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.OrgAgencyObject;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
@@ -66,6 +67,8 @@ public class ProductTraceDomain {
             trace.setSourceType(TraceSourceType.AGENCY);
         if (trace.getAction() == null)
             trace.setAction(TraceAction.DELIVERY);
+
+        trace.setStatusCode(LookupCodes.TraceStatus.PENDING);
         return keyApiClient.post("/producttrace/external/{partitionId}", trace, ProductTrace.class, partitionId);
     }
 
