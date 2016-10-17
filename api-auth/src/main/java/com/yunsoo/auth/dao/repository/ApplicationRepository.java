@@ -16,6 +16,8 @@ public interface ApplicationRepository extends Repository<ApplicationEntity, Str
 
     Page<ApplicationEntity> findAll(Pageable pageable);
 
+    Page<ApplicationEntity> findByTypeCode(String typeCode, Pageable pageable);
+
     ApplicationEntity save(ApplicationEntity entity);
 
 }
