@@ -5,6 +5,7 @@ import com.yunsoo.marketing.dao.repository.MarketingRightRepository;
 import com.yunsoo.marketing.dto.MarketingRight;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -36,6 +37,9 @@ public class MarketingRightService {
         return toMarketingRight(entity);
     }
 
+    @Transactional
+    public void putMarketingRightsByMarketingId(String marketingId, List<MarketingRight> marketingRights) {
+    }
 
     private MarketingRight toMarketingRight(MarketingRightEntity entity) {
         if (entity == null) {
@@ -56,6 +60,4 @@ public class MarketingRightService {
         marketingRight.setModifiedDateTime(entity.getModifiedDateTime());
         return marketingRight;
     }
-
-
 }

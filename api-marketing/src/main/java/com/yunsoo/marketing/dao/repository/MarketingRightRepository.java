@@ -17,5 +17,8 @@ public interface MarketingRightRepository extends Repository<MarketingRightEntit
 
     MarketingRightEntity save(MarketingRightEntity entity);
 
+    List<MarketingRightEntity> save(Iterable<MarketingRightEntity> entities);
+
+
     List<MarketingRightEntity> findByMarketingId(String marketingId);
 }
