@@ -46,6 +46,7 @@ public class TaskFileEntryController {
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "app_id", required = false) String appId,
             @RequestParam(value = "device_id", required = false) String deviceId,
+            @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "type_code", required = false) String typeCode,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
             @RequestParam(value = "product_base_id", required = false) String productBaseId,
@@ -58,6 +59,7 @@ public class TaskFileEntryController {
                 orgId,
                 appId,
                 deviceId,
+                name,
                 typeCode,
                 statusCodeIn == null || statusCodeIn.size() == 0 ? null : statusCodeIn,
                 statusCodeIn == null || statusCodeIn.size() == 0,
@@ -117,7 +119,8 @@ public class TaskFileEntryController {
     public int countTaskFiles(@RequestParam(value = "org_id") String orgId,
                               @RequestParam(value = "device_ids") List<String> deviceId,
                               @RequestParam(value = "type_code") String typeCode,
-                              @RequestParam(value = "status_code_in") List<String> statusCodeIn,  @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+                              @RequestParam(value = "status_code_in") List<String> statusCodeIn,
+                              @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
                               @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
 
         return taskFileEntryRepository.count(deviceId, typeCode, start, end,
