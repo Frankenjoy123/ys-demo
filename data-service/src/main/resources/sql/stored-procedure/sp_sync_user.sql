@@ -117,30 +117,36 @@ case when usr.user_id is not null and usr.user_id <> '0020000000000000000' then 
         as up on mdp.draw_record_id = up.last_draw_prize_id
         where mdp.paid_datetime >= min_value_date and mdp.paid_datetime < max_value_date;
 
+
+
+update sp_sync_user_tmp_user
+set province = trim(trailing'省'FROM province) where province like '%省';
+
+
     start transaction;
 
     -- 先更新部分数据
   update emr_user u
       inner join sp_sync_user_tmp_user tmp
         on u.org_id = tmp.org_id and (u.user_id = tmp.user_id and u.ys_id = tmp.ys_id)
-           left join lu_province_city l on (l.city = tmp.city  or l.city = concat(tmp.city,'市') )
+           left join lu_province_city l on (l.city = tmp.city  or l.city = concat(tmp.city,'市') or (length(tmp.city) >0 and l.city like concat(tmp.city,'%'))  )
         set u.email = tmp.email, u.age = tmp.age, u.name = tmp.name, u.sex = tmp.sex, u.gravatar_url = tmp.gravatar_url,
         u.wx_openid = tmp.wx_openid, u.province = ifnull(l.province,tmp.province),
-        u.city =  ifnull(l.city,tmp.city);
+        u.city =  l.city;
 
 
 
     -- 插入user——id
     insert into emr_user (user_id, ys_id, org_id, org_name, name, phone, email,age, sex, gravatar_url, wx_openid, province, city, address,join_datetime, latest_event_ip,latest_event_device)
       select usr.user_id, usr.ys_id, usr.org_id, usr.org_name, usr.name, usr.phone, usr.email,usr.age,
-        usr.sex, usr.gravatar_url, usr.wx_openid, ifnull(l.province,usr.province), ifnull(l.city,usr.city),
+        usr.sex, usr.gravatar_url, usr.wx_openid, ifnull(l.province,usr.province), l.city,
         usr.address,usr.join_datetime, usr.last_event_ip,
         case when usr.last_user_agent like '%iphone%' or usr.last_user_agent like '%ipad%' then 'iPhone'
         when usr.last_user_agent like '%android%' then 'Android'
         when usr.last_user_agent like '%windows%' then 'Windows'
         else '其他' end
       from sp_sync_user_tmp_user usr
-        left join lu_province_city l on (l.city = usr.city  or l.city = concat(usr.city,'市') )
+        left join lu_province_city l on (l.city = usr.city  or l.city = concat(usr.city,'市') or (length(usr.city) >0 and l.city like concat(usr.city,'%')) )
       where not exists (select 1 from emr_user where user_id = usr.user_id and org_id = usr.org_id and ys_id = usr.ys_id);
 
 	update emr_user inner join sp_sync_user_tmp_user_phone on emr_user.user_id = sp_sync_user_tmp_user_phone.user_id

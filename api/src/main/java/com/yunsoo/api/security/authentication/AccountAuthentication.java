@@ -33,7 +33,7 @@ public class AccountAuthentication implements Authentication {
 
     public List<PermissionEntry> getPermissionEntries() {
         if (permissionEntries == null) {
-            permissionEntries = authorizationService.getPermissionEntries(this);
+            permissionEntries = authorizationService.getPermissionEntries();
         }
         return permissionEntries;
     }

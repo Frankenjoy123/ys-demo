@@ -1,7 +1,7 @@
 package com.yunsoo.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yunsoo.auth.dto.util.OrgIdDetectable;
+import com.yunsoo.common.web.security.util.OrgIdDetectable;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;

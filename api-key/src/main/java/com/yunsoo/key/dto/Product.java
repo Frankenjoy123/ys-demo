@@ -26,6 +26,9 @@ public class Product implements Serializable {
     @JsonProperty("key_batch_id")
     private String keyBatchId;
 
+    @JsonProperty("primary_key")
+    private String primaryKey;
+
     @JsonProperty("key_set")
     private Set<String> keySet;
 
@@ -71,6 +74,14 @@ public class Product implements Serializable {
 
     public void setKeyBatchId(String keyBatchId) {
         this.keyBatchId = keyBatchId;
+    }
+
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(String primaryKey) {
+        this.primaryKey = primaryKey;
     }
 
     public Set<String> getKeySet() {

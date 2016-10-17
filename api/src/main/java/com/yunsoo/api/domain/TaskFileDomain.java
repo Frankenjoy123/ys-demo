@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -77,16 +76,8 @@ public class TaskFileDomain {
         });
     }
 
-    public void updateStatusToUploaded(String fileId) {
-        try {
-            dataApiClient.put("taskFileEntry/{id}/statusCode", LookupCodes.TaskFileStatus.UPLOADED, fileId);
-        } catch (Exception e) {
-            log.error("update statusCode failed for taskFileEntry " + StringFormatter.formatMap("fileId", fileId));
-        }
-    }
-
     /**
-     * file_type should be [package|logistics]
+     * file_type should be [package|trace]
      *
      * @param fileName not required
      * @param ysFile   must contains file_type in header
@@ -94,7 +85,7 @@ public class TaskFileDomain {
      * @param deviceId not required
      * @return new created file entry object
      */
-    public TaskFileEntryObject saveYSFile(String fileName, YSFile ysFile, String appId, String deviceId) {
+    public TaskFileEntryObject saveYSFile(String fileName, YSFile ysFile, String appId, String deviceId, Boolean ignored) {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
         String fileType = ysFile.getHeader("file_type");
         if (!validateFileType(fileType)) {
@@ -120,12 +111,15 @@ public class TaskFileDomain {
         fileService.putFile(path, new ResourceInputStream(new ByteArrayInputStream(data), data.length, "text/plain"));
 
         //update status of the file entry
-        this.updateStatusToUploaded(obj.getFileId());
-
+        if (ignored != null && ignored) {
+            this.updateTaskFileEntryStatus(obj.getFileId(), LookupCodes.TaskFileStatus.UPLOADED);
+        } else {
+            this.updateTaskFileEntryStatus(obj.getFileId(), LookupCodes.TaskFileStatus.PENDING);
+        }
         return this.getTaskFileEntryById(obj.getFileId());
     }
 
-    public ResourceInputStream getFile(String orgId, String fileId){
+    public ResourceInputStream getFile(String orgId, String fileId) {
         String path = String.format("organization/%s/task_file/%s", orgId, fileId);
         return fileService.getFile(path);
     }
@@ -157,7 +151,7 @@ public class TaskFileDomain {
     }
 
     public List<TaskFileEntryObject> getTotalByDate(String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
-        if(start == null && end == null)
+        if (start == null && end == null)
             start = DateTime.now().minusDays(90);
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("device_id", deviceId)
@@ -169,9 +163,9 @@ public class TaskFileDomain {
 
         List<TaskFileEntryObject> resultList = dataApiClient.get("/taskFileEntry/sum/date" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
         });
-        if(resultList.size() > 0) {
-            DateTime lastDate = DateTime.parse(resultList.get(resultList.size() - 1).getName()+ "T00:00");
-            while (DateTime.now().getDayOfYear() > lastDate.getDayOfYear()){
+        if (resultList.size() > 0) {
+            DateTime lastDate = DateTime.parse(resultList.get(resultList.size() - 1).getName() + "T00:00");
+            while (DateTime.now().getDayOfYear() > lastDate.getDayOfYear()) {
                 lastDate = lastDate.plusDays(1);
                 TaskFileEntryObject object = new TaskFileEntryObject();
                 object.setName(lastDate.toString("YYYY-MM-dd"));
@@ -181,7 +175,7 @@ public class TaskFileDomain {
             }
         }
 
-        return  resultList;
+        return resultList;
     }
 
     public List<TaskFileEntryObject> getTotalByDevice(List<String> deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
@@ -203,6 +197,14 @@ public class TaskFileDomain {
         obj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         obj.setCreatedDateTime(DateTime.now());
         return dataApiClient.post("taskFileEntry", obj, TaskFileEntryObject.class);
+    }
+
+    private void updateTaskFileEntryStatus(String fileId, String statusCode) {
+        try {
+            dataApiClient.put("taskFileEntry/{id}/statusCode", statusCode, fileId);
+        } catch (Exception e) {
+            log.error("update statusCode failed for taskFileEntry " + StringFormatter.formatMap("fileId", fileId));
+        }
     }
 
     private boolean validateFileType(String fileType) {

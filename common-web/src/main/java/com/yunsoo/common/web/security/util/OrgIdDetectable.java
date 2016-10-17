@@ -1,4 +1,4 @@
-package com.yunsoo.auth.dto.util;
+package com.yunsoo.common.web.security.util;
 
 /**
  * Created by:   Lijian
